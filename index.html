@@ -770,6 +770,54 @@ function normalize(s) { return s.trim().toLowerCase().replace(/ß/g,"ss").replac
 const MODES = { ARTICLE:"article", PLURAL:"plural", BOTH:"both" };
 
 // ═══════════════════════════════════════════════════════════════
+// GIST PERSISTENCE
+// ═══════════════════════════════════════════════════════════════
+const GIST_FILENAME = "artikel-blitz-data.json";
+const PAT_KEY = "artikel-blitz-pat";
+const GIST_ID_KEY = "artikel-blitz-gist-id";
+const DEFAULT_DATA = { decks: [], nounStats: {} };
+
+function getPat() { return localStorage.getItem(PAT_KEY) || ""; }
+function setPat(t) { localStorage.setItem(PAT_KEY, t); }
+function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ""; }
+function setGistId(id) { localStorage.setItem(GIST_ID_KEY, id); }
+
+async function gistFetch(path, opts = {}) {
+  const pat = getPat();
+  if (!pat) throw new Error("No PAT configured");
+  const r = await fetch(`https://api.github.com${path}`, {
+    ...opts,
+    headers: { Authorization: `token ${pat}`, Accept: "application/vnd.github+json", ...opts.headers },
+  });
+  if (!r.ok) throw new Error(`GitHub API ${r.status}: ${r.statusText}`);
+  return r.json();
+}
+
+async function loadGistData() {
+  const gistId = getGistId();
+  if (!gistId) return { ...DEFAULT_DATA };
+  const gist = await gistFetch(`/gists/${gistId}`);
+  const file = gist.files[GIST_FILENAME];
+  if (!file) return { ...DEFAULT_DATA };
+  return JSON.parse(file.content);
+}
+
+async function saveGistData(data) {
+  const gistId = getGistId();
+  const body = { files: { [GIST_FILENAME]: { content: JSON.stringify(data, null, 2) } } };
+  if (gistId) {
+    return gistFetch(`/gists/${gistId}`, { method: "PATCH", body: JSON.stringify(body) });
+  } else {
+    const gist = await gistFetch("/gists", {
+      method: "POST",
+      body: JSON.stringify({ description: "Artikel Blitz — saved progress", public: false, ...body }),
+    });
+    setGistId(gist.id);
+    return gist;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
 function GermanNounGame() {
@@ -797,15 +845,80 @@ function GermanNounGame() {
   const currentNoun = queue[currentIndex];
   const timeLimit = useMemo(() => difficulty==="easy"?0:difficulty==="hard"?8:15, [difficulty]);
 
-  const startGame = useCallback((m,d,t) => {
-    const tierNouns = getNounsForTier(t);
-    const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
-    setMode(m);setDifficulty(d);setTier(t);setQueue(shuffleArray(unique));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
-    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setPluralInput("");setArticleChoice(null);
-    setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(d==="easy"?0:d==="hard"?8:15);setScreen("game");
+  // ── Persistence state ──
+  const [userData, setUserData] = useState(DEFAULT_DATA);
+  const [syncStatus, setSyncStatus] = useState("idle"); // idle|loading|saving|error|synced
+  const [activeDeck, setActiveDeck] = useState(null); // null = tier mode, or deck id
+
+  useEffect(() => {
+    if (!getPat()) return;
+    setSyncStatus("loading");
+    loadGistData().then(d => { setUserData(d); setSyncStatus("synced"); })
+      .catch(() => setSyncStatus("error"));
   }, []);
 
-  const endSession = useCallback(() => { clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); setScreen("results"); }, []);
+  const persistData = useCallback(async (newData) => {
+    setUserData(newData);
+    if (!getPat()) return;
+    setSyncStatus("saving");
+    try { await saveGistData(newData); setSyncStatus("synced"); }
+    catch { setSyncStatus("error"); }
+  }, []);
+
+  const updateNounStats = useCallback((answered) => {
+    setUserData(prev => {
+      const stats = { ...prev.nounStats };
+      answered.forEach(({ noun, correct }) => {
+        const s = stats[noun] || { attempts: 0, correct: 0 };
+        stats[noun] = { attempts: s.attempts + 1, correct: s.correct + (correct ? 1 : 0) };
+      });
+      const newData = { ...prev, nounStats: stats };
+      if (getPat()) {
+        setSyncStatus("saving");
+        saveGistData(newData).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error"));
+      }
+      return newData;
+    });
+  }, []);
+
+  const saveDeck = useCallback((name, nounNames) => {
+    const deck = { id: Date.now().toString(36), name, nouns: nounNames, created: new Date().toISOString() };
+    const newData = { ...userData, decks: [...userData.decks, deck] };
+    persistData(newData);
+    return deck;
+  }, [userData, persistData]);
+
+  const deleteDeck = useCallback((deckId) => {
+    const newData = { ...userData, decks: userData.decks.filter(d => d.id !== deckId) };
+    persistData(newData);
+  }, [userData, persistData]);
+
+  const startGame = useCallback((m,d,t,deckId) => {
+    let nouns;
+    if (deckId) {
+      const deck = userData.decks.find(dk => dk.id === deckId);
+      if (!deck) return;
+      nouns = deck.nouns.map(name => NOUNS.find(n => n[0] === name)).filter(Boolean);
+      setActiveDeck(deckId);
+    } else {
+      const tierNouns = getNounsForTier(t);
+      nouns = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
+      setActiveDeck(null);
+    }
+    if (!nouns.length) return;
+    sessionAnswersRef.current = [];
+    setMode(m);setDifficulty(d);setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
+    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setPluralInput("");setArticleChoice(null);
+    setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(d==="easy"?0:d==="hard"?8:15);setScreen("game");
+  }, [userData.decks]);
+
+  const sessionAnswersRef = useRef([]);
+  const endSession = useCallback(() => {
+    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current);
+    if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
+    sessionAnswersRef.current = [];
+    setScreen("results");
+  }, [updateNounStats]);
 
   useEffect(() => {
     if (screen!=="game"||phase!=="question"||difficulty==="easy") return;
@@ -821,6 +934,7 @@ function GermanNounGame() {
     setStreak(0);setTotalAnswered(pr=>pr+1);
     setFeedback({correct:false,article:a,plural:p,noun:s,english:e});
     setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:"—",userPlural:"—"}]);
+    sessionAnswersRef.current.push({ noun: s, correct: false });
     setPhase("feedback");
   }, [currentNoun]);
 
@@ -830,7 +944,11 @@ function GermanNounGame() {
 
   const nextQuestion = useCallback(() => {
     const ni=currentIndex+1;
-    if(ni>=queue.length){setScreen("results");return;}
+    if(ni>=queue.length){
+      if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
+      sessionAnswersRef.current = [];
+      setScreen("results");return;
+    }
     setCurrentIndex(ni);setFeedback(null);setPluralInput("");setArticleChoice(null);setPhase("question");setShowHint(false);setTimeLeft(timeLimit);
   }, [currentIndex, queue.length, timeLimit]);
 
@@ -847,6 +965,7 @@ function GermanNounGame() {
       setStreak(0);
       setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:chosenArt||"—",userPlural:typedPlur?.trim()||"—"}]);
     }
+    sessionAnswersRef.current.push({ noun: s, correct });
     setTotalAnswered(pr=>pr+1);setFeedback({correct,article:a,plural:p,noun:s,english:e});setPhase("feedback");
   }, [currentNoun, mode, phase, streak, difficulty, timeLeft]);
 
@@ -874,10 +993,14 @@ function GermanNounGame() {
   const timerPct = timeLimit>0?(timeLeft/timeLimit)*100:100;
   const timerColor = timeLeft<=3?"#EF4444":timeLeft<=6?"#F59E0B":"#10B981";
 
-  if(screen==="menu") return <MenuScreen onStart={startGame}/>;
-  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
+  if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSyncRefresh={()=>{
+    if(!getPat()) return; setSyncStatus("loading");
+    loadGistData().then(d=>{setUserData(d);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
+  }}/>;
+  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
     const nd=wrongAnswers.map(w=>NOUNS.find(n=>n[0]===w.noun)).filter(Boolean);
+    sessionAnswersRef.current = [];
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
     setFeedback(null);setPluralInput("");setArticleChoice(null);setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
   }}/>;
@@ -942,28 +1065,107 @@ function GermanNounGame() {
 // ═══════════════════════════════════════════════════════════════
 // MENU
 // ═══════════════════════════════════════════════════════════════
-function MenuScreen({onStart}) {
+function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}) {
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [diff,setDiff]=useState("normal");
   const [tier,setTier]=useState(500);
+  const [source,setSource]=useState("tier"); // "tier" or "deck"
+  const [selectedDeck,setSelectedDeck]=useState(null);
+  const [showSettings,setShowSettings]=useState(false);
+  const [patInput,setPatInput]=useState(getPat());
+  const [patSaved,setPatSaved]=useState(false);
+
+  const handleSavePat = () => {
+    setPat(patInput.trim());
+    setPatSaved(true);
+    setTimeout(() => setPatSaved(false), 2000);
+    if (patInput.trim()) onSyncRefresh();
+  };
+
+  const handleStart = () => {
+    if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck);
+    else onStart(mode, diff, tier, null);
+  };
+
+  const syncDot = { idle:"#64748b", loading:"#F59E0B", saving:"#F59E0B", synced:"#10B981", error:"#EF4444" }[syncStatus];
+
   return (
     <div style={S.container}><div style={S.menuInner}>
-      <div style={{textAlign:"center"}}>
+      <div style={{textAlign:"center",position:"relative"}}>
+        <button onClick={()=>setShowSettings(!showSettings)} style={S.gearBtn} title="Sync Settings">
+          <span style={{fontSize:18}}>&#9881;</span>
+          <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot,display:"inline-block",marginLeft:4}}/>
+        </button>
         <div style={{fontSize:28,marginBottom:8,letterSpacing:2}}><span style={{color:"#3B82F6",fontWeight:900}}>der</span><span style={{color:"#EC4899",fontWeight:900}}> die</span><span style={{color:"#10B981",fontWeight:900}}> das</span></div>
         <h1 style={S.menuTitle}>Artikel Blitz</h1>
         <p style={{fontSize:14,color:"#64748b",margin:0}}>Master {NOUNS.length.toLocaleString()} German nouns · Leipzig Corpus</p>
       </div>
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Vocabulary Level</label>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-          {TIER_OPTIONS.map(t=>
-            <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{t.label}</span>
-              <span style={{fontSize:10,color:"#64748b"}}>{t.desc}</span>
-            </button>
-          )}
+
+      {showSettings&&(
+        <div style={S.settingsPanel}>
+          <label style={S.menuLabel}>GitHub PAT (for cloud sync)</label>
+          <p style={{fontSize:11,color:"#64748b",margin:"0 0 6px"}}>Create a token with <strong>gist</strong> scope at github.com/settings/tokens</p>
+          <div style={{display:"flex",gap:8}}>
+            <input value={patInput} onChange={e=>setPatInput(e.target.value)} placeholder="ghp_xxxxxxxxxxxx" type="password"
+              style={{...S.pluralInput,fontSize:13,textAlign:"left",flex:1,padding:"8px 12px"}}/>
+            <button onClick={handleSavePat} style={{...S.submitBtn,fontSize:13,padding:"8px 16px"}}>{patSaved?"Saved!":"Save"}</button>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
+            <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot}}/>
+            <span style={{fontSize:11,color:"#94a3b8"}}>
+              {syncStatus==="idle"?"Not connected":syncStatus==="loading"?"Loading...":syncStatus==="saving"?"Saving...":syncStatus==="synced"?"Synced":syncStatus==="error"?"Sync error — check PAT":""}
+            </span>
+            {getGistId()&&<span style={{fontSize:10,color:"#475569",marginLeft:"auto"}}>Gist: {getGistId().slice(0,8)}...</span>}
+          </div>
         </div>
-      </div>
+      )}
+
+      {userData.decks.length>0&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Play from</label>
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={()=>{setSource("tier");setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source==="tier"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="tier"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Vocab Level</span>
+            </button>
+            <button onClick={()=>setSource("deck")} style={{...S.diffBtn,flex:1,borderColor:source==="deck"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="deck"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Saved Deck</span>
+              <span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length} deck{userData.decks.length>1?"s":""}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {source==="tier"&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Vocabulary Level</label>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+            {TIER_OPTIONS.map(t=>
+              <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{t.label}</span>
+                <span style={{fontSize:10,color:"#64748b"}}>{t.desc}</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {source==="deck"&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Select Deck</label>
+          <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
+            {userData.decks.map(dk=>(
+              <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
+                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0"}}>{dk.name}</span>
+                  <span style={{fontSize:11,color:"#64748b"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}</span>
+                </button>
+                <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div style={S.menuSection}>
         <label style={S.menuLabel}>Game Mode</label>
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -984,7 +1186,7 @@ function MenuScreen({onStart}) {
           )}
         </div>
       </div>
-      <button onClick={()=>onStart(mode,diff,tier)} style={S.startBtn}>Start Game</button>
+      <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck} style={{...S.startBtn,opacity:source==="deck"&&!selectedDeck?0.4:1}}>Start Game</button>
       <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} grammar explanations pre-loaded</div>
     </div></div>
   );
@@ -993,8 +1195,10 @@ function MenuScreen({onStart}) {
 // ═══════════════════════════════════════════════════════════════
 // RESULTS — detailed review with grammar explanations
 // ═══════════════════════════════════════════════════════════════
-function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onRestart,onPracticeWrong}) {
+function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,onRestart,onPracticeWrong}) {
   const [expandedIdx,setExpandedIdx]=useState(null);
+  const [deckName,setDeckName]=useState("");
+  const [deckSaved,setDeckSaved]=useState(false);
   const accuracy=totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const grade=accuracy>=95?"S":accuracy>=85?"A":accuracy>=70?"B":accuracy>=55?"C":"D";
   const gc={S:"#F59E0B",A:"#10B981",B:"#3B82F6",C:"#8B5CF6",D:"#EF4444"}[grade];
@@ -1061,6 +1265,24 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
         </div>
       )}
       {wrongAnswers.length===0&&<div style={{textAlign:"center",padding:24,color:"#10B981",fontSize:18,fontWeight:700}}>Perfect session — no mistakes!</div>}
+
+      {wrongAnswers.length>0&&!deckSaved&&(
+        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
+          <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:600}}>Save mistakes as deck</label>
+          <div style={{display:"flex",gap:8}}>
+            <input value={deckName} onChange={e=>setDeckName(e.target.value)}
+              placeholder={`Mistakes ${new Date().toLocaleDateString()}`}
+              style={{...S.pluralInput,fontSize:13,textAlign:"left",flex:1,padding:"8px 12px"}}/>
+            <button onClick={()=>{
+              const name = deckName.trim() || `Mistakes ${new Date().toLocaleDateString()}`;
+              onSaveDeck(name, wrongAnswers.map(w=>w.noun));
+              setDeckSaved(true);
+            }} style={{...S.submitBtn,fontSize:13,padding:"8px 16px"}}>Save</button>
+          </div>
+        </div>
+      )}
+      {deckSaved&&<div style={{fontSize:13,color:"#10B981",fontWeight:700}}>Deck saved{syncStatus==="synced"?" & synced":""}</div>}
+
       <div style={{display:"flex",gap:10,width:"100%",flexDirection:"column"}}>
         {wrongAnswers.length>0&&<button onClick={onPracticeWrong} style={S.practiceBtn}>Practice {wrongAnswers.length} Missed Noun{wrongAnswers.length>1?"s":""}</button>}
         <button onClick={onRestart} style={S.restartBtn}>New Game</button>
@@ -1121,6 +1343,8 @@ const S = {
   resultLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1},
   practiceBtn:{width:"100%",padding:"14px",background:"rgba(239,68,68,0.1)",border:"2px solid rgba(239,68,68,0.3)",borderRadius:12,fontSize:15,fontWeight:700,color:"#f87171",cursor:"pointer",fontFamily:"inherit"},
   restartBtn:{width:"100%",padding:"14px",background:"linear-gradient(135deg, #3B82F6, #6366F1)",border:"none",borderRadius:12,fontSize:15,fontWeight:800,color:"#fff",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,textTransform:"uppercase"},
+  gearBtn:{position:"absolute",top:0,right:0,background:"none",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"4px 10px",cursor:"pointer",color:"#94a3b8",display:"flex",alignItems:"center"},
+  settingsPanel:{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:16,display:"flex",flexDirection:"column",gap:6},
 };
 
 // Mount the app
