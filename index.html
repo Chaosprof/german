@@ -775,7 +775,16 @@ const MODES = { ARTICLE:"article", PLURAL:"plural", BOTH:"both" };
 const GIST_FILENAME = "artikel-blitz-data.json";
 const PAT_KEY = "artikel-blitz-pat";
 const GIST_ID_KEY = "artikel-blitz-gist-id";
-const DEFAULT_DATA = { decks: [], nounStats: {} };
+const DEFAULT_DATA = {
+  decks: [], nounStats: {},
+  xp: 0, level: 1, coins: 0,
+  dailyStreak: { current: 0, lastDate: null, best: 0 },
+  achievements: [],
+  unlockedTiers: [100],
+  masteredNouns: [],
+  totalSessions: 0,
+  activePerks: [],
+};
 
 function getPat() { return localStorage.getItem(PAT_KEY) || ""; }
 function setPat(t) { localStorage.setItem(PAT_KEY, t); }
@@ -818,6 +827,148 @@ async function saveGistData(data) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// GAME SYSTEMS — XP, Levels, Achievements, Perks, SRS
+// ═══════════════════════════════════════════════════════════════
+
+// XP: level N requires 50*N*(N-1) total XP
+function xpForLevel(n) { return 50 * n * (n - 1); }
+function levelFromXp(xp) { let l = 1; while (xpForLevel(l + 1) <= xp) l++; return l; }
+function xpProgress(xp) { const l = levelFromXp(xp); const cur = xpForLevel(l); const nxt = xpForLevel(l + 1); return { level: l, current: xp - cur, needed: nxt - cur, total: xp }; }
+
+const TITLES = [
+  [1, "Anfänger", "Beginner"],
+  [5, "Fortgeschritten", "Intermediate"],
+  [10, "Kenner", "Expert"],
+  [15, "Meister", "Master"],
+  [20, "Sprachgenie", "Language Genius"],
+  [25, "Wortschatz-Legende", "Vocab Legend"],
+];
+function getTitle(level) { let t = TITLES[0]; for (const r of TITLES) if (level >= r[0]) t = r; return t; }
+
+// Perks
+const PERKS = [
+  { id: "streak_shield", name: "Streak Shield", desc: "First miss won't break your streak", cost: 50, icon: "🛡️", unlockLevel: 3 },
+  { id: "time_freeze", name: "Time Freeze", desc: "+5 seconds per question", cost: 40, icon: "❄️", unlockLevel: 5 },
+  { id: "double_xp", name: "Double XP", desc: "2× XP this session", cost: 80, icon: "⚡", unlockLevel: 8 },
+  { id: "score_boost", name: "Score Boost", desc: "1.5× score multiplier", cost: 50, icon: "🚀", unlockLevel: 6 },
+  { id: "second_chance", name: "Second Chance", desc: "One free retry per session", cost: 60, icon: "🔄", unlockLevel: 10 },
+];
+
+// Achievements
+const ACHIEVEMENTS = [
+  { id: "first_session", name: "First Steps", desc: "Complete your first session", icon: "🎯", check: d => d.totalSessions >= 1 },
+  { id: "perfect_session", name: "Flawless", desc: "100% accuracy in a session", icon: "💎", check: null },
+  { id: "streak_10", name: "On Fire", desc: "10 correct in a row", icon: "🔥", check: null },
+  { id: "streak_25", name: "Unstoppable", desc: "25 correct in a row", icon: "💥", check: null },
+  { id: "streak_50", name: "Legendary Streak", desc: "50 correct in a row", icon: "⭐", check: null },
+  { id: "mastered_10", name: "Collector", desc: "Master 10 nouns", icon: "📦", check: d => d.masteredNouns.length >= 10 },
+  { id: "mastered_50", name: "Hoarder", desc: "Master 50 nouns", icon: "🏆", check: d => d.masteredNouns.length >= 50 },
+  { id: "mastered_100", name: "Centurion", desc: "Master 100 nouns", icon: "👑", check: d => d.masteredNouns.length >= 100 },
+  { id: "mastered_500", name: "Lexicon", desc: "Master 500 nouns", icon: "📚", check: d => d.masteredNouns.length >= 500 },
+  { id: "daily_3", name: "Consistent", desc: "3-day streak", icon: "📅", check: d => d.dailyStreak.current >= 3 },
+  { id: "daily_7", name: "Dedicated", desc: "7-day streak", icon: "🗓️", check: d => d.dailyStreak.current >= 7 },
+  { id: "daily_30", name: "Committed", desc: "30-day streak", icon: "💪", check: d => d.dailyStreak.current >= 30 },
+  { id: "level_5", name: "Rising Star", desc: "Reach level 5", icon: "🌟", check: d => d.level >= 5 },
+  { id: "level_10", name: "Veteran", desc: "Reach level 10", icon: "🎖️", check: d => d.level >= 10 },
+  { id: "level_20", name: "Grandmaster", desc: "Reach level 20", icon: "🏅", check: d => d.level >= 20 },
+  { id: "sessions_10", name: "Regular", desc: "Complete 10 sessions", icon: "🔁", check: d => d.totalSessions >= 10 },
+  { id: "sessions_50", name: "Addict", desc: "Complete 50 sessions", icon: "🎮", check: d => d.totalSessions >= 50 },
+  { id: "speed_demon", name: "Speed Demon", desc: "20 correct in 60s challenge", icon: "⚡", check: null },
+  { id: "survivor", name: "Survivor", desc: "Survive 30+ nouns in survival mode", icon: "❤️", check: null },
+  { id: "tier_unlock_all", name: "Unlocker", desc: "Unlock all vocabulary tiers", icon: "🔓", check: d => TIER_OPTIONS.every(t => d.unlockedTiers.includes(t.value)) },
+];
+
+function checkAchievements(data, sessionAchievements = []) {
+  const newlyEarned = [];
+  const all = [...data.achievements, ...sessionAchievements];
+  for (const a of ACHIEVEMENTS) {
+    if (all.includes(a.id)) continue;
+    if (a.check && a.check(data)) newlyEarned.push(a.id);
+  }
+  return [...sessionAchievements, ...newlyEarned];
+}
+
+// Session XP/coin calculator
+function calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, difficulty, activePerks, gameMode) {
+  let xp = totalCorrect * 10 + (totalAnswered - totalCorrect) * 3;
+  xp += bestStreak * 2;
+  const acc = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
+  if (acc >= 1) xp += 200; else if (acc >= 0.9) xp += 100; else if (acc >= 0.8) xp += 50;
+  if (mode === MODES.PLURAL) xp = Math.floor(xp * 1.2);
+  if (mode === MODES.BOTH) xp = Math.floor(xp * 1.5);
+  if (difficulty === "normal") xp = Math.floor(xp * 1.25);
+  if (difficulty === "hard") xp = Math.floor(xp * 1.5);
+  if (gameMode === "timed") xp = Math.floor(xp * 1.3);
+  if (gameMode === "survival") xp = Math.floor(xp * 1.4);
+  if (activePerks.includes("double_xp")) xp *= 2;
+
+  let coins = totalCorrect;
+  if (bestStreak >= 10) coins += 5;
+  if (bestStreak >= 25) coins += 10;
+  if (acc >= 1 && totalAnswered >= 5) coins += 15;
+
+  return { xp: Math.floor(xp), coins };
+}
+
+// SRS: build a weighted queue — struggling nouns appear more, mastered less
+function buildSrsQueue(nouns, nounStats, maxSize) {
+  const weighted = nouns.map(n => {
+    const s = nounStats[n[0]];
+    if (!s) return { noun: n, weight: 5 }; // never seen = high priority
+    const ratio = s.attempts > 0 ? s.correct / s.attempts : 0;
+    const cStreak = s.consecutiveCorrect || 0;
+    if (cStreak >= 5) return { noun: n, weight: 0.5 }; // mastered = low priority
+    if (ratio < 0.5) return { noun: n, weight: 8 }; // struggling
+    if (ratio < 0.75) return { noun: n, weight: 4 }; // needs work
+    return { noun: n, weight: 2 }; // decent
+  });
+  // Weighted random selection
+  const pool = [];
+  for (const { noun, weight } of weighted) {
+    const count = Math.max(1, Math.round(weight));
+    for (let i = 0; i < count; i++) pool.push(noun);
+  }
+  const shuffled = shuffleArray(pool);
+  const seen = new Set(); const result = [];
+  for (const n of shuffled) {
+    if (seen.has(n[0])) continue;
+    seen.add(n[0]); result.push(n);
+    if (result.length >= maxSize) break;
+  }
+  return result;
+}
+
+// Generate weakest nouns deck from stats
+function getWeakestNouns(nounStats, count = 30) {
+  const entries = Object.entries(nounStats)
+    .filter(([, s]) => s.attempts >= 2)
+    .map(([noun, s]) => ({ noun, ratio: s.correct / s.attempts, attempts: s.attempts }))
+    .sort((a, b) => a.ratio - b.ratio || b.attempts - a.attempts);
+  return entries.slice(0, count).map(e => e.noun);
+}
+
+// Daily streak logic
+function updateDailyStreak(streak) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (streak.lastDate === today) return streak; // already played today
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (streak.lastDate === yesterday) {
+    const c = streak.current + 1;
+    return { current: c, lastDate: today, best: Math.max(streak.best || 0, c) };
+  }
+  return { current: 1, lastDate: today, best: Math.max(streak.best || 0, 1) }; // streak broken
+}
+
+// Game modes
+const GAME_MODES = [
+  { id: "classic", name: "Classic", desc: "Standard practice", icon: "📖" },
+  { id: "timed", name: "Time Attack", desc: "60 seconds — go!", icon: "⏱️", unlockLevel: 2 },
+  { id: "survival", name: "Survival", desc: "3 lives, no timer", icon: "❤️", unlockLevel: 4 },
+  { id: "reverse", name: "Reverse", desc: "English → German", icon: "🔀", unlockLevel: 3 },
+  { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯", unlockLevel: 2 },
+];
+
+// ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
 function GermanNounGame() {
@@ -847,14 +998,26 @@ function GermanNounGame() {
 
   // ── Persistence state ──
   const [userData, setUserData] = useState(DEFAULT_DATA);
-  const [syncStatus, setSyncStatus] = useState("idle"); // idle|loading|saving|error|synced
-  const [activeDeck, setActiveDeck] = useState(null); // null = tier mode, or deck id
+  const [syncStatus, setSyncStatus] = useState("idle");
+  const [activeDeck, setActiveDeck] = useState(null);
+  const [gameMode, setGameMode] = useState("classic"); // classic|timed|survival|reverse|weakest
+  const [lives, setLives] = useState(3);
+  const [globalTimer, setGlobalTimer] = useState(60);
+  const [sessionRewards, setSessionRewards] = useState(null);
+  const [newAchievements, setNewAchievements] = useState([]);
+  const [reverseInput, setReverseInput] = useState("");
+  const [usedSecondChance, setUsedSecondChance] = useState(false);
+  const [usedStreakShield, setUsedStreakShield] = useState(false);
+  const globalTimerRef = useRef(null);
 
   useEffect(() => {
     if (!getPat()) return;
     setSyncStatus("loading");
-    loadGistData().then(d => { setUserData(d); setSyncStatus("synced"); })
-      .catch(() => setSyncStatus("error"));
+    loadGistData().then(d => {
+      const merged = { ...DEFAULT_DATA, ...d, dailyStreak: { ...DEFAULT_DATA.dailyStreak, ...(d.dailyStreak||{}) } };
+      merged.level = levelFromXp(merged.xp);
+      setUserData(merged); setSyncStatus("synced");
+    }).catch(() => setSyncStatus("error"));
   }, []);
 
   const persistData = useCallback(async (newData) => {
@@ -868,11 +1031,14 @@ function GermanNounGame() {
   const updateNounStats = useCallback((answered) => {
     setUserData(prev => {
       const stats = { ...prev.nounStats };
+      const mastered = new Set(prev.masteredNouns || []);
       answered.forEach(({ noun, correct }) => {
-        const s = stats[noun] || { attempts: 0, correct: 0 };
-        stats[noun] = { attempts: s.attempts + 1, correct: s.correct + (correct ? 1 : 0) };
+        const s = stats[noun] || { attempts: 0, correct: 0, consecutiveCorrect: 0 };
+        const cc = correct ? (s.consecutiveCorrect || 0) + 1 : 0;
+        stats[noun] = { attempts: s.attempts + 1, correct: s.correct + (correct ? 1 : 0), consecutiveCorrect: cc };
+        if (cc >= 5) mastered.add(noun);
       });
-      const newData = { ...prev, nounStats: stats };
+      const newData = { ...prev, nounStats: stats, masteredNouns: [...mastered] };
       if (getPat()) {
         setSyncStatus("saving");
         saveGistData(newData).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error"));
@@ -893,40 +1059,129 @@ function GermanNounGame() {
     persistData(newData);
   }, [userData, persistData]);
 
-  const startGame = useCallback((m,d,t,deckId) => {
+  const buyPerk = useCallback((perkId) => {
+    const perk = PERKS.find(p => p.id === perkId);
+    if (!perk || userData.coins < perk.cost || userData.level < perk.unlockLevel) return false;
+    const newData = { ...userData, coins: userData.coins - perk.cost, activePerks: [...(userData.activePerks||[]), perkId] };
+    persistData(newData);
+    return true;
+  }, [userData, persistData]);
+
+  const deactivatePerk = useCallback((perkId) => {
+    const newData = { ...userData, activePerks: (userData.activePerks||[]).filter(p => p !== perkId) };
+    persistData(newData);
+  }, [userData, persistData]);
+
+  const startGame = useCallback((m, d, t, deckId, gm) => {
     let nouns;
-    if (deckId) {
+    const gMode = gm || "classic";
+    if (gMode === "weakest") {
+      const weakNames = getWeakestNouns(userData.nounStats, 30);
+      nouns = weakNames.map(name => NOUNS.find(n => n[0] === name)).filter(Boolean);
+      if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
+      setActiveDeck(null);
+    } else if (deckId) {
       const deck = userData.decks.find(dk => dk.id === deckId);
       if (!deck) return;
       nouns = deck.nouns.map(name => NOUNS.find(n => n[0] === name)).filter(Boolean);
       setActiveDeck(deckId);
     } else {
       const tierNouns = getNounsForTier(t);
-      nouns = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
+      const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
+      // Use SRS weighting for classic mode
+      nouns = gMode === "classic" ? buildSrsQueue(unique, userData.nounStats, unique.length) : shuffleArray(unique);
       setActiveDeck(null);
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    setMode(m);setDifficulty(d);setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
-    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setPluralInput("");setArticleChoice(null);
-    setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(d==="easy"?0:d==="hard"?8:15);setScreen("game");
-  }, [userData.decks]);
+    setGameMode(gMode);
+    setMode(gMode === "reverse" ? MODES.ARTICLE : m);
+    setDifficulty(gMode === "survival" ? "easy" : gMode === "timed" ? "easy" : d);
+    setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
+    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");
+    setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
+    setUsedSecondChance(false);setUsedStreakShield(false);
+    if (gMode === "survival") { setLives(3); setTimeLeft(0); }
+    else if (gMode === "timed") { setGlobalTimer(60); setTimeLeft(0); }
+    else { setTimeLeft(d==="easy"?0:d==="hard"?8:15); }
+    setScreen("game");
+  }, [userData]);
 
   const sessionAnswersRef = useRef([]);
+
+  // End session: calculate XP, coins, achievements, tier unlocks
   const endSession = useCallback(() => {
-    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current);
+    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
     if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
     sessionAnswersRef.current = [];
-    setScreen("results");
-  }, [updateNounStats]);
 
+    // Calculate rewards
+    const rewards = calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, difficulty, userData.activePerks || [], gameMode);
+    setSessionRewards(rewards);
+
+    // Update userData with rewards
+    setUserData(prev => {
+      const newXp = (prev.xp || 0) + rewards.xp;
+      const newLevel = levelFromXp(newXp);
+      const newCoins = (prev.coins || 0) + rewards.coins;
+      const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
+      const newSessions = (prev.totalSessions || 0) + 1;
+
+      // Check tier unlock: if accuracy >= 80% and tier played, unlock next tier
+      const acc = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
+      const unlockedTiers = [...(prev.unlockedTiers || [100])];
+      if (acc >= 0.8 && totalAnswered >= 10) {
+        const tierIdx = TIER_OPTIONS.findIndex(to => to.value === tier);
+        if (tierIdx >= 0 && tierIdx < TIER_OPTIONS.length - 1) {
+          const nextTier = TIER_OPTIONS[tierIdx + 1].value;
+          if (!unlockedTiers.includes(nextTier)) unlockedTiers.push(nextTier);
+        }
+      }
+
+      // Session-based achievements
+      let sessionAch = [];
+      if (acc >= 1 && totalAnswered >= 5) sessionAch.push("perfect_session");
+      if (bestStreak >= 10) sessionAch.push("streak_10");
+      if (bestStreak >= 25) sessionAch.push("streak_25");
+      if (bestStreak >= 50) sessionAch.push("streak_50");
+      if (gameMode === "timed" && totalCorrect >= 20) sessionAch.push("speed_demon");
+      if (gameMode === "survival" && totalAnswered >= 30) sessionAch.push("survivor");
+
+      const updated = { ...prev, xp: newXp, level: newLevel, coins: newCoins, dailyStreak: newStreak,
+        totalSessions: newSessions, unlockedTiers, activePerks: [] }; // perks consumed after session
+      const allNew = checkAchievements(updated, sessionAch.filter(a => !(prev.achievements||[]).includes(a)));
+      updated.achievements = [...new Set([...(prev.achievements || []), ...allNew])];
+      setNewAchievements(allNew.filter(a => !(prev.achievements||[]).includes(a)));
+
+      if (getPat()) {
+        setSyncStatus("saving");
+        saveGistData(updated).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error"));
+      }
+      return updated;
+    });
+
+    setScreen("results");
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, userData.activePerks, tier]);
+
+  // Per-question timer (classic/reverse with timer)
   useEffect(() => {
-    if (screen!=="game"||phase!=="question"||difficulty==="easy") return;
+    if (screen!=="game"||phase!=="question"||difficulty==="easy"||gameMode==="timed"||gameMode==="survival") return;
+    const tl = (userData.activePerks||[]).includes("time_freeze") ? timeLimit + 5 : timeLimit;
+    setTimeLeft(tl);
     timerRef.current = setInterval(() => {
       setTimeLeft(p => { if(p<=1){clearInterval(timerRef.current);handleTimeout();return 0;} return p-1; });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [screen, phase, currentIndex, difficulty]);
+  }, [screen, phase, currentIndex, difficulty, gameMode]);
+
+  // Global timer for timed challenge
+  useEffect(() => {
+    if (screen!=="game"||gameMode!=="timed") return;
+    globalTimerRef.current = setInterval(() => {
+      setGlobalTimer(p => { if(p<=1){clearInterval(globalTimerRef.current);endSession();return 0;} return p-1; });
+    }, 1000);
+    return () => clearInterval(globalTimerRef.current);
+  }, [screen, gameMode]);
 
   const handleTimeout = useCallback(() => {
     if (!currentNoun) return;
@@ -943,31 +1198,75 @@ function GermanNounGame() {
   }, [phase, feedback]);
 
   const nextQuestion = useCallback(() => {
+    // Second chance: retry same question
+    if (feedback?.secondChance) {
+      setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+      if (gameMode !== "timed" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
+      return;
+    }
     const ni=currentIndex+1;
     if(ni>=queue.length){
+      if (gameMode === "timed") {
+        // Loop for timed mode
+        setQueue(prev => shuffleArray([...prev]));
+        setCurrentIndex(0);setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+        return;
+      }
       if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
       sessionAnswersRef.current = [];
-      setScreen("results");return;
+      endSession();return;
     }
-    setCurrentIndex(ni);setFeedback(null);setPluralInput("");setArticleChoice(null);setPhase("question");setShowHint(false);setTimeLeft(timeLimit);
-  }, [currentIndex, queue.length, timeLimit]);
+    setCurrentIndex(ni);setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+    if (gameMode !== "timed" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
+  }, [currentIndex, queue.length, timeLimit, gameMode, difficulty, feedback]);
 
-  const checkAnswer = useCallback((chosenArt, typedPlur) => {
+  const checkAnswer = useCallback((chosenArt, typedPlur, typedReverse) => {
     if(!currentNoun||phase!=="question") return;
     clearInterval(timerRef.current);
     const [s,a,p,e]=currentNoun; let correct=true;
-    if(mode===MODES.ARTICLE||mode===MODES.BOTH) if(chosenArt!==a) correct=false;
-    if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=typedPlur.trim();if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
+
+    if (gameMode === "reverse") {
+      const typed = (typedReverse||"").trim();
+      correct = typed === s || normalize(typed) === normalize(s);
+    } else {
+      if(mode===MODES.ARTICLE||mode===MODES.BOTH) if(chosenArt!==a) correct=false;
+      if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=typedPlur.trim();if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
+    }
+
+    const perks = userData.activePerks || [];
+    const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
+
     if(correct){
       const sb=Math.floor(streak/5)*10, tb=difficulty!=="easy"?Math.floor(timeLeft*2):0;
-      setScore(pr=>pr+100+sb+tb);setStreak(pr=>{const n=pr+1;setBestStreak(b=>Math.max(b,n));return n;});setTotalCorrect(pr=>pr+1);
+      setScore(pr=>pr+Math.floor((100+sb+tb)*scoreMultiplier));
+      setStreak(pr=>{const n=pr+1;setBestStreak(b=>Math.max(b,n));return n;});setTotalCorrect(pr=>pr+1);
     } else {
-      setStreak(0);
+      // Second chance perk
+      if (perks.includes("second_chance") && !usedSecondChance) {
+        setUsedSecondChance(true);
+        setFeedback({correct:false,article:a,plural:p,noun:s,english:e,secondChance:true});
+        setPhase("feedback");
+        return; // don't record, let them retry
+      }
+      // Streak shield perk
+      if (perks.includes("streak_shield") && !usedStreakShield && streak > 0) {
+        setUsedStreakShield(true);
+        // Don't reset streak
+      } else {
+        setStreak(0);
+      }
       setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:chosenArt||"—",userPlural:typedPlur?.trim()||"—"}]);
+      // Survival mode: lose a life
+      if (gameMode === "survival") {
+        setLives(prev => {
+          if (prev <= 1) { setTimeout(() => endSession(), 700); return 0; }
+          return prev - 1;
+        });
+      }
     }
     sessionAnswersRef.current.push({ noun: s, correct });
     setTotalAnswered(pr=>pr+1);setFeedback({correct,article:a,plural:p,noun:s,english:e});setPhase("feedback");
-  }, [currentNoun, mode, phase, streak, difficulty, timeLeft]);
+  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, userData.activePerks, usedSecondChance, usedStreakShield]);
 
   const handleArticle = useCallback((art) => {
     if(phase!=="question") return;
@@ -981,28 +1280,33 @@ function GermanNounGame() {
     else if(mode===MODES.BOTH){if(!articleChoice) return; checkAnswer(articleChoice,pluralInput);}
   }, [mode,phase,pluralInput,articleChoice,checkAnswer]);
 
+  const handleReverseSubmit = useCallback((ev) => {
+    ev?.preventDefault(); if(phase!=="question"||gameMode!=="reverse") return;
+    checkAnswer("","",reverseInput);
+  }, [phase,gameMode,reverseInput,checkAnswer]);
+
   useEffect(() => {
     if(screen!=="game"||phase!=="question") return;
     const h=(ev)=>{if(ev.target.tagName==="INPUT")return;if(ev.key==="1")handleArticle("der");else if(ev.key==="2")handleArticle("die");else if(ev.key==="3")handleArticle("das");else if(ev.key==="h")setShowHint(true);};
     window.addEventListener("keydown",h); return()=>window.removeEventListener("keydown",h);
   }, [screen,phase,handleArticle]);
 
-  useEffect(() => { if(screen==="game"&&phase==="question"&&mode===MODES.PLURAL) setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,mode,currentIndex]);
+  useEffect(() => { if(screen==="game"&&phase==="question"&&(mode===MODES.PLURAL||gameMode==="reverse")) setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,mode,currentIndex,gameMode]);
 
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const timerPct = timeLimit>0?(timeLeft/timeLimit)*100:100;
   const timerColor = timeLeft<=3?"#EF4444":timeLeft<=6?"#F59E0B":"#10B981";
 
-  if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSyncRefresh={()=>{
+  if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
-    loadGistData().then(d=>{setUserData(d);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
+    loadGistData().then(d=>{const m={...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}};m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
-  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
+  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
     const nd=wrongAnswers.map(w=>NOUNS.find(n=>n[0]===w.noun)).filter(Boolean);
     sessionAnswersRef.current = [];
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
-    setFeedback(null);setPluralInput("");setArticleChoice(null);setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
+    setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
   }}/>;
 
   return (
@@ -1012,9 +1316,14 @@ function GermanNounGame() {
         <div style={{textAlign:"center"}}>
           <span style={S.scoreLabel}>{score.toLocaleString()}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
         </div>
-        <span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>
+        <div style={{textAlign:"right"}}>
+          {gameMode==="survival"&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
+          {gameMode==="timed"&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
+          {gameMode!=="survival"&&gameMode!=="timed"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
+        </div>
       </div>
-      {difficulty!=="easy"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
+      {difficulty!=="easy"&&gameMode!=="timed"&&gameMode!=="survival"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
+      {gameMode==="timed"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/60)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
       <div style={S.statsRow}>
         {[["Accuracy",`${accuracy}%`,"#cbd5e1"],["Best",bestStreak,"#cbd5e1"],["Correct",totalCorrect,"#10B981"],["Wrong",wrongAnswers.length,"#f87171"]].map(([l,v,c])=>
           <div key={l} style={S.statItem}><span style={{...S.statValue,color:c}}>{v}</span><span style={S.statLabel}>{l}</span></div>
@@ -1022,18 +1331,39 @@ function GermanNounGame() {
       </div>
       {currentNoun&&(
         <div style={{...S.card,borderColor:phase==="feedback"?(feedback?.correct?"#10B981":"#EF4444"):"transparent",backgroundColor:phase==="feedback"?(feedback?.correct?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)"):"rgba(255,255,255,0.03)"}}>
-          <div style={S.nounDisplay}>
-            <span style={S.nounWord}>{currentNoun[0]}</span>
-            {showHint&&<span style={S.hintText}>({currentNoun[3]})</span>}
-            {!showHint&&phase==="question"&&<button onClick={()=>setShowHint(true)} style={S.hintBtn}>hint</button>}
-          </div>
-          {phase==="feedback"&&feedback&&(
-            <div style={S.feedbackFlash}>
-              <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":"✗"}</span>
-              {!feedback.correct&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} → {feedback.plural}</span>}
+          {gameMode==="reverse"?(
+            <div style={S.nounDisplay}>
+              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Translate to German</span>
+              <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9"}}>{currentNoun[3].split("/")[0]}</span>
+              <span style={{fontSize:14,color:ARTICLE_COLORS[currentNoun[1]],fontWeight:700}}>({currentNoun[1]})</span>
+            </div>
+          ):(
+            <div style={S.nounDisplay}>
+              <span style={S.nounWord}>{currentNoun[0]}</span>
+              {showHint&&<span style={S.hintText}>({currentNoun[3]})</span>}
+              {!showHint&&phase==="question"&&<button onClick={()=>setShowHint(true)} style={S.hintBtn}>hint</button>}
             </div>
           )}
-          {phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
+          {phase==="feedback"&&feedback&&(
+            <div style={S.feedbackFlash}>
+              <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":feedback.secondChance?"🔄":"✗"}</span>
+              {feedback.secondChance&&<span style={{fontSize:13,color:"#F59E0B",fontWeight:700}}>Second chance! Try again...</span>}
+              {!feedback.correct&&!feedback.secondChance&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} → {feedback.plural}</span>}
+            </div>
+          )}
+          {gameMode==="reverse"&&phase==="question"&&(
+            <div style={S.pluralSection}>
+              <label style={S.pluralLabel}>German noun:</label>
+              <div style={S.inputRow}>
+                <input ref={inputRef} value={reverseInput} onChange={e=>setReverseInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handleReverseSubmit(e);}} placeholder="Type the noun..." style={S.pluralInput} autoComplete="off" autoFocus/>
+                <button onClick={handleReverseSubmit} style={S.submitBtn}>→</button>
+              </div>
+              <div style={S.umlauts}>
+                {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} onClick={()=>{setReverseInput(p=>p+c);inputRef.current?.focus();}} style={S.umlautBtn}>{c}</button>)}
+              </div>
+            </div>
+          )}
+          {gameMode!=="reverse"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
             <div style={S.articleRow}>
               {["der","die","das"].map(art=>(
                 <button key={art} onClick={()=>handleArticle(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
@@ -1043,7 +1373,7 @@ function GermanNounGame() {
               ))}
             </div>
           )}
-          {phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
+          {gameMode!=="reverse"&&phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
             <div style={S.pluralSection}>
               <label style={S.pluralLabel}>Plural form:</label>
               <div style={S.inputRow}>
@@ -1055,7 +1385,7 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der · <kbd style={S.kbd}>2</kbd> die · <kbd style={S.kbd}>3</kbd> das · <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der · <kbd style={S.kbd}>2</kbd> die · <kbd style={S.kbd}>3</kbd> das · <kbd style={S.kbd}>H</kbd> hint</div>}
         </div>
       )}
     </div>
@@ -1065,29 +1395,217 @@ function GermanNounGame() {
 // ═══════════════════════════════════════════════════════════════
 // MENU
 // ═══════════════════════════════════════════════════════════════
-function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}) {
+function DeckBuilder({onSave, onCancel}) {
+  const [name,setName]=useState("");
+  const [search,setSearch]=useState("");
+  const [selected,setSelected]=useState(new Set());
+  const searchRef = useRef(null);
+
+  const results = useMemo(()=>{
+    if(!search.trim()) return [];
+    const q = search.trim().toLowerCase();
+    return NOUNS.filter(n =>
+      n[0].toLowerCase().includes(q) || n[3].toLowerCase().includes(q)
+    ).slice(0, 50);
+  },[search]);
+
+  const toggle = (noun) => {
+    setSelected(prev => {
+      const s = new Set(prev);
+      if (s.has(noun)) s.delete(noun); else s.add(noun);
+      return s;
+    });
+  };
+
+  const handleSave = () => {
+    if (!selected.size) return;
+    const deckName = name.trim() || `Custom ${new Date().toLocaleDateString()}`;
+    onSave(deckName, [...selected]);
+  };
+
+  return (
+    <div style={S.container}><div style={S.menuInner}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <h2 style={{fontSize:22,fontWeight:800,color:"#f1f5f9",margin:0}}>Create Deck</h2>
+        <button onClick={onCancel} style={S.endBtn}>Cancel</button>
+      </div>
+
+      <div style={S.menuSection}>
+        <label style={S.menuLabel}>Deck Name</label>
+        <input value={name} onChange={e=>setName(e.target.value)} placeholder="My custom deck"
+          style={{...S.pluralInput,fontSize:14,textAlign:"left",padding:"10px 14px"}}/>
+      </div>
+
+      <div style={S.menuSection}>
+        <label style={S.menuLabel}>Search nouns ({NOUNS.length.toLocaleString()} available)</label>
+        <input ref={searchRef} value={search} onChange={e=>setSearch(e.target.value)} placeholder="Type German or English..."
+          style={{...S.pluralInput,fontSize:14,textAlign:"left",padding:"10px 14px"}} autoFocus/>
+      </div>
+
+      {results.length>0&&(
+        <div style={{display:"flex",flexDirection:"column",gap:4,maxHeight:250,overflowY:"auto",paddingRight:4}}>
+          {results.map(n=>{
+            const inDeck = selected.has(n[0]);
+            return (
+              <button key={n[0]} onClick={()=>toggle(n[0])} style={{
+                display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",
+                background:inDeck?"rgba(139,92,246,0.15)":"rgba(255,255,255,0.03)",
+                border:`1px solid ${inDeck?"rgba(139,92,246,0.4)":"rgba(255,255,255,0.08)"}`,
+                borderRadius:8,cursor:"pointer",transition:"all 0.15s",textAlign:"left"
+              }}>
+                <div style={{display:"flex",alignItems:"baseline",gap:6}}>
+                  <span style={{color:ARTICLE_COLORS[n[1]],fontWeight:800,fontSize:13}}>{n[1]}</span>
+                  <span style={{fontWeight:700,fontSize:15,color:"#f1f5f9"}}>{n[0]}</span>
+                  <span style={{fontSize:11,color:"#64748b"}}>{n[3].split("/")[0]}</span>
+                </div>
+                <span style={{fontSize:14,color:inDeck?"#10B981":"#475569"}}>{inDeck?"✓":"+"}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {!search.trim()&&!selected.size&&(
+        <p style={{fontSize:12,color:"#475569",textAlign:"center"}}>Search for nouns above to add them to your deck</p>
+      )}
+
+      {selected.size>0&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Selected ({selected.size} noun{selected.size>1?"s":""})</label>
+          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+            {[...selected].map(noun=>{
+              const n = NOUNS.find(x=>x[0]===noun);
+              return (
+                <button key={noun} onClick={()=>toggle(noun)} style={{
+                  display:"flex",alignItems:"center",gap:4,padding:"4px 10px",
+                  background:"rgba(139,92,246,0.1)",border:"1px solid rgba(139,92,246,0.3)",
+                  borderRadius:16,cursor:"pointer",fontSize:12,color:"#e2e8f0"
+                }}>
+                  {n&&<span style={{color:ARTICLE_COLORS[n[1]],fontWeight:700}}>{n[1]}</span>}
+                  <span style={{fontWeight:600}}>{noun}</span>
+                  <span style={{color:"#f87171",marginLeft:2}}>×</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <button onClick={handleSave} disabled={!selected.size}
+        style={{...S.startBtn,opacity:selected.size?1:0.4,background:selected.size?"linear-gradient(135deg, #8B5CF6, #6366F1)":"#333"}}>
+        Save Deck ({selected.size} noun{selected.size!==1?"s":""})
+      </button>
+    </div></div>
+  );
+}
+
+function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onBuyPerk, onDeactivatePerk, onSyncRefresh}) {
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [diff,setDiff]=useState("normal");
   const [tier,setTier]=useState(500);
-  const [source,setSource]=useState("tier"); // "tier" or "deck"
+  const [source,setSource]=useState("tier");
   const [selectedDeck,setSelectedDeck]=useState(null);
   const [showSettings,setShowSettings]=useState(false);
+  const [showDeckBuilder,setShowDeckBuilder]=useState(false);
+  const [showShop,setShowShop]=useState(false);
+  const [showAchievements,setShowAchievements]=useState(false);
+  const [selectedGameMode,setSelectedGameMode]=useState("classic");
   const [patInput,setPatInput]=useState(getPat());
   const [patSaved,setPatSaved]=useState(false);
 
   const handleSavePat = () => {
-    setPat(patInput.trim());
-    setPatSaved(true);
+    setPat(patInput.trim()); setPatSaved(true);
     setTimeout(() => setPatSaved(false), 2000);
     if (patInput.trim()) onSyncRefresh();
   };
 
   const handleStart = () => {
-    if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck);
-    else onStart(mode, diff, tier, null);
+    if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode);
+    else onStart(mode, diff, tier, null, selectedGameMode);
   };
 
-  const syncDot = { idle:"#64748b", loading:"#F59E0B", saving:"#F59E0B", synced:"#10B981", error:"#EF4444" }[syncStatus];
+  const prog = xpProgress(userData.xp || 0);
+  const title = getTitle(prog.level);
+  const syncDot = {idle:"#64748b",loading:"#F59E0B",saving:"#F59E0B",synced:"#10B981",error:"#EF4444"}[syncStatus];
+  const dailyStreak = userData.dailyStreak || {current:0,best:0};
+
+  if (showDeckBuilder) {
+    return <DeckBuilder onSave={(name, nouns) => { onSaveDeck(name, nouns); setShowDeckBuilder(false); setSource("deck"); }}
+      onCancel={() => setShowDeckBuilder(false)} />;
+  }
+
+  if (showShop) {
+    return (
+      <div style={S.container}><div style={S.menuInner}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <h2 style={{fontSize:22,fontWeight:800,color:"#f1f5f9",margin:0}}>Perk Shop</h2>
+          <button onClick={()=>setShowShop(false)} style={S.endBtn}>Back</button>
+        </div>
+        <div style={{textAlign:"center",fontSize:18,fontWeight:700,color:"#F59E0B"}}>
+          {userData.coins||0} coins
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {PERKS.map(perk=>{
+            const locked = (userData.level||1) < perk.unlockLevel;
+            const active = (userData.activePerks||[]).includes(perk.id);
+            const canBuy = !locked && !active && (userData.coins||0) >= perk.cost;
+            return (
+              <div key={perk.id} style={{...S.settingsPanel,opacity:locked?0.4:1,borderColor:active?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div>
+                    <span style={{fontSize:18,marginRight:6}}>{perk.icon}</span>
+                    <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0"}}>{perk.name}</span>
+                  </div>
+                  {locked&&<span style={{fontSize:11,color:"#64748b"}}>Unlock at Lv.{perk.unlockLevel}</span>}
+                  {active&&<span style={{fontSize:11,color:"#10B981",fontWeight:700}}>ACTIVE</span>}
+                  {!locked&&!active&&(
+                    <button onClick={()=>onBuyPerk(perk.id)} disabled={!canBuy}
+                      style={{...S.submitBtn,fontSize:12,padding:"4px 14px",opacity:canBuy?1:0.4}}>
+                      {perk.cost} coins
+                    </button>
+                  )}
+                </div>
+                <span style={{fontSize:12,color:"#94a3b8"}}>{perk.desc}</span>
+                {active&&<button onClick={()=>onDeactivatePerk(perk.id)} style={{fontSize:11,color:"#f87171",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:0}}>Deactivate (no refund)</button>}
+              </div>
+            );
+          })}
+        </div>
+        <p style={{fontSize:11,color:"#475569",textAlign:"center"}}>Perks are consumed after one session</p>
+      </div></div>
+    );
+  }
+
+  if (showAchievements) {
+    return (
+      <div style={S.container}><div style={S.menuInner}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <h2 style={{fontSize:22,fontWeight:800,color:"#f1f5f9",margin:0}}>Achievements</h2>
+          <button onClick={()=>setShowAchievements(false)} style={S.endBtn}>Back</button>
+        </div>
+        <div style={{textAlign:"center",fontSize:13,color:"#64748b"}}>
+          {(userData.achievements||[]).length} / {ACHIEVEMENTS.length} unlocked
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {ACHIEVEMENTS.map(a=>{
+            const earned = (userData.achievements||[]).includes(a.id);
+            return (
+              <div key={a.id} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",
+                background:earned?"rgba(16,185,129,0.08)":"rgba(255,255,255,0.02)",
+                border:`1px solid ${earned?"rgba(16,185,129,0.3)":"rgba(255,255,255,0.06)"}`,
+                borderRadius:10,opacity:earned?1:0.5}}>
+                <span style={{fontSize:24}}>{earned?a.icon:"🔒"}</span>
+                <div>
+                  <div style={{fontSize:14,fontWeight:700,color:earned?"#e2e8f0":"#64748b"}}>{a.name}</div>
+                  <div style={{fontSize:11,color:"#94a3b8"}}>{a.desc}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div></div>
+    );
+  }
 
   return (
     <div style={S.container}><div style={S.menuInner}>
@@ -1099,6 +1617,27 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}
         <div style={{fontSize:28,marginBottom:8,letterSpacing:2}}><span style={{color:"#3B82F6",fontWeight:900}}>der</span><span style={{color:"#EC4899",fontWeight:900}}> die</span><span style={{color:"#10B981",fontWeight:900}}> das</span></div>
         <h1 style={S.menuTitle}>Artikel Blitz</h1>
         <p style={{fontSize:14,color:"#64748b",margin:0}}>Master {NOUNS.length.toLocaleString()} German nouns · Leipzig Corpus</p>
+      </div>
+
+      {/* ── Profile card ── */}
+      <div style={{...S.settingsPanel,textAlign:"center",position:"relative"}}>
+        <div style={{fontSize:13,color:"#94a3b8",fontWeight:600}}>{title[2]}</div>
+        <div style={{fontSize:22,fontWeight:900,color:"#e2e8f0"}}>Lv. {prog.level} <span style={{fontSize:14,fontWeight:600,color:"#8B5CF6"}}>{title[1]}</span></div>
+        <div style={{position:"relative",height:12,background:"rgba(255,255,255,0.06)",borderRadius:6,overflow:"hidden",margin:"4px 0"}}>
+          <div style={{height:"100%",width:`${prog.needed>0?(prog.current/prog.needed)*100:100}%`,background:"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:6,transition:"width 0.5s"}}/>
+        </div>
+        <div style={{fontSize:11,color:"#64748b"}}>{prog.current} / {prog.needed} XP to Lv. {prog.level+1}</div>
+        <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:8}}>
+          <div><span style={{fontSize:16,fontWeight:800,color:"#F59E0B"}}>{userData.coins||0}</span><span style={{fontSize:11,color:"#64748b"}}> coins</span></div>
+          <div><span style={{fontSize:16,fontWeight:800,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current>=1?"🔥":""}{dailyStreak.current}</span><span style={{fontSize:11,color:"#64748b"}}> day streak</span></div>
+          <div><span style={{fontSize:16,fontWeight:800,color:"#10B981"}}>{(userData.masteredNouns||[]).length}</span><span style={{fontSize:11,color:"#64748b"}}> mastered</span></div>
+        </div>
+        <div style={{display:"flex",gap:8,marginTop:8,justifyContent:"center"}}>
+          <button onClick={()=>setShowShop(true)} style={{...S.submitBtn,fontSize:12,padding:"6px 16px"}}>Perk Shop</button>
+          <button onClick={()=>setShowAchievements(true)} style={{...S.submitBtn,fontSize:12,padding:"6px 16px",background:"linear-gradient(135deg,#F59E0B,#EF4444)"}}>
+            Achievements ({(userData.achievements||[]).length}/{ACHIEVEMENTS.length})
+          </button>
+        </div>
       </div>
 
       {showSettings&&(
@@ -1120,7 +1659,27 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}
         </div>
       )}
 
-      {userData.decks.length>0&&(
+      {/* ── Game Mode selection ── */}
+      <div style={S.menuSection}>
+        <label style={S.menuLabel}>Game Mode</label>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          {GAME_MODES.map(gm=>{
+            const locked = gm.unlockLevel && (userData.level||1) < gm.unlockLevel;
+            const selected = selectedGameMode===gm.id;
+            return (
+              <button key={gm.id} disabled={locked} onClick={()=>setSelectedGameMode(gm.id)}
+                style={{...S.modeCard,opacity:locked?0.35:1,borderColor:selected?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent"}}>
+                <span style={{fontSize:18}}>{gm.icon}</span>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{gm.name}</span>
+                <span style={{fontSize:10,color:"#64748b"}}>{locked?`Unlock Lv.${gm.unlockLevel}`:gm.desc}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Source selection ── */}
+      {selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Play from</label>
           <div style={{display:"flex",gap:8}}>
@@ -1129,27 +1688,30 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}
             </button>
             <button onClick={()=>setSource("deck")} style={{...S.diffBtn,flex:1,borderColor:source==="deck"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="deck"?"rgba(139,92,246,0.1)":"transparent"}}>
               <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Saved Deck</span>
-              <span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length} deck{userData.decks.length>1?"s":""}</span>
+              {userData.decks.length>0&&<span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length} deck{userData.decks.length>1?"s":""}</span>}
             </button>
           </div>
         </div>
       )}
 
-      {source==="tier"&&(
+      {source==="tier"&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-            {TIER_OPTIONS.map(t=>
-              <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{t.label}</span>
-                <span style={{fontSize:10,color:"#64748b"}}>{t.desc}</span>
-              </button>
-            )}
+            {TIER_OPTIONS.map(t=>{
+              const locked = !(userData.unlockedTiers||[100]).includes(t.value) && t.value > 100;
+              return (
+                <button key={t.value} disabled={locked} onClick={()=>setTier(t.value)} style={{...S.tierBtn,opacity:locked?0.35:1,borderColor:tier===t.value&&!locked?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&!locked?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:locked?"#475569":"#e2e8f0"}}>{locked?"🔒 ":""}{t.label}</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>{locked?"80%+ to unlock":t.desc}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {source==="deck"&&(
+      {source==="deck"&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Select Deck</label>
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
@@ -1162,31 +1724,50 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}
                 <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
               </div>
             ))}
+            {userData.decks.length===0&&<p style={{fontSize:12,color:"#475569",textAlign:"center",margin:"8px 0"}}>No decks yet — create one or save mistakes after a session</p>}
+          </div>
+          <button onClick={()=>setShowDeckBuilder(true)} style={{...S.practiceBtn,borderColor:"rgba(139,92,246,0.3)",color:"#a78bfa",background:"rgba(139,92,246,0.1)",marginTop:4}}>
+            + Create Custom Deck
+          </button>
+        </div>
+      )}
+
+      {/* ── Answer type (hidden for reverse/weakest game modes) ── */}
+      {selectedGameMode!=="reverse"&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Answer Type</label>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Type the plural form"],[MODES.BOTH,"Both","Article + Plural"]].map(([m,t,d])=>
+              <button key={m} onClick={()=>setMode(m)} style={{...S.modeCard,borderColor:mode===m?"#3B82F6":"rgba(255,255,255,0.1)",backgroundColor:mode===m?"rgba(59,130,246,0.1)":"transparent"}}>
+                <span style={{fontSize:16,fontWeight:700,color:"#e2e8f0"}}>{t}</span><span style={{fontSize:12,color:"#64748b"}}>{d}</span>
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Game Mode</label>
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Type the plural form"],[MODES.BOTH,"Both","Article + Plural"]].map(([m,t,d])=>
-            <button key={m} onClick={()=>setMode(m)} style={{...S.modeCard,borderColor:mode===m?"#3B82F6":"rgba(255,255,255,0.1)",backgroundColor:mode===m?"rgba(59,130,246,0.1)":"transparent"}}>
-              <span style={{fontSize:16,fontWeight:700,color:"#e2e8f0"}}>{t}</span><span style={{fontSize:12,color:"#64748b"}}>{d}</span>
-            </button>
-          )}
+      {/* ── Speed (hidden for timed/survival) ── */}
+      {selectedGameMode!=="timed"&&selectedGameMode!=="survival"&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Speed</label>
+          <div style={{display:"flex",gap:8}}>
+            {[["easy","Relaxed","No timer"],["normal","Normal","15s"],["hard","Blitz","8s"]].map(([d,l,s])=>
+              <button key={d} onClick={()=>setDiff(d)} style={{...S.diffBtn,borderColor:diff===d?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:diff===d?"rgba(245,158,11,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{l}</span><span style={{fontSize:11,color:"#64748b"}}>{s}</span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Speed</label>
-        <div style={{display:"flex",gap:8}}>
-          {[["easy","Relaxed","No timer"],["normal","Normal","15s"],["hard","Blitz","8s"]].map(([d,l,s])=>
-            <button key={d} onClick={()=>setDiff(d)} style={{...S.diffBtn,borderColor:diff===d?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:diff===d?"rgba(245,158,11,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{l}</span><span style={{fontSize:11,color:"#64748b"}}>{s}</span>
-            </button>
-          )}
+      )}
+
+      {/* Active perks indicator */}
+      {(userData.activePerks||[]).length>0&&(
+        <div style={{display:"flex",gap:6,flexWrap:"wrap",justifyContent:"center"}}>
+          {(userData.activePerks||[]).map(pid=>{const p=PERKS.find(x=>x.id===pid);return p?<span key={pid} style={{fontSize:12,background:"rgba(16,185,129,0.1)",border:"1px solid rgba(16,185,129,0.3)",borderRadius:12,padding:"3px 10px",color:"#10B981"}}>{p.icon} {p.name}</span>:null;})}
         </div>
-      </div>
-      <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck} style={{...S.startBtn,opacity:source==="deck"&&!selectedDeck?0.4:1}}>Start Game</button>
+      )}
+
+      <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck&&selectedGameMode!=="weakest"} style={{...S.startBtn,opacity:(source==="deck"&&!selectedDeck&&selectedGameMode!=="weakest")?0.4:1}}>Start Game</button>
       <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} grammar explanations pre-loaded</div>
     </div></div>
   );
@@ -1195,16 +1776,52 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSyncRefresh}
 // ═══════════════════════════════════════════════════════════════
 // RESULTS — detailed review with grammar explanations
 // ═══════════════════════════════════════════════════════════════
-function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,onRestart,onPracticeWrong}) {
+function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionRewards,newAchievements,userData,gameMode,onRestart,onPracticeWrong}) {
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [deckName,setDeckName]=useState("");
   const [deckSaved,setDeckSaved]=useState(false);
   const accuracy=totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const grade=accuracy>=95?"S":accuracy>=85?"A":accuracy>=70?"B":accuracy>=55?"C":"D";
   const gc={S:"#F59E0B",A:"#10B981",B:"#3B82F6",C:"#8B5CF6",D:"#EF4444"}[grade];
+  const prog = xpProgress(userData.xp || 0);
+  const title = getTitle(prog.level);
   return (
     <div style={S.container}><div style={S.resultsInner}>
       <div style={{...S.gradeCircle,borderColor:gc,color:gc}}>{grade}</div>
+
+      {/* ── XP & Rewards panel ── */}
+      {sessionRewards&&(
+        <div style={{...S.settingsPanel,textAlign:"center",borderColor:"rgba(139,92,246,0.3)"}}>
+          <div style={{fontSize:24,fontWeight:900,color:"#8B5CF6"}}>+{sessionRewards.xp} XP</div>
+          <div style={{fontSize:14,color:"#F59E0B",fontWeight:700}}>+{sessionRewards.coins} coins</div>
+          <div style={{position:"relative",height:10,background:"rgba(255,255,255,0.06)",borderRadius:5,overflow:"hidden",margin:"6px 0"}}>
+            <div style={{height:"100%",width:`${prog.needed>0?(prog.current/prog.needed)*100:100}%`,background:"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:5,transition:"width 1s"}}/>
+          </div>
+          <div style={{fontSize:12,color:"#94a3b8"}}>Lv. {prog.level} {title[1]} — {prog.current}/{prog.needed} XP</div>
+          {(userData.dailyStreak||{}).current>=1&&(
+            <div style={{fontSize:13,color:"#EF4444",fontWeight:700,marginTop:4}}>🔥 {userData.dailyStreak.current} day streak{(userData.dailyStreak||{}).current>=(userData.dailyStreak||{}).best?" (new best!)":""}</div>
+          )}
+        </div>
+      )}
+
+      {/* ── New achievements ── */}
+      {newAchievements&&newAchievements.length>0&&(
+        <div style={{display:"flex",flexDirection:"column",gap:6,width:"100%"}}>
+          {newAchievements.map(aid=>{
+            const a=ACHIEVEMENTS.find(x=>x.id===aid);
+            return a?(
+              <div key={aid} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.3)",borderRadius:10}}>
+                <span style={{fontSize:24}}>{a.icon}</span>
+                <div>
+                  <div style={{fontSize:13,fontWeight:800,color:"#F59E0B"}}>Achievement Unlocked!</div>
+                  <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{a.name}</div>
+                  <div style={{fontSize:11,color:"#94a3b8"}}>{a.desc}</div>
+                </div>
+              </div>
+            ):null;
+          })}
+        </div>
+      )}
       <h2 style={{fontSize:24,fontWeight:800,color:"#f1f5f9",margin:0}}>Session Complete</h2>
       <div style={S.resultsGrid}>
         {[["Score",score.toLocaleString()],["Accuracy",`${accuracy}%`],["Correct",`${totalCorrect}/${totalAnswered}`],["Best Streak",`🔥 ${bestStreak}`]].map(([l,v])=>
