@@ -273,6 +273,172 @@ const GAME_MODES = [
   { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯", unlockLevel: 2 },
 ];
 
+const NO_ANSWER = "__unanswered__";
+const NO_PLURAL_LABEL = "kein Plural";
+
+const PLURAL_FAMILY_PRIORITY = {
+  none: ["same", "e", "en", "s"],
+  same: ["e", "en", "er", "umlaut"],
+  s: ["e", "en", "same", "er"],
+  nen: ["n", "en", "e", "same"],
+  n: ["en", "e", "same", "s"],
+  en: ["e", "same", "er", "s"],
+  e: ["en", "er", "same", "s"],
+  er: ["e", "same", "en", "s"],
+  er_umlaut: ["er", "e_umlaut", "same", "en"],
+  e_umlaut: ["e", "en", "er_umlaut", "same"],
+  umlaut: ["same", "e_umlaut", "er_umlaut", "e"],
+  um_en: ["um_a", "same", "e", "en"],
+  um_a: ["um_en", "same", "e", "en"],
+  ium_ien: ["same", "en", "e", "s"],
+  us_en: ["same", "e", "en", "s"],
+  a_en: ["same", "e", "en", "s"],
+};
+
+function formatArticleAttempt(value) {
+  return value === NO_ANSWER ? "—" : value;
+}
+
+function formatPluralAttempt(value) {
+  if (value === NO_ANSWER) return "—";
+  return value === "—" ? NO_PLURAL_LABEL : value;
+}
+
+function getPluralOptionLabel(value) {
+  return value === "—" ? NO_PLURAL_LABEL : `die ${value}`;
+}
+
+function isLikelyLoanword(lowerWord) {
+  return ["ion","t\u00e4t","ismus","ist","or","eur","ment","ette","age","ade","ie","ik","ur","a","i","o","u","y"].some(suffix => lowerWord.endsWith(suffix));
+}
+
+function addUmlaut(word) {
+  const lowerWord = word.toLowerCase();
+  const auIndex = lowerWord.lastIndexOf("au");
+  if (auIndex !== -1) {
+    const replacement = word[auIndex] === word[auIndex].toUpperCase() ? "Äu" : "äu";
+    return word.slice(0, auIndex) + replacement + word.slice(auIndex + 2);
+  }
+
+  const replacements = [["a", "ä"], ["o", "ö"], ["u", "ü"]];
+  let bestMatch = null;
+
+  replacements.forEach(([base, target]) => {
+    const idx = lowerWord.lastIndexOf(base);
+    if (idx === -1) return;
+    if (!bestMatch || idx > bestMatch.idx || (idx === bestMatch.idx && base.length > bestMatch.base.length)) {
+      bestMatch = { idx, base, target };
+    }
+  });
+
+  if (!bestMatch) return word;
+
+  let replacement = bestMatch.target;
+  const originalSlice = word.slice(bestMatch.idx, bestMatch.idx + bestMatch.base.length);
+  if (originalSlice[0] === originalSlice[0].toUpperCase()) {
+    replacement = replacement[0].toUpperCase() + replacement.slice(1);
+  }
+
+  return word.slice(0, bestMatch.idx) + replacement + word.slice(bestMatch.idx + bestMatch.base.length);
+}
+
+function buildPluralCandidates(word, article) {
+  const lowerWord = word.toLowerCase();
+  const umlauted = addUmlaut(word);
+  const hasUmlautVariant = umlauted !== word;
+  const endsWithStableEnding = /(er|el|en)$/i.test(lowerWord);
+  const hasLatinEnding = /(ent|ant|ist|or|eur|ion|ium|ismus|ment)$/i.test(lowerWord);
+  const candidates = new Map();
+
+  const pushCandidate = (form, family, score) => {
+    if (!form && form !== "—") return;
+    if (form !== "—" && form === word && family !== "same" && family !== "umlaut") return;
+    const existing = candidates.get(form);
+    if (!existing || existing.score < score) {
+      candidates.set(form, { form, family, score });
+    }
+  };
+
+  pushCandidate(word, "same", 0.18 + (endsWithStableEnding ? 0.65 : 0));
+  if (!lowerWord.endsWith("e")) pushCandidate(word + "e", "e", 0.18 + (article === "der" ? 0.85 : article === "das" ? 0.65 : 0.22));
+  pushCandidate(word + "en", "en", 0.18 + (article === "die" ? 0.95 : 0.38));
+  if (!lowerWord.endsWith("e") && !endsWithStableEnding) pushCandidate(word + "er", "er", 0.12 + (article === "das" ? 0.8 : article === "der" ? 0.35 : 0));
+  pushCandidate(word + "s", "s", 0.08 + ((/[aiouy]$/i.test(word) || isLikelyLoanword(lowerWord)) ? 0.75 : 0.1));
+  pushCandidate("—", "none", article === "die" ? 0.03 : 0.05);
+
+  if (lowerWord.endsWith("e")) pushCandidate(word + "n", "n", 1.3 + (article === "die" ? 0.2 : 0.05));
+  if (lowerWord.endsWith("in")) pushCandidate(word + "nen", "nen", 1.7);
+
+  if (hasUmlautVariant && !hasLatinEnding) {
+    pushCandidate(umlauted, "umlaut", 0.12 + (endsWithStableEnding ? 0.6 : 0.2));
+    if (!lowerWord.endsWith("e")) pushCandidate(umlauted + "e", "e_umlaut", 0.15 + (article === "der" ? 1.0 : article === "die" ? 0.45 : 0.18));
+    if (!lowerWord.endsWith("e") && !endsWithStableEnding) pushCandidate(umlauted + "er", "er_umlaut", 0.12 + (article === "das" ? 1.05 : article === "der" ? 0.45 : 0));
+  }
+
+  if (/(chen|lein)$/i.test(lowerWord)) pushCandidate(word, "same", 1.6);
+  if (endsWithStableEnding) {
+    pushCandidate(word, "same", 1.05);
+    if (hasUmlautVariant) pushCandidate(umlauted, "umlaut", 0.95);
+  }
+
+  if (article === "die" && !lowerWord.endsWith("e") && !lowerWord.endsWith("in")) pushCandidate(word + "en", "en", 1.2);
+  if (article === "der" && word.length <= 7) {
+    if (!lowerWord.endsWith("e")) pushCandidate(word + "e", "e", 1.1);
+    if (hasUmlautVariant && !hasLatinEnding && !lowerWord.endsWith("e")) pushCandidate(umlauted + "e", "e_umlaut", 1.18);
+  }
+  if (article === "das" && word.length <= 7) {
+    if (!lowerWord.endsWith("e")) pushCandidate(word + "e", "e", 1.02);
+    if (!lowerWord.endsWith("e") && !endsWithStableEnding) pushCandidate(word + "er", "er", 1.08);
+    if (hasUmlautVariant && !hasLatinEnding && !lowerWord.endsWith("e") && !endsWithStableEnding) pushCandidate(umlauted + "er", "er_umlaut", 1.2);
+  }
+
+  if (lowerWord.endsWith("um")) {
+    pushCandidate(word.slice(0, -2) + "en", "um_en", 1.55);
+    pushCandidate(word.slice(0, -2) + "a", "um_a", 1.1);
+  }
+  if (lowerWord.endsWith("ium")) pushCandidate(word.slice(0, -3) + "ien", "ium_ien", 1.65);
+  if (lowerWord.endsWith("us")) pushCandidate(word.slice(0, -2) + "en", "us_en", 1.15);
+  if (lowerWord.endsWith("a")) pushCandidate(word.slice(0, -1) + "en", "a_en", 1.05);
+
+  return [...candidates.values()];
+}
+
+function familyClosenessBonus(candidateFamily, correctFamily) {
+  if (!correctFamily) return 0;
+  const priorities = PLURAL_FAMILY_PRIORITY[correctFamily] || [];
+  const idx = priorities.indexOf(candidateFamily);
+  return idx === -1 ? 0 : Math.max(0.16, 0.72 - idx * 0.14);
+}
+
+function getPluralOptions(word, article, correctPlural) {
+  const candidates = buildPluralCandidates(word, article);
+  if (!candidates.some(candidate => candidate.form === correctPlural)) {
+    candidates.push({ form: correctPlural, family: null, score: 1.5 });
+  }
+
+  const correctEntry = candidates.find(candidate => candidate.form === correctPlural) || { family: null };
+  const correctLength = correctPlural === "—" ? word.length : correctPlural.length;
+  const wrongOptions = candidates
+    .filter(candidate => candidate.form !== correctPlural)
+    .map(candidate => ({
+      ...candidate,
+      totalScore:
+        candidate.score +
+        familyClosenessBonus(candidate.family, correctEntry.family) -
+        Math.abs((candidate.form === "—" ? word.length : candidate.form.length) - correctLength) * 0.04,
+    }))
+    .sort((a, b) => b.totalScore - a.totalScore || a.form.localeCompare(b.form, "de"))
+    .slice(0, 2)
+    .map(candidate => candidate.form);
+
+  const fallbackPool = [word + "e", word + "en", word + "er", word + "s", word, "—"].filter(form => form !== correctPlural);
+  fallbackPool.forEach(form => {
+    if (wrongOptions.length < 2 && !wrongOptions.includes(form)) wrongOptions.push(form);
+  });
+
+  return shuffleArray([correctPlural, ...wrongOptions.slice(0, 2)]);
+}
+
 // ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
@@ -289,7 +455,6 @@ function GermanNounGame() {
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
   const [feedback, setFeedback] = useState(null);
-  const [pluralInput, setPluralInput] = useState("");
   const [articleChoice, setArticleChoice] = useState(null);
   const [phase, setPhase] = useState("question");
   const [difficulty, setDifficulty] = useState("normal");
@@ -314,6 +479,10 @@ function GermanNounGame() {
   const [usedSecondChance, setUsedSecondChance] = useState(false);
   const [usedStreakShield, setUsedStreakShield] = useState(false);
   const globalTimerRef = useRef(null);
+  const pluralOptions = useMemo(() => {
+    if (!currentNoun || gameMode === "reverse" || mode === MODES.ARTICLE) return [];
+    return getPluralOptions(currentNoun[0], currentNoun[1], currentNoun[2]);
+  }, [currentNoun, gameMode, mode]);
 
   useEffect(() => {
     if (!getPat()) return;
@@ -403,7 +572,7 @@ function GermanNounGame() {
     setMode(gMode === "reverse" ? MODES.ARTICLE : m);
     setDifficulty(gMode === "survival" ? "easy" : gMode === "timed" ? "easy" : d);
     setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
-    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");
+    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");
     setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
     setUsedSecondChance(false);setUsedStreakShield(false);
     if (gMode === "survival") { setLives(3); setTimeLeft(0); }
@@ -493,7 +662,7 @@ function GermanNounGame() {
     const [s,a,p,e] = currentNoun;
     setStreak(0);setTotalAnswered(pr=>pr+1);
     setFeedback({correct:false,article:a,plural:p,noun:s,english:e});
-    setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:"—",userPlural:"—"}]);
+    setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER}]);
     sessionAnswersRef.current.push({ noun: s, correct: false });
     setPhase("feedback");
   }, [currentNoun]);
@@ -505,7 +674,7 @@ function GermanNounGame() {
   const nextQuestion = useCallback(() => {
     // Second chance: retry same question
     if (feedback?.secondChance) {
-      setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+      setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
       if (gameMode !== "timed" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
       return;
     }
@@ -514,18 +683,18 @@ function GermanNounGame() {
       if (gameMode === "timed") {
         // Loop for timed mode
         setQueue(prev => shuffleArray([...prev]));
-        setCurrentIndex(0);setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+        setCurrentIndex(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
         return;
       }
       if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
       sessionAnswersRef.current = [];
       endSession();return;
     }
-    setCurrentIndex(ni);setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+    setCurrentIndex(ni);setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
     if (gameMode !== "timed" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
   }, [currentIndex, queue.length, timeLimit, gameMode, difficulty, feedback]);
 
-  const checkAnswer = useCallback((chosenArt, typedPlur, typedReverse) => {
+  const checkAnswer = useCallback((chosenArt, chosenPlural, typedReverse) => {
     if(!currentNoun||phase!=="question") return;
     clearInterval(timerRef.current);
     const [s,a,p,e]=currentNoun; let correct=true;
@@ -535,7 +704,7 @@ function GermanNounGame() {
       correct = typed === s || normalize(typed) === normalize(s);
     } else {
       if(mode===MODES.ARTICLE||mode===MODES.BOTH) if(chosenArt!==a) correct=false;
-      if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=typedPlur.trim();if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
+      if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=chosenPlural||"";if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
     }
 
     const perks = userData.activePerks || [];
@@ -560,7 +729,7 @@ function GermanNounGame() {
       } else {
         setStreak(0);
       }
-      setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:chosenArt||"—",userPlural:typedPlur?.trim()||"—"}]);
+      setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
       // Survival mode: lose a life
       if (gameMode === "survival") {
         setLives(prev => {
@@ -576,14 +745,14 @@ function GermanNounGame() {
   const handleArticle = useCallback((art) => {
     if(phase!=="question") return;
     if(mode===MODES.ARTICLE) checkAnswer(art,"");
-    else { setArticleChoice(art); setTimeout(()=>inputRef.current?.focus(),50); }
+    else setArticleChoice(art);
   }, [mode, phase, checkAnswer]);
 
-  const handlePluralSubmit = useCallback((ev) => {
-    ev?.preventDefault(); if(phase!=="question") return;
-    if(mode===MODES.PLURAL) checkAnswer("",pluralInput);
-    else if(mode===MODES.BOTH){if(!articleChoice) return; checkAnswer(articleChoice,pluralInput);}
-  }, [mode,phase,pluralInput,articleChoice,checkAnswer]);
+  const handlePluralChoice = useCallback((plural) => {
+    if(phase!=="question") return;
+    if(mode===MODES.PLURAL) checkAnswer("",plural);
+    else if(mode===MODES.BOTH){if(!articleChoice) return; checkAnswer(articleChoice,plural);}
+  }, [mode,phase,articleChoice,checkAnswer]);
 
   const handleReverseSubmit = useCallback((ev) => {
     ev?.preventDefault(); if(phase!=="question"||gameMode!=="reverse") return;
@@ -592,11 +761,23 @@ function GermanNounGame() {
 
   useEffect(() => {
     if(screen!=="game"||phase!=="question") return;
-    const h=(ev)=>{if(ev.target.tagName==="INPUT")return;if(ev.key==="1")handleArticle("der");else if(ev.key==="2")handleArticle("die");else if(ev.key==="3")handleArticle("das");else if(ev.key==="h")setShowHint(true);};
+    const h=(ev)=>{
+      if(ev.target.tagName==="INPUT")return;
+      if(ev.key==="h"){setShowHint(true);return;}
+      const choiceIndex = ["1","2","3"].indexOf(ev.key);
+      if(choiceIndex===-1)return;
+      if(mode===MODES.ARTICLE){handleArticle(["der","die","das"][choiceIndex]);return;}
+      if(mode===MODES.PLURAL){const choice = pluralOptions[choiceIndex]; if(choice) handlePluralChoice(choice); return;}
+      if(mode===MODES.BOTH){
+        if(!articleChoice){handleArticle(["der","die","das"][choiceIndex]); return;}
+        const choice = pluralOptions[choiceIndex];
+        if(choice) handlePluralChoice(choice);
+      }
+    };
     window.addEventListener("keydown",h); return()=>window.removeEventListener("keydown",h);
-  }, [screen,phase,handleArticle]);
+  }, [screen,phase,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
 
-  useEffect(() => { if(screen==="game"&&phase==="question"&&(mode===MODES.PLURAL||gameMode==="reverse")) setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,mode,currentIndex,gameMode]);
+  useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
 
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const timerPct = timeLimit>0?(timeLeft/timeLimit)*100:100;
@@ -611,7 +792,7 @@ function GermanNounGame() {
     const nd=wrongAnswers.map(w=>getNounByName(w.noun)).filter(Boolean);
     sessionAnswersRef.current = [];
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
-    setFeedback(null);setPluralInput("");setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
+    setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
   }}/>;
 
   return (
@@ -653,7 +834,7 @@ function GermanNounGame() {
             <div style={S.feedbackFlash}>
               <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":feedback.secondChance?"🔄":"✗"}</span>
               {feedback.secondChance&&<span style={{fontSize:13,color:"#F59E0B",fontWeight:700}}>Second chance! Try again...</span>}
-              {!feedback.correct&&!feedback.secondChance&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} → {feedback.plural}</span>}
+              {!feedback.correct&&!feedback.secondChance&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} -> {formatPluralAttempt(feedback.plural)}</span>}
             </div>
           )}
           {gameMode==="reverse"&&phase==="question"&&(
@@ -680,17 +861,25 @@ function GermanNounGame() {
           )}
           {gameMode!=="reverse"&&phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
             <div style={S.pluralSection}>
-              <label style={S.pluralLabel}>Plural form:</label>
-              <div style={S.inputRow}>
-                <input ref={inputRef} value={pluralInput} onChange={e=>setPluralInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handlePluralSubmit(e);}} placeholder="die ..." style={S.pluralInput} autoComplete="off" autoCapitalize="off" spellCheck={false}/>
-                <button onClick={handlePluralSubmit} style={S.submitBtn}>→</button>
-              </div>
-              <div style={S.umlauts}>
-                {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} onClick={()=>{setPluralInput(p=>p+c);inputRef.current?.focus();}} style={S.umlautBtn}>{c}</button>)}
+              <label style={S.pluralLabel}>{mode===MODES.BOTH&&!articleChoice?"Pick the article first, then the plural":"Plural form:"}</label>
+              <div style={S.pluralChoices}>
+                {pluralOptions.map((option, idx)=>(
+                  <button
+                    key={currentNoun[0] + "-" + option}
+                    onClick={()=>handlePluralChoice(option)}
+                    disabled={mode===MODES.BOTH&&!articleChoice}
+                    style={{...S.pluralChoiceBtn,opacity:mode===MODES.BOTH&&!articleChoice?0.45:1,cursor:mode===MODES.BOTH&&!articleChoice?"not-allowed":"pointer"}}
+                  >
+                    <span style={S.pluralChoiceKey}>{idx+1}</span>
+                    <span style={S.pluralChoiceLabel}>{getPluralOptionLabel(option)}</span>
+                  </button>
+                ))}
               </div>
             </div>
           )}
-          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der · <kbd style={S.kbd}>2</kbd> die · <kbd style={S.kbd}>3</kbd> das · <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
         </div>
       )}
     </div>
@@ -1042,7 +1231,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Type the plural form"],[MODES.BOTH,"Both","Article + Plural"]].map(([m,t,d])=>
+            {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Choose the plural form"],[MODES.BOTH,"Both","Article + plural choice"]].map(([m,t,d])=>
               <button key={m} onClick={()=>setMode(m)} style={{...S.modeCard,borderColor:mode===m?"#3B82F6":"rgba(255,255,255,0.1)",backgroundColor:mode===m?"rgba(59,130,246,0.1)":"transparent"}}>
                 <span style={{fontSize:16,fontWeight:700,color:"#e2e8f0"}}>{t}</span><span style={{fontSize:12,color:"#64748b"}}>{d}</span>
               </button>
@@ -1148,24 +1337,24 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                     <div style={{display:"flex",alignItems:"baseline",gap:2}}>
                       <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15}}>{w.article}</span>
                       <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}> {w.noun}</span>
-                      <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>→ {w.plural}</span>
+                      <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>-> {formatPluralAttempt(w.plural)}</span>
                     </div>
                     <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{w.english}</span>
                   </div>
                   <div style={{display:"flex",flexDirection:"column",gap:2,marginTop:6}}>
-                    {(mode===MODES.ARTICLE||mode===MODES.BOTH)&&w.userArticle!=="—"&&(
+                    {(mode===MODES.ARTICLE||mode===MODES.BOTH)&&w.userArticle!==NO_ANSWER&&(
                       <span style={{fontSize:12,color:"#94a3b8"}}>
-                        Your article: <span style={{color:w.userArticle===w.article?"#10B981":"#f87171",fontWeight:700}}>{w.userArticle}</span>
-                        {w.userArticle!==w.article&&<span style={{color:"#10B981"}}> → {w.article}</span>}
+                        Your article: <span style={{color:w.userArticle===w.article?"#10B981":"#f87171",fontWeight:700}}>{formatArticleAttempt(w.userArticle)}</span>
+                        {w.userArticle!==w.article&&<span style={{color:"#10B981"}}> -> {w.article}</span>}
                       </span>
                     )}
-                    {(mode===MODES.PLURAL||mode===MODES.BOTH)&&w.userPlural!=="—"&&(
+                    {(mode===MODES.PLURAL||mode===MODES.BOTH)&&w.userPlural!==NO_ANSWER&&(
                       <span style={{fontSize:12,color:"#94a3b8"}}>
-                        Your plural: <span style={{color:"#f87171",fontWeight:700}}>{w.userPlural||"(empty)"}</span>
-                        <span style={{color:"#10B981"}}> → {w.plural}</span>
+                        Your plural: <span style={{color:"#f87171",fontWeight:700}}>{formatPluralAttempt(w.userPlural)}</span>
+                        <span style={{color:"#10B981"}}> -> {formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {w.userArticle==="—"&&w.userPlural==="—"&&<span style={{fontSize:12,color:"#f59e0b"}}>⏱ Time expired</span>}
+                    {w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
                   {isOpen&&expl&&(
                     <div style={{marginTop:10,padding:"10px 12px",background:"rgba(251,191,36,0.05)",border:"1px solid rgba(251,191,36,0.15)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
@@ -1242,6 +1431,10 @@ const S = {
   articleBtnSub:{fontSize:10,textTransform:"uppercase",letterSpacing:1,opacity:0.7},
   pluralSection:{width:"100%",display:"flex",flexDirection:"column",alignItems:"center",gap:10},
   pluralLabel:{fontSize:13,color:"#94a3b8",textTransform:"uppercase",letterSpacing:1},
+  pluralChoices:{width:"100%",display:"grid",gap:10},
+  pluralChoiceBtn:{width:"100%",background:"rgba(255,255,255,0.04)",border:"2px solid rgba(255,255,255,0.12)",borderRadius:12,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,color:"#f1f5f9",fontSize:18,fontWeight:700,fontFamily:"inherit",textAlign:"left",transition:"all 0.15s ease"},
+  pluralChoiceKey:{width:28,height:28,borderRadius:999,border:"1px solid rgba(255,255,255,0.16)",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#94a3b8",flexShrink:0},
+  pluralChoiceLabel:{fontSize:18,fontWeight:700,color:"#f1f5f9"},
   inputRow:{display:"flex",gap:8,width:"100%",maxWidth:400},
   pluralInput:{flex:1,background:"rgba(255,255,255,0.06)",border:"2px solid rgba(255,255,255,0.12)",borderRadius:10,padding:"12px 16px",fontSize:20,color:"#f1f5f9",outline:"none",fontFamily:"inherit",textAlign:"center"},
   submitBtn:{background:"#3B82F6",border:"none",borderRadius:10,padding:"12px 20px",fontSize:20,color:"#fff",cursor:"pointer",fontWeight:700},
