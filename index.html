@@ -267,14 +267,16 @@ function updateDailyStreak(streak) {
 // Game modes
 const GAME_MODES = [
   { id: "classic", name: "Classic", desc: "Standard practice", icon: "📖" },
-  { id: "timed", name: "Time Attack", desc: "60 seconds — go!", icon: "⏱️", unlockLevel: 2 },
+  { id: "timed", name: "Time Attack", desc: "60 seconds to score", icon: "⏱️", unlockLevel: 2 },
   { id: "survival", name: "Survival", desc: "3 lives, no timer", icon: "❤️", unlockLevel: 4 },
-  { id: "reverse", name: "Reverse", desc: "English → German", icon: "🔀", unlockLevel: 3 },
+  { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔀", unlockLevel: 3 },
+  { id: "matching", name: "Matching", desc: "Pair nouns and meanings", icon: "🧩", unlockLevel: 3 },
   { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯", unlockLevel: 2 },
 ];
 
 const NO_ANSWER = "__unanswered__";
 const NO_PLURAL_LABEL = "kein Plural";
+const MATCHING_BATCH_SIZE = 10;
 
 const PLURAL_FAMILY_PRIORITY = {
   none: ["same", "e", "en", "s"],
@@ -439,6 +441,22 @@ function getPluralOptions(word, article, correctPlural) {
   return shuffleArray([correctPlural, ...wrongOptions.slice(0, 2)]);
 }
 
+function getMeaningLabel(english) {
+  return (english || "").split("/").join(" / ");
+}
+
+function shuffleMatchingMeanings(batch) {
+  return shuffleArray(batch.map(([word,,,english]) => ({ id: word, label: getMeaningLabel(english) })));
+}
+
+function dedupeMistakesByNoun(mistakes) {
+  const latestByNoun = new Map();
+  mistakes.forEach(mistake => {
+    latestByNoun.set(mistake.noun, mistake);
+  });
+  return [...latestByNoun.values()];
+}
+
 // ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
@@ -483,6 +501,15 @@ function GermanNounGame() {
     if (!currentNoun || gameMode === "reverse" || mode === MODES.ARTICLE) return [];
     return getPluralOptions(currentNoun[0], currentNoun[1], currentNoun[2]);
   }, [currentNoun, gameMode, mode]);
+  const matchingBatch = useMemo(() => (
+    gameMode === "matching" ? queue.slice(currentIndex, currentIndex + MATCHING_BATCH_SIZE) : []
+  ), [gameMode, queue, currentIndex]);
+  const [matchingRightItems, setMatchingRightItems] = useState([]);
+  const [matchingMatchedIds, setMatchingMatchedIds] = useState([]);
+  const [matchingSelectedWord, setMatchingSelectedWord] = useState(null);
+  const [matchingSelectedMeaning, setMatchingSelectedMeaning] = useState(null);
+  const [matchingMismatch, setMatchingMismatch] = useState(null);
+  const matchingMismatchTimerRef = useRef(null);
 
   useEffect(() => {
     if (!getPat()) return;
@@ -493,6 +520,18 @@ function GermanNounGame() {
       setUserData(merged); setSyncStatus("synced");
     }).catch(() => setSyncStatus("error"));
   }, []);
+
+  useEffect(() => {
+    if (gameMode !== "matching") return;
+    if (!matchingBatch.length) return;
+    clearTimeout(matchingMismatchTimerRef.current);
+    setMatchingRightItems(shuffleMatchingMeanings(matchingBatch));
+    setMatchingMatchedIds([]);
+    setMatchingSelectedWord(null);
+    setMatchingSelectedMeaning(null);
+    setMatchingMismatch(null);
+    return () => clearTimeout(matchingMismatchTimerRef.current);
+  }, [gameMode, matchingBatch]);
 
   const persistData = useCallback(async (newData) => {
     setUserData(newData);
@@ -568,16 +607,23 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
+    const effectiveMode = gMode === "reverse" || gMode === "matching" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" ? "easy" : d;
     setGameMode(gMode);
-    setMode(gMode === "reverse" ? MODES.ARTICLE : m);
-    setDifficulty(gMode === "survival" ? "easy" : gMode === "timed" ? "easy" : d);
+    setMode(effectiveMode);
+    setDifficulty(effectiveDifficulty);
     setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
     setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");
     setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
     setUsedSecondChance(false);setUsedStreakShield(false);
+    setMatchingRightItems([]);
+    setMatchingMatchedIds([]);
+    setMatchingSelectedWord(null);
+    setMatchingSelectedMeaning(null);
+    setMatchingMismatch(null);
     if (gMode === "survival") { setLives(3); setTimeLeft(0); }
     else if (gMode === "timed") { setGlobalTimer(60); setTimeLeft(0); }
-    else { setTimeLeft(d==="easy"?0:d==="hard"?8:15); }
+    else { setTimeLeft(effectiveDifficulty==="easy"?0:effectiveDifficulty==="hard"?8:15); }
     setScreen("game");
   }, [userData]);
 
@@ -754,13 +800,101 @@ function GermanNounGame() {
     else if(mode===MODES.BOTH){if(!articleChoice) return; checkAnswer(articleChoice,plural);}
   }, [mode,phase,articleChoice,checkAnswer]);
 
+  const resolveMatchingPair = useCallback((wordId, meaningId) => {
+    const noun = matchingBatch.find(([word]) => word === wordId);
+    const chosenMeaning = matchingRightItems.find(item => item.id === meaningId);
+    if (!noun || !chosenMeaning) return;
+
+    const [word, article, plural, english] = noun;
+    const correct = wordId === meaningId;
+    const perks = userData.activePerks || [];
+    const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
+
+    setTotalAnswered(prev => prev + 1);
+
+    if (correct) {
+      setScore(prev => prev + Math.floor(120 * scoreMultiplier));
+      setTotalCorrect(prev => prev + 1);
+      setStreak(prev => {
+        const next = prev + 1;
+        setBestStreak(best => Math.max(best, next));
+        return next;
+      });
+      sessionAnswersRef.current.push({ noun: word, correct: true });
+      setMatchingMatchedIds(prev => [...prev, word]);
+      setMatchingSelectedWord(null);
+      setMatchingSelectedMeaning(null);
+      setMatchingMismatch(null);
+      return;
+    }
+
+    if (perks.includes("streak_shield") && !usedStreakShield && streak > 0) {
+      setUsedStreakShield(true);
+    } else {
+      setStreak(0);
+    }
+
+    sessionAnswersRef.current.push({ noun: word, correct: false });
+    setWrongAnswers(prev => [...prev, {
+      noun: word,
+      article,
+      plural,
+      english,
+      userMeaning: chosenMeaning.label,
+      userArticle: NO_ANSWER,
+      userPlural: NO_ANSWER,
+    }]);
+    setMatchingMismatch({ wordId, meaningId });
+    setMatchingSelectedWord(null);
+    setMatchingSelectedMeaning(null);
+    clearTimeout(matchingMismatchTimerRef.current);
+    matchingMismatchTimerRef.current = setTimeout(() => setMatchingMismatch(null), 450);
+  }, [matchingBatch, matchingRightItems, userData.activePerks, usedStreakShield, streak]);
+
+  const handleMatchingWordSelect = useCallback((wordId) => {
+    if (gameMode !== "matching" || phase !== "question" || matchingMatchedIds.includes(wordId)) return;
+    if (matchingSelectedWord === wordId) {
+      setMatchingSelectedWord(null);
+      return;
+    }
+    if (matchingSelectedMeaning) {
+      resolveMatchingPair(wordId, matchingSelectedMeaning);
+      return;
+    }
+    setMatchingSelectedWord(wordId);
+  }, [gameMode, phase, matchingMatchedIds, matchingSelectedWord, matchingSelectedMeaning, resolveMatchingPair]);
+
+  const handleMatchingMeaningSelect = useCallback((meaningId) => {
+    if (gameMode !== "matching" || phase !== "question" || matchingMatchedIds.includes(meaningId)) return;
+    if (matchingSelectedMeaning === meaningId) {
+      setMatchingSelectedMeaning(null);
+      return;
+    }
+    if (matchingSelectedWord) {
+      resolveMatchingPair(matchingSelectedWord, meaningId);
+      return;
+    }
+    setMatchingSelectedMeaning(meaningId);
+  }, [gameMode, phase, matchingMatchedIds, matchingSelectedMeaning, matchingSelectedWord, resolveMatchingPair]);
+
   const handleReverseSubmit = useCallback((ev) => {
     ev?.preventDefault(); if(phase!=="question"||gameMode!=="reverse") return;
     checkAnswer("","",reverseInput);
   }, [phase,gameMode,reverseInput,checkAnswer]);
 
   useEffect(() => {
-    if(screen!=="game"||phase!=="question") return;
+    if (gameMode !== "matching" || !matchingBatch.length) return;
+    if (matchingMatchedIds.length !== matchingBatch.length) return;
+    const nextIndex = currentIndex + matchingBatch.length;
+    if (nextIndex >= queue.length) {
+      endSession();
+      return;
+    }
+    setCurrentIndex(nextIndex);
+  }, [gameMode, matchingBatch, matchingMatchedIds, currentIndex, queue.length, endSession]);
+
+  useEffect(() => {
+    if(screen!=="game"||phase!=="question"||gameMode==="matching") return;
     const h=(ev)=>{
       if(ev.target.tagName==="INPUT")return;
       if(ev.key==="h"){setShowHint(true);return;}
@@ -775,13 +909,26 @@ function GermanNounGame() {
       }
     };
     window.addEventListener("keydown",h); return()=>window.removeEventListener("keydown",h);
-  }, [screen,phase,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
+  }, [screen,phase,gameMode,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
 
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
 
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const timerPct = timeLimit>0?(timeLeft/timeLimit)*100:100;
   const timerColor = timeLeft<=3?"#EF4444":timeLeft<=6?"#F59E0B":"#10B981";
+  const matchingProgress = Math.min(currentIndex + matchingMatchedIds.length, queue.length);
+  const matchingBatchNumber = gameMode === "matching" ? Math.floor(currentIndex / MATCHING_BATCH_SIZE) + 1 : 0;
+  const matchingBatchTotal = gameMode === "matching" ? Math.ceil(queue.length / MATCHING_BATCH_SIZE) : 0;
+  const selectedMeaningLabel = matchingSelectedMeaning
+    ? matchingRightItems.find(item => item.id === matchingSelectedMeaning)?.label
+    : "";
+  const matchingPrompt = matchingMismatch
+    ? "Wrong pair. Try again."
+    : matchingSelectedWord
+      ? `Choose the meaning for ${matchingSelectedWord}.`
+      : matchingSelectedMeaning
+        ? `Choose the noun for ${selectedMeaningLabel}.`
+        : `Match all ${matchingBatch.length} pairs to continue.`;
 
   if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
@@ -789,7 +936,7 @@ function GermanNounGame() {
   }}/>;
   if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
-    const nd=wrongAnswers.map(w=>getNounByName(w.noun)).filter(Boolean);
+    const nd=dedupeMistakesByNoun(wrongAnswers).map(w=>getNounByName(w.noun)).filter(Boolean);
     sessionAnswersRef.current = [];
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
     setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
@@ -805,7 +952,8 @@ function GermanNounGame() {
         <div style={{textAlign:"right"}}>
           {gameMode==="survival"&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
           {gameMode==="timed"&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
-          {gameMode!=="survival"&&gameMode!=="timed"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
+          {gameMode==="matching"&&<span style={S.progressText}>{matchingProgress} / {queue.length}</span>}
+          {gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="matching"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
         </div>
       </div>
       {difficulty!=="easy"&&gameMode!=="timed"&&gameMode!=="survival"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
@@ -817,7 +965,13 @@ function GermanNounGame() {
       </div>
       {currentNoun&&(
         <div style={{...S.card,borderColor:phase==="feedback"?(feedback?.correct?"#10B981":"#EF4444"):"transparent",backgroundColor:phase==="feedback"?(feedback?.correct?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)"):"rgba(255,255,255,0.03)"}}>
-          {gameMode==="reverse"?(
+          {gameMode==="matching"?(
+            <div style={S.nounDisplay}>
+              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Batch {matchingBatchNumber} / {matchingBatchTotal}</span>
+              <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9",textAlign:"center"}}>Match the nouns with their meanings</span>
+              <span style={{...S.hintText,color:matchingMismatch?"#f87171":"#94a3b8",fontStyle:"normal"}}>{matchingPrompt}</span>
+            </div>
+          ):gameMode==="reverse"?(
             <div style={S.nounDisplay}>
               <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Translate to German</span>
               <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9"}}>{currentNoun[3].split("/")[0]}</span>
@@ -830,11 +984,78 @@ function GermanNounGame() {
               {!showHint&&phase==="question"&&<button onClick={()=>setShowHint(true)} style={S.hintBtn}>hint</button>}
             </div>
           )}
+          {gameMode==="matching"&&phase==="question"&&(
+            <>
+              <div style={S.matchingBoard}>
+                <div style={S.matchingColumn}>
+                  <span style={S.matchingColumnTitle}>German</span>
+                  <div style={S.matchingList}>
+                    {matchingBatch.map(([word, article, plural]) => {
+                      const matched = matchingMatchedIds.includes(word);
+                      const selected = matchingSelectedWord === word;
+                      const mismatched = matchingMismatch?.wordId === word;
+                      return (
+                        <button
+                          key={word}
+                          onClick={() => handleMatchingWordSelect(word)}
+                          disabled={matched}
+                          style={{
+                            ...S.matchingItemBtn,
+                            borderColor: matched ? "rgba(16,185,129,0.45)" : mismatched ? "rgba(239,68,68,0.45)" : selected ? "rgba(139,92,246,0.55)" : "rgba(255,255,255,0.12)",
+                            background: matched ? "rgba(16,185,129,0.12)" : mismatched ? "rgba(239,68,68,0.1)" : selected ? "rgba(139,92,246,0.14)" : "rgba(255,255,255,0.04)",
+                            opacity: matched ? 0.72 : 1,
+                            cursor: matched ? "default" : "pointer",
+                          }}
+                        >
+                          <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                            <span style={{display:"flex",alignItems:"baseline",gap:6}}>
+                              <span style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>
+                              <span style={S.matchingItemMain}>{word}</span>
+                            </span>
+                            <span style={S.matchingItemMeta}>{formatPluralAttempt(plural)}</span>
+                          </div>
+                          <span style={S.matchingItemState}>{matched ? "done" : selected ? "pick" : ""}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div style={S.matchingColumn}>
+                  <span style={S.matchingColumnTitle}>English</span>
+                  <div style={S.matchingList}>
+                    {matchingRightItems.map(item => {
+                      const matched = matchingMatchedIds.includes(item.id);
+                      const selected = matchingSelectedMeaning === item.id;
+                      const mismatched = matchingMismatch?.meaningId === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => handleMatchingMeaningSelect(item.id)}
+                          disabled={matched}
+                          style={{
+                            ...S.matchingItemBtn,
+                            borderColor: matched ? "rgba(16,185,129,0.45)" : mismatched ? "rgba(239,68,68,0.45)" : selected ? "rgba(139,92,246,0.55)" : "rgba(255,255,255,0.12)",
+                            background: matched ? "rgba(16,185,129,0.12)" : mismatched ? "rgba(239,68,68,0.1)" : selected ? "rgba(139,92,246,0.14)" : "rgba(255,255,255,0.04)",
+                            opacity: matched ? 0.72 : 1,
+                            cursor: matched ? "default" : "pointer",
+                          }}
+                        >
+                          <span style={S.matchingItemMain}>{item.label}</span>
+                          <span style={S.matchingItemState}>{matched ? "done" : selected ? "pick" : ""}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div style={S.shortcutHint}>This mode runs through the whole selected deck in batches of up to {MATCHING_BATCH_SIZE}.</div>
+            </>
+          )}
           {phase==="feedback"&&feedback&&(
             <div style={S.feedbackFlash}>
               <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":feedback.secondChance?"🔄":"✗"}</span>
               {feedback.secondChance&&<span style={{fontSize:13,color:"#F59E0B",fontWeight:700}}>Second chance! Try again...</span>}
-              {!feedback.correct&&!feedback.secondChance&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} -> {formatPluralAttempt(feedback.plural)}</span>}
+              {!feedback.correct&&!feedback.secondChance&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} {"->"} {formatPluralAttempt(feedback.plural)}</span>}
             </div>
           )}
           {gameMode==="reverse"&&phase==="question"&&(
@@ -849,7 +1070,7 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {gameMode!=="reverse"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
+          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
             <div style={S.articleRow}>
               {["der","die","das"].map(art=>(
                 <button key={art} onClick={()=>handleArticle(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
@@ -859,7 +1080,7 @@ function GermanNounGame() {
               ))}
             </div>
           )}
-          {gameMode!=="reverse"&&phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
+          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
             <div style={S.pluralSection}>
               <label style={S.pluralLabel}>{mode===MODES.BOTH&&!articleChoice?"Pick the article first, then the plural":"Plural form:"}</label>
               <div style={S.pluralChoices}>
@@ -877,9 +1098,9 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
-          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
-          {gameMode!=="reverse"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
         </div>
       )}
     </div>
@@ -1227,7 +1448,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Answer type (hidden for reverse/weakest game modes) ── */}
-      {selectedGameMode!=="reverse"&&(
+      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -1241,7 +1462,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Speed (hidden for timed/survival) ── */}
-      {selectedGameMode!=="timed"&&selectedGameMode!=="survival"&&(
+      {selectedGameMode!=="timed"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Speed</label>
           <div style={{display:"flex",gap:8}}>
@@ -1279,6 +1500,8 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
   const gc={S:"#F59E0B",A:"#10B981",B:"#3B82F6",C:"#8B5CF6",D:"#EF4444"}[grade];
   const prog = xpProgress(userData.xp || 0);
   const title = getTitle(prog.level);
+  const isMatching = gameMode === "matching";
+  const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
   return (
     <div style={S.container}><div style={S.resultsInner}>
       <div style={{...S.gradeCircle,borderColor:gc,color:gc}}>{grade}</div>
@@ -1323,40 +1546,50 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
         )}
       </div>
 
-      {wrongAnswers.length>0&&(
+      {reviewWrongAnswers.length>0&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
-          <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {wrongAnswers.length} mistake{wrongAnswers.length>1?"s":""}</h3>
-          <p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>
+          <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {reviewWrongAnswers.length} mistake{reviewWrongAnswers.length>1?"s":""}</h3>
+          {!isMatching&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:500,overflowY:"auto",paddingRight:4}}>
-            {wrongAnswers.map((w,i)=>{
+            {reviewWrongAnswers.map((w,i)=>{
               const expl=EXPLANATIONS.get(w.noun);
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>setExpandedIdx(isOpen?null:i)} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching?"default":"pointer",transition:"border-color 0.2s"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
                     <div style={{display:"flex",alignItems:"baseline",gap:2}}>
                       <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15}}>{w.article}</span>
                       <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}> {w.noun}</span>
-                      <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>-> {formatPluralAttempt(w.plural)}</span>
+                      <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>{"->"} {formatPluralAttempt(w.plural)}</span>
                     </div>
-                    <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{w.english}</span>
+                    <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>
                   </div>
                   <div style={{display:"flex",flexDirection:"column",gap:2,marginTop:6}}>
+                    {isMatching&&(
+                      <>
+                        <span style={{fontSize:12,color:"#94a3b8"}}>
+                          Your match: <span style={{color:"#f87171",fontWeight:700}}>{w.userMeaning || "none"}</span>
+                        </span>
+                        <span style={{fontSize:12,color:"#94a3b8"}}>
+                          Correct meaning: <span style={{color:"#10B981",fontWeight:700}}>{getMeaningLabel(w.english)}</span>
+                        </span>
+                      </>
+                    )}
                     {(mode===MODES.ARTICLE||mode===MODES.BOTH)&&w.userArticle!==NO_ANSWER&&(
                       <span style={{fontSize:12,color:"#94a3b8"}}>
                         Your article: <span style={{color:w.userArticle===w.article?"#10B981":"#f87171",fontWeight:700}}>{formatArticleAttempt(w.userArticle)}</span>
-                        {w.userArticle!==w.article&&<span style={{color:"#10B981"}}> -> {w.article}</span>}
+                        {w.userArticle!==w.article&&<span style={{color:"#10B981"}}>{" -> "}{w.article}</span>}
                       </span>
                     )}
                     {(mode===MODES.PLURAL||mode===MODES.BOTH)&&w.userPlural!==NO_ANSWER&&(
                       <span style={{fontSize:12,color:"#94a3b8"}}>
                         Your plural: <span style={{color:"#f87171",fontWeight:700}}>{formatPluralAttempt(w.userPlural)}</span>
-                        <span style={{color:"#10B981"}}> -> {formatPluralAttempt(w.plural)}</span>
+                        <span style={{color:"#10B981"}}>{" -> "}{formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {!isMatching&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
-                  {isOpen&&expl&&(
+                  {!isMatching&&isOpen&&expl&&(
                     <div style={{marginTop:10,padding:"10px 12px",background:"rgba(251,191,36,0.05)",border:"1px solid rgba(251,191,36,0.15)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
                       <div style={{display:"flex",flexDirection:"column",gap:3}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Why {w.article}?</span>
@@ -1368,16 +1601,16 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                       </div>
                     </div>
                   )}
-                  <div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>
+                  {!isMatching&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
                 </div>
               );
             })}
           </div>
         </div>
       )}
-      {wrongAnswers.length===0&&<div style={{textAlign:"center",padding:24,color:"#10B981",fontSize:18,fontWeight:700}}>Perfect session — no mistakes!</div>}
+      {reviewWrongAnswers.length===0&&<div style={{textAlign:"center",padding:24,color:"#10B981",fontSize:18,fontWeight:700}}>Perfect session — no mistakes!</div>}
 
-      {wrongAnswers.length>0&&!deckSaved&&(
+      {reviewWrongAnswers.length>0&&!deckSaved&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
           <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:600}}>Save mistakes as deck</label>
           <div style={{display:"flex",gap:8}}>
@@ -1386,7 +1619,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
               style={{...S.pluralInput,fontSize:13,textAlign:"left",flex:1,padding:"8px 12px"}}/>
             <button onClick={()=>{
               const name = deckName.trim() || `Mistakes ${new Date().toLocaleDateString()}`;
-              onSaveDeck(name, wrongAnswers.map(w=>w.noun));
+              onSaveDeck(name, reviewWrongAnswers.map(w=>w.noun));
               setDeckSaved(true);
             }} style={{...S.submitBtn,fontSize:13,padding:"8px 16px"}}>Save</button>
           </div>
@@ -1395,7 +1628,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
       {deckSaved&&<div style={{fontSize:13,color:"#10B981",fontWeight:700}}>Deck saved{syncStatus==="synced"?" & synced":""}</div>}
 
       <div style={{display:"flex",gap:10,width:"100%",flexDirection:"column"}}>
-        {wrongAnswers.length>0&&<button onClick={onPracticeWrong} style={S.practiceBtn}>Practice {wrongAnswers.length} Missed Noun{wrongAnswers.length>1?"s":""}</button>}
+        {reviewWrongAnswers.length>0&&<button onClick={onPracticeWrong} style={S.practiceBtn}>Practice {reviewWrongAnswers.length} Missed Noun{reviewWrongAnswers.length>1?"s":""}</button>}
         <button onClick={onRestart} style={S.restartBtn}>New Game</button>
       </div>
     </div></div>
@@ -1423,6 +1656,14 @@ const S = {
   nounWord:{fontSize:44,fontWeight:900,letterSpacing:"-1px",color:"#f1f5f9",textAlign:"center",lineHeight:1.1,wordBreak:"break-word"},
   hintText:{fontSize:15,color:"#64748b",fontStyle:"italic"},
   hintBtn:{background:"none",border:"1px solid rgba(255,255,255,0.1)",color:"#64748b",fontSize:11,padding:"3px 10px",borderRadius:6,cursor:"pointer",textTransform:"uppercase",letterSpacing:1},
+  matchingBoard:{width:"100%",display:"flex",gap:12,flexWrap:"wrap",alignItems:"flex-start"},
+  matchingColumn:{flex:"1 1 220px",display:"flex",flexDirection:"column",gap:8},
+  matchingColumnTitle:{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:700},
+  matchingList:{display:"flex",flexDirection:"column",gap:8},
+  matchingItemBtn:{width:"100%",background:"rgba(255,255,255,0.04)",border:"2px solid rgba(255,255,255,0.12)",borderRadius:12,padding:"12px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,color:"#f1f5f9",fontFamily:"inherit",textAlign:"left",transition:"all 0.15s ease"},
+  matchingItemMain:{fontSize:16,fontWeight:700,color:"#f1f5f9",lineHeight:1.35},
+  matchingItemMeta:{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1},
+  matchingItemState:{fontSize:10,color:"#94a3b8",textTransform:"uppercase",letterSpacing:1.2,fontWeight:700},
   feedbackFlash:{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"8px 16px"},
   flashCorrection:{fontSize:16,fontWeight:700,color:"#f1f5f9"},
   articleRow:{display:"flex",gap:12,width:"100%",justifyContent:"center",marginBottom:16},
