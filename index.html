@@ -23,10 +23,14 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // ═══════════════════════════════════════════════════════════════
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site
 const WORDS_DATA_PATH = "./data/nouns.json";
+const ADJECTIVES_DATA_PATH = "./data/adjectives.json";
+const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json";
 let NOUNS = [];
 let NOUN_INDEX = new Map();
 let EXPLANATIONS = new Map();
 let WORDS_META = {};
+let BUILTIN_DECKS = [];
+let ADJECTIVES = [];  // [word, english, rank]
 
 function hydrateWordData(payload) {
   const nounEntries = Array.isArray(payload?.nouns) ? payload.nouns : [];
@@ -42,10 +46,38 @@ async function loadWordData() {
   const payload = await response.json();
   hydrateWordData(payload);
   if (!NOUNS.length) throw new Error(`No noun data found in ${WORDS_DATA_PATH}`);
+  // Load adjectives
+  try {
+    const adjResp = await fetch(ADJECTIVES_DATA_PATH);
+    if (adjResp.ok) {
+      const adjData = await adjResp.json();
+      ADJECTIVES = (adjData.adjectives || []).map(({ word, english, rank }) => [word, english, rank]);
+    }
+  } catch(e) { console.warn("Could not load adjectives:", e); }
+  // Load built-in decks
+  try {
+    const dgResp = await fetch(DUAL_GENDER_PATH);
+    if (dgResp.ok) {
+      const dgData = await dgResp.json();
+      if (dgData.nouns?.length) {
+        BUILTIN_DECKS.push({
+          id: "__dual_gender__",
+          name: "Dual-Gender Nouns",
+          description: dgData.meta?.description || "Nouns whose meaning changes with the article",
+          nouns: dgData.nouns.map(n => n.word).filter(w => NOUN_INDEX.has(w)),
+          builtin: true
+        });
+      }
+    }
+  } catch(e) { console.warn("Could not load dual-gender deck:", e); }
 }
 
 function getNounByName(name) {
   return NOUN_INDEX.get(name) || null;
+}
+
+function getAdjectivesForTier(tier) {
+  return ADJECTIVES.filter(a => a[2] <= tier);
 }
 // VOCABULARY TIER CONFIG
 // ═══════════════════════════════════════════════════════════════
@@ -448,7 +480,10 @@ function getMeaningLabel(english) {
   return (english || "").split("/").join(" / ");
 }
 
-function shuffleMatchingMeanings(batch) {
+function shuffleMatchingMeanings(batch, wordType) {
+  if (wordType === "adjectives") {
+    return shuffleArray(batch.map(([word, english]) => ({ id: word, label: getMeaningLabel(english) })));
+  }
   return shuffleArray(batch.map(([word,,,english]) => ({ id: word, label: getMeaningLabel(english) })));
 }
 
@@ -492,6 +527,7 @@ function GermanNounGame() {
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
   const [gameMode, setGameMode] = useState("classic"); // classic|timed|survival|reverse|weakest
+  const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives
   const [lives, setLives] = useState(3);
   const [globalTimer, setGlobalTimer] = useState(60);
   const [sessionRewards, setSessionRewards] = useState(null);
@@ -528,13 +564,13 @@ function GermanNounGame() {
     if (gameMode !== "matching") return;
     if (!matchingBatch.length) return;
     clearTimeout(matchingMismatchTimerRef.current);
-    setMatchingRightItems(shuffleMatchingMeanings(matchingBatch));
+    setMatchingRightItems(shuffleMatchingMeanings(matchingBatch, matchingWordType));
     setMatchingMatchedIds([]);
     setMatchingSelectedWord(null);
     setMatchingSelectedMeaning(null);
     setMatchingMismatch(null);
     return () => clearTimeout(matchingMismatchTimerRef.current);
-  }, [gameMode, matchingBatch]);
+  }, [gameMode, matchingBatch, matchingWordType]);
 
   const persistData = useCallback(async (newData) => {
     setUserData(newData);
@@ -588,16 +624,27 @@ function GermanNounGame() {
     persistData(newData);
   }, [userData, persistData]);
 
-  const startGame = useCallback((m, d, t, deckId, gm) => {
+  const startGame = useCallback((m, d, t, deckId, gm, wordType) => {
     let nouns;
     const gMode = gm || "classic";
-    if (gMode === "weakest") {
+    const wType = wordType || "nouns";
+    setMatchingWordType(wType);
+    // Adjective matching mode
+    if (gMode === "matching" && wType === "adjectives") {
+      const adjTier = Math.min(t, ADJECTIVES.length);
+      const tierAdjs = getAdjectivesForTier(adjTier);
+      const unique = (() => { const seen = new Set(); return tierAdjs.filter(a => { if (seen.has(a[0])) return false; seen.add(a[0]); return true; }); })();
+      // Filter out adjectives without English translations
+      nouns = shuffleArray(unique.filter(a => a[1]));
+      if (!nouns.length) { alert("No adjectives available for this tier"); return; }
+      setActiveDeck(null);
+    } else if (gMode === "weakest") {
       const weakNames = getWeakestNouns(userData.nounStats, 30);
       nouns = weakNames.map(name => getNounByName(name)).filter(Boolean);
       if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
       setActiveDeck(null);
     } else if (deckId) {
-      const deck = userData.decks.find(dk => dk.id === deckId);
+      const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
       if (!deck) return;
       nouns = deck.nouns.map(name => getNounByName(name)).filter(Boolean);
       setActiveDeck(deckId);
@@ -795,11 +842,15 @@ function GermanNounGame() {
   }, [mode,phase,articleChoice,checkAnswer]);
 
   const resolveMatchingPair = useCallback((wordId, meaningId) => {
-    const noun = matchingBatch.find(([word]) => word === wordId);
+    const item = matchingBatch.find(([word]) => word === wordId);
     const chosenMeaning = matchingRightItems.find(item => item.id === meaningId);
-    if (!noun || !chosenMeaning) return;
+    if (!item || !chosenMeaning) return;
 
-    const [word, article, plural, english] = noun;
+    const isAdj = matchingWordType === "adjectives";
+    const word = item[0];
+    const article = isAdj ? "" : item[1];
+    const plural = isAdj ? "" : item[2];
+    const english = isAdj ? item[1] : item[3];
     const correct = wordId === meaningId;
     const perks = userData.activePerks || [];
     const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
@@ -843,7 +894,7 @@ function GermanNounGame() {
     setMatchingSelectedMeaning(null);
     clearTimeout(matchingMismatchTimerRef.current);
     matchingMismatchTimerRef.current = setTimeout(() => setMatchingMismatch(null), 450);
-  }, [matchingBatch, matchingRightItems, userData.activePerks, usedStreakShield, streak]);
+  }, [matchingBatch, matchingRightItems, matchingWordType, userData.activePerks, usedStreakShield, streak]);
 
   const handleMatchingWordSelect = useCallback((wordId) => {
     if (gameMode !== "matching" || phase !== "question" || matchingMatchedIds.includes(wordId)) return;
@@ -921,7 +972,7 @@ function GermanNounGame() {
     : matchingSelectedWord
       ? `Choose the meaning for ${matchingSelectedWord}.`
       : matchingSelectedMeaning
-        ? `Choose the noun for ${selectedMeaningLabel}.`
+        ? `Choose the ${matchingWordType==="adjectives"?"adjective":"noun"} for ${selectedMeaningLabel}.`
         : `Match all ${matchingBatch.length} pairs to continue.`;
 
   if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onSyncRefresh={()=>{
@@ -961,7 +1012,7 @@ function GermanNounGame() {
         <div style={{...S.card,borderColor:phase==="feedback"?(feedback?.correct?"#10B981":"#EF4444"):"transparent",backgroundColor:phase==="feedback"?(feedback?.correct?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)"):"rgba(255,255,255,0.03)"}}>
           {gameMode==="matching"?(
             <div style={S.nounDisplay}>
-              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Batch {matchingBatchNumber} / {matchingBatchTotal}</span>
+              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>{matchingWordType==="adjectives"?"Adjectives":"Nouns"} — Batch {matchingBatchNumber} / {matchingBatchTotal}</span>
               <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9",textAlign:"center"}}>Match the nouns with their meanings</span>
               <span style={{...S.hintText,color:matchingMismatch?"#f87171":"#94a3b8",fontStyle:"normal"}}>{matchingPrompt}</span>
             </div>
@@ -984,7 +1035,11 @@ function GermanNounGame() {
                 <div style={S.matchingColumn}>
                   <span style={S.matchingColumnTitle}>German</span>
                   <div style={S.matchingList}>
-                    {matchingBatch.map(([word, article, plural]) => {
+                    {matchingBatch.map((entry) => {
+                      const word = entry[0];
+                      const isAdj = matchingWordType === "adjectives";
+                      const article = isAdj ? "" : entry[1];
+                      const plural = isAdj ? "" : entry[2];
                       const matched = matchingMatchedIds.includes(word);
                       const selected = matchingSelectedWord === word;
                       const mismatched = matchingMismatch?.wordId === word;
@@ -1003,10 +1058,10 @@ function GermanNounGame() {
                         >
                           <div style={{display:"flex",flexDirection:"column",gap:4}}>
                             <span style={{display:"flex",alignItems:"baseline",gap:6}}>
-                              <span style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>
+                              {article&&<span style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>}
                               <span style={S.matchingItemMain}>{word}</span>
                             </span>
-                            <span style={S.matchingItemMeta}>{formatPluralAttempt(plural)}</span>
+                            {plural&&<span style={S.matchingItemMeta}>{formatPluralAttempt(plural)}</span>}
                           </div>
                           <span style={S.matchingItemState}>{matched ? "done" : selected ? "pick" : ""}</span>
                         </button>
@@ -1219,6 +1274,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [showShop,setShowShop]=useState(false);
   const [showAchievements,setShowAchievements]=useState(false);
   const [selectedGameMode,setSelectedGameMode]=useState("classic");
+  const [matchWordType,setMatchWordType]=useState("nouns");
   const [patInput,setPatInput]=useState(getPat());
   const [patSaved,setPatSaved]=useState(false);
 
@@ -1229,8 +1285,9 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   };
 
   const handleStart = () => {
-    if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode);
-    else onStart(mode, diff, tier, null, selectedGameMode);
+    const wType = selectedGameMode === "matching" ? matchWordType : "nouns";
+    if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType);
+    else onStart(mode, diff, tier, null, selectedGameMode, wType);
   };
 
   const prog = xpProgress(userData.xp || 0);
@@ -1384,23 +1441,44 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       </div>
 
-      {/* ── Source selection ── */}
-      {selectedGameMode!=="weakest"&&(
+      {/* ── Word type for matching ── */}
+      {selectedGameMode==="matching"&&(
         <div style={S.menuSection}>
-          <label style={S.menuLabel}>Play from</label>
+          <label style={S.menuLabel}>Word Type</label>
           <div style={{display:"flex",gap:8}}>
-            <button onClick={()=>{setSource("tier");setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source==="tier"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="tier"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Vocab Level</span>
+            <button onClick={()=>setMatchWordType("nouns")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="nouns"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="nouns"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Nouns</span>
+              <span style={{fontSize:10,color:"#64748b"}}>{NOUNS.length.toLocaleString()} words</span>
             </button>
-            <button onClick={()=>setSource("deck")} style={{...S.diffBtn,flex:1,borderColor:source==="deck"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="deck"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Saved Deck</span>
-              {userData.decks.length>0&&<span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length} deck{userData.decks.length>1?"s":""}</span>}
+            <button onClick={()=>setMatchWordType("adjectives")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="adjectives"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="adjectives"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Adjectives</span>
+              <span style={{fontSize:10,color:"#64748b"}}>{ADJECTIVES.length.toLocaleString()} words</span>
             </button>
           </div>
         </div>
       )}
 
-      {source==="tier"&&selectedGameMode!=="weakest"&&(
+      {/* ── Source selection ── */}
+      {selectedGameMode!=="weakest"&&(
+        <div style={S.menuSection}>
+          {!(selectedGameMode==="matching"&&matchWordType==="adjectives")&&(
+            <>
+            <label style={S.menuLabel}>Play from</label>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>{setSource("tier");setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source==="tier"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="tier"?"rgba(139,92,246,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Vocab Level</span>
+              </button>
+              <button onClick={()=>setSource("deck")} style={{...S.diffBtn,flex:1,borderColor:source==="deck"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="deck"?"rgba(139,92,246,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Saved Deck</span>
+                {(userData.decks.length+BUILTIN_DECKS.length)>0&&<span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length+BUILTIN_DECKS.length} deck{(userData.decks.length+BUILTIN_DECKS.length)>1?"s":""}</span>}
+              </button>
+            </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {(source==="tier"||(selectedGameMode==="matching"&&matchWordType==="adjectives"))&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
@@ -1418,6 +1496,14 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Select Deck</label>
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
+            {BUILTIN_DECKS.map(dk=>(
+              <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
+                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0"}}>{dk.name}</span>
+                  <span style={{fontSize:11,color:"#64748b"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in</span>
+                </button>
+              </div>
+            ))}
             {userData.decks.map(dk=>(
               <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
                 <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent"}}>
@@ -1427,7 +1513,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
               </div>
             ))}
-            {userData.decks.length===0&&<p style={{fontSize:12,color:"#475569",textAlign:"center",margin:"8px 0"}}>No decks yet — create one or save mistakes after a session</p>}
+            {userData.decks.length===0&&BUILTIN_DECKS.length===0&&<p style={{fontSize:12,color:"#475569",textAlign:"center",margin:"8px 0"}}>No decks yet — create one or save mistakes after a session</p>}
           </div>
           <button onClick={()=>setShowDeckBuilder(true)} style={{...S.practiceBtn,borderColor:"rgba(139,92,246,0.3)",color:"#a78bfa",background:"rgba(139,92,246,0.1)",marginTop:4}}>
             + Create Custom Deck

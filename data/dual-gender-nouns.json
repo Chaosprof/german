@@ -1,0 +1,1407 @@
+{
+  "meta": {
+    "name": "Dual-Gender Nouns",
+    "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
+    "version": 1,
+    "count": 98,
+    "generatedAt": "2026-04-02T18:18:04.008492+00:00"
+  },
+  "nouns": [
+    {
+      "word": "Mensch",
+      "genders": [
+        {
+          "article": "der",
+          "english": "human/person"
+        },
+        {
+          "article": "das",
+          "english": "wretch/hussy (derogatory)"
+        }
+      ],
+      "rank": 3
+    },
+    {
+      "word": "Tag",
+      "genders": [
+        {
+          "article": "der",
+          "english": "day"
+        },
+        {
+          "article": "das",
+          "english": "tag (markup)"
+        }
+      ],
+      "rank": 6
+    },
+    {
+      "word": "Teil",
+      "genders": [
+        {
+          "article": "der",
+          "english": "part/portion"
+        },
+        {
+          "article": "das",
+          "english": "piece/component"
+        }
+      ],
+      "rank": 26
+    },
+    {
+      "word": "Kunde",
+      "genders": [
+        {
+          "article": "die",
+          "english": "news/tidings"
+        },
+        {
+          "article": "der",
+          "english": "customer/client"
+        }
+      ],
+      "rank": 28
+    },
+    {
+      "word": "Ort",
+      "genders": [
+        {
+          "article": "der",
+          "english": "place/location"
+        },
+        {
+          "article": "das",
+          "english": "pointed end/awl"
+        }
+      ],
+      "rank": 36
+    },
+    {
+      "word": "Fall",
+      "genders": [
+        {
+          "article": "der",
+          "english": "case/fall"
+        },
+        {
+          "article": "das",
+          "english": "halyard (nautical rope)"
+        }
+      ],
+      "rank": 40
+    },
+    {
+      "word": "Alter",
+      "genders": [
+        {
+          "article": "der",
+          "english": "old man (colloquial)"
+        },
+        {
+          "article": "das",
+          "english": "age"
+        }
+      ],
+      "rank": 201
+    },
+    {
+      "word": "Service",
+      "genders": [
+        {
+          "article": "der",
+          "english": "service"
+        },
+        {
+          "article": "das",
+          "english": "tea/dinner set"
+        }
+      ],
+      "rank": 232
+    },
+    {
+      "word": "Bund",
+      "genders": [
+        {
+          "article": "der",
+          "english": "federation/alliance"
+        },
+        {
+          "article": "das",
+          "english": "bunch/bundle"
+        }
+      ],
+      "rank": 311
+    },
+    {
+      "word": "Band",
+      "genders": [
+        {
+          "article": "die",
+          "english": "band (music group)"
+        },
+        {
+          "article": "der",
+          "english": "volume (book)"
+        },
+        {
+          "article": "das",
+          "english": "ribbon/tape/bond"
+        }
+      ],
+      "rank": 374
+    },
+    {
+      "word": "See",
+      "genders": [
+        {
+          "article": "die",
+          "english": "sea/ocean"
+        },
+        {
+          "article": "der",
+          "english": "lake"
+        }
+      ],
+      "rank": 493
+    },
+    {
+      "word": "Moment",
+      "genders": [
+        {
+          "article": "der",
+          "english": "moment (time)"
+        },
+        {
+          "article": "das",
+          "english": "factor/element (physics: torque)"
+        }
+      ],
+      "rank": 530
+    },
+    {
+      "word": "Leiter",
+      "genders": [
+        {
+          "article": "die",
+          "english": "ladder"
+        },
+        {
+          "article": "der",
+          "english": "leader/director/conductor"
+        }
+      ],
+      "rank": 564
+    },
+    {
+      "word": "Maß",
+      "genders": [
+        {
+          "article": "die",
+          "english": "liter of beer (Bavarian)"
+        },
+        {
+          "article": "das",
+          "english": "measure/degree/extent"
+        }
+      ],
+      "rank": 570
+    },
+    {
+      "word": "Tor",
+      "genders": [
+        {
+          "article": "der",
+          "english": "fool (archaic)"
+        },
+        {
+          "article": "das",
+          "english": "gate/goal"
+        }
+      ],
+      "rank": 702
+    },
+    {
+      "word": "Kaffee",
+      "genders": [
+        {
+          "article": "der",
+          "english": "coffee"
+        },
+        {
+          "article": "das",
+          "english": "cafe"
+        }
+      ],
+      "rank": 720
+    },
+    {
+      "word": "Steuer",
+      "genders": [
+        {
+          "article": "die",
+          "english": "tax"
+        },
+        {
+          "article": "das",
+          "english": "steering wheel/helm"
+        }
+      ],
+      "rank": 749
+    },
+    {
+      "word": "Post",
+      "genders": [
+        {
+          "article": "die",
+          "english": "mail/post office"
+        },
+        {
+          "article": "der",
+          "english": "post (online)"
+        }
+      ],
+      "rank": 755
+    },
+    {
+      "word": "Morgen",
+      "genders": [
+        {
+          "article": "der",
+          "english": "morning"
+        },
+        {
+          "article": "das",
+          "english": "tomorrow/the future"
+        }
+      ],
+      "rank": 882
+    },
+    {
+      "word": "Mangel",
+      "genders": [
+        {
+          "article": "die",
+          "english": "mangle (laundry press)"
+        },
+        {
+          "article": "der",
+          "english": "lack/deficiency"
+        }
+      ],
+      "rank": 975
+    },
+    {
+      "word": "Gang",
+      "genders": [
+        {
+          "article": "die",
+          "english": "gang"
+        },
+        {
+          "article": "der",
+          "english": "corridor/aisle/gear/gait"
+        }
+      ],
+      "rank": 1120
+    },
+    {
+      "word": "Gehalt",
+      "genders": [
+        {
+          "article": "der",
+          "english": "content/substance"
+        },
+        {
+          "article": "das",
+          "english": "salary/wage"
+        }
+      ],
+      "rank": 1147
+    },
+    {
+      "word": "Bord",
+      "genders": [
+        {
+          "article": "der",
+          "english": "board (on board)"
+        },
+        {
+          "article": "das",
+          "english": "shelf"
+        }
+      ],
+      "rank": 1195
+    },
+    {
+      "word": "Boot",
+      "genders": [
+        {
+          "article": "der",
+          "english": "boot (footwear, from English)"
+        },
+        {
+          "article": "das",
+          "english": "boat"
+        }
+      ],
+      "rank": 1249
+    },
+    {
+      "word": "Erbe",
+      "genders": [
+        {
+          "article": "der",
+          "english": "heir"
+        },
+        {
+          "article": "das",
+          "english": "inheritance/heritage"
+        }
+      ],
+      "rank": 1257
+    },
+    {
+      "word": "Mode",
+      "genders": [
+        {
+          "article": "die",
+          "english": "fashion"
+        },
+        {
+          "article": "der",
+          "english": "mode (technical)"
+        }
+      ],
+      "rank": 1353
+    },
+    {
+      "word": "Bauer",
+      "genders": [
+        {
+          "article": "der",
+          "english": "farmer/peasant"
+        },
+        {
+          "article": "das",
+          "english": "birdcage"
+        }
+      ],
+      "rank": 1425
+    },
+    {
+      "word": "Loch",
+      "genders": [
+        {
+          "article": "der",
+          "english": "loch (Scottish lake)"
+        },
+        {
+          "article": "das",
+          "english": "hole"
+        }
+      ],
+      "rank": 1443
+    },
+    {
+      "word": "Tee",
+      "genders": [
+        {
+          "article": "der",
+          "english": "tea"
+        },
+        {
+          "article": "das",
+          "english": "tee (golf)"
+        }
+      ],
+      "rank": 1519
+    },
+    {
+      "word": "Chor",
+      "genders": [
+        {
+          "article": "der",
+          "english": "choir/chorus"
+        },
+        {
+          "article": "das",
+          "english": "chancel (church architecture)"
+        }
+      ],
+      "rank": 1556
+    },
+    {
+      "word": "Mund",
+      "genders": [
+        {
+          "article": "die",
+          "english": "guardianship (legal, archaic)"
+        },
+        {
+          "article": "der",
+          "english": "mouth"
+        }
+      ],
+      "rank": 1794
+    },
+    {
+      "word": "Kraut",
+      "genders": [
+        {
+          "article": "der",
+          "english": "Kraut (derogatory)"
+        },
+        {
+          "article": "das",
+          "english": "herb/cabbage"
+        }
+      ],
+      "rank": 1917
+    },
+    {
+      "word": "Schild",
+      "genders": [
+        {
+          "article": "der",
+          "english": "shield"
+        },
+        {
+          "article": "das",
+          "english": "sign/nameplate"
+        }
+      ],
+      "rank": 1938
+    },
+    {
+      "word": "Wende",
+      "genders": [
+        {
+          "article": "die",
+          "english": "turn/change (die Wende = reunification)"
+        },
+        {
+          "article": "der",
+          "english": "Wend/Sorb (Slavic people)"
+        }
+      ],
+      "rank": 1984
+    },
+    {
+      "word": "Model",
+      "genders": [
+        {
+          "article": "der",
+          "english": "mold/form"
+        },
+        {
+          "article": "das",
+          "english": "model (fashion)"
+        }
+      ],
+      "rank": 1993
+    },
+    {
+      "word": "Plastik",
+      "genders": [
+        {
+          "article": "die",
+          "english": "sculpture"
+        },
+        {
+          "article": "der",
+          "english": "plastic"
+        }
+      ],
+      "rank": 2035
+    },
+    {
+      "word": "Mark",
+      "genders": [
+        {
+          "article": "die",
+          "english": "mark (currency)/border march"
+        },
+        {
+          "article": "das",
+          "english": "marrow/pith"
+        }
+      ],
+      "rank": 2188
+    },
+    {
+      "word": "Verdienst",
+      "genders": [
+        {
+          "article": "der",
+          "english": "earnings/income"
+        },
+        {
+          "article": "das",
+          "english": "merit/credit"
+        }
+      ],
+      "rank": 2272
+    },
+    {
+      "word": "Lob",
+      "genders": [
+        {
+          "article": "der",
+          "english": "lob (sports)"
+        },
+        {
+          "article": "das",
+          "english": "praise"
+        }
+      ],
+      "rank": 2296
+    },
+    {
+      "word": "Flur",
+      "genders": [
+        {
+          "article": "die",
+          "english": "open field/farmland"
+        },
+        {
+          "article": "der",
+          "english": "hallway/corridor"
+        }
+      ],
+      "rank": 2394
+    },
+    {
+      "word": "Stift",
+      "genders": [
+        {
+          "article": "die",
+          "english": "?"
+        },
+        {
+          "article": "der",
+          "english": "pen/pencil/apprentice"
+        },
+        {
+          "article": "das",
+          "english": "collegiate church/foundation"
+        }
+      ],
+      "rank": 2401
+    },
+    {
+      "word": "Messer",
+      "genders": [
+        {
+          "article": "der",
+          "english": "measurer/gauge"
+        },
+        {
+          "article": "das",
+          "english": "knife"
+        }
+      ],
+      "rank": 2424
+    },
+    {
+      "word": "Golf",
+      "genders": [
+        {
+          "article": "der",
+          "english": "gulf"
+        },
+        {
+          "article": "das",
+          "english": "golf (sport)"
+        }
+      ],
+      "rank": 2638
+    },
+    {
+      "word": "Militär",
+      "genders": [
+        {
+          "article": "der",
+          "english": "military officer"
+        },
+        {
+          "article": "das",
+          "english": "military/army"
+        }
+      ],
+      "rank": 2850
+    },
+    {
+      "word": "Reis",
+      "genders": [
+        {
+          "article": "der",
+          "english": "rice"
+        },
+        {
+          "article": "das",
+          "english": "twig/shoot"
+        }
+      ],
+      "rank": 3039
+    },
+    {
+      "word": "Schock",
+      "genders": [
+        {
+          "article": "der",
+          "english": "shock"
+        },
+        {
+          "article": "das",
+          "english": "sixty (archaic unit)"
+        }
+      ],
+      "rank": 3313
+    },
+    {
+      "word": "Objektiv",
+      "genders": [
+        {
+          "article": "der",
+          "english": "objective case (grammar)"
+        },
+        {
+          "article": "das",
+          "english": "lens/objective (camera)"
+        }
+      ],
+      "rank": 3578
+    },
+    {
+      "word": "Vorsatz",
+      "genders": [
+        {
+          "article": "der",
+          "english": "intention/prefix"
+        },
+        {
+          "article": "das",
+          "english": "end leaf/end paper"
+        }
+      ],
+      "rank": 3889
+    },
+    {
+      "word": "Gift",
+      "genders": [
+        {
+          "article": "die",
+          "english": "gift (archaic/false friend)"
+        },
+        {
+          "article": "der",
+          "english": "anger/wrath (archaic)"
+        },
+        {
+          "article": "das",
+          "english": "poison"
+        }
+      ],
+      "rank": 4023
+    },
+    {
+      "word": "Gefallen",
+      "genders": [
+        {
+          "article": "der",
+          "english": "favour"
+        },
+        {
+          "article": "das",
+          "english": "pleasure/liking"
+        }
+      ],
+      "rank": 5336
+    },
+    {
+      "word": "Heide",
+      "genders": [
+        {
+          "article": "die",
+          "english": "heath/moor"
+        },
+        {
+          "article": "der",
+          "english": "heathen/pagan"
+        }
+      ],
+      "rank": 5658
+    },
+    {
+      "word": "Hummel",
+      "genders": [
+        {
+          "article": "die",
+          "english": "bumblebee/dumbledore"
+        },
+        {
+          "article": "der",
+          "english": "breeding bull"
+        }
+      ],
+      "rank": 5756
+    },
+    {
+      "word": "Spektakel",
+      "genders": [
+        {
+          "article": "der",
+          "english": "racket/commotion"
+        },
+        {
+          "article": "das",
+          "english": "spectacle/show"
+        }
+      ],
+      "rank": 5795
+    },
+    {
+      "word": "Quark",
+      "genders": [
+        {
+          "article": "der",
+          "english": "cottage cheese/curd cheese"
+        },
+        {
+          "article": "das",
+          "english": "quark"
+        }
+      ],
+      "rank": 5892
+    },
+    {
+      "word": "Kiefer",
+      "genders": [
+        {
+          "article": "die",
+          "english": "pine tree"
+        },
+        {
+          "article": "der",
+          "english": "jaw"
+        }
+      ],
+      "rank": 5978
+    },
+    {
+      "word": "Mast",
+      "genders": [
+        {
+          "article": "die",
+          "english": "fattening (of animals)"
+        },
+        {
+          "article": "der",
+          "english": "mast/pole/pylon"
+        }
+      ],
+      "rank": 5984
+    },
+    {
+      "word": "Korn",
+      "genders": [
+        {
+          "article": "der",
+          "english": "grain schnapps"
+        },
+        {
+          "article": "das",
+          "english": "grain/corn/kernel"
+        }
+      ],
+      "rank": 6249
+    },
+    {
+      "word": "Müsli",
+      "genders": [
+        {
+          "article": "die",
+          "english": "?"
+        },
+        {
+          "article": "der",
+          "english": "granola type/muesli freak"
+        },
+        {
+          "article": "das",
+          "english": "cereals/granola"
+        }
+      ],
+      "rank": 6258
+    },
+    {
+      "word": "Treff",
+      "genders": [
+        {
+          "article": "der",
+          "english": "meeting point"
+        },
+        {
+          "article": "das",
+          "english": "clubs"
+        }
+      ],
+      "rank": 6510
+    },
+    {
+      "word": "Marsch",
+      "genders": [
+        {
+          "article": "die",
+          "english": "marsh/wetland"
+        },
+        {
+          "article": "der",
+          "english": "march"
+        }
+      ],
+      "rank": 6588
+    },
+    {
+      "word": "Pony",
+      "genders": [
+        {
+          "article": "der",
+          "english": "fringe/bangs (hair)"
+        },
+        {
+          "article": "das",
+          "english": "pony (small horse)"
+        }
+      ],
+      "rank": 6596
+    },
+    {
+      "word": "Pole",
+      "genders": [
+        {
+          "article": "die",
+          "english": "pole"
+        },
+        {
+          "article": "der",
+          "english": "Pole"
+        }
+      ],
+      "rank": 6845
+    },
+    {
+      "word": "Funke",
+      "genders": [
+        {
+          "article": "die",
+          "english": "radio equipment"
+        },
+        {
+          "article": "der",
+          "english": "spark"
+        }
+      ],
+      "rank": 6931
+    },
+    {
+      "word": "Bulle",
+      "genders": [
+        {
+          "article": "die",
+          "english": "papal bull"
+        },
+        {
+          "article": "der",
+          "english": "bull/cop (slang)"
+        }
+      ],
+      "rank": 7190
+    },
+    {
+      "word": "Espresso",
+      "genders": [
+        {
+          "article": "der",
+          "english": "espresso (coffee)"
+        },
+        {
+          "article": "das",
+          "english": "espresso bar"
+        }
+      ],
+      "rank": 7209
+    },
+    {
+      "word": "Zink",
+      "genders": [
+        {
+          "article": "der",
+          "english": "cornett (Renaissance instrument)"
+        },
+        {
+          "article": "das",
+          "english": "zinc (metal)"
+        }
+      ],
+      "rank": 7485
+    },
+    {
+      "word": "Ex",
+      "genders": [
+        {
+          "article": "die",
+          "english": "pop quiz/quiz"
+        },
+        {
+          "article": "der",
+          "english": "ex"
+        }
+      ],
+      "rank": 7860
+    },
+    {
+      "word": "Hefe",
+      "genders": [
+        {
+          "article": "die",
+          "english": "barm/dregs"
+        },
+        {
+          "article": "das",
+          "english": "hefeweizen/wheat beer"
+        }
+      ],
+      "rank": 8068
+    },
+    {
+      "word": "Tram",
+      "genders": [
+        {
+          "article": "die",
+          "english": "tram/tramway"
+        },
+        {
+          "article": "der",
+          "english": "beam"
+        }
+      ],
+      "rank": 8329
+    },
+    {
+      "word": "Lachs",
+      "genders": [
+        {
+          "article": "der",
+          "english": "longissimus dorsi muscle/salmon"
+        },
+        {
+          "article": "das",
+          "english": "blush/salmon"
+        }
+      ],
+      "rank": 8684
+    },
+    {
+      "word": "Orange",
+      "genders": [
+        {
+          "article": "die",
+          "english": "orange (fruit)"
+        },
+        {
+          "article": "das",
+          "english": "orange (color)"
+        }
+      ],
+      "rank": 9196
+    },
+    {
+      "word": "Alpaka",
+      "genders": [
+        {
+          "article": "die",
+          "english": "reclaimed wool/reprocessed wool"
+        },
+        {
+          "article": "der",
+          "english": "alpaca"
+        },
+        {
+          "article": "das",
+          "english": "German silver/nickel silver"
+        }
+      ],
+      "rank": 9532
+    },
+    {
+      "word": "Finne",
+      "genders": [
+        {
+          "article": "die",
+          "english": "cysticercus/fin"
+        },
+        {
+          "article": "der",
+          "english": "Finn"
+        }
+      ],
+      "rank": 9607
+    },
+    {
+      "word": "Titan",
+      "genders": [
+        {
+          "article": "der",
+          "english": "Titan (mythology)"
+        },
+        {
+          "article": "das",
+          "english": "titanium (element)"
+        }
+      ],
+      "rank": 9770
+    },
+    {
+      "word": "Korpus",
+      "genders": [
+        {
+          "article": "die",
+          "english": "corpus"
+        },
+        {
+          "article": "der",
+          "english": "base/body"
+        },
+        {
+          "article": "das",
+          "english": "corpus"
+        }
+      ],
+      "rank": 9955
+    },
+    {
+      "word": "Lama",
+      "genders": [
+        {
+          "article": "der",
+          "english": "lama (Buddhist monk)"
+        },
+        {
+          "article": "das",
+          "english": "llama (animal)"
+        }
+      ],
+      "rank": 10299
+    },
+    {
+      "word": "Laster",
+      "genders": [
+        {
+          "article": "der",
+          "english": "lorry/truck"
+        },
+        {
+          "article": "das",
+          "english": "vice/bad habit"
+        }
+      ],
+      "rank": 10302
+    },
+    {
+      "word": "Python",
+      "genders": [
+        {
+          "article": "der",
+          "english": "python (snake)"
+        },
+        {
+          "article": "das",
+          "english": "Python (programming)"
+        }
+      ],
+      "rank": 10351
+    },
+    {
+      "word": "Rentier",
+      "genders": [
+        {
+          "article": "der",
+          "english": "person of independent means"
+        },
+        {
+          "article": "das",
+          "english": "reindeer"
+        }
+      ],
+      "rank": 10365
+    },
+    {
+      "word": "Mahd",
+      "genders": [
+        {
+          "article": "die",
+          "english": "mowing/swath"
+        },
+        {
+          "article": "das",
+          "english": "alpine/meadow"
+        }
+      ],
+      "rank": 10679
+    },
+    {
+      "word": "Elf",
+      "genders": [
+        {
+          "article": "die",
+          "english": "eleven/football team"
+        },
+        {
+          "article": "der",
+          "english": "elf"
+        }
+      ],
+      "rank": 10922
+    },
+    {
+      "word": "Zimt",
+      "genders": [
+        {
+          "article": "der",
+          "english": "nonsense (colloquial)"
+        },
+        {
+          "article": "das",
+          "english": "cinnamon"
+        }
+      ],
+      "rank": 11220
+    },
+    {
+      "word": "Graph",
+      "genders": [
+        {
+          "article": "der",
+          "english": "graph"
+        },
+        {
+          "article": "das",
+          "english": "grapheme"
+        }
+      ],
+      "rank": 11370
+    },
+    {
+      "word": "Franchise",
+      "genders": [
+        {
+          "article": "die",
+          "english": "deductible/excess (insurance)"
+        },
+        {
+          "article": "das",
+          "english": "franchise"
+        }
+      ],
+      "rank": 11742
+    },
+    {
+      "word": "Page",
+      "genders": [
+        {
+          "article": "die",
+          "english": "page (web/book)"
+        },
+        {
+          "article": "der",
+          "english": "bellboy/page (attendant)"
+        }
+      ],
+      "rank": 12833
+    },
+    {
+      "word": "Heroin",
+      "genders": [
+        {
+          "article": "die",
+          "english": "heroine"
+        },
+        {
+          "article": "das",
+          "english": "heroin (drug)"
+        }
+      ],
+      "rank": 16264
+    },
+    {
+      "word": "Transit",
+      "genders": [
+        {
+          "article": "der",
+          "english": "astronomical transit"
+        },
+        {
+          "article": "das",
+          "english": "transit pass/transit visa"
+        }
+      ],
+      "rank": 16727
+    },
+    {
+      "word": "Type",
+      "genders": [
+        {
+          "article": "die",
+          "english": "letter/type"
+        },
+        {
+          "article": "der",
+          "english": "type"
+        }
+      ],
+      "rank": 16737
+    },
+    {
+      "word": "Mandarin",
+      "genders": [
+        {
+          "article": "der",
+          "english": "mandarin"
+        },
+        {
+          "article": "das",
+          "english": "standard Mandarin"
+        }
+      ],
+      "rank": 17429
+    },
+    {
+      "word": "Laube",
+      "genders": [
+        {
+          "article": "die",
+          "english": "arbor/arbour"
+        },
+        {
+          "article": "der",
+          "english": "bleak"
+        }
+      ],
+      "rank": 18611
+    },
+    {
+      "word": "Tau",
+      "genders": [
+        {
+          "article": "der",
+          "english": "dew"
+        },
+        {
+          "article": "das",
+          "english": "rope/hawser"
+        }
+      ],
+      "rank": 19054
+    },
+    {
+      "word": "Ekel",
+      "genders": [
+        {
+          "article": "der",
+          "english": "disgust/revulsion"
+        },
+        {
+          "article": "das",
+          "english": "disgusting person"
+        }
+      ],
+      "rank": 19595
+    },
+    {
+      "word": "Gemahl",
+      "genders": [
+        {
+          "article": "der",
+          "english": "husband/spouse"
+        },
+        {
+          "article": "das",
+          "english": "spouse/wife"
+        }
+      ],
+      "rank": 19752
+    },
+    {
+      "word": "Schote",
+      "genders": [
+        {
+          "article": "die",
+          "english": "pod/silique"
+        },
+        {
+          "article": "der",
+          "english": "fool/simpleton"
+        }
+      ],
+      "rank": 20464
+    },
+    {
+      "word": "As",
+      "genders": [
+        {
+          "article": "der",
+          "english": "as"
+        },
+        {
+          "article": "das",
+          "english": "A flat"
+        }
+      ],
+      "rank": 20939
+    },
+    {
+      "word": "Ohm",
+      "genders": [
+        {
+          "article": "der",
+          "english": "uncle (dialectal)"
+        },
+        {
+          "article": "das",
+          "english": "ohm (unit)"
+        }
+      ],
+      "rank": 21999
+    },
+    {
+      "word": "Otter",
+      "genders": [
+        {
+          "article": "die",
+          "english": "adder/viper"
+        },
+        {
+          "article": "der",
+          "english": "otter"
+        }
+      ],
+      "rank": 22023
+    },
+    {
+      "word": "Pik",
+      "genders": [
+        {
+          "article": "der",
+          "english": "grudge/pique"
+        },
+        {
+          "article": "das",
+          "english": "spades (card suit)"
+        }
+      ],
+      "rank": 24305
+    }
+  ]
+}
