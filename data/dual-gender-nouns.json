@@ -2,9 +2,9 @@
   "meta": {
     "name": "Dual-Gender Nouns",
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
-    "version": 1,
+    "version": 2,
     "count": 98,
-    "generatedAt": "2026-04-02T18:18:04.008492+00:00"
+    "generatedAt": "2026-04-02T20:43:45.436Z"
   },
   "nouns": [
     {
@@ -12,11 +12,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "human/person"
+          "english": "human/person",
+          "plural": "Menschen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "wretch/hussy (derogatory)"
+          "english": "wretch/hussy (derogatory)",
+          "plural": "Menscher",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 3
@@ -26,11 +32,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "day"
+          "english": "day",
+          "plural": "Tage",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "tag (markup)"
+          "english": "tag (markup)",
+          "plural": "Tags",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6
@@ -40,11 +52,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "part/portion"
+          "english": "part/portion",
+          "plural": "Teile",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "piece/component"
+          "english": "piece/component",
+          "plural": "Teile",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 26
@@ -54,11 +72,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "news/tidings"
+          "english": "news/tidings",
+          "plural": "Kunden",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "customer/client"
+          "english": "customer/client",
+          "plural": "Kunden",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 28
@@ -68,11 +92,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "place/location"
+          "english": "place/location",
+          "plural": "Orte",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "pointed end/awl"
+          "english": "pointed end/awl",
+          "plural": "Örter",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 36
@@ -82,11 +112,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "case/fall"
+          "english": "case/fall",
+          "plural": "Fälle",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "halyard (nautical rope)"
+          "english": "halyard (nautical rope)",
+          "plural": "Fallen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 40
@@ -96,11 +132,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "old man (colloquial)"
+          "english": "old man (colloquial)",
+          "plural": "Alte",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "age"
+          "english": "age",
+          "plural": "Alter",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 201
@@ -110,11 +152,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "service"
+          "english": "service",
+          "plural": "Services",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "tea/dinner set"
+          "english": "tea/dinner set",
+          "plural": "Service",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 232
@@ -124,11 +172,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "federation/alliance"
+          "english": "federation/alliance",
+          "plural": "Bünde",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "bunch/bundle"
+          "english": "bunch/bundle",
+          "plural": "Bunde",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 311
@@ -138,15 +192,24 @@
       "genders": [
         {
           "article": "die",
-          "english": "band (music group)"
+          "english": "band (music group)",
+          "plural": "Bands",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "volume (book)"
+          "english": "volume (book)",
+          "plural": "Bände",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "ribbon/tape/bond"
+          "english": "ribbon/tape/bond",
+          "plural": "Bänder",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 374
@@ -156,11 +219,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "sea/ocean"
+          "english": "sea/ocean",
+          "plural": "Seen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "lake"
+          "english": "lake",
+          "plural": "Seen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 493
@@ -170,11 +239,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "moment (time)"
+          "english": "moment (time)",
+          "plural": "Momente",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "factor/element (physics: torque)"
+          "english": "factor/element (physics: torque)",
+          "plural": "Momente",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 530
@@ -184,11 +259,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "ladder"
+          "english": "ladder",
+          "plural": "Leitern",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "leader/director/conductor"
+          "english": "leader/director/conductor",
+          "plural": "Leiter",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 564
@@ -198,11 +279,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "liter of beer (Bavarian)"
+          "english": "liter of beer (Bavarian)",
+          "plural": "Maß",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "measure/degree/extent"
+          "english": "measure/degree/extent",
+          "plural": "Maße",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 570
@@ -212,11 +299,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "fool (archaic)"
+          "english": "fool (archaic)",
+          "plural": "Toren",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "gate/goal"
+          "english": "gate/goal",
+          "plural": "Tore",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 702
@@ -226,11 +319,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "coffee"
+          "english": "coffee",
+          "plural": "Kaffees",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "cafe"
+          "english": "cafe",
+          "plural": "Kaffees",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 720
@@ -240,11 +339,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "tax"
+          "english": "tax",
+          "plural": "Steuern",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "steering wheel/helm"
+          "english": "steering wheel/helm",
+          "plural": "Steuer",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 749
@@ -254,11 +359,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "mail/post office"
+          "english": "mail/post office",
+          "plural": "Posten",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "post (online)"
+          "english": "post (online)",
+          "plural": "Posts",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 755
@@ -268,11 +379,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "morning"
+          "english": "morning",
+          "plural": "Morgen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "tomorrow/the future"
+          "english": "tomorrow/the future",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 882
@@ -282,11 +399,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "mangle (laundry press)"
+          "english": "mangle (laundry press)",
+          "plural": "Mangeln",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "lack/deficiency"
+          "english": "lack/deficiency",
+          "plural": "Mängel",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 975
@@ -296,11 +419,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "gang"
+          "english": "gang",
+          "plural": "Gangs",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "corridor/aisle/gear/gait"
+          "english": "corridor/aisle/gear/gait",
+          "plural": "Gänge",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1120
@@ -310,11 +439,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "content/substance"
+          "english": "content/substance",
+          "plural": "Gehalte",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "salary/wage"
+          "english": "salary/wage",
+          "plural": "Gehälter",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1147
@@ -324,11 +459,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "board (on board)"
+          "english": "board (on board)",
+          "plural": "Borde",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "shelf"
+          "english": "shelf",
+          "plural": "Borde",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1195
@@ -338,11 +479,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "boot (footwear, from English)"
+          "english": "boot (footwear, from English)",
+          "plural": "Boots",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "boat"
+          "english": "boat",
+          "plural": "Boote",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1249
@@ -352,11 +499,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "heir"
+          "english": "heir",
+          "plural": "Erben",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "inheritance/heritage"
+          "english": "inheritance/heritage",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 1257
@@ -366,11 +519,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "fashion"
+          "english": "fashion",
+          "plural": "Moden",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "mode (technical)"
+          "english": "mode (technical)",
+          "plural": "Moden",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1353
@@ -380,11 +539,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "farmer/peasant"
+          "english": "farmer/peasant",
+          "plural": "Bauern",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "birdcage"
+          "english": "birdcage",
+          "plural": "Bauern",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1425
@@ -394,11 +559,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "loch (Scottish lake)"
+          "english": "loch (Scottish lake)",
+          "plural": "Lochs",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "hole"
+          "english": "hole",
+          "plural": "Löcher",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1443
@@ -408,11 +579,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "tea"
+          "english": "tea",
+          "plural": "Tees",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "tee (golf)"
+          "english": "tee (golf)",
+          "plural": "Tees",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1519
@@ -422,11 +599,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "choir/chorus"
+          "english": "choir/chorus",
+          "plural": "Chöre",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "chancel (church architecture)"
+          "english": "chancel (church architecture)",
+          "plural": "Chöre",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1556
@@ -436,11 +619,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "guardianship (legal, archaic)"
+          "english": "guardianship (legal, archaic)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "mouth"
+          "english": "mouth",
+          "plural": "Münder",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1794
@@ -450,11 +639,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "Kraut (derogatory)"
+          "english": "Kraut (derogatory)",
+          "plural": "Krauts",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "herb/cabbage"
+          "english": "herb/cabbage",
+          "plural": "Kräuter",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1917
@@ -464,11 +659,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "shield"
+          "english": "shield",
+          "plural": "Schilde",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "sign/nameplate"
+          "english": "sign/nameplate",
+          "plural": "Schilder",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1938
@@ -478,11 +679,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "turn/change (die Wende = reunification)"
+          "english": "turn/change (die Wende = reunification)",
+          "plural": "Wenden",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "Wend/Sorb (Slavic people)"
+          "english": "Wend/Sorb (Slavic people)",
+          "plural": "Wenden",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1984
@@ -492,11 +699,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "mold/form"
+          "english": "mold/form",
+          "plural": "Model",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "model (fashion)"
+          "english": "model (fashion)",
+          "plural": "Models",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 1993
@@ -506,11 +719,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "sculpture"
+          "english": "sculpture",
+          "plural": "Plastiken",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "plastic"
+          "english": "plastic",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 2035
@@ -520,11 +739,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "mark (currency)/border march"
+          "english": "mark (currency)/border march",
+          "plural": "Mark",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "marrow/pith"
+          "english": "marrow/pith",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 2188
@@ -534,11 +759,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "earnings/income"
+          "english": "earnings/income",
+          "plural": "Verdienste",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "merit/credit"
+          "english": "merit/credit",
+          "plural": "Verdienste",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 2272
@@ -548,11 +779,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "lob (sports)"
+          "english": "lob (sports)",
+          "plural": "Lobs",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "praise"
+          "english": "praise",
+          "plural": "Lobe",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 2296
@@ -562,11 +799,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "open field/farmland"
+          "english": "open field/farmland",
+          "plural": "Fluren",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "hallway/corridor"
+          "english": "hallway/corridor",
+          "plural": "Flure",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 2394
@@ -576,15 +819,24 @@
       "genders": [
         {
           "article": "die",
-          "english": "?"
+          "english": "?",
+          "plural": "Stiften",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "pen/pencil/apprentice"
+          "english": "pen/pencil/apprentice",
+          "plural": "Stifte",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "collegiate church/foundation"
+          "english": "collegiate church/foundation",
+          "plural": "Stifte",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 2401
@@ -594,11 +846,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "measurer/gauge"
+          "english": "measurer/gauge",
+          "plural": "Messer",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "knife"
+          "english": "knife",
+          "plural": "Messer",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 2424
@@ -608,11 +866,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "gulf"
+          "english": "gulf",
+          "plural": "Golfe",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "golf (sport)"
+          "english": "golf (sport)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 2638
@@ -622,11 +886,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "military officer"
+          "english": "military officer",
+          "plural": "Militärs",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "military/army"
+          "english": "military/army",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 2850
@@ -636,11 +906,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "rice"
+          "english": "rice",
+          "plural": "Reise",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "twig/shoot"
+          "english": "twig/shoot",
+          "plural": "Reiser",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 3039
@@ -650,11 +926,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "shock"
+          "english": "shock",
+          "plural": "Schocke",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "sixty (archaic unit)"
+          "english": "sixty (archaic unit)",
+          "plural": "Schocke",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 3313
@@ -664,11 +946,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "objective case (grammar)"
+          "english": "objective case (grammar)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "lens/objective (camera)"
+          "english": "lens/objective (camera)",
+          "plural": "Objektive",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 3578
@@ -678,11 +966,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "intention/prefix"
+          "english": "intention/prefix",
+          "plural": "Vorsätze",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "end leaf/end paper"
+          "english": "end leaf/end paper",
+          "plural": "Vorsätze",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 3889
@@ -692,15 +986,24 @@
       "genders": [
         {
           "article": "die",
-          "english": "gift (archaic/false friend)"
+          "english": "gift (archaic/false friend)",
+          "plural": "Giften",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "anger/wrath (archaic)"
+          "english": "anger/wrath (archaic)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "poison"
+          "english": "poison",
+          "plural": "Gifte",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 4023
@@ -710,11 +1013,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "favour"
+          "english": "favour",
+          "plural": "Gefallen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "pleasure/liking"
+          "english": "pleasure/liking",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 5336
@@ -724,11 +1033,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "heath/moor"
+          "english": "heath/moor",
+          "plural": "Heiden",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "heathen/pagan"
+          "english": "heathen/pagan",
+          "plural": "Heiden",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 5658
@@ -738,11 +1053,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "bumblebee/dumbledore"
+          "english": "bumblebee/dumbledore",
+          "plural": "Hummeln",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "breeding bull"
+          "english": "breeding bull",
+          "plural": "Hummel",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 5756
@@ -752,11 +1073,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "racket/commotion"
+          "english": "racket/commotion",
+          "plural": "Spektakel",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "spectacle/show"
+          "english": "spectacle/show",
+          "plural": "Spektakel",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 5795
@@ -766,11 +1093,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "cottage cheese/curd cheese"
+          "english": "cottage cheese/curd cheese",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "quark"
+          "english": "quark",
+          "plural": "Quarks",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 5892
@@ -780,11 +1113,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "pine tree"
+          "english": "pine tree",
+          "plural": "Kiefern",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "jaw"
+          "english": "jaw",
+          "plural": "Kiefer",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 5978
@@ -794,11 +1133,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "fattening (of animals)"
+          "english": "fattening (of animals)",
+          "plural": "Masten",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "mast/pole/pylon"
+          "english": "mast/pole/pylon",
+          "plural": "Maste",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 5984
@@ -808,11 +1153,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "grain schnapps"
+          "english": "grain schnapps",
+          "plural": "Korn",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "grain/corn/kernel"
+          "english": "grain/corn/kernel",
+          "plural": "Körner",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6249
@@ -822,15 +1173,24 @@
       "genders": [
         {
           "article": "die",
-          "english": "?"
+          "english": "?",
+          "plural": "Müslis",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "granola type/muesli freak"
+          "english": "granola type/muesli freak",
+          "plural": "Müslis",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "cereals/granola"
+          "english": "cereals/granola",
+          "plural": "Müsli",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6258
@@ -840,11 +1200,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "meeting point"
+          "english": "meeting point",
+          "plural": "Treffs",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "clubs"
+          "english": "clubs",
+          "plural": "Treffs",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6510
@@ -854,11 +1220,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "marsh/wetland"
+          "english": "marsh/wetland",
+          "plural": "Marschen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "march"
+          "english": "march",
+          "plural": "Märsche",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6588
@@ -868,11 +1240,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "fringe/bangs (hair)"
+          "english": "fringe/bangs (hair)",
+          "plural": "Ponys",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "pony (small horse)"
+          "english": "pony (small horse)",
+          "plural": "Ponys",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6596
@@ -882,11 +1260,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "pole"
+          "english": "pole",
+          "plural": "Poles",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "Pole"
+          "english": "Pole",
+          "plural": "Polen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6845
@@ -896,11 +1280,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "radio equipment"
+          "english": "radio equipment",
+          "plural": "Funken",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "spark"
+          "english": "spark",
+          "plural": "Funken",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 6931
@@ -910,11 +1300,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "papal bull"
+          "english": "papal bull",
+          "plural": "Bullen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "bull/cop (slang)"
+          "english": "bull/cop (slang)",
+          "plural": "Bullen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 7190
@@ -924,11 +1320,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "espresso (coffee)"
+          "english": "espresso (coffee)",
+          "plural": "Espressos",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "espresso bar"
+          "english": "espresso bar",
+          "plural": "Espressos",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 7209
@@ -938,11 +1340,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "cornett (Renaissance instrument)"
+          "english": "cornett (Renaissance instrument)",
+          "plural": "Zinken",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "zinc (metal)"
+          "english": "zinc (metal)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 7485
@@ -952,11 +1360,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "pop quiz/quiz"
+          "english": "pop quiz/quiz",
+          "plural": "Exen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "ex"
+          "english": "ex",
+          "plural": "Ex",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 7860
@@ -966,11 +1380,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "barm/dregs"
+          "english": "barm/dregs",
+          "plural": "Hefen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "hefeweizen/wheat beer"
+          "english": "hefeweizen/wheat beer",
+          "plural": "Hefe",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 8068
@@ -980,11 +1400,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "tram/tramway"
+          "english": "tram/tramway",
+          "plural": "Trams",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "beam"
+          "english": "beam",
+          "plural": "Trame",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 8329
@@ -994,11 +1420,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "longissimus dorsi muscle/salmon"
+          "english": "longissimus dorsi muscle/salmon",
+          "plural": "Lachse",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "blush/salmon"
+          "english": "blush/salmon",
+          "plural": "Lachstöne",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 8684
@@ -1008,11 +1440,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "orange (fruit)"
+          "english": "orange (fruit)",
+          "plural": "Orangen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "orange (color)"
+          "english": "orange (color)",
+          "plural": "Orange",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 9196
@@ -1022,15 +1460,24 @@
       "genders": [
         {
           "article": "die",
-          "english": "reclaimed wool/reprocessed wool"
+          "english": "reclaimed wool/reprocessed wool",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "alpaca"
+          "english": "alpaca",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "German silver/nickel silver"
+          "english": "German silver/nickel silver",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 9532
@@ -1040,11 +1487,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "cysticercus/fin"
+          "english": "cysticercus/fin",
+          "plural": "Finnen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "Finn"
+          "english": "Finn",
+          "plural": "Finnen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 9607
@@ -1054,11 +1507,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "Titan (mythology)"
+          "english": "Titan (mythology)",
+          "plural": "Titanen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "titanium (element)"
+          "english": "titanium (element)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 9770
@@ -1068,15 +1527,24 @@
       "genders": [
         {
           "article": "die",
-          "english": "corpus"
+          "english": "corpus",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "base/body"
+          "english": "base/body",
+          "plural": "Korpusse",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "corpus"
+          "english": "corpus",
+          "plural": "Korpora",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 9955
@@ -1086,11 +1554,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "lama (Buddhist monk)"
+          "english": "lama (Buddhist monk)",
+          "plural": "Lamas",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "llama (animal)"
+          "english": "llama (animal)",
+          "plural": "Lamas",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 10299
@@ -1100,11 +1574,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "lorry/truck"
+          "english": "lorry/truck",
+          "plural": "Laster",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "vice/bad habit"
+          "english": "vice/bad habit",
+          "plural": "Laster",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 10302
@@ -1114,11 +1594,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "python (snake)"
+          "english": "python (snake)",
+          "plural": "Pythons",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "Python (programming)"
+          "english": "Python (programming)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 10351
@@ -1128,11 +1614,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "person of independent means"
+          "english": "person of independent means",
+          "plural": "Rentiers",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "reindeer"
+          "english": "reindeer",
+          "plural": "Rentiere",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 10365
@@ -1142,11 +1634,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "mowing/swath"
+          "english": "mowing/swath",
+          "plural": "Mahden",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "alpine/meadow"
+          "english": "alpine/meadow",
+          "plural": "Mähder",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 10679
@@ -1156,11 +1654,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "eleven/football team"
+          "english": "eleven/football team",
+          "plural": "Elfen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "elf"
+          "english": "elf",
+          "plural": "Elfen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 10922
@@ -1170,11 +1674,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "nonsense (colloquial)"
+          "english": "nonsense (colloquial)",
+          "plural": "Zimte",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "cinnamon"
+          "english": "cinnamon",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 11220
@@ -1184,11 +1694,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "graph"
+          "english": "graph",
+          "plural": "Graphen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "grapheme"
+          "english": "grapheme",
+          "plural": "Graphe",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 11370
@@ -1198,11 +1714,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "deductible/excess (insurance)"
+          "english": "deductible/excess (insurance)",
+          "plural": "Franchisen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "franchise"
+          "english": "franchise",
+          "plural": "Franchises",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 11742
@@ -1212,11 +1734,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "page (web/book)"
+          "english": "page (web/book)",
+          "plural": "Pages",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "bellboy/page (attendant)"
+          "english": "bellboy/page (attendant)",
+          "plural": "Pagen",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 12833
@@ -1226,11 +1754,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "heroine"
+          "english": "heroine",
+          "plural": "Heroinnen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "heroin (drug)"
+          "english": "heroin (drug)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 16264
@@ -1240,11 +1774,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "astronomical transit"
+          "english": "astronomical transit",
+          "plural": "Transite",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "transit pass/transit visa"
+          "english": "transit pass/transit visa",
+          "plural": "Transite",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 16727
@@ -1254,11 +1794,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "letter/type"
+          "english": "letter/type",
+          "plural": "Typen",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "type"
+          "english": "type",
+          "plural": "Types",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 16737
@@ -1268,11 +1814,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "mandarin"
+          "english": "mandarin",
+          "plural": "Mandarine",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "standard Mandarin"
+          "english": "standard Mandarin",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 17429
@@ -1282,11 +1834,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "arbor/arbour"
+          "english": "arbor/arbour",
+          "plural": "Lauben",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "bleak"
+          "english": "bleak",
+          "plural": "Lauben",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 18611
@@ -1296,11 +1854,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "dew"
+          "english": "dew",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "rope/hawser"
+          "english": "rope/hawser",
+          "plural": "Taue",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 19054
@@ -1310,11 +1874,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "disgust/revulsion"
+          "english": "disgust/revulsion",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "disgusting person"
+          "english": "disgusting person",
+          "plural": "Ekel",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 19595
@@ -1324,11 +1894,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "husband/spouse"
+          "english": "husband/spouse",
+          "plural": "Gemahle",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "spouse/wife"
+          "english": "spouse/wife",
+          "plural": "Gemahle",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 19752
@@ -1338,11 +1914,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "pod/silique"
+          "english": "pod/silique",
+          "plural": "Schoten",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "fool/simpleton"
+          "english": "fool/simpleton",
+          "plural": "Schoten",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 20464
@@ -1352,11 +1934,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "as"
+          "english": "as",
+          "plural": "Asse",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "A flat"
+          "english": "A flat",
+          "plural": "As",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 20939
@@ -1366,11 +1954,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "uncle (dialectal)"
+          "english": "uncle (dialectal)",
+          "plural": "Ohme",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "ohm (unit)"
+          "english": "ohm (unit)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 21999
@@ -1380,11 +1974,17 @@
       "genders": [
         {
           "article": "die",
-          "english": "adder/viper"
+          "english": "adder/viper",
+          "plural": "Ottern",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "der",
-          "english": "otter"
+          "english": "otter",
+          "plural": "Otter",
+          "singularOnly": false,
+          "pluralOnly": false
         }
       ],
       "rank": 22023
@@ -1394,11 +1994,17 @@
       "genders": [
         {
           "article": "der",
-          "english": "grudge/pique"
+          "english": "grudge/pique",
+          "plural": "Piks",
+          "singularOnly": false,
+          "pluralOnly": false
         },
         {
           "article": "das",
-          "english": "spades (card suit)"
+          "english": "spades (card suit)",
+          "plural": "?",
+          "singularOnly": true,
+          "pluralOnly": false
         }
       ],
       "rank": 24305

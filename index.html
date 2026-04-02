@@ -31,7 +31,26 @@ let EXPLANATIONS = new Map();
 let WORDS_META = {};
 let BUILTIN_DECKS = [];
 let DUAL_GENDER_WORDS = new Set();
+let DUAL_GENDER_SENSES = new Map();
+let DUAL_GENDER_INDEX = new Map();
 let ADJECTIVES = [];  // [word, english, rank]
+
+function makeDualGenderSenseId(word, article, plural) {
+  return `__dual__|${word}|${article}|${plural || "—"}`;
+}
+
+function buildDualGenderEntry(word, rank, genderEntry) {
+  const plural = genderEntry.singularOnly || genderEntry.plural === "?" ? "—" : (genderEntry.plural || "—");
+  return [word, genderEntry.article, plural, genderEntry.english, rank, makeDualGenderSenseId(word, genderEntry.article, plural)];
+}
+
+function getNounEntryId(noun) {
+  return noun?.[5] || noun?.[0] || "";
+}
+
+function getMistakeEntryId(mistake) {
+  return mistake?.entryId || mistake?.noun || "";
+}
 
 function hydrateWordData(payload) {
   const nounEntries = Array.isArray(payload?.nouns) ? payload.nouns : [];
@@ -61,12 +80,16 @@ async function loadWordData() {
     if (dgResp.ok) {
       const dgData = await dgResp.json();
       if (dgData.nouns?.length) {
-        DUAL_GENDER_WORDS = new Set(dgData.nouns.map(n => n.word));
+        const dualSensePairs = dgData.nouns.map(({ word, rank, genders = [] }) => [word, genders.map(genderEntry => buildDualGenderEntry(word, rank, genderEntry))]);
+        const dualEntries = dualSensePairs.flatMap(([, entries]) => entries);
+        DUAL_GENDER_WORDS = new Set(dualSensePairs.map(([word]) => word));
+        DUAL_GENDER_SENSES = new Map(dualSensePairs);
+        DUAL_GENDER_INDEX = new Map(dualEntries.map(entry => [getNounEntryId(entry), entry]));
         BUILTIN_DECKS.push({
           id: "__dual_gender__",
           name: "Dual-Gender Nouns",
           description: dgData.meta?.description || "Nouns whose meaning changes with the article",
-          nouns: dgData.nouns.map(n => n.word).filter(w => NOUN_INDEX.has(w)),
+          nouns: dualEntries.map(entry => getNounEntryId(entry)),
           builtin: true
         });
       }
@@ -75,7 +98,15 @@ async function loadWordData() {
 }
 
 function getNounByName(name) {
-  return NOUN_INDEX.get(name) || null;
+  return DUAL_GENDER_INDEX.get(name) || NOUN_INDEX.get(name) || null;
+}
+
+function getDeckEntriesByName(name) {
+  if (DUAL_GENDER_INDEX.has(name)) return [DUAL_GENDER_INDEX.get(name)];
+  const dualEntries = DUAL_GENDER_SENSES.get(name);
+  if (dualEntries?.length) return dualEntries;
+  const noun = getNounByName(name);
+  return noun ? [noun] : [];
 }
 
 function shouldShowSenseHint(noun) {
@@ -259,7 +290,8 @@ function calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, diffi
 // SRS: build a weighted queue — struggling nouns appear more, mastered less
 function buildSrsQueue(nouns, nounStats, maxSize) {
   const weighted = nouns.map(n => {
-    const s = nounStats[n[0]];
+    const nounId = getNounEntryId(n);
+    const s = nounStats[nounId] || nounStats[n[0]];
     if (!s) return { noun: n, weight: 5 }; // never seen = high priority
     const ratio = s.attempts > 0 ? s.correct / s.attempts : 0;
     const cStreak = s.consecutiveCorrect || 0;
@@ -277,8 +309,9 @@ function buildSrsQueue(nouns, nounStats, maxSize) {
   const shuffled = shuffleArray(pool);
   const seen = new Set(); const result = [];
   for (const n of shuffled) {
-    if (seen.has(n[0])) continue;
-    seen.add(n[0]); result.push(n);
+    const nounId = getNounEntryId(n);
+    if (seen.has(nounId)) continue;
+    seen.add(nounId); result.push(n);
     if (result.length >= maxSize) break;
   }
   return result;
@@ -490,13 +523,13 @@ function shuffleMatchingMeanings(batch, wordType) {
   if (wordType === "adjectives") {
     return shuffleArray(batch.map(([word, english]) => ({ id: word, label: getMeaningLabel(english) })));
   }
-  return shuffleArray(batch.map(([word,,,english]) => ({ id: word, label: getMeaningLabel(english) })));
+  return shuffleArray(batch.map(noun => ({ id: getNounEntryId(noun), label: getMeaningLabel(noun[3]) })));
 }
 
 function dedupeMistakesByNoun(mistakes) {
   const latestByNoun = new Map();
   mistakes.forEach(mistake => {
-    latestByNoun.set(mistake.noun, mistake);
+    latestByNoun.set(getMistakeEntryId(mistake), mistake);
   });
   return [...latestByNoun.values()];
 }
@@ -646,19 +679,20 @@ function GermanNounGame() {
       setActiveDeck(null);
     } else if (gMode === "weakest") {
       const weakNames = getWeakestNouns(userData.nounStats, 30);
-      nouns = weakNames.map(name => getNounByName(name)).filter(Boolean);
+      nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
       if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
       setActiveDeck(null);
     } else if (deckId) {
       const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
       if (!deck) return;
-      nouns = deck.nouns.map(name => getNounByName(name)).filter(Boolean);
+      nouns = deck.nouns.flatMap(name => getDeckEntriesByName(name));
       setActiveDeck(deckId);
     } else {
       const tierNouns = getNounsForTier(t);
       const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
+      const expanded = unique.flatMap(noun => getDeckEntriesByName(noun[0]));
       // Use SRS weighting for classic mode
-      nouns = gMode === "classic" ? buildSrsQueue(unique, userData.nounStats, unique.length) : shuffleArray(unique);
+      nouns = gMode === "classic" ? buildSrsQueue(expanded, userData.nounStats, expanded.length) : shuffleArray(expanded);
       setActiveDeck(null);
     }
     if (!nouns.length) return;
@@ -753,10 +787,11 @@ function GermanNounGame() {
   const handleTimeout = useCallback(() => {
     if (!currentNoun) return;
     const [s,a,p,e] = currentNoun;
+    const entryId = getNounEntryId(currentNoun);
     setStreak(0);setTotalAnswered(pr=>pr+1);
     setFeedback({correct:false,article:a,plural:p,noun:s,english:e});
-    setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER}]);
-    sessionAnswersRef.current.push({ noun: s, correct: false });
+    setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER}]);
+    sessionAnswersRef.current.push({ noun: entryId, correct: false });
     setPhase("feedback");
   }, [currentNoun]);
 
@@ -791,6 +826,7 @@ function GermanNounGame() {
     if(!currentNoun||phase!=="question") return;
     clearInterval(timerRef.current);
     const [s,a,p,e]=currentNoun; let correct=true;
+    const entryId = getNounEntryId(currentNoun);
 
     if (gameMode === "reverse") {
       const typed = (typedReverse||"").trim();
@@ -822,7 +858,7 @@ function GermanNounGame() {
       } else {
         setStreak(0);
       }
-      setWrongAnswers(pr=>[...pr,{noun:s,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
+      setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
       // Survival mode: lose a life
       if (gameMode === "survival") {
         setLives(prev => {
@@ -831,7 +867,7 @@ function GermanNounGame() {
         });
       }
     }
-    sessionAnswersRef.current.push({ noun: s, correct });
+    sessionAnswersRef.current.push({ noun: entryId, correct });
     setTotalAnswered(pr=>pr+1);setFeedback({correct,article:a,plural:p,noun:s,english:e});setPhase("feedback");
   }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, userData.activePerks, usedSecondChance, usedStreakShield]);
 
@@ -848,15 +884,16 @@ function GermanNounGame() {
   }, [mode,phase,articleChoice,checkAnswer]);
 
   const resolveMatchingPair = useCallback((wordId, meaningId) => {
-    const item = matchingBatch.find(([word]) => word === wordId);
+    const isAdj = matchingWordType === "adjectives";
+    const item = matchingBatch.find(entry => (isAdj ? entry[0] : getNounEntryId(entry)) === wordId);
     const chosenMeaning = matchingRightItems.find(item => item.id === meaningId);
     if (!item || !chosenMeaning) return;
 
-    const isAdj = matchingWordType === "adjectives";
     const word = item[0];
     const article = isAdj ? "" : item[1];
     const plural = isAdj ? "" : item[2];
     const english = isAdj ? item[1] : item[3];
+    const entryId = isAdj ? word : getNounEntryId(item);
     const correct = wordId === meaningId;
     const perks = userData.activePerks || [];
     const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
@@ -871,8 +908,8 @@ function GermanNounGame() {
         setBestStreak(best => Math.max(best, next));
         return next;
       });
-      sessionAnswersRef.current.push({ noun: word, correct: true });
-      setMatchingMatchedIds(prev => [...prev, word]);
+      sessionAnswersRef.current.push({ noun: entryId, correct: true });
+      setMatchingMatchedIds(prev => [...prev, entryId]);
       setMatchingSelectedWord(null);
       setMatchingSelectedMeaning(null);
       setMatchingMismatch(null);
@@ -885,9 +922,10 @@ function GermanNounGame() {
       setStreak(0);
     }
 
-    sessionAnswersRef.current.push({ noun: word, correct: false });
+    sessionAnswersRef.current.push({ noun: entryId, correct: false });
     setWrongAnswers(prev => [...prev, {
       noun: word,
+      entryId,
       article,
       plural,
       english,
@@ -971,13 +1009,16 @@ function GermanNounGame() {
   const matchingBatchNumber = gameMode === "matching" ? Math.floor(currentIndex / MATCHING_BATCH_SIZE) + 1 : 0;
   const matchingBatchTotal = gameMode === "matching" ? Math.ceil(queue.length / MATCHING_BATCH_SIZE) : 0;
   const showSenseHint = shouldShowSenseHint(currentNoun);
+  const selectedWordLabel = matchingSelectedWord
+    ? matchingBatch.find(entry => ((matchingWordType === "adjectives" ? entry[0] : getNounEntryId(entry)) === matchingSelectedWord))?.[0]
+    : "";
   const selectedMeaningLabel = matchingSelectedMeaning
     ? matchingRightItems.find(item => item.id === matchingSelectedMeaning)?.label
     : "";
   const matchingPrompt = matchingMismatch
     ? "Wrong pair. Try again."
     : matchingSelectedWord
-      ? `Choose the meaning for ${matchingSelectedWord}.`
+      ? `Choose the meaning for ${selectedWordLabel}.`
       : matchingSelectedMeaning
         ? `Choose the ${matchingWordType==="adjectives"?"adjective":"noun"} for ${selectedMeaningLabel}.`
         : `Match all ${matchingBatch.length} pairs to continue.`;
@@ -988,7 +1029,7 @@ function GermanNounGame() {
   }}/>;
   if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
-    const nd=dedupeMistakesByNoun(wrongAnswers).map(w=>getNounByName(w.noun)).filter(Boolean);
+    const nd=dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
     sessionAnswersRef.current = [];
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
     setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
@@ -1046,15 +1087,16 @@ function GermanNounGame() {
                     {matchingBatch.map((entry) => {
                       const word = entry[0];
                       const isAdj = matchingWordType === "adjectives";
+                      const wordId = isAdj ? word : getNounEntryId(entry);
                       const article = isAdj ? "" : entry[1];
                       const plural = isAdj ? "" : entry[2];
-                      const matched = matchingMatchedIds.includes(word);
-                      const selected = matchingSelectedWord === word;
-                      const mismatched = matchingMismatch?.wordId === word;
+                      const matched = matchingMatchedIds.includes(wordId);
+                      const selected = matchingSelectedWord === wordId;
+                      const mismatched = matchingMismatch?.wordId === wordId;
                       return (
                         <button
-                          key={word}
-                          onClick={() => handleMatchingWordSelect(word)}
+                          key={wordId}
+                          onClick={() => handleMatchingWordSelect(wordId)}
                           disabled={matched}
                           style={{
                             ...S.matchingItemBtn,
@@ -1701,7 +1743,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
               style={{...S.pluralInput,fontSize:13,textAlign:"left",flex:1,padding:"8px 12px"}}/>
             <button onClick={()=>{
               const name = deckName.trim() || `Mistakes ${new Date().toLocaleDateString()}`;
-              onSaveDeck(name, reviewWrongAnswers.map(w=>w.noun));
+              onSaveDeck(name, reviewWrongAnswers.map(w=>w.entryId || w.noun));
               setDeckSaved(true);
             }} style={{...S.submitBtn,fontSize:13,padding:"8px 16px"}}>Save</button>
           </div>
