@@ -155,11 +155,11 @@ function getTitle(level) { let t = TITLES[0]; for (const r of TITLES) if (level 
 
 // Perks
 const PERKS = [
-  { id: "streak_shield", name: "Streak Shield", desc: "First miss won't break your streak", cost: 50, icon: "🛡️", unlockLevel: 3 },
-  { id: "time_freeze", name: "Time Freeze", desc: "+5 seconds per question", cost: 40, icon: "❄️", unlockLevel: 5 },
-  { id: "double_xp", name: "Double XP", desc: "2× XP this session", cost: 80, icon: "⚡", unlockLevel: 8 },
-  { id: "score_boost", name: "Score Boost", desc: "1.5× score multiplier", cost: 50, icon: "🚀", unlockLevel: 6 },
-  { id: "second_chance", name: "Second Chance", desc: "One free retry per session", cost: 60, icon: "🔄", unlockLevel: 10 },
+  { id: "streak_shield", name: "Streak Shield", desc: "First miss won't break your streak", cost: 50, icon: "🛡️" },
+  { id: "time_freeze", name: "Time Freeze", desc: "+5 seconds per question", cost: 40, icon: "❄️" },
+  { id: "double_xp", name: "Double XP", desc: "2× XP this session", cost: 80, icon: "⚡" },
+  { id: "score_boost", name: "Score Boost", desc: "1.5× score multiplier", cost: 50, icon: "🚀" },
+  { id: "second_chance", name: "Second Chance", desc: "One free retry per session", cost: 60, icon: "🔄" },
 ];
 
 // Achievements
@@ -270,11 +270,11 @@ function updateDailyStreak(streak) {
 // Game modes
 const GAME_MODES = [
   { id: "classic", name: "Classic", desc: "Standard practice", icon: "📖" },
-  { id: "timed", name: "Time Attack", desc: "60 seconds to score", icon: "⏱️", unlockLevel: 2 },
-  { id: "survival", name: "Survival", desc: "3 lives, no timer", icon: "❤️", unlockLevel: 4 },
-  { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔀", unlockLevel: 3 },
-  { id: "matching", name: "Matching", desc: "Pair nouns and meanings", icon: "🧩", unlockLevel: 3 },
-  { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯", unlockLevel: 2 },
+  { id: "timed", name: "Time Attack", desc: "60 seconds to score", icon: "⏱️" },
+  { id: "survival", name: "Survival", desc: "3 lives, no timer", icon: "❤️" },
+  { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔀" },
+  { id: "matching", name: "Matching", desc: "Pair nouns and meanings", icon: "🧩" },
+  { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯" },
 ];
 
 const NO_ANSWER = "__unanswered__";
@@ -577,7 +577,7 @@ function GermanNounGame() {
 
   const buyPerk = useCallback((perkId) => {
     const perk = PERKS.find(p => p.id === perkId);
-    if (!perk || userData.coins < perk.cost || userData.level < perk.unlockLevel) return false;
+    if (!perk || userData.coins < perk.cost) return false;
     const newData = { ...userData, coins: userData.coins - perk.cost, activePerks: [...(userData.activePerks||[]), perkId] };
     persistData(newData);
     return true;
@@ -650,16 +650,7 @@ function GermanNounGame() {
       const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
       const newSessions = (prev.totalSessions || 0) + 1;
 
-      // Check tier unlock: if accuracy >= 80% and tier played, unlock next tier
       const acc = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
-      const unlockedTiers = [...(prev.unlockedTiers || [100])];
-      if (acc >= 0.8 && totalAnswered >= 10) {
-        const tierIdx = TIER_OPTIONS.findIndex(to => to.value === tier);
-        if (tierIdx >= 0 && tierIdx < TIER_OPTIONS.length - 1) {
-          const nextTier = TIER_OPTIONS[tierIdx + 1].value;
-          if (!unlockedTiers.includes(nextTier)) unlockedTiers.push(nextTier);
-        }
-      }
 
       // Session-based achievements
       let sessionAch = [];
@@ -671,7 +662,7 @@ function GermanNounGame() {
       if (gameMode === "survival" && totalAnswered >= 30) sessionAch.push("survivor");
 
       const updated = { ...prev, xp: newXp, level: newLevel, coins: newCoins, dailyStreak: newStreak,
-        totalSessions: newSessions, unlockedTiers, activePerks: [] }; // perks consumed after session
+        totalSessions: newSessions, activePerks: [] }; // perks consumed after session
       const allNew = checkAchievements(updated, sessionAch.filter(a => !(prev.achievements||[]).includes(a)));
       updated.achievements = [...new Set([...(prev.achievements || []), ...allNew])];
       setNewAchievements(allNew.filter(a => !(prev.achievements||[]).includes(a)));
@@ -1264,19 +1255,17 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:10}}>
           {PERKS.map(perk=>{
-            const locked = (userData.level||1) < perk.unlockLevel;
             const active = (userData.activePerks||[]).includes(perk.id);
-            const canBuy = !locked && !active && (userData.coins||0) >= perk.cost;
+            const canBuy = !active && (userData.coins||0) >= perk.cost;
             return (
-              <div key={perk.id} style={{...S.settingsPanel,opacity:locked?0.4:1,borderColor:active?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)"}}>
+              <div key={perk.id} style={{...S.settingsPanel,borderColor:active?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                   <div>
                     <span style={{fontSize:18,marginRight:6}}>{perk.icon}</span>
                     <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0"}}>{perk.name}</span>
                   </div>
-                  {locked&&<span style={{fontSize:11,color:"#64748b"}}>Unlock at Lv.{perk.unlockLevel}</span>}
                   {active&&<span style={{fontSize:11,color:"#10B981",fontWeight:700}}>ACTIVE</span>}
-                  {!locked&&!active&&(
+                  {!active&&(
                     <button onClick={()=>onBuyPerk(perk.id)} disabled={!canBuy}
                       style={{...S.submitBtn,fontSize:12,padding:"4px 14px",opacity:canBuy?1:0.4}}>
                       {perk.cost} coins
@@ -1382,14 +1371,13 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         <label style={S.menuLabel}>Game Mode</label>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
           {GAME_MODES.map(gm=>{
-            const locked = gm.unlockLevel && (userData.level||1) < gm.unlockLevel;
             const selected = selectedGameMode===gm.id;
             return (
-              <button key={gm.id} disabled={locked} onClick={()=>setSelectedGameMode(gm.id)}
-                style={{...S.modeCard,opacity:locked?0.35:1,borderColor:selected?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent"}}>
+              <button key={gm.id} onClick={()=>setSelectedGameMode(gm.id)}
+                style={{...S.modeCard,borderColor:selected?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent"}}>
                 <span style={{fontSize:18}}>{gm.icon}</span>
                 <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{gm.name}</span>
-                <span style={{fontSize:10,color:"#64748b"}}>{locked?`Unlock Lv.${gm.unlockLevel}`:gm.desc}</span>
+                <span style={{fontSize:10,color:"#64748b"}}>{gm.desc}</span>
               </button>
             );
           })}
@@ -1416,15 +1404,12 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-            {TIER_OPTIONS.map(t=>{
-              const locked = !(userData.unlockedTiers||[100]).includes(t.value) && t.value > 100;
-              return (
-                <button key={t.value} disabled={locked} onClick={()=>setTier(t.value)} style={{...S.tierBtn,opacity:locked?0.35:1,borderColor:tier===t.value&&!locked?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&!locked?"rgba(139,92,246,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:locked?"#475569":"#e2e8f0"}}>{locked?"🔒 ":""}{t.label}</span>
-                  <span style={{fontSize:10,color:"#64748b"}}>{locked?"80%+ to unlock":t.desc}</span>
+            {TIER_OPTIONS.map(t=>(
+                <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{t.label}</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>{t.desc}</span>
                 </button>
-              );
-            })}
+            ))}
           </div>
         </div>
       )}
