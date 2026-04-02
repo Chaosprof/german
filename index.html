@@ -30,6 +30,7 @@ let NOUN_INDEX = new Map();
 let EXPLANATIONS = new Map();
 let WORDS_META = {};
 let BUILTIN_DECKS = [];
+let DUAL_GENDER_WORDS = new Set();
 let ADJECTIVES = [];  // [word, english, rank]
 
 function hydrateWordData(payload) {
@@ -60,6 +61,7 @@ async function loadWordData() {
     if (dgResp.ok) {
       const dgData = await dgResp.json();
       if (dgData.nouns?.length) {
+        DUAL_GENDER_WORDS = new Set(dgData.nouns.map(n => n.word));
         BUILTIN_DECKS.push({
           id: "__dual_gender__",
           name: "Dual-Gender Nouns",
@@ -74,6 +76,10 @@ async function loadWordData() {
 
 function getNounByName(name) {
   return NOUN_INDEX.get(name) || null;
+}
+
+function shouldShowSenseHint(noun) {
+  return !!noun?.[0] && !!noun?.[3] && DUAL_GENDER_WORDS.has(noun[0]);
 }
 
 function getAdjectivesForTier(tier) {
@@ -964,6 +970,7 @@ function GermanNounGame() {
   const matchingProgress = Math.min(currentIndex + matchingMatchedIds.length, queue.length);
   const matchingBatchNumber = gameMode === "matching" ? Math.floor(currentIndex / MATCHING_BATCH_SIZE) + 1 : 0;
   const matchingBatchTotal = gameMode === "matching" ? Math.ceil(queue.length / MATCHING_BATCH_SIZE) : 0;
+  const showSenseHint = shouldShowSenseHint(currentNoun);
   const selectedMeaningLabel = matchingSelectedMeaning
     ? matchingRightItems.find(item => item.id === matchingSelectedMeaning)?.label
     : "";
@@ -1025,8 +1032,9 @@ function GermanNounGame() {
           ):(
             <div style={S.nounDisplay}>
               <span style={S.nounWord}>{currentNoun[0]}</span>
-              {showHint&&<span style={S.hintText}>({currentNoun[3]})</span>}
-              {!showHint&&phase==="question"&&<button onClick={()=>setShowHint(true)} style={S.hintBtn}>hint</button>}
+              {showSenseHint&&<span style={S.nounSense}>{getMeaningLabel(currentNoun[3])}</span>}
+              {showHint&&!showSenseHint&&<span style={S.hintText}>({currentNoun[3]})</span>}
+              {!showHint&&!showSenseHint&&phase==="question"&&<button onClick={()=>setShowHint(true)} style={S.hintBtn}>hint</button>}
             </div>
           )}
           {gameMode==="matching"&&phase==="question"&&(
@@ -1728,6 +1736,7 @@ const S = {
   card:{width:"100%",maxWidth:560,margin:"8px auto",padding:"32px 24px 24px",borderRadius:16,border:"2px solid transparent",transition:"all 0.15s ease",display:"flex",flexDirection:"column",alignItems:"center",minHeight:280,boxSizing:"border-box"},
   nounDisplay:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,marginBottom:28},
   nounWord:{fontSize:44,fontWeight:900,letterSpacing:"-1px",color:"#f1f5f9",textAlign:"center",lineHeight:1.1,wordBreak:"break-word"},
+  nounSense:{fontSize:13,color:"#94a3b8",textAlign:"center",lineHeight:1.45,maxWidth:320},
   hintText:{fontSize:15,color:"#64748b",fontStyle:"italic"},
   hintBtn:{background:"none",border:"1px solid rgba(255,255,255,0.1)",color:"#64748b",fontSize:11,padding:"3px 10px",borderRadius:6,cursor:"pointer",textTransform:"uppercase",letterSpacing:1},
   matchingBoard:{width:"100%",display:"flex",gap:12,flexWrap:"wrap",alignItems:"flex-start"},
