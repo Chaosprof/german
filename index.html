@@ -276,6 +276,7 @@ function calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, diffi
   if (difficulty === "normal") xp = Math.floor(xp * 1.25);
   if (difficulty === "hard") xp = Math.floor(xp * 1.5);
   if (gameMode === "timed") xp = Math.floor(xp * 1.3);
+  if (gameMode === "speed_sort") xp = Math.floor(xp * 1.25);
   if (gameMode === "survival") xp = Math.floor(xp * 1.4);
   if (activePerks.includes("double_xp")) xp *= 2;
 
@@ -342,8 +343,9 @@ function updateDailyStreak(streak) {
 const GAME_MODES = [
   { id: "classic", name: "Classic", desc: "Standard practice", icon: "📖" },
   { id: "timed", name: "Time Attack", desc: "60 seconds to score", icon: "⏱️" },
+  { id: "speed_sort", name: "Speed Sort", desc: "Sort nouns into der / die / das", icon: "⚡" },
   { id: "survival", name: "Survival", desc: "3 lives, no timer", icon: "❤️" },
-  { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔀" },
+  { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔄" },
   { id: "matching", name: "Matching", desc: "Pair nouns and meanings", icon: "🧩" },
   { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯" },
 ];
@@ -351,6 +353,8 @@ const GAME_MODES = [
 const NO_ANSWER = "__unanswered__";
 const NO_PLURAL_LABEL = "kein Plural";
 const MATCHING_BATCH_SIZE = 10;
+const TIMED_CHALLENGE_DURATION = 60;
+const SPEED_SORT_DURATION = 75;
 
 const PLURAL_FAMILY_PRIORITY = {
   none: ["same", "e", "en", "s"],
@@ -565,7 +569,7 @@ function GermanNounGame() {
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
-  const [gameMode, setGameMode] = useState("classic"); // classic|timed|survival|reverse|weakest
+  const [gameMode, setGameMode] = useState("classic"); // classic|timed|speed_sort|survival|reverse|matching|weakest
   const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives
   const [lives, setLives] = useState(3);
   const [globalTimer, setGlobalTimer] = useState(60);
@@ -582,6 +586,15 @@ function GermanNounGame() {
   const matchingBatch = useMemo(() => (
     gameMode === "matching" ? queue.slice(currentIndex, currentIndex + MATCHING_BATCH_SIZE) : []
   ), [gameMode, queue, currentIndex]);
+  const speedSortUpcoming = useMemo(() => {
+    if (gameMode !== "speed_sort" || queue.length <= 1) return [];
+    const preview = [];
+    const count = Math.min(4, queue.length - 1);
+    for (let offset = 1; offset <= count; offset++) {
+      preview.push(queue[(currentIndex + offset) % queue.length]);
+    }
+    return preview;
+  }, [gameMode, queue, currentIndex]);
   const [matchingRightItems, setMatchingRightItems] = useState([]);
   const [matchingMatchedIds, setMatchingMatchedIds] = useState([]);
   const [matchingSelectedWord, setMatchingSelectedWord] = useState(null);
@@ -697,8 +710,8 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    const effectiveMode = gMode === "reverse" || gMode === "matching" ? MODES.ARTICLE : m;
-    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" ? "easy" : d;
+    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" ? "easy" : d;
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
@@ -712,7 +725,8 @@ function GermanNounGame() {
     setMatchingSelectedMeaning(null);
     setMatchingMismatch(null);
     if (gMode === "survival") { setLives(3); setTimeLeft(0); }
-    else if (gMode === "timed") { setGlobalTimer(60); setTimeLeft(0); }
+    else if (gMode === "timed") { setGlobalTimer(TIMED_CHALLENGE_DURATION); setTimeLeft(0); }
+    else if (gMode === "speed_sort") { setGlobalTimer(SPEED_SORT_DURATION); setTimeLeft(0); }
     else { setTimeLeft(effectiveDifficulty==="easy"?0:effectiveDifficulty==="hard"?8:15); }
     setScreen("game");
   }, [userData]);
@@ -766,7 +780,7 @@ function GermanNounGame() {
 
   // Per-question timer (classic/reverse with timer)
   useEffect(() => {
-    if (screen!=="game"||phase!=="question"||difficulty==="easy"||gameMode==="timed"||gameMode==="survival") return;
+    if (screen!=="game"||phase!=="question"||difficulty==="easy"||gameMode==="timed"||gameMode==="speed_sort"||gameMode==="survival") return;
     const tl = (userData.activePerks||[]).includes("time_freeze") ? timeLimit + 5 : timeLimit;
     setTimeLeft(tl);
     timerRef.current = setInterval(() => {
@@ -775,9 +789,9 @@ function GermanNounGame() {
     return () => clearInterval(timerRef.current);
   }, [screen, phase, currentIndex, difficulty, gameMode]);
 
-  // Global timer for timed challenge
+  // Global timer for timed modes
   useEffect(() => {
-    if (screen!=="game"||gameMode!=="timed") return;
+    if (screen!=="game"||(gameMode!=="timed"&&gameMode!=="speed_sort")) return;
     globalTimerRef.current = setInterval(() => {
       setGlobalTimer(p => { if(p<=1){clearInterval(globalTimerRef.current);endSession();return 0;} return p-1; });
     }, 1000);
@@ -803,13 +817,13 @@ function GermanNounGame() {
     // Second chance: retry same question
     if (feedback?.secondChance) {
       setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
-      if (gameMode !== "timed" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
+      if (gameMode !== "timed" && gameMode !== "speed_sort" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
       return;
     }
     const ni=currentIndex+1;
     if(ni>=queue.length){
-      if (gameMode === "timed") {
-        // Loop for timed mode
+      if (gameMode === "timed" || gameMode === "speed_sort") {
+        // Loop for timed/sort modes
         setQueue(prev => shuffleArray([...prev]));
         setCurrentIndex(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
         return;
@@ -819,7 +833,7 @@ function GermanNounGame() {
       endSession();return;
     }
     setCurrentIndex(ni);setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
-    if (gameMode !== "timed" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
+    if (gameMode !== "timed" && gameMode !== "speed_sort" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
   }, [currentIndex, queue.length, timeLimit, gameMode, difficulty, feedback]);
 
   const checkAnswer = useCallback((chosenArt, chosenPlural, typedReverse) => {
@@ -839,37 +853,49 @@ function GermanNounGame() {
     const perks = userData.activePerks || [];
     const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
 
-    if(correct){
+    const registerCorrect = () => {
       const sb=Math.floor(streak/5)*10, tb=difficulty!=="easy"?Math.floor(timeLeft*2):0;
       setScore(pr=>pr+Math.floor((100+sb+tb)*scoreMultiplier));
-      setStreak(pr=>{const n=pr+1;setBestStreak(b=>Math.max(b,n));return n;});setTotalCorrect(pr=>pr+1);
-    } else {
-      // Second chance perk
+      setStreak(pr=>{const n=pr+1;setBestStreak(b=>Math.max(b,n));return n;});
+      setTotalCorrect(pr=>pr+1);
+    };
+
+    const registerWrong = () => {
       if (perks.includes("second_chance") && !usedSecondChance) {
         setUsedSecondChance(true);
         setFeedback({correct:false,article:a,plural:p,noun:s,english:e,secondChance:true});
         setPhase("feedback");
-        return; // don't record, let them retry
+        return false;
       }
-      // Streak shield perk
       if (perks.includes("streak_shield") && !usedStreakShield && streak > 0) {
         setUsedStreakShield(true);
-        // Don't reset streak
       } else {
         setStreak(0);
       }
       setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
-      // Survival mode: lose a life
       if (gameMode === "survival") {
         setLives(prev => {
           if (prev <= 1) { setTimeout(() => endSession(), 700); return 0; }
           return prev - 1;
         });
       }
+      return true;
+    };
+
+    if (gameMode === "speed_sort") {
+      if (correct) registerCorrect();
+      else if (!registerWrong()) return;
+      sessionAnswersRef.current.push({ noun: entryId, correct });
+      setTotalAnswered(pr=>pr+1);
+      nextQuestion();
+      return;
     }
+
+    if(correct) registerCorrect();
+    else if (!registerWrong()) return;
     sessionAnswersRef.current.push({ noun: entryId, correct });
     setTotalAnswered(pr=>pr+1);setFeedback({correct,article:a,plural:p,noun:s,english:e});setPhase("feedback");
-  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, userData.activePerks, usedSecondChance, usedStreakShield]);
+  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, userData.activePerks, usedSecondChance, usedStreakShield, nextQuestion, endSession]);
 
   const handleArticle = useCallback((art) => {
     if(phase!=="question") return;
@@ -986,7 +1012,7 @@ function GermanNounGame() {
     if(screen!=="game"||phase!=="question"||gameMode==="matching") return;
     const h=(ev)=>{
       if(ev.target.tagName==="INPUT")return;
-      if(ev.key==="h"){setShowHint(true);return;}
+      if(ev.key==="h"){if(gameMode!=="speed_sort") setShowHint(true);return;}
       const choiceIndex = ["1","2","3"].indexOf(ev.key);
       if(choiceIndex===-1)return;
       if(mode===MODES.ARTICLE){handleArticle(["der","die","das"][choiceIndex]);return;}
@@ -1022,6 +1048,7 @@ function GermanNounGame() {
       : matchingSelectedMeaning
         ? `Choose the ${matchingWordType==="adjectives"?"adjective":"noun"} for ${selectedMeaningLabel}.`
         : `Match all ${matchingBatch.length} pairs to continue.`;
+  const timedModeDuration = gameMode === "speed_sort" ? SPEED_SORT_DURATION : TIMED_CHALLENGE_DURATION;
 
   if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
@@ -1031,8 +1058,11 @@ function GermanNounGame() {
     if(!wrongAnswers.length) return;
     const nd=dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
     sessionAnswersRef.current = [];
+    if (gameMode === "survival") setLives(3);
+    if (gameMode === "timed") setGlobalTimer(TIMED_CHALLENGE_DURATION);
+    if (gameMode === "speed_sort") setGlobalTimer(SPEED_SORT_DURATION);
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
-    setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(timeLimit);setScreen("game");
+    setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(gameMode==="timed"||gameMode==="speed_sort"||gameMode==="survival"?0:timeLimit);setScreen("game");
   }}/>;
 
   return (
@@ -1044,13 +1074,13 @@ function GermanNounGame() {
         </div>
         <div style={{textAlign:"right"}}>
           {gameMode==="survival"&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
-          {gameMode==="timed"&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
+          {(gameMode==="timed"||gameMode==="speed_sort")&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
           {gameMode==="matching"&&<span style={S.progressText}>{matchingProgress} / {queue.length}</span>}
-          {gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="matching"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
+          {gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&gameMode!=="matching"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
         </div>
       </div>
-      {difficulty!=="easy"&&gameMode!=="timed"&&gameMode!=="survival"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
-      {gameMode==="timed"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/60)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
+      {difficulty!=="easy"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&gameMode!=="survival"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
+      {(gameMode==="timed"||gameMode==="speed_sort")&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/timedModeDuration)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
       <div style={S.statsRow}>
         {[["Accuracy",`${accuracy}%`,"#cbd5e1"],["Best",bestStreak,"#cbd5e1"],["Correct",totalCorrect,"#10B981"],["Wrong",wrongAnswers.length,"#f87171"]].map(([l,v,c])=>
           <div key={l} style={S.statItem}><span style={{...S.statValue,color:c}}>{v}</span><span style={S.statLabel}>{l}</span></div>
@@ -1069,6 +1099,13 @@ function GermanNounGame() {
               <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Translate to German</span>
               <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9"}}>{currentNoun[3].split("/")[0]}</span>
               <span style={{fontSize:14,color:ARTICLE_COLORS[currentNoun[1]],fontWeight:700}}>({currentNoun[1]})</span>
+            </div>
+          ):gameMode==="speed_sort"?(
+            <div style={S.nounDisplay}>
+              <span style={S.speedSortEyebrow}>Speed Sort</span>
+              <span style={S.nounWord}>{currentNoun[0]}</span>
+              {showSenseHint&&<span style={S.nounSense}>{getMeaningLabel(currentNoun[3])}</span>}
+              <span style={S.speedSortPrompt}>Drop it into the right article lane.</span>
             </div>
           ):(
             <div style={S.nounDisplay}>
@@ -1169,7 +1206,30 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
+          {gameMode==="speed_sort"&&phase==="question"&&(
+            <>
+              <div style={S.speedSortLanes}>
+                {["der","die","das"].map((art, idx)=>(
+                  <button key={art} onClick={()=>handleArticle(art)} style={{...S.speedSortLane,borderColor:ARTICLE_COLORS[art],background:`linear-gradient(180deg, ${ARTICLE_COLORS[art]}22, rgba(255,255,255,0.03))`}}>
+                    <span style={S.speedSortLaneKey}>{idx+1}</span>
+                    <span style={{...S.speedSortLaneMain,color:ARTICLE_COLORS[art]}}>{art}</span>
+                    <span style={S.speedSortLaneSub}>{art==="der"?"masculine lane":art==="die"?"feminine lane":"neuter lane"}</span>
+                  </button>
+                ))}
+              </div>
+              {speedSortUpcoming.length>0&&(
+                <div style={S.speedSortQueue}>
+                  <span style={S.speedSortQueueLabel}>Incoming</span>
+                  <div style={S.speedSortQueueList}>
+                    {speedSortUpcoming.map((noun, idx)=>(
+                      <span key={getNounEntryId(noun)+"-"+idx} style={S.speedSortChip}>{noun[0]}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
             <div style={S.articleRow}>
               {["der","die","das"].map(art=>(
                 <button key={art} onClick={()=>handleArticle(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
@@ -1197,7 +1257,8 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode==="speed_sort"&&phase==="question"&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | sort as many nouns as you can before time runs out</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
         </div>
@@ -1490,6 +1551,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           })}
         </div>
       </div>
+      {selectedGameMode==="speed_sort"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Speed Sort always uses article sorting and a {SPEED_SORT_DURATION}s timer.</div>}
 
       {/* ── Word type for matching ── */}
       {selectedGameMode==="matching"&&(
@@ -1572,7 +1634,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Answer type (hidden for reverse/weakest game modes) ── */}
-      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&(
+      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -1586,7 +1648,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Speed (hidden for timed/survival) ── */}
-      {selectedGameMode!=="timed"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&(
+      {selectedGameMode!=="timed"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Speed</label>
           <div style={{display:"flex",gap:8}}>
@@ -1779,8 +1841,19 @@ const S = {
   nounDisplay:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,marginBottom:28},
   nounWord:{fontSize:44,fontWeight:900,letterSpacing:"-1px",color:"#f1f5f9",textAlign:"center",lineHeight:1.1,wordBreak:"break-word"},
   nounSense:{fontSize:13,color:"#94a3b8",textAlign:"center",lineHeight:1.45,maxWidth:320},
+  speedSortEyebrow:{fontSize:12,color:"#f59e0b",textTransform:"uppercase",letterSpacing:2,fontWeight:800},
+  speedSortPrompt:{fontSize:13,color:"#94a3b8",textAlign:"center"},
   hintText:{fontSize:15,color:"#64748b",fontStyle:"italic"},
   hintBtn:{background:"none",border:"1px solid rgba(255,255,255,0.1)",color:"#64748b",fontSize:11,padding:"3px 10px",borderRadius:6,cursor:"pointer",textTransform:"uppercase",letterSpacing:1},
+  speedSortLanes:{width:"100%",display:"grid",gridTemplateColumns:"repeat(3, minmax(0, 1fr))",gap:10,marginBottom:14},
+  speedSortLane:{minHeight:120,border:"2px solid",borderRadius:14,padding:"14px 10px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,cursor:"pointer",fontFamily:"inherit",background:"rgba(255,255,255,0.03)",transition:"transform 0.12s ease, border-color 0.12s ease"},
+  speedSortLaneKey:{width:26,height:26,borderRadius:999,border:"1px solid rgba(255,255,255,0.18)",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#cbd5e1"},
+  speedSortLaneMain:{fontSize:30,fontWeight:900,letterSpacing:"-1px"},
+  speedSortLaneSub:{fontSize:10,color:"#cbd5e1",textTransform:"uppercase",letterSpacing:1.2,textAlign:"center"},
+  speedSortQueue:{width:"100%",display:"flex",flexDirection:"column",gap:8},
+  speedSortQueueLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:700},
+  speedSortQueueList:{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center"},
+  speedSortChip:{padding:"6px 10px",borderRadius:999,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",fontSize:12,color:"#cbd5e1"},
   matchingBoard:{width:"100%",display:"flex",gap:12,flexWrap:"wrap",alignItems:"flex-start"},
   matchingColumn:{flex:"1 1 220px",display:"flex",flexDirection:"column",gap:8},
   matchingColumnTitle:{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:700},
