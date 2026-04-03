@@ -601,6 +601,27 @@ function GermanNounGame() {
   const [matchingSelectedMeaning, setMatchingSelectedMeaning] = useState(null);
   const [matchingMismatch, setMatchingMismatch] = useState(null);
   const matchingMismatchTimerRef = useRef(null);
+  const matchingCards = useMemo(() => {
+    if (gameMode !== "matching" || matchingRightItems.length !== matchingBatch.length) return [];
+    const isAdj = matchingWordType === "adjectives";
+    const germanCards = matchingBatch.map(entry => ({
+      key: `word:${isAdj ? entry[0] : getNounEntryId(entry)}`,
+      id: isAdj ? entry[0] : getNounEntryId(entry),
+      type: "word",
+      label: entry[0],
+      article: isAdj ? "" : entry[1],
+      plural: isAdj ? "" : entry[2],
+    }));
+    const englishCards = matchingRightItems.map(item => ({
+      key: `meaning:${item.id}`,
+      id: item.id,
+      type: "meaning",
+      label: item.label,
+      article: "",
+      plural: "",
+    }));
+    return shuffleArray([...germanCards, ...englishCards]);
+  }, [gameMode, matchingBatch, matchingRightItems, matchingWordType]);
 
   useEffect(() => {
     if (!getPat()) return;
@@ -1044,10 +1065,10 @@ function GermanNounGame() {
   const matchingPrompt = matchingMismatch
     ? "Wrong pair. Try again."
     : matchingSelectedWord
-      ? `Choose the meaning for ${selectedWordLabel}.`
+      ? `Choose the English match for ${selectedWordLabel}.`
       : matchingSelectedMeaning
-        ? `Choose the ${matchingWordType==="adjectives"?"adjective":"noun"} for ${selectedMeaningLabel}.`
-        : `Match all ${matchingBatch.length} pairs to continue.`;
+        ? `Choose the ${matchingWordType==="adjectives"?"German adjective":"German noun"} for ${selectedMeaningLabel}.`
+        : `Find all ${matchingBatch.length} German-English pairs in the grid.`;
   const timedModeDuration = gameMode === "speed_sort" ? SPEED_SORT_DURATION : TIMED_CHALLENGE_DURATION;
 
   if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onSyncRefresh={()=>{
@@ -1118,73 +1139,47 @@ function GermanNounGame() {
           {gameMode==="matching"&&phase==="question"&&(
             <>
               <div style={S.matchingBoard}>
-                <div style={S.matchingColumn}>
-                  <span style={S.matchingColumnTitle}>German</span>
-                  <div style={S.matchingList}>
-                    {matchingBatch.map((entry) => {
-                      const word = entry[0];
-                      const isAdj = matchingWordType === "adjectives";
-                      const wordId = isAdj ? word : getNounEntryId(entry);
-                      const article = isAdj ? "" : entry[1];
-                      const plural = isAdj ? "" : entry[2];
-                      const matched = matchingMatchedIds.includes(wordId);
-                      const selected = matchingSelectedWord === wordId;
-                      const mismatched = matchingMismatch?.wordId === wordId;
-                      return (
-                        <button
-                          key={wordId}
-                          onClick={() => handleMatchingWordSelect(wordId)}
-                          disabled={matched}
-                          style={{
-                            ...S.matchingItemBtn,
-                            borderColor: matched ? "rgba(16,185,129,0.45)" : mismatched ? "rgba(239,68,68,0.45)" : selected ? "rgba(139,92,246,0.55)" : "rgba(255,255,255,0.12)",
-                            background: matched ? "rgba(16,185,129,0.12)" : mismatched ? "rgba(239,68,68,0.1)" : selected ? "rgba(139,92,246,0.14)" : "rgba(255,255,255,0.04)",
-                            opacity: matched ? 0.72 : 1,
-                            cursor: matched ? "default" : "pointer",
-                          }}
-                        >
+                {matchingCards.map(card => {
+                  const matched = matchingMatchedIds.includes(card.id);
+                  const selected = card.type === "word" ? matchingSelectedWord === card.id : matchingSelectedMeaning === card.id;
+                  const mismatched = card.type === "word" ? matchingMismatch?.wordId === card.id : matchingMismatch?.meaningId === card.id;
+                  const isWord = card.type === "word";
+                  return (
+                    <button
+                      key={card.key}
+                      onClick={() => isWord ? handleMatchingWordSelect(card.id) : handleMatchingMeaningSelect(card.id)}
+                      disabled={matched}
+                      style={{
+                        ...S.matchingItemBtn,
+                        minHeight: isWord ? 96 : 82,
+                        borderColor: matched ? "rgba(16,185,129,0.45)" : mismatched ? "rgba(239,68,68,0.45)" : selected ? "rgba(139,92,246,0.55)" : isWord ? "rgba(59,130,246,0.22)" : "rgba(236,72,153,0.22)",
+                        background: matched ? "rgba(16,185,129,0.12)" : mismatched ? "rgba(239,68,68,0.1)" : selected ? "rgba(139,92,246,0.14)" : isWord ? "linear-gradient(180deg, rgba(59,130,246,0.08), rgba(255,255,255,0.04))" : "linear-gradient(180deg, rgba(236,72,153,0.08), rgba(255,255,255,0.04))",
+                        opacity: matched ? 0.72 : 1,
+                        cursor: matched ? "default" : "pointer",
+                      }}
+                    >
+                      <div style={S.matchingItemStack}>
+                        <span style={{...S.matchingItemBadge, borderColor:isWord?"rgba(59,130,246,0.35)":"rgba(236,72,153,0.35)", color:isWord?"#93c5fd":"#f9a8d4"}}>
+                          {isWord ? "DE" : "EN"}
+                        </span>
+                        {isWord ? (
                           <div style={{display:"flex",flexDirection:"column",gap:4}}>
-                            <span style={{display:"flex",alignItems:"baseline",gap:6}}>
-                              {article&&<span style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>}
-                              <span style={S.matchingItemMain}>{word}</span>
+                            <span style={{display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap"}}>
+                              {card.article&&<span style={{color:ARTICLE_COLORS[card.article],fontWeight:800,fontSize:13}}>{card.article}</span>}
+                              <span style={S.matchingItemMain}>{card.label}</span>
                             </span>
-                            {plural&&<span style={S.matchingItemMeta}>{formatPluralAttempt(plural)}</span>}
+                            {card.plural&&<span style={S.matchingItemMeta}>{formatPluralAttempt(card.plural)}</span>}
                           </div>
-                          <span style={S.matchingItemState}>{matched ? "done" : selected ? "pick" : ""}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div style={S.matchingColumn}>
-                  <span style={S.matchingColumnTitle}>English</span>
-                  <div style={S.matchingList}>
-                    {matchingRightItems.map(item => {
-                      const matched = matchingMatchedIds.includes(item.id);
-                      const selected = matchingSelectedMeaning === item.id;
-                      const mismatched = matchingMismatch?.meaningId === item.id;
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => handleMatchingMeaningSelect(item.id)}
-                          disabled={matched}
-                          style={{
-                            ...S.matchingItemBtn,
-                            borderColor: matched ? "rgba(16,185,129,0.45)" : mismatched ? "rgba(239,68,68,0.45)" : selected ? "rgba(139,92,246,0.55)" : "rgba(255,255,255,0.12)",
-                            background: matched ? "rgba(16,185,129,0.12)" : mismatched ? "rgba(239,68,68,0.1)" : selected ? "rgba(139,92,246,0.14)" : "rgba(255,255,255,0.04)",
-                            opacity: matched ? 0.72 : 1,
-                            cursor: matched ? "default" : "pointer",
-                          }}
-                        >
-                          <span style={S.matchingItemMain}>{item.label}</span>
-                          <span style={S.matchingItemState}>{matched ? "done" : selected ? "pick" : ""}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                        ) : (
+                          <span style={S.matchingItemMain}>{card.label}</span>
+                        )}
+                      </div>
+                      <span style={S.matchingItemState}>{matched ? "done" : selected ? "pick" : ""}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <div style={S.shortcutHint}>This mode runs through the whole selected deck in batches of up to {MATCHING_BATCH_SIZE}.</div>
+              <div style={S.shortcutHint}>Tap one <kbd style={S.kbd}>DE</kbd> card and one <kbd style={S.kbd}>EN</kbd> card to make a pair. This mode runs through the whole selected deck in batches of up to {MATCHING_BATCH_SIZE}.</div>
             </>
           )}
           {phase==="feedback"&&feedback&&(
@@ -1854,11 +1849,10 @@ const S = {
   speedSortQueueLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:700},
   speedSortQueueList:{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center"},
   speedSortChip:{padding:"6px 10px",borderRadius:999,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",fontSize:12,color:"#cbd5e1"},
-  matchingBoard:{width:"100%",display:"flex",gap:12,flexWrap:"wrap",alignItems:"flex-start"},
-  matchingColumn:{flex:"1 1 220px",display:"flex",flexDirection:"column",gap:8},
-  matchingColumnTitle:{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:700},
-  matchingList:{display:"flex",flexDirection:"column",gap:8},
-  matchingItemBtn:{width:"100%",background:"rgba(255,255,255,0.04)",border:"2px solid rgba(255,255,255,0.12)",borderRadius:12,padding:"12px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,color:"#f1f5f9",fontFamily:"inherit",textAlign:"left",transition:"all 0.15s ease"},
+  matchingBoard:{width:"100%",display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,alignItems:"stretch"},
+  matchingItemBtn:{width:"100%",background:"rgba(255,255,255,0.04)",border:"2px solid rgba(255,255,255,0.12)",borderRadius:12,padding:"12px 14px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,color:"#f1f5f9",fontFamily:"inherit",textAlign:"left",transition:"all 0.15s ease"},
+  matchingItemStack:{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start",minWidth:0},
+  matchingItemBadge:{padding:"3px 8px",borderRadius:999,border:"1px solid rgba(255,255,255,0.12)",fontSize:10,fontWeight:800,letterSpacing:1.2,textTransform:"uppercase"},
   matchingItemMain:{fontSize:16,fontWeight:700,color:"#f1f5f9",lineHeight:1.35},
   matchingItemMeta:{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1},
   matchingItemState:{fontSize:10,color:"#94a3b8",textTransform:"uppercase",letterSpacing:1.2,fontWeight:700},
