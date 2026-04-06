@@ -2351,9 +2351,6 @@ function CampaignScreen({ campaignProgress, onSelectChallenge, onBack }) {
       {/* Map */}
       <div style={{position:"relative",width:"100%",maxWidth:420,margin:"0 auto"}}>
         <svg viewBox="35 -5 370 400" style={{width:"100%",height:"auto"}}>
-          {/* Germany outline */}
-          <path d={GERMANY_OUTLINE} fill="rgba(139,92,246,0.04)" stroke="rgba(139,92,246,0.15)" strokeWidth="1.5"/>
-
           {/* Bundesland shapes */}
           {CAMPAIGN_STATES.map(state => {
             const pathD = STATE_PATHS[state.id];
