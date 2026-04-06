@@ -161,6 +161,7 @@ const DEFAULT_DATA = {
   masteredNouns: [],
   totalSessions: 0,
   activePerks: [],
+  campaignProgress: {},
 };
 
 function getPat() { return localStorage.getItem(PAT_KEY) || ""; }
@@ -254,6 +255,244 @@ const ACHIEVEMENTS = [
   { id: "survivor", name: "Survivor", desc: "Survive 30+ nouns in survival mode", icon: "❤️", check: null },
   { id: "tier_unlock_all", name: "Unlocker", desc: "Unlock all vocabulary tiers", icon: "🔓", check: d => TIER_OPTIONS.every(t => d.unlockedTiers.includes(t.value)) },
 ];
+
+// ═══════════════════════════════════════════════════════════════
+// CAMPAIGN MODE — Bundesland map progression
+// ═══════════════════════════════════════════════════════════════
+
+// Challenge types: each has a game mode, answer mode, tier, difficulty, word count, and pass accuracy
+// Stars: >=90% = 3 stars, >=75% = 2 stars, >=60% = 1 star
+function campaignStars(accuracy) {
+  if (accuracy >= 90) return 3;
+  if (accuracy >= 75) return 2;
+  if (accuracy >= 60) return 1;
+  return 0;
+}
+
+const CAMPAIGN_STATES = [
+  // Tier 1 — Northern coast (unlocked from start)
+  {
+    id: "sh", name: "Schleswig-Holstein", abbr: "SH", tier: 1,
+    x: 210, y: 32, unlockRequires: null,
+    challenges: [
+      { id: "sh1", name: "Nordsee Basics", desc: "Article basics with top nouns", gameMode: "classic", mode: "article", tier: 100, difficulty: "easy", count: 15, icon: "1" },
+      { id: "sh2", name: "Kieler Plurale", desc: "Plural forms practice", gameMode: "classic", mode: "plural", tier: 100, difficulty: "easy", count: 15, icon: "2" },
+      { id: "sh3", name: "Watt-Matching", desc: "Match nouns to meanings", gameMode: "matching", mode: "article", tier: 100, difficulty: "easy", count: 20, icon: "3" },
+      { id: "sh4", name: "Ostsee Sprint", desc: "Speed Sort challenge", gameMode: "speed_sort", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "4" },
+      { id: "sh5", name: "Leuchtturm-Boss", desc: "Articles + Plurals combined", gameMode: "classic", mode: "both", tier: 200, difficulty: "normal", count: 20, icon: "S" },
+    ]
+  },
+  {
+    id: "hh", name: "Hamburg", abbr: "HH", tier: 1,
+    x: 220, y: 78, unlockRequires: null,
+    challenges: [
+      { id: "hh1", name: "Hafen-Artikel", desc: "Port city article drill", gameMode: "classic", mode: "article", tier: 100, difficulty: "easy", count: 15, icon: "1" },
+      { id: "hh2", name: "Elbe Plurale", desc: "Plural challenge", gameMode: "classic", mode: "plural", tier: 100, difficulty: "easy", count: 15, icon: "2" },
+      { id: "hh3", name: "Reeperbahn Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 100, difficulty: "easy", count: 15, icon: "3" },
+      { id: "hh4", name: "Speicherstadt Timed", desc: "Beat the clock", gameMode: "timed", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "4" },
+      { id: "hh5", name: "Elbphilharmonie", desc: "Full challenge", gameMode: "classic", mode: "both", tier: 200, difficulty: "normal", count: 20, icon: "S" },
+    ]
+  },
+  {
+    id: "hb", name: "Bremen", abbr: "HB", tier: 1,
+    x: 175, y: 95, unlockRequires: null,
+    challenges: [
+      { id: "hb1", name: "Stadtmusikanten", desc: "Easy article start", gameMode: "classic", mode: "article", tier: 100, difficulty: "easy", count: 15, icon: "1" },
+      { id: "hb2", name: "Weser-Wörter", desc: "Plural practice", gameMode: "classic", mode: "plural", tier: 100, difficulty: "easy", count: 15, icon: "2" },
+      { id: "hb3", name: "Marktplatz Match", desc: "Matching game", gameMode: "matching", mode: "article", tier: 100, difficulty: "easy", count: 20, icon: "3" },
+      { id: "hb4", name: "Roland Sprint", desc: "Survival mode", gameMode: "survival", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "4" },
+      { id: "hb5", name: "Bremer Boss", desc: "Both modes combined", gameMode: "classic", mode: "both", tier: 200, difficulty: "normal", count: 20, icon: "S" },
+    ]
+  },
+  // Tier 2 — Complete any 2 Tier-1 states
+  {
+    id: "mv", name: "Mecklenburg-Vorpommern", abbr: "MV", tier: 2,
+    x: 295, y: 52, unlockRequires: { tier: 1, count: 2 },
+    challenges: [
+      { id: "mv1", name: "Rügen-Artikel", desc: "Island article drill", gameMode: "classic", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "1" },
+      { id: "mv2", name: "Ostsee Plurale", desc: "Coastal plurals", gameMode: "classic", mode: "plural", tier: 200, difficulty: "easy", count: 20, icon: "2" },
+      { id: "mv3", name: "Rostock Match", desc: "Matching drill", gameMode: "matching", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "3" },
+      { id: "mv4", name: "Strandkorb Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 200, difficulty: "easy", count: 25, icon: "4" },
+      { id: "mv5", name: "Seebad-Boss", desc: "Both at normal speed", gameMode: "classic", mode: "both", tier: 300, difficulty: "normal", count: 20, icon: "S" },
+    ]
+  },
+  {
+    id: "ni", name: "Niedersachsen", abbr: "NI", tier: 2,
+    x: 175, y: 130, unlockRequires: { tier: 1, count: 2 },
+    challenges: [
+      { id: "ni1", name: "Heide-Artikel", desc: "Heath article practice", gameMode: "classic", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "1" },
+      { id: "ni2", name: "Harz Plurale", desc: "Mountain plurals", gameMode: "classic", mode: "plural", tier: 200, difficulty: "normal", count: 20, icon: "2" },
+      { id: "ni3", name: "Hannover Speed", desc: "Speed Sort drill", gameMode: "speed_sort", mode: "article", tier: 200, difficulty: "easy", count: 25, icon: "3" },
+      { id: "ni4", name: "Göttingen Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "4" },
+      { id: "ni5", name: "Niedersachsen-Boss", desc: "Full challenge", gameMode: "classic", mode: "both", tier: 300, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  // Tier 3 — Complete any 2 Tier-2 states
+  {
+    id: "be", name: "Berlin", abbr: "BE", tier: 3,
+    x: 320, y: 118, unlockRequires: { tier: 2, count: 2 },
+    challenges: [
+      { id: "be1", name: "Brandenburger Tor", desc: "Article drill - Top 300", gameMode: "classic", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "1" },
+      { id: "be2", name: "Currywurst Plurale", desc: "Berlin plural challenge", gameMode: "classic", mode: "plural", tier: 300, difficulty: "normal", count: 20, icon: "2" },
+      { id: "be3", name: "Alexanderplatz", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "3" },
+      { id: "be4", name: "Fernsehturm Timed", desc: "Time Attack 60s", gameMode: "timed", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "4" },
+      { id: "be5", name: "Reichstag-Boss", desc: "Hard combined drill", gameMode: "classic", mode: "both", tier: 500, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  {
+    id: "bb", name: "Brandenburg", abbr: "BB", tier: 3,
+    x: 330, y: 145, unlockRequires: { tier: 2, count: 2 },
+    challenges: [
+      { id: "bb1", name: "Spreewald-Artikel", desc: "Forest article practice", gameMode: "classic", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "1" },
+      { id: "bb2", name: "Potsdam Plurale", desc: "Palace plurals", gameMode: "classic", mode: "plural", tier: 300, difficulty: "normal", count: 20, icon: "2" },
+      { id: "bb3", name: "Fontane Match", desc: "Matching drill", gameMode: "matching", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "3" },
+      { id: "bb4", name: "Havelsee Survival", desc: "3 lives", gameMode: "survival", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "4" },
+      { id: "bb5", name: "Sanssouci-Boss", desc: "Combined challenge", gameMode: "classic", mode: "both", tier: 500, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  {
+    id: "st", name: "Sachsen-Anhalt", abbr: "ST", tier: 3,
+    x: 265, y: 155, unlockRequires: { tier: 2, count: 2 },
+    challenges: [
+      { id: "st1", name: "Luther-Artikel", desc: "Reformation words", gameMode: "classic", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "1" },
+      { id: "st2", name: "Halle Plurale", desc: "Salt city plurals", gameMode: "classic", mode: "plural", tier: 300, difficulty: "normal", count: 20, icon: "2" },
+      { id: "st3", name: "Magdeburg Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "3" },
+      { id: "st4", name: "Elbe Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "4" },
+      { id: "st5", name: "Anhalt-Boss", desc: "Full challenge", gameMode: "classic", mode: "both", tier: 500, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  // Tier 4 — Complete any 2 Tier-3 states
+  {
+    id: "nw", name: "Nordrhein-Westfalen", abbr: "NW", tier: 4,
+    x: 120, y: 170, unlockRequires: { tier: 3, count: 2 },
+    challenges: [
+      { id: "nw1", name: "Kölner Dom", desc: "Article drill - Top 500", gameMode: "classic", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "1" },
+      { id: "nw2", name: "Rhein Plurale", desc: "River plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
+      { id: "nw3", name: "Ruhrgebiet Match", desc: "Industrial matching", gameMode: "matching", mode: "article", tier: 500, difficulty: "easy", count: 20, icon: "3" },
+      { id: "nw4", name: "Düsseldorf Timed", desc: "60s Time Attack", gameMode: "timed", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "4" },
+      { id: "nw5", name: "NRW-Boss", desc: "Hardest so far", gameMode: "classic", mode: "both", tier: 500, difficulty: "hard", count: 25, icon: "S" },
+    ]
+  },
+  {
+    id: "sn", name: "Sachsen", abbr: "SN", tier: 4,
+    x: 310, y: 195, unlockRequires: { tier: 3, count: 2 },
+    challenges: [
+      { id: "sn1", name: "Dresdner Artikel", desc: "Baroque city articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "1" },
+      { id: "sn2", name: "Leipzig Plurale", desc: "Trade fair plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
+      { id: "sn3", name: "Erzgebirge Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "3" },
+      { id: "sn4", name: "Meißen Survival", desc: "Porcelain survival", gameMode: "survival", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "4" },
+      { id: "sn5", name: "Sachsen-Boss", desc: "Combined hard drill", gameMode: "classic", mode: "both", tier: 500, difficulty: "hard", count: 25, icon: "S" },
+    ]
+  },
+  {
+    id: "th", name: "Thüringen", abbr: "TH", tier: 4,
+    x: 250, y: 200, unlockRequires: { tier: 3, count: 2 },
+    challenges: [
+      { id: "th1", name: "Wartburg-Artikel", desc: "Castle articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "1" },
+      { id: "th2", name: "Weimar Plurale", desc: "Classical plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
+      { id: "th3", name: "Thüringer Match", desc: "Matching game", gameMode: "matching", mode: "article", tier: 500, difficulty: "easy", count: 20, icon: "3" },
+      { id: "th4", name: "Erfurt Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "4" },
+      { id: "th5", name: "Thüringen-Boss", desc: "Full combined", gameMode: "classic", mode: "both", tier: 500, difficulty: "hard", count: 25, icon: "S" },
+    ]
+  },
+  // Tier 5 — Complete any 2 Tier-4 states
+  {
+    id: "he", name: "Hessen", abbr: "HE", tier: 5,
+    x: 175, y: 220, unlockRequires: { tier: 4, count: 2 },
+    challenges: [
+      { id: "he1", name: "Frankfurt Artikel", desc: "Financial articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "normal", count: 25, icon: "1" },
+      { id: "he2", name: "Kassel Plurale", desc: "Documenta plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
+      { id: "he3", name: "Taunus Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "3" },
+      { id: "he4", name: "Wiesbaden Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 30, icon: "4" },
+      { id: "he5", name: "Hessen-Boss", desc: "Top 1000 combined", gameMode: "classic", mode: "both", tier: 1000, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  {
+    id: "rp", name: "Rheinland-Pfalz", abbr: "RP", tier: 5,
+    x: 115, y: 240, unlockRequires: { tier: 4, count: 2 },
+    challenges: [
+      { id: "rp1", name: "Mosel-Artikel", desc: "Wine region articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "normal", count: 25, icon: "1" },
+      { id: "rp2", name: "Trier Plurale", desc: "Roman city plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
+      { id: "rp3", name: "Mainz Match", desc: "Carnival matching", gameMode: "matching", mode: "article", tier: 500, difficulty: "easy", count: 20, icon: "3" },
+      { id: "rp4", name: "Rhein Survival", desc: "River survival", gameMode: "survival", mode: "article", tier: 1000, difficulty: "easy", count: 30, icon: "4" },
+      { id: "rp5", name: "Pfalz-Boss", desc: "Top 1000 combined", gameMode: "classic", mode: "both", tier: 1000, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  {
+    id: "sl", name: "Saarland", abbr: "SL", tier: 5,
+    x: 95, y: 275, unlockRequires: { tier: 4, count: 2 },
+    challenges: [
+      { id: "sl1", name: "Saarbrücken", desc: "Bridge city articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "normal", count: 20, icon: "1" },
+      { id: "sl2", name: "Völklinger Plurale", desc: "Industrial plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 20, icon: "2" },
+      { id: "sl3", name: "Saarschleife Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "3" },
+      { id: "sl4", name: "Saar Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 25, icon: "4" },
+      { id: "sl5", name: "Saarland-Boss", desc: "Combined challenge", gameMode: "classic", mode: "both", tier: 1000, difficulty: "normal", count: 25, icon: "S" },
+    ]
+  },
+  // Tier 6 — Complete any 2 Tier-5 states (final)
+  {
+    id: "bw", name: "Baden-Württemberg", abbr: "BW", tier: 6,
+    x: 155, y: 320, unlockRequires: { tier: 5, count: 2 },
+    challenges: [
+      { id: "bw1", name: "Stuttgart Artikel", desc: "Top 1000 articles", gameMode: "classic", mode: "article", tier: 1000, difficulty: "normal", count: 25, icon: "1" },
+      { id: "bw2", name: "Schwarzwald", desc: "Forest plurals", gameMode: "classic", mode: "plural", tier: 1000, difficulty: "normal", count: 25, icon: "2" },
+      { id: "bw3", name: "Heidelberg Match", desc: "University matching", gameMode: "matching", mode: "article", tier: 1000, difficulty: "easy", count: 20, icon: "3" },
+      { id: "bw4", name: "Freiburg Survival", desc: "Sunny survival", gameMode: "survival", mode: "both", tier: 1000, difficulty: "easy", count: 35, icon: "4" },
+      { id: "bw5", name: "BW-Boss", desc: "Top 1000, hard, both", gameMode: "classic", mode: "both", tier: 1000, difficulty: "hard", count: 30, icon: "S" },
+    ]
+  },
+  {
+    id: "by", name: "Bayern", abbr: "BY", tier: 6,
+    x: 255, y: 340, unlockRequires: { tier: 5, count: 2 },
+    challenges: [
+      { id: "by1", name: "München Artikel", desc: "Bavarian articles", gameMode: "classic", mode: "article", tier: 1000, difficulty: "normal", count: 25, icon: "1" },
+      { id: "by2", name: "Neuschwanstein", desc: "Castle plurals", gameMode: "classic", mode: "plural", tier: 1000, difficulty: "normal", count: 25, icon: "2" },
+      { id: "by3", name: "Oktoberfest Speed", desc: "Speed Sort frenzy", gameMode: "speed_sort", mode: "article", tier: 1000, difficulty: "easy", count: 35, icon: "3" },
+      { id: "by4", name: "Alpen Timed", desc: "Alpine time attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 35, icon: "4" },
+      { id: "by5", name: "Bayern-Boss", desc: "Final Boss: Top 1000, hard", gameMode: "classic", mode: "both", tier: 1000, difficulty: "hard", count: 30, icon: "S" },
+    ]
+  },
+];
+
+// Connections between states for the map lines
+const CAMPAIGN_CONNECTIONS = [
+  ["sh","hh"],["sh","mv"],["hh","hb"],["hh","ni"],["hb","ni"],
+  ["mv","bb"],["ni","st"],["ni","nw"],["ni","he"],
+  ["be","bb"],["bb","sn"],["bb","st"],["st","th"],["st","sn"],
+  ["nw","he"],["nw","rp"],["sn","th"],
+  ["he","rp"],["he","th"],["he","bw"],["rp","sl"],["rp","bw"],
+  ["bw","by"],["th","by"],["sn","by"],
+];
+
+function isCampaignStateUnlocked(stateData, campaignProgress) {
+  if (!stateData.unlockRequires) return true;
+  const { tier, count } = stateData.unlockRequires;
+  const statesInTier = CAMPAIGN_STATES.filter(s => s.tier === tier);
+  const completed = statesInTier.filter(s => {
+    const sp = campaignProgress[s.id];
+    return sp && s.challenges.every(c => (sp[c.id] || 0) >= 1);
+  });
+  return completed.length >= count;
+}
+
+function getCampaignStateStars(stateId, campaignProgress) {
+  const state = CAMPAIGN_STATES.find(s => s.id === stateId);
+  if (!state) return 0;
+  const sp = campaignProgress[stateId] || {};
+  return state.challenges.reduce((sum, c) => sum + (sp[c.id] || 0), 0);
+}
+
+function getCampaignMaxStars(stateId) {
+  const state = CAMPAIGN_STATES.find(s => s.id === stateId);
+  return state ? state.challenges.length * 3 : 0;
+}
+
+function isChallengeUnlocked(state, challengeIndex, campaignProgress) {
+  if (challengeIndex === 0) return true;
+  const prevChallenge = state.challenges[challengeIndex - 1];
+  const sp = campaignProgress[state.id] || {};
+  return (sp[prevChallenge.id] || 0) >= 1;
+}
 
 function checkAchievements(data, sessionAchievements = []) {
   const newlyEarned = [];
@@ -578,6 +817,7 @@ function GermanNounGame() {
   const [reverseInput, setReverseInput] = useState("");
   const [usedSecondChance, setUsedSecondChance] = useState(false);
   const [usedStreakShield, setUsedStreakShield] = useState(false);
+  const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
   const globalTimerRef = useRef(null);
   const pluralOptions = useMemo(() => {
     if (!currentNoun || gameMode === "reverse" || mode === MODES.ARTICLE) return [];
@@ -697,6 +937,8 @@ function GermanNounGame() {
     persistData(newData);
   }, [userData, persistData]);
 
+  const sessionAnswersRef = useRef([]);
+
   const startGame = useCallback((m, d, t, deckId, gm, wordType) => {
     let nouns;
     const gMode = gm || "classic";
@@ -752,7 +994,47 @@ function GermanNounGame() {
     setScreen("game");
   }, [userData]);
 
-  const sessionAnswersRef = useRef([]);
+  // Campaign challenge launcher
+  const startCampaignChallenge = useCallback((state, challenge) => {
+    setCampaignChallenge({ stateId: state.id, challengeId: challenge.id });
+    const gMode = challenge.gameMode;
+    const m = challenge.mode === "article" ? MODES.ARTICLE : challenge.mode === "plural" ? MODES.PLURAL : MODES.BOTH;
+    const t = challenge.tier;
+    const d = challenge.difficulty;
+    const count = challenge.count;
+
+    let nouns;
+    if (gMode === "matching" && challenge.wordType === "adjectives") {
+      const tierAdjs = getAdjectivesForTier(Math.min(t, ADJECTIVES.length));
+      nouns = shuffleArray(tierAdjs.filter(a => a[1])).slice(0, count);
+      setMatchingWordType("adjectives");
+    } else {
+      setMatchingWordType("nouns");
+      const tierNouns = getNounsForTier(t);
+      const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
+      const expanded = unique.flatMap(noun => getDeckEntriesByName(noun[0]));
+      nouns = shuffleArray(expanded).slice(0, count);
+    }
+    if (!nouns.length) return;
+
+    sessionAnswersRef.current = [];
+    const effectiveMode = (gMode === "reverse" || gMode === "matching" || gMode === "speed_sort") ? MODES.ARTICLE : m;
+    const effectiveDifficulty = (gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort") ? "easy" : d;
+    setGameMode(gMode);
+    setMode(effectiveMode);
+    setDifficulty(effectiveDifficulty);
+    setTier(t); setQueue(shuffleArray(nouns)); setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
+    setTotalAnswered(0); setTotalCorrect(0); setFeedback(null); setArticleChoice(null); setReverseInput("");
+    setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionRewards(null); setNewAchievements([]);
+    setUsedSecondChance(false); setUsedStreakShield(false);
+    setMatchingRightItems([]); setMatchingMatchedIds([]); setMatchingSelectedWord(null); setMatchingSelectedMeaning(null); setMatchingMismatch(null);
+    setActiveDeck(null);
+    if (gMode === "survival") { setLives(3); setTimeLeft(0); }
+    else if (gMode === "timed") { setGlobalTimer(TIMED_CHALLENGE_DURATION); setTimeLeft(0); }
+    else if (gMode === "speed_sort") { setGlobalTimer(SPEED_SORT_DURATION); setTimeLeft(0); }
+    else { setTimeLeft(effectiveDifficulty === "easy" ? 0 : effectiveDifficulty === "hard" ? 8 : 15); }
+    setScreen("game");
+  }, []);
 
   // End session: calculate XP, coins, achievements, tier unlocks
   const endSession = useCallback(() => {
@@ -789,6 +1071,19 @@ function GermanNounGame() {
       updated.achievements = [...new Set([...(prev.achievements || []), ...allNew])];
       setNewAchievements(allNew.filter(a => !(prev.achievements||[]).includes(a)));
 
+      // Campaign progress update
+      if (campaignChallenge && totalAnswered > 0) {
+        const accPct = Math.round((totalCorrect / totalAnswered) * 100);
+        const stars = campaignStars(accPct);
+        if (stars > 0) {
+          const cp = { ...(updated.campaignProgress || {}) };
+          const sp = { ...(cp[campaignChallenge.stateId] || {}) };
+          sp[campaignChallenge.challengeId] = Math.max(sp[campaignChallenge.challengeId] || 0, stars);
+          cp[campaignChallenge.stateId] = sp;
+          updated.campaignProgress = cp;
+        }
+      }
+
       if (getPat()) {
         setSyncStatus("saving");
         saveGistData(updated).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error"));
@@ -797,7 +1092,7 @@ function GermanNounGame() {
     });
 
     setScreen("results");
-  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, userData.activePerks, tier]);
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, userData.activePerks, tier, campaignChallenge]);
 
   // Per-question timer (classic/reverse with timer)
   useEffect(() => {
@@ -1071,11 +1366,16 @@ function GermanNounGame() {
         : `Find all ${matchingBatch.length} German-English pairs in the grid.`;
   const timedModeDuration = gameMode === "speed_sort" ? SPEED_SORT_DURATION : TIMED_CHALLENGE_DURATION;
 
-  if(screen==="menu") return <MenuScreen onStart={startGame} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onSyncRefresh={()=>{
+  if(screen==="campaign") return <CampaignScreen
+    campaignProgress={userData.campaignProgress || {}}
+    onSelectChallenge={(state, ch) => startCampaignChallenge(state, ch)}
+    onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
+  />;
+  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onOpenCampaign={()=>setScreen("campaign")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m={...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}};m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
-  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>setScreen("menu")} onPracticeWrong={()=>{
+  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
     const nd=dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
     sessionAnswersRef.current = [];
@@ -1369,7 +1669,7 @@ function DeckBuilder({onSave, onCancel}) {
   );
 }
 
-function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onBuyPerk, onDeactivatePerk, onSyncRefresh}) {
+function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onBuyPerk, onDeactivatePerk, onSyncRefresh, onOpenCampaign}) {
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [diff,setDiff]=useState("normal");
   const [tier,setTier]=useState(500);
@@ -1664,6 +1964,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck&&selectedGameMode!=="weakest"} style={{...S.startBtn,opacity:(source==="deck"&&!selectedDeck&&selectedGameMode!=="weakest")?0.4:1}}>Start Game</button>
+      <button onClick={onOpenCampaign} style={{...S.startBtn,background:"linear-gradient(135deg,#7C3AED,#2563EB)",marginTop:0}}>Campaign Mode</button>
       <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} precomputed grammar explanations loaded</div>
     </div></div>
   );
@@ -1894,6 +2195,198 @@ const S = {
   gearBtn:{position:"absolute",top:0,right:0,background:"none",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"4px 10px",cursor:"pointer",color:"#94a3b8",display:"flex",alignItems:"center"},
   settingsPanel:{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:16,display:"flex",flexDirection:"column",gap:6},
 };
+
+// ═══════════════════════════════════════════════════════════════
+// CAMPAIGN SCREEN
+// ═══════════════════════════════════════════════════════════════
+
+// Simplified Germany outline for the background
+const GERMANY_OUTLINE = "M210,8 L240,5 L270,10 L310,15 L340,22 L365,35 L380,55 L375,80 L365,100 L370,125 L355,145 L365,170 L350,195 L340,220 L320,235 L305,260 L285,280 L290,310 L280,335 L265,355 L250,375 L235,380 L215,370 L195,355 L175,360 L155,350 L140,335 L125,310 L110,290 L95,275 L85,260 L80,240 L90,225 L85,205 L95,185 L105,170 L100,150 L110,130 L125,115 L140,100 L150,80 L160,60 L175,40 L190,25 L210,8 Z";
+
+function CampaignScreen({ campaignProgress, onSelectChallenge, onBack }) {
+  const [selectedState, setSelectedState] = useState(null);
+  const totalStars = CAMPAIGN_STATES.reduce((sum, s) => sum + getCampaignStateStars(s.id, campaignProgress), 0);
+  const maxStars = CAMPAIGN_STATES.reduce((sum, s) => sum + getCampaignMaxStars(s.id), 0);
+
+  // State detail panel
+  if (selectedState) {
+    const state = CAMPAIGN_STATES.find(s => s.id === selectedState);
+    if (!state) { setSelectedState(null); return null; }
+    const unlocked = isCampaignStateUnlocked(state, campaignProgress);
+    const sp = campaignProgress[state.id] || {};
+    const stateStars = getCampaignStateStars(state.id, campaignProgress);
+    const stateMax = getCampaignMaxStars(state.id);
+
+    return (
+      <div style={S.container}><div style={{...S.menuInner,maxWidth:520}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <button onClick={()=>setSelectedState(null)} style={S.endBtn}>Back</button>
+          <div style={{textAlign:"right"}}>
+            <span style={{fontSize:16,color:"#F59E0B"}}>{"★".repeat(Math.min(stateStars, stateMax))}</span>
+            <span style={{fontSize:12,color:"#64748b"}}> {stateStars}/{stateMax}</span>
+          </div>
+        </div>
+        <div style={{textAlign:"center",marginBottom:8}}>
+          <div style={{fontSize:13,color:"#8B5CF6",fontWeight:700,textTransform:"uppercase",letterSpacing:2}}>{state.abbr}</div>
+          <h2 style={{fontSize:22,fontWeight:800,color:"#f1f5f9",margin:"4px 0"}}>{state.name}</h2>
+        </div>
+
+        {!unlocked ? (
+          <div style={{...S.settingsPanel,textAlign:"center",borderColor:"rgba(239,68,68,0.2)"}}>
+            <span style={{fontSize:28}}>🔒</span>
+            <p style={{fontSize:14,color:"#94a3b8",margin:"8px 0 0"}}>
+              Complete {state.unlockRequires.count} states from Tier {state.unlockRequires.tier} to unlock
+            </p>
+          </div>
+        ) : (
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {state.challenges.map((ch, idx) => {
+              const stars = sp[ch.id] || 0;
+              const chUnlocked = isChallengeUnlocked(state, idx, campaignProgress);
+              const modeLabel = {classic:"Classic",timed:"Time Attack",speed_sort:"Speed Sort",survival:"Survival",reverse:"Reverse",matching:"Matching"}[ch.gameMode] || ch.gameMode;
+              const answerLabel = {article:"Articles",plural:"Plurals",both:"Both"}[ch.mode] || ch.mode;
+              const isBoss = ch.icon === "S";
+              return (
+                <button key={ch.id} onClick={()=>chUnlocked && onSelectChallenge(state, ch)}
+                  disabled={!chUnlocked}
+                  style={{
+                    ...S.settingsPanel,
+                    cursor: chUnlocked ? "pointer" : "default",
+                    opacity: chUnlocked ? 1 : 0.4,
+                    borderColor: isBoss ? (stars >= 1 ? "rgba(245,158,11,0.4)" : "rgba(245,158,11,0.2)") : (stars >= 1 ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.1)"),
+                    background: stars >= 1 ? (isBoss ? "rgba(245,158,11,0.06)" : "rgba(16,185,129,0.04)") : "transparent",
+                    textAlign: "left",
+                    transition: "transform 0.1s, border-color 0.15s",
+                  }}>
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <div style={{
+                      width:36, height:36, borderRadius: isBoss ? 8 : "50%",
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      background: isBoss ? "linear-gradient(135deg,#F59E0B,#EF4444)" : stars >= 1 ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)",
+                      border: `2px solid ${isBoss ? "rgba(245,158,11,0.5)" : stars >= 1 ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.1)"}`,
+                      fontSize: isBoss ? 16 : 14, fontWeight: 800,
+                      color: isBoss ? "#fff" : stars >= 1 ? "#10B981" : "#64748b",
+                      flexShrink: 0,
+                    }}>
+                      {!chUnlocked ? "🔒" : ch.icon}
+                    </div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:15,fontWeight:700,color:"#e2e8f0"}}>{ch.name}</div>
+                      <div style={{fontSize:11,color:"#94a3b8"}}>{ch.desc}</div>
+                      <div style={{fontSize:10,color:"#64748b",marginTop:2}}>
+                        {modeLabel} · {answerLabel} · Top {ch.tier} · {ch.count} words
+                      </div>
+                    </div>
+                    <div style={{display:"flex",gap:2,flexShrink:0}}>
+                      {[1,2,3].map(s => (
+                        <span key={s} style={{fontSize:16,color:stars>=s?"#F59E0B":"#334155"}}>★</span>
+                      ))}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div></div>
+    );
+  }
+
+  // Main map view
+  return (
+    <div style={S.container}><div style={{...S.menuInner, maxWidth: 520}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <button onClick={onBack} style={S.endBtn}>Back</button>
+        <div style={{textAlign:"center",flex:1}}>
+          <h2 style={{fontSize:20,fontWeight:800,color:"#f1f5f9",margin:0}}>Campaign</h2>
+        </div>
+        <div style={{textAlign:"right",minWidth:70}}>
+          <span style={{fontSize:14,color:"#F59E0B",fontWeight:700}}>★ {totalStars}</span>
+          <span style={{fontSize:11,color:"#64748b"}}>/{maxStars}</span>
+        </div>
+      </div>
+
+      {/* Map */}
+      <div style={{position:"relative",width:"100%",maxWidth:420,margin:"0 auto"}}>
+        <svg viewBox="40 -5 350 400" style={{width:"100%",height:"auto"}}>
+          {/* Germany outline */}
+          <path d={GERMANY_OUTLINE} fill="rgba(139,92,246,0.04)" stroke="rgba(139,92,246,0.15)" strokeWidth="1.5"/>
+
+          {/* Connection lines */}
+          {CAMPAIGN_CONNECTIONS.map(([a,b]) => {
+            const sa = CAMPAIGN_STATES.find(s=>s.id===a);
+            const sb = CAMPAIGN_STATES.find(s=>s.id===b);
+            if (!sa || !sb) return null;
+            const aUnlocked = isCampaignStateUnlocked(sa, campaignProgress);
+            const bUnlocked = isCampaignStateUnlocked(sb, campaignProgress);
+            const bothUnlocked = aUnlocked && bUnlocked;
+            return <line key={a+b} x1={sa.x} y1={sa.y} x2={sb.x} y2={sb.y}
+              stroke={bothUnlocked ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.06)"} strokeWidth="1.5" strokeDasharray={bothUnlocked?"":"4,4"}/>;
+          })}
+
+          {/* State nodes */}
+          {CAMPAIGN_STATES.map(state => {
+            const unlocked = isCampaignStateUnlocked(state, campaignProgress);
+            const stateStars = getCampaignStateStars(state.id, campaignProgress);
+            const stateMax = getCampaignMaxStars(state.id);
+            const allDone = stateStars >= stateMax;
+            const anyDone = stateStars > 0;
+            const tierColors = {
+              1:"#3B82F6", 2:"#8B5CF6", 3:"#EC4899",
+              4:"#F59E0B", 5:"#EF4444", 6:"#10B981"
+            };
+            const color = tierColors[state.tier] || "#8B5CF6";
+            return (
+              <g key={state.id} onClick={()=>setSelectedState(state.id)} style={{cursor:"pointer"}}>
+                {/* Glow for completed */}
+                {allDone && <circle cx={state.x} cy={state.y} r="24" fill={color} opacity="0.12"/>}
+                {/* Node circle */}
+                <circle cx={state.x} cy={state.y} r="18"
+                  fill={unlocked ? (allDone ? color+"22" : anyDone ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)") : "rgba(255,255,255,0.02)"}
+                  stroke={unlocked ? color : "rgba(255,255,255,0.1)"}
+                  strokeWidth={unlocked ? "2" : "1"}
+                  opacity={unlocked ? 1 : 0.4}
+                />
+                {/* Abbreviation */}
+                <text x={state.x} y={state.y+1} textAnchor="middle" dominantBaseline="middle"
+                  fill={unlocked ? (allDone ? color : "#e2e8f0") : "#475569"}
+                  fontSize="10" fontWeight="800" fontFamily="'JetBrains Mono',monospace">
+                  {unlocked ? state.abbr : "🔒"}
+                </text>
+                {/* Stars indicator */}
+                {unlocked && anyDone && (
+                  <text x={state.x} y={state.y+28} textAnchor="middle" fill="#F59E0B" fontSize="8" fontWeight="700">
+                    {"★".repeat(Math.min(Math.ceil(stateStars/state.challenges.length), 3))}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Tier legend */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center",marginTop:4}}>
+        {[
+          [1,"#3B82F6","Coast"],[2,"#8B5CF6","North"],[3,"#EC4899","East"],
+          [4,"#F59E0B","Central"],[5,"#EF4444","West"],[6,"#10B981","South"]
+        ].map(([t,c,label])=>{
+          const tierStates = CAMPAIGN_STATES.filter(s=>s.tier===t);
+          const done = tierStates.filter(s => {
+            const sp = campaignProgress[s.id];
+            return sp && s.challenges.every(ch => (sp[ch.id] || 0) >= 1);
+          }).length;
+          return (
+            <div key={t} style={{display:"flex",alignItems:"center",gap:4,fontSize:11,color:"#94a3b8"}}>
+              <span style={{width:8,height:8,borderRadius:"50%",background:c,display:"inline-block"}}/>
+              {label} {done}/{tierStates.length}
+            </div>
+          );
+        })}
+      </div>
+    </div></div>
+  );
+}
 
 function WordDataStatus({ title, detail, isError = false }) {
   return (
