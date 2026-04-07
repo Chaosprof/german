@@ -24,6 +24,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site
 const WORDS_DATA_PATH = "./data/nouns.json";
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json";
+const VERBS_DATA_PATH = "./data/verbs.json";
 const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json";
 let NOUNS = [];
 let NOUN_INDEX = new Map();
@@ -34,6 +35,7 @@ let DUAL_GENDER_WORDS = new Set();
 let DUAL_GENDER_SENSES = new Map();
 let DUAL_GENDER_INDEX = new Map();
 let ADJECTIVES = [];  // [word, english, rank]
+let VERBS = [];  // [word, english, rank]
 
 function makeDualGenderSenseId(word, article, plural) {
   return `__dual__|${word}|${article}|${plural || "—"}`;
@@ -74,6 +76,14 @@ async function loadWordData() {
       ADJECTIVES = (adjData.adjectives || []).map(({ word, english, rank }) => [word, english, rank]);
     }
   } catch(e) { console.warn("Could not load adjectives:", e); }
+  // Load verbs
+  try {
+    const verbResp = await fetch(VERBS_DATA_PATH);
+    if (verbResp.ok) {
+      const verbData = await verbResp.json();
+      VERBS = (verbData.verbs || []).map(({ word, english, rank }) => [word, english, rank]);
+    }
+  } catch(e) { console.warn("Could not load verbs:", e); }
   // Load built-in decks
   try {
     const dgResp = await fetch(DUAL_GENDER_PATH);
@@ -115,6 +125,10 @@ function shouldShowSenseHint(noun) {
 
 function getAdjectivesForTier(tier) {
   return ADJECTIVES.filter(a => a[2] <= tier);
+}
+
+function getVerbsForTier(tier) {
+  return VERBS.filter(v => v[2] <= tier);
 }
 // VOCABULARY TIER CONFIG
 // ═══════════════════════════════════════════════════════════════
@@ -763,7 +777,7 @@ function getMeaningLabel(english) {
 }
 
 function shuffleMatchingMeanings(batch, wordType) {
-  if (wordType === "adjectives") {
+  if (wordType === "adjectives" || wordType === "verbs") {
     return shuffleArray(batch.map(([word, english]) => ({ id: word, label: getMeaningLabel(english) })));
   }
   return shuffleArray(batch.map(noun => ({ id: getNounEntryId(noun), label: getMeaningLabel(noun[3]) })));
@@ -809,7 +823,7 @@ function GermanNounGame() {
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
   const [gameMode, setGameMode] = useState("classic"); // classic|timed|speed_sort|survival|reverse|matching|weakest
-  const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives
+  const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives|verbs
   const [lives, setLives] = useState(3);
   const [globalTimer, setGlobalTimer] = useState(60);
   const [sessionRewards, setSessionRewards] = useState(null);
@@ -843,14 +857,14 @@ function GermanNounGame() {
   const matchingMismatchTimerRef = useRef(null);
   const matchingCards = useMemo(() => {
     if (gameMode !== "matching" || matchingRightItems.length !== matchingBatch.length) return [];
-    const isAdj = matchingWordType === "adjectives";
+    const isSimple = matchingWordType === "adjectives" || matchingWordType === "verbs";
     const germanCards = matchingBatch.map(entry => ({
-      key: `word:${isAdj ? entry[0] : getNounEntryId(entry)}`,
-      id: isAdj ? entry[0] : getNounEntryId(entry),
+      key: `word:${isSimple ? entry[0] : getNounEntryId(entry)}`,
+      id: isSimple ? entry[0] : getNounEntryId(entry),
       type: "word",
       label: entry[0],
-      article: isAdj ? "" : entry[1],
-      plural: isAdj ? "" : entry[2],
+      article: isSimple ? "" : entry[1],
+      plural: isSimple ? "" : entry[2],
     }));
     const englishCards = matchingRightItems.map(item => ({
       key: `meaning:${item.id}`,
@@ -953,6 +967,13 @@ function GermanNounGame() {
       nouns = shuffleArray(unique.filter(a => a[1]));
       if (!nouns.length) { alert("No adjectives available for this tier"); return; }
       setActiveDeck(null);
+    } else if (gMode === "matching" && wType === "verbs") {
+      const verbTier = Math.min(t, VERBS.length);
+      const tierVerbs = getVerbsForTier(verbTier);
+      const unique = (() => { const seen = new Set(); return tierVerbs.filter(v => { if (seen.has(v[0])) return false; seen.add(v[0]); return true; }); })();
+      nouns = shuffleArray(unique.filter(v => v[1]));
+      if (!nouns.length) { alert("No verbs available for this tier"); return; }
+      setActiveDeck(null);
     } else if (gMode === "weakest") {
       const weakNames = getWeakestNouns(userData.nounStats, 30);
       nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
@@ -1008,6 +1029,10 @@ function GermanNounGame() {
       const tierAdjs = getAdjectivesForTier(Math.min(t, ADJECTIVES.length));
       nouns = shuffleArray(tierAdjs.filter(a => a[1])).slice(0, count);
       setMatchingWordType("adjectives");
+    } else if (gMode === "matching" && challenge.wordType === "verbs") {
+      const tierVerbs = getVerbsForTier(Math.min(t, VERBS.length));
+      nouns = shuffleArray(tierVerbs.filter(v => v[1])).slice(0, count);
+      setMatchingWordType("verbs");
     } else {
       setMatchingWordType("nouns");
       const tierNouns = getNounsForTier(t);
@@ -1226,16 +1251,16 @@ function GermanNounGame() {
   }, [mode,phase,articleChoice,checkAnswer]);
 
   const resolveMatchingPair = useCallback((wordId, meaningId) => {
-    const isAdj = matchingWordType === "adjectives";
-    const item = matchingBatch.find(entry => (isAdj ? entry[0] : getNounEntryId(entry)) === wordId);
+    const isSimple = matchingWordType === "adjectives" || matchingWordType === "verbs";
+    const item = matchingBatch.find(entry => (isSimple ? entry[0] : getNounEntryId(entry)) === wordId);
     const chosenMeaning = matchingRightItems.find(item => item.id === meaningId);
     if (!item || !chosenMeaning) return;
 
     const word = item[0];
-    const article = isAdj ? "" : item[1];
-    const plural = isAdj ? "" : item[2];
-    const english = isAdj ? item[1] : item[3];
-    const entryId = isAdj ? word : getNounEntryId(item);
+    const article = isSimple ? "" : item[1];
+    const plural = isSimple ? "" : item[2];
+    const english = isSimple ? item[1] : item[3];
+    const entryId = isSimple ? word : getNounEntryId(item);
     const correct = wordId === meaningId;
     const perks = userData.activePerks || [];
     const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
@@ -1352,7 +1377,7 @@ function GermanNounGame() {
   const matchingBatchTotal = gameMode === "matching" ? Math.ceil(queue.length / MATCHING_BATCH_SIZE) : 0;
   const showSenseHint = shouldShowSenseHint(currentNoun);
   const selectedWordLabel = matchingSelectedWord
-    ? matchingBatch.find(entry => ((matchingWordType === "adjectives" ? entry[0] : getNounEntryId(entry)) === matchingSelectedWord))?.[0]
+    ? matchingBatch.find(entry => (((matchingWordType === "adjectives" || matchingWordType === "verbs") ? entry[0] : getNounEntryId(entry)) === matchingSelectedWord))?.[0]
     : "";
   const selectedMeaningLabel = matchingSelectedMeaning
     ? matchingRightItems.find(item => item.id === matchingSelectedMeaning)?.label
@@ -1362,7 +1387,7 @@ function GermanNounGame() {
     : matchingSelectedWord
       ? `Choose the English match for ${selectedWordLabel}.`
       : matchingSelectedMeaning
-        ? `Choose the ${matchingWordType==="adjectives"?"German adjective":"German noun"} for ${selectedMeaningLabel}.`
+        ? `Choose the ${matchingWordType==="adjectives"?"German adjective":matchingWordType==="verbs"?"German verb":"German noun"} for ${selectedMeaningLabel}.`
         : `Find all ${matchingBatch.length} German-English pairs in the grid.`;
   const timedModeDuration = gameMode === "speed_sort" ? SPEED_SORT_DURATION : TIMED_CHALLENGE_DURATION;
 
@@ -1411,7 +1436,7 @@ function GermanNounGame() {
         <div style={{...S.card,borderColor:phase==="feedback"?(feedback?.correct?"#10B981":"#EF4444"):"transparent",backgroundColor:phase==="feedback"?(feedback?.correct?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)"):"rgba(255,255,255,0.03)"}}>
           {gameMode==="matching"?(
             <div style={S.nounDisplay}>
-              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>{matchingWordType==="adjectives"?"Adjectives":"Nouns"} — Batch {matchingBatchNumber} / {matchingBatchTotal}</span>
+              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>{matchingWordType==="adjectives"?"Adjectives":matchingWordType==="verbs"?"Verbs":"Nouns"} — Batch {matchingBatchNumber} / {matchingBatchTotal}</span>
               <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9",textAlign:"center"}}>Match the nouns with their meanings</span>
               <span style={{...S.hintText,color:matchingMismatch?"#f87171":"#94a3b8",fontStyle:"normal"}}>{matchingPrompt}</span>
             </div>
@@ -1861,6 +1886,10 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Adjectives</span>
               <span style={{fontSize:10,color:"#64748b"}}>{ADJECTIVES.length.toLocaleString()} words</span>
             </button>
+            <button onClick={()=>setMatchWordType("verbs")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="verbs"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="verbs"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Verbs</span>
+              <span style={{fontSize:10,color:"#64748b"}}>{VERBS.length.toLocaleString()} words</span>
+            </button>
           </div>
         </div>
       )}
@@ -1868,7 +1897,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       {/* ── Source selection ── */}
       {selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
-          {!(selectedGameMode==="matching"&&matchWordType==="adjectives")&&(
+          {!(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs"))&&(
             <>
             <label style={S.menuLabel}>Play from</label>
             <div style={{display:"flex",gap:8}}>
@@ -1885,7 +1914,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {(source==="tier"||(selectedGameMode==="matching"&&matchWordType==="adjectives"))&&selectedGameMode!=="weakest"&&(
+      {(source==="tier"||(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs")))&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
