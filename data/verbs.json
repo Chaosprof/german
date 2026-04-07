@@ -9,7 +9,7 @@
   "verbs": [
     {
       "word": "sein",
-      "english": "be / exist / have",
+      "english": "be",
       "rank": 1,
       "irregular": true,
       "prateritum": "war",
@@ -18,7 +18,7 @@
     },
     {
       "word": "werden",
-      "english": "be / become / get",
+      "english": "become / get",
       "rank": 2,
       "irregular": true,
       "prateritum": "wurde",
@@ -27,13 +27,13 @@
     },
     {
       "word": "haben",
-      "english": "be available / be free / contain",
+      "english": "have",
       "rank": 3,
       "irregular": false
     },
     {
       "word": "können",
-      "english": "be able to / can / know",
+      "english": "can / be able to",
       "rank": 4,
       "irregular": true,
       "prateritum": "konnte",
@@ -42,13 +42,13 @@
     },
     {
       "word": "sollen",
-      "english": "shall / should",
+      "english": "should / shall",
       "rank": 5,
       "irregular": false
     },
     {
       "word": "geben",
-      "english": "add / ease off / give",
+      "english": "give",
       "rank": 6,
       "irregular": true,
       "prateritum": "gab",
@@ -57,7 +57,7 @@
     },
     {
       "word": "müssen",
-      "english": "have to / must",
+      "english": "must / have to",
       "rank": 7,
       "irregular": true,
       "prateritum": "musste",
@@ -66,7 +66,7 @@
     },
     {
       "word": "finden",
-      "english": "find / think",
+      "english": "find",
       "rank": 8,
       "irregular": true,
       "prateritum": "fand",
@@ -75,13 +75,13 @@
     },
     {
       "word": "machen",
-      "english": "do / go / make",
+      "english": "make / do",
       "rank": 9,
       "irregular": false
     },
     {
       "word": "kommen",
-      "english": "advance / arrive / be due to",
+      "english": "come",
       "rank": 10,
       "irregular": true,
       "prateritum": "kam",
@@ -90,7 +90,7 @@
     },
     {
       "word": "stehen",
-      "english": "be / become / stand",
+      "english": "stand",
       "rank": 11,
       "irregular": true,
       "prateritum": "stand",
@@ -99,7 +99,7 @@
     },
     {
       "word": "lassen",
-      "english": "allow / be possible / can",
+      "english": "let / leave",
       "rank": 12,
       "irregular": true,
       "prateritum": "ließ",
@@ -108,7 +108,7 @@
     },
     {
       "word": "gehen",
-      "english": "be on / do / extend",
+      "english": "go / walk",
       "rank": 13,
       "irregular": true,
       "prateritum": "ging",
@@ -117,13 +117,13 @@
     },
     {
       "word": "wollen",
-      "english": "want / wish",
+      "english": "want",
       "rank": 14,
       "irregular": false
     },
     {
       "word": "bieten",
-      "english": "accept / allow / bid",
+      "english": "offer",
       "rank": 15,
       "irregular": true,
       "prateritum": "bot",
@@ -132,7 +132,7 @@
     },
     {
       "word": "liegen",
-      "english": "be / be appropriate / be located",
+      "english": "lie / be located",
       "rank": 16,
       "irregular": true,
       "prateritum": "lag",
@@ -141,7 +141,7 @@
     },
     {
       "word": "erhalten",
-      "english": "achieve / conserve / get",
+      "english": "receive / get",
       "rank": 17,
       "irregular": true,
       "prateritum": "erhielt",
@@ -150,13 +150,13 @@
     },
     {
       "word": "zeigen",
-      "english": "demonstrate / indicate / point",
+      "english": "show",
       "rank": 18,
       "irregular": false
     },
     {
       "word": "sehen",
-      "english": "look / see / view",
+      "english": "see",
       "rank": 19,
       "irregular": true,
       "prateritum": "sah",
@@ -165,19 +165,19 @@
     },
     {
       "word": "stellen",
-      "english": "adjust / ask / catch",
+      "english": "put / place",
       "rank": 20,
       "irregular": false
     },
     {
       "word": "nutzen",
-      "english": "employ / use / utilise",
+      "english": "use",
       "rank": 21,
       "irregular": false
     },
     {
       "word": "gelten",
-      "english": "be classified as / be considered as / be directed at",
+      "english": "apply / be valid",
       "rank": 22,
       "irregular": true,
       "prateritum": "galt",
@@ -198,7 +198,7 @@
     },
     {
       "word": "dürfen",
-      "english": "allowed / may",
+      "english": "may / be allowed to",
       "rank": 25,
       "irregular": true,
       "prateritum": "durfte",
@@ -207,7 +207,7 @@
     },
     {
       "word": "bleiben",
-      "english": "last / remain / stay",
+      "english": "stay / remain",
       "rank": 26,
       "irregular": true,
       "prateritum": "blieb",
@@ -222,7 +222,7 @@
     },
     {
       "word": "nehmen",
-      "english": "have / seize / take",
+      "english": "take",
       "rank": 28,
       "irregular": true,
       "prateritum": "nahm",
@@ -240,7 +240,7 @@
     },
     {
       "word": "anbieten",
-      "english": "be suitable for / offer / propose",
+      "english": "offer",
       "rank": 30,
       "irregular": true,
       "prateritum": "bot an",
@@ -249,7 +249,7 @@
     },
     {
       "word": "bestehen",
-      "english": "consist (of) / exist / insist (on)",
+      "english": "exist / consist of / insist on",
       "rank": 31,
       "irregular": true,
       "prateritum": "bestand",
@@ -258,7 +258,7 @@
     },
     {
       "word": "arbeiten",
-      "english": "be employed / function / warp",
+      "english": "work",
       "rank": 32,
       "irregular": false
     },
@@ -270,7 +270,7 @@
     },
     {
       "word": "bekommen",
-      "english": "be given / get / receive",
+      "english": "get / receive",
       "rank": 34,
       "irregular": true,
       "prateritum": "bekam",
@@ -279,7 +279,7 @@
     },
     {
       "word": "halten",
-      "english": "care about / consider / hold",
+      "english": "hold / keep / stop",
       "rank": 35,
       "irregular": true,
       "prateritum": "hielt",
@@ -297,13 +297,13 @@
     },
     {
       "word": "erreichen",
-      "english": "accomplish / achieve / acquire",
+      "english": "reach / achieve",
       "rank": 37,
       "irregular": false
     },
     {
       "word": "stattfinden",
-      "english": "happen / take place",
+      "english": "take place",
       "rank": 38,
       "irregular": true,
       "prateritum": "fand statt",
@@ -321,25 +321,25 @@
     },
     {
       "word": "setzen",
-      "english": "bet / litter / place",
+      "english": "put / place / set",
       "rank": 40,
       "irregular": false
     },
     {
       "word": "suchen",
-      "english": "look for / search / seek",
+      "english": "search / look for",
       "rank": 41,
       "irregular": false
     },
     {
       "word": "verwenden",
-      "english": "use / utilise",
+      "english": "use",
       "rank": 42,
       "irregular": false
     },
     {
       "word": "hören",
-      "english": "hear / listen / obey",
+      "english": "hear / listen",
       "rank": 43,
       "irregular": false
     },
@@ -351,7 +351,7 @@
     },
     {
       "word": "entstehen",
-      "english": "arise / emerge / originate",
+      "english": "arise / develop",
       "rank": 45,
       "irregular": true,
       "prateritum": "entstand",
@@ -360,7 +360,7 @@
     },
     {
       "word": "beginnen",
-      "english": "begin / commence / start",
+      "english": "begin / start",
       "rank": 46,
       "irregular": true,
       "prateritum": "begann",
@@ -375,19 +375,19 @@
     },
     {
       "word": "brauchen",
-      "english": "need / use",
+      "english": "need",
       "rank": 48,
       "irregular": false
     },
     {
       "word": "ermöglichen",
-      "english": "enable / make something possible",
+      "english": "enable / make possible",
       "rank": 49,
       "irregular": false
     },
     {
       "word": "sorgen",
-      "english": "care / cause / tend",
+      "english": "ensure / worry / care",
       "rank": 50,
       "irregular": false
     },
@@ -408,19 +408,19 @@
     },
     {
       "word": "fördern",
-      "english": "advance / aid / assist",
+      "english": "promote / support",
       "rank": 53,
       "irregular": false
     },
     {
       "word": "einsetzen",
-      "english": "advocate / appoint / commence",
+      "english": "use / deploy",
       "rank": 54,
       "irregular": false
     },
     {
       "word": "treffen",
-      "english": "affect / hit / meet",
+      "english": "meet / hit",
       "rank": 55,
       "irregular": true,
       "prateritum": "traf",
@@ -429,13 +429,13 @@
     },
     {
       "word": "erklären",
-      "english": "announce / declare / explain",
+      "english": "explain",
       "rank": 56,
       "irregular": false
     },
     {
       "word": "schaffen",
-      "english": "accomplish / complete / create",
+      "english": "create / manage",
       "rank": 57,
       "irregular": true,
       "prateritum": "schuf",
@@ -453,13 +453,13 @@
     },
     {
       "word": "vorstellen",
-      "english": "envisage / envision / imagine",
+      "english": "introduce / imagine",
       "rank": 59,
       "irregular": false
     },
     {
       "word": "durchführen",
-      "english": "carry out / give a tour / guide",
+      "english": "carry out / conduct",
       "rank": 60,
       "irregular": false
     },
@@ -471,7 +471,7 @@
     },
     {
       "word": "sprechen",
-      "english": "propose / speak / talk",
+      "english": "speak / talk",
       "rank": 62,
       "irregular": true,
       "prateritum": "sprach",
@@ -480,7 +480,7 @@
     },
     {
       "word": "übernehmen",
-      "english": "adopt / assume / burn the candle at both ends",
+      "english": "take over / assume",
       "rank": 63,
       "irregular": true,
       "prateritum": "übernahm",
@@ -498,13 +498,13 @@
     },
     {
       "word": "handeln",
-      "english": "act / deal / do",
+      "english": "act / trade",
       "rank": 65,
       "irregular": false
     },
     {
       "word": "heißen",
-      "english": "be called / be named / be said",
+      "english": "be called / mean",
       "rank": 66,
       "irregular": true,
       "prateritum": "hieß",
@@ -525,13 +525,13 @@
     },
     {
       "word": "benötigen",
-      "english": "need / require / take",
+      "english": "need / require",
       "rank": 69,
       "irregular": false
     },
     {
       "word": "tragen",
-      "english": "carry / drag / wear",
+      "english": "carry / wear",
       "rank": 70,
       "irregular": true,
       "prateritum": "trug",
@@ -540,7 +540,7 @@
     },
     {
       "word": "gestalten",
-      "english": "arrange / design / form",
+      "english": "design / shape",
       "rank": 71,
       "irregular": false
     },
@@ -555,7 +555,7 @@
     },
     {
       "word": "gewinnen",
-      "english": "earn / gain / produce",
+      "english": "win / gain",
       "rank": 73,
       "irregular": true,
       "prateritum": "gewann",
@@ -564,7 +564,7 @@
     },
     {
       "word": "verbinden",
-      "english": "associate / bandage / combine",
+      "english": "connect / combine",
       "rank": 74,
       "irregular": true,
       "prateritum": "verband",
@@ -585,7 +585,7 @@
     },
     {
       "word": "enthalten",
-      "english": "abstain / contain / embody",
+      "english": "contain",
       "rank": 77,
       "irregular": true,
       "prateritum": "enthielt",
@@ -600,7 +600,7 @@
     },
     {
       "word": "wählen",
-      "english": "adopt / choose / dial",
+      "english": "choose / vote / elect",
       "rank": 79,
       "irregular": false
     },
@@ -624,13 +624,13 @@
     },
     {
       "word": "erwarten",
-      "english": "abide / await / expect",
+      "english": "expect",
       "rank": 83,
       "irregular": false
     },
     {
       "word": "fahren",
-      "english": "bring / cart / drive",
+      "english": "drive / go / ride",
       "rank": 84,
       "irregular": true,
       "prateritum": "fuhr",
@@ -654,7 +654,7 @@
     },
     {
       "word": "ziehen",
-      "english": "breed / draw / move",
+      "english": "pull / move",
       "rank": 87,
       "irregular": true,
       "prateritum": "zog",
@@ -663,13 +663,13 @@
     },
     {
       "word": "dienen",
-      "english": "be on active service / serve",
+      "english": "serve",
       "rank": 88,
       "irregular": false
     },
     {
       "word": "verstehen",
-      "english": "about / apprehend / as",
+      "english": "understand",
       "rank": 89,
       "irregular": true,
       "prateritum": "verstand",
@@ -678,7 +678,7 @@
     },
     {
       "word": "legen",
-      "english": "castrate / deal the Skat / lay",
+      "english": "put / lay",
       "rank": 90,
       "irregular": false
     },
@@ -702,7 +702,7 @@
     },
     {
       "word": "schreiben",
-      "english": "store / touch-type / write",
+      "english": "write",
       "rank": 93,
       "irregular": true,
       "prateritum": "schrieb",
@@ -711,7 +711,7 @@
     },
     {
       "word": "einladen",
-      "english": "invite / load in",
+      "english": "invite",
       "rank": 94,
       "irregular": true,
       "prateritum": "lud ein",
@@ -720,7 +720,7 @@
     },
     {
       "word": "nennen",
-      "english": "call / mention / name",
+      "english": "call / name",
       "rank": 95,
       "irregular": true,
       "prateritum": "nannte",
@@ -729,13 +729,13 @@
     },
     {
       "word": "verfügen",
-      "english": "decree / direct / enact",
+      "english": "have / possess",
       "rank": 96,
       "irregular": false
     },
     {
       "word": "empfehlen",
-      "english": "advise / advocate / approve",
+      "english": "recommend",
       "rank": 97,
       "irregular": true,
       "prateritum": "empfahl",
@@ -750,13 +750,13 @@
     },
     {
       "word": "planen",
-      "english": "contrive / plan",
+      "english": "plan",
       "rank": 99,
       "irregular": false
     },
     {
       "word": "aufnehmen",
-      "english": "absorb / accept / admit",
+      "english": "record / accept / absorb",
       "rank": 100,
       "irregular": true,
       "prateritum": "nahm auf",
@@ -771,19 +771,19 @@
     },
     {
       "word": "kaufen",
-      "english": "bribe / buy",
+      "english": "buy",
       "rank": 102,
       "irregular": false
     },
     {
       "word": "umsetzen",
-      "english": "implement / realize / transform",
+      "english": "implement",
       "rank": 103,
       "irregular": false
     },
     {
       "word": "versuchen",
-      "english": "taste / tempt / try",
+      "english": "try",
       "rank": 104,
       "irregular": false
     },
@@ -798,7 +798,7 @@
     },
     {
       "word": "berichten",
-      "english": "detail / refer / relate",
+      "english": "report",
       "rank": 106,
       "irregular": false
     },
@@ -810,37 +810,37 @@
     },
     {
       "word": "entdecken",
-      "english": "descry / discover",
+      "english": "discover",
       "rank": 108,
       "irregular": false
     },
     {
       "word": "ändern",
-      "english": "alter / change / vary",
+      "english": "change",
       "rank": 109,
       "irregular": false
     },
     {
       "word": "fragen",
-      "english": "ask / enquire / wonder",
+      "english": "ask",
       "rank": 110,
       "irregular": false
     },
     {
       "word": "beschäftigen",
-      "english": "absorb / concern / deal",
+      "english": "employ / occupy",
       "rank": 111,
       "irregular": false
     },
     {
       "word": "funktionieren",
-      "english": "function / operate / perform",
+      "english": "work / function",
       "rank": 112,
       "irregular": false
     },
     {
       "word": "beachten",
-      "english": "be aware / comply / consider",
+      "english": "pay attention to / observe",
       "rank": 113,
       "irregular": false
     },
@@ -858,13 +858,13 @@
     },
     {
       "word": "leisten",
-      "english": "afford / allow oneself / perform",
+      "english": "accomplish / afford",
       "rank": 116,
       "irregular": false
     },
     {
       "word": "lesen",
-      "english": "glean / lecture / pick",
+      "english": "read",
       "rank": 117,
       "irregular": true,
       "prateritum": "las",
@@ -873,7 +873,7 @@
     },
     {
       "word": "teilnehmen",
-      "english": "attend / participate / share",
+      "english": "participate",
       "rank": 118,
       "irregular": true,
       "prateritum": "nahm teil",
@@ -888,7 +888,7 @@
     },
     {
       "word": "steigen",
-      "english": "climb / get / rise",
+      "english": "climb / rise",
       "rank": 120,
       "irregular": true,
       "prateritum": "stieg",
@@ -897,7 +897,7 @@
     },
     {
       "word": "aussehen",
-      "english": "look / look like",
+      "english": "look / appear",
       "rank": 121,
       "irregular": true,
       "prateritum": "sah aus",
@@ -927,13 +927,13 @@
     },
     {
       "word": "liefern",
-      "english": "deliver / fight / furnish",
+      "english": "deliver / supply",
       "rank": 125,
       "irregular": false
     },
     {
       "word": "verlieren",
-      "english": "lose / relinquish",
+      "english": "lose",
       "rank": 126,
       "irregular": true,
       "prateritum": "verlor",
@@ -951,13 +951,13 @@
     },
     {
       "word": "richten",
-      "english": "decide / direct / fix",
+      "english": "direct / aim",
       "rank": 128,
       "irregular": false
     },
     {
       "word": "erfüllen",
-      "english": "elate / fulfil",
+      "english": "fulfill",
       "rank": 129,
       "irregular": false
     },
@@ -969,13 +969,13 @@
     },
     {
       "word": "fehlen",
-      "english": "be missing / be short / be wrong",
+      "english": "be missing / lack",
       "rank": 131,
       "irregular": false
     },
     {
       "word": "ergeben",
-      "english": "capitulate / happen / occur",
+      "english": "result / yield",
       "rank": 132,
       "irregular": true,
       "prateritum": "ergab",
@@ -984,7 +984,7 @@
     },
     {
       "word": "prüfen",
-      "english": "assess / check / examine",
+      "english": "check / examine",
       "rank": 133,
       "irregular": false
     },
@@ -996,13 +996,13 @@
     },
     {
       "word": "überzeugen",
-      "english": "convince / convince oneself / persuade",
+      "english": "convince",
       "rank": 135,
       "irregular": false
     },
     {
       "word": "genießen",
-      "english": "enjoy / relish / savor",
+      "english": "enjoy",
       "rank": 136,
       "irregular": true,
       "prateritum": "genoss",
@@ -1011,7 +1011,7 @@
     },
     {
       "word": "betragen",
-      "english": "amount / behave / come",
+      "english": "amount to",
       "rank": 137,
       "irregular": true,
       "prateritum": "betrug",
@@ -1020,37 +1020,37 @@
     },
     {
       "word": "beteiligen",
-      "english": "give a share in / involve / participate",
+      "english": "participate / involve",
       "rank": 138,
       "irregular": false
     },
     {
       "word": "erhöhen",
-      "english": "raise / rise",
+      "english": "increase / raise",
       "rank": 139,
       "irregular": false
     },
     {
       "word": "sichern",
-      "english": "protect / put on a safety catch / safeguard",
+      "english": "secure / protect",
       "rank": 140,
       "irregular": false
     },
     {
       "word": "berücksichtigen",
-      "english": "consider / take into consideration",
+      "english": "consider / take into account",
       "rank": 141,
       "irregular": false
     },
     {
       "word": "wünschen",
-      "english": "desire / require / want",
+      "english": "wish / want",
       "rank": 142,
       "irregular": false
     },
     {
       "word": "erzählen",
-      "english": "narrate / tell",
+      "english": "tell / narrate",
       "rank": 143,
       "irregular": false
     },
@@ -1068,13 +1068,13 @@
     },
     {
       "word": "achten",
-      "english": "keep an eye on / pay attention to / respect",
+      "english": "pay attention to / respect",
       "rank": 146,
       "irregular": false
     },
     {
       "word": "beitragen",
-      "english": "add to / contribute / help",
+      "english": "contribute",
       "rank": 147,
       "irregular": true,
       "prateritum": "trug bei",
@@ -1092,13 +1092,13 @@
     },
     {
       "word": "wirken",
-      "english": "act / appear / knead",
+      "english": "have an effect / seem",
       "rank": 149,
       "irregular": false
     },
     {
       "word": "schließen",
-      "english": "close / conclude / deduce",
+      "english": "close / conclude",
       "rank": 150,
       "irregular": true,
       "prateritum": "schloss",
@@ -1113,25 +1113,25 @@
     },
     {
       "word": "umfassen",
-      "english": "clasp / consist / contain",
+      "english": "include / comprise",
       "rank": 152,
       "irregular": false
     },
     {
       "word": "aufbauen",
-      "english": "accumulate / based / build",
+      "english": "build / build up",
       "rank": 153,
       "irregular": false
     },
     {
       "word": "fühlen",
-      "english": "feel / sense",
+      "english": "feel",
       "rank": 154,
       "irregular": false
     },
     {
       "word": "beraten",
-      "english": "advise / discuss / recommend",
+      "english": "advise / consult",
       "rank": 155,
       "irregular": true,
       "prateritum": "beriet",
@@ -1140,7 +1140,7 @@
     },
     {
       "word": "bauen",
-      "english": "build / construct / erect",
+      "english": "build / construct",
       "rank": 156,
       "irregular": false
     },
@@ -1161,7 +1161,7 @@
     },
     {
       "word": "abschließen",
-      "english": "end / lock / sign",
+      "english": "complete / lock",
       "rank": 159,
       "irregular": true,
       "prateritum": "schloss ab",
@@ -1170,7 +1170,7 @@
     },
     {
       "word": "ankommen",
-      "english": "arrive / bear down on / befall",
+      "english": "arrive / depend on",
       "rank": 160,
       "irregular": true,
       "prateritum": "kam an",
@@ -1179,7 +1179,7 @@
     },
     {
       "word": "eröffnen",
-      "english": "inaugurate / open / open up",
+      "english": "open",
       "rank": 161,
       "irregular": false
     },
@@ -1197,19 +1197,19 @@
     },
     {
       "word": "feststellen",
-      "english": "ascertain / determine / establish",
+      "english": "determine / notice",
       "rank": 164,
       "irregular": false
     },
     {
       "word": "sammeln",
-      "english": "accumulate / collect / concentrate",
+      "english": "collect / gather",
       "rank": 165,
       "irregular": false
     },
     {
       "word": "reichen",
-      "english": "be enough / do / enrich",
+      "english": "be enough / suffice",
       "rank": 166,
       "irregular": false
     },
@@ -1221,31 +1221,31 @@
     },
     {
       "word": "auszeichnen",
-      "english": "award / decorate / display",
+      "english": "distinguish / award",
       "rank": 168,
       "irregular": false
     },
     {
       "word": "gründen",
-      "english": "base / build / found",
+      "english": "found / establish",
       "rank": 169,
       "irregular": false
     },
     {
       "word": "sparen",
-      "english": "economise / economize / put aside",
+      "english": "save",
       "rank": 170,
       "irregular": false
     },
     {
       "word": "anpassen",
-      "english": "accommodate / adapt / adjust",
+      "english": "adapt / adjust",
       "rank": 171,
       "irregular": false
     },
     {
       "word": "treten",
-      "english": "kick / pedal / step",
+      "english": "step / kick",
       "rank": 172,
       "irregular": true,
       "prateritum": "trat",
@@ -1263,19 +1263,19 @@
     },
     {
       "word": "verkaufen",
-      "english": "make a bad buy / sell",
+      "english": "sell",
       "rank": 174,
       "irregular": false
     },
     {
       "word": "passieren",
-      "english": "cross / filter / happen",
+      "english": "happen",
       "rank": 175,
       "irregular": false
     },
     {
       "word": "entsprechen",
-      "english": "accord / correlate / correspond",
+      "english": "correspond to",
       "rank": 176,
       "irregular": true,
       "prateritum": "entsprach",
@@ -1290,31 +1290,31 @@
     },
     {
       "word": "erweitern",
-      "english": "enlarge / expand / extend",
+      "english": "expand / extend",
       "rank": 178,
       "irregular": false
     },
     {
       "word": "ergänzen",
-      "english": "add / complement / complete",
+      "english": "add / supplement",
       "rank": 179,
       "irregular": false
     },
     {
       "word": "stärken",
-      "english": "invigorate / lift up / oneself",
+      "english": "strengthen",
       "rank": 180,
       "irregular": false
     },
     {
       "word": "warten",
-      "english": "maintain / wait",
+      "english": "wait / maintain",
       "rank": 181,
       "irregular": false
     },
     {
       "word": "vertreten",
-      "english": "injure the foot / represent / substitute",
+      "english": "represent",
       "rank": 182,
       "irregular": true,
       "prateritum": "vertrat",
@@ -1323,7 +1323,7 @@
     },
     {
       "word": "organisieren",
-      "english": "get hold / organize",
+      "english": "organize",
       "rank": 183,
       "irregular": false
     },
@@ -1335,7 +1335,7 @@
     },
     {
       "word": "beziehen",
-      "english": "begin / move in / receive",
+      "english": "refer to / obtain",
       "rank": 185,
       "irregular": true,
       "prateritum": "bezog",
@@ -1344,7 +1344,7 @@
     },
     {
       "word": "wachsen",
-      "english": "grow / wax",
+      "english": "grow",
       "rank": 186,
       "irregular": true,
       "prateritum": "wuchs",
@@ -1353,7 +1353,7 @@
     },
     {
       "word": "angeben",
-      "english": "boast / brag / cite",
+      "english": "state / indicate",
       "rank": 187,
       "irregular": true,
       "prateritum": "gab an",
@@ -1362,49 +1362,49 @@
     },
     {
       "word": "anzeigen",
-      "english": "announce / display / for",
+      "english": "display / report",
       "rank": 188,
       "irregular": false
     },
     {
       "word": "passen",
-      "english": "fit / go with / pass",
+      "english": "fit / suit",
       "rank": 189,
       "irregular": false
     },
     {
       "word": "bewegen",
-      "english": "agitate / induce / move",
+      "english": "move",
       "rank": 190,
       "irregular": false
     },
     {
       "word": "dauern",
-      "english": "last / take time",
+      "english": "last / take (time)",
       "rank": 191,
       "irregular": false
     },
     {
       "word": "kosten",
-      "english": "cost / get a taste of / taste",
+      "english": "cost / taste",
       "rank": 192,
       "irregular": false
     },
     {
       "word": "bezeichnen",
-      "english": "denote / designate / mark",
+      "english": "describe / denote",
       "rank": 193,
       "irregular": false
     },
     {
       "word": "verhindern",
-      "english": "avert / inhibit / prevent",
+      "english": "prevent",
       "rank": 194,
       "irregular": false
     },
     {
       "word": "betreiben",
-      "english": "collect / devote oneself to / engage in",
+      "english": "operate / run",
       "rank": 195,
       "irregular": true,
       "prateritum": "betrieb",
@@ -1413,13 +1413,13 @@
     },
     {
       "word": "anmelden",
-      "english": "announce / declare / enroll",
+      "english": "register / sign up",
       "rank": 196,
       "irregular": false
     },
     {
       "word": "verlassen",
-      "english": "abandon / forsake / leave",
+      "english": "leave",
       "rank": 197,
       "irregular": true,
       "prateritum": "verließ",
@@ -1437,55 +1437,55 @@
     },
     {
       "word": "lohnen",
-      "english": "pay / pay off / reward",
+      "english": "be worth it",
       "rank": 199,
       "irregular": false
     },
     {
       "word": "bestellen",
-      "english": "convey / cultivate / order",
+      "english": "order",
       "rank": 200,
       "irregular": false
     },
     {
       "word": "gewährleisten",
-      "english": "assure / grant",
+      "english": "guarantee / ensure",
       "rank": 201,
       "irregular": false
     },
     {
       "word": "glauben",
-      "english": "believe / believe in / suppose",
+      "english": "believe",
       "rank": 202,
       "irregular": false
     },
     {
       "word": "herstellen",
-      "english": "manufacture / produce",
+      "english": "produce / manufacture",
       "rank": 203,
       "irregular": false
     },
     {
       "word": "auswählen",
-      "english": "choose / pick / select",
+      "english": "choose / select",
       "rank": 204,
       "irregular": false
     },
     {
       "word": "lösen",
-      "english": "buy / defecate / detach",
+      "english": "solve / release",
       "rank": 205,
       "irregular": false
     },
     {
       "word": "erlauben",
-      "english": "allow / indulge / permit",
+      "english": "allow / permit",
       "rank": 206,
       "irregular": false
     },
     {
       "word": "wenden",
-      "english": "address / consult / oppose",
+      "english": "turn / apply to",
       "rank": 207,
       "irregular": true,
       "prateritum": "wandte",
@@ -1494,7 +1494,7 @@
     },
     {
       "word": "unterscheiden",
-      "english": "differ / distinguish / tell apart",
+      "english": "distinguish / differ",
       "rank": 208,
       "irregular": true,
       "prateritum": "unterschied",
@@ -1503,7 +1503,7 @@
     },
     {
       "word": "vorsehen",
-      "english": "be careful / provide / watch out",
+      "english": "plan / provide for",
       "rank": 209,
       "irregular": true,
       "prateritum": "sah vor",
@@ -1512,13 +1512,13 @@
     },
     {
       "word": "bestätigen",
-      "english": "authenticate / confirm",
+      "english": "confirm",
       "rank": 210,
       "irregular": false
     },
     {
       "word": "ausgehen",
-      "english": "assume / go out / go places",
+      "english": "go out / assume",
       "rank": 211,
       "irregular": true,
       "prateritum": "ging aus",
@@ -1527,13 +1527,13 @@
     },
     {
       "word": "einstellen",
-      "english": "adjust / appoint / cease",
+      "english": "set / hire / stop",
       "rank": 212,
       "irregular": false
     },
     {
       "word": "verpflichten",
-      "english": "commit / engage / obligate",
+      "english": "oblige / commit",
       "rank": 213,
       "irregular": false
     },
@@ -1551,7 +1551,7 @@
     },
     {
       "word": "sitzen",
-      "english": "fit / sit",
+      "english": "sit",
       "rank": 216,
       "irregular": true,
       "prateritum": "saß",
@@ -1566,7 +1566,7 @@
     },
     {
       "word": "meinen",
-      "english": "intend / mean / signify",
+      "english": "mean / think",
       "rank": 218,
       "irregular": false
     },
@@ -1581,7 +1581,7 @@
     },
     {
       "word": "bitten",
-      "english": "ask / beg / invite",
+      "english": "ask / request",
       "rank": 220,
       "irregular": true,
       "prateritum": "bat",
@@ -1590,7 +1590,7 @@
     },
     {
       "word": "erwerben",
-      "english": "acquire / attain / purchase",
+      "english": "acquire / obtain",
       "rank": 221,
       "irregular": true,
       "prateritum": "erwarb",
@@ -1605,7 +1605,7 @@
     },
     {
       "word": "auftreten",
-      "english": "act / appear / kick",
+      "english": "appear / occur",
       "rank": 223,
       "irregular": true,
       "prateritum": "trat auf",
@@ -1614,25 +1614,25 @@
     },
     {
       "word": "belegen",
-      "english": "allocate / back / cover",
+      "english": "prove / occupy",
       "rank": 224,
       "irregular": false
     },
     {
       "word": "reduzieren",
-      "english": "decrease / reduce",
+      "english": "reduce",
       "rank": 225,
       "irregular": false
     },
     {
       "word": "festlegen",
-      "english": "commit / define / determine",
+      "english": "determine / define",
       "rank": 226,
       "irregular": false
     },
     {
       "word": "gefallen",
-      "english": "please",
+      "english": "please / like",
       "rank": 227,
       "irregular": true,
       "prateritum": "gefiel",
@@ -1641,13 +1641,13 @@
     },
     {
       "word": "prägen",
-      "english": "a / be / by",
+      "english": "shape / characterize",
       "rank": 228,
       "irregular": false
     },
     {
       "word": "laden",
-      "english": "charge / download / invite",
+      "english": "load / charge / invite",
       "rank": 229,
       "irregular": true,
       "prateritum": "lud",
@@ -1656,31 +1656,31 @@
     },
     {
       "word": "melden",
-      "english": "enlist / raise one's hand / report",
+      "english": "report",
       "rank": 230,
       "irregular": false
     },
     {
       "word": "betonen",
-      "english": "emphasise / emphasize / stress",
+      "english": "emphasize / stress",
       "rank": 231,
       "irregular": false
     },
     {
       "word": "betreuen",
-      "english": "take care of",
+      "english": "take care of / look after",
       "rank": 232,
       "irregular": false
     },
     {
       "word": "einrichten",
-      "english": "arrange / furnish / set up",
+      "english": "set up / furnish",
       "rank": 233,
       "irregular": false
     },
     {
       "word": "rechnen",
-      "english": "anticipate / calculate / compute",
+      "english": "calculate / expect",
       "rank": 234,
       "irregular": false
     },
@@ -1698,13 +1698,13 @@
     },
     {
       "word": "teilen",
-      "english": "divide / part / share",
+      "english": "share / divide",
       "rank": 237,
       "irregular": false
     },
     {
       "word": "bewerben",
-      "english": "apply / promote",
+      "english": "apply",
       "rank": 238,
       "irregular": true,
       "prateritum": "bewarb",
@@ -1713,7 +1713,7 @@
     },
     {
       "word": "vornehmen",
-      "english": "carry out / conduct / propose",
+      "english": "carry out / intend",
       "rank": 239,
       "irregular": true,
       "prateritum": "nahm vor",
@@ -1722,7 +1722,7 @@
     },
     {
       "word": "beantworten",
-      "english": "answer / respond",
+      "english": "answer",
       "rank": 240,
       "irregular": false
     },
@@ -1734,7 +1734,7 @@
     },
     {
       "word": "annehmen",
-      "english": "accept / adopt / assume",
+      "english": "accept / assume",
       "rank": 242,
       "irregular": true,
       "prateritum": "nahm an",
@@ -1743,13 +1743,13 @@
     },
     {
       "word": "schauen",
-      "english": "check / gaze / look",
+      "english": "look / watch",
       "rank": 243,
       "irregular": false
     },
     {
       "word": "eingehen",
-      "english": "accept / die / go into",
+      "english": "go into / accept",
       "rank": 244,
       "irregular": true,
       "prateritum": "ging ein",
@@ -1758,7 +1758,7 @@
     },
     {
       "word": "beschließen",
-      "english": "close / conclude / decide",
+      "english": "decide",
       "rank": 245,
       "irregular": true,
       "prateritum": "beschloss",
@@ -1767,55 +1767,55 @@
     },
     {
       "word": "erzielen",
-      "english": "achieve / arrive / attain",
+      "english": "achieve",
       "rank": 246,
       "irregular": false
     },
     {
       "word": "stammen",
-      "english": "be descended from / come from / date from",
+      "english": "come from / originate",
       "rank": 247,
       "irregular": false
     },
     {
       "word": "engagieren",
-      "english": "commit oneself to something / employ somebody to do something / engage somebody as somebody",
+      "english": "engage / hire",
       "rank": 248,
       "irregular": false
     },
     {
       "word": "leiten",
-      "english": "conduct / lead / manage",
+      "english": "lead / manage",
       "rank": 249,
       "irregular": false
     },
     {
       "word": "bewerten",
-      "english": "evaluate / rate / review",
+      "english": "evaluate / rate",
       "rank": 250,
       "irregular": false
     },
     {
       "word": "ersetzen",
-      "english": "replace / substitute",
+      "english": "replace",
       "rank": 251,
       "irregular": false
     },
     {
       "word": "überprüfen",
-      "english": "check / recheck / review",
+      "english": "check / review",
       "rank": 252,
       "irregular": false
     },
     {
       "word": "erläutern",
-      "english": "elucidate / explain",
+      "english": "explain",
       "rank": 253,
       "irregular": false
     },
     {
       "word": "hinweisen",
-      "english": "indicate / point / point out",
+      "english": "point out / indicate",
       "rank": 254,
       "irregular": true,
       "prateritum": "wies hin",
@@ -1824,31 +1824,31 @@
     },
     {
       "word": "kümmern",
-      "english": "look after / pay attention to / take care of",
+      "english": "take care of",
       "rank": 255,
       "irregular": false
     },
     {
       "word": "testen",
-      "english": "test / trial",
+      "english": "test",
       "rank": 256,
       "irregular": false
     },
     {
       "word": "ausstatten",
-      "english": "equip somebody / provide somebody with something",
+      "english": "equip / provide",
       "rank": 257,
       "irregular": false
     },
     {
       "word": "beobachten",
-      "english": "observe / study / supervise",
+      "english": "observe / watch",
       "rank": 258,
       "irregular": false
     },
     {
       "word": "ermitteln",
-      "english": "calculate / find out / identify",
+      "english": "determine / investigate",
       "rank": 259,
       "irregular": false
     },
@@ -1860,31 +1860,31 @@
     },
     {
       "word": "verzichten",
-      "english": "forgo / renounce / resign",
+      "english": "do without / forgo",
       "rank": 261,
       "irregular": false
     },
     {
       "word": "stecken",
-      "english": "be located / be stuck / insert",
+      "english": "put / be stuck",
       "rank": 262,
       "irregular": false
     },
     {
       "word": "verfolgen",
-      "english": "follow / persecute / pursue",
+      "english": "pursue / follow",
       "rank": 263,
       "irregular": false
     },
     {
       "word": "sicherstellen",
-      "english": "assure / confiscate / guarantee",
+      "english": "ensure / guarantee",
       "rank": 264,
       "irregular": false
     },
     {
       "word": "ansprechen",
-      "english": "accost / address / appeal",
+      "english": "address / appeal to",
       "rank": 265,
       "irregular": true,
       "prateritum": "sprach an",
@@ -1893,7 +1893,7 @@
     },
     {
       "word": "erheben",
-      "english": "charge / elevate / ennoble",
+      "english": "raise / charge",
       "rank": 266,
       "irregular": true,
       "prateritum": "erhob",
@@ -1902,7 +1902,7 @@
     },
     {
       "word": "abgeben",
-      "english": "concede / concern / deliver",
+      "english": "hand in / give",
       "rank": 267,
       "irregular": true,
       "prateritum": "gab ab",
@@ -1917,7 +1917,7 @@
     },
     {
       "word": "übertragen",
-      "english": "infect / transfer / transform",
+      "english": "transfer / broadcast",
       "rank": 269,
       "irregular": true,
       "prateritum": "übertrug",
@@ -1926,13 +1926,13 @@
     },
     {
       "word": "wechseln",
-      "english": "change / exchange / vary",
+      "english": "change / exchange",
       "rank": 270,
       "irregular": false
     },
     {
       "word": "produzieren",
-      "english": "make / make an exhibition of oneself / produce",
+      "english": "produce",
       "rank": 271,
       "irregular": false
     },
@@ -1944,7 +1944,7 @@
     },
     {
       "word": "erfassen",
-      "english": "capture / collect / compass",
+      "english": "record / capture",
       "rank": 273,
       "irregular": false
     },
@@ -1956,7 +1956,7 @@
     },
     {
       "word": "fallen",
-      "english": "be killed in action / decline / drop",
+      "english": "fall",
       "rank": 275,
       "irregular": true,
       "prateritum": "fiel",
@@ -1965,25 +1965,25 @@
     },
     {
       "word": "erleichtern",
-      "english": "facilitate / lighten / make easier",
+      "english": "make easier / facilitate",
       "rank": 276,
       "irregular": false
     },
     {
       "word": "benutzen",
-      "english": "use / utilize",
+      "english": "use",
       "rank": 277,
       "irregular": false
     },
     {
       "word": "betrachten",
-      "english": "consider / gaze at / look at",
+      "english": "consider / look at",
       "rank": 278,
       "irregular": false
     },
     {
       "word": "holen",
-      "english": "breathe in / catch / fetch",
+      "english": "fetch / get",
       "rank": 279,
       "irregular": false
     },
@@ -1998,7 +1998,7 @@
     },
     {
       "word": "wahrnehmen",
-      "english": "attend / make use of / notice",
+      "english": "perceive / notice",
       "rank": 281,
       "irregular": true,
       "prateritum": "nahm wahr",
@@ -2007,43 +2007,43 @@
     },
     {
       "word": "erarbeiten",
-      "english": "achieve / acquire / compile",
+      "english": "develop / work out",
       "rank": 282,
       "irregular": false
     },
     {
       "word": "regeln",
-      "english": "control / manage / regulate",
+      "english": "regulate / arrange",
       "rank": 283,
       "irregular": false
     },
     {
       "word": "anlegen",
-      "english": "create / dock / invest",
+      "english": "create / invest",
       "rank": 284,
       "irregular": false
     },
     {
       "word": "buchen",
-      "english": "book / register / reserve",
+      "english": "book",
       "rank": 285,
       "irregular": false
     },
     {
       "word": "beantragen",
-      "english": "apply for / propose",
+      "english": "apply for",
       "rank": 286,
       "irregular": false
     },
     {
       "word": "bearbeiten",
-      "english": "handle",
+      "english": "edit / process",
       "rank": 287,
       "irregular": false
     },
     {
       "word": "verbringen",
-      "english": "accomplish / achieve / acquire",
+      "english": "spend (time)",
       "rank": 288,
       "irregular": true,
       "prateritum": "verbrachte",
@@ -2052,13 +2052,13 @@
     },
     {
       "word": "austauschen",
-      "english": "exchange / replace",
+      "english": "exchange / swap",
       "rank": 289,
       "irregular": false
     },
     {
       "word": "ausbauen",
-      "english": "build on / enlarge / expand",
+      "english": "expand / develop",
       "rank": 290,
       "irregular": false
     },
@@ -2070,7 +2070,7 @@
     },
     {
       "word": "ausschließen",
-      "english": "banish / exclude / lock oneself out",
+      "english": "exclude / rule out",
       "rank": 292,
       "irregular": true,
       "prateritum": "schloss aus",
@@ -2079,7 +2079,7 @@
     },
     {
       "word": "verleihen",
-      "english": "confer / lend",
+      "english": "lend / award",
       "rank": 293,
       "irregular": true,
       "prateritum": "verlieh",
@@ -2094,7 +2094,7 @@
     },
     {
       "word": "schlagen",
-      "english": "beat / fell / fight",
+      "english": "beat / hit",
       "rank": 295,
       "irregular": true,
       "prateritum": "schlug",
@@ -2103,7 +2103,7 @@
     },
     {
       "word": "umgehen",
-      "english": "avoid / bypass / circumvent",
+      "english": "handle / avoid",
       "rank": 296,
       "irregular": true,
       "prateritum": "umging",
@@ -2112,31 +2112,31 @@
     },
     {
       "word": "absolvieren",
-      "english": "absolve / complete / pass",
+      "english": "complete",
       "rank": 297,
       "irregular": false
     },
     {
       "word": "einführen",
-      "english": "adopt / import / introduce",
+      "english": "introduce / import",
       "rank": 298,
       "irregular": false
     },
     {
       "word": "verarbeiten",
-      "english": "assimilate / consume / convert",
+      "english": "process",
       "rank": 299,
       "irregular": false
     },
     {
       "word": "fällen",
-      "english": "chop down / come to / cut down",
+      "english": "fell / make (a decision)",
       "rank": 300,
       "irregular": false
     },
     {
       "word": "versorgen",
-      "english": "provide / supply / take care of",
+      "english": "supply / take care of",
       "rank": 301,
       "irregular": false
     },
@@ -2148,7 +2148,7 @@
     },
     {
       "word": "vergeben",
-      "english": "award / forgive / miss",
+      "english": "forgive / award",
       "rank": 303,
       "irregular": true,
       "prateritum": "vergab",
@@ -2157,13 +2157,13 @@
     },
     {
       "word": "verlangen",
-      "english": "demand / request",
+      "english": "demand / require",
       "rank": 304,
       "irregular": false
     },
     {
       "word": "vergessen",
-      "english": "forget / forget oneself",
+      "english": "forget",
       "rank": 305,
       "irregular": true,
       "prateritum": "vergaß",
@@ -2172,7 +2172,7 @@
     },
     {
       "word": "rufen",
-      "english": "call / cry / shout",
+      "english": "call / shout",
       "rank": 306,
       "irregular": true,
       "prateritum": "rief",
@@ -2181,19 +2181,19 @@
     },
     {
       "word": "steigern",
-      "english": "buy at auction / compare / improve",
+      "english": "increase / improve",
       "rank": 307,
       "irregular": false
     },
     {
       "word": "widmen",
-      "english": "attend to / dedicate",
+      "english": "dedicate",
       "rank": 308,
       "irregular": false
     },
     {
       "word": "vereinbaren",
-      "english": "agree / arrange / reconcile",
+      "english": "agree / arrange",
       "rank": 309,
       "irregular": false
     },
@@ -2208,31 +2208,31 @@
     },
     {
       "word": "wohnen",
-      "english": "dwell / live / lodge",
+      "english": "live",
       "rank": 311,
       "irregular": false
     },
     {
       "word": "drehen",
-      "english": "shoot / spin / turn",
+      "english": "turn / spin / shoot (film)",
       "rank": 312,
       "irregular": false
     },
     {
       "word": "klären",
-      "english": "clarify / clear / purge",
+      "english": "clarify",
       "rank": 313,
       "irregular": false
     },
     {
       "word": "löschen",
-      "english": "delete / erase / extinguish",
+      "english": "delete / extinguish",
       "rank": 314,
       "irregular": false
     },
     {
       "word": "erzeugen",
-      "english": "generate / produce",
+      "english": "produce / generate",
       "rank": 315,
       "irregular": false
     },
@@ -2247,7 +2247,7 @@
     },
     {
       "word": "schicken",
-      "english": "consign / send",
+      "english": "send",
       "rank": 317,
       "irregular": false
     },
@@ -2262,7 +2262,7 @@
     },
     {
       "word": "aufzeigen",
-      "english": "put one's hand up / reveal",
+      "english": "show / demonstrate",
       "rank": 319,
       "irregular": false
     },
@@ -2283,31 +2283,31 @@
     },
     {
       "word": "lieben",
-      "english": "have sex / love",
+      "english": "love",
       "rank": 322,
       "irregular": false
     },
     {
       "word": "beenden",
-      "english": "close / complete / conclude",
+      "english": "end / finish",
       "rank": 323,
       "irregular": false
     },
     {
       "word": "verdienen",
-      "english": "deserve / earn",
+      "english": "earn / deserve",
       "rank": 324,
       "irregular": false
     },
     {
       "word": "vorlegen",
-      "english": "present / provide",
+      "english": "present / submit",
       "rank": 325,
       "irregular": false
     },
     {
       "word": "sterben",
-      "english": "be gathered to one's fathers / buy the farm / cop it",
+      "english": "die",
       "rank": 326,
       "irregular": true,
       "prateritum": "starb",
@@ -2316,13 +2316,13 @@
     },
     {
       "word": "bereitstellen",
-      "english": "make available / provide",
+      "english": "provide / make available",
       "rank": 327,
       "irregular": false
     },
     {
       "word": "leiden",
-      "english": "put up with / suffer / tolerate",
+      "english": "suffer",
       "rank": 328,
       "irregular": true,
       "prateritum": "litt",
@@ -2337,7 +2337,7 @@
     },
     {
       "word": "aufstellen",
-      "english": "deploy / develop / erect",
+      "english": "set up / establish",
       "rank": 330,
       "irregular": false
     },
@@ -2349,7 +2349,7 @@
     },
     {
       "word": "mitbringen",
-      "english": "bring",
+      "english": "bring along",
       "rank": 332,
       "irregular": true,
       "prateritum": "brachte mit",
@@ -2364,7 +2364,7 @@
     },
     {
       "word": "greifen",
-      "english": "grab / grip / reach for",
+      "english": "grab / reach",
       "rank": 334,
       "irregular": true,
       "prateritum": "griff",
@@ -2373,7 +2373,7 @@
     },
     {
       "word": "ausfallen",
-      "english": "cancelled / fail / fall out",
+      "english": "fail / be canceled",
       "rank": 335,
       "irregular": true,
       "prateritum": "fiel aus",
@@ -2382,7 +2382,7 @@
     },
     {
       "word": "entfernen",
-      "english": "delete / deprive / detach",
+      "english": "remove",
       "rank": 336,
       "irregular": false
     },
@@ -2400,7 +2400,7 @@
     },
     {
       "word": "nachweisen",
-      "english": "prove",
+      "english": "prove / demonstrate",
       "rank": 339,
       "irregular": true,
       "prateritum": "wies nach",
@@ -2430,7 +2430,7 @@
     },
     {
       "word": "gebären",
-      "english": "bear / deliver / give birth",
+      "english": "give birth",
       "rank": 343,
       "irregular": true,
       "prateritum": "gebar",
@@ -2439,7 +2439,7 @@
     },
     {
       "word": "zulassen",
-      "english": "allow / keep closed / permit",
+      "english": "allow / permit",
       "rank": 344,
       "irregular": true,
       "prateritum": "ließ zu",
@@ -2448,7 +2448,7 @@
     },
     {
       "word": "anschließen",
-      "english": "affiliate / attach / connect",
+      "english": "connect / join",
       "rank": 345,
       "irregular": true,
       "prateritum": "schloss an",
@@ -2457,19 +2457,19 @@
     },
     {
       "word": "schätzen",
-      "english": "appreciate / assess / estimate",
+      "english": "estimate / appreciate",
       "rank": 346,
       "irregular": false
     },
     {
       "word": "veranstalten",
-      "english": "organize",
+      "english": "organize / host",
       "rank": 347,
       "irregular": false
     },
     {
       "word": "abhängen",
-      "english": "correlate / depend / dependent",
+      "english": "depend on",
       "rank": 348,
       "irregular": true,
       "prateritum": "hing ab",
@@ -2478,13 +2478,13 @@
     },
     {
       "word": "orientieren",
-      "english": "inform / orient / orientate oneself",
+      "english": "orient / guide",
       "rank": 349,
       "irregular": false
     },
     {
       "word": "versprechen",
-      "english": "expect / hope / mispronounce",
+      "english": "promise",
       "rank": 350,
       "irregular": true,
       "prateritum": "versprach",
@@ -2493,7 +2493,7 @@
     },
     {
       "word": "werfen",
-      "english": "cast / deform / give birth",
+      "english": "throw",
       "rank": 351,
       "irregular": true,
       "prateritum": "warf",
@@ -2502,7 +2502,7 @@
     },
     {
       "word": "realisieren",
-      "english": "carry out / implement / realize",
+      "english": "realize / implement",
       "rank": 352,
       "irregular": false
     },
@@ -2532,13 +2532,13 @@
     },
     {
       "word": "begeistern",
-      "english": "be very much interested in / excite / fill with enthusiasm",
+      "english": "inspire / excite",
       "rank": 357,
       "irregular": false
     },
     {
       "word": "einnehmen",
-      "english": "adopt / capture / cover",
+      "english": "take / occupy",
       "rank": 358,
       "irregular": true,
       "prateritum": "nahm ein",
@@ -2547,19 +2547,19 @@
     },
     {
       "word": "ausprobieren",
-      "english": "test / try out",
+      "english": "try out",
       "rank": 359,
       "irregular": false
     },
     {
       "word": "kämpfen",
-      "english": "fight / struggle / wrestle",
+      "english": "fight / struggle",
       "rank": 360,
       "irregular": false
     },
     {
       "word": "raten",
-      "english": "advise / give advice / guess",
+      "english": "advise / guess",
       "rank": 361,
       "irregular": true,
       "prateritum": "riet",
@@ -2568,13 +2568,13 @@
     },
     {
       "word": "erkunden",
-      "english": "explore / investigate",
+      "english": "explore",
       "rank": 362,
       "irregular": false
     },
     {
       "word": "vorkommen",
-      "english": "advance / exist / occur",
+      "english": "occur / happen",
       "rank": 363,
       "irregular": true,
       "prateritum": "kam vor",
@@ -2583,7 +2583,7 @@
     },
     {
       "word": "aufrufen",
-      "english": "call / call for / call up",
+      "english": "call / call up",
       "rank": 364,
       "irregular": true,
       "prateritum": "rief auf",
@@ -2604,31 +2604,31 @@
     },
     {
       "word": "bedienen",
-      "english": "operate / serve",
+      "english": "serve / operate",
       "rank": 367,
       "irregular": false
     },
     {
       "word": "landen",
-      "english": "alight / debark / disembark",
+      "english": "land",
       "rank": 368,
       "irregular": false
     },
     {
       "word": "lauten",
-      "english": "be / go / read",
+      "english": "read / say (text)",
       "rank": 369,
       "irregular": false
     },
     {
       "word": "pflegen",
-      "english": "administer / attend / care for",
+      "english": "care for / maintain",
       "rank": 370,
       "irregular": false
     },
     {
       "word": "klingen",
-      "english": "clink / ring / sound",
+      "english": "sound",
       "rank": 371,
       "irregular": true,
       "prateritum": "klang",
@@ -2637,13 +2637,13 @@
     },
     {
       "word": "ausführen",
-      "english": "ask out / execute / export",
+      "english": "carry out / execute",
       "rank": 372,
       "irregular": false
     },
     {
       "word": "bedürfen",
-      "english": "need / require / want",
+      "english": "need / require",
       "rank": 373,
       "irregular": true,
       "prateritum": "bedurfte",
@@ -2652,7 +2652,7 @@
     },
     {
       "word": "stimmen",
-      "english": "be correct / render / tune",
+      "english": "be correct / vote",
       "rank": 374,
       "irregular": false
     },
@@ -2664,13 +2664,13 @@
     },
     {
       "word": "verletzen",
-      "english": "bruise / harm / hurt",
+      "english": "injure / violate",
       "rank": 376,
       "irregular": false
     },
     {
       "word": "anwenden",
-      "english": "apply / deploy / employ",
+      "english": "apply / use",
       "rank": 377,
       "irregular": true,
       "prateritum": "wandte an",
@@ -2679,19 +2679,19 @@
     },
     {
       "word": "ausreichen",
-      "english": "suffice / sufficient",
+      "english": "suffice / be enough",
       "rank": 378,
       "irregular": false
     },
     {
       "word": "ausrichten",
-      "english": "align / host / organize",
+      "english": "align / host",
       "rank": 379,
       "irregular": false
     },
     {
       "word": "zusammenstellen",
-      "english": "compile / compose",
+      "english": "compile / put together",
       "rank": 380,
       "irregular": false
     },
@@ -2703,49 +2703,49 @@
     },
     {
       "word": "abstimmen",
-      "english": "coordinate / vote",
+      "english": "vote / coordinate",
       "rank": 382,
       "irregular": false
     },
     {
       "word": "senden",
-      "english": "broadcast / send",
+      "english": "send / broadcast",
       "rank": 383,
       "irregular": false
     },
     {
       "word": "verursachen",
-      "english": "bring about / cause",
+      "english": "cause",
       "rank": 384,
       "irregular": false
     },
     {
       "word": "durchsetzen",
-      "english": "establish / prevail / push through",
+      "english": "enforce / prevail",
       "rank": 385,
       "irregular": false
     },
     {
       "word": "trennen",
-      "english": "break up / distinguish / hyphenate",
+      "english": "separate",
       "rank": 386,
       "irregular": false
     },
     {
       "word": "befassen",
-      "english": "be / concerned / focus",
+      "english": "deal with",
       "rank": 387,
       "irregular": false
     },
     {
       "word": "errichten",
-      "english": "build / erect / establish",
+      "english": "build / establish",
       "rank": 388,
       "irregular": false
     },
     {
       "word": "eintragen",
-      "english": "enter / inscribe / record",
+      "english": "enter / register",
       "rank": 389,
       "irregular": true,
       "prateritum": "trug ein",
@@ -2754,13 +2754,13 @@
     },
     {
       "word": "erledigen",
-      "english": "complete / deal with / finish",
+      "english": "take care of / finish",
       "rank": 390,
       "irregular": false
     },
     {
       "word": "messen",
-      "english": "compare / compete / look up and down",
+      "english": "measure",
       "rank": 391,
       "irregular": true,
       "prateritum": "maß",
@@ -2769,7 +2769,7 @@
     },
     {
       "word": "ankündigen",
-      "english": "announce / foretell / portend",
+      "english": "announce",
       "rank": 392,
       "irregular": false
     },
@@ -2790,7 +2790,7 @@
     },
     {
       "word": "sinken",
-      "english": "sink",
+      "english": "sink / decline",
       "rank": 395,
       "irregular": true,
       "prateritum": "sank",
@@ -2799,7 +2799,7 @@
     },
     {
       "word": "anerkennen",
-      "english": "acknowledge / appreciate",
+      "english": "acknowledge / recognize",
       "rank": 396,
       "irregular": true,
       "prateritum": "erkannte an",
@@ -2808,7 +2808,7 @@
     },
     {
       "word": "auslösen",
-      "english": "induce / ransom / trigger",
+      "english": "trigger / cause",
       "rank": 397,
       "irregular": false
     },
@@ -2823,13 +2823,13 @@
     },
     {
       "word": "ausmachen",
-      "english": "aggregate / agree on / amount",
+      "english": "make up / turn off / matter",
       "rank": 399,
       "irregular": false
     },
     {
       "word": "tun",
-      "english": "act / do / happen",
+      "english": "do",
       "rank": 400,
       "irregular": true,
       "prateritum": "tat",
@@ -2838,7 +2838,7 @@
     },
     {
       "word": "gedenken",
-      "english": "commemorate / intend / plan",
+      "english": "commemorate",
       "rank": 401,
       "irregular": true,
       "prateritum": "gedachte",
@@ -2847,13 +2847,13 @@
     },
     {
       "word": "verbreiten",
-      "english": "exude / put about / spread",
+      "english": "spread",
       "rank": 402,
       "irregular": false
     },
     {
       "word": "ablehnen",
-      "english": "decline / refuse",
+      "english": "refuse / reject",
       "rank": 403,
       "irregular": false
     },
@@ -2868,31 +2868,31 @@
     },
     {
       "word": "konzentrieren",
-      "english": "concentrate / pay attention",
+      "english": "concentrate / focus",
       "rank": 405,
       "irregular": false
     },
     {
       "word": "reden",
-      "english": "say / speak / talk",
+      "english": "talk / speak",
       "rank": 406,
       "irregular": false
     },
     {
       "word": "steuern",
-      "english": "control / head / obviate",
+      "english": "control / steer",
       "rank": 407,
       "irregular": false
     },
     {
       "word": "basieren",
-      "english": "be based on / be founded on",
+      "english": "be based on",
       "rank": 408,
       "irregular": false
     },
     {
       "word": "eingeben",
-      "english": "to administer (a drug, poison, remedy to somebody) / to allow (somebody something) / to appeal",
+      "english": "enter / input",
       "rank": 409,
       "irregular": true,
       "prateritum": "gab ein",
@@ -2901,13 +2901,13 @@
     },
     {
       "word": "senken",
-      "english": "lower",
+      "english": "lower / reduce",
       "rank": 410,
       "irregular": false
     },
     {
       "word": "verweisen",
-      "english": "expel / rebuke / refer",
+      "english": "refer / point",
       "rank": 411,
       "irregular": true,
       "prateritum": "verwies",
@@ -2922,13 +2922,13 @@
     },
     {
       "word": "begegnen",
-      "english": "come across / encounter / face",
+      "english": "encounter / meet",
       "rank": 413,
       "irregular": false
     },
     {
       "word": "herausfinden",
-      "english": "discover / figure out / find out",
+      "english": "find out / discover",
       "rank": 414,
       "irregular": true,
       "prateritum": "fand heraus",
@@ -2937,7 +2937,7 @@
     },
     {
       "word": "zukommen",
-      "english": "approach / contact",
+      "english": "approach / be due to",
       "rank": 415,
       "irregular": true,
       "prateritum": "kam zu",
@@ -2946,7 +2946,7 @@
     },
     {
       "word": "angehen",
-      "english": "attack / beg / come on",
+      "english": "concern / tackle",
       "rank": 416,
       "irregular": true,
       "prateritum": "ging an",
@@ -2955,13 +2955,13 @@
     },
     {
       "word": "etablieren",
-      "english": "become / establish / set oneself up",
+      "english": "establish",
       "rank": 417,
       "irregular": false
     },
     {
       "word": "entnehmen",
-      "english": "extract / gather / infer",
+      "english": "take from / gather",
       "rank": 418,
       "irregular": true,
       "prateritum": "entnahm",
@@ -2976,13 +2976,13 @@
     },
     {
       "word": "kontrollieren",
-      "english": "check / inspect",
+      "english": "check / control",
       "rank": 420,
       "irregular": false
     },
     {
       "word": "fortsetzen",
-      "english": "continue / resume",
+      "english": "continue",
       "rank": 421,
       "irregular": false
     },
@@ -2994,7 +2994,7 @@
     },
     {
       "word": "stoßen",
-      "english": "encounter / push / run into",
+      "english": "push / bump into",
       "rank": 423,
       "irregular": true,
       "prateritum": "stieß",
@@ -3003,7 +3003,7 @@
     },
     {
       "word": "einhalten",
-      "english": "comply / maintain",
+      "english": "comply with / observe",
       "rank": 424,
       "irregular": true,
       "prateritum": "hielt ein",
@@ -3012,7 +3012,7 @@
     },
     {
       "word": "zunehmen",
-      "english": "gain / increase / wax",
+      "english": "increase / gain weight",
       "rank": 425,
       "irregular": true,
       "prateritum": "nahm zu",
@@ -3021,7 +3021,7 @@
     },
     {
       "word": "verlaufen",
-      "english": "disappear / dispel / get lost",
+      "english": "proceed / go",
       "rank": 426,
       "irregular": true,
       "prateritum": "verlief",
@@ -3030,13 +3030,13 @@
     },
     {
       "word": "retten",
-      "english": "escape / recover / rescue",
+      "english": "rescue / save",
       "rank": 427,
       "irregular": false
     },
     {
       "word": "verschwinden",
-      "english": "be lost / disappear / get lost",
+      "english": "disappear",
       "rank": 428,
       "irregular": true,
       "prateritum": "verschwand",
@@ -3045,13 +3045,13 @@
     },
     {
       "word": "verabschieden",
-      "english": "adopt / discharge / dismiss",
+      "english": "say goodbye / pass (a law)",
       "rank": 429,
       "irregular": false
     },
     {
       "word": "binden",
-      "english": "bind / blend / tie",
+      "english": "bind / tie",
       "rank": 430,
       "irregular": true,
       "prateritum": "band",
@@ -3075,13 +3075,13 @@
     },
     {
       "word": "merken",
-      "english": "keep in mind / memorize / notice",
+      "english": "notice / remember",
       "rank": 433,
       "irregular": false
     },
     {
       "word": "herrschen",
-      "english": "prevail / reign / rule",
+      "english": "rule / prevail",
       "rank": 434,
       "irregular": false
     },
@@ -3096,7 +3096,7 @@
     },
     {
       "word": "ausgeben",
-      "english": "dispense / imitate / issue",
+      "english": "spend / issue",
       "rank": 436,
       "irregular": true,
       "prateritum": "gab aus",
@@ -3111,7 +3111,7 @@
     },
     {
       "word": "antreten",
-      "english": "begin / compete / kick start",
+      "english": "begin / start",
       "rank": 438,
       "irregular": true,
       "prateritum": "trat an",
@@ -3120,13 +3120,13 @@
     },
     {
       "word": "registrieren",
-      "english": "notice / register",
+      "english": "register / notice",
       "rank": 439,
       "irregular": false
     },
     {
       "word": "hängen",
-      "english": "be fond of / hang / impend",
+      "english": "hang",
       "rank": 440,
       "irregular": true,
       "prateritum": "hing",
@@ -3144,7 +3144,7 @@
     },
     {
       "word": "unterliegen",
-      "english": "be beaten / be subject to",
+      "english": "be subject to",
       "rank": 442,
       "irregular": true,
       "prateritum": "unterlag",
@@ -3153,7 +3153,7 @@
     },
     {
       "word": "abdecken",
-      "english": "cover / hood / remove",
+      "english": "cover",
       "rank": 443,
       "irregular": false
     },
@@ -3165,19 +3165,19 @@
     },
     {
       "word": "auseinandersetzen",
-      "english": "deal",
+      "english": "deal with / examine",
       "rank": 445,
       "irregular": false
     },
     {
       "word": "auffordern",
-      "english": "request / require",
+      "english": "request / urge",
       "rank": 446,
       "irregular": false
     },
     {
       "word": "auswirken",
-      "english": "have an effect / obtain",
+      "english": "have an effect",
       "rank": 447,
       "irregular": false
     },
@@ -3189,7 +3189,7 @@
     },
     {
       "word": "weitergeben",
-      "english": "impart / pass on",
+      "english": "pass on",
       "rank": 449,
       "irregular": true,
       "prateritum": "gab weiter",
@@ -3207,13 +3207,13 @@
     },
     {
       "word": "beauftragen",
-      "english": "ask / commission / hire",
+      "english": "commission / hire",
       "rank": 451,
       "irregular": false
     },
     {
       "word": "besetzen",
-      "english": "decorate / garnish / occupy",
+      "english": "occupy / fill (a position)",
       "rank": 452,
       "irregular": false
     },
@@ -3225,13 +3225,13 @@
     },
     {
       "word": "begründen",
-      "english": "establish / justify",
+      "english": "justify / establish",
       "rank": 454,
       "irregular": false
     },
     {
       "word": "besprechen",
-      "english": "discuss / review",
+      "english": "discuss",
       "rank": 455,
       "irregular": true,
       "prateritum": "besprach",
@@ -3240,13 +3240,13 @@
     },
     {
       "word": "fassen",
-      "english": "apprehend / arrest / capture",
+      "english": "grasp / hold",
       "rank": 456,
       "irregular": false
     },
     {
       "word": "verschaffen",
-      "english": "procure / provide",
+      "english": "provide / obtain",
       "rank": 457,
       "irregular": false
     },
@@ -3258,7 +3258,7 @@
     },
     {
       "word": "mitnehmen",
-      "english": "keep / take / take with",
+      "english": "take along",
       "rank": 459,
       "irregular": true,
       "prateritum": "nahm mit",
@@ -3267,19 +3267,19 @@
     },
     {
       "word": "motivieren",
-      "english": "give reasons / motivate",
+      "english": "motivate",
       "rank": 460,
       "irregular": false
     },
     {
       "word": "verlängern",
-      "english": "dilute / lengthen / prolong",
+      "english": "extend / prolong",
       "rank": 461,
       "irregular": false
     },
     {
       "word": "festhalten",
-      "english": "capture / fasten / record",
+      "english": "hold on to / record",
       "rank": 462,
       "irregular": true,
       "prateritum": "hielt fest",
@@ -3297,19 +3297,19 @@
     },
     {
       "word": "währen",
-      "english": "last / take time",
+      "english": "last",
       "rank": 464,
       "irregular": false
     },
     {
       "word": "ausbilden",
-      "english": "educate / form",
+      "english": "train / educate",
       "rank": 465,
       "irregular": false
     },
     {
       "word": "aussprechen",
-      "english": "pronounce",
+      "english": "pronounce / express",
       "rank": 466,
       "irregular": true,
       "prateritum": "sprach aus",
@@ -3318,13 +3318,13 @@
     },
     {
       "word": "drücken",
-      "english": "be too tight / hug / lower",
+      "english": "press / push",
       "rank": 467,
       "irregular": false
     },
     {
       "word": "erbringen",
-      "english": "adduce / bring / come up with the goods",
+      "english": "provide / produce",
       "rank": 468,
       "irregular": true,
       "prateritum": "erbrachte",
@@ -3333,13 +3333,13 @@
     },
     {
       "word": "einschränken",
-      "english": "cut / limit / reduce",
+      "english": "restrict / limit",
       "rank": 469,
       "irregular": false
     },
     {
       "word": "entfallen",
-      "english": "allot / be canceled / be dropped",
+      "english": "be dropped / be omitted",
       "rank": 470,
       "irregular": true,
       "prateritum": "entfiel",
@@ -3354,7 +3354,7 @@
     },
     {
       "word": "benennen",
-      "english": "appoint / assign / call",
+      "english": "name / designate",
       "rank": 472,
       "irregular": true,
       "prateritum": "benannte",
@@ -3363,7 +3363,7 @@
     },
     {
       "word": "übergeben",
-      "english": "hand over / vomit",
+      "english": "hand over",
       "rank": 473,
       "irregular": true,
       "prateritum": "übergab",
@@ -3378,7 +3378,7 @@
     },
     {
       "word": "verringern",
-      "english": "decrease",
+      "english": "reduce / decrease",
       "rank": 475,
       "irregular": false
     },
@@ -3390,7 +3390,7 @@
     },
     {
       "word": "empfangen",
-      "english": "conceive / receive / welcome",
+      "english": "receive / welcome",
       "rank": 477,
       "irregular": true,
       "prateritum": "empfing",
@@ -3399,7 +3399,7 @@
     },
     {
       "word": "auffallen",
-      "english": "attract attention / catch someone's eye / fall onto",
+      "english": "stand out / attract attention",
       "rank": 478,
       "irregular": true,
       "prateritum": "fiel auf",
@@ -3408,25 +3408,25 @@
     },
     {
       "word": "erwähnen",
-      "english": "bring up / mention",
+      "english": "mention",
       "rank": 479,
       "irregular": false
     },
     {
       "word": "schmecken",
-      "english": "smack / smell / taste",
+      "english": "taste",
       "rank": 480,
       "irregular": false
     },
     {
       "word": "voraussetzen",
-      "english": "assume / prerequire / presume",
+      "english": "presuppose / require",
       "rank": 481,
       "irregular": false
     },
     {
       "word": "beschränken",
-      "english": "limit",
+      "english": "limit / restrict",
       "rank": 482,
       "irregular": false
     },
@@ -3438,25 +3438,25 @@
     },
     {
       "word": "anregen",
-      "english": "stimulate",
+      "english": "stimulate / suggest",
       "rank": 484,
       "irregular": false
     },
     {
       "word": "ausstellen",
-      "english": "exhibit / issue / switch off",
+      "english": "exhibit / issue",
       "rank": 485,
       "irregular": false
     },
     {
       "word": "verstärken",
-      "english": "invigorate",
+      "english": "strengthen / reinforce",
       "rank": 486,
       "irregular": false
     },
     {
       "word": "zurückkehren",
-      "english": "come back / return",
+      "english": "return",
       "rank": 487,
       "irregular": false
     },
@@ -3468,7 +3468,7 @@
     },
     {
       "word": "fliegen",
-      "english": "aviate / be expelled / fly",
+      "english": "fly",
       "rank": 489,
       "irregular": true,
       "prateritum": "flog",
@@ -3477,19 +3477,19 @@
     },
     {
       "word": "zeichnen",
-      "english": "an / bespeak / betoken",
+      "english": "draw",
       "rank": 490,
       "irregular": false
     },
     {
       "word": "auswerten",
-      "english": "analyze / evaluate / interpret",
+      "english": "analyze / evaluate",
       "rank": 491,
       "irregular": false
     },
     {
       "word": "gebieten",
-      "english": "command / order / reign",
+      "english": "command / demand",
       "rank": 492,
       "irregular": true,
       "prateritum": "gebot",
@@ -3510,31 +3510,31 @@
     },
     {
       "word": "schenken",
-      "english": "donate / give / give a miss",
+      "english": "give (as a gift)",
       "rank": 495,
       "irregular": false
     },
     {
       "word": "gefährden",
-      "english": "endanger / expose to danger / imperil",
+      "english": "endanger",
       "rank": 496,
       "irregular": false
     },
     {
       "word": "kennzeichnen",
-      "english": "characterize / denote / flag",
+      "english": "characterize / mark",
       "rank": 497,
       "irregular": false
     },
     {
       "word": "kündigen",
-      "english": "cancel / dismiss / give notice",
+      "english": "cancel / quit / fire",
       "rank": 498,
       "irregular": false
     },
     {
       "word": "versehen",
-      "english": "be mistaken / expect / occupy",
+      "english": "equip / provide",
       "rank": 499,
       "irregular": true,
       "prateritum": "versah",
@@ -3543,7 +3543,7 @@
     },
     {
       "word": "aufheben",
-      "english": "abolish / keep / pick up",
+      "english": "pick up / keep / abolish",
       "rank": 500,
       "irregular": true,
       "prateritum": "hob auf",
@@ -3552,19 +3552,19 @@
     },
     {
       "word": "aussetzen",
-      "english": "abandon / critize / expose",
+      "english": "expose / suspend",
       "rank": 501,
       "irregular": false
     },
     {
       "word": "ausüben",
-      "english": "exercise / exert / perform",
+      "english": "exercise / practice",
       "rank": 502,
       "irregular": false
     },
     {
       "word": "zurückgehen",
-      "english": "decline / decrease / go back",
+      "english": "go back / decline",
       "rank": 503,
       "irregular": true,
       "prateritum": "ging zurück",
@@ -3573,7 +3573,7 @@
     },
     {
       "word": "aufgeben",
-      "english": "assign / give (homework) / give up",
+      "english": "give up / assign",
       "rank": 504,
       "irregular": true,
       "prateritum": "gab auf",
@@ -3588,7 +3588,7 @@
     },
     {
       "word": "abnehmen",
-      "english": "amputate / answer / believe",
+      "english": "lose weight / decrease / take off",
       "rank": 506,
       "irregular": true,
       "prateritum": "nahm ab",
@@ -3597,7 +3597,7 @@
     },
     {
       "word": "rücken",
-      "english": "draw / move / proceed",
+      "english": "move",
       "rank": 507,
       "irregular": false
     },
@@ -3612,7 +3612,7 @@
     },
     {
       "word": "treiben",
-      "english": "bring forth / do / drift",
+      "english": "drive / do (sports)",
       "rank": 509,
       "irregular": true,
       "prateritum": "trieb",
@@ -3621,7 +3621,7 @@
     },
     {
       "word": "abrufen",
-      "english": "call away / retrieve",
+      "english": "retrieve / call up",
       "rank": 510,
       "irregular": true,
       "prateritum": "rief ab",
@@ -3639,7 +3639,7 @@
     },
     {
       "word": "üben",
-      "english": "do / exercise / practice",
+      "english": "practice",
       "rank": 512,
       "irregular": false
     },
@@ -3651,25 +3651,25 @@
     },
     {
       "word": "sperren",
-      "english": "block / space out",
+      "english": "block / lock",
       "rank": 514,
       "irregular": false
     },
     {
       "word": "aktualisieren",
-      "english": "refresh / update",
+      "english": "update",
       "rank": 515,
       "irregular": false
     },
     {
       "word": "genügen",
-      "english": "comply / suffice",
+      "english": "suffice / be enough",
       "rank": 516,
       "irregular": false
     },
     {
       "word": "formulieren",
-      "english": "couch / frame / put",
+      "english": "formulate",
       "rank": 517,
       "irregular": false
     },
@@ -3684,19 +3684,19 @@
     },
     {
       "word": "ausfüllen",
-      "english": "complete / fill in / fill out",
+      "english": "fill in / fill out",
       "rank": 519,
       "irregular": false
     },
     {
       "word": "bereiten",
-      "english": "cause / get something ready / prepare",
+      "english": "prepare / cause",
       "rank": 520,
       "irregular": false
     },
     {
       "word": "absehen",
-      "english": "disregard / foresee / refrain",
+      "english": "foresee / refrain from",
       "rank": 521,
       "irregular": true,
       "prateritum": "sah ab",
@@ -3720,13 +3720,13 @@
     },
     {
       "word": "stören",
-      "english": "disturb / hinder / interfere",
+      "english": "disturb",
       "rank": 524,
       "irregular": false
     },
     {
       "word": "singen",
-      "english": "rat / sing / squeal",
+      "english": "sing",
       "rank": 525,
       "irregular": true,
       "prateritum": "sang",
@@ -3735,19 +3735,19 @@
     },
     {
       "word": "verzeichnen",
-      "english": "distort / list / misdraw",
+      "english": "record / register",
       "rank": 526,
       "irregular": false
     },
     {
       "word": "verwalten",
-      "english": "manage",
+      "english": "manage / administer",
       "rank": 527,
       "irregular": false
     },
     {
       "word": "vorschlagen",
-      "english": "propose / suggest",
+      "english": "suggest / propose",
       "rank": 528,
       "irregular": true,
       "prateritum": "schlug vor",
@@ -3756,31 +3756,31 @@
     },
     {
       "word": "beurteilen",
-      "english": "judge",
+      "english": "judge / assess",
       "rank": 529,
       "irregular": false
     },
     {
       "word": "wecken",
-      "english": "bring about / cause / wake",
+      "english": "wake / arouse",
       "rank": 530,
       "irregular": false
     },
     {
       "word": "beleuchten",
-      "english": "illuminate / light",
+      "english": "illuminate / shed light on",
       "rank": 531,
       "irregular": false
     },
     {
       "word": "klappen",
-      "english": "clap / fold / work",
+      "english": "work (out) / fold",
       "rank": 532,
       "irregular": false
     },
     {
       "word": "mitmachen",
-      "english": "function / join in / participate",
+      "english": "join in / participate",
       "rank": 533,
       "irregular": false
     },
@@ -3792,7 +3792,7 @@
     },
     {
       "word": "werben",
-      "english": "advertise / court / recruit",
+      "english": "advertise / recruit",
       "rank": 535,
       "irregular": true,
       "prateritum": "warb",
@@ -3801,7 +3801,7 @@
     },
     {
       "word": "besichtigen",
-      "english": "view / visit",
+      "english": "visit / view",
       "rank": 536,
       "irregular": false
     },
@@ -3813,7 +3813,7 @@
     },
     {
       "word": "unterhalten",
-      "english": "chat / entertain / propose",
+      "english": "entertain / maintain / chat",
       "rank": 538,
       "irregular": true,
       "prateritum": "unterhielt",
@@ -3828,7 +3828,7 @@
     },
     {
       "word": "erweisen",
-      "english": "prove",
+      "english": "prove / show",
       "rank": 540,
       "irregular": true,
       "prateritum": "erwies",
@@ -3837,13 +3837,13 @@
     },
     {
       "word": "transportieren",
-      "english": "convey / move / somebody",
+      "english": "transport",
       "rank": 541,
       "irregular": false
     },
     {
       "word": "eintreten",
-      "english": "enter / join / occur",
+      "english": "enter / occur",
       "rank": 542,
       "irregular": true,
       "prateritum": "trat ein",
@@ -3852,7 +3852,7 @@
     },
     {
       "word": "zugreifen",
-      "english": "access / grab / help oneself",
+      "english": "access / grab",
       "rank": 543,
       "irregular": true,
       "prateritum": "griff zu",
@@ -3861,13 +3861,13 @@
     },
     {
       "word": "erforschen",
-      "english": "research",
+      "english": "research / explore",
       "rank": 544,
       "irregular": false
     },
     {
       "word": "ablaufen",
-      "english": "cover / drain / expire",
+      "english": "expire / proceed",
       "rank": 545,
       "irregular": true,
       "prateritum": "lief ab",
@@ -3876,13 +3876,13 @@
     },
     {
       "word": "locken",
-      "english": "curl / dandle / entice",
+      "english": "lure / attract",
       "rank": 546,
       "irregular": false
     },
     {
       "word": "vorgehen",
-      "english": "happen / precede / proceed",
+      "english": "proceed",
       "rank": 547,
       "irregular": true,
       "prateritum": "ging vor",
@@ -3891,19 +3891,19 @@
     },
     {
       "word": "abbauen",
-      "english": "break down / dismantle / get rid of",
+      "english": "dismantle / reduce",
       "rank": 548,
       "irregular": false
     },
     {
       "word": "ablegen",
-      "english": "depart / deposit / file",
+      "english": "put down / take (an exam)",
       "rank": 549,
       "irregular": false
     },
     {
       "word": "behaupten",
-      "english": "allege / claim / defend",
+      "english": "claim",
       "rank": 550,
       "irregular": false
     },
@@ -3921,13 +3921,13 @@
     },
     {
       "word": "vernetzen",
-      "english": "network",
+      "english": "network / connect",
       "rank": 553,
       "irregular": false
     },
     {
       "word": "begeben",
-      "english": "betake / go / happen",
+      "english": "go / proceed",
       "rank": 554,
       "irregular": true,
       "prateritum": "begab",
@@ -3936,31 +3936,31 @@
     },
     {
       "word": "erlernen",
-      "english": "acquire / learn / study",
+      "english": "learn",
       "rank": 555,
       "irregular": false
     },
     {
       "word": "verknüpfen",
-      "english": "attach / combine / tie together",
+      "english": "link / connect",
       "rank": 556,
       "irregular": false
     },
     {
       "word": "aufführen",
-      "english": "build / list / misbehave",
+      "english": "list / perform",
       "rank": 557,
       "irregular": false
     },
     {
       "word": "einlösen",
-      "english": "cash / redeem",
+      "english": "redeem / cash",
       "rank": 558,
       "irregular": false
     },
     {
       "word": "konzipieren",
-      "english": "become pregnant / conceive / conceptualise",
+      "english": "conceive / design",
       "rank": 559,
       "irregular": false
     },
@@ -3972,13 +3972,13 @@
     },
     {
       "word": "abholen",
-      "english": "collect / pick up / take away",
+      "english": "pick up / collect",
       "rank": 561,
       "irregular": false
     },
     {
       "word": "verhalten",
-      "english": "be / behave / relate",
+      "english": "behave",
       "rank": 562,
       "irregular": true,
       "prateritum": "verhielt",
@@ -3993,7 +3993,7 @@
     },
     {
       "word": "zurückgreifen",
-      "english": "fall back on / go further back",
+      "english": "fall back on / resort to",
       "rank": 564,
       "irregular": true,
       "prateritum": "griff zurück",
@@ -4002,13 +4002,13 @@
     },
     {
       "word": "abbilden",
-      "english": "map / portray",
+      "english": "depict / map",
       "rank": 565,
       "irregular": false
     },
     {
       "word": "anrufen",
-      "english": "against / appeal / call",
+      "english": "call (on the phone)",
       "rank": 566,
       "irregular": true,
       "prateritum": "rief an",
@@ -4017,25 +4017,25 @@
     },
     {
       "word": "decken",
-      "english": "be congruent / coincide / cover",
+      "english": "cover",
       "rank": 567,
       "irregular": false
     },
     {
       "word": "erstrecken",
-      "english": "cover / extend / range",
+      "english": "extend / stretch",
       "rank": 568,
       "irregular": false
     },
     {
       "word": "wiederholen",
-      "english": "iterate / repeat / repeat oneself",
+      "english": "repeat",
       "rank": 569,
       "irregular": false
     },
     {
       "word": "einsehen",
-      "english": "admit / examine / have a look at",
+      "english": "understand / realize",
       "rank": 570,
       "irregular": true,
       "prateritum": "sah ein",
@@ -4044,7 +4044,7 @@
     },
     {
       "word": "unterbringen",
-      "english": "accommodate",
+      "english": "accommodate / house",
       "rank": 571,
       "irregular": true,
       "prateritum": "brachte unter",
@@ -4053,7 +4053,7 @@
     },
     {
       "word": "nachdenken",
-      "english": "ponder / reflect / think",
+      "english": "think / reflect",
       "rank": 572,
       "irregular": true,
       "prateritum": "dachte nach",
@@ -4062,19 +4062,19 @@
     },
     {
       "word": "bewahren",
-      "english": "keep / protect",
+      "english": "preserve / keep",
       "rank": 573,
       "irregular": false
     },
     {
       "word": "überwachen",
-      "english": "oversee / surveil / survey",
+      "english": "monitor / supervise",
       "rank": 574,
       "irregular": false
     },
     {
       "word": "vorantreiben",
-      "english": "advance / promote / push on",
+      "english": "advance / push forward",
       "rank": 575,
       "irregular": true,
       "prateritum": "trieb voran",
@@ -4083,19 +4083,19 @@
     },
     {
       "word": "einbauen",
-      "english": "build in / install",
+      "english": "install / build in",
       "rank": 576,
       "irregular": false
     },
     {
       "word": "auftauchen",
-      "english": "crop up / emerge / show",
+      "english": "appear / emerge",
       "rank": 577,
       "irregular": false
     },
     {
       "word": "hinterlassen",
-      "english": "leave / leave behind",
+      "english": "leave behind",
       "rank": 578,
       "irregular": true,
       "prateritum": "hinterließ",
@@ -4104,19 +4104,19 @@
     },
     {
       "word": "kochen",
-      "english": "be seething with rage / boil / cook",
+      "english": "cook / boil",
       "rank": 579,
       "irregular": false
     },
     {
       "word": "absichern",
-      "english": "guarantee / make sure",
+      "english": "safeguard / secure",
       "rank": 580,
       "irregular": false
     },
     {
       "word": "nachgehen",
-      "english": "follow / follow up / pursue",
+      "english": "pursue / investigate",
       "rank": 581,
       "irregular": true,
       "prateritum": "ging nach",
@@ -4125,13 +4125,13 @@
     },
     {
       "word": "versichern",
-      "english": "assure / insure / make certain",
+      "english": "assure / insure",
       "rank": 582,
       "irregular": false
     },
     {
       "word": "bewältigen",
-      "english": "cope with",
+      "english": "cope with / manage",
       "rank": 583,
       "irregular": false
     },
@@ -4143,13 +4143,13 @@
     },
     {
       "word": "würdigen",
-      "english": "acknowledge / appreciate / deign",
+      "english": "appreciate / acknowledge",
       "rank": 585,
       "irregular": false
     },
     {
       "word": "feststehen",
-      "english": "be certain / confirm / establish",
+      "english": "be certain",
       "rank": 586,
       "irregular": true,
       "prateritum": "stand fest",
@@ -4176,7 +4176,7 @@
     },
     {
       "word": "spezialisieren",
-      "english": "itemize / specify / spezialize",
+      "english": "specialize",
       "rank": 590,
       "irregular": false
     },
@@ -4188,31 +4188,31 @@
     },
     {
       "word": "wandern",
-      "english": "go trekking / hike / migrate",
+      "english": "hike / wander",
       "rank": 592,
       "irregular": false
     },
     {
       "word": "blicken",
-      "english": "look",
+      "english": "look / glance",
       "rank": 593,
       "irregular": false
     },
     {
       "word": "fertigen",
-      "english": "craft / manufacture / produce",
+      "english": "manufacture / produce",
       "rank": 594,
       "irregular": false
     },
     {
       "word": "verwandeln",
-      "english": "convert / metamorphose / transform",
+      "english": "transform / convert",
       "rank": 595,
       "irregular": false
     },
     {
       "word": "schneiden",
-      "english": "cut / tap",
+      "english": "cut",
       "rank": 596,
       "irregular": true,
       "prateritum": "schnitt",
@@ -4221,31 +4221,31 @@
     },
     {
       "word": "anhören",
-      "english": "hear / sound",
+      "english": "listen to / sound",
       "rank": 597,
       "irregular": false
     },
     {
       "word": "ansetzen",
-      "english": "calculate something at something / call a meeting/election/rehearsal / put on weight",
+      "english": "schedule / set",
       "rank": 598,
       "irregular": false
     },
     {
       "word": "befragen",
-      "english": "ask / consult / interrogate",
+      "english": "question / interview",
       "rank": 599,
       "irregular": false
     },
     {
       "word": "reinigen",
-      "english": "clean / dry-clean / purify",
+      "english": "clean",
       "rank": 600,
       "irregular": false
     },
     {
       "word": "weisen",
-      "english": "direct / point / show",
+      "english": "point / show",
       "rank": 601,
       "irregular": true,
       "prateritum": "wies",
@@ -4254,7 +4254,7 @@
     },
     {
       "word": "anstreben",
-      "english": "strive for",
+      "english": "strive for / aim at",
       "rank": 602,
       "irregular": false
     },
@@ -4266,7 +4266,7 @@
     },
     {
       "word": "überwinden",
-      "english": "force / overcome",
+      "english": "overcome",
       "rank": 604,
       "irregular": true,
       "prateritum": "überwand",
@@ -4275,7 +4275,7 @@
     },
     {
       "word": "aufhalten",
-      "english": "balk / block / hinder",
+      "english": "stop / delay",
       "rank": 605,
       "irregular": true,
       "prateritum": "hielt auf",
@@ -4296,7 +4296,7 @@
     },
     {
       "word": "ausweisen",
-      "english": "declare / deport / exclude",
+      "english": "identify / deport",
       "rank": 608,
       "irregular": true,
       "prateritum": "wies aus",
@@ -4305,19 +4305,19 @@
     },
     {
       "word": "beeinträchtigen",
-      "english": "affect / impair / spoil",
+      "english": "impair / affect",
       "rank": 609,
       "irregular": false
     },
     {
       "word": "vermuten",
-      "english": "assume / guess / suppose",
+      "english": "suspect / assume",
       "rank": 610,
       "irregular": false
     },
     {
       "word": "thematisieren",
-      "english": "discuss",
+      "english": "address / discuss",
       "rank": 611,
       "irregular": false
     },
@@ -4341,7 +4341,7 @@
     },
     {
       "word": "ausgleichen",
-      "english": "balance / balance out / compensate",
+      "english": "balance / compensate",
       "rank": 614,
       "irregular": true,
       "prateritum": "glich aus",
@@ -4350,7 +4350,7 @@
     },
     {
       "word": "empfinden",
-      "english": "experience / feel / sense",
+      "english": "feel / perceive",
       "rank": 615,
       "irregular": true,
       "prateritum": "empfand",
@@ -4359,31 +4359,31 @@
     },
     {
       "word": "verlegen",
-      "english": "lay / mislay / misplace",
+      "english": "lay / relocate / misplace",
       "rank": 616,
       "irregular": false
     },
     {
       "word": "forschen",
-      "english": "do research / research",
+      "english": "research",
       "rank": 617,
       "irregular": false
     },
     {
       "word": "auslegen",
-      "english": "cover / display / interpret",
+      "english": "interpret / lay out",
       "rank": 618,
       "irregular": false
     },
     {
       "word": "einschätzen",
-      "english": "assess / evaluate / judge",
+      "english": "assess / evaluate",
       "rank": 619,
       "irregular": false
     },
     {
       "word": "zwingen",
-      "english": "compel / force",
+      "english": "force / compel",
       "rank": 620,
       "irregular": true,
       "prateritum": "zwang",
@@ -4392,37 +4392,37 @@
     },
     {
       "word": "einleiten",
-      "english": "initiate / introduce / pour",
+      "english": "initiate / introduce",
       "rank": 621,
       "irregular": false
     },
     {
       "word": "versenden",
-      "english": "dispatch / send",
+      "english": "send / ship",
       "rank": 622,
       "irregular": false
     },
     {
       "word": "aussuchen",
-      "english": "choose / pick / select",
+      "english": "choose / select",
       "rank": 623,
       "irregular": false
     },
     {
       "word": "probieren",
-      "english": "attempt / sample / taste",
+      "english": "try / taste",
       "rank": 624,
       "irregular": false
     },
     {
       "word": "beseitigen",
-      "english": "dispose / remove",
+      "english": "remove / eliminate",
       "rank": 625,
       "irregular": false
     },
     {
       "word": "geraten",
-      "english": "fall into / get into / resemble",
+      "english": "get into / turn out",
       "rank": 626,
       "irregular": true,
       "prateritum": "geriet",
@@ -4431,13 +4431,13 @@
     },
     {
       "word": "verbrauchen",
-      "english": "consume / wear out",
+      "english": "consume / use up",
       "rank": 627,
       "irregular": false
     },
     {
       "word": "ansiedeln",
-      "english": "settle down",
+      "english": "settle",
       "rank": 628,
       "irregular": false
     },
@@ -4455,7 +4455,7 @@
     },
     {
       "word": "verschieben",
-      "english": "move / postpone / reschedule",
+      "english": "postpone / move",
       "rank": 631,
       "irregular": true,
       "prateritum": "verschob",
@@ -4464,19 +4464,19 @@
     },
     {
       "word": "auflösen",
-      "english": "annul / disperse / dissolve",
+      "english": "dissolve / resolve",
       "rank": 632,
       "irregular": false
     },
     {
       "word": "ableiten",
-      "english": "derive / differentiate / divert",
+      "english": "derive",
       "rank": 633,
       "irregular": false
     },
     {
       "word": "springen",
-      "english": "crack / dive / jump",
+      "english": "jump",
       "rank": 634,
       "irregular": true,
       "prateritum": "sprang",
@@ -4485,7 +4485,7 @@
     },
     {
       "word": "spenden",
-      "english": "dispense / donate / give",
+      "english": "donate",
       "rank": 635,
       "irregular": false
     },
@@ -4503,13 +4503,13 @@
     },
     {
       "word": "einkaufen",
-      "english": "buy / buy in / go shopping",
+      "english": "shop / buy",
       "rank": 638,
       "irregular": false
     },
     {
       "word": "abrunden",
-      "english": "round down",
+      "english": "round off",
       "rank": 639,
       "irregular": false
     },
@@ -4521,13 +4521,13 @@
     },
     {
       "word": "ausdrücken",
-      "english": "communicate nonverbally / couch / embody",
+      "english": "express",
       "rank": 641,
       "irregular": false
     },
     {
       "word": "unterstreichen",
-      "english": "emphasize / highlight / underline",
+      "english": "underline / emphasize",
       "rank": 642,
       "irregular": true,
       "prateritum": "unterstrich",
@@ -4536,13 +4536,13 @@
     },
     {
       "word": "mitwirken",
-      "english": "collaborate",
+      "english": "participate / collaborate",
       "rank": 643,
       "irregular": false
     },
     {
       "word": "bergen",
-      "english": "bear / recover / salvage",
+      "english": "rescue / contain",
       "rank": 644,
       "irregular": true,
       "prateritum": "barg",
@@ -4551,7 +4551,7 @@
     },
     {
       "word": "anstehen",
-      "english": "be pending / be upcoming / queue",
+      "english": "be pending / queue",
       "rank": 645,
       "irregular": true,
       "prateritum": "stand an",
@@ -4572,7 +4572,7 @@
     },
     {
       "word": "knüpfen",
-      "english": "knot",
+      "english": "tie / make (contacts)",
       "rank": 648,
       "irregular": false
     },
@@ -4584,7 +4584,7 @@
     },
     {
       "word": "angehören",
-      "english": "belong",
+      "english": "belong to",
       "rank": 650,
       "irregular": false
     },
@@ -4596,37 +4596,37 @@
     },
     {
       "word": "erneuern",
-      "english": "change / exchange / refresh",
+      "english": "renew",
       "rank": 652,
       "irregular": false
     },
     {
       "word": "auszahlen",
-      "english": "be worth / buy out / cash out",
+      "english": "pay out / be worth it",
       "rank": 653,
       "irregular": false
     },
     {
       "word": "zubereiten",
-      "english": "prepare",
+      "english": "prepare (food)",
       "rank": 654,
       "irregular": false
     },
     {
       "word": "überreichen",
-      "english": "hand over / present / submit",
+      "english": "hand over / present",
       "rank": 655,
       "irregular": false
     },
     {
       "word": "bewirken",
-      "english": "bring about / cause",
+      "english": "cause / bring about",
       "rank": 656,
       "irregular": false
     },
     {
       "word": "vorgeben",
-      "english": "predefine / pretend / specify",
+      "english": "pretend / specify",
       "rank": 657,
       "irregular": true,
       "prateritum": "gab vor",
@@ -4635,7 +4635,7 @@
     },
     {
       "word": "entfalten",
-      "english": "develop / flower out / unfold",
+      "english": "unfold / develop",
       "rank": 658,
       "irregular": false
     },
@@ -4653,19 +4653,19 @@
     },
     {
       "word": "bemühen",
-      "english": "consult / make an effort / trouble oneself",
+      "english": "make an effort / try",
       "rank": 661,
       "irregular": false
     },
     {
       "word": "versetzen",
-      "english": "pawn / relocate / stand so. up",
+      "english": "transfer / relocate",
       "rank": 662,
       "irregular": false
     },
     {
       "word": "entwerfen",
-      "english": "design",
+      "english": "design / draft",
       "rank": 663,
       "irregular": true,
       "prateritum": "entwarf",
@@ -4674,7 +4674,7 @@
     },
     {
       "word": "begehen",
-      "english": "celebrate / commit / go along",
+      "english": "commit / celebrate",
       "rank": 664,
       "irregular": true,
       "prateritum": "beging",
@@ -4683,19 +4683,19 @@
     },
     {
       "word": "erproben",
-      "english": "prove / put to the test / test",
+      "english": "test / try out",
       "rank": 665,
       "irregular": false
     },
     {
       "word": "herausstellen",
-      "english": "come to light / emphasize / put out",
+      "english": "turn out / emphasize",
       "rank": 666,
       "irregular": false
     },
     {
       "word": "hervorgehen",
-      "english": "result",
+      "english": "result / emerge",
       "rank": 667,
       "irregular": true,
       "prateritum": "ging hervor",
@@ -4704,7 +4704,7 @@
     },
     {
       "word": "markieren",
-      "english": "highlight / mark",
+      "english": "mark / highlight",
       "rank": 668,
       "irregular": false
     },
@@ -4716,7 +4716,7 @@
     },
     {
       "word": "verwirklichen",
-      "english": "realize",
+      "english": "realize / achieve",
       "rank": 670,
       "irregular": false
     },
@@ -4737,7 +4737,7 @@
     },
     {
       "word": "ergreifen",
-      "english": "be / grab / seize",
+      "english": "seize / take",
       "rank": 673,
       "irregular": true,
       "prateritum": "ergriff",
@@ -4746,7 +4746,7 @@
     },
     {
       "word": "heben",
-      "english": "hold / lift / raise",
+      "english": "lift / raise",
       "rank": 674,
       "irregular": true,
       "prateritum": "hob",
@@ -4755,7 +4755,7 @@
     },
     {
       "word": "überlassen",
-      "english": "abandon / cede / concede",
+      "english": "leave to / hand over",
       "rank": 675,
       "irregular": true,
       "prateritum": "überließ",
@@ -4764,7 +4764,7 @@
     },
     {
       "word": "verschicken",
-      "english": "dispatch / forward / mail",
+      "english": "send",
       "rank": 676,
       "irregular": false
     },
@@ -4782,7 +4782,7 @@
     },
     {
       "word": "zusammenkommen",
-      "english": "accumulate / combine / gather",
+      "english": "come together / gather",
       "rank": 679,
       "irregular": true,
       "prateritum": "kam zusammen",
@@ -4791,7 +4791,7 @@
     },
     {
       "word": "einholen",
-      "english": "accompany / catch up / lower",
+      "english": "catch up / obtain",
       "rank": 680,
       "irregular": false
     },
@@ -4803,7 +4803,7 @@
     },
     {
       "word": "bemerken",
-      "english": "comment / mention / note",
+      "english": "notice / remark",
       "rank": 682,
       "irregular": false
     },
@@ -4848,13 +4848,13 @@
     },
     {
       "word": "zusammensetzen",
-      "english": "assemble / compose / meet",
+      "english": "assemble / be composed of",
       "rank": 689,
       "irregular": false
     },
     {
       "word": "beherrschen",
-      "english": "dominate / master / monopolize",
+      "english": "master / dominate",
       "rank": 690,
       "irregular": false
     },
@@ -4866,7 +4866,7 @@
     },
     {
       "word": "streichen",
-      "english": "cancel / model / mould",
+      "english": "cancel / paint / delete",
       "rank": 692,
       "irregular": true,
       "prateritum": "strich",
@@ -4893,7 +4893,7 @@
     },
     {
       "word": "einziehen",
-      "english": "insert / move in / penetrate",
+      "english": "move in / collect",
       "rank": 696,
       "irregular": true,
       "prateritum": "zog ein",
@@ -4902,7 +4902,7 @@
     },
     {
       "word": "erfreuen",
-      "english": "delight / enjoy / please",
+      "english": "please / delight",
       "rank": 697,
       "irregular": false
     },
@@ -4917,7 +4917,7 @@
     },
     {
       "word": "einräumen",
-      "english": "admit / concede / move in",
+      "english": "admit / grant",
       "rank": 699,
       "irregular": false
     },
@@ -4932,7 +4932,7 @@
     },
     {
       "word": "anziehen",
-      "english": "attire / attract / dress",
+      "english": "attract / dress",
       "rank": 701,
       "irregular": true,
       "prateritum": "zog an",
@@ -4941,7 +4941,7 @@
     },
     {
       "word": "aufkommen",
-      "english": "appear / arise / pay for",
+      "english": "arise / come up",
       "rank": 702,
       "irregular": true,
       "prateritum": "kam auf",
@@ -4950,7 +4950,7 @@
     },
     {
       "word": "beheben",
-      "english": "rectify / remedy / withdraw money",
+      "english": "fix / remedy",
       "rank": 703,
       "irregular": true,
       "prateritum": "behob",
@@ -4959,19 +4959,19 @@
     },
     {
       "word": "bevorzugen",
-      "english": "favour / prefer",
+      "english": "prefer",
       "rank": 704,
       "irregular": false
     },
     {
       "word": "sanieren",
-      "english": "itself back on an even keel / put something back on an even keel / redevelop",
+      "english": "renovate / redevelop",
       "rank": 705,
       "irregular": false
     },
     {
       "word": "vorschreiben",
-      "english": "enjoin / oblige / prescribe",
+      "english": "prescribe / require",
       "rank": 706,
       "irregular": true,
       "prateritum": "schrieb vor",
@@ -4989,7 +4989,7 @@
     },
     {
       "word": "aufteilen",
-      "english": "portion",
+      "english": "divide / split",
       "rank": 708,
       "irregular": false
     },
@@ -5001,7 +5001,7 @@
     },
     {
       "word": "herausgeben",
-      "english": "give change / hand over / publish",
+      "english": "publish / issue",
       "rank": 710,
       "irregular": true,
       "prateritum": "gab heraus",
@@ -5010,7 +5010,7 @@
     },
     {
       "word": "berufen",
-      "english": "appeal",
+      "english": "appoint / appeal",
       "rank": 711,
       "irregular": true,
       "prateritum": "berief",
@@ -5019,7 +5019,7 @@
     },
     {
       "word": "schlafen",
-      "english": "sleep / stay at someones place / stay over night",
+      "english": "sleep",
       "rank": 712,
       "irregular": true,
       "prateritum": "schlief",
@@ -5028,7 +5028,7 @@
     },
     {
       "word": "verbergen",
-      "english": "conceal / hide / suppress",
+      "english": "hide / conceal",
       "rank": 713,
       "irregular": true,
       "prateritum": "verbarg",
@@ -5037,7 +5037,7 @@
     },
     {
       "word": "vertreiben",
-      "english": "banish / distribute / drive away",
+      "english": "drive away / distribute",
       "rank": 714,
       "irregular": true,
       "prateritum": "vertrieb",
@@ -5046,7 +5046,7 @@
     },
     {
       "word": "bedenken",
-      "english": "consider / give / reflect",
+      "english": "consider",
       "rank": 715,
       "irregular": true,
       "prateritum": "bedachte",
@@ -5079,7 +5079,7 @@
     },
     {
       "word": "widersprechen",
-      "english": "contradict / controvert / gainsay",
+      "english": "contradict",
       "rank": 720,
       "irregular": true,
       "prateritum": "widersprach",
@@ -5088,7 +5088,7 @@
     },
     {
       "word": "brechen",
-      "english": "breach / break / burst",
+      "english": "break",
       "rank": 721,
       "irregular": true,
       "prateritum": "brach",
@@ -5109,25 +5109,25 @@
     },
     {
       "word": "befürchten",
-      "english": "be afraid / dread / fear",
+      "english": "fear",
       "rank": 724,
       "irregular": false
     },
     {
       "word": "punkten",
-      "english": "award points / collect points / pick up points",
+      "english": "score points",
       "rank": 725,
       "irregular": false
     },
     {
       "word": "aufsuchen",
-      "english": "go / visit",
+      "english": "visit / seek out",
       "rank": 726,
       "irregular": false
     },
     {
       "word": "einsteigen",
-      "english": "board / climb in / get in",
+      "english": "get in / board",
       "rank": 727,
       "irregular": true,
       "prateritum": "stieg ein",
@@ -5136,31 +5136,31 @@
     },
     {
       "word": "anordnen",
-      "english": "order",
+      "english": "order / arrange",
       "rank": 728,
       "irregular": false
     },
     {
       "word": "zurückführen",
-      "english": "attribute / lead back / take back",
+      "english": "attribute / trace back",
       "rank": 729,
       "irregular": false
     },
     {
       "word": "erkranken",
-      "english": "get ill",
+      "english": "fall ill",
       "rank": 730,
       "irregular": false
     },
     {
       "word": "absetzen",
-      "english": "deduct / depose / dethrone",
+      "english": "deduct / remove",
       "rank": 731,
       "irregular": false
     },
     {
       "word": "einlegen",
-      "english": "insert / pickle",
+      "english": "insert",
       "rank": 732,
       "irregular": false
     },
@@ -5172,13 +5172,13 @@
     },
     {
       "word": "widerspiegeln",
-      "english": "mirror / reflect",
+      "english": "reflect / mirror",
       "rank": 734,
       "irregular": false
     },
     {
       "word": "bereithalten",
-      "english": "have something at the ready / have something ready / hold",
+      "english": "have ready",
       "rank": 735,
       "irregular": true,
       "prateritum": "hielt bereit",
@@ -5193,19 +5193,19 @@
     },
     {
       "word": "überleben",
-      "english": "overlive / survive",
+      "english": "survive",
       "rank": 737,
       "irregular": false
     },
     {
       "word": "berühren",
-      "english": "address / touch / touch on",
+      "english": "touch",
       "rank": 738,
       "irregular": false
     },
     {
       "word": "erfinden",
-      "english": "fabricate / invent",
+      "english": "invent",
       "rank": 739,
       "irregular": true,
       "prateritum": "erfand",
@@ -5226,7 +5226,7 @@
     },
     {
       "word": "abschneiden",
-      "english": "amputate / block / cut off",
+      "english": "cut off / perform",
       "rank": 742,
       "irregular": true,
       "prateritum": "schnitt ab",
@@ -5235,7 +5235,7 @@
     },
     {
       "word": "einstufen",
-      "english": "categorize / grade",
+      "english": "classify / categorize",
       "rank": 743,
       "irregular": false
     },
@@ -5247,25 +5247,25 @@
     },
     {
       "word": "bewähren",
-      "english": "demonstrate / prove / prove itself",
+      "english": "prove itself",
       "rank": 745,
       "irregular": false
     },
     {
       "word": "aufbewahren",
-      "english": "store",
+      "english": "store / keep",
       "rank": 746,
       "irregular": false
     },
     {
       "word": "lachen",
-      "english": "giggle / laugh",
+      "english": "laugh",
       "rank": 747,
       "irregular": false
     },
     {
       "word": "auskommen",
-      "english": "get along / get on / make do",
+      "english": "get by / manage",
       "rank": 748,
       "irregular": true,
       "prateritum": "kam aus",
@@ -5274,13 +5274,13 @@
     },
     {
       "word": "kooperieren",
-      "english": "co-operate",
+      "english": "cooperate",
       "rank": 749,
       "irregular": false
     },
     {
       "word": "losgehen",
-      "english": "fire / go off / leave",
+      "english": "start / go off",
       "rank": 750,
       "irregular": true,
       "prateritum": "ging los",
@@ -5298,7 +5298,7 @@
     },
     {
       "word": "servieren",
-      "english": "serve / wait at table",
+      "english": "serve",
       "rank": 752,
       "irregular": false
     },
@@ -5310,25 +5310,25 @@
     },
     {
       "word": "genehmigen",
-      "english": "allow / permit",
+      "english": "approve / permit",
       "rank": 754,
       "irregular": false
     },
     {
       "word": "recherchieren",
-      "english": "investigate / research",
+      "english": "research / investigate",
       "rank": 755,
       "irregular": false
     },
     {
       "word": "tauschen",
-      "english": "change / exchange / swap",
+      "english": "exchange / swap",
       "rank": 756,
       "irregular": false
     },
     {
       "word": "durchlaufen",
-      "english": "pass / pass through / run through",
+      "english": "go through / pass through",
       "rank": 757,
       "irregular": true,
       "prateritum": "lief durch",
@@ -5337,13 +5337,13 @@
     },
     {
       "word": "hinterlegen",
-      "english": "deposit / lodge",
+      "english": "deposit",
       "rank": 758,
       "irregular": false
     },
     {
       "word": "nachfragen",
-      "english": "asking / keep / request",
+      "english": "inquire / follow up",
       "rank": 759,
       "irregular": false
     },
@@ -5355,7 +5355,7 @@
     },
     {
       "word": "schaden",
-      "english": "damage / harm / hurt",
+      "english": "harm / damage",
       "rank": 761,
       "irregular": false
     },
@@ -5367,7 +5367,7 @@
     },
     {
       "word": "anhalten",
-      "english": "ask / continue / hold on",
+      "english": "stop / continue",
       "rank": 763,
       "irregular": true,
       "prateritum": "hielt an",
@@ -5382,7 +5382,7 @@
     },
     {
       "word": "erleiden",
-      "english": "incur / suffer / sustain",
+      "english": "suffer / sustain",
       "rank": 765,
       "irregular": true,
       "prateritum": "erlitt",
@@ -5391,7 +5391,7 @@
     },
     {
       "word": "erschweren",
-      "english": "aggravate / complicate / impede",
+      "english": "make more difficult",
       "rank": 766,
       "irregular": false
     },
@@ -5406,7 +5406,7 @@
     },
     {
       "word": "nachkommen",
-      "english": "carry out / come / come on",
+      "english": "comply with / follow",
       "rank": 768,
       "irregular": true,
       "prateritum": "kam nach",
@@ -5415,7 +5415,7 @@
     },
     {
       "word": "umgeben",
-      "english": "put on",
+      "english": "surround",
       "rank": 769,
       "irregular": true,
       "prateritum": "gab um",
@@ -5430,25 +5430,25 @@
     },
     {
       "word": "verurteilen",
-      "english": "sentence",
+      "english": "condemn / sentence",
       "rank": 771,
       "irregular": false
     },
     {
       "word": "aufhören",
-      "english": "cease / end / quit",
+      "english": "stop / cease",
       "rank": 772,
       "irregular": false
     },
     {
       "word": "haften",
-      "english": "adhere / bear / liability",
+      "english": "be liable / stick",
       "rank": 773,
       "irregular": false
     },
     {
       "word": "heranziehen",
-      "english": "advance / consult something for something / grow",
+      "english": "consult / use",
       "rank": 774,
       "irregular": true,
       "prateritum": "zog heran",
@@ -5472,7 +5472,7 @@
     },
     {
       "word": "zustehen",
-      "english": "be / entitled",
+      "english": "be entitled to",
       "rank": 777,
       "irregular": true,
       "prateritum": "stand zu",
@@ -5481,7 +5481,7 @@
     },
     {
       "word": "brennen",
-      "english": "be / bootleg / burn",
+      "english": "burn",
       "rank": 778,
       "irregular": true,
       "prateritum": "brannte",
@@ -5490,7 +5490,7 @@
     },
     {
       "word": "freigeben",
-      "english": "clear / release / set free",
+      "english": "release / approve",
       "rank": 779,
       "irregular": true,
       "prateritum": "gab frei",
@@ -5499,13 +5499,13 @@
     },
     {
       "word": "bekämpfen",
-      "english": "antagonize / battle / combat",
+      "english": "fight / combat",
       "rank": 780,
       "irregular": false
     },
     {
       "word": "betreten",
-      "english": "enter / onto / step",
+      "english": "enter",
       "rank": 781,
       "irregular": true,
       "prateritum": "betrat",
@@ -5514,43 +5514,43 @@
     },
     {
       "word": "packen",
-      "english": "carry it off / clear out / grab",
+      "english": "pack / grab",
       "rank": 782,
       "irregular": false
     },
     {
       "word": "schulen",
-      "english": "instruct",
+      "english": "train",
       "rank": 783,
       "irregular": false
     },
     {
       "word": "verteidigen",
-      "english": "defend / protect",
+      "english": "defend",
       "rank": 784,
       "irregular": false
     },
     {
       "word": "ausweiten",
-      "english": "broaden / expand / extend",
+      "english": "expand / extend",
       "rank": 785,
       "irregular": false
     },
     {
       "word": "schildern",
-      "english": "depict / describe / narrate",
+      "english": "describe",
       "rank": 786,
       "irregular": false
     },
     {
       "word": "basteln",
-      "english": "do handicrafts / tinker",
+      "english": "do crafts / tinker",
       "rank": 787,
       "irregular": false
     },
     {
       "word": "nachvollziehen",
-      "english": "comprehend / retrace / understand",
+      "english": "understand / comprehend",
       "rank": 788,
       "irregular": true,
       "prateritum": "vollzog nach",
@@ -5559,43 +5559,43 @@
     },
     {
       "word": "umstellen",
-      "english": "surround",
+      "english": "switch / rearrange",
       "rank": 789,
       "irregular": false
     },
     {
       "word": "veranlassen",
-      "english": "arrange / cause / have something done",
+      "english": "cause / arrange",
       "rank": 790,
       "irregular": false
     },
     {
       "word": "zulegen",
-      "english": "add / gain / gain weight",
+      "english": "gain / acquire",
       "rank": 791,
       "irregular": false
     },
     {
       "word": "lagern",
-      "english": "camp / encamp / keep",
+      "english": "store / camp",
       "rank": 792,
       "irregular": false
     },
     {
       "word": "verantworten",
-      "english": "take responsibility",
+      "english": "take responsibility for",
       "rank": 793,
       "irregular": false
     },
     {
       "word": "zusammenfassen",
-      "english": "group / summarize",
+      "english": "summarize",
       "rank": 794,
       "irregular": false
     },
     {
       "word": "ablösen",
-      "english": "peel off / remove / supersede",
+      "english": "replace / relieve",
       "rank": 795,
       "irregular": false
     },
@@ -5607,19 +5607,19 @@
     },
     {
       "word": "entsorgen",
-      "english": "dispose",
+      "english": "dispose of",
       "rank": 797,
       "irregular": false
     },
     {
       "word": "stürzen",
-      "english": "fall / overthrow / plunge",
+      "english": "fall / overthrow",
       "rank": 798,
       "irregular": false
     },
     {
       "word": "überarbeiten",
-      "english": "overwork / rework",
+      "english": "revise / rework",
       "rank": 799,
       "irregular": false
     },
@@ -5631,7 +5631,7 @@
     },
     {
       "word": "einhergehen",
-      "english": "accompany / come walking along / walk along",
+      "english": "go hand in hand with",
       "rank": 801,
       "irregular": true,
       "prateritum": "ging einher",
@@ -5640,7 +5640,7 @@
     },
     {
       "word": "vergehen",
-      "english": "die / elapse / pass",
+      "english": "pass / elapse",
       "rank": 802,
       "irregular": true,
       "prateritum": "verging",
@@ -5649,13 +5649,13 @@
     },
     {
       "word": "wohlfühlen",
-      "english": "feel comfortable / feel fine",
+      "english": "feel comfortable",
       "rank": 803,
       "irregular": false
     },
     {
       "word": "zurückgeben",
-      "english": "resign / return",
+      "english": "return / give back",
       "rank": 804,
       "irregular": true,
       "prateritum": "gab zurück",
@@ -5664,7 +5664,7 @@
     },
     {
       "word": "angreifen",
-      "english": "affect / attack / touch",
+      "english": "attack",
       "rank": 805,
       "irregular": true,
       "prateritum": "griff an",
@@ -5673,25 +5673,25 @@
     },
     {
       "word": "einschalten",
-      "english": "interpolate / intervene / put into operation",
+      "english": "turn on / intervene",
       "rank": 806,
       "irregular": false
     },
     {
       "word": "malen",
-      "english": "calligraph / color / colour",
+      "english": "paint / draw",
       "rank": 807,
       "irregular": false
     },
     {
       "word": "einplanen",
-      "english": "budget / plan / schedule",
+      "english": "plan / schedule",
       "rank": 808,
       "irregular": false
     },
     {
       "word": "ausnehmen",
-      "english": "appear / dress / except",
+      "english": "except / take out",
       "rank": 809,
       "irregular": true,
       "prateritum": "nahm aus",
@@ -5706,7 +5706,7 @@
     },
     {
       "word": "begreifen",
-      "english": "comprehend / encompass / include",
+      "english": "understand / comprehend",
       "rank": 811,
       "irregular": true,
       "prateritum": "begriff",
@@ -5715,13 +5715,13 @@
     },
     {
       "word": "anfertigen",
-      "english": "create / make / produce",
+      "english": "produce / make",
       "rank": 812,
       "irregular": false
     },
     {
       "word": "schieben",
-      "english": "impute / push / shove",
+      "english": "push / shove",
       "rank": 813,
       "irregular": true,
       "prateritum": "schob",
@@ -5730,7 +5730,7 @@
     },
     {
       "word": "wiederfinden",
-      "english": "find",
+      "english": "find again",
       "rank": 814,
       "irregular": true,
       "prateritum": "fand wieder",
@@ -5739,7 +5739,7 @@
     },
     {
       "word": "gönnen",
-      "english": "afford / allow / be happy for someone because of their good fortune",
+      "english": "not begrudge / allow",
       "rank": 815,
       "irregular": false
     },
@@ -5757,7 +5757,7 @@
     },
     {
       "word": "backen",
-      "english": "bake / create / cure",
+      "english": "bake",
       "rank": 818,
       "irregular": true,
       "prateritum": "buk",
@@ -5766,7 +5766,7 @@
     },
     {
       "word": "erobern",
-      "english": "conquer / win",
+      "english": "conquer",
       "rank": 819,
       "irregular": false
     },
@@ -5790,19 +5790,19 @@
     },
     {
       "word": "befestigen",
-      "english": "affix / attach / consolidate",
+      "english": "attach / fasten",
       "rank": 823,
       "irregular": false
     },
     {
       "word": "beherbergen",
-      "english": "accommodate",
+      "english": "accommodate / house",
       "rank": 824,
       "irregular": false
     },
     {
       "word": "entgegennehmen",
-      "english": "accept / receive / take",
+      "english": "accept / receive",
       "rank": 825,
       "irregular": true,
       "prateritum": "nahm entgegen",
@@ -5820,13 +5820,13 @@
     },
     {
       "word": "trauen",
-      "english": "dare / marry / trust",
+      "english": "trust / dare / marry",
       "rank": 827,
       "irregular": false
     },
     {
       "word": "unterbrechen",
-      "english": "cut off / disconnect / disrupt",
+      "english": "interrupt",
       "rank": 828,
       "irregular": true,
       "prateritum": "unterbrach",
@@ -5835,7 +5835,7 @@
     },
     {
       "word": "zurückziehen",
-      "english": "back out / draw back / pull back",
+      "english": "withdraw / pull back",
       "rank": 829,
       "irregular": true,
       "prateritum": "zog zurück",
@@ -5844,19 +5844,19 @@
     },
     {
       "word": "abwarten",
-      "english": "await / observe / wait",
+      "english": "wait / wait and see",
       "rank": 830,
       "irregular": false
     },
     {
       "word": "ausdrucken",
-      "english": "print",
+      "english": "print (out)",
       "rank": 831,
       "irregular": false
     },
     {
       "word": "ausschreiben",
-      "english": "announce / ask for bids / call for bids",
+      "english": "advertise / announce",
       "rank": 832,
       "irregular": true,
       "prateritum": "schrieb aus",
@@ -5865,7 +5865,7 @@
     },
     {
       "word": "einschließen",
-      "english": "include / lock up",
+      "english": "include / lock in",
       "rank": 833,
       "irregular": true,
       "prateritum": "schloss ein",
@@ -5874,13 +5874,13 @@
     },
     {
       "word": "eintauchen",
-      "english": "dip in / dive in",
+      "english": "dive in / immerse",
       "rank": 834,
       "irregular": false
     },
     {
       "word": "entgehen",
-      "english": "elude / evade / miss",
+      "english": "escape / miss",
       "rank": 835,
       "irregular": true,
       "prateritum": "entging",
@@ -5889,13 +5889,13 @@
     },
     {
       "word": "verkünden",
-      "english": "announce / preach",
+      "english": "announce / proclaim",
       "rank": 836,
       "irregular": false
     },
     {
       "word": "einfallen",
-      "english": "come to mind / intrude / occur",
+      "english": "come to mind / occur",
       "rank": 837,
       "irregular": true,
       "prateritum": "fiel ein",
@@ -5904,37 +5904,37 @@
     },
     {
       "word": "anfühlen",
-      "english": "feel / touch",
+      "english": "feel",
       "rank": 838,
       "irregular": false
     },
     {
       "word": "befördern",
-      "english": "bring / carry / dispatch",
+      "english": "promote / transport",
       "rank": 839,
       "irregular": false
     },
     {
       "word": "korrigieren",
-      "english": "adjust / correct",
+      "english": "correct",
       "rank": 840,
       "irregular": false
     },
     {
       "word": "schonen",
-      "english": "handle / rest / spare",
+      "english": "spare / be easy on",
       "rank": 841,
       "irregular": false
     },
     {
       "word": "stützen",
-      "english": "lean / lean on / rest",
+      "english": "support / lean on",
       "rank": 842,
       "irregular": false
     },
     {
       "word": "abbrechen",
-      "english": "abort / break off / cancel",
+      "english": "break off / cancel",
       "rank": 843,
       "irregular": true,
       "prateritum": "brach ab",
@@ -5943,25 +5943,25 @@
     },
     {
       "word": "anrechnen",
-      "english": "acknowledge / credit",
+      "english": "credit / count",
       "rank": 844,
       "irregular": false
     },
     {
       "word": "blockieren",
-      "english": "barricade / block / interlock",
+      "english": "block",
       "rank": 845,
       "irregular": false
     },
     {
       "word": "minimieren",
-      "english": "minimise / minimize",
+      "english": "minimize",
       "rank": 846,
       "irregular": false
     },
     {
       "word": "vorwerfen",
-      "english": "reproach",
+      "english": "reproach / accuse",
       "rank": 847,
       "irregular": true,
       "prateritum": "warf vor",
@@ -5970,7 +5970,7 @@
     },
     {
       "word": "abziehen",
-      "english": "flush / subtract / withdraw",
+      "english": "subtract / withdraw",
       "rank": 848,
       "irregular": true,
       "prateritum": "zog ab",
@@ -5979,7 +5979,7 @@
     },
     {
       "word": "hinausgehen",
-      "english": "go out / look",
+      "english": "go out / exceed",
       "rank": 849,
       "irregular": true,
       "prateritum": "ging hinaus",
@@ -5994,7 +5994,7 @@
     },
     {
       "word": "übergehen",
-      "english": "change / pass",
+      "english": "pass / skip over",
       "rank": 851,
       "irregular": true,
       "prateritum": "ging über",
@@ -6003,19 +6003,19 @@
     },
     {
       "word": "festsetzen",
-      "english": "arrest / collect / define",
+      "english": "set / determine",
       "rank": 852,
       "irregular": false
     },
     {
       "word": "mischen",
-      "english": "mingle / mix / shuffle",
+      "english": "mix",
       "rank": 853,
       "irregular": false
     },
     {
       "word": "verstoßen",
-      "english": "cast out / infringe",
+      "english": "violate / expel",
       "rank": 854,
       "irregular": true,
       "prateritum": "verstieß",
@@ -6024,19 +6024,19 @@
     },
     {
       "word": "ernähren",
-      "english": "eat / feed / keep",
+      "english": "feed / nourish",
       "rank": 855,
       "irregular": false
     },
     {
       "word": "verbauen",
-      "english": "bodge",
+      "english": "block / use up (materials)",
       "rank": 856,
       "irregular": false
     },
     {
       "word": "wandeln",
-      "english": "change / stroll / transform",
+      "english": "change / stroll",
       "rank": 857,
       "irregular": false
     },
@@ -6048,13 +6048,13 @@
     },
     {
       "word": "hinterfragen",
-      "english": "call into question / question",
+      "english": "question",
       "rank": 859,
       "irregular": false
     },
     {
       "word": "lenken",
-      "english": "control / steer",
+      "english": "steer / direct",
       "rank": 860,
       "irregular": false
     },
@@ -6072,25 +6072,25 @@
     },
     {
       "word": "bewundern",
-      "english": "admire / adore / marvel at",
+      "english": "admire",
       "rank": 863,
       "irregular": false
     },
     {
       "word": "drängen",
-      "english": "cajole / demand / push",
+      "english": "push / urge",
       "rank": 864,
       "irregular": false
     },
     {
       "word": "vergrößern",
-      "english": "enlarge / increase / magnify",
+      "english": "enlarge / increase",
       "rank": 865,
       "irregular": false
     },
     {
       "word": "verschließen",
-      "english": "close / lock / shut in",
+      "english": "close / lock",
       "rank": 866,
       "irregular": true,
       "prateritum": "verschloss",
@@ -6099,13 +6099,13 @@
     },
     {
       "word": "verwöhnen",
-      "english": "pamper / spoil",
+      "english": "spoil / pamper",
       "rank": 867,
       "irregular": false
     },
     {
       "word": "abhalten",
-      "english": "detain / give / hold",
+      "english": "hold / prevent",
       "rank": 868,
       "irregular": true,
       "prateritum": "hielt ab",
@@ -6114,13 +6114,13 @@
     },
     {
       "word": "anbauen",
-      "english": "cultivate / grow",
+      "english": "grow / cultivate",
       "rank": 869,
       "irregular": false
     },
     {
       "word": "anstellen",
-      "english": "accomplish / employ / hire",
+      "english": "employ / hire",
       "rank": 870,
       "irregular": false
     },
@@ -6147,7 +6147,7 @@
     },
     {
       "word": "erlassen",
-      "english": "enact / issue / let off",
+      "english": "enact / waive",
       "rank": 874,
       "irregular": true,
       "prateritum": "erließ",
@@ -6156,7 +6156,7 @@
     },
     {
       "word": "fürchten",
-      "english": "afraid / fear",
+      "english": "fear",
       "rank": 875,
       "irregular": false
     },
@@ -6177,7 +6177,7 @@
     },
     {
       "word": "auskennen",
-      "english": "be familiar / experienced",
+      "english": "be familiar with",
       "rank": 878,
       "irregular": true,
       "prateritum": "kannte aus",
@@ -6186,13 +6186,13 @@
     },
     {
       "word": "fortführen",
-      "english": "continue / lead away",
+      "english": "continue",
       "rank": 879,
       "irregular": false
     },
     {
       "word": "spiegeln",
-      "english": "mirror",
+      "english": "reflect / mirror",
       "rank": 880,
       "irregular": false
     },
@@ -6210,13 +6210,13 @@
     },
     {
       "word": "erörtern",
-      "english": "argue / debate / discuss",
+      "english": "discuss / debate",
       "rank": 883,
       "irregular": false
     },
     {
       "word": "fangen",
-      "english": "bag / capture / catch",
+      "english": "catch",
       "rank": 884,
       "irregular": true,
       "prateritum": "fing",
@@ -6234,7 +6234,7 @@
     },
     {
       "word": "verdoppeln",
-      "english": "double / duplicate",
+      "english": "double",
       "rank": 886,
       "irregular": false
     },
@@ -6246,7 +6246,7 @@
     },
     {
       "word": "anführen",
-      "english": "lead",
+      "english": "lead / cite",
       "rank": 888,
       "irregular": false
     },
@@ -6258,13 +6258,13 @@
     },
     {
       "word": "abstellen",
-      "english": "bring to an end / park / put down",
+      "english": "turn off / park",
       "rank": 890,
       "irregular": false
     },
     {
       "word": "voranbringen",
-      "english": "advance / allow to advance / get going",
+      "english": "advance / move forward",
       "rank": 891,
       "irregular": true,
       "prateritum": "brachte voran",
@@ -6273,7 +6273,7 @@
     },
     {
       "word": "abheben",
-      "english": "answer / cut / pick up",
+      "english": "withdraw / stand out",
       "rank": 892,
       "irregular": true,
       "prateritum": "hob ab",
@@ -6282,7 +6282,7 @@
     },
     {
       "word": "entziehen",
-      "english": "avoid / extract / revoke",
+      "english": "withdraw / revoke",
       "rank": 893,
       "irregular": true,
       "prateritum": "entzog",
@@ -6291,7 +6291,7 @@
     },
     {
       "word": "fotografieren",
-      "english": "take a photo",
+      "english": "photograph / take a photo",
       "rank": 894,
       "irregular": false
     },
@@ -6309,7 +6309,7 @@
     },
     {
       "word": "ausleihen",
-      "english": "borrow / lend / loan",
+      "english": "borrow / lend",
       "rank": 897,
       "irregular": true,
       "prateritum": "lieh aus",
@@ -6318,7 +6318,7 @@
     },
     {
       "word": "hervorrufen",
-      "english": "cause / elicit",
+      "english": "cause / evoke",
       "rank": 898,
       "irregular": true,
       "prateritum": "rief hervor",
@@ -6327,7 +6327,7 @@
     },
     {
       "word": "entschließen",
-      "english": "decide / make up one's mind",
+      "english": "decide",
       "rank": 899,
       "irregular": true,
       "prateritum": "entschloss",
@@ -6336,13 +6336,13 @@
     },
     {
       "word": "ermutigen",
-      "english": "cheer / embolden / encourage",
+      "english": "encourage",
       "rank": 900,
       "irregular": false
     },
     {
       "word": "übertreffen",
-      "english": "surpass",
+      "english": "surpass / exceed",
       "rank": 901,
       "irregular": true,
       "prateritum": "übertraf",
@@ -6351,19 +6351,19 @@
     },
     {
       "word": "verpacken",
-      "english": "pack / wrap / wrap up",
+      "english": "pack / wrap",
       "rank": 902,
       "irregular": false
     },
     {
       "word": "zuhören",
-      "english": "hear / listen / pay attention",
+      "english": "listen",
       "rank": 903,
       "irregular": false
     },
     {
       "word": "programmieren",
-      "english": "code / program",
+      "english": "program / code",
       "rank": 904,
       "irregular": false
     },
@@ -6375,13 +6375,13 @@
     },
     {
       "word": "heiraten",
-      "english": "get married / marry / wed",
+      "english": "marry",
       "rank": 906,
       "irregular": false
     },
     {
       "word": "widerrufen",
-      "english": "cancel / countermand / recant",
+      "english": "revoke / cancel",
       "rank": 907,
       "irregular": true,
       "prateritum": "widerrief",
@@ -6390,7 +6390,7 @@
     },
     {
       "word": "einlassen",
-      "english": "admit / apply / brush",
+      "english": "let in / get involved in",
       "rank": 908,
       "irregular": true,
       "prateritum": "ließ ein",
@@ -6399,7 +6399,7 @@
     },
     {
       "word": "ernennen",
-      "english": "appoint / name",
+      "english": "appoint",
       "rank": 909,
       "irregular": true,
       "prateritum": "ernannte",
@@ -6408,13 +6408,13 @@
     },
     {
       "word": "werten",
-      "english": "consider / grade / rate",
+      "english": "rate / evaluate",
       "rank": 910,
       "irregular": false
     },
     {
       "word": "nachlesen",
-      "english": "look up",
+      "english": "look up / read up on",
       "rank": 911,
       "irregular": true,
       "prateritum": "las nach",
@@ -6423,13 +6423,13 @@
     },
     {
       "word": "abzielen",
-      "english": "be aimed / be designed",
+      "english": "aim at",
       "rank": 912,
       "irregular": false
     },
     {
       "word": "anweisen",
-      "english": "assign / instruct",
+      "english": "instruct / assign",
       "rank": 913,
       "irregular": true,
       "prateritum": "wies an",
@@ -6438,7 +6438,7 @@
     },
     {
       "word": "bestechen",
-      "english": "bribe / captivate / corrupt",
+      "english": "bribe / impress",
       "rank": 914,
       "irregular": true,
       "prateritum": "bestach",
@@ -6447,25 +6447,25 @@
     },
     {
       "word": "schädigen",
-      "english": "damage / damnify / harm",
+      "english": "damage / harm",
       "rank": 915,
       "irregular": false
     },
     {
       "word": "verweigern",
-      "english": "deny / refuse",
+      "english": "refuse / deny",
       "rank": 916,
       "irregular": false
     },
     {
       "word": "anklicken",
-      "english": "click / on",
+      "english": "click on",
       "rank": 917,
       "irregular": false
     },
     {
       "word": "aufbringen",
-      "english": "apply / bring up / capture",
+      "english": "raise / apply",
       "rank": 918,
       "irregular": true,
       "prateritum": "brachte auf",
@@ -6474,25 +6474,25 @@
     },
     {
       "word": "versammeln",
-      "english": "assemble / gather",
+      "english": "gather / assemble",
       "rank": 919,
       "irregular": false
     },
     {
       "word": "gliedern",
-      "english": "be divided / divide / organise",
+      "english": "structure / divide",
       "rank": 920,
       "irregular": false
     },
     {
       "word": "unterschätzen",
-      "english": "take for granted / underestimate / underrate",
+      "english": "underestimate",
       "rank": 921,
       "irregular": false
     },
     {
       "word": "abschaffen",
-      "english": "abolish / abrogate",
+      "english": "abolish",
       "rank": 922,
       "irregular": false
     },
@@ -6507,7 +6507,7 @@
     },
     {
       "word": "stehlen",
-      "english": "sneak / steal / steal away",
+      "english": "steal",
       "rank": 924,
       "irregular": true,
       "prateritum": "stahl",
@@ -6516,7 +6516,7 @@
     },
     {
       "word": "übersteigen",
-      "english": "exceed / surmount",
+      "english": "exceed",
       "rank": 925,
       "irregular": true,
       "prateritum": "überstieg",
@@ -6525,7 +6525,7 @@
     },
     {
       "word": "vortragen",
-      "english": "ask for / beg for / carry forward",
+      "english": "present / recite",
       "rank": 926,
       "irregular": true,
       "prateritum": "trug vor",
@@ -6534,7 +6534,7 @@
     },
     {
       "word": "ausstrahlen",
-      "english": "air / broadcast / emanate",
+      "english": "broadcast / radiate",
       "rank": 927,
       "irregular": false
     },
@@ -6552,13 +6552,13 @@
     },
     {
       "word": "verschenken",
-      "english": "give as a present / give away",
+      "english": "give away",
       "rank": 930,
       "irregular": false
     },
     {
       "word": "vorlesen",
-      "english": "read aloud / read out / read out loud",
+      "english": "read aloud",
       "rank": 931,
       "irregular": true,
       "prateritum": "las vor",
@@ -6567,13 +6567,13 @@
     },
     {
       "word": "zurücklegen",
-      "english": "cover / lay back / lean back",
+      "english": "cover (distance) / save",
       "rank": 932,
       "irregular": false
     },
     {
       "word": "schwimmen",
-      "english": "bathe / be flat broke / convey by water",
+      "english": "swim",
       "rank": 933,
       "irregular": true,
       "prateritum": "schwamm",
@@ -6588,7 +6588,7 @@
     },
     {
       "word": "kriegen",
-      "english": "catch / come down with / get",
+      "english": "get",
       "rank": 935,
       "irregular": false
     },
@@ -6609,13 +6609,13 @@
     },
     {
       "word": "abspielen",
-      "english": "play",
+      "english": "play (back)",
       "rank": 938,
       "irregular": false
     },
     {
       "word": "ausscheiden",
-      "english": "deposit / drop out / eliminate",
+      "english": "drop out / be eliminated",
       "rank": 939,
       "irregular": true,
       "prateritum": "schied aus",
@@ -6630,7 +6630,7 @@
     },
     {
       "word": "umziehen",
-      "english": "change clothes / get changed / move",
+      "english": "move / change clothes",
       "rank": 941,
       "irregular": true,
       "prateritum": "zog um",
@@ -6639,7 +6639,7 @@
     },
     {
       "word": "übersehen",
-      "english": "comprehend / overlook",
+      "english": "overlook",
       "rank": 942,
       "irregular": true,
       "prateritum": "übersah",
@@ -6648,7 +6648,7 @@
     },
     {
       "word": "wiegen",
-      "english": "chop / rock / weigh",
+      "english": "weigh",
       "rank": 943,
       "irregular": false
     },
@@ -6666,7 +6666,7 @@
     },
     {
       "word": "kleben",
-      "english": "adhere / cleave / cling",
+      "english": "stick / glue",
       "rank": 946,
       "irregular": false
     },
@@ -6681,13 +6681,13 @@
     },
     {
       "word": "abrechnen",
-      "english": "cash up / deduct / settle the score",
+      "english": "settle / bill",
       "rank": 948,
       "irregular": false
     },
     {
       "word": "ausbreiten",
-      "english": "extend / spread out",
+      "english": "spread out",
       "rank": 949,
       "irregular": false
     },
@@ -6699,7 +6699,7 @@
     },
     {
       "word": "eingreifen",
-      "english": "encroach / engage / interfere",
+      "english": "intervene",
       "rank": 951,
       "irregular": true,
       "prateritum": "griff ein",
@@ -6714,7 +6714,7 @@
     },
     {
       "word": "vollziehen",
-      "english": "carry out / execute / perform",
+      "english": "carry out / execute",
       "rank": 953,
       "irregular": true,
       "prateritum": "vollzog",
@@ -6732,13 +6732,13 @@
     },
     {
       "word": "erbauen",
-      "english": "build / construct / edify",
+      "english": "build / construct",
       "rank": 955,
       "irregular": false
     },
     {
       "word": "ernten",
-      "english": "harvest / reap",
+      "english": "harvest",
       "rank": 956,
       "irregular": false
     },
@@ -6750,19 +6750,19 @@
     },
     {
       "word": "verständigen",
-      "english": "alert / warn",
+      "english": "notify / inform",
       "rank": 958,
       "irregular": false
     },
     {
       "word": "zusammenführen",
-      "english": "bring together / consolidate",
+      "english": "bring together",
       "rank": 959,
       "irregular": false
     },
     {
       "word": "zusammenhängen",
-      "english": "have to do with / involved",
+      "english": "be connected / be related",
       "rank": 960,
       "irregular": true,
       "prateritum": "hing zusammen",
@@ -6771,7 +6771,7 @@
     },
     {
       "word": "fressen",
-      "english": "at / away / devour",
+      "english": "eat (animals) / devour",
       "rank": 961,
       "irregular": true,
       "prateritum": "fraß",
@@ -6786,7 +6786,7 @@
     },
     {
       "word": "zugeben",
-      "english": "acknowledge / add / admit",
+      "english": "admit",
       "rank": 963,
       "irregular": true,
       "prateritum": "gab zu",
@@ -6807,13 +6807,13 @@
     },
     {
       "word": "aufpassen",
-      "english": "be careful / pay attention / take care",
+      "english": "pay attention / be careful",
       "rank": 966,
       "irregular": false
     },
     {
       "word": "bestreiten",
-      "english": "challenge / deny / finance",
+      "english": "deny / finance",
       "rank": 967,
       "irregular": true,
       "prateritum": "bestritt",
@@ -6822,7 +6822,7 @@
     },
     {
       "word": "eintreffen",
-      "english": "arrive / come true / happen",
+      "english": "arrive",
       "rank": 968,
       "irregular": true,
       "prateritum": "traf ein",
@@ -6831,13 +6831,13 @@
     },
     {
       "word": "erwirtschaften",
-      "english": "generate",
+      "english": "generate / earn",
       "rank": 969,
       "irregular": false
     },
     {
       "word": "hinnehmen",
-      "english": "take",
+      "english": "accept / put up with",
       "rank": 970,
       "irregular": true,
       "prateritum": "nahm hin",
@@ -6846,37 +6846,37 @@
     },
     {
       "word": "überfordern",
-      "english": "overburden / overcharge / overexert",
+      "english": "overwhelm",
       "rank": 971,
       "irregular": false
     },
     {
       "word": "tauchen",
-      "english": "dip / dive / duck",
+      "english": "dive",
       "rank": 972,
       "irregular": false
     },
     {
       "word": "zusagen",
-      "english": "commit / please / promise",
+      "english": "accept / promise",
       "rank": 973,
       "irregular": false
     },
     {
       "word": "aufsetzen",
-      "english": "don / draft / draw up",
+      "english": "put on / draft",
       "rank": 974,
       "irregular": false
     },
     {
       "word": "bestaunen",
-      "english": "gaze / marvel / wonder",
+      "english": "marvel at",
       "rank": 975,
       "irregular": false
     },
     {
       "word": "wiedergeben",
-      "english": "give back / refer / render",
+      "english": "reproduce / render",
       "rank": 976,
       "irregular": true,
       "prateritum": "gab wieder",
@@ -6885,7 +6885,7 @@
     },
     {
       "word": "austragen",
-      "english": "carry to term / deliver / deregister",
+      "english": "deliver / host (event)",
       "rank": 977,
       "irregular": true,
       "prateritum": "trug aus",
@@ -6900,13 +6900,13 @@
     },
     {
       "word": "erhoffen",
-      "english": "hope",
+      "english": "hope for",
       "rank": 979,
       "irregular": false
     },
     {
       "word": "zurückweisen",
-      "english": "refuse / refute / reject",
+      "english": "reject / refuse",
       "rank": 980,
       "irregular": true,
       "prateritum": "wies zurück",
@@ -6915,13 +6915,13 @@
     },
     {
       "word": "behindern",
-      "english": "hinder",
+      "english": "hinder / obstruct",
       "rank": 981,
       "irregular": false
     },
     {
       "word": "entlassen",
-      "english": "discharge / dismiss / fire",
+      "english": "dismiss / fire",
       "rank": 982,
       "irregular": true,
       "prateritum": "entließ",
@@ -6930,7 +6930,7 @@
     },
     {
       "word": "klagen",
-      "english": "bring an action / complain / go to court",
+      "english": "complain / sue",
       "rank": 983,
       "irregular": false
     },
@@ -6942,7 +6942,7 @@
     },
     {
       "word": "anheben",
-      "english": "lift up / raise",
+      "english": "raise / lift",
       "rank": 985,
       "irregular": true,
       "prateritum": "hob an",
@@ -6951,13 +6951,13 @@
     },
     {
       "word": "anknüpfen",
-      "english": "contact someone / fasten / resume",
+      "english": "connect / resume",
       "rank": 986,
       "irregular": false
     },
     {
       "word": "aufgehen",
-      "english": "come out even / come undone / germinate",
+      "english": "open / work out",
       "rank": 987,
       "irregular": true,
       "prateritum": "ging auf",
@@ -6966,7 +6966,7 @@
     },
     {
       "word": "beanspruchen",
-      "english": "claim / demand / put under stress",
+      "english": "claim / demand",
       "rank": 988,
       "irregular": false
     },
@@ -6978,19 +6978,19 @@
     },
     {
       "word": "ordnen",
-      "english": "arrange / regulate",
+      "english": "arrange / organize",
       "rank": 990,
       "irregular": false
     },
     {
       "word": "teilhaben",
-      "english": "have a share / participate",
+      "english": "participate / share in",
       "rank": 991,
       "irregular": false
     },
     {
       "word": "verbrennen",
-      "english": "burn / burn at the stake / cremate",
+      "english": "burn",
       "rank": 992,
       "irregular": true,
       "prateritum": "verbrannte",
@@ -6999,7 +6999,7 @@
     },
     {
       "word": "versterben",
-      "english": "pass away",
+      "english": "pass away / die",
       "rank": 993,
       "irregular": true,
       "prateritum": "verstarb",
@@ -7008,13 +7008,13 @@
     },
     {
       "word": "ausnutzen",
-      "english": "exploit / take advantage of / use",
+      "english": "exploit / take advantage of",
       "rank": 994,
       "irregular": false
     },
     {
       "word": "schelten",
-      "english": "berate / call / complain",
+      "english": "scold",
       "rank": 995,
       "irregular": true,
       "prateritum": "schalt",
@@ -7023,7 +7023,7 @@
     },
     {
       "word": "unterziehen",
-      "english": "subject / undergo",
+      "english": "undergo / subject to",
       "rank": 996,
       "irregular": true,
       "prateritum": "unterzog",
@@ -7032,7 +7032,7 @@
     },
     {
       "word": "vermerken",
-      "english": "register",
+      "english": "note / record",
       "rank": 997,
       "irregular": false
     },
@@ -7047,7 +7047,7 @@
     },
     {
       "word": "reißen",
-      "english": "carve / fight tooth and nail / kill",
+      "english": "tear / rip",
       "rank": 999,
       "irregular": true,
       "prateritum": "riss",
@@ -7068,19 +7068,19 @@
     },
     {
       "word": "anreisen",
-      "english": "arrive / come / travel",
+      "english": "arrive / travel (to)",
       "rank": 1002,
       "irregular": false
     },
     {
       "word": "erwischen",
-      "english": "catch / catch red-handed / grab",
+      "english": "catch",
       "rank": 1003,
       "irregular": false
     },
     {
       "word": "gegenüberstehen",
-      "english": "be in front of / contradict",
+      "english": "face",
       "rank": 1004,
       "irregular": true,
       "prateritum": "stand gegenüber",
@@ -7095,13 +7095,13 @@
     },
     {
       "word": "notieren",
-      "english": "make a note / note down / quote",
+      "english": "note / write down",
       "rank": 1006,
       "irregular": false
     },
     {
       "word": "mitspielen",
-      "english": "contribute / cooperate / play",
+      "english": "play along / cooperate",
       "rank": 1007,
       "irregular": false
     },
@@ -7113,7 +7113,7 @@
     },
     {
       "word": "entführen",
-      "english": "abduct / hijack / kidnap",
+      "english": "kidnap / abduct",
       "rank": 1009,
       "irregular": false
     },
@@ -7125,7 +7125,7 @@
     },
     {
       "word": "neigen",
-      "english": "bend / tend / tilt",
+      "english": "tend / incline",
       "rank": 1011,
       "irregular": false
     },
@@ -7137,13 +7137,13 @@
     },
     {
       "word": "räumen",
-      "english": "clear / move / move out",
+      "english": "clear / vacate",
       "rank": 1013,
       "irregular": false
     },
     {
       "word": "aufbrechen",
-      "english": "break camp / break down / break into",
+      "english": "break open / set off",
       "rank": 1014,
       "irregular": true,
       "prateritum": "brach auf",
@@ -7152,37 +7152,37 @@
     },
     {
       "word": "aufzeichnen",
-      "english": "record / tape / write down",
+      "english": "record",
       "rank": 1015,
       "irregular": false
     },
     {
       "word": "ausrüsten",
-      "english": "accouter / accoutre / equip",
+      "english": "equip",
       "rank": 1016,
       "irregular": false
     },
     {
       "word": "beschaffen",
-      "english": "acquire / obtain / procure",
+      "english": "obtain / procure",
       "rank": 1017,
       "irregular": false
     },
     {
       "word": "surfen",
-      "english": "surf / train surf / windsurf",
+      "english": "surf",
       "rank": 1018,
       "irregular": false
     },
     {
       "word": "auflegen",
-      "english": "bring out / deejay / hang up",
+      "english": "hang up / put on",
       "rank": 1019,
       "irregular": false
     },
     {
       "word": "einteilen",
-      "english": "classify / dispose / divide",
+      "english": "divide / classify",
       "rank": 1020,
       "irregular": false
     },
@@ -7194,7 +7194,7 @@
     },
     {
       "word": "offenbaren",
-      "english": "bare / disclose / reveal",
+      "english": "reveal",
       "rank": 1022,
       "irregular": false
     },
@@ -7206,13 +7206,13 @@
     },
     {
       "word": "bewilligen",
-      "english": "allow / approve / grant",
+      "english": "approve / grant",
       "rank": 1024,
       "irregular": false
     },
     {
       "word": "fertigstellen",
-      "english": "accomplish / complete / finish",
+      "english": "complete / finish",
       "rank": 1025,
       "irregular": false
     },
@@ -7224,7 +7224,7 @@
     },
     {
       "word": "obliegen",
-      "english": "apply oneself to a task / be somebody's responsibility",
+      "english": "be the responsibility of",
       "rank": 1027,
       "irregular": true,
       "prateritum": "oblag",
@@ -7233,7 +7233,7 @@
     },
     {
       "word": "überstehen",
-      "english": "get over / recover / survive",
+      "english": "survive / get through",
       "rank": 1028,
       "irregular": true,
       "prateritum": "überstand",
@@ -7269,7 +7269,7 @@
     },
     {
       "word": "vorbeikommen",
-      "english": "come by / drop by / pass by",
+      "english": "come by / pass by",
       "rank": 1033,
       "irregular": true,
       "prateritum": "kam vorbei",
@@ -7314,7 +7314,7 @@
     },
     {
       "word": "zurückkommen",
-      "english": "come back / get back / return",
+      "english": "come back / return",
       "rank": 1039,
       "irregular": true,
       "prateritum": "kam zurück",
@@ -7323,7 +7323,7 @@
     },
     {
       "word": "missen",
-      "english": "do without / lose / miss",
+      "english": "miss / do without",
       "rank": 1040,
       "irregular": false
     },
@@ -7350,13 +7350,13 @@
     },
     {
       "word": "wundern",
-      "english": "be surprised / marvel / surprise",
+      "english": "surprise / wonder",
       "rank": 1044,
       "irregular": false
     },
     {
       "word": "anstoßen",
-      "english": "bump / clink glasses / initiate",
+      "english": "initiate / clink glasses",
       "rank": 1045,
       "irregular": true,
       "prateritum": "stieß an",
@@ -7365,7 +7365,7 @@
     },
     {
       "word": "aufwerten",
-      "english": "appreciate",
+      "english": "upgrade / enhance",
       "rank": 1046,
       "irregular": false
     },
@@ -7377,7 +7377,7 @@
     },
     {
       "word": "errechnen",
-      "english": "calculate / work out",
+      "english": "calculate",
       "rank": 1048,
       "irregular": false
     },
@@ -7395,7 +7395,7 @@
     },
     {
       "word": "zusammenschließen",
-      "english": "associate / combine / merge",
+      "english": "merge / join together",
       "rank": 1051,
       "irregular": true,
       "prateritum": "schloss zusammen",
@@ -7404,7 +7404,7 @@
     },
     {
       "word": "besorgen",
-      "english": "apprehend / attend to / deal with",
+      "english": "get / obtain",
       "rank": 1052,
       "irregular": false
     },
@@ -7431,13 +7431,13 @@
     },
     {
       "word": "verschlüsseln",
-      "english": "cipher / encrypt",
+      "english": "encrypt",
       "rank": 1056,
       "irregular": false
     },
     {
       "word": "abwickeln",
-      "english": "carry out / happen / liquidate",
+      "english": "handle / process",
       "rank": 1057,
       "irregular": false
     },
@@ -7449,7 +7449,7 @@
     },
     {
       "word": "glänzen",
-      "english": "excel / glare / glitter",
+      "english": "shine / excel",
       "rank": 1059,
       "irregular": false
     },
@@ -7461,13 +7461,13 @@
     },
     {
       "word": "verschärfen",
-      "english": "become more critical / get bad / get worse",
+      "english": "tighten / intensify",
       "rank": 1061,
       "irregular": false
     },
     {
       "word": "vorbeischauen",
-      "english": "swing by",
+      "english": "stop by / drop in",
       "rank": 1062,
       "irregular": false
     },
@@ -7479,7 +7479,7 @@
     },
     {
       "word": "beibringen",
-      "english": "inflict / produce / provide",
+      "english": "teach",
       "rank": 1064,
       "irregular": true,
       "prateritum": "brachte bei",
@@ -7488,7 +7488,7 @@
     },
     {
       "word": "küren",
-      "english": "award / bestow / choose",
+      "english": "choose / elect",
       "rank": 1065,
       "irregular": false
     },
@@ -7503,13 +7503,13 @@
     },
     {
       "word": "anrichten",
-      "english": "arrange / cause / dish",
+      "english": "cause / serve (food)",
       "rank": 1067,
       "irregular": false
     },
     {
       "word": "einschlagen",
-      "english": "be well received / break / carve into",
+      "english": "hit / take (a path)",
       "rank": 1068,
       "irregular": true,
       "prateritum": "schlug ein",
@@ -7524,7 +7524,7 @@
     },
     {
       "word": "antreffen",
-      "english": "catch / come across / find",
+      "english": "find / encounter",
       "rank": 1070,
       "irregular": true,
       "prateritum": "traf an",
@@ -7539,19 +7539,19 @@
     },
     {
       "word": "enttäuschen",
-      "english": "disappoint / falsify",
+      "english": "disappoint",
       "rank": 1072,
       "irregular": false
     },
     {
       "word": "automatisieren",
-      "english": "automate / automatise / automatize",
+      "english": "automate",
       "rank": 1073,
       "irregular": false
     },
     {
       "word": "beabsichtigen",
-      "english": "intend / mean / plan",
+      "english": "intend",
       "rank": 1074,
       "irregular": false
     },
@@ -7563,7 +7563,7 @@
     },
     {
       "word": "schlüpfen",
-      "english": "hatch / slip / slip into",
+      "english": "slip / hatch",
       "rank": 1076,
       "irregular": false
     },
@@ -7581,7 +7581,7 @@
     },
     {
       "word": "kehren",
-      "english": "sweep / take care of / turn",
+      "english": "sweep / turn",
       "rank": 1079,
       "irregular": false
     },
@@ -7593,19 +7593,19 @@
     },
     {
       "word": "zaubern",
-      "english": "conjure up / do magic / do magic tricks",
+      "english": "do magic",
       "rank": 1081,
       "irregular": false
     },
     {
       "word": "anmerken",
-      "english": "comment / mark / mention",
+      "english": "note / remark",
       "rank": 1082,
       "irregular": false
     },
     {
       "word": "ärgern",
-      "english": "annoy / annoyed / be",
+      "english": "annoy",
       "rank": 1083,
       "irregular": false
     },
@@ -7617,13 +7617,13 @@
     },
     {
       "word": "formen",
-      "english": "form / model / sculpt",
+      "english": "form / shape",
       "rank": 1085,
       "irregular": false
     },
     {
       "word": "anbinden",
-      "english": "connect / lash / thether",
+      "english": "tie / connect",
       "rank": 1086,
       "irregular": true,
       "prateritum": "band an",
@@ -7632,13 +7632,13 @@
     },
     {
       "word": "aufmachen",
-      "english": "make for a place / open",
+      "english": "open",
       "rank": 1087,
       "irregular": false
     },
     {
       "word": "ergehen",
-      "english": "be / expatiate / fare",
+      "english": "be issued / fare",
       "rank": 1088,
       "irregular": true,
       "prateritum": "erging",
@@ -7647,13 +7647,13 @@
     },
     {
       "word": "ermorden",
-      "english": "assassinate / murder",
+      "english": "murder",
       "rank": 1089,
       "irregular": false
     },
     {
       "word": "knacken",
-      "english": "crack / nap / sleep",
+      "english": "crack",
       "rank": 1090,
       "irregular": false
     },
@@ -7665,25 +7665,25 @@
     },
     {
       "word": "vermarkten",
-      "english": "commercially / exploit / market",
+      "english": "market",
       "rank": 1092,
       "irregular": false
     },
     {
       "word": "abzeichnen",
-      "english": "be emerging / be evolving / become apparent",
+      "english": "become apparent",
       "rank": 1093,
       "irregular": false
     },
     {
       "word": "ähneln",
-      "english": "be alike / be similar / resemble",
+      "english": "resemble",
       "rank": 1094,
       "irregular": false
     },
     {
       "word": "aufstehen",
-      "english": "get up / rise / rise up",
+      "english": "get up / stand up",
       "rank": 1095,
       "irregular": true,
       "prateritum": "stand auf",
@@ -7692,7 +7692,7 @@
     },
     {
       "word": "aufsteigen",
-      "english": "ascend / get on / mount",
+      "english": "rise / climb",
       "rank": 1096,
       "irregular": true,
       "prateritum": "stieg auf",
@@ -7713,7 +7713,7 @@
     },
     {
       "word": "aussagen",
-      "english": "express / reveal / state",
+      "english": "state / testify",
       "rank": 1099,
       "irregular": false
     },
@@ -7728,7 +7728,7 @@
     },
     {
       "word": "beruhigen",
-      "english": "blow over / calm",
+      "english": "calm / calm down",
       "rank": 1101,
       "irregular": false
     },
@@ -7746,7 +7746,7 @@
     },
     {
       "word": "zeugen",
-      "english": "beget / father / procreate",
+      "english": "testify / father",
       "rank": 1104,
       "irregular": false
     },
@@ -7758,19 +7758,19 @@
     },
     {
       "word": "begehren",
-      "english": "covet / crave / desire",
+      "english": "desire",
       "rank": 1106,
       "irregular": false
     },
     {
       "word": "betätigen",
-      "english": "be active / busy oneself / operate",
+      "english": "operate / activate",
       "rank": 1107,
       "irregular": false
     },
     {
       "word": "ruhen",
-      "english": "halt / rest / stall",
+      "english": "rest",
       "rank": 1108,
       "irregular": false
     },
@@ -7782,7 +7782,7 @@
     },
     {
       "word": "bescheren",
-      "english": "somebody is blessed with something / somebody is given something / somebody is granted something",
+      "english": "bring / give (as a gift)",
       "rank": 1110,
       "irregular": false
     },
@@ -7794,13 +7794,13 @@
     },
     {
       "word": "tippen",
-      "english": "bet / tap / type",
+      "english": "type / tap / bet",
       "rank": 1112,
       "irregular": false
     },
     {
       "word": "verdrängen",
-      "english": "displace / repress / suppress",
+      "english": "displace / suppress",
       "rank": 1113,
       "irregular": false
     },
@@ -7833,7 +7833,7 @@
     },
     {
       "word": "nachlassen",
-      "english": "abate / desist / give a discount",
+      "english": "decrease / let up",
       "rank": 1118,
       "irregular": true,
       "prateritum": "ließ nach",
@@ -7857,7 +7857,7 @@
     },
     {
       "word": "verschreiben",
-      "english": "commit / make a slip of the pen / mispell",
+      "english": "prescribe",
       "rank": 1121,
       "irregular": true,
       "prateritum": "verschrieb",
@@ -7881,7 +7881,7 @@
     },
     {
       "word": "ausweichen",
-      "english": "avoid / dodge / swerve",
+      "english": "avoid / dodge",
       "rank": 1124,
       "irregular": true,
       "prateritum": "wich aus",
@@ -7923,7 +7923,7 @@
     },
     {
       "word": "festigen",
-      "english": "harden / solidify / stabilize",
+      "english": "strengthen / consolidate",
       "rank": 1130,
       "irregular": false
     },
@@ -7935,19 +7935,19 @@
     },
     {
       "word": "kürzen",
-      "english": "reduce / shorten / simplify",
+      "english": "shorten / reduce",
       "rank": 1132,
       "irregular": false
     },
     {
       "word": "putzen",
-      "english": "clean / plaster / render",
+      "english": "clean",
       "rank": 1133,
       "irregular": false
     },
     {
       "word": "verschlechtern",
-      "english": "deteriorate / get worse / make worse",
+      "english": "worsen / deteriorate",
       "rank": 1134,
       "irregular": false
     },
@@ -7962,7 +7962,7 @@
     },
     {
       "word": "bescheinigen",
-      "english": "attest / authenticate / certify",
+      "english": "certify / confirm",
       "rank": 1136,
       "irregular": false
     },
@@ -7986,7 +7986,7 @@
     },
     {
       "word": "verfallen",
-      "english": "decay / deteriorate / expire",
+      "english": "expire / decay",
       "rank": 1139,
       "irregular": true,
       "prateritum": "verfiel",
@@ -8016,7 +8016,7 @@
     },
     {
       "word": "stöbern",
-      "english": "rummage",
+      "english": "browse / rummage",
       "rank": 1143,
       "irregular": false
     },
@@ -8037,7 +8037,7 @@
     },
     {
       "word": "bekräftigen",
-      "english": "confirm / reaffirm / reinforce",
+      "english": "confirm / reaffirm",
       "rank": 1146,
       "irregular": false
     },
@@ -8064,7 +8064,7 @@
     },
     {
       "word": "festnehmen",
-      "english": "apprehend / arrest / seize",
+      "english": "arrest",
       "rank": 1150,
       "irregular": true,
       "prateritum": "nahm fest",
@@ -8073,13 +8073,13 @@
     },
     {
       "word": "nützen",
-      "english": "use / useful",
+      "english": "be useful",
       "rank": 1151,
       "irregular": false
     },
     {
       "word": "rüsten",
-      "english": "arm / mount / prepare",
+      "english": "arm / prepare",
       "rank": 1152,
       "irregular": false
     },
@@ -8112,7 +8112,7 @@
     },
     {
       "word": "rühren",
-      "english": "move / stir / touch",
+      "english": "stir / move",
       "rank": 1157,
       "irregular": false
     },
@@ -8124,7 +8124,7 @@
     },
     {
       "word": "absagen",
-      "english": "beg off / call off / cancel",
+      "english": "cancel",
       "rank": 1159,
       "irregular": false
     },
@@ -8136,13 +8136,13 @@
     },
     {
       "word": "ausarbeiten",
-      "english": "complete / draw up / flesh out",
+      "english": "work out / develop",
       "rank": 1161,
       "irregular": false
     },
     {
       "word": "ausbrechen",
-      "english": "break away / break out / burst",
+      "english": "break out / escape",
       "rank": 1162,
       "irregular": true,
       "prateritum": "brach aus",
@@ -8226,13 +8226,13 @@
     },
     {
       "word": "aufspüren",
-      "english": "detect / ferret / track down",
+      "english": "track down",
       "rank": 1175,
       "irregular": false
     },
     {
       "word": "besiegen",
-      "english": "bag / beat / conquer",
+      "english": "defeat",
       "rank": 1176,
       "irregular": false
     },
@@ -8250,7 +8250,7 @@
     },
     {
       "word": "koppeln",
-      "english": "connect / couple / dead reckoning",
+      "english": "connect / couple",
       "rank": 1179,
       "irregular": false
     },
@@ -8268,7 +8268,7 @@
     },
     {
       "word": "aussteigen",
-      "english": "ahead of schedule / to alight from (a bus, train) / to back out of (a commitment)",
+      "english": "get off / exit",
       "rank": 1182,
       "irregular": true,
       "prateritum": "stieg aus",
@@ -8277,7 +8277,7 @@
     },
     {
       "word": "deuten",
-      "english": "interpret / point / portend",
+      "english": "interpret / point to",
       "rank": 1183,
       "irregular": false
     },
@@ -8289,7 +8289,7 @@
     },
     {
       "word": "mitbekommen",
-      "english": "given / take note",
+      "english": "notice / receive",
       "rank": 1185,
       "irregular": true,
       "prateritum": "bekam mit",
@@ -8298,13 +8298,13 @@
     },
     {
       "word": "promovieren",
-      "english": "Ph.D. / PhD / doctor",
+      "english": "get a doctorate",
       "rank": 1186,
       "irregular": false
     },
     {
       "word": "anschaffen",
-      "english": "purchase / turn tricks",
+      "english": "acquire",
       "rank": 1187,
       "irregular": false
     },
@@ -8319,19 +8319,19 @@
     },
     {
       "word": "unterstellen",
-      "english": "insinuate / subordinate / suppose",
+      "english": "assume / subordinate",
       "rank": 1189,
       "irregular": false
     },
     {
       "word": "vollenden",
-      "english": "accomplish / achieve / complete",
+      "english": "complete",
       "rank": 1190,
       "irregular": false
     },
     {
       "word": "beitreten",
-      "english": "accede / join / support",
+      "english": "join",
       "rank": 1191,
       "irregular": true,
       "prateritum": "trat bei",
@@ -8352,7 +8352,7 @@
     },
     {
       "word": "absprechen",
-      "english": "agree upon something / arrange / deny",
+      "english": "arrange / deny",
       "rank": 1194,
       "irregular": true,
       "prateritum": "sprach ab",
@@ -8373,13 +8373,13 @@
     },
     {
       "word": "jagen",
-      "english": "chase / hunt / rush",
+      "english": "hunt / chase",
       "rank": 1197,
       "irregular": false
     },
     {
       "word": "loslegen",
-      "english": "get going / get started / kick off",
+      "english": "get started",
       "rank": 1198,
       "irregular": false
     },
@@ -8397,13 +8397,13 @@
     },
     {
       "word": "prognostizieren",
-      "english": "forecast / foretell / predict",
+      "english": "predict / forecast",
       "rank": 1201,
       "irregular": false
     },
     {
       "word": "übereinstimmen",
-      "english": "agree / correlate / correspond",
+      "english": "agree / correspond",
       "rank": 1202,
       "irregular": false
     },
@@ -9111,7 +9111,7 @@
     },
     {
       "word": "mangeln",
-      "english": "mangle",
+      "english": "lack",
       "rank": 1305,
       "irregular": false
     },
@@ -9165,7 +9165,7 @@
     },
     {
       "word": "unterbreiten",
-      "english": "spread / underneath",
+      "english": "submit / present",
       "rank": 1313,
       "irregular": false
     },
@@ -9243,7 +9243,7 @@
     },
     {
       "word": "durchstarten",
-      "english": "go around",
+      "english": "take off / launch",
       "rank": 1325,
       "irregular": false
     },
@@ -9261,7 +9261,7 @@
     },
     {
       "word": "referieren",
-      "english": "refer",
+      "english": "present / report",
       "rank": 1328,
       "irregular": false
     },
@@ -9273,7 +9273,7 @@
     },
     {
       "word": "tummeln",
-      "english": "hurry",
+      "english": "romp / hurry",
       "rank": 1330,
       "irregular": false
     },
@@ -9330,7 +9330,7 @@
     },
     {
       "word": "überholen",
-      "english": "outstrip / overhaul / overtake",
+      "english": "overtake / overhaul",
       "rank": 1338,
       "irregular": false
     },
@@ -9342,7 +9342,7 @@
     },
     {
       "word": "vorbeigehen",
-      "english": "go by / pass by",
+      "english": "pass by / go past",
       "rank": 1340,
       "irregular": true,
       "prateritum": "ging vorbei",
@@ -9519,7 +9519,7 @@
     },
     {
       "word": "befriedigen",
-      "english": "masturbate / satisfy",
+      "english": "satisfy",
       "rank": 1365,
       "irregular": false
     },
@@ -9582,13 +9582,13 @@
     },
     {
       "word": "schalten",
-      "english": "be in charge / change / get the idea",
+      "english": "switch",
       "rank": 1373,
       "irregular": false
     },
     {
       "word": "schöpfen",
-      "english": "create / draw / fish",
+      "english": "create / draw (water)",
       "rank": 1374,
       "irregular": false
     },
@@ -9639,7 +9639,7 @@
     },
     {
       "word": "ahnden",
-      "english": "avenge / punish",
+      "english": "punish / penalize",
       "rank": 1381,
       "irregular": false
     },
@@ -9651,7 +9651,7 @@
     },
     {
       "word": "dotieren",
-      "english": "contaminate / endow",
+      "english": "endow",
       "rank": 1383,
       "irregular": false
     },
@@ -10179,7 +10179,7 @@
     },
     {
       "word": "verunsichern",
-      "english": "irritate / make insecure / make uncertain",
+      "english": "unsettle",
       "rank": 1460,
       "irregular": false
     },
@@ -10245,7 +10245,7 @@
     },
     {
       "word": "gastieren",
-      "english": "guest",
+      "english": "perform as a guest",
       "rank": 1469,
       "irregular": false
     },
@@ -10263,7 +10263,7 @@
     },
     {
       "word": "spinnen",
-      "english": "be crazy / be nutty / be screwy",
+      "english": "be crazy / spin",
       "rank": 1472,
       "irregular": true,
       "prateritum": "spann",
@@ -10422,7 +10422,7 @@
     },
     {
       "word": "herbeiführen",
-      "english": "bring about / cause / induce",
+      "english": "bring about / cause",
       "rank": 1496,
       "irregular": false
     },
@@ -10449,25 +10449,25 @@
     },
     {
       "word": "spritzen",
-      "english": "fumigate / inject / squirt",
+      "english": "spray / inject",
       "rank": 1500,
       "irregular": false
     },
     {
       "word": "strecken",
-      "english": "dilute / stretch",
+      "english": "stretch",
       "rank": 1501,
       "irregular": false
     },
     {
       "word": "synchronisieren",
-      "english": "dub / synchronize",
+      "english": "synchronize",
       "rank": 1502,
       "irregular": false
     },
     {
       "word": "unterdrücken",
-      "english": "blanket / bottle up / oppress",
+      "english": "suppress / oppress",
       "rank": 1503,
       "irregular": false
     },
@@ -10521,19 +10521,19 @@
     },
     {
       "word": "befürworten",
-      "english": "advocate / back / endorse",
+      "english": "advocate / support",
       "rank": 1511,
       "irregular": false
     },
     {
       "word": "erschüttern",
-      "english": "shake",
+      "english": "shake / shatter",
       "rank": 1512,
       "irregular": false
     },
     {
       "word": "lüften",
-      "english": "air / chased / disclose",
+      "english": "air / ventilate",
       "rank": 1513,
       "irregular": false
     },
@@ -10545,13 +10545,13 @@
     },
     {
       "word": "wickeln",
-      "english": "change a baby / diaper / wind",
+      "english": "wrap / wind",
       "rank": 1515,
       "irregular": false
     },
     {
       "word": "abwehren",
-      "english": "beat back / defend / fend off",
+      "english": "fend off / defend",
       "rank": 1516,
       "irregular": false
     },
@@ -10593,13 +10593,13 @@
     },
     {
       "word": "untermauern",
-      "english": "corroborate / shore up / substantiate",
+      "english": "substantiate / underpin",
       "rank": 1523,
       "irregular": false
     },
     {
       "word": "versäumen",
-      "english": "miss / omit",
+      "english": "miss / neglect",
       "rank": 1524,
       "irregular": false
     },
@@ -10710,7 +10710,7 @@
     },
     {
       "word": "auspacken",
-      "english": "fess up / spill the beans / unpack",
+      "english": "unpack",
       "rank": 1542,
       "irregular": false
     },
@@ -10947,7 +10947,7 @@
     },
     {
       "word": "hergeben",
-      "english": "be pretty good / be well worth the effort / get involved in",
+      "english": "give up",
       "rank": 1576,
       "irregular": true,
       "prateritum": "gab her",
@@ -10968,7 +10968,7 @@
     },
     {
       "word": "schälen",
-      "english": "husk / peel / shale",
+      "english": "peel",
       "rank": 1579,
       "irregular": false
     },
@@ -11016,7 +11016,7 @@
     },
     {
       "word": "anmieten",
-      "english": "lupagi",
+      "english": "rent",
       "rank": 1587,
       "irregular": false
     },
@@ -11157,7 +11157,7 @@
     },
     {
       "word": "verführen",
-      "english": "cajole / coax / get",
+      "english": "seduce / tempt",
       "rank": 1609,
       "irregular": false
     },
@@ -11559,7 +11559,7 @@
     },
     {
       "word": "klarkommen",
-      "english": "accept / manage well with / put up with",
+      "english": "manage / cope",
       "rank": 1668,
       "irregular": true,
       "prateritum": "kam klar",
@@ -11589,7 +11589,7 @@
     },
     {
       "word": "resümieren",
-      "english": "sum up / summarize",
+      "english": "summarize",
       "rank": 1672,
       "irregular": false
     },
@@ -11697,7 +11697,7 @@
     },
     {
       "word": "recyceln",
-      "english": "to recycle",
+      "english": "recycle",
       "rank": 1689,
       "irregular": false
     },
@@ -11724,7 +11724,7 @@
     },
     {
       "word": "überziehen",
-      "english": "hit / put on / whack",
+      "english": "cover / overdraw",
       "rank": 1693,
       "irregular": true,
       "prateritum": "zog über",
@@ -11733,7 +11733,7 @@
     },
     {
       "word": "umlegen",
-      "english": "apportion / waste",
+      "english": "distribute / flip (switch)",
       "rank": 1694,
       "irregular": false
     },
@@ -11796,7 +11796,7 @@
     },
     {
       "word": "ausliegen",
-      "english": "available / displayed / down",
+      "english": "be on display",
       "rank": 1704,
       "irregular": true,
       "prateritum": "lag aus",
@@ -11829,7 +11829,7 @@
     },
     {
       "word": "nachgeben",
-      "english": "be equals / collapse / decrease",
+      "english": "give in / yield",
       "rank": 1709,
       "irregular": true,
       "prateritum": "gab nach",
@@ -11877,7 +11877,7 @@
     },
     {
       "word": "verkleiden",
-      "english": "case / clad / disguise",
+      "english": "disguise / dress up",
       "rank": 1716,
       "irregular": false
     },
@@ -11931,7 +11931,7 @@
     },
     {
       "word": "heizen",
-      "english": "heat / rush / speed",
+      "english": "heat",
       "rank": 1724,
       "irregular": false
     },
@@ -12084,7 +12084,7 @@
     },
     {
       "word": "wertschätzen",
-      "english": "appreciate (someone, something) / cherish (someone) / esteem (someone, something)",
+      "english": "appreciate / value",
       "rank": 1746,
       "irregular": false
     },
@@ -12150,7 +12150,7 @@
     },
     {
       "word": "blasen",
-      "english": "blow / blowjob / head",
+      "english": "blow",
       "rank": 1756,
       "irregular": true,
       "prateritum": "blies",
@@ -12174,7 +12174,7 @@
     },
     {
       "word": "klauen",
-      "english": "bag / nick / pinch",
+      "english": "steal",
       "rank": 1759,
       "irregular": false
     },
@@ -12261,7 +12261,7 @@
     },
     {
       "word": "anschlagen",
-      "english": "aim / bark / chip",
+      "english": "post / strike",
       "rank": 1772,
       "irregular": true,
       "prateritum": "schlug an",
@@ -12489,7 +12489,7 @@
     },
     {
       "word": "betrügen",
-      "english": "befool / betray / cheat",
+      "english": "cheat / deceive",
       "rank": 1805,
       "irregular": true,
       "prateritum": "betrog",
@@ -12561,13 +12561,13 @@
     },
     {
       "word": "säumen",
-      "english": "delay / line / line all sides",
+      "english": "line / delay",
       "rank": 1816,
       "irregular": false
     },
     {
       "word": "schreien",
-      "english": "cry / cry out / exclaim",
+      "english": "scream / shout",
       "rank": 1817,
       "irregular": true,
       "prateritum": "schrie",
@@ -12813,7 +12813,7 @@
     },
     {
       "word": "hauen",
-      "english": "beat / hew",
+      "english": "hit",
       "rank": 1851,
       "irregular": false
     },
@@ -12843,7 +12843,7 @@
     },
     {
       "word": "streicheln",
-      "english": "fondle / pet / stroke",
+      "english": "stroke / pet",
       "rank": 1856,
       "irregular": false
     },
@@ -12876,13 +12876,13 @@
     },
     {
       "word": "wischen",
-      "english": "get shocked / slap / wipe",
+      "english": "wipe",
       "rank": 1861,
       "irregular": false
     },
     {
       "word": "abstürzen",
-      "english": "crash / fall / freeze",
+      "english": "crash",
       "rank": 1862,
       "irregular": false
     },
@@ -12999,7 +12999,7 @@
     },
     {
       "word": "anbraten",
-      "english": "brown / proposition / roast",
+      "english": "sear / brown",
       "rank": 1879,
       "irregular": true,
       "prateritum": "briet an",
@@ -13014,7 +13014,7 @@
     },
     {
       "word": "auflaufen",
-      "english": "accumulate / collide with / run aground",
+      "english": "run up / accumulate",
       "rank": 1881,
       "irregular": true,
       "prateritum": "lief auf",
@@ -13047,7 +13047,7 @@
     },
     {
       "word": "schlummern",
-      "english": "lie dormant / slumber / snooze",
+      "english": "slumber / doze",
       "rank": 1886,
       "irregular": false
     },
@@ -13059,7 +13059,7 @@
     },
     {
       "word": "thronen",
-      "english": "be enthroned / sit enthroned / sit in state",
+      "english": "sit enthroned",
       "rank": 1888,
       "irregular": false
     },
@@ -13134,7 +13134,7 @@
     },
     {
       "word": "mähen",
-      "english": "baa / bleat / mow",
+      "english": "mow",
       "rank": 1900,
       "irregular": false
     },
@@ -13170,7 +13170,7 @@
     },
     {
       "word": "verschlagen",
-      "english": "end up / lose the page / take away",
+      "english": "cunning / end up",
       "rank": 1905,
       "irregular": true,
       "prateritum": "verschlug",
@@ -13188,7 +13188,7 @@
     },
     {
       "word": "zocken",
-      "english": "football / gamble / lay down",
+      "english": "gamble",
       "rank": 1907,
       "irregular": false
     },
@@ -13254,7 +13254,7 @@
     },
     {
       "word": "einwerben",
-      "english": "funding / funds / investors",
+      "english": "raise (funds)",
       "rank": 1917,
       "irregular": true,
       "prateritum": "warb ein",
@@ -13431,7 +13431,7 @@
     },
     {
       "word": "frühstücken",
-      "english": "breakfast",
+      "english": "have breakfast",
       "rank": 1942,
       "irregular": false
     },
@@ -13458,7 +13458,7 @@
     },
     {
       "word": "losfahren",
-      "english": "approach / attack / charge",
+      "english": "set off / depart",
       "rank": 1946,
       "irregular": true,
       "prateritum": "fuhr los",
@@ -13485,7 +13485,7 @@
     },
     {
       "word": "skalieren",
-      "english": "scale / sizing",
+      "english": "scale",
       "rank": 1950,
       "irregular": false
     },
@@ -13575,19 +13575,19 @@
     },
     {
       "word": "aufspielen",
-      "english": "brag / give oneself airs / show off",
+      "english": "show off",
       "rank": 1964,
       "irregular": false
     },
     {
       "word": "aufwärmen",
-      "english": "bring up / heat up / warm oneself",
+      "english": "warm up",
       "rank": 1965,
       "irregular": false
     },
     {
       "word": "deinstallieren",
-      "english": "deinstall / dismantle / dismount",
+      "english": "uninstall",
       "rank": 1966,
       "irregular": false
     },
@@ -13635,7 +13635,7 @@
     },
     {
       "word": "fahnden",
-      "english": "to hunt for (somebody) / to hunt for (something) / to launch, spark a manhunt for (somebody)",
+      "english": "search for",
       "rank": 1972,
       "irregular": false
     },
@@ -13647,19 +13647,19 @@
     },
     {
       "word": "firmieren",
-      "english": "trade under the name of",
+      "english": "trade under the name",
       "rank": 1974,
       "irregular": false
     },
     {
       "word": "hüpfen",
-      "english": "bounce / frisk / gambol",
+      "english": "hop / jump",
       "rank": 1975,
       "irregular": false
     },
     {
       "word": "immatrikulieren",
-      "english": "enrol / enroll / matriculate",
+      "english": "enroll / matriculate",
       "rank": 1976,
       "irregular": false
     },
@@ -13743,7 +13743,7 @@
     },
     {
       "word": "duften",
-      "english": "pleasantly / smell",
+      "english": "smell nice",
       "rank": 1989,
       "irregular": false
     },
@@ -13776,7 +13776,7 @@
     },
     {
       "word": "hetzen",
-      "english": "agitate / hustle / rush",
+      "english": "rush / incite",
       "rank": 1994,
       "irregular": false
     },
@@ -19671,7 +19671,7 @@
     },
     {
       "word": "mühen",
-      "english": "labour / take care / work",
+      "english": "make an effort",
       "rank": 2881,
       "irregular": false
     },
