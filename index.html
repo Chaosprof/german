@@ -136,6 +136,19 @@ function getVerbsForTier(tier) {
 function getIrregularVerbsForTier(tier) {
   return IRREGULAR_VERBS.filter(v => v[2] <= tier);
 }
+
+// Build a mixed queue of nouns, adjectives, and verbs for Blitz Type
+// Each entry: { type: "noun"|"adj"|"verb", german: "...", english: "...", article: "der"|"die"|"das"|"" }
+function buildBlitzQueue(tier, count) {
+  const nouns = getNounsForTier(tier).filter(n => n[3]).map(n => ({ type: "noun", german: n[0], english: n[3], article: n[1] }));
+  const adjs = getAdjectivesForTier(tier).filter(a => a[1]).map(a => ({ type: "adj", german: a[0], english: a[1], article: "" }));
+  const verbs = getVerbsForTier(tier).filter(v => v[1]).map(v => ({ type: "verb", german: v[0], english: v[1], article: "" }));
+  const pool = shuffleArray([...nouns, ...adjs, ...verbs]);
+  // Deduplicate by german word
+  const seen = new Set();
+  const unique = pool.filter(w => { if (seen.has(w.german)) return false; seen.add(w.german); return true; });
+  return unique.slice(0, count);
+}
 // VOCABULARY TIER CONFIG
 // ═══════════════════════════════════════════════════════════════
 const TIER_OPTIONS = [
@@ -607,6 +620,7 @@ const GAME_MODES = [
   { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔄" },
   { id: "matching", name: "Matching", desc: "Pair nouns and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
+  { id: "blitz_type", name: "Blitz Type", desc: "Speed-translate mixed words", icon: "🚀" },
   { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯" },
 ];
 
@@ -615,6 +629,9 @@ const NO_PLURAL_LABEL = "kein Plural";
 const MATCHING_BATCH_SIZE = 10;
 const TIMED_CHALLENGE_DURATION = 60;
 const SPEED_SORT_DURATION = 75;
+const BLITZ_TYPE_COUNT = 30;
+const BLITZ_PENALTY_SECONDS = 3;
+const BLITZ_PB_KEY = "artikelblitz_blitz_pb";
 
 const PLURAL_FAMILY_PRIORITY = {
   none: ["same", "e", "en", "s"],
@@ -840,6 +857,15 @@ function GermanNounGame() {
   const verbInfRef = useRef(null);
   const verbPratRef = useRef(null);
   const verbPerfRef = useRef(null);
+  // Blitz Type state
+  const [blitzQueue, setBlitzQueue] = useState([]); // [{type, german, english, article}]
+  const [blitzIndex, setBlitzIndex] = useState(0);
+  const [blitzInput, setBlitzInput] = useState("");
+  const [blitzElapsed, setBlitzElapsed] = useState(0); // in tenths of a second
+  const [blitzPenalty, setBlitzPenalty] = useState(0); // total penalty in tenths
+  const [blitzFlash, setBlitzFlash] = useState(null); // "correct"|"wrong"|null
+  const blitzTimerRef = useRef(null);
+  const blitzInputRef = useRef(null);
   const [usedSecondChance, setUsedSecondChance] = useState(false);
   const [usedStreakShield, setUsedStreakShield] = useState(false);
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
@@ -992,6 +1018,17 @@ function GermanNounGame() {
       nouns = shuffleArray(unique.filter(v => v[1]));
       if (!nouns.length) { alert("No irregular verbs available for this tier"); return; }
       setActiveDeck(null);
+    } else if (gMode === "blitz_type") {
+      const bq = buildBlitzQueue(t, BLITZ_TYPE_COUNT);
+      if (bq.length < 5) { alert("Not enough words available for this tier"); return; }
+      setBlitzQueue(bq);
+      setBlitzIndex(0);
+      setBlitzInput("");
+      setBlitzElapsed(0);
+      setBlitzPenalty(0);
+      setBlitzFlash(null);
+      nouns = [["_blitz_placeholder"]]; // non-empty so the guard below passes
+      setActiveDeck(null);
     } else if (gMode === "weakest") {
       const weakNames = getWeakestNouns(userData.nounStats, 30);
       nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
@@ -1012,12 +1049,12 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" ? MODES.ARTICLE : m;
-    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" ? "easy" : d;
+    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" || gMode === "blitz_type" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" || gMode === "blitz_type" ? "easy" : d;
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
-    setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
+    setTier(t);setQueue(gMode === "blitz_type" ? nouns : shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
     setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});
     setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
     setUsedSecondChance(false);setUsedStreakShield(false);
@@ -1081,7 +1118,12 @@ function GermanNounGame() {
 
   // End session: calculate XP, coins, achievements, tier unlocks
   const endSession = useCallback(() => {
-    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
+    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current); clearInterval(blitzTimerRef.current);
+    // Save blitz timing for results screen (if not already saved by handleBlitzSubmit)
+    if (gameMode === "blitz_type") {
+      localStorage.setItem("_blitz_elapsed", String(blitzElapsed));
+      localStorage.setItem("_blitz_penalty", String(blitzPenalty));
+    }
     if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
     sessionAnswersRef.current = [];
 
@@ -1135,7 +1177,7 @@ function GermanNounGame() {
     });
 
     setScreen("results");
-  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, userData.activePerks, tier, campaignChallenge]);
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, userData.activePerks, tier, campaignChallenge, blitzElapsed, blitzPenalty]);
 
   // Per-question timer (classic/reverse with timer)
   useEffect(() => {
@@ -1156,6 +1198,73 @@ function GermanNounGame() {
     }, 1000);
     return () => clearInterval(globalTimerRef.current);
   }, [screen, gameMode]);
+
+  // Blitz Type timer (counts up in tenths of seconds)
+  useEffect(() => {
+    if (screen !== "game" || gameMode !== "blitz_type") return;
+    blitzTimerRef.current = setInterval(() => {
+      setBlitzElapsed(p => p + 1);
+    }, 100);
+    return () => clearInterval(blitzTimerRef.current);
+  }, [screen, gameMode]);
+
+  const handleBlitzSubmit = useCallback((ev) => {
+    ev?.preventDefault();
+    if (gameMode !== "blitz_type" || blitzIndex >= blitzQueue.length) return;
+    const item = blitzQueue[blitzIndex];
+    const typed = blitzInput.trim();
+    if (!typed) return;
+
+    // For nouns, expect "article word" (e.g. "der Hund")
+    let correct = false;
+    if (item.type === "noun") {
+      const parts = typed.split(/\s+/);
+      if (parts.length >= 2) {
+        const typedArt = parts[0].toLowerCase();
+        const typedWord = parts.slice(1).join(" ");
+        correct = typedArt === item.article && (typedWord === item.german || normalize(typedWord) === normalize(item.german));
+      }
+    } else {
+      correct = typed === item.german || normalize(typed) === normalize(item.german);
+    }
+
+    setTotalAnswered(p => p + 1);
+
+    if (correct) {
+      setTotalCorrect(p => p + 1);
+      setScore(p => p + 100);
+      setStreak(p => { const n = p + 1; setBestStreak(b => Math.max(b, n)); return n; });
+      setBlitzFlash("correct");
+    } else {
+      setStreak(0);
+      setBlitzPenalty(p => p + BLITZ_PENALTY_SECONDS * 10);
+      setBlitzFlash("wrong");
+      setWrongAnswers(p => [...p, {
+        noun: item.german, entryId: item.german, article: item.article, plural: "", english: item.english,
+        userArticle: NO_ANSWER, userPlural: NO_ANSWER, blitzTyped: typed, blitzWordType: item.type,
+      }]);
+    }
+
+    setTimeout(() => setBlitzFlash(null), 250);
+    setBlitzInput("");
+
+    const nextIdx = blitzIndex + 1;
+    if (nextIdx >= blitzQueue.length) {
+      // Save timing data for results screen
+      const finalPenalty = blitzPenalty + (correct ? 0 : BLITZ_PENALTY_SECONDS * 10);
+      const finalElapsed = blitzElapsed;
+      const finalTime = finalElapsed + finalPenalty;
+      localStorage.setItem("_blitz_elapsed", String(finalElapsed));
+      localStorage.setItem("_blitz_penalty", String(finalPenalty));
+      const prevPb = parseFloat(localStorage.getItem(BLITZ_PB_KEY) || "999999");
+      if (finalTime < prevPb) localStorage.setItem(BLITZ_PB_KEY, String(finalTime));
+      clearInterval(blitzTimerRef.current);
+      setTimeout(() => endSession(), 300);
+    } else {
+      setBlitzIndex(nextIdx);
+    }
+    setTimeout(() => blitzInputRef.current?.focus(), 50);
+  }, [gameMode, blitzIndex, blitzQueue, blitzInput, blitzElapsed, blitzPenalty, endSession]);
 
   const handleTimeout = useCallback(() => {
     if (!currentNoun) return;
@@ -1416,6 +1525,7 @@ function GermanNounGame() {
 
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_forms") setTimeout(()=>verbInfRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
+  useEffect(() => { if(screen==="game"&&gameMode==="blitz_type") setTimeout(()=>blitzInputRef.current?.focus(),100); }, [screen,gameMode,blitzIndex]);
 
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const timerPct = timeLimit>0?(timeLeft/timeLimit)*100:100;
@@ -1438,6 +1548,12 @@ function GermanNounGame() {
         ? `Choose the ${matchingWordType==="adjectives"?"German adjective":matchingWordType==="verbs"?"German verb":"German noun"} for ${selectedMeaningLabel}.`
         : `Find all ${matchingBatch.length} German-English pairs in the grid.`;
   const timedModeDuration = gameMode === "speed_sort" ? SPEED_SORT_DURATION : TIMED_CHALLENGE_DURATION;
+  const blitzCurrentWord = gameMode === "blitz_type" && blitzIndex < blitzQueue.length ? blitzQueue[blitzIndex] : null;
+  const blitzTotalTime = blitzElapsed + blitzPenalty;
+  const blitzTimeStr = (blitzTotalTime / 10).toFixed(1) + "s";
+  const blitzPenaltyStr = blitzPenalty > 0 ? "+" + (blitzPenalty / 10).toFixed(1) + "s" : "";
+  const blitzPb = parseFloat(localStorage.getItem(BLITZ_PB_KEY) || "0");
+  const blitzPbStr = blitzPb > 0 ? (blitzPb / 10).toFixed(1) + "s" : "";
 
   if(screen==="campaign") return <CampaignScreen
     campaignProgress={userData.campaignProgress || {}}
@@ -1454,6 +1570,16 @@ function GermanNounGame() {
     if (gameMode === "verb_forms") {
       const wrongWords = new Set(wrongAnswers.map(w => w.noun));
       nd = IRREGULAR_VERBS.filter(v => wrongWords.has(v[0]));
+    } else if (gameMode === "blitz_type") {
+      // Rebuild blitz queue from wrong answers
+      const bq = wrongAnswers.map(w => ({ type: w.blitzWordType || "noun", german: w.noun, english: w.english, article: w.article }));
+      setBlitzQueue(shuffleArray(bq));
+      setBlitzIndex(0);
+      setBlitzInput("");
+      setBlitzElapsed(0);
+      setBlitzPenalty(0);
+      setBlitzFlash(null);
+      nd = [["_blitz_placeholder"]];
     } else {
       nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
     }
@@ -1470,23 +1596,60 @@ function GermanNounGame() {
       <div style={S.header}>
         <button onClick={endSession} style={S.endBtn}>End</button>
         <div style={{textAlign:"center"}}>
-          <span style={S.scoreLabel}>{score.toLocaleString()}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
+          {gameMode==="blitz_type"?(
+            <span style={{fontSize:22,fontWeight:900,color:"#f1f5f9",fontVariantNumeric:"tabular-nums"}}>{blitzTimeStr}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
+          ):(
+            <span style={S.scoreLabel}>{score.toLocaleString()}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
+          )}
         </div>
         <div style={{textAlign:"right"}}>
           {gameMode==="survival"&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
           {(gameMode==="timed"||gameMode==="speed_sort")&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
           {gameMode==="matching"&&<span style={S.progressText}>{matchingProgress} / {queue.length}</span>}
-          {gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&gameMode!=="matching"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
+          {gameMode==="blitz_type"&&<span style={S.progressText}>{blitzIndex + 1} / {blitzQueue.length}</span>}
+          {gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&gameMode!=="matching"&&gameMode!=="blitz_type"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
         </div>
       </div>
       {difficulty!=="easy"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&gameMode!=="survival"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
       {(gameMode==="timed"||gameMode==="speed_sort")&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/timedModeDuration)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
+      {gameMode==="blitz_type"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(blitzIndex/blitzQueue.length)*100}%`,backgroundColor:"#8B5CF6",transition:"width 0.3s"}}/></div>}
       <div style={S.statsRow}>
         {[["Accuracy",`${accuracy}%`,"#cbd5e1"],["Best",bestStreak,"#cbd5e1"],["Correct",totalCorrect,"#10B981"],["Wrong",wrongAnswers.length,"#f87171"]].map(([l,v,c])=>
           <div key={l} style={S.statItem}><span style={{...S.statValue,color:c}}>{v}</span><span style={S.statLabel}>{l}</span></div>
         )}
       </div>
-      {currentNoun&&(
+      {gameMode==="blitz_type"&&blitzCurrentWord&&(
+        <div style={{...S.card,borderColor:blitzFlash==="correct"?"#10B981":blitzFlash==="wrong"?"#EF4444":"transparent",backgroundColor:blitzFlash==="correct"?"rgba(16,185,129,0.15)":blitzFlash==="wrong"?"rgba(239,68,68,0.15)":"rgba(255,255,255,0.03)",transition:"border-color 0.15s, background-color 0.15s"}}>
+          <div style={S.nounDisplay}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,marginBottom:4}}>
+              <span style={{fontSize:36,fontWeight:900,color:blitzFlash==="wrong"?"#EF4444":"#f1f5f9",fontVariantNumeric:"tabular-nums"}}>{blitzTimeStr}</span>
+              {blitzPenaltyStr&&<span style={{fontSize:14,fontWeight:700,color:"#EF4444"}}>{blitzPenaltyStr} penalty</span>}
+            </div>
+            {blitzPbStr&&<span style={{fontSize:11,color:"#64748b"}}>Personal best: {blitzPbStr}</span>}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,margin:"12px 0 4px"}}>
+              <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,padding:"2px 8px",borderRadius:6,border:"1px solid",
+                color:blitzCurrentWord.type==="noun"?"#60a5fa":blitzCurrentWord.type==="verb"?"#a78bfa":"#f59e0b",
+                borderColor:blitzCurrentWord.type==="noun"?"rgba(96,165,250,0.4)":blitzCurrentWord.type==="verb"?"rgba(167,139,250,0.4)":"rgba(245,158,11,0.4)",
+                background:blitzCurrentWord.type==="noun"?"rgba(96,165,250,0.1)":blitzCurrentWord.type==="verb"?"rgba(167,139,250,0.1)":"rgba(245,158,11,0.1)",
+              }}>{blitzCurrentWord.type==="noun"?"noun":blitzCurrentWord.type==="verb"?"verb":"adj"}</span>
+            </div>
+            <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9",textAlign:"center"}}>{getMeaningLabel(blitzCurrentWord.english)}</span>
+            {blitzCurrentWord.type==="noun"&&<span style={{fontSize:12,color:"#64748b",marginTop:2}}>Include the article (e.g. der Hund)</span>}
+          </div>
+          <form onSubmit={handleBlitzSubmit} style={{width:"100%",padding:"0 8px"}}>
+            <div style={S.inputRow}>
+              <input ref={blitzInputRef} value={blitzInput} onChange={e=>setBlitzInput(e.target.value)} placeholder={blitzCurrentWord.type==="noun"?"der/die/das + Noun":"German word..."} style={S.pluralInput} autoComplete="off" autoFocus/>
+              <button type="submit" style={S.submitBtn}>→</button>
+            </div>
+            <div style={S.umlauts}>
+              {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} type="button" onClick={()=>{setBlitzInput(p=>p+c);blitzInputRef.current?.focus();}} style={S.umlautBtn}>{c}</button>)}
+            </div>
+          </form>
+          {streak>=3&&<div style={{textAlign:"center",fontSize:14,fontWeight:800,color:"#F59E0B",marginTop:4}}>🔥 {streak} streak!</div>}
+          <div style={S.shortcutHint}>Translate {blitzQueue.length} words as fast as you can. Wrong answers add +{BLITZ_PENALTY_SECONDS}s penalty.</div>
+        </div>
+      )}
+      {currentNoun&&gameMode!=="blitz_type"&&(
         <div style={{...S.card,borderColor:phase==="feedback"?(feedback?.correct?"#10B981":"#EF4444"):"transparent",backgroundColor:phase==="feedback"?(feedback?.correct?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)"):"rgba(255,255,255,0.03)"}}>
           {gameMode==="matching"?(
             <div style={S.nounDisplay}>
@@ -1957,6 +2120,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       </div>
       {selectedGameMode==="speed_sort"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Speed Sort always uses article sorting and a {SPEED_SORT_DURATION}s timer.</div>}
       {selectedGameMode==="verb_forms"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the Infinitiv, Präteritum (ich), and Partizip Perfekt for each irregular verb. {IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.</div>}
+      {selectedGameMode==="blitz_type"&&(()=>{const pb=parseFloat(localStorage.getItem(BLITZ_PB_KEY)||"0");return <div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Translate {BLITZ_TYPE_COUNT} mixed words (nouns, verbs, adjectives) from English to German as fast as you can. Wrong answers add +{BLITZ_PENALTY_SECONDS}s penalty. For nouns, include the article.{pb>0&&<span style={{color:"#10B981",fontWeight:700}}>{" "}PB: {(pb/10).toFixed(1)}s</span>}</div>;})()}
 
       {/* ── Word type for matching ── */}
       {selectedGameMode==="matching"&&(
@@ -1980,7 +2144,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Source selection ── */}
-      {selectedGameMode!=="weakest"&&selectedGameMode!=="verb_forms"&&(
+      {selectedGameMode!=="weakest"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
         <div style={S.menuSection}>
           {!(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs"))&&(
             <>
@@ -1999,7 +2163,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {(source==="tier"||selectedGameMode==="verb_forms"||(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs")))&&selectedGameMode!=="weakest"&&(
+      {(source==="tier"||selectedGameMode==="verb_forms"||selectedGameMode==="blitz_type"||(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs")))&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
@@ -2043,7 +2207,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Answer type (hidden for reverse/weakest game modes) ── */}
-      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="verb_forms"&&(
+      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -2057,7 +2221,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Speed (hidden for timed/survival) ── */}
-      {selectedGameMode!=="timed"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&(
+      {selectedGameMode!=="timed"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Speed</label>
           <div style={{display:"flex",gap:8}}>
@@ -2098,6 +2262,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
   const title = getTitle(prog.level);
   const isMatching = gameMode === "matching";
   const isVerbForms = gameMode === "verb_forms";
+  const isBlitz = gameMode === "blitz_type";
   const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
   return (
     <div style={S.container}><div style={S.resultsInner}>
@@ -2137,25 +2302,55 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
         </div>
       )}
       <h2 style={{fontSize:24,fontWeight:800,color:"#f1f5f9",margin:0}}>Session Complete</h2>
+      {isBlitz?(()=>{
+        const elapsed = parseFloat(localStorage.getItem("_blitz_elapsed")||"0");
+        const penalty = parseFloat(localStorage.getItem("_blitz_penalty")||"0");
+        const total = elapsed + penalty;
+        const pb = parseFloat(localStorage.getItem(BLITZ_PB_KEY)||"0");
+        const isNewPb = pb > 0 && total <= pb;
+        return (
+          <div style={{width:"100%",textAlign:"center",display:"flex",flexDirection:"column",gap:4,alignItems:"center"}}>
+            <span style={{fontSize:48,fontWeight:900,color:"#f1f5f9",fontVariantNumeric:"tabular-nums"}}>{(total/10).toFixed(1)}s</span>
+            <div style={{display:"flex",gap:16,justifyContent:"center",fontSize:13,color:"#94a3b8"}}>
+              <span>Base: {(elapsed/10).toFixed(1)}s</span>
+              {penalty>0&&<span style={{color:"#f87171"}}>Penalty: +{(penalty/10).toFixed(1)}s</span>}
+            </div>
+            {isNewPb&&<span style={{fontSize:16,fontWeight:800,color:"#10B981",marginTop:4}}>New Personal Best!</span>}
+            {pb>0&&!isNewPb&&<span style={{fontSize:12,color:"#64748b"}}>Personal best: {(pb/10).toFixed(1)}s</span>}
+            <div style={{display:"flex",gap:16,justifyContent:"center",fontSize:13,color:"#94a3b8",marginTop:8}}>
+              <span>Accuracy: <span style={{color:"#e2e8f0",fontWeight:700}}>{accuracy}%</span></span>
+              <span>Streak: <span style={{color:"#e2e8f0",fontWeight:700}}>🔥 {bestStreak}</span></span>
+              <span>{totalCorrect}/{totalAnswered} correct</span>
+            </div>
+          </div>
+        );
+      })():(
       <div style={S.resultsGrid}>
         {[["Score",score.toLocaleString()],["Accuracy",`${accuracy}%`],["Correct",`${totalCorrect}/${totalAnswered}`],["Best Streak",`🔥 ${bestStreak}`]].map(([l,v])=>
           <div key={l} style={S.resultCard}><span style={S.resultValue}>{v}</span><span style={S.resultLabel}>{l}</span></div>
         )}
       </div>
+      )}
 
       {reviewWrongAnswers.length>0&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
           <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {reviewWrongAnswers.length} mistake{reviewWrongAnswers.length>1?"s":""}</h3>
-          {!isMatching&&!isVerbForms&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
+          {!isMatching&&!isVerbForms&&!isBlitz&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:500,overflowY:"auto",paddingRight:4}}>
             {reviewWrongAnswers.map((w,i)=>{
               const expl=EXPLANATIONS.get(w.noun);
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching&&!isVerbForms?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms?"default":"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms&&!isBlitz) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching&&!isVerbForms&&!isBlitz?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms||isBlitz?"default":"pointer",transition:"border-color 0.2s"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
                     {isVerbForms?(
                       <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}>{getMeaningLabel(w.english)}</span>
+                    ):isBlitz?(
+                      <div style={{display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap"}}>
+                        <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>
+                        <span style={{fontSize:13,color:"#64748b"}}>→</span>
+                        <span style={{fontWeight:800,fontSize:15,color:"#10B981"}}>{w.article?w.article+" ":""}{w.noun}</span>
+                      </div>
                     ):(
                     <div style={{display:"flex",alignItems:"baseline",gap:2}}>
                       <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15}}>{w.article}</span>
@@ -2163,7 +2358,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                       <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>{"->"} {formatPluralAttempt(w.plural)}</span>
                     </div>
                     )}
-                    {!isVerbForms&&<span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>}
+                    {!isVerbForms&&!isBlitz&&<span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>}
                   </div>
                   <div style={{display:"flex",flexDirection:"column",gap:2,marginTop:6}}>
                     {isVerbForms&&w.verbInfinitive&&(
@@ -2173,6 +2368,11 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                         <span style={{fontSize:12,color:"#94a3b8"}}>Präteritum: <span style={{color:normalize(w.userPrateritum||"")=== normalize(w.verbPrateritum)?"#10B981":"#f87171",fontWeight:700}}>{w.userPrateritum===NO_ANSWER?"—":w.userPrateritum}</span></span>
                         <span style={{fontSize:12,color:"#94a3b8"}}>Partizip: <span style={{color:normalize(w.userPerfekt||"")=== normalize(w.verbPerfekt)?"#10B981":"#f87171",fontWeight:700}}>{w.userPerfekt===NO_ANSWER?"—":w.userPerfekt}</span></span>
                       </>
+                    )}
+                    {isBlitz&&w.blitzTyped&&(
+                      <span style={{fontSize:12,color:"#94a3b8"}}>
+                        You typed: <span style={{color:"#f87171",fontWeight:700}}>{w.blitzTyped}</span>
+                      </span>
                     )}
                     {isMatching&&(
                       <>
@@ -2196,9 +2396,9 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                         <span style={{color:"#10B981"}}>{" -> "}{formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {!isMatching&&!isVerbForms&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {!isMatching&&!isVerbForms&&!isBlitz&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
-                  {!isMatching&&!isVerbForms&&isOpen&&expl&&(
+                  {!isMatching&&!isVerbForms&&!isBlitz&&isOpen&&expl&&(
                     <div style={{marginTop:10,padding:"10px 12px",background:"rgba(251,191,36,0.05)",border:"1px solid rgba(251,191,36,0.15)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
                       <div style={{display:"flex",flexDirection:"column",gap:3}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Why {w.article}?</span>
@@ -2210,7 +2410,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                       </div>
                     </div>
                   )}
-                  {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
+                  {!isMatching&&!isVerbForms&&!isBlitz&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
                 </div>
               );
             })}
