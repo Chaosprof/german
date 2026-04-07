@@ -83,7 +83,7 @@ async function loadWordData() {
     if (verbResp.ok) {
       const verbData = await verbResp.json();
       VERBS = (verbData.verbs || []).map(({ word, english, rank }) => [word, english, rank]);
-      IRREGULAR_VERBS = (verbData.verbs || []).filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt }) => [word, english, rank, prateritum, perfekt]);
+      IRREGULAR_VERBS = (verbData.verbs || []).filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt, withSein }) => [word, english, rank, prateritum, (withSein ? "ist " : "hat ") + perfekt]);
     }
   } catch(e) { console.warn("Could not load verbs:", e); }
   // Load built-in decks
@@ -1752,7 +1752,7 @@ function GermanNounGame() {
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:4}}>
                 <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600}}>Partizip Perfekt</label>
-                <input ref={verbPerfRef} value={verbFormInputs.perfekt} onChange={e=>setVerbFormInputs(p=>({...p,perfekt:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter")handleVerbFormsSubmit(e);}} placeholder="z.B. gegangen" style={S.pluralInput} autoComplete="off"/>
+                <input ref={verbPerfRef} value={verbFormInputs.perfekt} onChange={e=>setVerbFormInputs(p=>({...p,perfekt:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter")handleVerbFormsSubmit(e);}} placeholder="z.B. ist gegangen" style={S.pluralInput} autoComplete="off"/>
               </div>
               <button onClick={handleVerbFormsSubmit} style={S.submitBtn}>Check</button>
               <div style={S.umlauts}>
