@@ -36,6 +36,7 @@ let DUAL_GENDER_SENSES = new Map();
 let DUAL_GENDER_INDEX = new Map();
 let ADJECTIVES = [];  // [word, english, rank]
 let VERBS = [];  // [word, english, rank]
+let IRREGULAR_VERBS = [];  // [word, english, rank, prateritum, perfekt]
 
 function makeDualGenderSenseId(word, article, plural) {
   return `__dual__|${word}|${article}|${plural || "—"}`;
@@ -82,6 +83,7 @@ async function loadWordData() {
     if (verbResp.ok) {
       const verbData = await verbResp.json();
       VERBS = (verbData.verbs || []).map(({ word, english, rank }) => [word, english, rank]);
+      IRREGULAR_VERBS = (verbData.verbs || []).filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt }) => [word, english, rank, prateritum, perfekt]);
     }
   } catch(e) { console.warn("Could not load verbs:", e); }
   // Load built-in decks
@@ -129,6 +131,10 @@ function getAdjectivesForTier(tier) {
 
 function getVerbsForTier(tier) {
   return VERBS.filter(v => v[2] <= tier);
+}
+
+function getIrregularVerbsForTier(tier) {
+  return IRREGULAR_VERBS.filter(v => v[2] <= tier);
 }
 // VOCABULARY TIER CONFIG
 // ═══════════════════════════════════════════════════════════════
@@ -600,6 +606,7 @@ const GAME_MODES = [
   { id: "survival", name: "Survival", desc: "3 lives, no timer", icon: "❤️" },
   { id: "reverse", name: "Reverse", desc: "English to German", icon: "🔄" },
   { id: "matching", name: "Matching", desc: "Pair nouns and meanings", icon: "🧩" },
+  { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "weakest", name: "Weakest Words", desc: "Practice your worst nouns", icon: "🎯" },
 ];
 
@@ -829,6 +836,10 @@ function GermanNounGame() {
   const [sessionRewards, setSessionRewards] = useState(null);
   const [newAchievements, setNewAchievements] = useState([]);
   const [reverseInput, setReverseInput] = useState("");
+  const [verbFormInputs, setVerbFormInputs] = useState({infinitive: "", prateritum: "", perfekt: ""});
+  const verbInfRef = useRef(null);
+  const verbPratRef = useRef(null);
+  const verbPerfRef = useRef(null);
   const [usedSecondChance, setUsedSecondChance] = useState(false);
   const [usedStreakShield, setUsedStreakShield] = useState(false);
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
@@ -974,6 +985,13 @@ function GermanNounGame() {
       nouns = shuffleArray(unique.filter(v => v[1]));
       if (!nouns.length) { alert("No verbs available for this tier"); return; }
       setActiveDeck(null);
+    } else if (gMode === "verb_forms") {
+      const verbTier = Math.min(t, IRREGULAR_VERBS.length > 0 ? Math.max(...IRREGULAR_VERBS.map(v => v[2])) : t);
+      const tierVerbs = getIrregularVerbsForTier(verbTier);
+      const unique = (() => { const seen = new Set(); return tierVerbs.filter(v => { if (seen.has(v[0])) return false; seen.add(v[0]); return true; }); })();
+      nouns = shuffleArray(unique.filter(v => v[1]));
+      if (!nouns.length) { alert("No irregular verbs available for this tier"); return; }
+      setActiveDeck(null);
     } else if (gMode === "weakest") {
       const weakNames = getWeakestNouns(userData.nounStats, 30);
       nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
@@ -994,13 +1012,13 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" ? MODES.ARTICLE : m;
-    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" ? "easy" : d;
+    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" ? "easy" : d;
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
     setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
-    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");
+    setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});
     setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
     setUsedSecondChance(false);setUsedStreakShield(false);
     setMatchingRightItems([]);
@@ -1043,13 +1061,13 @@ function GermanNounGame() {
     if (!nouns.length) return;
 
     sessionAnswersRef.current = [];
-    const effectiveMode = (gMode === "reverse" || gMode === "matching" || gMode === "speed_sort") ? MODES.ARTICLE : m;
-    const effectiveDifficulty = (gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort") ? "easy" : d;
+    const effectiveMode = (gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms") ? MODES.ARTICLE : m;
+    const effectiveDifficulty = (gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms") ? "easy" : d;
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
     setTier(t); setQueue(shuffleArray(nouns)); setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
-    setTotalAnswered(0); setTotalCorrect(0); setFeedback(null); setArticleChoice(null); setReverseInput("");
+    setTotalAnswered(0); setTotalCorrect(0); setFeedback(null); setArticleChoice(null); setReverseInput(""); setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});
     setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionRewards(null); setNewAchievements([]);
     setUsedSecondChance(false); setUsedStreakShield(false);
     setMatchingRightItems([]); setMatchingMatchedIds([]); setMatchingSelectedWord(null); setMatchingSelectedMeaning(null); setMatchingMismatch(null);
@@ -1157,7 +1175,7 @@ function GermanNounGame() {
   const nextQuestion = useCallback(() => {
     // Second chance: retry same question
     if (feedback?.secondChance) {
-      setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+      setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setPhase("question");setShowHint(false);
       if (gameMode !== "timed" && gameMode !== "speed_sort" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
       return;
     }
@@ -1166,14 +1184,14 @@ function GermanNounGame() {
       if (gameMode === "timed" || gameMode === "speed_sort") {
         // Loop for timed/sort modes
         setQueue(prev => shuffleArray([...prev]));
-        setCurrentIndex(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+        setCurrentIndex(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setPhase("question");setShowHint(false);
         return;
       }
       if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
       sessionAnswersRef.current = [];
       endSession();return;
     }
-    setCurrentIndex(ni);setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);
+    setCurrentIndex(ni);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setPhase("question");setShowHint(false);
     if (gameMode !== "timed" && gameMode !== "speed_sort" && gameMode !== "survival" && difficulty !== "easy") setTimeLeft(timeLimit);
   }, [currentIndex, queue.length, timeLimit, gameMode, difficulty, feedback]);
 
@@ -1183,7 +1201,19 @@ function GermanNounGame() {
     const [s,a,p,e]=currentNoun; let correct=true;
     const entryId = getNounEntryId(currentNoun);
 
-    if (gameMode === "reverse") {
+    if (gameMode === "verb_forms") {
+      // currentNoun = [word, english, rank, prateritum, perfekt]
+      const correctInf = currentNoun[0];
+      const correctPrat = currentNoun[3];
+      const correctPerf = currentNoun[4];
+      const typedInf = verbFormInputs.infinitive.trim();
+      const typedPrat = verbFormInputs.prateritum.trim();
+      const typedPerf = verbFormInputs.perfekt.trim();
+      const infOk = typedInf === correctInf || normalize(typedInf) === normalize(correctInf);
+      const pratOk = typedPrat === correctPrat || normalize(typedPrat) === normalize(correctPrat);
+      const perfOk = typedPerf === correctPerf || normalize(typedPerf) === normalize(correctPerf);
+      correct = infOk && pratOk && perfOk;
+    } else if (gameMode === "reverse") {
       const typed = (typedReverse||"").trim();
       correct = typed === s || normalize(typed) === normalize(s);
     } else {
@@ -1213,7 +1243,13 @@ function GermanNounGame() {
       } else {
         setStreak(0);
       }
-      setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
+      if (gameMode === "verb_forms") {
+        setWrongAnswers(pr=>[...pr,{noun:s,entryId:s,article:"",plural:"",english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER,
+          verbInfinitive:s,verbPrateritum:currentNoun[3],verbPerfekt:currentNoun[4],
+          userInfinitive:verbFormInputs.infinitive.trim()||NO_ANSWER,userPrateritum:verbFormInputs.prateritum.trim()||NO_ANSWER,userPerfekt:verbFormInputs.perfekt.trim()||NO_ANSWER}]);
+      } else {
+        setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
+      }
       if (gameMode === "survival") {
         setLives(prev => {
           if (prev <= 1) { setTimeout(() => endSession(), 700); return 0; }
@@ -1235,8 +1271,14 @@ function GermanNounGame() {
     if(correct) registerCorrect();
     else if (!registerWrong()) return;
     sessionAnswersRef.current.push({ noun: entryId, correct });
-    setTotalAnswered(pr=>pr+1);setFeedback({correct,article:a,plural:p,noun:s,english:e});setPhase("feedback");
-  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, userData.activePerks, usedSecondChance, usedStreakShield, nextQuestion, endSession]);
+    setTotalAnswered(pr=>pr+1);
+    if (gameMode === "verb_forms") {
+      setFeedback({correct,noun:s,english:e,article:"",plural:"",verbInfinitive:s,verbPrateritum:currentNoun[3],verbPerfekt:currentNoun[4]});
+    } else {
+      setFeedback({correct,article:a,plural:p,noun:s,english:e});
+    }
+    setPhase("feedback");
+  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, userData.activePerks, usedSecondChance, usedStreakShield, nextQuestion, endSession, verbFormInputs]);
 
   const handleArticle = useCallback((art) => {
     if(phase!=="question") return;
@@ -1338,6 +1380,11 @@ function GermanNounGame() {
     checkAnswer("","",reverseInput);
   }, [phase,gameMode,reverseInput,checkAnswer]);
 
+  const handleVerbFormsSubmit = useCallback((ev) => {
+    ev?.preventDefault(); if(phase!=="question"||gameMode!=="verb_forms") return;
+    checkAnswer("","");
+  }, [phase,gameMode,checkAnswer]);
+
   useEffect(() => {
     if (gameMode !== "matching" || !matchingBatch.length) return;
     if (matchingMatchedIds.length !== matchingBatch.length) return;
@@ -1368,6 +1415,7 @@ function GermanNounGame() {
   }, [screen,phase,gameMode,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
 
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
+  useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_forms") setTimeout(()=>verbInfRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
 
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const timerPct = timeLimit>0?(timeLeft/timeLimit)*100:100;
@@ -1402,13 +1450,19 @@ function GermanNounGame() {
   }}/>;
   if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
-    const nd=dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
+    let nd;
+    if (gameMode === "verb_forms") {
+      const wrongWords = new Set(wrongAnswers.map(w => w.noun));
+      nd = IRREGULAR_VERBS.filter(v => wrongWords.has(v[0]));
+    } else {
+      nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
+    }
     sessionAnswersRef.current = [];
     if (gameMode === "survival") setLives(3);
     if (gameMode === "timed") setGlobalTimer(TIMED_CHALLENGE_DURATION);
     if (gameMode === "speed_sort") setGlobalTimer(SPEED_SORT_DURATION);
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
-    setFeedback(null);setArticleChoice(null);setReverseInput("");setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(gameMode==="timed"||gameMode==="speed_sort"||gameMode==="survival"?0:timeLimit);setScreen("game");
+    setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(gameMode==="timed"||gameMode==="speed_sort"||gameMode==="survival"?0:timeLimit);setScreen("game");
   }}/>;
 
   return (
@@ -1439,6 +1493,14 @@ function GermanNounGame() {
               <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>{matchingWordType==="adjectives"?"Adjectives":matchingWordType==="verbs"?"Verbs":"Nouns"} — Batch {matchingBatchNumber} / {matchingBatchTotal}</span>
               <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9",textAlign:"center"}}>Match the nouns with their meanings</span>
               <span style={{...S.hintText,color:matchingMismatch?"#f87171":"#94a3b8",fontStyle:"normal"}}>{matchingPrompt}</span>
+            </div>
+          ):gameMode==="verb_forms"?(
+            <div style={S.nounDisplay}>
+              <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Irregular Verb Forms</span>
+              <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9"}}>{getMeaningLabel(currentNoun[1])}</span>
+              {phase==="feedback"&&!feedback?.correct&&(
+                <span style={{fontSize:14,color:"#10B981",fontWeight:700,textAlign:"center"}}>{currentNoun[0]} — {currentNoun[3]} — {currentNoun[4]}</span>
+              )}
             </div>
           ):gameMode==="reverse"?(
             <div style={S.nounDisplay}>
@@ -1511,7 +1573,28 @@ function GermanNounGame() {
             <div style={S.feedbackFlash}>
               <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":feedback.secondChance?"🔄":"✗"}</span>
               {feedback.secondChance&&<span style={{fontSize:13,color:"#F59E0B",fontWeight:700}}>Second chance! Try again...</span>}
-              {!feedback.correct&&!feedback.secondChance&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} {"->"} {formatPluralAttempt(feedback.plural)}</span>}
+              {!feedback.correct&&!feedback.secondChance&&gameMode!=="verb_forms"&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} {"->"} {formatPluralAttempt(feedback.plural)}</span>}
+              {!feedback.correct&&!feedback.secondChance&&gameMode==="verb_forms"&&<span style={S.flashCorrection}>{feedback.verbInfinitive} — {feedback.verbPrateritum} — {feedback.verbPerfekt}</span>}
+            </div>
+          )}
+          {gameMode==="verb_forms"&&phase==="question"&&(
+            <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",padding:"0 8px"}}>
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600}}>Infinitiv</label>
+                <input ref={verbInfRef} value={verbFormInputs.infinitive} onChange={e=>setVerbFormInputs(p=>({...p,infinitive:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();verbPratRef.current?.focus();}}} placeholder="z.B. gehen" style={S.pluralInput} autoComplete="off" autoFocus/>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600}}>Präteritum (ich)</label>
+                <input ref={verbPratRef} value={verbFormInputs.prateritum} onChange={e=>setVerbFormInputs(p=>({...p,prateritum:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();verbPerfRef.current?.focus();}}} placeholder="z.B. ging" style={S.pluralInput} autoComplete="off"/>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600}}>Partizip Perfekt</label>
+                <input ref={verbPerfRef} value={verbFormInputs.perfekt} onChange={e=>setVerbFormInputs(p=>({...p,perfekt:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter")handleVerbFormsSubmit(e);}} placeholder="z.B. gegangen" style={S.pluralInput} autoComplete="off"/>
+              </div>
+              <button onClick={handleVerbFormsSubmit} style={S.submitBtn}>Check</button>
+              <div style={S.umlauts}>
+                {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} onClick={()=>{const el=document.activeElement;if(el&&el.tagName==="INPUT"){const s=el.selectionStart||0;const e=el.selectionEnd||0;const v=el.value;const nv=v.slice(0,s)+c+v.slice(e);const field=el===verbInfRef.current?"infinitive":el===verbPratRef.current?"prateritum":"perfekt";setVerbFormInputs(p=>({...p,[field]:nv}));setTimeout(()=>{el.selectionStart=el.selectionEnd=s+1;},0);}}} style={S.umlautBtn}>{c}</button>)}
+              </div>
             </div>
           )}
           {gameMode==="reverse"&&phase==="question"&&(
@@ -1549,7 +1632,7 @@ function GermanNounGame() {
               )}
             </>
           )}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&gameMode!=="verb_forms"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
             <div style={S.articleRow}>
               {["der","die","das"].map(art=>(
                 <button key={art} onClick={()=>handleArticle(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
@@ -1559,7 +1642,7 @@ function GermanNounGame() {
               ))}
             </div>
           )}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&phase==="question"&&(mode===MODES.PLURAL||mode===MODES.BOTH)&&(
             <div style={S.pluralSection}>
               <label style={S.pluralLabel}>{mode===MODES.BOTH&&!articleChoice?"Pick the article first, then the plural":"Plural form:"}</label>
               <div style={S.pluralChoices}>
@@ -1578,9 +1661,10 @@ function GermanNounGame() {
             </div>
           )}
           {gameMode==="speed_sort"&&phase==="question"&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | sort as many nouns as you can before time runs out</div>}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode==="verb_forms"&&phase==="question"&&<div style={S.shortcutHint}>Type all three forms then press <kbd style={S.kbd}>Enter</kbd> to check. <kbd style={S.kbd}>Tab</kbd>/<kbd style={S.kbd}>Enter</kbd> to move between fields.</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&gameMode!=="verb_forms"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
         </div>
       )}
     </div>
@@ -1872,6 +1956,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       </div>
       {selectedGameMode==="speed_sort"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Speed Sort always uses article sorting and a {SPEED_SORT_DURATION}s timer.</div>}
+      {selectedGameMode==="verb_forms"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the Infinitiv, Präteritum (ich), and Partizip Perfekt for each irregular verb. {IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.</div>}
 
       {/* ── Word type for matching ── */}
       {selectedGameMode==="matching"&&(
@@ -1895,7 +1980,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Source selection ── */}
-      {selectedGameMode!=="weakest"&&(
+      {selectedGameMode!=="weakest"&&selectedGameMode!=="verb_forms"&&(
         <div style={S.menuSection}>
           {!(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs"))&&(
             <>
@@ -1914,7 +1999,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {(source==="tier"||(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs")))&&selectedGameMode!=="weakest"&&(
+      {(source==="tier"||selectedGameMode==="verb_forms"||(selectedGameMode==="matching"&&(matchWordType==="adjectives"||matchWordType==="verbs")))&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
@@ -1958,7 +2043,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Answer type (hidden for reverse/weakest game modes) ── */}
-      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&(
+      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="verb_forms"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -1972,7 +2057,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Speed (hidden for timed/survival) ── */}
-      {selectedGameMode!=="timed"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&(
+      {selectedGameMode!=="timed"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="survival"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Speed</label>
           <div style={{display:"flex",gap:8}}>
@@ -2012,6 +2097,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
   const prog = xpProgress(userData.xp || 0);
   const title = getTitle(prog.level);
   const isMatching = gameMode === "matching";
+  const isVerbForms = gameMode === "verb_forms";
   const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
   return (
     <div style={S.container}><div style={S.resultsInner}>
@@ -2060,22 +2146,34 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
       {reviewWrongAnswers.length>0&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
           <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {reviewWrongAnswers.length} mistake{reviewWrongAnswers.length>1?"s":""}</h3>
-          {!isMatching&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
+          {!isMatching&&!isVerbForms&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:500,overflowY:"auto",paddingRight:4}}>
             {reviewWrongAnswers.map((w,i)=>{
               const expl=EXPLANATIONS.get(w.noun);
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>{ if (!isMatching) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching?"default":"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching&&!isVerbForms?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms?"default":"pointer",transition:"border-color 0.2s"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
+                    {isVerbForms?(
+                      <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}>{getMeaningLabel(w.english)}</span>
+                    ):(
                     <div style={{display:"flex",alignItems:"baseline",gap:2}}>
                       <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15}}>{w.article}</span>
                       <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}> {w.noun}</span>
                       <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>{"->"} {formatPluralAttempt(w.plural)}</span>
                     </div>
-                    <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>
+                    )}
+                    {!isVerbForms&&<span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>}
                   </div>
                   <div style={{display:"flex",flexDirection:"column",gap:2,marginTop:6}}>
+                    {isVerbForms&&w.verbInfinitive&&(
+                      <>
+                        <span style={{fontSize:12,color:"#10B981",fontWeight:700}}>Correct: {w.verbInfinitive} — {w.verbPrateritum} — {w.verbPerfekt}</span>
+                        <span style={{fontSize:12,color:"#94a3b8"}}>Infinitiv: <span style={{color:normalize(w.userInfinitive||"")=== normalize(w.verbInfinitive)?"#10B981":"#f87171",fontWeight:700}}>{w.userInfinitive===NO_ANSWER?"—":w.userInfinitive}</span></span>
+                        <span style={{fontSize:12,color:"#94a3b8"}}>Präteritum: <span style={{color:normalize(w.userPrateritum||"")=== normalize(w.verbPrateritum)?"#10B981":"#f87171",fontWeight:700}}>{w.userPrateritum===NO_ANSWER?"—":w.userPrateritum}</span></span>
+                        <span style={{fontSize:12,color:"#94a3b8"}}>Partizip: <span style={{color:normalize(w.userPerfekt||"")=== normalize(w.verbPerfekt)?"#10B981":"#f87171",fontWeight:700}}>{w.userPerfekt===NO_ANSWER?"—":w.userPerfekt}</span></span>
+                      </>
+                    )}
                     {isMatching&&(
                       <>
                         <span style={{fontSize:12,color:"#94a3b8"}}>
@@ -2098,9 +2196,9 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                         <span style={{color:"#10B981"}}>{" -> "}{formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {!isMatching&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {!isMatching&&!isVerbForms&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
-                  {!isMatching&&isOpen&&expl&&(
+                  {!isMatching&&!isVerbForms&&isOpen&&expl&&(
                     <div style={{marginTop:10,padding:"10px 12px",background:"rgba(251,191,36,0.05)",border:"1px solid rgba(251,191,36,0.15)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
                       <div style={{display:"flex",flexDirection:"column",gap:3}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Why {w.article}?</span>
@@ -2112,7 +2210,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                       </div>
                     </div>
                   )}
-                  {!isMatching&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
+                  {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
                 </div>
               );
             })}
