@@ -7,7 +7,30 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #0a0a0f; overflow-x: hidden; }
-  #root { min-height: 100vh; }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 70% 0%, rgba(30, 0, 0, 0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 20% 100%, rgba(60, 30, 0, 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(40, 10, 0, 0.2) 0%, transparent 50%),
+      linear-gradient(180deg, #0a0a0f 0%, #0f0d12 35%, #12100a 65%, #0a0a0f 100%);
+    pointer-events: none;
+  }
+  #root { min-height: 100vh; position: relative; z-index: 1; }
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 100;
+    background: linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 33%, #c1272d 33%, #c1272d 66%, #d4a843 66%, #d4a843 100%);
+    opacity: 0.7;
+  }
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -2448,7 +2471,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
 // STYLES
 // ═══════════════════════════════════════════════════════════════
 const S = {
-  container:{minHeight:"100vh",background:"linear-gradient(145deg, #0a0a0f 0%, #111127 50%, #0d1117 100%)",color:"#e2e8f0",fontFamily:"'JetBrains Mono','SF Mono','Fira Code',monospace",display:"flex",flexDirection:"column",alignItems:"center",padding:0},
+  container:{minHeight:"100vh",background:"linear-gradient(170deg, rgba(10,10,15,0.85) 0%, rgba(18,14,10,0.7) 40%, rgba(15,10,12,0.75) 70%, rgba(10,10,15,0.9) 100%)",color:"#e2e8f0",fontFamily:"'JetBrains Mono','SF Mono','Fira Code',monospace",display:"flex",flexDirection:"column",alignItems:"center",padding:0},
   header:{width:"100%",maxWidth:600,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 8px",boxSizing:"border-box"},
   endBtn:{background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.3)",color:"#f87171",fontSize:13,fontWeight:700,padding:"6px 14px",borderRadius:8,cursor:"pointer",fontFamily:"inherit"},
   scoreLabel:{fontSize:28,fontWeight:800,color:"#F59E0B",letterSpacing:"-0.5px"},
