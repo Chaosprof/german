@@ -3,8 +3,8 @@
     "name": "Dual-Gender Nouns",
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
     "version": 2,
-    "count": 98,
-    "generatedAt": "2026-04-02T20:43:45.436Z"
+    "count": 91,
+    "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
     {
@@ -19,7 +19,7 @@
         },
         {
           "article": "das",
-          "english": "wretch (derogatory, archaic)",
+          "english": "wretch (archaic/dialectal, derogatory)",
           "plural": "Menscher",
           "singularOnly": false,
           "pluralOnly": false
@@ -133,7 +133,7 @@
         {
           "article": "der",
           "english": "old man (colloquial)",
-          "plural": "Alte",
+          "plural": "Alten",
           "singularOnly": false,
           "pluralOnly": false
         },
@@ -326,7 +326,7 @@
         },
         {
           "article": "das",
-          "english": "café (regional)",
+          "english": "cafe (regional/dialectal, standard: das Café)",
           "plural": "Kaffees",
           "singularOnly": false,
           "pluralOnly": false
@@ -360,8 +360,8 @@
         {
           "article": "die",
           "english": "mail/post office",
-          "plural": "Posten",
-          "singularOnly": false,
+          "plural": "—",
+          "singularOnly": true,
           "pluralOnly": false
         },
         {
@@ -455,26 +455,6 @@
       "rank": 1147
     },
     {
-      "word": "Bord",
-      "genders": [
-        {
-          "article": "der",
-          "english": "board (on board)",
-          "plural": "Borde",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "shelf",
-          "plural": "Borde",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 1195
-    },
-    {
       "word": "Boot",
       "genders": [
         {
@@ -547,32 +527,12 @@
         {
           "article": "das",
           "english": "birdcage",
-          "plural": "Bauern",
+          "plural": "Bauer",
           "singularOnly": false,
           "pluralOnly": false
         }
       ],
       "rank": 1425
-    },
-    {
-      "word": "Loch",
-      "genders": [
-        {
-          "article": "der",
-          "english": "loch (Scottish lake)",
-          "plural": "Lochs",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "hole",
-          "plural": "Löcher",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 1443
     },
     {
       "word": "Tee",
@@ -633,26 +593,6 @@
         }
       ],
       "rank": 1794
-    },
-    {
-      "word": "Kraut",
-      "genders": [
-        {
-          "article": "der",
-          "english": "Kraut (derogatory)",
-          "plural": "Krauts",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "herb/cabbage",
-          "plural": "Kräuter",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 1917
     },
     {
       "word": "Schild",
@@ -725,7 +665,7 @@
           "pluralOnly": false
         },
         {
-          "article": "der",
+          "article": "das",
           "english": "plastic",
           "plural": "?",
           "singularOnly": true,
@@ -818,13 +758,6 @@
       "word": "Stift",
       "genders": [
         {
-          "article": "die",
-          "english": "?",
-          "plural": "Stiften",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
           "article": "der",
           "english": "pen/pencil",
           "plural": "Stifte",
@@ -907,8 +840,8 @@
         {
           "article": "der",
           "english": "rice",
-          "plural": "Reise",
-          "singularOnly": false,
+          "plural": "—",
+          "singularOnly": true,
           "pluralOnly": false
         },
         {
@@ -1169,33 +1102,6 @@
       "rank": 6249
     },
     {
-      "word": "Müsli",
-      "genders": [
-        {
-          "article": "die",
-          "english": "?",
-          "plural": "Müslis",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "der",
-          "english": "?",
-          "plural": "Müslis",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "muesli/granola",
-          "plural": "Müsli",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 6258
-    },
-    {
       "word": "Treff",
       "genders": [
         {
@@ -1276,26 +1182,6 @@
       "rank": 6845
     },
     {
-      "word": "Funke",
-      "genders": [
-        {
-          "article": "die",
-          "english": "radio equipment",
-          "plural": "Funken",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "der",
-          "english": "spark",
-          "plural": "Funken",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 6931
-    },
-    {
       "word": "Bulle",
       "genders": [
         {
@@ -1327,7 +1213,7 @@
         },
         {
           "article": "das",
-          "english": "espresso bar",
+          "english": "espresso (variant gender, non-standard)",
           "plural": "Espressos",
           "singularOnly": false,
           "pluralOnly": false
@@ -1416,26 +1302,6 @@
       "rank": 8329
     },
     {
-      "word": "Lachs",
-      "genders": [
-        {
-          "article": "der",
-          "english": "salmon",
-          "plural": "Lachse",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "salmon (color)",
-          "plural": "Lachstöne",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 8684
-    },
-    {
       "word": "Orange",
       "genders": [
         {
@@ -1454,33 +1320,6 @@
         }
       ],
       "rank": 9196
-    },
-    {
-      "word": "Alpaka",
-      "genders": [
-        {
-          "article": "die",
-          "english": "alpaca wool",
-          "plural": "?",
-          "singularOnly": true,
-          "pluralOnly": false
-        },
-        {
-          "article": "der",
-          "english": "alpaca (animal)",
-          "plural": "?",
-          "singularOnly": true,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "nickel silver",
-          "plural": "?",
-          "singularOnly": true,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 9532
     },
     {
       "word": "Finne",
@@ -1670,26 +1509,6 @@
       "rank": 10922
     },
     {
-      "word": "Zimt",
-      "genders": [
-        {
-          "article": "der",
-          "english": "cinnamon",
-          "plural": "Zimte",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "cinnamon",
-          "plural": "?",
-          "singularOnly": true,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 11220
-    },
-    {
       "word": "Graph",
       "genders": [
         {
@@ -1768,26 +1587,6 @@
         }
       ],
       "rank": 16264
-    },
-    {
-      "word": "Transit",
-      "genders": [
-        {
-          "article": "der",
-          "english": "transit",
-          "plural": "Transite",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "transit",
-          "plural": "Transite",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 16727
     },
     {
       "word": "Type",
@@ -2008,6 +1807,46 @@
         }
       ],
       "rank": 24305
+    },
+    {
+      "word": "Hut",
+      "genders": [
+        {
+          "article": "der",
+          "english": "hat",
+          "plural": "Hüte",
+          "singularOnly": false,
+          "pluralOnly": false
+        },
+        {
+          "article": "die",
+          "english": "guard/protection (auf der Hut sein = to be on guard)",
+          "plural": "—",
+          "singularOnly": true,
+          "pluralOnly": false
+        }
+      ],
+      "rank": 999
+    },
+    {
+      "word": "Junge",
+      "genders": [
+        {
+          "article": "der",
+          "english": "boy",
+          "plural": "Jungen",
+          "singularOnly": false,
+          "pluralOnly": false
+        },
+        {
+          "article": "das",
+          "english": "young animal/cub",
+          "plural": "Jungen",
+          "singularOnly": false,
+          "pluralOnly": false
+        }
+      ],
+      "rank": 998
     }
   ]
 }

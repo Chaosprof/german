@@ -2,9 +2,9 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 5211,
-    "irregularCount": 1145,
-    "generatedAt": "2026-04-07T06:22:34.633603+00:00"
+    "count": 5213,
+    "irregularCount": 1150,
+    "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "verbs": [
     {
@@ -29,7 +29,10 @@
       "word": "haben",
       "english": "have",
       "rank": 3,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "hatte",
+      "perfekt": "gehabt",
+      "withSein": false
     },
     {
       "word": "können",
@@ -44,7 +47,10 @@
       "word": "sollen",
       "english": "should / shall",
       "rank": 5,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "sollte",
+      "perfekt": "gesollt",
+      "withSein": false
     },
     {
       "word": "geben",
@@ -119,7 +125,10 @@
       "word": "wollen",
       "english": "want",
       "rank": 14,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "wollte",
+      "perfekt": "gewollt",
+      "withSein": false
     },
     {
       "word": "bieten",
@@ -435,7 +444,7 @@
     },
     {
       "word": "schaffen",
-      "english": "create / manage",
+      "english": "create (irregular: schuf/geschaffen) / manage (regular: schaffte/geschafft)",
       "rank": 57,
       "irregular": true,
       "prateritum": "schuf",
@@ -581,7 +590,8 @@
       "word": "starten",
       "english": "start",
       "rank": 76,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "enthalten",
@@ -614,7 +624,8 @@
       "word": "folgen",
       "english": "ensue / follow",
       "rank": 81,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erleben",
@@ -1271,7 +1282,8 @@
       "word": "passieren",
       "english": "happen",
       "rank": 175,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entsprechen",
@@ -2103,12 +2115,12 @@
     },
     {
       "word": "umgehen",
-      "english": "handle / avoid",
+      "english": "deal with / handle",
       "rank": 296,
       "irregular": true,
-      "prateritum": "umging",
-      "perfekt": "umgangen",
-      "withSein": false
+      "prateritum": "ging um",
+      "perfekt": "umgegangen",
+      "withSein": true
     },
     {
       "word": "absolvieren",
@@ -2378,7 +2390,7 @@
       "irregular": true,
       "prateritum": "fiel aus",
       "perfekt": "ausgefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "entfernen",
@@ -2612,7 +2624,8 @@
       "word": "landen",
       "english": "land",
       "rank": 368,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "lauten",
@@ -2711,7 +2724,10 @@
       "word": "senden",
       "english": "send / broadcast",
       "rank": 383,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "sandte",
+      "perfekt": "gesandt",
+      "withSein": false
     },
     {
       "word": "verursachen",
@@ -2924,7 +2940,8 @@
       "word": "begegnen",
       "english": "encounter / meet",
       "rank": 413,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "herausfinden",
@@ -2933,7 +2950,7 @@
       "irregular": true,
       "prateritum": "fand heraus",
       "perfekt": "herausgefunden",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "zukommen",
@@ -2942,7 +2959,7 @@
       "irregular": true,
       "prateritum": "kam zu",
       "perfekt": "zugekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "angehen",
@@ -2951,7 +2968,7 @@
       "irregular": true,
       "prateritum": "ging an",
       "perfekt": "angegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "etablieren",
@@ -3026,7 +3043,7 @@
       "irregular": true,
       "prateritum": "verlief",
       "perfekt": "verlaufen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "retten",
@@ -3065,7 +3082,7 @@
       "irregular": true,
       "prateritum": "floss",
       "perfekt": "geflossen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "danken",
@@ -3185,7 +3202,8 @@
       "word": "reisen",
       "english": "travel",
       "rank": 448,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "weitergeben",
@@ -3344,7 +3362,7 @@
       "irregular": true,
       "prateritum": "entfiel",
       "perfekt": "entfallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "begrenzen",
@@ -3404,7 +3422,7 @@
       "irregular": true,
       "prateritum": "fiel auf",
       "perfekt": "aufgefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erwähnen",
@@ -3458,7 +3476,8 @@
       "word": "zurückkehren",
       "english": "return",
       "rank": 487,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "überraschen",
@@ -3887,7 +3906,7 @@
       "irregular": true,
       "prateritum": "ging vor",
       "perfekt": "vorgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abbauen",
@@ -3932,7 +3951,7 @@
       "irregular": true,
       "prateritum": "begab",
       "perfekt": "begeben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erlernen",
@@ -3989,7 +4008,8 @@
       "word": "scheitern",
       "english": "fail",
       "rank": 563,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zurückgreifen",
@@ -4121,7 +4141,7 @@
       "irregular": true,
       "prateritum": "ging nach",
       "perfekt": "nachgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "versichern",
@@ -4190,7 +4210,8 @@
       "word": "wandern",
       "english": "hike / wander",
       "rank": 592,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "blicken",
@@ -4427,7 +4448,7 @@
       "irregular": true,
       "prateritum": "geriet",
       "perfekt": "geraten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "verbrauchen",
@@ -4842,7 +4863,7 @@
     },
     {
       "word": "verfassen",
-      "english": "indite / write",
+      "english": "write / compose",
       "rank": 688,
       "irregular": false
     },
@@ -4860,7 +4881,7 @@
     },
     {
       "word": "aufbereiten",
-      "english": "purify",
+      "english": "process / prepare",
       "rank": 691,
       "irregular": false
     },
@@ -4887,7 +4908,7 @@
     },
     {
       "word": "reflektieren",
-      "english": "be interested / reflect",
+      "english": "reflect",
       "rank": 695,
       "irregular": false
     },
@@ -5150,7 +5171,8 @@
       "word": "erkranken",
       "english": "fall ill",
       "rank": 730,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "absetzen",
@@ -5270,7 +5292,7 @@
       "irregular": true,
       "prateritum": "kam aus",
       "perfekt": "ausgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "kooperieren",
@@ -5333,7 +5355,7 @@
       "irregular": true,
       "prateritum": "lief durch",
       "perfekt": "durchgelaufen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hinterlegen",
@@ -5418,8 +5440,8 @@
       "english": "surround",
       "rank": 769,
       "irregular": true,
-      "prateritum": "gab um",
-      "perfekt": "umgegeben",
+      "prateritum": "umgab",
+      "perfekt": "umgeben",
       "withSein": false
     },
     {
@@ -5739,7 +5761,7 @@
     },
     {
       "word": "gönnen",
-      "english": "not begrudge / allow",
+      "english": "not begrudge / treat oneself to",
       "rank": 815,
       "irregular": false
     },
@@ -5885,7 +5907,7 @@
       "irregular": true,
       "prateritum": "entging",
       "perfekt": "entgangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "verkünden",
@@ -5900,7 +5922,7 @@
       "irregular": true,
       "prateritum": "fiel ein",
       "perfekt": "eingefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "anfühlen",
@@ -5999,7 +6021,7 @@
       "irregular": true,
       "prateritum": "ging über",
       "perfekt": "übergegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "festsetzen",
@@ -6038,7 +6060,8 @@
       "word": "wandeln",
       "english": "change / stroll",
       "rank": 857,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "einigen",
@@ -6143,7 +6166,7 @@
       "irregular": true,
       "prateritum": "verblieb",
       "perfekt": "verblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erlassen",
@@ -6620,7 +6643,7 @@
       "irregular": true,
       "prateritum": "schied aus",
       "perfekt": "ausgeschieden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "ignorieren",
@@ -6650,7 +6673,10 @@
       "word": "wiegen",
       "english": "weigh",
       "rank": 943,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "wog",
+      "perfekt": "gewogen",
+      "withSein": false
     },
     {
       "word": "einbetten",
@@ -7329,7 +7355,7 @@
     },
     {
       "word": "riechen",
-      "english": "reek / smell",
+      "english": "smell",
       "rank": 1041,
       "irregular": true,
       "prateritum": "roch",
@@ -7643,7 +7669,7 @@
       "irregular": true,
       "prateritum": "erging",
       "perfekt": "ergangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "ermorden",
@@ -7871,7 +7897,7 @@
       "irregular": true,
       "prateritum": "kam zugute",
       "perfekt": "zugutegekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "andauern",
@@ -7931,7 +7957,8 @@
       "word": "klettern",
       "english": "climb",
       "rank": 1131,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "kürzen",
@@ -8006,7 +8033,7 @@
       "irregular": true,
       "prateritum": "wurde los",
       "perfekt": "losgeworden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "riskieren",
@@ -8030,10 +8057,7 @@
       "word": "wiederherstellen",
       "english": "recover / restore",
       "rank": 1145,
-      "irregular": true,
-      "prateritum": "stellte wieder her",
-      "perfekt": "wiederhergestellt",
-      "withSein": false
+      "irregular": false
     },
     {
       "word": "bekräftigen",
@@ -8096,7 +8120,7 @@
       "irregular": true,
       "prateritum": "blieb aus",
       "perfekt": "ausgeblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erhitzen",
@@ -8336,7 +8360,7 @@
       "irregular": true,
       "prateritum": "trat bei",
       "perfekt": "beigetreten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "entrichten",
@@ -8507,7 +8531,7 @@
       "irregular": true,
       "prateritum": "fiel weg",
       "perfekt": "weggefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "befähigen",
@@ -8612,7 +8636,7 @@
       "irregular": true,
       "prateritum": "fuhr an",
       "perfekt": "angefahren",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "diagnostizieren",
@@ -8630,7 +8654,8 @@
       "word": "rutschen",
       "english": "slide / slip",
       "rank": 1235,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "sichten",
@@ -8816,7 +8841,7 @@
       "irregular": true,
       "prateritum": "kam zurecht",
       "perfekt": "zurechtgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "ausziehen",
@@ -9434,7 +9459,7 @@
       "irregular": true,
       "prateritum": "gedieh",
       "perfekt": "gediehen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "loslassen",
@@ -9719,7 +9744,7 @@
       "irregular": true,
       "prateritum": "befiel",
       "perfekt": "befallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "biegen",
@@ -10196,7 +10221,7 @@
       "irregular": true,
       "prateritum": "kam wieder",
       "perfekt": "wiedergekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "würzen",
@@ -10211,7 +10236,7 @@
       "irregular": true,
       "prateritum": "ging ab",
       "perfekt": "abgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abwenden",
@@ -10508,7 +10533,8 @@
       "word": "aufwachen",
       "english": "awake / wake up",
       "rank": 1509,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausschelten",
@@ -10760,7 +10786,7 @@
       "irregular": true,
       "prateritum": "fiel ab",
       "perfekt": "abgefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "bedingen",
@@ -10835,7 +10861,8 @@
       "word": "segeln",
       "english": "glide / sail",
       "rank": 1560,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vereinigen",
@@ -11045,13 +11072,14 @@
       "irregular": true,
       "prateritum": "ging durch",
       "perfekt": "durchgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "einkehren",
       "english": "come / set in / stop off",
       "rank": 1592,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entgegentreten",
@@ -11060,7 +11088,7 @@
       "irregular": true,
       "prateritum": "trat entgegen",
       "perfekt": "entgegengetreten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "entstammen",
@@ -11171,7 +11199,8 @@
       "word": "verreisen",
       "english": "go away",
       "rank": 1611,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "versteuern",
@@ -11444,7 +11473,7 @@
       "irregular": true,
       "prateritum": "sprang ein",
       "perfekt": "eingesprungen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "fortschreiben",
@@ -11564,7 +11593,7 @@
       "irregular": true,
       "prateritum": "kam klar",
       "perfekt": "klargekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "protokollieren",
@@ -11576,7 +11605,8 @@
       "word": "reifen",
       "english": "cover with frost / ripen",
       "rank": 1670,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "reiten",
@@ -11825,7 +11855,8 @@
       "word": "explodieren",
       "english": "explode",
       "rank": 1708,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "nachgeben",
@@ -11873,7 +11904,7 @@
       "irregular": true,
       "prateritum": "verdarb",
       "perfekt": "verdorben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "verkleiden",
@@ -12065,7 +12096,8 @@
       "word": "veralten",
       "english": "become obsolete / become outdated",
       "rank": 1743,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verschönern",
@@ -12251,7 +12283,7 @@
       "irregular": true,
       "prateritum": "trat ab",
       "perfekt": "abgetreten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "anfreunden",
@@ -12293,7 +12325,7 @@
       "irregular": true,
       "prateritum": "kam daher",
       "perfekt": "dahergekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "einstehen",
@@ -12329,7 +12361,8 @@
       "word": "stolpern",
       "english": "stumble",
       "rank": 1781,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verrechnen",
@@ -12473,7 +12506,8 @@
       "word": "auswandern",
       "english": "emigrate",
       "rank": 1802,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "bedecken",
@@ -12884,7 +12918,8 @@
       "word": "abstürzen",
       "english": "crash",
       "rank": 1862,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "avancieren",
@@ -13199,7 +13234,7 @@
       "irregular": true,
       "prateritum": "floss ab",
       "perfekt": "abgeflossen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "ableisten",
@@ -13571,7 +13606,8 @@
       "word": "altern",
       "english": "age / get older / grow old",
       "rank": 1963,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufspielen",
@@ -13835,7 +13871,7 @@
       "irregular": true,
       "prateritum": "überfiel",
       "perfekt": "überfallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "überschlagen",
@@ -13898,7 +13934,7 @@
       "irregular": true,
       "prateritum": "trat zusammen",
       "perfekt": "zusammengetreten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abfüllen",
@@ -14006,7 +14042,10 @@
       "word": "erschrecken",
       "english": "frighten / scare / startle",
       "rank": 2028,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "erschrak",
+      "perfekt": "erschrocken",
+      "withSein": true
     },
     {
       "word": "extrahieren",
@@ -14405,7 +14444,8 @@
       "word": "ersticken",
       "english": "suffocate",
       "rank": 2089,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "flattern",
@@ -14429,7 +14469,7 @@
       "irregular": true,
       "prateritum": "ging heran",
       "perfekt": "herangegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "kriechen",
@@ -14498,7 +14538,8 @@
       "word": "prallen",
       "english": "bounce / collide",
       "rank": 2102,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "pumpen",
@@ -14546,7 +14587,7 @@
       "irregular": true,
       "prateritum": "ging verloren",
       "perfekt": "verlorengegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "vermengen",
@@ -14666,7 +14707,7 @@
       "irregular": true,
       "prateritum": "fiel durch",
       "perfekt": "durchgefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "durchmachen",
@@ -14807,7 +14848,8 @@
       "word": "aufblühen",
       "english": "bloom / blossom / blossom out",
       "rank": 2148,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufkleben",
@@ -15203,7 +15245,7 @@
       "irregular": true,
       "prateritum": "kam durch",
       "perfekt": "durchgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "einscannen",
@@ -15500,7 +15542,7 @@
       "irregular": true,
       "prateritum": "schlich",
       "perfekt": "geschlichen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "schnüren",
@@ -15713,7 +15755,7 @@
       "irregular": true,
       "prateritum": "ging kaputt",
       "perfekt": "kaputtgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "kaschieren",
@@ -15731,7 +15773,8 @@
       "word": "migrieren",
       "english": "migrate",
       "rank": 2287,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "nicken",
@@ -15791,7 +15834,8 @@
       "word": "umkippen",
       "english": "faint / keel over / tip over",
       "rank": 2296,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verdrehen",
@@ -16061,7 +16105,8 @@
       "word": "verunglücken",
       "english": "fail / go wrong / have an accident",
       "rank": 2338,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verzeihen",
@@ -16097,7 +16142,7 @@
       "irregular": true,
       "prateritum": "fiel zusammen",
       "perfekt": "zusammengefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abbringen",
@@ -16295,7 +16340,8 @@
       "word": "umkehren",
       "english": "return",
       "rank": 2373,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verbreitern",
@@ -16535,7 +16581,7 @@
       "irregular": true,
       "prateritum": "ging her",
       "perfekt": "hergegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "herunterfahren",
@@ -16730,7 +16776,7 @@
       "irregular": true,
       "prateritum": "fiel zurück",
       "perfekt": "zurückgefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zusammenrechnen",
@@ -16880,7 +16926,8 @@
       "word": "einstürzen",
       "english": "collapse",
       "rank": 2460,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "emittieren",
@@ -17252,7 +17299,7 @@
       "irregular": true,
       "prateritum": "kam hin",
       "perfekt": "hingekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hinsetzen",
@@ -17414,7 +17461,8 @@
       "word": "zirkulieren",
       "english": "circulate",
       "rank": 2542,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zurückdrängen",
@@ -17447,7 +17495,7 @@
       "irregular": true,
       "prateritum": "sprang ab",
       "perfekt": "abgesprungen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abstrahieren",
@@ -17693,7 +17741,7 @@
       "irregular": true,
       "prateritum": "lief über",
       "perfekt": "übergelaufen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "umhüllen",
@@ -17894,13 +17942,15 @@
       "word": "einwandern",
       "english": "immigrate",
       "rank": 2615,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "emigrieren",
       "english": "emigrate",
       "rank": 2616,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entwerten",
@@ -18119,7 +18169,7 @@
       "irregular": true,
       "prateritum": "verkam",
       "perfekt": "verkommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "verriegeln",
@@ -18161,7 +18211,7 @@
       "irregular": true,
       "prateritum": "floss zu",
       "perfekt": "zugeflossen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "aberkennen",
@@ -18371,7 +18421,8 @@
       "word": "paddeln",
       "english": "canoe / paddle",
       "rank": 2687,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "postulieren",
@@ -18392,7 +18443,7 @@
       "irregular": true,
       "prateritum": "fiel rein",
       "perfekt": "reingefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "rühmen",
@@ -18494,7 +18545,7 @@
       "irregular": true,
       "prateritum": "fiel zu",
       "perfekt": "zugefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zusammenzählen",
@@ -18866,7 +18917,7 @@
       "irregular": true,
       "prateritum": "fuhr vor",
       "perfekt": "vorgefahren",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "wegfahren",
@@ -19040,7 +19091,8 @@
       "word": "bröckeln",
       "english": "break / crumble / disappear",
       "rank": 2785,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "deckeln",
@@ -19136,7 +19188,7 @@
       "irregular": true,
       "prateritum": "kam hoch",
       "perfekt": "hochgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "kitzeln",
@@ -19154,7 +19206,8 @@
       "word": "kollabieren",
       "english": "collapse",
       "rank": 2802,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "lästern",
@@ -19358,7 +19411,7 @@
       "irregular": true,
       "prateritum": "kam zuvor",
       "perfekt": "zuvorgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zwischenspeichern",
@@ -19595,7 +19648,8 @@
       "word": "erhärten",
       "english": "harden",
       "rank": 2868,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "florieren",
@@ -20117,7 +20171,8 @@
       "word": "einrücken",
       "english": "enter / indent / march in",
       "rank": 2949,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "eintreiben",
@@ -20342,7 +20397,7 @@
       "irregular": true,
       "prateritum": "fiel um",
       "perfekt": "umgefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "unterfordern",
@@ -20393,7 +20448,7 @@
       "irregular": true,
       "prateritum": "ging vonstatten",
       "perfekt": "vonstattengegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "vorlassen",
@@ -20897,7 +20952,7 @@
       "irregular": true,
       "prateritum": "überkam",
       "perfekt": "überkommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "überlappen",
@@ -20969,7 +21024,7 @@
       "irregular": true,
       "prateritum": "ging vorüber",
       "perfekt": "vorübergegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "wachrütteln",
@@ -21275,7 +21330,7 @@
       "irregular": true,
       "prateritum": "ging herum",
       "perfekt": "herumgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hochheben",
@@ -21608,7 +21663,7 @@
       "irregular": true,
       "prateritum": "kam abhanden",
       "perfekt": "abhandengekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abkoppeln",
@@ -21650,7 +21705,8 @@
       "word": "anecken",
       "english": "bump into / hit / offend",
       "rank": 3182,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "anfeinden",
@@ -21743,7 +21799,8 @@
       "word": "ausrasten",
       "english": "crash out / freak out / go postal",
       "rank": 3197,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausrutschen",
@@ -21845,7 +21902,7 @@
       "irregular": true,
       "prateritum": "kam drauf",
       "perfekt": "draufgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "dröhnen",
@@ -22010,7 +22067,7 @@
       "irregular": true,
       "prateritum": "ging hinein",
       "perfekt": "hineingegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hinfallen",
@@ -22019,7 +22076,7 @@
       "irregular": true,
       "prateritum": "fiel hin",
       "perfekt": "hingefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hoppeln",
@@ -22214,7 +22271,7 @@
       "irregular": true,
       "prateritum": "kam überein",
       "perfekt": "übereingekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "überstellen",
@@ -22340,7 +22397,7 @@
       "irregular": true,
       "prateritum": "zerging",
       "perfekt": "zergangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zerstreiten",
@@ -22718,7 +22775,7 @@
       "irregular": true,
       "prateritum": "ging hinauf",
       "perfekt": "hinaufgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hinausschieben",
@@ -23519,7 +23576,7 @@
       "irregular": true,
       "prateritum": "ging fort",
       "perfekt": "fortgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "frankieren",
@@ -24725,7 +24782,7 @@
       "irregular": true,
       "prateritum": "kam herauf",
       "perfekt": "heraufgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "herauslassen",
@@ -24743,7 +24800,7 @@
       "irregular": true,
       "prateritum": "fiel her",
       "perfekt": "hergefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hervorragen",
@@ -24767,7 +24824,7 @@
       "irregular": true,
       "prateritum": "ging hinunter",
       "perfekt": "hinuntergegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hochgehen",
@@ -24776,7 +24833,7 @@
       "irregular": true,
       "prateritum": "ging hoch",
       "perfekt": "hochgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "huschen",
@@ -26570,7 +26627,7 @@
       "irregular": true,
       "prateritum": "kam vorwärts",
       "perfekt": "vorwärtsgekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "wegfliegen",
@@ -26618,10 +26675,7 @@
       "word": "wiedergutmachen",
       "english": "compensate",
       "rank": 3945,
-      "irregular": true,
-      "prateritum": "machte wieder gut",
-      "perfekt": "wiedergutgemacht",
-      "withSein": false
+      "irregular": false
     },
     {
       "word": "zappeln",
@@ -26756,7 +26810,8 @@
       "word": "abmagern",
       "english": "lose weight",
       "rank": 3966,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abschenken",
@@ -26867,7 +26922,8 @@
       "word": "aufkreuzen",
       "english": "appear / sail to windward / show up",
       "rank": 3984,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufmotzen",
@@ -26903,7 +26959,7 @@
       "irregular": true,
       "prateritum": "fiel auseinander",
       "perfekt": "auseinandergefallen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "auseinanderfalten",
@@ -27098,7 +27154,8 @@
       "word": "detonieren",
       "english": "detonate",
       "rank": 4020,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "diffundieren",
@@ -27500,7 +27557,7 @@
       "irregular": true,
       "prateritum": "wuchs heraus",
       "perfekt": "herausgewachsen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hereinspazieren",
@@ -27677,7 +27734,8 @@
       "word": "kullern",
       "english": "roll",
       "rank": 4112,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "kurieren",
@@ -27962,7 +28020,8 @@
       "word": "sacken",
       "english": "sink / sink in / slump",
       "rank": 4159,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "säkularisieren",
@@ -28544,7 +28603,7 @@
       "irregular": true,
       "prateritum": "fror ab",
       "perfekt": "abgefroren",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abhärten",
@@ -28844,7 +28903,8 @@
       "word": "ausfransen",
       "english": "become frayed / fray",
       "rank": 4296,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausgucken",
@@ -29039,7 +29099,7 @@
       "irregular": true,
       "prateritum": "fuhr davon",
       "perfekt": "davongefahren",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "davonziehen",
@@ -29387,7 +29447,7 @@
       "irregular": true,
       "prateritum": "ging fremd",
       "perfekt": "fremdgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "frotzeln",
@@ -29537,7 +29597,7 @@
       "irregular": true,
       "prateritum": "ging hinab",
       "perfekt": "hinabgegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hinreichen",
@@ -29888,7 +29948,8 @@
       "word": "notlanden",
       "english": "to force-land / to make a forced landing / to make an emergency landing",
       "rank": 4455,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ohrfeigen",
@@ -30281,7 +30342,8 @@
       "word": "traben",
       "english": "trot",
       "rank": 4518,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "tradieren",
@@ -30617,13 +30679,15 @@
       "word": "verwelken",
       "english": "wilt",
       "rank": 4570,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verwesen",
       "english": "decompose / rot",
       "rank": 4571,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verzapfen",
@@ -30848,7 +30912,8 @@
       "word": "zurückrollen",
       "english": "roll back / roll back something",
       "rank": 4605,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zurückscheuen",
@@ -31157,7 +31222,8 @@
       "word": "aufdampfen",
       "english": "evaporate / vapor-deposit / vapour-deposit",
       "rank": 4654,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufdröseln",
@@ -31235,7 +31301,8 @@
       "word": "aufsprühen",
       "english": "shoot up / spray on / spray up",
       "rank": 4667,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausbooten",
@@ -31253,7 +31320,8 @@
       "word": "ausbüxen",
       "english": "abscond",
       "rank": 4670,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "auseinanderbrechen",
@@ -31691,7 +31759,7 @@
       "irregular": true,
       "prateritum": "kam dazwischen",
       "perfekt": "dazwischengekommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "dealen",
@@ -32444,7 +32512,7 @@
       "irregular": true,
       "prateritum": "fuhr heim",
       "perfekt": "heimgefahren",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "heimschicken",
@@ -33053,7 +33121,8 @@
       "word": "mineralisieren",
       "english": "mineralise / mineralize",
       "rank": 4954,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "mitsegeln",
@@ -33110,7 +33179,7 @@
       "irregular": true,
       "prateritum": "ging nahe",
       "perfekt": "nahegegangen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "netzwerken",
@@ -33986,7 +34055,8 @@
       "word": "verbluten",
       "english": "bleed to death",
       "rank": 5103,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verbocken",
@@ -34064,7 +34134,8 @@
       "word": "vergilben",
       "english": "turn yellow",
       "rank": 5115,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vergittern",
@@ -34310,7 +34381,8 @@
       "word": "verweichlichen",
       "english": "grow soft / make soft / render effeminate",
       "rank": 5154,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verwinden",
@@ -34517,7 +34589,7 @@
       "irregular": true,
       "prateritum": "zerfloss",
       "perfekt": "zerflossen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zerfurchen",
@@ -34580,7 +34652,7 @@
       "irregular": true,
       "prateritum": "zerstob",
       "perfekt": "zerstoben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zetern",
@@ -34691,7 +34763,7 @@
       "irregular": true,
       "prateritum": "trat zu",
       "perfekt": "zugetreten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zutrinken",
@@ -34706,6 +34778,21 @@
       "word": "zwirbeln",
       "english": "twirl",
       "rank": 5211,
+      "irregular": false
+    },
+    {
+      "word": "geschehen",
+      "english": "happen / occur",
+      "rank": 5212,
+      "irregular": true,
+      "prateritum": "geschah",
+      "perfekt": "geschehen",
+      "withSein": true
+    },
+    {
+      "word": "freuen",
+      "english": "please / be glad",
+      "rank": 5213,
       "irregular": false
     }
   ]
