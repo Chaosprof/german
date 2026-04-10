@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Artikel Blitz — German Noun Trainer</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0f; overflow-x: hidden; }
+  body { background: #09090b; overflow-x: hidden; }
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 80% 50% at 70% 0%, rgba(30, 0, 0, 0.5) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 20% 100%, rgba(60, 30, 0, 0.35) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(40, 10, 0, 0.2) 0%, transparent 50%),
-      linear-gradient(180deg, #0a0a0f 0%, #0f0d12 35%, #12100a 65%, #0a0a0f 100%);
+      radial-gradient(ellipse 120% 60% at 50% -20%, rgba(139,92,246,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 50% at 0% 50%, rgba(59,130,246,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 50% at 100% 50%, rgba(236,72,153,0.03) 0%, transparent 60%);
     pointer-events: none;
   }
   #root { min-height: 100vh; position: relative; z-index: 1; }
@@ -26,12 +26,11 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 2px;
     z-index: 100;
-    background: linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 33%, #c1272d 33%, #c1272d 66%, #d4a843 66%, #d4a843 100%);
-    opacity: 0.7;
+    background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
+    opacity: 0.6;
   }
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -2650,7 +2649,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
 // STYLES
 // ═══════════════════════════════════════════════════════════════
 const S = {
-  container:{minHeight:"100vh",background:"linear-gradient(170deg, rgba(10,10,15,0.85) 0%, rgba(18,14,10,0.7) 40%, rgba(15,10,12,0.75) 70%, rgba(10,10,15,0.9) 100%)",color:"#e2e8f0",fontFamily:"'JetBrains Mono','SF Mono','Fira Code',monospace",display:"flex",flexDirection:"column",alignItems:"center",padding:0},
+  container:{minHeight:"100vh",background:"transparent",color:"#e2e8f0",fontFamily:"'JetBrains Mono','SF Mono','Fira Code',monospace",display:"flex",flexDirection:"column",alignItems:"center",padding:0},
   header:{width:"100%",maxWidth:600,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 8px",boxSizing:"border-box"},
   endBtn:{background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.3)",color:"#f87171",fontSize:13,fontWeight:700,padding:"6px 14px",borderRadius:8,cursor:"pointer",fontFamily:"inherit"},
   scoreLabel:{fontSize:28,fontWeight:800,color:"#F59E0B",letterSpacing:"-0.5px"},
@@ -2662,7 +2661,7 @@ const S = {
   statItem:{display:"flex",flexDirection:"column",alignItems:"center"},
   statValue:{fontSize:15,fontWeight:700},
   statLabel:{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:1},
-  card:{width:"100%",maxWidth:560,margin:"8px auto",padding:"32px 24px 24px",borderRadius:16,border:"2px solid transparent",transition:"all 0.15s ease",display:"flex",flexDirection:"column",alignItems:"center",minHeight:280,boxSizing:"border-box"},
+  card:{width:"100%",maxWidth:560,margin:"8px auto",padding:"32px 24px 24px",borderRadius:16,border:"2px solid transparent",transition:"all 0.15s ease",display:"flex",flexDirection:"column",alignItems:"center",minHeight:280,boxSizing:"border-box",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"},
   nounDisplay:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,marginBottom:28},
   nounWord:{fontSize:44,fontWeight:900,letterSpacing:"-1px",color:"#f1f5f9",textAlign:"center",lineHeight:1.1,wordBreak:"break-word"},
   nounSense:{fontSize:13,color:"#94a3b8",textAlign:"center",lineHeight:1.45,maxWidth:320},
@@ -2700,7 +2699,7 @@ const S = {
   pluralChoiceLabel:{fontSize:18,fontWeight:700,color:"#f1f5f9"},
   inputRow:{display:"flex",gap:8,width:"100%",maxWidth:400},
   pluralInput:{flex:1,background:"rgba(255,255,255,0.06)",border:"2px solid rgba(255,255,255,0.12)",borderRadius:10,padding:"12px 16px",fontSize:20,color:"#f1f5f9",outline:"none",fontFamily:"inherit",textAlign:"center"},
-  submitBtn:{background:"#3B82F6",border:"none",borderRadius:10,padding:"12px 20px",fontSize:20,color:"#fff",cursor:"pointer",fontWeight:700},
+  submitBtn:{background:"#8B5CF6",border:"none",borderRadius:10,padding:"12px 20px",fontSize:20,color:"#fff",cursor:"pointer",fontWeight:700},
   umlauts:{display:"flex",gap:6,flexWrap:"wrap",justifyContent:"center"},
   umlautBtn:{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:6,padding:"6px 12px",fontSize:16,color:"#cbd5e1",cursor:"pointer",fontFamily:"inherit"},
   shortcutHint:{fontSize:11,color:"#475569",marginTop:16,textAlign:"center"},
@@ -2712,7 +2711,7 @@ const S = {
   tierBtn:{padding:"10px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.15s ease"},
   modeCard:{padding:"14px 16px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"left",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
   diffBtn:{flex:1,padding:"12px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
-  startBtn:{width:"100%",padding:"16px",background:"linear-gradient(135deg, #3B82F6, #6366F1)",border:"none",borderRadius:12,fontSize:18,fontWeight:800,color:"#fff",cursor:"pointer",letterSpacing:1,textTransform:"uppercase",marginTop:4,fontFamily:"inherit"},
+  startBtn:{width:"100%",padding:"16px",background:"linear-gradient(135deg, #8B5CF6, #6366F1)",border:"none",borderRadius:12,fontSize:18,fontWeight:800,color:"#fff",cursor:"pointer",letterSpacing:1,textTransform:"uppercase",marginTop:4,fontFamily:"inherit"},
   resultsInner:{width:"100%",maxWidth:600,padding:"32px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:20,boxSizing:"border-box"},
   gradeCircle:{width:80,height:80,borderRadius:"50%",border:"3px solid",display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,fontWeight:900},
   resultsGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,width:"100%"},
@@ -2720,9 +2719,9 @@ const S = {
   resultValue:{fontSize:20,fontWeight:800,color:"#f1f5f9"},
   resultLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1},
   practiceBtn:{width:"100%",padding:"14px",background:"rgba(239,68,68,0.1)",border:"2px solid rgba(239,68,68,0.3)",borderRadius:12,fontSize:15,fontWeight:700,color:"#f87171",cursor:"pointer",fontFamily:"inherit"},
-  restartBtn:{width:"100%",padding:"14px",background:"linear-gradient(135deg, #3B82F6, #6366F1)",border:"none",borderRadius:12,fontSize:15,fontWeight:800,color:"#fff",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,textTransform:"uppercase"},
+  restartBtn:{width:"100%",padding:"14px",background:"linear-gradient(135deg, #8B5CF6, #6366F1)",border:"none",borderRadius:12,fontSize:15,fontWeight:800,color:"#fff",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,textTransform:"uppercase"},
   gearBtn:{position:"absolute",top:0,right:0,background:"none",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"4px 10px",cursor:"pointer",color:"#94a3b8",display:"flex",alignItems:"center"},
-  settingsPanel:{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:16,display:"flex",flexDirection:"column",gap:6},
+  settingsPanel:{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,padding:16,display:"flex",flexDirection:"column",gap:6},
 };
 
 // ═══════════════════════════════════════════════════════════════
