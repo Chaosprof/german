@@ -56,6 +56,7 @@ let BUILTIN_DECKS = [];
 let DUAL_GENDER_WORDS = new Set();
 let DUAL_GENDER_SENSES = new Map();
 let DUAL_GENDER_INDEX = new Map();
+let DUAL_GENDER_DRILL_BOTH = new Set();
 let ADJECTIVES = [];  // [word, english, rank]
 let VERBS = [];  // [word, english, rank]
 let IRREGULAR_VERBS = [];  // [word, english, rank, prateritum, perfekt]
@@ -119,6 +120,7 @@ async function loadWordData() {
         DUAL_GENDER_WORDS = new Set(dualSensePairs.map(([word]) => word));
         DUAL_GENDER_SENSES = new Map(dualSensePairs);
         DUAL_GENDER_INDEX = new Map(dualEntries.map(entry => [getNounEntryId(entry), entry]));
+        DUAL_GENDER_DRILL_BOTH = new Set(dgData.nouns.filter(n => n.bothInDrills).map(n => n.word));
         BUILTIN_DECKS.push({
           id: "__dual_gender__",
           name: "Dual-Gender Nouns",
@@ -139,6 +141,20 @@ function getDeckEntriesByName(name) {
   if (DUAL_GENDER_INDEX.has(name)) return [DUAL_GENDER_INDEX.get(name)];
   const dualEntries = DUAL_GENDER_SENSES.get(name);
   if (dualEntries?.length) return dualEntries;
+  const noun = getNounByName(name);
+  return noun ? [noun] : [];
+}
+
+// Like getDeckEntriesByName, but only expands to both genders for Category A words.
+// Category B/C dual-gender words return only their primary (nouns.json) entry.
+function getDrillEntriesByName(name) {
+  if (DUAL_GENDER_INDEX.has(name)) return [DUAL_GENDER_INDEX.get(name)];
+  if (DUAL_GENDER_SENSES.has(name)) {
+    if (DUAL_GENDER_DRILL_BOTH.has(name)) return DUAL_GENDER_SENSES.get(name);
+    // B/C word: return only the primary entry from nouns.json
+    const primary = NOUN_INDEX.get(name);
+    return primary ? [primary] : [DUAL_GENDER_SENSES.get(name)[0]];
+  }
   const noun = getNounByName(name);
   return noun ? [noun] : [];
 }
@@ -1062,7 +1078,7 @@ function GermanNounGame() {
     // Helper to resolve a word name to its entry (noun, adj, or verb)
     const resolveWordEntry = (name, forMode) => {
       // Try noun first
-      const nounEntries = getDeckEntriesByName(name);
+      const nounEntries = getDrillEntriesByName(name);
       if (nounEntries.length) return nounEntries;
       // Try adjective
       const adj = ADJECTIVES.find(a => a[0] === name);
@@ -1099,7 +1115,7 @@ function GermanNounGame() {
       } else if (gMode === "reverse") {
         nouns = weakNames.flatMap(name => resolveWordEntry(name, "reverse"));
       } else {
-        nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
+        nouns = weakNames.flatMap(name => getDrillEntriesByName(name));
       }
       if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
       setActiveDeck(null);
@@ -1157,7 +1173,7 @@ function GermanNounGame() {
     } else {
       const tierNouns = getNounsForTier(t);
       const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
-      const expanded = unique.flatMap(noun => getDeckEntriesByName(noun[0]));
+      const expanded = unique.flatMap(noun => getDrillEntriesByName(noun[0]));
       // Use SRS weighting for classic mode
       nouns = gMode === "classic" ? buildSrsQueue(expanded, userData.nounStats, expanded.length) : shuffleArray(expanded);
       setActiveDeck(null);
@@ -1208,7 +1224,7 @@ function GermanNounGame() {
       setMatchingWordType("nouns");
       const tierNouns = getNounsForTier(t);
       const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
-      const expanded = unique.flatMap(noun => getDeckEntriesByName(noun[0]));
+      const expanded = unique.flatMap(noun => getDrillEntriesByName(noun[0]));
       nouns = shuffleArray(expanded).slice(0, count);
     }
     if (!nouns.length) return;
@@ -1715,7 +1731,7 @@ function GermanNounGame() {
       setBlitzFlash(null);
       nd = [["_blitz_placeholder"]];
     } else {
-      nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDeckEntriesByName(w.entryId || w.noun));
+      nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDrillEntriesByName(w.entryId || w.noun));
     }
     sessionAnswersRef.current = [];
     if (playStyle === "survival" || gameMode === "survival") setLives(3);
