@@ -613,10 +613,22 @@ function buildSrsQueue(nouns, nounStats, maxSize) {
   return result;
 }
 
-// Generate weakest nouns deck from stats
-function getWeakestNouns(nounStats, count = 30) {
+// Generate weakest words from stats, optionally filtered by word type
+function getWeakestNouns(nounStats, count = 30, wordType) {
+  // Build lookup sets for filtering by word type
+  let allowedWords = null;
+  if (wordType === "nouns") {
+    allowedWords = new Set(NOUNS.map(n => n[0]));
+    // Also include noun entry IDs
+    NOUNS.forEach(n => { const id = getNounEntryId(n); if (id) allowedWords.add(id); });
+  } else if (wordType === "adjectives") {
+    allowedWords = new Set(ADJECTIVES.map(a => a[0]));
+  } else if (wordType === "verbs") {
+    allowedWords = new Set(VERBS.map(v => v[0]));
+  }
+  // wordType "mixed" or undefined => no filter
   const entries = Object.entries(nounStats)
-    .filter(([, s]) => s.attempts >= 2)
+    .filter(([name, s]) => s.attempts >= 2 && (!allowedWords || allowedWords.has(name)))
     .map(([noun, s]) => ({ noun, ratio: s.correct / s.attempts, attempts: s.attempts }))
     .sort((a, b) => a.ratio - b.ratio || b.attempts - a.attempts);
   return entries.slice(0, count).map(e => e.noun);
@@ -642,7 +654,6 @@ const GAME_MODES = [
   { id: "matching", name: "Matching", desc: "Pair words and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "blitz_type", name: "Blitz Type", desc: "Speed-translate words", icon: "🚀" },
-  { id: "weakest", name: "Weakest Words", desc: "Practice your worst words", icon: "🎯" },
 ];
 
 const NO_ANSWER = "__unanswered__";
@@ -873,7 +884,7 @@ function GermanNounGame() {
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
-  const [gameMode, setGameMode] = useState("classic"); // classic|speed_sort|reverse|matching|verb_forms|blitz_type|weakest
+  const [gameMode, setGameMode] = useState("classic"); // classic|speed_sort|reverse|matching|verb_forms|blitz_type
   const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives|verbs|mixed
   const [playStyle, setPlayStyle] = useState("practice"); // practice|timed|survival
   const [timedSeconds, setTimedSeconds] = useState(10);
@@ -1047,8 +1058,53 @@ function GermanNounGame() {
     // Normalize adj/verb to noun-like format [word, article, plural, english, rank]
     const normalizeAdj = (a) => [a[0], "", "", a[1], a[2]];
     const normalizeVerb = (v) => [v[0], "", "", v[1], v[2]];
+    const supportsWt = gMode === "matching" || gMode === "reverse" || gMode === "blitz_type";
 
-    if ((gMode === "matching" || gMode === "reverse") && wType === "adjectives") {
+    // Helper to resolve a word name to its entry (noun, adj, or verb)
+    const resolveWordEntry = (name, forMode) => {
+      // Try noun first
+      const nounEntries = getDeckEntriesByName(name);
+      if (nounEntries.length) return nounEntries;
+      // Try adjective
+      const adj = ADJECTIVES.find(a => a[0] === name);
+      if (adj) return forMode === "reverse" ? [normalizeAdj(adj)] : [adj];
+      // Try verb
+      const verb = VERBS.find(v => v[0] === name);
+      if (verb) return forMode === "reverse" ? [normalizeVerb(verb)] : [verb];
+      return [];
+    };
+
+    if (deckId === "__weakest__") {
+      // Weakest words mode - filtered by effective word type
+      const effWeakType = supportsWt ? wType : (gMode === "verb_forms" ? "verbs" : "nouns");
+      const weakNames = getWeakestNouns(userData.nounStats, 30, effWeakType === "mixed" ? undefined : effWeakType);
+      if (gMode === "blitz_type") {
+        const bq = weakNames.map(name => {
+          const adj = ADJECTIVES.find(a => a[0] === name);
+          if (adj) return { type: "adj", german: adj[0], english: adj[1], article: "" };
+          const verb = VERBS.find(v => v[0] === name);
+          if (verb) return { type: "verb", german: verb[0], english: verb[1], article: "" };
+          const noun = getNounByName(name);
+          if (noun) return { type: "noun", german: noun[0], english: noun[3], article: noun[1] };
+          return null;
+        }).filter(Boolean);
+        if (bq.length < 3) { alert("Not enough data yet — play some sessions first!"); return; }
+        setBlitzQueue(shuffleArray(bq));
+        setBlitzIndex(0); setBlitzInput(""); setBlitzElapsed(0); setBlitzPenalty(0); setBlitzFlash(null);
+        nouns = [["_blitz_placeholder"]];
+      } else if (gMode === "verb_forms") {
+        const weakVerbs = weakNames.flatMap(name => { const v = IRREGULAR_VERBS.find(iv => iv[0] === name); return v ? [v] : []; });
+        nouns = shuffleArray(weakVerbs);
+      } else if (gMode === "matching") {
+        nouns = weakNames.flatMap(name => resolveWordEntry(name, "matching"));
+      } else if (gMode === "reverse") {
+        nouns = weakNames.flatMap(name => resolveWordEntry(name, "reverse"));
+      } else {
+        nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
+      }
+      if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
+      setActiveDeck(null);
+    } else if ((gMode === "matching" || gMode === "reverse") && wType === "adjectives") {
       nouns = loadAdjectives(t);
       if (gMode === "reverse") nouns = nouns.map(normalizeAdj);
       if (!nouns.length) { alert("No adjectives available for this tier"); return; }
@@ -1093,11 +1149,6 @@ function GermanNounGame() {
       setBlitzPenalty(0);
       setBlitzFlash(null);
       nouns = [["_blitz_placeholder"]]; // non-empty so the guard below passes
-      setActiveDeck(null);
-    } else if (gMode === "weakest") {
-      const weakNames = getWeakestNouns(userData.nounStats, 30);
-      nouns = weakNames.flatMap(name => getDeckEntriesByName(name));
-      if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
       setActiveDeck(null);
     } else if (deckId) {
       const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
@@ -2052,7 +2103,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds);
+    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds);
+    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds);
     else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds);
   };
 
@@ -2196,7 +2248,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           {GAME_MODES.map(gm=>{
             const selected = selectedGameMode===gm.id;
             return (
-              <button key={gm.id} onClick={()=>setSelectedGameMode(gm.id)}
+              <button key={gm.id} onClick={()=>{setSelectedGameMode(gm.id);if(source==="deck")setSource("tier");}}
                 style={{...S.modeCard,borderColor:selected?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent"}}>
                 <span style={{fontSize:18}}>{gm.icon}</span>
                 <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{gm.name}</span>
@@ -2219,15 +2271,15 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Nouns</span>
               <span style={{fontSize:10,color:"#64748b"}}>{NOUNS.length.toLocaleString()} words</span>
             </button>
-            <button onClick={()=>setMatchWordType("adjectives")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="adjectives"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="adjectives"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <button onClick={()=>{setMatchWordType("adjectives");if(source==="deck")setSource("tier");}} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="adjectives"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="adjectives"?"rgba(139,92,246,0.1)":"transparent"}}>
               <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Adjectives</span>
               <span style={{fontSize:10,color:"#64748b"}}>{ADJECTIVES.length.toLocaleString()} words</span>
             </button>
-            <button onClick={()=>setMatchWordType("verbs")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="verbs"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="verbs"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <button onClick={()=>{setMatchWordType("verbs");if(source==="deck")setSource("tier");}} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="verbs"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="verbs"?"rgba(139,92,246,0.1)":"transparent"}}>
               <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Verbs</span>
               <span style={{fontSize:10,color:"#64748b"}}>{VERBS.length.toLocaleString()} words</span>
             </button>
-            <button onClick={()=>setMatchWordType("mixed")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="mixed"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="mixed"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <button onClick={()=>{setMatchWordType("mixed");if(source==="deck")setSource("tier");}} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="mixed"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="mixed"?"rgba(139,92,246,0.1)":"transparent"}}>
               <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>All Mixed</span>
               <span style={{fontSize:10,color:"#64748b"}}>Everything</span>
             </button>
@@ -2236,26 +2288,33 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Source selection ── */}
-      {selectedGameMode!=="weakest"&&selectedGameMode!=="verb_forms"&&(
+      {(()=>{
+        const showDeck = !((supportsWordType&&matchWordType!=="nouns")||selectedGameMode==="verb_forms");
+        return (
         <div style={S.menuSection}>
-          {!(supportsWordType&&matchWordType!=="nouns")&&(
-            <>
-            <label style={S.menuLabel}>Play from</label>
-            <div style={{display:"flex",gap:8}}>
-              <button onClick={()=>{setSource("tier");setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source==="tier"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="tier"?"rgba(139,92,246,0.1)":"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Vocab Level</span>
-              </button>
+          <label style={S.menuLabel}>Play from</label>
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={()=>{setSource("tier");setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source==="tier"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="tier"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Vocab Level</span>
+            </button>
+            {showDeck&&(
               <button onClick={()=>setSource("deck")} style={{...S.diffBtn,flex:1,borderColor:source==="deck"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="deck"?"rgba(139,92,246,0.1)":"transparent"}}>
                 <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Saved Deck</span>
                 {(userData.decks.length+BUILTIN_DECKS.length)>0&&<span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length+BUILTIN_DECKS.length} deck{(userData.decks.length+BUILTIN_DECKS.length)>1?"s":""}</span>}
               </button>
-            </div>
-            </>
-          )}
+            )}
+            <button onClick={()=>setSource("weakest")} style={{...S.diffBtn,flex:1,borderColor:source==="weakest"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:source==="weakest"?"rgba(239,68,68,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Weakest</span>
+              <span style={{fontSize:10,color:"#64748b"}}>Your worst words</span>
+            </button>
+          </div>
         </div>
-      )}
+        );
+      })()}
 
-      {(source==="tier"||selectedGameMode==="verb_forms"||(supportsWordType&&matchWordType!=="nouns"))&&selectedGameMode!=="weakest"&&(()=>{
+      {source==="weakest"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Practice your weakest words based on past performance. Requires at least a few sessions of play data.</div>}
+
+      {source!=="weakest"&&(source==="tier"||selectedGameMode==="verb_forms"||(supportsWordType&&matchWordType!=="nouns"))&&(()=>{
         // Compute effective word type for tier labels
         const effWt = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : "nouns");
         const countForTier = (tv) => {
@@ -2301,7 +2360,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         );
       })()}
 
-      {source==="deck"&&selectedGameMode!=="weakest"&&(
+      {source==="deck"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Select Deck</label>
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
@@ -2330,7 +2389,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {/* ── Answer type (hidden for reverse/weakest game modes) ── */}
+      {/* ── Answer type (hidden for reverse and special game modes) ── */}
       {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
@@ -2384,7 +2443,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck&&selectedGameMode!=="weakest"} style={{...S.startBtn,opacity:(source==="deck"&&!selectedDeck&&selectedGameMode!=="weakest")?0.4:1}}>Start Game</button>
+      <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck} style={{...S.startBtn,opacity:(source==="deck"&&!selectedDeck)?0.4:1}}>Start Game</button>
       <button onClick={onOpenCampaign} style={{...S.startBtn,background:"linear-gradient(135deg,#7C3AED,#2563EB)",marginTop:0}}>Campaign Mode</button>
       <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} precomputed grammar explanations loaded</div>
     </div></div>
