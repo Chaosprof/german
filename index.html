@@ -2255,19 +2255,51 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {(source==="tier"||selectedGameMode==="verb_forms"||(supportsWordType&&matchWordType!=="nouns"))&&selectedGameMode!=="weakest"&&(
+      {(source==="tier"||selectedGameMode==="verb_forms"||(supportsWordType&&matchWordType!=="nouns"))&&selectedGameMode!=="weakest"&&(()=>{
+        // Compute effective word type for tier labels
+        const effWt = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : "nouns");
+        const countForTier = (tv) => {
+          if (effWt === "nouns") return getNounsForTier(tv).length;
+          if (effWt === "adjectives") return getAdjectivesForTier(tv).length;
+          if (effWt === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(tv) : getVerbsForTier(tv)).length;
+          // mixed
+          return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
+        };
+        const maxAvailable = countForTier(99999);
+        // Filter out tiers with 0 words, and dedupe tiers that yield the same count
+        const seenCounts = new Set();
+        const filteredTiers = TIER_OPTIONS.filter(t => {
+          const c = countForTier(t.value);
+          if (c <= 0) return false;
+          if (seenCounts.has(c)) return false;
+          seenCounts.add(c);
+          return true;
+        });
+        return (
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-            {TIER_OPTIONS.map(t=>(
+            {filteredTiers.map(t=>{
+                const count = countForTier(t.value);
+                const capped = effWt !== "mixed" && count < t.value;
+                const label = capped ? `Top ${count.toLocaleString()}` : t.label;
+                const isAll = count >= maxAvailable;
+                const desc = isAll
+                  ? `All ${effWt === "mixed" ? "words" : effWt} (${count.toLocaleString()})`
+                  : effWt === "mixed"
+                    ? `${count.toLocaleString()} words`
+                    : (capped ? `${count.toLocaleString()} available` : t.desc);
+                return (
                 <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{t.label}</span>
-                  <span style={{fontSize:10,color:"#64748b"}}>{t.desc}</span>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{label}</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>{desc}</span>
                 </button>
-            ))}
+                );
+            })}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {source==="deck"&&selectedGameMode!=="weakest"&&(
         <div style={S.menuSection}>
