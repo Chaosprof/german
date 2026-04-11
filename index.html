@@ -2375,8 +2375,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
             const bestPct = modeScores.length > 0 ? Math.max(...modeScores) : 0;
             return (
               <button key={gm.id} onClick={()=>{setSelectedGameMode(gm.id);if(source==="deck")setSource("tier");}}
-                style={{...S.modeCard,borderColor:selected?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                {bestPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${bestPct}%`,background:"rgba(16,185,129,0.15)",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                style={{...S.modeCard,borderColor:selected?"#8B5CF6":bestPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                {bestPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${bestPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                 <span style={{fontSize:18,position:"relative"}}>{gm.icon}</span>
                 <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{gm.name}</span>
                 <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{gm.desc}</span>
@@ -2482,11 +2482,11 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 const tierBest = (userData.bestScores || {})[tierKey];
                 const tierPct = tierBest ? tierBest.pct : 0;
                 return (
-                <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:"rgba(16,185,129,0.15)",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{label}</span>
                   <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{desc}</span>
-                  {tierPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>{tierPct}%</span>}
+                  {tierPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {tierPct}%</span>}
                 </button>
                 );
             })}
@@ -2505,8 +2505,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               const dkPct = dkBest ? dkBest.pct : 0;
               return (
               <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"rgba(16,185,129,0.15)",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                  {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
                   <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in{dkPct>0?` · Best: ${dkPct}%`:""}</span>
                 </button>
@@ -2519,8 +2519,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               const dkPct = dkBest ? dkBest.pct : 0;
               return (
               <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"rgba(16,185,129,0.15)",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                  {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
                   <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}{dkPct>0?` · Best: ${dkPct}%`:""}</span>
                 </button>
