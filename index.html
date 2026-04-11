@@ -949,6 +949,7 @@ function GermanNounGame() {
   const [usedStreakShield, setUsedStreakShield] = useState(false);
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
   const [sessionKey, setSessionKey] = useState(null); // "gameMode:source:id" for best-score tracking
+  const [sessionTotal, setSessionTotal] = useState(0); // total words in queue at session start
   const globalTimerRef = useRef(null);
   const pluralOptions = useMemo(() => {
     if (!currentNoun || gameMode === "reverse" || mode === MODES.ARTICLE) return [];
@@ -1233,6 +1234,7 @@ function GermanNounGame() {
     // Build session key for best-score tracking
     const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : `tier:${t}`;
     setSessionKey(`${gMode}:${sSource}`);
+    setSessionTotal(nouns.length);
     setScreen("game");
   }, [userData]);
 
@@ -1336,13 +1338,14 @@ function GermanNounGame() {
         }
       }
 
-      // Best score tracking per session key
+      // Best score tracking per session key — pct is correct / total words in deck
       if (sessionKey && totalAnswered > 0) {
-        const pct = Math.round((totalCorrect / totalAnswered) * 100);
+        const denom = sessionTotal > 0 ? sessionTotal : totalAnswered;
+        const pct = Math.round((totalCorrect / denom) * 100);
         const bs = { ...(updated.bestScores || {}) };
         const prev_best = bs[sessionKey];
         if (!prev_best || pct > prev_best.pct) {
-          bs[sessionKey] = { correct: totalCorrect, total: totalAnswered, pct };
+          bs[sessionKey] = { correct: totalCorrect, total: denom, pct };
         }
         updated.bestScores = bs;
       }
@@ -1355,7 +1358,7 @@ function GermanNounGame() {
     });
 
     setScreen("results");
-  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, tier, campaignChallenge, blitzElapsed, blitzPenalty, sessionKey]);
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, tier, campaignChallenge, blitzElapsed, blitzPenalty, sessionKey, sessionTotal]);
 
   // Per-question timer (for timed playStyle or campaign difficulty modes)
   useEffect(() => {
