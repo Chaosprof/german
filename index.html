@@ -31,6 +31,32 @@
     background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
     opacity: 0.6;
   }
+  @keyframes goldPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    50% { box-shadow: 0 0 12px 2px rgba(245,158,11,0.3); }
+  }
+  @keyframes goldShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .range-gold {
+    animation: goldPulse 3s ease-in-out infinite;
+  }
+  .range-gold::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.08) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: goldShimmer 4s ease-in-out infinite;
+    border-radius: 10px;
+    pointer-events: none;
+  }
+  /* Scrollbar for range grid */
+  .range-grid::-webkit-scrollbar { width: 4px; }
+  .range-grid::-webkit-scrollbar-track { background: transparent; }
+  .range-grid::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 2px; }
+  .range-grid::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.5); }
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -1079,7 +1105,7 @@ function GermanNounGame() {
 
   const sessionAnswersRef = useRef([]);
 
-  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs, tMin) => {
+  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs, tMin, isRange) => {
     let nouns;
     const gMode = gm || "classic";
     const wType = wordType || "nouns";
@@ -1238,7 +1264,7 @@ function GermanNounGame() {
     else if (ps === "timed") { setTimeLeft(ts); }
     else { setTimeLeft(0); }
     // Build session key for best-score tracking
-    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : tierMinVal ? `range:${tierMinVal+1}-${t}` : `tier:${t}`;
+    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : isRange ? `range:${tierMinVal+1}-${t}` : `tier:${t}`;
     setSessionKey(`${gMode}:${sSource}`);
     setSessionTotal(nouns.length);
     setScreen("game");
@@ -1785,7 +1811,7 @@ function GermanNounGame() {
     onSelectChallenge={(state, ch) => startCampaignChallenge(state, ch)}
     onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
   />;
-  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onOpenCampaign={()=>setScreen("campaign")} onSyncRefresh={()=>{
+  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onOpenCampaign={()=>setScreen("campaign")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m={...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}};m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
@@ -2236,10 +2262,11 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    const effectiveTierMin = (source === "tier" && tierMode === "range") ? tierMin : 0;
-    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0);
-    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0);
-    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin);
+    const isRange = source === "tier" && tierMode === "range";
+    const effectiveTierMin = isRange ? tierMin : 0;
+    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
   };
 
   const prog = xpProgress(userData.xp || 0);
@@ -2336,25 +2363,65 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       </div>
 
       {/* ── Profile card ── */}
-      <div style={{...S.settingsPanel,textAlign:"center",position:"relative"}}>
-        <div style={{fontSize:13,color:"#94a3b8",fontWeight:600}}>{title[2]}</div>
-        <div style={{fontSize:22,fontWeight:900,color:"#e2e8f0"}}>Lv. {prog.level} <span style={{fontSize:14,fontWeight:600,color:"#8B5CF6"}}>{title[1]}</span></div>
-        <div style={{position:"relative",height:12,background:"rgba(255,255,255,0.06)",borderRadius:6,overflow:"hidden",margin:"4px 0"}}>
-          <div style={{height:"100%",width:`${prog.needed>0?(prog.current/prog.needed)*100:100}%`,background:"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:6,transition:"width 0.5s"}}/>
+      {(()=>{
+        const totalNouns = NOUNS.length;
+        const masteredCount = (userData.masteredNouns||[]).length;
+        const masteryPct = totalNouns > 0 ? Math.round((masteredCount / totalNouns) * 100) : 0;
+        const masteryColor = masteryPct >= 100 ? "#F59E0B" : masteryPct >= 50 ? "#10B981" : "#8B5CF6";
+        return (
+      <div style={{...S.settingsPanel,textAlign:"center",position:"relative",overflow:"hidden"}}>
+        {/* Subtle shimmer for high mastery */}
+        {masteryPct >= 25 && <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg, transparent, ${masteryColor}44, transparent)`,opacity:0.6}}/>}
+        <div style={{display:"flex",alignItems:"center",gap:14,justifyContent:"center"}}>
+          {/* XP level ring */}
+          <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <svg width={56} height={56} style={{transform:"rotate(-90deg)"}}>
+              <circle cx={28} cy={28} r={24} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={4}/>
+              <circle cx={28} cy={28} r={24} fill="none" stroke="#8B5CF6" strokeWidth={4}
+                strokeDasharray={2*Math.PI*24} strokeDashoffset={2*Math.PI*24-(prog.needed>0?(prog.current/prog.needed):1)*2*Math.PI*24}
+                strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease"}}/>
+            </svg>
+            <span style={{position:"absolute",fontSize:18,fontWeight:900,color:"#e2e8f0"}}>{prog.level}</span>
+          </div>
+          <div style={{textAlign:"left"}}>
+            <div style={{fontSize:18,fontWeight:900,color:"#e2e8f0"}}>{title[1]} <span style={{fontSize:12,color:"#94a3b8",fontWeight:600}}>{title[2]}</span></div>
+            <div style={{fontSize:11,color:"#64748b"}}>{prog.current} / {prog.needed} XP to Lv. {prog.level+1}</div>
+          </div>
         </div>
-        <div style={{fontSize:11,color:"#64748b"}}>{prog.current} / {prog.needed} XP to Lv. {prog.level+1}</div>
-        <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:8}}>
-          <div><span style={{fontSize:16,fontWeight:800,color:"#F59E0B"}}>{userData.coins||0}</span><span style={{fontSize:11,color:"#64748b"}}> coins</span></div>
-          <div><span style={{fontSize:16,fontWeight:800,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current>=1?"🔥":""}{dailyStreak.current}</span><span style={{fontSize:11,color:"#64748b"}}> day streak</span></div>
-          <div><span style={{fontSize:16,fontWeight:800,color:"#10B981"}}>{(userData.masteredNouns||[]).length}</span><span style={{fontSize:11,color:"#64748b"}}> mastered</span></div>
+        {/* Stats row */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:10}}>
+          <div style={{background:"rgba(245,158,11,0.06)",border:"1px solid rgba(245,158,11,0.15)",borderRadius:8,padding:"8px 4px"}}>
+            <div style={{fontSize:18,fontWeight:800,color:"#F59E0B"}}>{userData.coins||0}</div>
+            <div style={{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:1}}>Coins</div>
+          </div>
+          <div style={{background:dailyStreak.current>=3?"rgba(239,68,68,0.06)":"rgba(255,255,255,0.02)",border:`1px solid ${dailyStreak.current>=3?"rgba(239,68,68,0.2)":"rgba(255,255,255,0.06)"}`,borderRadius:8,padding:"8px 4px"}}>
+            <div style={{fontSize:18,fontWeight:800,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current>=1?"\uD83D\uDD25":""}{dailyStreak.current}</div>
+            <div style={{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:1}}>Streak</div>
+          </div>
+          <div style={{background:`${masteryColor}0F`,border:`1px solid ${masteryColor}33`,borderRadius:8,padding:"8px 4px"}}>
+            <div style={{fontSize:18,fontWeight:800,color:masteryColor}}>{masteredCount.toLocaleString()}</div>
+            <div style={{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:1}}>Mastered</div>
+          </div>
         </div>
-        <div style={{display:"flex",gap:8,marginTop:8,justifyContent:"center"}}>
+        {/* Mastery progress bar */}
+        <div style={{marginTop:8}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+            <span style={{fontSize:10,color:"#94a3b8",fontWeight:600}}>Overall Mastery</span>
+            <span style={{fontSize:10,fontWeight:700,color:masteryColor}}>{masteryPct}% ({masteredCount.toLocaleString()} / {totalNouns.toLocaleString()})</span>
+          </div>
+          <div style={{position:"relative",height:8,background:"rgba(255,255,255,0.06)",borderRadius:4,overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${masteryPct}%`,background:masteryPct>=100?"linear-gradient(90deg,#F59E0B,#EF4444)":masteryPct>=50?"linear-gradient(90deg,#10B981,#3B82F6)":"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:4,transition:"width 0.5s ease",boxShadow:masteryPct>10?`0 0 8px ${masteryColor}44`:"none"}}/>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8,marginTop:10,justifyContent:"center"}}>
           <button onClick={()=>setShowShop(true)} style={{...S.submitBtn,fontSize:12,padding:"6px 16px"}}>Perk Shop</button>
           <button onClick={()=>setShowAchievements(true)} style={{...S.submitBtn,fontSize:12,padding:"6px 16px",background:"linear-gradient(135deg,#F59E0B,#EF4444)"}}>
             Achievements ({(userData.achievements||[]).length}/{ACHIEVEMENTS.length})
           </button>
         </div>
       </div>
+        );
+      })()}
 
       {showSettings&&(
         <div style={S.settingsPanel}>
@@ -2473,6 +2540,28 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           if (effWt === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
           return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
         };
+        // Mastery: count mastered words in a range
+        const masteredSet = new Set(userData.masteredNouns || []);
+        const nounStats = userData.nounStats || {};
+        const wordsInRange = (min, max) => {
+          const words = [];
+          if (effWt === "nouns" || effWt === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
+          if (effWt === "adjectives" || effWt === "mixed") getAdjectivesForTier(max, min).forEach(a => words.push(a[0]));
+          if (effWt === "verbs" || effWt === "mixed") getVerbsForTier(max, min).forEach(v => words.push(v[0]));
+          if (effWt === "verb_prep") getVerbPrepositionsForTier(max, min).forEach(v => words.push(v[0]+"|"+v[3]));
+          return words;
+        };
+        const masteryForRange = (min, max) => {
+          const words = wordsInRange(min, max);
+          if (!words.length) return { mastered: 0, total: 0, pct: 0 };
+          let m = 0;
+          words.forEach(w => {
+            if (masteredSet.has(w)) { m++; return; }
+            const s = nounStats[w];
+            if (s && (s.consecutiveCorrect || 0) >= 5) m++;
+          });
+          return { mastered: m, total: words.length, pct: Math.round((m / words.length) * 100) };
+        };
         const maxAvailable = countForTier(99999);
         // Filter out tiers with 0 words, and dedupe tiers that yield the same count
         const seenCounts = new Set();
@@ -2493,6 +2582,22 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           const c = countForRange(rMin, rMax);
           if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
         }
+        // SVG progress ring helper
+        const ProgressRing = ({pct, size, stroke, color, bgColor}) => {
+          const r = (size - stroke) / 2;
+          const circ = 2 * Math.PI * r;
+          const offset = circ - (pct / 100) * circ;
+          return (
+            <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0}}>
+              <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={bgColor||"rgba(255,255,255,0.06)"} strokeWidth={stroke}/>
+              {pct > 0 && <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color||"#10B981"} strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease"}}/>}
+            </svg>
+          );
+        };
+        // Compute overall mastery for the header
+        const totalMastery = masteryForRange(0, 99999);
+        const rangesCompleted = ranges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
+        const rangesStarted = ranges.filter(r => { const m = masteryForRange(r.min, r.max); return m.pct > 0 && m.pct < 100; }).length;
         return (
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
@@ -2521,33 +2626,71 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 const tierKey = `${selectedGameMode}:tier:${t.value}`;
                 const tierBest = (userData.bestScores || {})[tierKey];
                 const tierPct = tierBest ? tierBest.pct : 0;
+                const tm = masteryForRange(0, t.value);
+                const ringColor = tm.pct >= 100 ? "#F59E0B" : tm.pct >= 50 ? "#10B981" : "#8B5CF6";
                 return (
-                <button key={t.value} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{label}</span>
-                  <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{desc}</span>
+                <button key={t.value} className={tm.pct>=100?"range-gold":""} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":tm.pct>=100?"rgba(245,158,11,0.5)":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":tm.pct>=100?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
+                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:tm.pct>=100?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
+                    <ProgressRing pct={tm.pct} size={36} stroke={3} color={ringColor}/>
+                    <span style={{position:"absolute",fontSize:9,fontWeight:800,color:ringColor}}>{tm.pct>=100?"\u2713":tm.pct>0?tm.pct+"%":""}</span>
+                  </div>
+                  <span style={{fontSize:13,fontWeight:700,color:tm.pct>=100?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
+                  <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{tm.mastered}/{tm.total} mastered</span>
                   {tierPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {tierPct}%</span>}
                 </button>
                 );
             })}
           </div>
           ):(
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:350,overflowY:"auto",paddingRight:4}}>
+          <>
+          {/* Overall mastery summary for ranges */}
+          <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,padding:"12px 16px",marginBottom:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:12}}>
+              <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <ProgressRing pct={totalMastery.pct} size={48} stroke={4} color={totalMastery.pct>=100?"#F59E0B":totalMastery.pct>=50?"#10B981":"#8B5CF6"}/>
+                <span style={{position:"absolute",fontSize:12,fontWeight:800,color:totalMastery.pct>=100?"#F59E0B":"#e2e8f0"}}>{totalMastery.pct}%</span>
+              </div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{totalMastery.mastered.toLocaleString()} / {totalMastery.total.toLocaleString()} words mastered</div>
+                <div style={{position:"relative",height:6,background:"rgba(255,255,255,0.06)",borderRadius:3,overflow:"hidden",marginTop:4}}>
+                  <div style={{height:"100%",width:`${totalMastery.pct}%`,background:totalMastery.pct>=100?"linear-gradient(90deg,#F59E0B,#EF4444)":totalMastery.pct>=50?"linear-gradient(90deg,#10B981,#3B82F6)":"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:3,transition:"width 0.5s"}}/>
+                </div>
+                <div style={{display:"flex",gap:12,marginTop:4}}>
+                  {rangesCompleted>0&&<span style={{fontSize:10,color:"#F59E0B",fontWeight:700}}>{rangesCompleted} completed</span>}
+                  {rangesStarted>0&&<span style={{fontSize:10,color:"#10B981",fontWeight:700}}>{rangesStarted} in progress</span>}
+                  <span style={{fontSize:10,color:"#64748b"}}>{ranges.length} total ranges</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:400,overflowY:"auto",paddingRight:4}}>
             {ranges.map(r=>{
                 const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
                 const rangeKey = `${selectedGameMode}:range:${r.min+1}-${r.max}`;
                 const rangeBest = (userData.bestScores || {})[rangeKey];
                 const rangePct = rangeBest ? rangeBest.pct : 0;
+                const rm = masteryForRange(r.min, r.max);
+                const isComplete = rm.pct >= 100;
+                const isStarted = rm.pct > 0;
+                const ringColor = isComplete ? "#F59E0B" : rm.pct >= 50 ? "#10B981" : rm.pct > 0 ? "#8B5CF6" : "rgba(255,255,255,0.1)";
+                const borderColor = isSelected ? "#8B5CF6" : isComplete ? "rgba(245,158,11,0.5)" : rangePct >= 90 ? "rgba(16,185,129,0.5)" : isStarted ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.08)";
+                const bgColor = isSelected ? "rgba(139,92,246,0.1)" : isComplete ? "rgba(245,158,11,0.06)" : "transparent";
                 return (
-                <button key={r.min} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":rangePct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:isSelected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{r.min+1}–{r.max}</span>
-                  <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{r.count} words</span>
-                  {rangePct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {rangePct}%</span>}
+                <button key={r.min} className={isComplete?"range-gold":""} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden",padding:"10px 6px",gap:1}}>
+                  {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:isComplete?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.25), rgba(16,185,129,0.08))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:1}}>
+                    <ProgressRing pct={rm.pct} size={32} stroke={2.5} color={ringColor}/>
+                    <span style={{position:"absolute",fontSize:isComplete?11:8,fontWeight:800,color:ringColor}}>{isComplete?"\u2713":rm.pct>0?rm.pct+"%":""}</span>
+                  </div>
+                  <span style={{fontSize:12,fontWeight:700,color:isComplete?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}–{r.max}</span>
+                  <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{rm.mastered}/{rm.total}</span>
+                  {rangePct>=90&&<span style={{fontSize:8,position:"relative",color:rangePct>=100?"#F59E0B":"#10B981",fontWeight:700}}>{rangePct>=100?"\u2605 "+rangePct+"%":rangePct+"%"}</span>}
                 </button>
                 );
             })}
           </div>
+          </>
           )}
         </div>
         );
