@@ -173,33 +173,38 @@ function shouldShowSenseHint(noun) {
   return !!noun?.[0] && !!noun?.[3] && DUAL_GENDER_WORDS.has(noun[0]);
 }
 
-function getAdjectivesForTier(tier) {
-  return ADJECTIVES.filter(a => a[2] <= tier);
+function getAdjectivesForTier(tier, minRank) {
+  return minRank ? ADJECTIVES.filter(a => a[2] > minRank && a[2] <= tier) : ADJECTIVES.filter(a => a[2] <= tier);
 }
 
-function getVerbsForTier(tier) {
-  return VERBS.filter(v => v[2] <= tier);
+function getVerbsForTier(tier, minRank) {
+  return minRank ? VERBS.filter(v => v[2] > minRank && v[2] <= tier) : VERBS.filter(v => v[2] <= tier);
 }
 
-function getIrregularVerbsForTier(tier) {
-  return IRREGULAR_VERBS.filter(v => v[2] <= tier);
+function getIrregularVerbsForTier(tier, minRank) {
+  return minRank ? IRREGULAR_VERBS.filter(v => v[2] > minRank && v[2] <= tier) : IRREGULAR_VERBS.filter(v => v[2] <= tier);
 }
 
-function getVerbPrepositionsForTier(tier) {
+function getVerbPrepositionsForTier(tier, minRank) {
   // Verb prepositions use their own rank (1-298), map tier proportionally
   if (!VERB_PREPOSITIONS.length) return [];
   const maxRank = Math.max(...VERB_PREPOSITIONS.map(v => v[2]));
   const fraction = Math.min(tier / (NOUNS.length || 25000), 1);
   const cutoff = Math.max(Math.ceil(fraction * maxRank), 30);
+  if (minRank) {
+    const minFraction = Math.min(minRank / (NOUNS.length || 25000), 1);
+    const minCutoff = Math.ceil(minFraction * maxRank);
+    return VERB_PREPOSITIONS.filter(v => v[2] > minCutoff && v[2] <= cutoff);
+  }
   return VERB_PREPOSITIONS.filter(v => v[2] <= cutoff);
 }
 
 // Build a mixed queue of nouns, adjectives, and verbs for Blitz Type
 // Each entry: { type: "noun"|"adj"|"verb", german: "...", english: "...", article: "der"|"die"|"das"|"" }
-function buildBlitzQueue(tier, count, wordType) {
-  const nouns = (!wordType || wordType === "mixed" || wordType === "nouns") ? getNounsForTier(tier).filter(n => n[3]).map(n => ({ type: "noun", german: n[0], english: n[3], article: n[1] })) : [];
-  const adjs = (!wordType || wordType === "mixed" || wordType === "adjectives") ? getAdjectivesForTier(tier).filter(a => a[1]).map(a => ({ type: "adj", german: a[0], english: a[1], article: "" })) : [];
-  const verbs = (!wordType || wordType === "mixed" || wordType === "verbs") ? getVerbsForTier(tier).filter(v => v[1]).map(v => ({ type: "verb", german: v[0], english: v[1], article: "" })) : [];
+function buildBlitzQueue(tier, count, wordType, minRank) {
+  const nouns = (!wordType || wordType === "mixed" || wordType === "nouns") ? getNounsForTier(tier, minRank).filter(n => n[3]).map(n => ({ type: "noun", german: n[0], english: n[3], article: n[1] })) : [];
+  const adjs = (!wordType || wordType === "mixed" || wordType === "adjectives") ? getAdjectivesForTier(tier, minRank).filter(a => a[1]).map(a => ({ type: "adj", german: a[0], english: a[1], article: "" })) : [];
+  const verbs = (!wordType || wordType === "mixed" || wordType === "verbs") ? getVerbsForTier(tier, minRank).filter(v => v[1]).map(v => ({ type: "verb", german: v[0], english: v[1], article: "" })) : [];
   const pool = shuffleArray([...nouns, ...adjs, ...verbs]);
   // Deduplicate by german word
   const seen = new Set();
@@ -220,8 +225,8 @@ const TIER_OPTIONS = [
   { value: 25000, label: "Top 25000", desc: "Near-native" },
 ];
 
-function getNounsForTier(tier) {
-  return NOUNS.filter(n => n[4] <= tier);
+function getNounsForTier(tier, minRank) {
+  return minRank ? NOUNS.filter(n => n[4] > minRank && n[4] <= tier) : NOUNS.filter(n => n[4] <= tier);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1074,25 +1079,26 @@ function GermanNounGame() {
 
   const sessionAnswersRef = useRef([]);
 
-  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs) => {
+  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs, tMin) => {
     let nouns;
     const gMode = gm || "classic";
     const wType = wordType || "nouns";
     const ps = pStyle || "practice";
     const ts = tSecs || 10;
+    const tierMinVal = tMin || 0;
     setMatchingWordType(wType);
     setPlayStyle(ps);
     setTimedSeconds(ts);
     // Adjective/verb loading for matching and reverse modes
-    const loadAdjectives = (tier) => {
+    const loadAdjectives = (tier, mn) => {
       const adjTier = Math.min(tier, ADJECTIVES.length);
-      const tierAdjs = getAdjectivesForTier(adjTier);
+      const tierAdjs = getAdjectivesForTier(adjTier, mn);
       const unique = (() => { const seen = new Set(); return tierAdjs.filter(a => { if (seen.has(a[0])) return false; seen.add(a[0]); return true; }); })();
       return shuffleArray(unique.filter(a => a[1]));
     };
-    const loadVerbs = (tier) => {
+    const loadVerbs = (tier, mn) => {
       const verbTier = Math.min(tier, VERBS.length);
-      const tierVerbs = getVerbsForTier(verbTier);
+      const tierVerbs = getVerbsForTier(verbTier, mn);
       const unique = (() => { const seen = new Set(); return tierVerbs.filter(v => { if (seen.has(v[0])) return false; seen.add(v[0]); return true; }); })();
       return shuffleArray(unique.filter(v => v[1]));
     };
@@ -1146,27 +1152,27 @@ function GermanNounGame() {
       if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
       setActiveDeck(null);
     } else if ((gMode === "matching" || gMode === "reverse") && wType === "adjectives") {
-      nouns = loadAdjectives(t);
+      nouns = loadAdjectives(t, tierMinVal);
       if (gMode === "reverse") nouns = nouns.map(normalizeAdj);
       if (!nouns.length) { alert("No adjectives available for this tier"); return; }
       setActiveDeck(null);
     } else if ((gMode === "matching" || gMode === "reverse") && wType === "verbs") {
-      nouns = loadVerbs(t);
+      nouns = loadVerbs(t, tierMinVal);
       if (gMode === "reverse") nouns = nouns.map(normalizeVerb);
       if (!nouns.length) { alert("No verbs available for this tier"); return; }
       setActiveDeck(null);
     } else if ((gMode === "matching" || gMode === "reverse") && wType === "mixed") {
-      const adjItems = loadAdjectives(t);
-      const verbItems = loadVerbs(t);
+      const adjItems = loadAdjectives(t, tierMinVal);
+      const verbItems = loadVerbs(t, tierMinVal);
       if (gMode === "reverse") {
-        const tierNouns = getNounsForTier(t);
+        const tierNouns = getNounsForTier(t, tierMinVal);
         const uniqueNouns = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
         const nounItems = shuffleArray(uniqueNouns.filter(n => n[3]));
         nouns = shuffleArray([...nounItems, ...adjItems.map(normalizeAdj), ...verbItems.map(normalizeVerb)]);
       } else {
         nouns = shuffleArray([...adjItems, ...verbItems]);
         // For matching mixed, we also need nouns
-        const tierNouns = getNounsForTier(t);
+        const tierNouns = getNounsForTier(t, tierMinVal);
         const uniqueNouns = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
         const nounItems = shuffleArray(uniqueNouns.filter(n => n[3]));
         nouns = shuffleArray([...nounItems, ...nouns]);
@@ -1175,19 +1181,19 @@ function GermanNounGame() {
       setActiveDeck(null);
     } else if (gMode === "verb_forms") {
       const verbTier = Math.min(t, IRREGULAR_VERBS.length > 0 ? Math.max(...IRREGULAR_VERBS.map(v => v[2])) : t);
-      const tierVerbs = getIrregularVerbsForTier(verbTier);
+      const tierVerbs = getIrregularVerbsForTier(verbTier, tierMinVal);
       const unique = (() => { const seen = new Set(); return tierVerbs.filter(v => { if (seen.has(v[0])) return false; seen.add(v[0]); return true; }); })();
       nouns = shuffleArray(unique.filter(v => v[1]));
       if (!nouns.length) { alert("No irregular verbs available for this tier"); return; }
       setActiveDeck(null);
     } else if (gMode === "verb_prepositions") {
-      const tierVP = getVerbPrepositionsForTier(t);
+      const tierVP = getVerbPrepositionsForTier(t, tierMinVal);
       const unique = (() => { const seen = new Set(); return tierVP.filter(v => { const k = v[0]+"|"+v[3]; if (seen.has(k)) return false; seen.add(k); return true; }); })();
       nouns = shuffleArray(unique.filter(v => v[1]));
       if (!nouns.length) { alert("No verb+preposition data available for this tier"); return; }
       setActiveDeck(null);
     } else if (gMode === "blitz_type") {
-      const bq = buildBlitzQueue(t, BLITZ_TYPE_COUNT, wType === "mixed" ? null : wType);
+      const bq = buildBlitzQueue(t, BLITZ_TYPE_COUNT, wType === "mixed" ? null : wType, tierMinVal);
       if (bq.length < 5) { alert("Not enough words available for this tier"); return; }
       setBlitzQueue(bq);
       setBlitzIndex(0);
@@ -1203,7 +1209,7 @@ function GermanNounGame() {
       nouns = deck.nouns.flatMap(name => getDeckEntriesByName(name));
       setActiveDeck(deckId);
     } else {
-      const tierNouns = getNounsForTier(t);
+      const tierNouns = getNounsForTier(t, tierMinVal);
       const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
       const expanded = unique.flatMap(noun => getDrillEntriesByName(noun[0]));
       // Use SRS weighting for classic mode
@@ -1232,7 +1238,7 @@ function GermanNounGame() {
     else if (ps === "timed") { setTimeLeft(ts); }
     else { setTimeLeft(0); }
     // Build session key for best-score tracking
-    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : `tier:${t}`;
+    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : tierMinVal ? `range:${tierMinVal+1}-${t}` : `tier:${t}`;
     setSessionKey(`${gMode}:${sSource}`);
     setSessionTotal(nouns.length);
     setScreen("game");
@@ -1779,7 +1785,7 @@ function GermanNounGame() {
     onSelectChallenge={(state, ch) => startCampaignChallenge(state, ch)}
     onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
   />;
-  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onOpenCampaign={()=>setScreen("campaign")} onSyncRefresh={()=>{
+  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onBuyPerk={buyPerk} onDeactivatePerk={deactivatePerk} onOpenCampaign={()=>setScreen("campaign")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m={...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}};m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
@@ -2205,6 +2211,8 @@ function DeckBuilder({onSave, onCancel}) {
 function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onBuyPerk, onDeactivatePerk, onSyncRefresh, onOpenCampaign}) {
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [tier,setTier]=useState(500);
+  const [tierMin,setTierMin]=useState(0);
+  const [tierMode,setTierMode]=useState("cumulative"); // "cumulative" or "range"
   const [source,setSource]=useState("tier");
   const [selectedDeck,setSelectedDeck]=useState(null);
   const [showSettings,setShowSettings]=useState(false);
@@ -2228,9 +2236,10 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds);
-    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds);
-    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds);
+    const effectiveTierMin = (source === "tier" && tierMode === "range") ? tierMin : 0;
+    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0);
+    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0);
+    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin);
   };
 
   const prog = xpProgress(userData.xp || 0);
@@ -2457,6 +2466,13 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           // mixed
           return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
         };
+        const countForRange = (min, max) => {
+          if (effWt === "nouns") return getNounsForTier(max, min).length;
+          if (effWt === "adjectives") return getAdjectivesForTier(max, min).length;
+          if (effWt === "verb_prep") return getVerbPrepositionsForTier(max, min).length;
+          if (effWt === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
+          return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
+        };
         const maxAvailable = countForTier(99999);
         // Filter out tiers with 0 words, and dedupe tiers that yield the same count
         const seenCounts = new Set();
@@ -2467,9 +2483,30 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           seenCounts.add(c);
           return true;
         });
+        // Build 100-word incremental ranges based on rank values
+        const rangeSize = 100;
+        const ranges = [];
+        const maxRankTier = TIER_OPTIONS[TIER_OPTIONS.length - 1].value;
+        for (let i = 0; i < maxRankTier; i += rangeSize) {
+          const rMin = i;
+          const rMax = i + rangeSize;
+          const c = countForRange(rMin, rMax);
+          if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
+        }
         return (
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Vocabulary Level</label>
+          <div style={{display:"flex",gap:6,marginBottom:10}}>
+            <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="cumulative"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Cumulative</span>
+              <span style={{fontSize:10,color:"#64748b"}}>Top N words</span>
+            </button>
+            <button onClick={()=>{setTierMode("range");}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="range"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="range"?"rgba(139,92,246,0.1)":"transparent"}}>
+              <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Ranges</span>
+              <span style={{fontSize:10,color:"#64748b"}}>100-word chunks</span>
+            </button>
+          </div>
+          {tierMode==="cumulative"?(
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
             {filteredTiers.map(t=>{
                 const count = countForTier(t.value);
@@ -2485,7 +2522,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 const tierBest = (userData.bestScores || {})[tierKey];
                 const tierPct = tierBest ? tierBest.pct : 0;
                 return (
-                <button key={t.value} onClick={()=>setTier(t.value)} style={{...S.tierBtn,borderColor:tier===t.value?"#8B5CF6":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                <button key={t.value} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
                   {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{label}</span>
                   <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{desc}</span>
@@ -2494,6 +2531,24 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 );
             })}
           </div>
+          ):(
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:350,overflowY:"auto",paddingRight:4}}>
+            {ranges.map(r=>{
+                const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
+                const rangeKey = `${selectedGameMode}:range:${r.min+1}-${r.max}`;
+                const rangeBest = (userData.bestScores || {})[rangeKey];
+                const rangePct = rangeBest ? rangeBest.pct : 0;
+                return (
+                <button key={r.min} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":rangePct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:isSelected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                  {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{r.min+1}–{r.max}</span>
+                  <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{r.count} words</span>
+                  {rangePct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {rangePct}%</span>}
+                </button>
+                );
+            })}
+          </div>
+          )}
         </div>
         );
       })()}
