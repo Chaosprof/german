@@ -241,7 +241,6 @@ function buildBlitzQueue(tier, count, wordType, minRank) {
 function getAnswerModes(mode, gameMode) {
   if (gameMode === "matching") return ["matching"];
   if (gameMode === "reverse") return ["reverse"];
-  if (gameMode === "speed_sort") return ["article"];
   if (gameMode === "verb_forms") return ["verb_forms"];
   if (gameMode === "verb_prepositions") return ["verb_prep"];
   if (gameMode === "blitz_type") return ["blitz"];
@@ -323,12 +322,13 @@ async function loadGistData() {
   const gist = await gistFetch(`/gists/${gistId}`);
   const file = gist.files[GIST_FILENAME];
   if (!file) return { ...DEFAULT_DATA };
-  return JSON.parse(file.content);
+  return sanitizePersistedData(JSON.parse(file.content));
 }
 
 async function saveGistData(data) {
+  const sanitized = sanitizePersistedData(data);
   const gistId = getGistId();
-  const body = { files: { [GIST_FILENAME]: { content: JSON.stringify(data, null, 2) } } };
+  const body = { files: { [GIST_FILENAME]: { content: JSON.stringify(sanitized, null, 2) } } };
   if (gistId) {
     return gistFetch(`/gists/${gistId}`, { method: "PATCH", body: JSON.stringify(body) });
   } else {
@@ -415,7 +415,6 @@ const CAMPAIGN_STATES = [
       { id: "sh1", name: "Nordsee Basics", desc: "Article basics with top nouns", gameMode: "classic", mode: "article", tier: 100, difficulty: "easy", count: 15, icon: "1" },
       { id: "sh2", name: "Kieler Plurale", desc: "Plural forms practice", gameMode: "classic", mode: "plural", tier: 100, difficulty: "easy", count: 15, icon: "2" },
       { id: "sh3", name: "Watt-Matching", desc: "Match nouns to meanings", gameMode: "matching", mode: "article", tier: 100, difficulty: "easy", count: 20, icon: "3" },
-      { id: "sh4", name: "Ostsee Sprint", desc: "Speed Sort challenge", gameMode: "speed_sort", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "4" },
       { id: "sh5", name: "Leuchtturm-Boss", desc: "Articles + Plurals combined", gameMode: "classic", mode: "both", tier: 200, difficulty: "normal", count: 20, icon: "S" },
     ]
   },
@@ -459,8 +458,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "ni1", name: "Heide-Artikel", desc: "Heath article practice", gameMode: "classic", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "1" },
       { id: "ni2", name: "Harz Plurale", desc: "Mountain plurals", gameMode: "classic", mode: "plural", tier: 200, difficulty: "normal", count: 20, icon: "2" },
-      { id: "ni3", name: "Hannover Speed", desc: "Speed Sort drill", gameMode: "speed_sort", mode: "article", tier: 200, difficulty: "easy", count: 25, icon: "3" },
-      { id: "ni4", name: "Göttingen Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "4" },
+      { id: "ni4", name: "Göttingen Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 200, difficulty: "easy", count: 20, icon: "3" },
       { id: "ni5", name: "Niedersachsen-Boss", desc: "Full challenge", gameMode: "classic", mode: "both", tier: 300, difficulty: "normal", count: 25, icon: "S" },
     ]
   },
@@ -471,8 +469,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "be1", name: "Brandenburger Tor", desc: "Article drill - Top 300", gameMode: "classic", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "1" },
       { id: "be2", name: "Currywurst Plurale", desc: "Berlin plural challenge", gameMode: "classic", mode: "plural", tier: 300, difficulty: "normal", count: 20, icon: "2" },
-      { id: "be3", name: "Alexanderplatz", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "3" },
-      { id: "be4", name: "Fernsehturm Timed", desc: "Time Attack 60s", gameMode: "timed", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "4" },
+      { id: "be4", name: "Fernsehturm Timed", desc: "Time Attack 60s", gameMode: "timed", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "3" },
       { id: "be5", name: "Reichstag-Boss", desc: "Hard combined drill", gameMode: "classic", mode: "both", tier: 500, difficulty: "normal", count: 25, icon: "S" },
     ]
   },
@@ -493,8 +490,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "st1", name: "Luther-Artikel", desc: "Reformation words", gameMode: "classic", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "1" },
       { id: "st2", name: "Halle Plurale", desc: "Salt city plurals", gameMode: "classic", mode: "plural", tier: 300, difficulty: "normal", count: 20, icon: "2" },
-      { id: "st3", name: "Magdeburg Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 300, difficulty: "easy", count: 25, icon: "3" },
-      { id: "st4", name: "Elbe Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "4" },
+      { id: "st4", name: "Elbe Reverse", desc: "English to German", gameMode: "reverse", mode: "article", tier: 300, difficulty: "easy", count: 20, icon: "3" },
       { id: "st5", name: "Anhalt-Boss", desc: "Full challenge", gameMode: "classic", mode: "both", tier: 500, difficulty: "normal", count: 25, icon: "S" },
     ]
   },
@@ -516,8 +512,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "sn1", name: "Dresdner Artikel", desc: "Baroque city articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "1" },
       { id: "sn2", name: "Leipzig Plurale", desc: "Trade fair plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
-      { id: "sn3", name: "Erzgebirge Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "3" },
-      { id: "sn4", name: "Meißen Survival", desc: "Porcelain survival", gameMode: "survival", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "4" },
+      { id: "sn4", name: "Meißen Survival", desc: "Porcelain survival", gameMode: "survival", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "3" },
       { id: "sn5", name: "Sachsen-Boss", desc: "Combined hard drill", gameMode: "classic", mode: "both", tier: 500, difficulty: "hard", count: 25, icon: "S" },
     ]
   },
@@ -539,8 +534,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "he1", name: "Frankfurt Artikel", desc: "Financial articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "normal", count: 25, icon: "1" },
       { id: "he2", name: "Kassel Plurale", desc: "Documenta plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 25, icon: "2" },
-      { id: "he3", name: "Taunus Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 500, difficulty: "easy", count: 30, icon: "3" },
-      { id: "he4", name: "Wiesbaden Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 30, icon: "4" },
+      { id: "he4", name: "Wiesbaden Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 30, icon: "3" },
       { id: "he5", name: "Hessen-Boss", desc: "Top 1000 combined", gameMode: "classic", mode: "both", tier: 1000, difficulty: "normal", count: 25, icon: "S" },
     ]
   },
@@ -561,8 +555,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "sl1", name: "Saarbrücken", desc: "Bridge city articles", gameMode: "classic", mode: "article", tier: 500, difficulty: "normal", count: 20, icon: "1" },
       { id: "sl2", name: "Völklinger Plurale", desc: "Industrial plurals", gameMode: "classic", mode: "plural", tier: 500, difficulty: "normal", count: 20, icon: "2" },
-      { id: "sl3", name: "Saarschleife Speed", desc: "Speed Sort", gameMode: "speed_sort", mode: "article", tier: 500, difficulty: "easy", count: 25, icon: "3" },
-      { id: "sl4", name: "Saar Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 25, icon: "4" },
+      { id: "sl4", name: "Saar Timed", desc: "Time Attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 25, icon: "3" },
       { id: "sl5", name: "Saarland-Boss", desc: "Combined challenge", gameMode: "classic", mode: "both", tier: 1000, difficulty: "normal", count: 25, icon: "S" },
     ]
   },
@@ -584,8 +577,7 @@ const CAMPAIGN_STATES = [
     challenges: [
       { id: "by1", name: "München Artikel", desc: "Bavarian articles", gameMode: "classic", mode: "article", tier: 1000, difficulty: "normal", count: 25, icon: "1" },
       { id: "by2", name: "Neuschwanstein", desc: "Castle plurals", gameMode: "classic", mode: "plural", tier: 1000, difficulty: "normal", count: 25, icon: "2" },
-      { id: "by3", name: "Oktoberfest Speed", desc: "Speed Sort frenzy", gameMode: "speed_sort", mode: "article", tier: 1000, difficulty: "easy", count: 35, icon: "3" },
-      { id: "by4", name: "Alpen Timed", desc: "Alpine time attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 35, icon: "4" },
+      { id: "by4", name: "Alpen Timed", desc: "Alpine time attack", gameMode: "timed", mode: "article", tier: 1000, difficulty: "easy", count: 35, icon: "3" },
       { id: "by5", name: "Bayern-Boss", desc: "Final Boss: Top 1000, hard", gameMode: "classic", mode: "both", tier: 1000, difficulty: "hard", count: 30, icon: "S" },
     ]
   },
@@ -652,7 +644,6 @@ function calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, diffi
   if (difficulty === "normal") xp = Math.floor(xp * 1.25);
   if (difficulty === "hard") xp = Math.floor(xp * 1.5);
   if (playStyle === "timed" || gameMode === "timed") xp = Math.floor(xp * 1.3);
-  if (gameMode === "speed_sort") xp = Math.floor(xp * 1.25);
   if (playStyle === "survival" || gameMode === "survival") xp = Math.floor(xp * 1.4);
   if (activePerks.includes("double_xp")) xp *= 2;
 
@@ -730,7 +721,6 @@ function updateDailyStreak(streak) {
 // Game modes
 const GAME_MODES = [
   { id: "classic", name: "Article & Plural", desc: "Practice articles and plurals", icon: "📖" },
-  { id: "speed_sort", name: "Speed Sort", desc: "Sort nouns into der / die / das", icon: "⚡" },
   { id: "reverse", name: "Reverse", desc: "English to German translation", icon: "🔄" },
   { id: "matching", name: "Matching", desc: "Pair words and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
@@ -742,10 +732,34 @@ const NO_ANSWER = "__unanswered__";
 const NO_PLURAL_LABEL = "kein Plural";
 const MATCHING_BATCH_SIZE = 10;
 const TIMED_CHALLENGE_DURATION = 60;
-const SPEED_SORT_DURATION = 75;
 const BLITZ_TYPE_COUNT = 30;
 const BLITZ_PENALTY_SECONDS = 3;
 const BLITZ_PB_KEY = "artikelblitz_blitz_pb";
+const PERSISTED_BEST_SCORE_MODE_IDS = new Set([...GAME_MODES.map(({ id }) => id), "timed", "survival"]);
+const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(({ id }) => id));
+const VALID_CAMPAIGN_CHALLENGES = CAMPAIGN_STATES.reduce((acc, state) => {
+  acc[state.id] = new Set(state.challenges.map(ch => ch.id));
+  return acc;
+}, {});
+
+function sanitizePersistedData(data) {
+  if (!data || typeof data !== "object") return { ...DEFAULT_DATA };
+  const achievements = [...new Set((data.achievements || []).filter(id => VALID_ACHIEVEMENT_IDS.has(id)))];
+  const bestScores = Object.fromEntries(
+    Object.entries(data.bestScores || {}).filter(([key]) => PERSISTED_BEST_SCORE_MODE_IDS.has(key.split(":")[0]))
+  );
+  const campaignProgress = Object.fromEntries(
+    Object.entries(data.campaignProgress || {}).flatMap(([stateId, progress]) => {
+      const validChallenges = VALID_CAMPAIGN_CHALLENGES[stateId];
+      if (!validChallenges) return [];
+      const cleaned = Object.fromEntries(
+        Object.entries(progress || {}).filter(([challengeId]) => validChallenges.has(challengeId))
+      );
+      return Object.keys(cleaned).length ? [[stateId, cleaned]] : [];
+    })
+  );
+  return { ...data, achievements, bestScores, campaignProgress };
+}
 
 const PLURAL_FAMILY_PRIORITY = {
   none: ["same", "e", "en", "s"],
@@ -966,7 +980,7 @@ function GermanNounGame() {
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
-  const [gameMode, setGameMode] = useState("classic"); // classic|speed_sort|reverse|matching|verb_forms|blitz_type
+  const [gameMode, setGameMode] = useState("classic"); // classic|reverse|matching|verb_forms|verb_prepositions|blitz_type|timed|survival
   const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives|verbs|mixed
   const [playStyle, setPlayStyle] = useState("practice"); // practice|timed|survival
   const [timedSeconds, setTimedSeconds] = useState(10);
@@ -1004,15 +1018,6 @@ function GermanNounGame() {
   const matchingBatch = useMemo(() => (
     gameMode === "matching" ? queue.slice(currentIndex, currentIndex + MATCHING_BATCH_SIZE) : []
   ), [gameMode, queue, currentIndex]);
-  const speedSortUpcoming = useMemo(() => {
-    if (gameMode !== "speed_sort" || queue.length <= 1) return [];
-    const preview = [];
-    const count = Math.min(4, queue.length - 1);
-    for (let offset = 1; offset <= count; offset++) {
-      preview.push(queue[(currentIndex + offset) % queue.length]);
-    }
-    return preview;
-  }, [gameMode, queue, currentIndex]);
   const [matchingRightItems, setMatchingRightItems] = useState([]);
   const [matchingMatchedIds, setMatchingMatchedIds] = useState([]);
   const [matchingSelectedWord, setMatchingSelectedWord] = useState(null);
@@ -1048,7 +1053,7 @@ function GermanNounGame() {
     if (!getPat()) return;
     setSyncStatus("loading");
     loadGistData().then(d => {
-      const merged = { ...DEFAULT_DATA, ...d, dailyStreak: { ...DEFAULT_DATA.dailyStreak, ...(d.dailyStreak||{}) } };
+      const merged = sanitizePersistedData({ ...DEFAULT_DATA, ...d, dailyStreak: { ...DEFAULT_DATA.dailyStreak, ...(d.dailyStreak||{}) } });
       merged.level = levelFromXp(merged.xp);
       setUserData(merged); setSyncStatus("synced");
     }).catch(() => setSyncStatus("error"));
@@ -1067,10 +1072,11 @@ function GermanNounGame() {
   }, [gameMode, matchingBatch, matchingWordType]);
 
   const persistData = useCallback(async (newData) => {
-    setUserData(newData);
+    const sanitized = sanitizePersistedData(newData);
+    setUserData(sanitized);
     if (!getPat()) return;
     setSyncStatus("saving");
-    try { await saveGistData(newData); setSyncStatus("synced"); }
+    try { await saveGistData(sanitized); setSyncStatus("synced"); }
     catch { setSyncStatus("error"); }
   }, []);
 
@@ -1277,8 +1283,8 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "blitz_type" ? MODES.ARTICLE : m;
-    const effectiveDifficulty = gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "blitz_type" ? "easy" : (ps === "timed" ? "normal" : "easy");
+    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "blitz_type" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "blitz_type" ? "easy" : (ps === "timed" ? "normal" : "easy");
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
@@ -1293,7 +1299,6 @@ function GermanNounGame() {
     setMatchingMismatch(null);
     if (ps === "survival" || gMode === "survival") { setLives(3); setTimeLeft(0); }
     else if (gMode === "timed") { setGlobalTimer(TIMED_CHALLENGE_DURATION); setTimeLeft(0); }
-    else if (gMode === "speed_sort") { setGlobalTimer(SPEED_SORT_DURATION); setTimeLeft(0); }
     else if (ps === "timed") { setTimeLeft(ts); }
     else { setTimeLeft(0); }
     // Build session key for best-score tracking
@@ -1331,8 +1336,8 @@ function GermanNounGame() {
     if (!nouns.length) return;
 
     sessionAnswersRef.current = [];
-    const effectiveMode = (gMode === "reverse" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms") ? MODES.ARTICLE : m;
-    const effectiveDifficulty = (gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "speed_sort" || gMode === "verb_forms") ? "easy" : d;
+    const effectiveMode = (gMode === "reverse" || gMode === "matching" || gMode === "verb_forms") ? MODES.ARTICLE : m;
+    const effectiveDifficulty = (gMode === "survival" || gMode === "timed" || gMode === "matching" || gMode === "verb_forms") ? "easy" : d;
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
@@ -1345,7 +1350,6 @@ function GermanNounGame() {
     // Set playStyle based on campaign gameMode
     if (gMode === "survival") { setPlayStyle("survival"); setLives(3); setTimeLeft(0); }
     else if (gMode === "timed") { setPlayStyle("practice"); setGlobalTimer(TIMED_CHALLENGE_DURATION); setTimeLeft(0); }
-    else if (gMode === "speed_sort") { setPlayStyle("practice"); setGlobalTimer(SPEED_SORT_DURATION); setTimeLeft(0); }
     else { setPlayStyle("practice"); setTimeLeft(effectiveDifficulty === "easy" ? 0 : effectiveDifficulty === "hard" ? 8 : 15); }
     setScreen("game");
   }, []);
@@ -1428,8 +1432,7 @@ function GermanNounGame() {
   // Per-question timer (for timed playStyle or campaign difficulty modes)
   useEffect(() => {
     if (screen!=="game"||phase!=="question") return;
-    // Skip for modes with their own timing
-    if (gameMode==="speed_sort"||gameMode==="blitz_type") return;
+    if (gameMode==="blitz_type") return;
     // Only run if playStyle is timed, or legacy difficulty-based timer
     const isTimed = playStyle === "timed";
     const isLegacyTimed = difficulty !== "easy" && gameMode !== "timed" && gameMode !== "survival" && playStyle !== "survival";
@@ -1445,7 +1448,7 @@ function GermanNounGame() {
 
   // Global timer for timed modes
   useEffect(() => {
-    if (screen!=="game"||(gameMode!=="timed"&&gameMode!=="speed_sort")) return;
+    if (screen!=="game"||gameMode!=="timed") return;
     globalTimerRef.current = setInterval(() => {
       setGlobalTimer(p => { if(p<=1){clearInterval(globalTimerRef.current);endSession();return 0;} return p-1; });
     }, 1000);
@@ -1538,14 +1541,14 @@ function GermanNounGame() {
     // Second chance: retry same question
     if (feedback?.secondChance) {
       setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);
-      const noTimerReset = gameMode === "timed" || gameMode === "speed_sort" || playStyle === "survival" || gameMode === "survival";
+      const noTimerReset = gameMode === "timed" || playStyle === "survival" || gameMode === "survival";
       if (!noTimerReset && (playStyle === "timed" || difficulty !== "easy")) setTimeLeft(playStyle === "timed" ? timedSeconds : timeLimit);
       return;
     }
     const ni=currentIndex+1;
     if(ni>=queue.length){
-      if (gameMode === "timed" || gameMode === "speed_sort") {
-        // Loop for timed/sort modes
+      if (gameMode === "timed") {
+        // Loop for timed challenges
         setQueue(prev => shuffleArray([...prev]));
         setCurrentIndex(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);
         return;
@@ -1555,7 +1558,7 @@ function GermanNounGame() {
       endSession();return;
     }
     setCurrentIndex(ni);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);
-    const noTimerReset2 = gameMode === "timed" || gameMode === "speed_sort" || playStyle === "survival" || gameMode === "survival";
+    const noTimerReset2 = gameMode === "timed" || playStyle === "survival" || gameMode === "survival";
     if (!noTimerReset2 && (playStyle === "timed" || difficulty !== "easy")) setTimeLeft(playStyle === "timed" ? timedSeconds : timeLimit);
   }, [currentIndex, queue.length, timeLimit, gameMode, difficulty, feedback, playStyle, timedSeconds]);
 
@@ -1635,15 +1638,6 @@ function GermanNounGame() {
       }
       return true;
     };
-
-    if (gameMode === "speed_sort") {
-      if (correct) registerCorrect();
-      else if (!registerWrong()) return;
-      sessionAnswersRef.current.push({ noun: entryId, correct, modes: getAnswerModes(mode, gameMode) });
-      setTotalAnswered(pr=>pr+1);
-      nextQuestion();
-      return;
-    }
 
     if(correct) registerCorrect();
     else if (!registerWrong()) return;
@@ -1791,7 +1785,7 @@ function GermanNounGame() {
     if(screen!=="game"||phase!=="question"||gameMode==="matching") return;
     const h=(ev)=>{
       if(ev.target.tagName==="INPUT")return;
-      if(ev.key==="h"){if(gameMode!=="speed_sort") setShowHint(true);return;}
+      if(ev.key==="h"){setShowHint(true);return;}
       const choiceIndex = ["1","2","3"].indexOf(ev.key);
       if(choiceIndex===-1)return;
       if(mode===MODES.ARTICLE){handleArticle(["der","die","das"][choiceIndex]);return;}
@@ -1831,7 +1825,6 @@ function GermanNounGame() {
       : matchingSelectedMeaning
         ? `Choose the ${matchingWordType==="adjectives"?"German adjective":matchingWordType==="verbs"?"German verb":"German noun"} for ${selectedMeaningLabel}.`
         : `Find all ${matchingBatch.length} German-English pairs in the grid.`;
-  const timedModeDuration = gameMode === "speed_sort" ? SPEED_SORT_DURATION : TIMED_CHALLENGE_DURATION;
   const blitzCurrentWord = gameMode === "blitz_type" && blitzIndex < blitzQueue.length ? blitzQueue[blitzIndex] : null;
   const blitzTotalTime = blitzElapsed + blitzPenalty;
   const blitzTimeStr = (blitzTotalTime / 10).toFixed(1) + "s";
@@ -1847,7 +1840,7 @@ function GermanNounGame() {
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
   if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
-    loadGistData().then(d=>{const m={...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}};m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
+    loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
   if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
@@ -1874,9 +1867,8 @@ function GermanNounGame() {
     sessionAnswersRef.current = [];
     if (playStyle === "survival" || gameMode === "survival") setLives(3);
     if (gameMode === "timed") setGlobalTimer(TIMED_CHALLENGE_DURATION);
-    if (gameMode === "speed_sort") setGlobalTimer(SPEED_SORT_DURATION);
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
-    const noTimer = gameMode==="timed"||gameMode==="speed_sort"||playStyle==="survival"||gameMode==="survival";
+    const noTimer = gameMode==="timed"||playStyle==="survival"||gameMode==="survival";
     setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(noTimer?0:(playStyle==="timed"?timedSeconds:timeLimit));setScreen("game");
   }}/>;
 
@@ -1893,14 +1885,14 @@ function GermanNounGame() {
         </div>
         <div style={{textAlign:"right"}}>
           {(playStyle==="survival"||gameMode==="survival")&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
-          {(gameMode==="timed"||gameMode==="speed_sort")&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
+          {gameMode==="timed"&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
           {gameMode==="matching"&&<span style={S.progressText}>{matchingProgress} / {queue.length}</span>}
           {gameMode==="blitz_type"&&<span style={S.progressText}>{blitzIndex + 1} / {blitzQueue.length}</span>}
-          {playStyle!=="survival"&&gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&gameMode!=="matching"&&gameMode!=="blitz_type"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
+          {playStyle!=="survival"&&gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="matching"&&gameMode!=="blitz_type"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
         </div>
       </div>
-      {(playStyle==="timed"||(difficulty!=="easy"&&gameMode!=="timed"&&gameMode!=="speed_sort"&&playStyle!=="survival"&&gameMode!=="survival"))&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
-      {(gameMode==="timed"||gameMode==="speed_sort")&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/timedModeDuration)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
+      {(playStyle==="timed"||(difficulty!=="easy"&&gameMode!=="timed"&&playStyle!=="survival"&&gameMode!=="survival"))&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
+      {gameMode==="timed"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/TIMED_CHALLENGE_DURATION)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
       {gameMode==="blitz_type"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(blitzIndex/blitzQueue.length)*100}%`,backgroundColor:"#8B5CF6",transition:"width 0.3s"}}/></div>}
       <div style={S.statsRow}>
         {[["Accuracy",`${accuracy}%`,"#cbd5e1"],["Best",bestStreak,"#cbd5e1"],["Correct",totalCorrect,"#10B981"],["Wrong",wrongAnswers.length,"#f87171"]].map(([l,v,c])=>
@@ -1971,13 +1963,6 @@ function GermanNounGame() {
               <span style={{fontSize:13,color:"#64748b",textTransform:"uppercase",letterSpacing:2}}>Translate to German</span>
               <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9"}}>{(currentNoun[3]||"").split("/")[0]}</span>
               {currentNoun[1]&&<span style={{fontSize:14,color:ARTICLE_COLORS[currentNoun[1]],fontWeight:700}}>({currentNoun[1]})</span>}
-            </div>
-          ):gameMode==="speed_sort"?(
-            <div style={S.nounDisplay}>
-              <span style={S.speedSortEyebrow}>Speed Sort</span>
-              <span style={S.nounWord}>{currentNoun[0]}</span>
-              {showSenseHint&&<span style={S.nounSense}>{getMeaningLabel(currentNoun[3])}</span>}
-              <span style={S.speedSortPrompt}>Drop it into the right article lane.</span>
             </div>
           ):(
             <div style={S.nounDisplay}>
@@ -2096,30 +2081,7 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {gameMode==="speed_sort"&&phase==="question"&&(
-            <>
-              <div style={S.speedSortLanes}>
-                {["der","die","das"].map((art, idx)=>(
-                  <button key={art} onClick={()=>handleArticle(art)} style={{...S.speedSortLane,borderColor:ARTICLE_COLORS[art],background:`linear-gradient(180deg, ${ARTICLE_COLORS[art]}22, rgba(255,255,255,0.03))`}}>
-                    <span style={S.speedSortLaneKey}>{idx+1}</span>
-                    <span style={{...S.speedSortLaneMain,color:ARTICLE_COLORS[art]}}>{art}</span>
-                    <span style={S.speedSortLaneSub}>{art==="der"?"masculine lane":art==="die"?"feminine lane":"neuter lane"}</span>
-                  </button>
-                ))}
-              </div>
-              {speedSortUpcoming.length>0&&(
-                <div style={S.speedSortQueue}>
-                  <span style={S.speedSortQueueLabel}>Incoming</span>
-                  <div style={S.speedSortQueueList}>
-                    {speedSortUpcoming.map((noun, idx)=>(
-                      <span key={getNounEntryId(noun)+"-"+idx} style={S.speedSortChip}>{noun[0]}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&(mode===MODES.ARTICLE||mode===MODES.BOTH)&&(
             <div style={S.articleRow}>
               {["der","die","das"].map(art=>(
                 <button key={art} onClick={()=>handleArticle(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
@@ -2147,10 +2109,9 @@ function GermanNounGame() {
               </div>
             </div>
           )}
-          {gameMode==="speed_sort"&&phase==="question"&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | sort as many nouns as you can before time runs out</div>}
           {gameMode==="verb_forms"&&phase==="question"&&<div style={S.shortcutHint}>Type all three forms then press <kbd style={S.kbd}>Enter</kbd> to check. <kbd style={S.kbd}>Tab</kbd>/<kbd style={S.kbd}>Enter</kbd> to move between fields.</div>}
           {gameMode==="verb_prepositions"&&phase==="question"&&<div style={S.shortcutHint}>Type the preposition, select the case, then press <kbd style={S.kbd}>Enter</kbd> to check.</div>}
-          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="speed_sort"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
+          {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
         </div>
@@ -2414,7 +2375,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           })}
         </div>
       </div>
-      {selectedGameMode==="speed_sort"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Speed Sort always uses article sorting and a {SPEED_SORT_DURATION}s timer.</div>}
       {selectedGameMode==="verb_forms"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the Infinitiv, Präteritum (ich), and Partizip Perfekt for each irregular verb. {IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.</div>}
       {selectedGameMode==="verb_prepositions"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the fixed preposition and select the governed case for each verb. {VERB_PREPOSITIONS.length} verb+preposition combos available.</div>}
       {selectedGameMode==="blitz_type"&&(()=>{const pb=parseFloat(localStorage.getItem(BLITZ_PB_KEY)||"0");const wtLabel=matchWordType==="nouns"?"nouns":matchWordType==="adjectives"?"adjectives":matchWordType==="verbs"?"verbs":"mixed words (nouns, verbs, adjectives)";return <div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Translate {BLITZ_TYPE_COUNT} {wtLabel} from English to German as fast as you can. Wrong answers add +{BLITZ_PENALTY_SECONDS}s penalty.{(matchWordType==="nouns"||matchWordType==="mixed")&&" For nouns, include the article."}{pb>0&&<span style={{color:"#10B981",fontWeight:700}}>{" "}PB: {(pb/10).toFixed(1)}s</span>}</div>;})()}
@@ -2708,7 +2668,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Answer type (hidden for reverse and special game modes) ── */}
-      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="speed_sort"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
+      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -2721,8 +2681,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {/* ── Play Style (hidden for speed_sort/blitz_type which have own timing) ── */}
-      {selectedGameMode!=="speed_sort"&&selectedGameMode!=="blitz_type"&&(
+      {/* ── Play Style (hidden for Blitz Type, which has its own timing) ── */}
+      {selectedGameMode!=="blitz_type"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Play Style</label>
           <div style={{display:"flex",gap:8}}>
@@ -3144,19 +3104,8 @@ const S = {
   nounDisplay:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,marginBottom:28},
   nounWord:{fontSize:44,fontWeight:900,letterSpacing:"-1px",color:"#f1f5f9",textAlign:"center",lineHeight:1.1,wordBreak:"break-word"},
   nounSense:{fontSize:13,color:"#94a3b8",textAlign:"center",lineHeight:1.45,maxWidth:320},
-  speedSortEyebrow:{fontSize:12,color:"#f59e0b",textTransform:"uppercase",letterSpacing:2,fontWeight:800},
-  speedSortPrompt:{fontSize:13,color:"#94a3b8",textAlign:"center"},
   hintText:{fontSize:15,color:"#64748b",fontStyle:"italic"},
   hintBtn:{background:"none",border:"1px solid rgba(255,255,255,0.1)",color:"#64748b",fontSize:11,padding:"3px 10px",borderRadius:6,cursor:"pointer",textTransform:"uppercase",letterSpacing:1},
-  speedSortLanes:{width:"100%",display:"grid",gridTemplateColumns:"repeat(3, minmax(0, 1fr))",gap:10,marginBottom:14},
-  speedSortLane:{minHeight:120,border:"2px solid",borderRadius:14,padding:"14px 10px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,cursor:"pointer",fontFamily:"inherit",background:"rgba(255,255,255,0.03)",transition:"transform 0.12s ease, border-color 0.12s ease"},
-  speedSortLaneKey:{width:26,height:26,borderRadius:999,border:"1px solid rgba(255,255,255,0.18)",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#cbd5e1"},
-  speedSortLaneMain:{fontSize:30,fontWeight:900,letterSpacing:"-1px"},
-  speedSortLaneSub:{fontSize:10,color:"#cbd5e1",textTransform:"uppercase",letterSpacing:1.2,textAlign:"center"},
-  speedSortQueue:{width:"100%",display:"flex",flexDirection:"column",gap:8},
-  speedSortQueueLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:700},
-  speedSortQueueList:{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center"},
-  speedSortChip:{padding:"6px 10px",borderRadius:999,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",fontSize:12,color:"#cbd5e1"},
   matchingBoard:{width:"100%",display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,alignItems:"stretch"},
   matchingItemBtn:{width:"100%",background:"rgba(255,255,255,0.04)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"7px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,color:"#f1f5f9",fontFamily:"inherit",textAlign:"left",transition:"all 0.12s ease"},
   matchingItemStack:{display:"flex",flexDirection:"row",gap:6,alignItems:"center",minWidth:0,flexWrap:"wrap"},
@@ -3292,7 +3241,7 @@ function CampaignScreen({ campaignProgress, onSelectChallenge, onBack }) {
             {state.challenges.map((ch, idx) => {
               const stars = sp[ch.id] || 0;
               const chUnlocked = isChallengeUnlocked(state, idx, campaignProgress);
-              const modeLabel = {classic:"Classic",timed:"Time Attack",speed_sort:"Speed Sort",survival:"Survival",reverse:"Reverse",matching:"Matching"}[ch.gameMode] || ch.gameMode;
+              const modeLabel = {classic:"Classic",timed:"Time Attack",survival:"Survival",reverse:"Reverse",matching:"Matching"}[ch.gameMode] || ch.gameMode;
               const answerLabel = {article:"Articles",plural:"Plurals",both:"Both"}[ch.mode] || ch.mode;
               const isBoss = ch.icon === "S";
               return (
