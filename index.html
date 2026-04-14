@@ -225,25 +225,13 @@ function getVerbPrepositionsForTier(tier, minRank) {
   return VERB_PREPOSITIONS.filter(v => v[2] <= cutoff);
 }
 
-// Build a mixed queue of nouns, adjectives, and verbs for Blitz Type
-// Each entry: { type: "noun"|"adj"|"verb", german: "...", english: "...", article: "der"|"die"|"das"|"" }
-function buildBlitzQueue(tier, count, wordType, minRank) {
-  const nouns = (!wordType || wordType === "mixed" || wordType === "nouns") ? getNounsForTier(tier, minRank).filter(n => n[3]).map(n => ({ type: "noun", german: n[0], english: n[3], article: n[1] })) : [];
-  const adjs = (!wordType || wordType === "mixed" || wordType === "adjectives") ? getAdjectivesForTier(tier, minRank).filter(a => a[1]).map(a => ({ type: "adj", german: a[0], english: a[1], article: "" })) : [];
-  const verbs = (!wordType || wordType === "mixed" || wordType === "verbs") ? getVerbsForTier(tier, minRank).filter(v => v[1]).map(v => ({ type: "verb", german: v[0], english: v[1], article: "" })) : [];
-  const pool = shuffleArray([...nouns, ...adjs, ...verbs]);
-  // Deduplicate by german word
-  const seen = new Set();
-  const unique = pool.filter(w => { if (seen.has(w.german)) return false; seen.add(w.german); return true; });
-  return unique.slice(0, count);
-}
 // Answer mode helpers for per-mode tracking
 function getAnswerModes(mode, gameMode) {
   if (gameMode === "matching") return ["matching"];
   if (gameMode === "reverse") return ["reverse"];
   if (gameMode === "verb_forms") return ["verb_forms"];
   if (gameMode === "verb_prepositions") return ["verb_prep"];
-  if (gameMode === "blitz_type") return ["blitz"];
+  if (gameMode === "runner") return ["article"];
   if (mode === MODES.BOTH) return ["article", "plural"];
   if (mode === MODES.PLURAL) return ["plural"];
   return ["article"];
@@ -725,17 +713,15 @@ const GAME_MODES = [
   { id: "matching", name: "Matching", desc: "Pair words and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "verb_prepositions", name: "Verb + Preposition", desc: "Practice verb-preposition combos & case", icon: "🎯" },
-  { id: "blitz_type", name: "Blitz Type", desc: "Speed-translate words", icon: "🚀" },
+  { id: "runner", name: "Artikel Runner", desc: "Subway Surfer-style article game", icon: "🏃" },
 ];
 
 const NO_ANSWER = "__unanswered__";
 const NO_PLURAL_LABEL = "kein Plural";
 const MATCHING_BATCH_SIZE = 10;
 const TIMED_CHALLENGE_DURATION = 60;
-const BLITZ_TYPE_COUNT = 30;
-const BLITZ_PENALTY_SECONDS = 3;
-const BLITZ_PB_KEY = "artikelblitz_blitz_pb";
 const PERSISTED_BEST_SCORE_MODE_IDS = new Set([...GAME_MODES.map(({ id }) => id), "timed", "survival"]);
+const VALID_PERSISTED_MODE_STAT_IDS = new Set(["article", "plural", "matching", "reverse", "verb_forms", "verb_prep"]);
 const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(({ id }) => id));
 const VALID_CAMPAIGN_CHALLENGES = CAMPAIGN_STATES.reduce((acc, state) => {
   acc[state.id] = new Set(state.challenges.map(ch => ch.id));
@@ -748,6 +734,12 @@ function sanitizePersistedData(data) {
   const bestScores = Object.fromEntries(
     Object.entries(data.bestScores || {}).filter(([key]) => PERSISTED_BEST_SCORE_MODE_IDS.has(key.split(":")[0]))
   );
+  const modeStats = Object.fromEntries(
+    Object.entries(data.modeStats || {}).filter(([key]) => VALID_PERSISTED_MODE_STAT_IDS.has(key.split(":")[0]))
+  );
+  const modeMastered = Object.fromEntries(
+    Object.entries(data.modeMastered || {}).filter(([modeId]) => VALID_PERSISTED_MODE_STAT_IDS.has(modeId))
+  );
   const campaignProgress = Object.fromEntries(
     Object.entries(data.campaignProgress || {}).flatMap(([stateId, progress]) => {
       const validChallenges = VALID_CAMPAIGN_CHALLENGES[stateId];
@@ -758,7 +750,7 @@ function sanitizePersistedData(data) {
       return Object.keys(cleaned).length ? [[stateId, cleaned]] : [];
     })
   );
-  return { ...data, achievements, bestScores, campaignProgress };
+  return { ...data, achievements, bestScores, modeStats, modeMastered, campaignProgress };
 }
 
 const PLURAL_FAMILY_PRIORITY = {
@@ -950,6 +942,1058 @@ function dedupeMistakesByNoun(mistakes) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// ARTIKEL RUNNER — Subway Surfer-style der/die/das game
+// ═══════════════════════════════════════════════════════════════
+function ArtikelRunner({ queue, onEnd }) {
+  const canvasRef = useRef(null);
+  const stateRef = useRef(null);
+  const animFrameRef = useRef(null);
+  const touchStartRef = useRef(null);
+  const onEndRef = useRef(onEnd);
+  onEndRef.current = onEnd;
+  const resultsRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    let cw = 0, ch = 0;
+    const resize = () => {
+      cw = Math.min(window.innerWidth, 500);
+      ch = Math.min(window.innerHeight, 920);
+      canvas.style.width = cw + "px";
+      canvas.style.height = ch + "px";
+      canvas.width = cw * dpr;
+      canvas.height = ch * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // ── 3D Perspective ──
+    const HORIZON = 0.30;
+    const VP_X = 0.5;
+    const ROAD_W_TOP = 0.05;
+    const ROAD_W_BOT = 0.48;
+    const PLAYER_Z_BASE = 0.84;
+    const ARTICLES = ["der", "die", "das"];
+    const ART_COLORS = { "der": "#3B82F6", "die": "#EC4899", "das": "#10B981" };
+    const ART_DARK  = { "der": "#1e40af", "die": "#9d174d", "das": "#065f46" };
+    const ART_GLOW  = { "der": "rgba(59,130,246,", "die": "rgba(236,72,153,", "das": "rgba(16,185,129," };
+    const LIVES = 3;
+    const INITIAL_SPEED = 0.016;
+    const MAX_SPEED = 0.035;
+    const SPEED_INC = 0.00035;
+    const STRIPE_COUNT = 28;
+    const TILE_ROWS = 18;
+
+    const projY = (z) => (HORIZON + z * (1 - HORIZON)) * ch;
+    const projScale = (z) => ROAD_W_TOP + z * (ROAD_W_BOT - ROAD_W_TOP);
+    const projX = (lane, z) => {
+      const hw = projScale(z) * cw;
+      return VP_X * cw + (lane - 1) * hw * 0.6;
+    };
+    const projHW = (z) => projScale(z) * cw;
+
+    // ── Game state ──
+    const gs = {
+      lane: 1, targetLane: 1, laneSmooth: 1,
+      coins: [],
+      obstacles: [],     // { z, lane, hit }
+      wordIndex: 0,
+      speed: INITIAL_SPEED,
+      lives: LIVES,
+      score: 0, streak: 0, bestStreak: 0,
+      totalCorrect: 0, totalAnswered: 0,
+      wrongAnswers: [], sessionAnswers: [],
+      gameOver: false, gameOverTimer: 0,
+      frame: 0, stripeOffset: 0,
+      particles: [],
+      floatingTexts: [],
+      flashColor: null, flashTimer: 0,
+      shakeTimer: 0, shakeX: 0, shakeY: 0,
+      coinSpawnTimer: 0, coinSpawnInterval: 50,
+      obstacleTimer: 0, obstacleInterval: 180,
+      jumpVel: 0, jumpY: 0, isJumping: false,
+      tileOffset: 0,
+      distance: 0,
+    };
+    stateRef.current = gs;
+
+    const spawnCoin = () => {
+      const idx = gs.wordIndex % queue.length;
+      gs.coins.push({ z: -0.15, wordIndex: idx, passed: false });
+      gs.wordIndex++;
+    };
+    const spawnObstacle = () => {
+      const lane = Math.floor(Math.random() * 3);
+      // Don't spawn obstacle too close to a coin
+      const tooClose = gs.coins.some(c => !c.passed && Math.abs(c.z - (-0.15)) < 0.2);
+      if (tooClose) return;
+      gs.obstacles.push({ z: -0.15, lane, hit: false });
+    };
+
+    const getCurrentWord = () => {
+      for (const c of gs.coins) if (!c.passed) return queue[c.wordIndex % queue.length];
+      return queue[gs.wordIndex % queue.length];
+    };
+
+    const addParticles = (sx, sy, color, count, spread) => {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const v = 2 + Math.random() * (spread || 5);
+        gs.particles.push({ x: sx, y: sy, vx: Math.cos(angle)*v, vy: Math.sin(angle)*v - 3,
+          life: 20 + Math.random()*25, maxLife: 45, color, size: 2+Math.random()*5 });
+      }
+    };
+    const addFloatingText = (text, x, y, color, big) => {
+      gs.floatingTexts.push({ text, x, y, vy: -2.5, life: 45, maxLife: 45, color, big: !!big });
+    };
+
+    // ── Input ──
+    const moveLane = (dir) => {
+      if (gs.gameOver) return;
+      gs.targetLane = Math.max(0, Math.min(2, gs.targetLane + dir));
+    };
+    const jump = () => {
+      if (gs.gameOver || gs.isJumping) return;
+      gs.isJumping = true;
+      gs.jumpVel = -12;
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowLeft" || e.key === "a") { e.preventDefault(); moveLane(-1); }
+      else if (e.key === "ArrowRight" || e.key === "d") { e.preventDefault(); moveLane(1); }
+      else if (e.key === "ArrowUp" || e.key === "w" || e.key === " ") { e.preventDefault(); jump(); }
+    };
+    const handleTouchStart = (e) => {
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+    };
+    const handleTouchEnd = (e) => {
+      if (!touchStartRef.current) return;
+      const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
+      const dy = e.changedTouches[0].clientY - touchStartRef.current.y;
+      if (Math.abs(dy) > Math.abs(dx) && dy < -30) { jump(); }
+      else if (Math.abs(dx) > 25) moveLane(dx > 0 ? 1 : -1);
+      touchStartRef.current = null;
+    };
+    const handleClick = (e) => {
+      if (gs.gameOver) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      moveLane(x < cw/2 ? -1 : 1);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
+    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
+    canvas.addEventListener("click", handleClick);
+
+    // ── Drawing ──
+    const drawSky = () => {
+      const hLine = HORIZON * ch;
+      const sky = ctx.createLinearGradient(0, 0, 0, hLine);
+      sky.addColorStop(0, "#050518");
+      sky.addColorStop(0.4, "#0c0c2a");
+      sky.addColorStop(0.8, "#151540");
+      sky.addColorStop(1, "#1f1f55");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, cw, hLine + 2);
+      // Stars
+      const rng = (seed) => { let s = seed; return () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; };
+      const r = rng(42);
+      for (let i = 0; i < 80; i++) {
+        const sx = r() * cw, sy = r() * hLine * 0.88;
+        const twinkle = Math.sin(gs.frame * 0.025 + i * 2.3) * 0.35 + 0.65;
+        ctx.globalAlpha = (0.25 + r() * 0.55) * twinkle;
+        ctx.fillStyle = "#fff";
+        const sz = 0.8 + r() * 1.5;
+        ctx.fillRect(sx, sy, sz, sz);
+      }
+      ctx.globalAlpha = 1;
+      // Moon
+      ctx.fillStyle = "rgba(200,200,255,0.06)";
+      ctx.beginPath(); ctx.arc(cw * 0.78, hLine * 0.22, 28, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "rgba(220,220,255,0.12)";
+      ctx.beginPath(); ctx.arc(cw * 0.78, hLine * 0.22, 18, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "rgba(240,240,255,0.25)";
+      ctx.beginPath(); ctx.arc(cw * 0.78, hLine * 0.22, 12, 0, Math.PI*2); ctx.fill();
+      // City skyline
+      const r2 = rng(77);
+      for (let i = 0; i < 40; i++) {
+        const bx = r2() * cw;
+        const bw = 6 + r2() * 28;
+        const bh = 8 + r2() * 55;
+        const brightness = 15 + r2() * 20;
+        ctx.fillStyle = `rgb(${brightness},${brightness},${brightness + 15})`;
+        ctx.fillRect(bx - bw/2, hLine - bh, bw, bh + 2);
+        // Windows
+        if (bw > 12 && bh > 20) {
+          for (let wy = hLine - bh + 4; wy < hLine - 3; wy += 8) {
+            for (let wx = bx - bw/2 + 3; wx < bx + bw/2 - 3; wx += 7) {
+              if (r2() > 0.5) {
+                ctx.fillStyle = `rgba(255,220,100,${0.15 + r2() * 0.25})`;
+                ctx.fillRect(wx, wy, 3, 4);
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const drawRoad = () => {
+      const hLine = HORIZON * ch;
+      // Main road trapezoid
+      const topL = VP_X * cw - ROAD_W_TOP * cw;
+      const topR = VP_X * cw + ROAD_W_TOP * cw;
+      const botL = VP_X * cw - ROAD_W_BOT * cw;
+      const botR = VP_X * cw + ROAD_W_BOT * cw;
+
+      // Sidewalk / ground outside road
+      const gndGrad = ctx.createLinearGradient(0, hLine, 0, ch);
+      gndGrad.addColorStop(0, "#1a1a35");
+      gndGrad.addColorStop(1, "#12122a");
+      ctx.fillStyle = gndGrad;
+      ctx.fillRect(0, hLine, cw, ch - hLine);
+
+      // Road surface with slight texture
+      const roadGrad = ctx.createLinearGradient(0, hLine, 0, ch);
+      roadGrad.addColorStop(0, "#333355");
+      roadGrad.addColorStop(0.15, "#2a2a48");
+      roadGrad.addColorStop(0.5, "#252540");
+      roadGrad.addColorStop(1, "#1e1e38");
+      ctx.fillStyle = roadGrad;
+      ctx.beginPath();
+      ctx.moveTo(topL, hLine); ctx.lineTo(topR, hLine);
+      ctx.lineTo(botR, ch); ctx.lineTo(botL, ch);
+      ctx.closePath(); ctx.fill();
+
+      // Checkered ground tiles (perspective)
+      gs.tileOffset = (gs.tileOffset + gs.speed * 55) % (2 / TILE_ROWS);
+      for (let i = 0; i < TILE_ROWS; i++) {
+        const zFrac = ((i / TILE_ROWS + gs.tileOffset) % 1);
+        const z = zFrac * zFrac;
+        const y1 = projY(z);
+        const zFrac2 = (((i+1) / TILE_ROWS + gs.tileOffset) % 1);
+        const z2 = zFrac2 * zFrac2;
+        const y2 = projY(z2);
+        if (y2 <= y1) continue;
+        const hw1 = projHW(z);
+        const hw2 = projHW(z2);
+        const cx = VP_X * cw;
+        // Alternating stripe on road
+        if (i % 2 === 0) {
+          ctx.fillStyle = `rgba(255,255,255,${Math.min(0.04, z * 0.08)})`;
+          ctx.beginPath();
+          ctx.moveTo(cx - hw1, y1); ctx.lineTo(cx + hw1, y1);
+          ctx.lineTo(cx + hw2, y2); ctx.lineTo(cx - hw2, y2);
+          ctx.closePath(); ctx.fill();
+        }
+      }
+
+      // Animated dashed center stripes
+      gs.stripeOffset = (gs.stripeOffset + gs.speed * 50) % (2 / STRIPE_COUNT);
+      for (let i = 0; i < STRIPE_COUNT; i++) {
+        const zFrac = ((i / STRIPE_COUNT + gs.stripeOffset) % 1);
+        const z = zFrac * zFrac;
+        const y = projY(z);
+        const hw = projHW(z);
+        const cx = VP_X * cw;
+        const alpha = Math.min(1, z * 3) * 0.22;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.lineWidth = 1 + z * 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cx - hw, y); ctx.lineTo(cx + hw, y);
+        ctx.stroke();
+      }
+
+      // Lane dividers (converging dashed lines)
+      for (let side = -1; side <= 1; side += 2) {
+        const laneOff = side * 0.333;
+        ctx.setLineDash([8, 12]);
+        ctx.strokeStyle = "rgba(255,255,200,0.18)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 40; i++) {
+          const z = (i/40) * (i/40);
+          const y = projY(z);
+          const hw = projHW(z);
+          const x = VP_X * cw + laneOff * hw;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Side walls with neon rails
+      for (const sign of [-1, 1]) {
+        // Wall fill
+        ctx.fillStyle = "rgba(30,30,60,0.6)";
+        ctx.beginPath();
+        for (let i = 0; i <= 40; i++) {
+          const z = (i/40)*(i/40);
+          const y = projY(z);
+          const hw = projHW(z);
+          const x = VP_X * cw + sign * (hw + 4);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        for (let i = 40; i >= 0; i--) {
+          const z = (i/40)*(i/40);
+          const y = projY(z);
+          const hw = projHW(z);
+          const wallH = 3 + z * 18;
+          const x = VP_X * cw + sign * (hw + 4);
+          ctx.lineTo(x, y - wallH);
+        }
+        ctx.closePath(); ctx.fill();
+
+        // Neon rail on top of wall
+        ctx.strokeStyle = "rgba(139,92,246,0.7)";
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = "rgba(139,92,246,0.5)";
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        for (let i = 0; i <= 40; i++) {
+          const z = (i/40)*(i/40);
+          const y = projY(z);
+          const hw = projHW(z);
+          const wallH = 3 + z * 18;
+          const x = VP_X * cw + sign * (hw + 4);
+          if (i === 0) ctx.moveTo(x, y - wallH); else ctx.lineTo(x, y - wallH);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Ground neon line
+        ctx.strokeStyle = "rgba(100,80,200,0.25)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let i = 0; i <= 40; i++) {
+          const z = (i/40)*(i/40);
+          const y = projY(z);
+          const hw = projHW(z);
+          const x = VP_X * cw + sign * hw;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    };
+
+    const drawObstacle3D = (obs) => {
+      const z = obs.z;
+      if (z < 0 || z > 1.15) return;
+      const zz = z * z;
+      const scale = projScale(zz);
+      const sx = projX(obs.lane, zz);
+      const sy = projY(zz);
+      const hw = scale * cw * 0.09;
+      const hh = scale * cw * 0.14;
+      if (hw < 2) return;
+
+      // Shadow
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.beginPath();
+      ctx.ellipse(sx, sy + 2, hw * 1.1, hw * 0.2, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      // Barrier body (3D box look)
+      // Front face
+      const fGrad = ctx.createLinearGradient(sx - hw, sy - hh, sx + hw, sy);
+      fGrad.addColorStop(0, "#ef4444");
+      fGrad.addColorStop(0.5, "#dc2626");
+      fGrad.addColorStop(1, "#b91c1c");
+      ctx.fillStyle = fGrad;
+      ctx.beginPath();
+      ctx.moveTo(sx - hw, sy);
+      ctx.lineTo(sx - hw, sy - hh);
+      ctx.lineTo(sx + hw, sy - hh);
+      ctx.lineTo(sx + hw, sy);
+      ctx.closePath();
+      ctx.fill();
+
+      // Top face (3D effect)
+      const topDepth = hh * 0.2;
+      ctx.fillStyle = "#f87171";
+      ctx.beginPath();
+      ctx.moveTo(sx - hw, sy - hh);
+      ctx.lineTo(sx - hw * 0.7, sy - hh - topDepth);
+      ctx.lineTo(sx + hw * 1.3, sy - hh - topDepth);
+      ctx.lineTo(sx + hw, sy - hh);
+      ctx.closePath();
+      ctx.fill();
+
+      // Right face
+      ctx.fillStyle = "#991b1b";
+      ctx.beginPath();
+      ctx.moveTo(sx + hw, sy - hh);
+      ctx.lineTo(sx + hw * 1.3, sy - hh - topDepth);
+      ctx.lineTo(sx + hw * 1.3, sy - topDepth);
+      ctx.lineTo(sx + hw, sy);
+      ctx.closePath();
+      ctx.fill();
+
+      // Warning stripes
+      const stripeW = hw * 0.35;
+      ctx.fillStyle = "rgba(255,255,255,0.25)";
+      for (let si = 0; si < 3; si++) {
+        const sx2 = sx - hw + stripeW * si * 2.2 + hw * 0.15;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(sx - hw, sy); ctx.lineTo(sx - hw, sy - hh);
+        ctx.lineTo(sx + hw, sy - hh); ctx.lineTo(sx + hw, sy);
+        ctx.closePath(); ctx.clip();
+        ctx.translate(sx2, sy - hh/2);
+        ctx.rotate(-0.4);
+        ctx.fillRect(-stripeW/2, -hh, stripeW, hh * 2);
+        ctx.restore();
+      }
+
+      // Danger glow
+      const dGlow = ctx.createRadialGradient(sx, sy - hh/2, 0, sx, sy - hh/2, hw * 2);
+      dGlow.addColorStop(0, "rgba(239,68,68,0.15)");
+      dGlow.addColorStop(1, "rgba(239,68,68,0)");
+      ctx.fillStyle = dGlow;
+      ctx.beginPath();
+      ctx.arc(sx, sy - hh/2, hw * 2, 0, Math.PI*2);
+      ctx.fill();
+    };
+
+    const drawCoin3D = (lane, z, article, bobOffset) => {
+      if (z < -0.05 || z > 1.12) return;
+      const zz = z * z;
+      const scale = projScale(zz);
+      const screenX = projX(lane, zz);
+      const screenY = projY(zz);
+      const radius = scale * cw * 0.12;  // MUCH bigger coins
+      if (radius < 4) return;
+      const color = ART_COLORS[article];
+      const dark = ART_DARK[article];
+      const glowBase = ART_GLOW[article];
+      const bob = Math.sin(gs.frame * 0.09 + bobOffset) * radius * 0.1;
+      const cy = screenY + bob - radius * 0.3; // float above road
+      const spin = gs.frame * 0.04 + bobOffset; // rotation feel
+      const stretch = 0.85 + Math.sin(spin) * 0.12; // slight wobble
+
+      // Shadow on road
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.beginPath();
+      ctx.ellipse(screenX, screenY + 3, radius * 0.7, radius * 0.15, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      // Outer glow (big and colorful)
+      const glow = ctx.createRadialGradient(screenX, cy, radius * 0.2, screenX, cy, radius * 2.2);
+      glow.addColorStop(0, glowBase + "0.3)");
+      glow.addColorStop(0.5, glowBase + "0.08)");
+      glow.addColorStop(1, glowBase + "0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(screenX, cy, radius * 2.2, 0, Math.PI*2);
+      ctx.fill();
+
+      // Coin edge (3D rim — thick dark ring behind)
+      ctx.fillStyle = dark;
+      ctx.beginPath();
+      ctx.ellipse(screenX + 1.5, cy + 3, radius * stretch + 3, radius + 3, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      // Coin main face — rich gradient
+      const faceGrad = ctx.createRadialGradient(
+        screenX - radius*0.25, cy - radius*0.25, radius * 0.05,
+        screenX, cy, radius * stretch
+      );
+      faceGrad.addColorStop(0, "#ffffff");
+      faceGrad.addColorStop(0.12, color);
+      faceGrad.addColorStop(0.55, color);
+      faceGrad.addColorStop(0.85, dark);
+      faceGrad.addColorStop(1, dark);
+      ctx.fillStyle = faceGrad;
+      ctx.beginPath();
+      ctx.ellipse(screenX, cy, radius * stretch, radius, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      // Inner ring (gold-ish border)
+      ctx.strokeStyle = "rgba(255,255,255,0.3)";
+      ctx.lineWidth = Math.max(1.5, radius * 0.06);
+      ctx.beginPath();
+      ctx.ellipse(screenX, cy, radius * stretch * 0.78, radius * 0.78, 0, 0, Math.PI*2);
+      ctx.stroke();
+
+      // Second inner ring
+      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.lineWidth = Math.max(1, radius * 0.04);
+      ctx.beginPath();
+      ctx.ellipse(screenX, cy, radius * stretch * 0.88, radius * 0.88, 0, 0, Math.PI*2);
+      ctx.stroke();
+
+      // Specular highlight (top-left sheen)
+      ctx.fillStyle = "rgba(255,255,255,0.35)";
+      ctx.beginPath();
+      ctx.ellipse(screenX - radius*0.2, cy - radius*0.28, radius*0.38, radius*0.22, -0.3, 0, Math.PI*2);
+      ctx.fill();
+      // Secondary softer highlight
+      ctx.fillStyle = "rgba(255,255,255,0.1)";
+      ctx.beginPath();
+      ctx.ellipse(screenX + radius*0.1, cy + radius*0.25, radius*0.45, radius*0.18, 0.2, 0, Math.PI*2);
+      ctx.fill();
+
+      // Article text — BIG and bold inside coin
+      const fontSize = Math.max(10, radius * 0.95);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      // Text shadow
+      ctx.fillStyle = "rgba(0,0,0,0.4)";
+      ctx.font = `900 ${fontSize}px JetBrains Mono, sans-serif`;
+      ctx.fillText(article, screenX + 1, cy + 2);
+      // Main text
+      ctx.fillStyle = "#fff";
+      ctx.font = `900 ${fontSize}px JetBrains Mono, sans-serif`;
+      ctx.fillText(article, screenX, cy);
+    };
+
+    const drawPlayer3D = () => {
+      const pz = PLAYER_Z_BASE;
+      const scale = projScale(pz) * cw;
+      const px = projX(gs.laneSmooth, pz);
+      const baseY = projY(pz);
+      const jumpOffset = gs.jumpY;
+      const py = baseY + jumpOffset;
+      const sz = scale * 0.15;
+      const bob = gs.isJumping ? 0 : Math.sin(gs.frame * 0.28) * sz * 0.06;
+      const lean = (gs.targetLane - gs.laneSmooth) * 0.3;
+      const legCycle = gs.frame * 0.35;
+      const runAmp = gs.isJumping ? 0.15 : 1;
+
+      ctx.save();
+      ctx.translate(px, py + bob);
+      ctx.rotate(lean);
+
+      // Shadow on ground (at baseY, not affected by jump)
+      ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.translate(px * dpr, baseY * dpr);
+      const shadowScale = 1 - Math.min(1, Math.abs(jumpOffset) / 80) * 0.4;
+      ctx.scale(shadowScale, shadowScale);
+      ctx.fillStyle = `rgba(0,0,0,${0.35 * shadowScale})`;
+      ctx.beginPath();
+      ctx.ellipse(0, 4 * dpr, sz * 0.9 * dpr, sz * 0.15 * dpr, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.translate(px, py + bob);
+      ctx.rotate(lean);
+
+      // Shoes
+      const legSpread = Math.sin(legCycle) * sz * 0.5 * runAmp;
+      ctx.fillStyle = "#1e1b4b";
+      ctx.beginPath();
+      ctx.ellipse(-sz*0.15 - legSpread*0.3, sz*0.92, sz*0.14, sz*0.08, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(sz*0.15 + legSpread*0.3, sz*0.92, sz*0.14, sz*0.08, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      // Legs
+      ctx.strokeStyle = "#4338ca";
+      ctx.lineWidth = sz * 0.24;
+      ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(-sz*0.1, sz*0.2);
+      ctx.lineTo(-sz*0.15 - legSpread*0.3, sz*0.85 + Math.abs(legSpread)*0.12);
+      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sz*0.1, sz*0.2);
+      ctx.lineTo(sz*0.15 + legSpread*0.3, sz*0.85 - Math.abs(legSpread)*0.12);
+      ctx.stroke();
+
+      // Body (torso with hoodie look)
+      const bodyGrad = ctx.createLinearGradient(0, -sz*0.65, 0, sz*0.3);
+      bodyGrad.addColorStop(0, "#7c3aed");
+      bodyGrad.addColorStop(0.6, "#6d28d9");
+      bodyGrad.addColorStop(1, "#5b21b6");
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.moveTo(-sz*0.34, sz*0.2);
+      ctx.quadraticCurveTo(-sz*0.38, -sz*0.15, -sz*0.3, -sz*0.5);
+      ctx.quadraticCurveTo(0, -sz*0.72, sz*0.3, -sz*0.5);
+      ctx.quadraticCurveTo(sz*0.38, -sz*0.15, sz*0.34, sz*0.2);
+      ctx.closePath();
+      ctx.fill();
+      // Hoodie front line
+      ctx.strokeStyle = "rgba(0,0,0,0.15)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, -sz*0.55); ctx.lineTo(0, sz*0.15); ctx.stroke();
+
+      // Arms
+      const armSwing = Math.sin(legCycle + Math.PI) * sz * 0.4 * runAmp;
+      ctx.strokeStyle = "#7c3aed";
+      ctx.lineWidth = sz * 0.2;
+      ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(-sz*0.32, -sz*0.25);
+      ctx.lineTo(-sz*0.52 - armSwing*0.3, sz*0.1 + armSwing*0.25);
+      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sz*0.32, -sz*0.25);
+      ctx.lineTo(sz*0.52 + armSwing*0.3, sz*0.1 - armSwing*0.25);
+      ctx.stroke();
+      // Hands
+      ctx.fillStyle = "#fde68a";
+      ctx.beginPath();
+      ctx.arc(-sz*0.52 - armSwing*0.3, sz*0.1 + armSwing*0.25, sz*0.07, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath();
+      ctx.arc(sz*0.52 + armSwing*0.3, sz*0.1 - armSwing*0.25, sz*0.07, 0, Math.PI*2); ctx.fill();
+
+      // Head
+      const headR = sz * 0.26;
+      const headGrad = ctx.createRadialGradient(-headR*0.15, -sz*0.72 - headR*0.15, 0, 0, -sz*0.72, headR);
+      headGrad.addColorStop(0, "#fef3c7");
+      headGrad.addColorStop(1, "#fbbf24");
+      ctx.fillStyle = headGrad;
+      ctx.beginPath();
+      ctx.arc(0, -sz*0.72, headR, 0, Math.PI*2);
+      ctx.fill();
+
+      // Hair
+      ctx.fillStyle = "#78350f";
+      ctx.beginPath();
+      ctx.ellipse(0, -sz*0.72 - headR*0.5, headR*0.9, headR*0.5, 0, Math.PI, Math.PI*2);
+      ctx.fill();
+      // Hair side
+      ctx.fillRect(-headR*0.85, -sz*0.72 - headR*0.2, headR*0.2, headR*0.5);
+      ctx.fillRect(headR*0.65, -sz*0.72 - headR*0.2, headR*0.2, headR*0.5);
+
+      // Eyes
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.ellipse(-headR*0.32, -sz*0.73, headR*0.15, headR*0.13, 0, 0, Math.PI*2); ctx.fill();
+      ctx.ellipse(headR*0.32, -sz*0.73, headR*0.15, headR*0.13, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "#1e1b4b";
+      ctx.beginPath();
+      ctx.arc(-headR*0.3, -sz*0.73, headR*0.07, 0, Math.PI*2); ctx.fill();
+      ctx.arc(headR*0.34, -sz*0.73, headR*0.07, 0, Math.PI*2); ctx.fill();
+
+      // Mouth
+      ctx.strokeStyle = "#92400e";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(0, -sz*0.64, headR*0.2, 0.15, Math.PI - 0.15);
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Glow trail behind player
+      const trailGrad = ctx.createRadialGradient(px, baseY, 0, px, baseY, sz * 2.5);
+      trailGrad.addColorStop(0, "rgba(124,58,237,0.2)");
+      trailGrad.addColorStop(1, "rgba(124,58,237,0)");
+      ctx.fillStyle = trailGrad;
+      ctx.beginPath();
+      ctx.arc(px, baseY, sz * 2.5, 0, Math.PI*2);
+      ctx.fill();
+    };
+
+    const drawHUD = () => {
+      const noun = getCurrentWord();
+      const word = noun ? noun[0] : "";
+      const english = noun ? noun[3] : "";
+
+      // Top gradient overlay
+      const topGrad = ctx.createLinearGradient(0, 0, 0, 105);
+      topGrad.addColorStop(0, "rgba(5,5,20,0.94)");
+      topGrad.addColorStop(0.7, "rgba(5,5,20,0.5)");
+      topGrad.addColorStop(1, "rgba(5,5,20,0)");
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(0, 0, cw, 105);
+
+      // Word (huge, centered)
+      ctx.textBaseline = "top";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "rgba(139,92,246,0.8)";
+      ctx.shadowBlur = 20;
+      ctx.fillStyle = "#fff";
+      ctx.font = `900 ${Math.min(42, cw*0.09)}px JetBrains Mono, sans-serif`;
+      ctx.fillText(word, cw/2, 10);
+      ctx.shadowBlur = 0;
+
+      // English
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = `500 ${Math.min(15, cw*0.033)}px JetBrains Mono, sans-serif`;
+      ctx.fillText(english, cw/2, 56);
+
+      // Score (top right)
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#f1f5f9";
+      ctx.font = `800 22px JetBrains Mono, sans-serif`;
+      ctx.fillText(gs.score.toLocaleString(), cw - 12, 10);
+
+      // Streak
+      if (gs.streak >= 3) {
+        const pulse = 1 + Math.sin(gs.frame * 0.15) * 0.12;
+        ctx.font = `700 ${15 * pulse}px JetBrains Mono, sans-serif`;
+        ctx.fillStyle = gs.streak >= 10 ? "#EF4444" : "#F59E0B";
+        ctx.fillText(`x${gs.streak}`, cw - 12, 36);
+      }
+
+      // Lives
+      ctx.textAlign = "left";
+      for (let i = 0; i < LIVES; i++) {
+        const hx = 12 + i * 30, hy = 16;
+        const alive = i < gs.lives;
+        ctx.fillStyle = alive ? "#EF4444" : "rgba(255,255,255,0.1)";
+        if (alive) { ctx.shadowColor = "rgba(239,68,68,0.6)"; ctx.shadowBlur = 8; }
+        ctx.beginPath();
+        ctx.moveTo(hx, hy + 4);
+        ctx.bezierCurveTo(hx, hy, hx - 9, hy - 3, hx - 9, hy + 5);
+        ctx.bezierCurveTo(hx - 9, hy + 11, hx, hy + 17, hx, hy + 19);
+        ctx.bezierCurveTo(hx, hy + 17, hx + 9, hy + 11, hx + 9, hy + 5);
+        ctx.bezierCurveTo(hx + 9, hy - 3, hx, hy, hx, hy + 4);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      // Speed bar
+      const speedPct = Math.min(1, (gs.speed - INITIAL_SPEED) / (MAX_SPEED - INITIAL_SPEED));
+      ctx.fillStyle = "rgba(255,255,255,0.06)";
+      const barY = 42;
+      ctx.beginPath(); ctx.roundRect(12, barY, 75, 5, 3); ctx.fill();
+      const spClr = speedPct > 0.7 ? "#EF4444" : speedPct > 0.4 ? "#F59E0B" : "#10B981";
+      ctx.fillStyle = spClr;
+      ctx.beginPath(); ctx.roundRect(12, barY, 75 * speedPct, 5, 3); ctx.fill();
+
+      // Bottom lane labels
+      ctx.textBaseline = "bottom";
+      const labels = ["der", "die", "das"];
+      for (let i = 0; i < 3; i++) {
+        const lx = projX(i, PLAYER_Z_BASE + 0.07);
+        const ly = ch - 6;
+        ctx.fillStyle = ART_COLORS[labels[i]];
+        ctx.font = `900 18px JetBrains Mono, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.globalAlpha = gs.lane === i ? 1 : 0.35;
+        ctx.shadowColor = ART_COLORS[labels[i]];
+        ctx.shadowBlur = gs.lane === i ? 10 : 0;
+        ctx.fillText(labels[i], lx, ly);
+        ctx.shadowBlur = 0;
+      }
+      ctx.globalAlpha = 1;
+
+      // Jump hint (subtle)
+      if (gs.frame < 180 && gs.obstacles.length === 0) {
+        ctx.globalAlpha = 0.5 - gs.frame * 0.002;
+        if (ctx.globalAlpha > 0) {
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "500 12px JetBrains Mono, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText("Swipe up / Space / W to jump obstacles", cw/2, 76);
+        }
+        ctx.globalAlpha = 1;
+      }
+    };
+
+    const drawParticles = () => {
+      gs.particles.forEach(p => {
+        const alpha = p.life / p.maxLife;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 4;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (0.4 + alpha * 0.6), 0, Math.PI*2);
+        ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    };
+
+    const drawFloatingTexts = () => {
+      gs.floatingTexts.forEach(ft => {
+        const alpha = ft.life / ft.maxLife;
+        const scale = ft.big ? 1.6 : 1;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = ft.color;
+        ctx.font = `900 ${(20 + (1-alpha)*10) * scale}px JetBrains Mono, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = ft.color;
+        ctx.shadowBlur = 12;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.shadowBlur = 0;
+      });
+      ctx.globalAlpha = 1;
+    };
+
+    const drawFlash = () => {
+      if (gs.flashTimer <= 0) return;
+      const alpha = (gs.flashTimer / 20) * 0.25;
+      ctx.fillStyle = gs.flashColor === "green"
+        ? `rgba(16,185,129,${alpha})` : `rgba(239,68,68,${alpha})`;
+      ctx.fillRect(0, 0, cw, ch);
+    };
+
+    const drawGameOver = () => {
+      ctx.fillStyle = "rgba(5,5,15,0.9)";
+      ctx.fillRect(0, 0, cw, ch);
+      const cy = ch / 2 - 40;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(239,68,68,0.5)"; ctx.shadowBlur = 25;
+      ctx.fillStyle = "#f1f5f9";
+      ctx.font = "900 46px JetBrains Mono, sans-serif";
+      ctx.fillText("GAME OVER", cw/2, cy - 55);
+      ctx.shadowBlur = 0;
+
+      // Score panel
+      ctx.fillStyle = "rgba(139,92,246,0.1)";
+      ctx.strokeStyle = "rgba(139,92,246,0.25)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(cw/2-120, cy-15, 240, 120, 14); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = "#a78bfa";
+      ctx.font = "800 36px JetBrains Mono, sans-serif";
+      ctx.fillText(gs.score.toLocaleString(), cw/2, cy + 18);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "600 12px JetBrains Mono, sans-serif";
+      ctx.fillText("SCORE", cw/2, cy + 44);
+
+      const acc = gs.totalAnswered > 0 ? Math.round((gs.totalCorrect/gs.totalAnswered)*100) : 0;
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "600 14px JetBrains Mono, sans-serif";
+      ctx.fillText(`${gs.totalCorrect}/${gs.totalAnswered} correct (${acc}%)`, cw/2, cy + 72);
+      ctx.fillText(`Best streak: ${gs.bestStreak}`, cw/2, cy + 94);
+
+      const pulse = 0.45 + Math.sin(gs.frame * 0.06) * 0.35;
+      ctx.globalAlpha = pulse;
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "500 14px JetBrains Mono, sans-serif";
+      ctx.fillText("Tap or press any key", cw/2, cy + 145);
+      ctx.globalAlpha = 1;
+    };
+
+    // ── Game Over exit ──
+    let gameOverHandled = false;
+    const gameOverExit = () => {
+      if (!gs.gameOver || gameOverHandled || gs.gameOverTimer > 0) return;
+      gameOverHandled = true;
+      resultsRef.current = {
+        score: gs.score, totalCorrect: gs.totalCorrect, totalAnswered: gs.totalAnswered,
+        bestStreak: gs.bestStreak, streak: gs.streak,
+        wrongAnswers: gs.wrongAnswers, sessionAnswers: gs.sessionAnswers,
+      };
+      onEndRef.current(resultsRef.current);
+    };
+    window.addEventListener("keydown", gameOverExit);
+    canvas.addEventListener("click", gameOverExit);
+    canvas.addEventListener("touchstart", gameOverExit);
+
+    // ── Update ──
+    const update = () => {
+      gs.frame++;
+      if (gs.gameOver) { gs.gameOverTimer--; return; }
+
+      // Lane smoothing
+      gs.laneSmooth += (gs.targetLane - gs.laneSmooth) * 0.22;
+      gs.lane = gs.targetLane;
+
+      // Jump physics
+      if (gs.isJumping) {
+        gs.jumpY += gs.jumpVel;
+        gs.jumpVel += 0.65; // gravity
+        if (gs.jumpY >= 0) { gs.jumpY = 0; gs.jumpVel = 0; gs.isJumping = false; }
+      }
+
+      // Speed ramp
+      gs.speed = Math.min(MAX_SPEED, INITIAL_SPEED + gs.totalAnswered * SPEED_INC);
+      gs.distance += gs.speed;
+
+      // Spawn coins (frequently!)
+      gs.coinSpawnTimer++;
+      if (gs.coinSpawnTimer >= gs.coinSpawnInterval) {
+        spawnCoin();
+        gs.coinSpawnTimer = 0;
+        gs.coinSpawnInterval = Math.max(28, 50 - gs.totalAnswered * 0.5);
+      }
+
+      // Spawn obstacles
+      gs.obstacleTimer++;
+      if (gs.obstacleTimer >= gs.obstacleInterval && gs.totalAnswered >= 3) {
+        spawnObstacle();
+        gs.obstacleTimer = 0;
+        gs.obstacleInterval = Math.max(90, 180 - gs.totalAnswered * 2);
+      }
+
+      // Move everything forward
+      gs.coins.forEach(c => { c.z += gs.speed; });
+      gs.obstacles.forEach(o => { o.z += gs.speed; });
+
+      // Coin collision
+      const hitZone = 0.045;
+      gs.coins.forEach(coin => {
+        if (coin.passed) return;
+        const czz = coin.z * coin.z;
+        if (czz >= PLAYER_Z_BASE - hitZone && czz <= PLAYER_Z_BASE + hitZone) {
+          coin.passed = true;
+          const noun = queue[coin.wordIndex % queue.length];
+          const correctArticle = noun[1];
+          const pickedArticle = ARTICLES[gs.lane];
+          const entryId = noun[5] || noun[0];
+          const sx = projX(gs.lane, PLAYER_Z_BASE);
+          const sy = projY(PLAYER_Z_BASE) + gs.jumpY;
+
+          gs.totalAnswered++;
+          if (pickedArticle === correctArticle) {
+            gs.totalCorrect++;
+            gs.streak++;
+            gs.bestStreak = Math.max(gs.bestStreak, gs.streak);
+            const bonus = gs.streak >= 20 ? 50 : gs.streak >= 10 ? 30 : gs.streak >= 5 ? 20 : 10;
+            gs.score += bonus;
+            gs.flashColor = "green"; gs.flashTimer = 16;
+            addParticles(sx, sy, ART_COLORS[correctArticle], 22, 6);
+            addFloatingText(`+${bonus}`, sx, sy - 40, ART_COLORS[correctArticle]);
+            if (gs.streak === 5) addFloatingText("GREAT!", cw/2, ch*0.38, "#F59E0B", true);
+            if (gs.streak === 10) addFloatingText("AMAZING!", cw/2, ch*0.38, "#EF4444", true);
+            if (gs.streak === 25) addFloatingText("LEGENDARY!", cw/2, ch*0.38, "#8B5CF6", true);
+            gs.sessionAnswers.push({ noun: entryId, correct: true, modes: ["article"] });
+          } else {
+            gs.streak = 0;
+            gs.lives--;
+            gs.flashColor = "red"; gs.flashTimer = 20;
+            gs.shakeTimer = 14;
+            addParticles(sx, sy, "#EF4444", 14, 4);
+            addFloatingText(correctArticle, sx, sy - 35, ART_COLORS[correctArticle]);
+            gs.wrongAnswers.push({ noun: noun[0], entryId, article: correctArticle, plural: noun[2], english: noun[3], userArticle: pickedArticle });
+            gs.sessionAnswers.push({ noun: entryId, correct: false, modes: ["article"] });
+            if (gs.lives <= 0) { gs.gameOver = true; gs.gameOverTimer = 50; }
+          }
+        }
+      });
+
+      // Obstacle collision
+      gs.obstacles.forEach(obs => {
+        if (obs.hit) return;
+        const ozz = obs.z * obs.z;
+        if (ozz >= PLAYER_Z_BASE - 0.04 && ozz <= PLAYER_Z_BASE + 0.03) {
+          if (obs.lane === gs.lane && !gs.isJumping) {
+            // Hit obstacle!
+            obs.hit = true;
+            gs.lives--;
+            gs.flashColor = "red"; gs.flashTimer = 25;
+            gs.shakeTimer = 18;
+            const sx = projX(obs.lane, PLAYER_Z_BASE);
+            const sy = projY(PLAYER_Z_BASE);
+            addParticles(sx, sy, "#EF4444", 20, 6);
+            addFloatingText("CRASH!", sx, sy - 40, "#EF4444", true);
+            if (gs.lives <= 0) { gs.gameOver = true; gs.gameOverTimer = 50; }
+          } else if (obs.lane === gs.lane && gs.isJumping) {
+            // Jumped over it — bonus!
+            obs.hit = true;
+            gs.score += 5;
+            const sx = projX(obs.lane, PLAYER_Z_BASE);
+            const sy = projY(PLAYER_Z_BASE) + gs.jumpY;
+            addFloatingText("+5", sx, sy - 30, "#a78bfa");
+            addParticles(sx, sy + 20, "#a78bfa", 8, 3);
+          }
+        }
+      });
+
+      // Cleanup coins
+      gs.coins = gs.coins.filter(c => {
+        if (c.z > 1.15 && !c.passed) {
+          const noun = queue[c.wordIndex % queue.length];
+          const entryId = noun[5] || noun[0];
+          gs.totalAnswered++;
+          gs.streak = 0;
+          gs.lives--;
+          gs.flashColor = "red"; gs.flashTimer = 16;
+          gs.shakeTimer = 10;
+          addFloatingText("MISS!", cw/2, ch*0.55, "#EF4444", true);
+          gs.wrongAnswers.push({ noun: noun[0], entryId, article: noun[1], plural: noun[2], english: noun[3], userArticle: "__missed__" });
+          gs.sessionAnswers.push({ noun: entryId, correct: false, modes: ["article"] });
+          if (gs.lives <= 0) { gs.gameOver = true; gs.gameOverTimer = 50; }
+          return false;
+        }
+        return c.z <= 1.3;
+      });
+      // Cleanup obstacles
+      gs.obstacles = gs.obstacles.filter(o => o.z <= 1.3);
+
+      // Particles & floating texts
+      gs.particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.14; p.life--; });
+      gs.particles = gs.particles.filter(p => p.life > 0);
+      gs.floatingTexts.forEach(ft => { ft.y += ft.vy; ft.life--; });
+      gs.floatingTexts = gs.floatingTexts.filter(ft => ft.life > 0);
+      if (gs.flashTimer > 0) gs.flashTimer--;
+      if (gs.shakeTimer > 0) {
+        gs.shakeX = (Math.random()-0.5) * 8;
+        gs.shakeY = (Math.random()-0.5) * 5;
+        gs.shakeTimer--;
+      } else { gs.shakeX = 0; gs.shakeY = 0; }
+    };
+
+    // ── Render ──
+    const render = () => {
+      ctx.save();
+      ctx.translate(gs.shakeX, gs.shakeY);
+      ctx.clearRect(-10, -10, cw+20, ch+20);
+      drawSky();
+      drawRoad();
+
+      // Collect all z-sorted renderables
+      const renderables = [];
+      gs.coins.filter(c => !c.passed).forEach((coin, ci) => {
+        renderables.push({ type: "coin", z: coin.z, coin, ci });
+      });
+      gs.obstacles.filter(o => !o.hit).forEach(obs => {
+        renderables.push({ type: "obstacle", z: obs.z, obs });
+      });
+      renderables.push({ type: "player", z: Math.sqrt(PLAYER_Z_BASE) });
+      renderables.sort((a, b) => a.z - b.z);
+
+      renderables.forEach(r => {
+        if (r.type === "coin") {
+          for (let lane = 0; lane < 3; lane++) {
+            drawCoin3D(lane, r.coin.z, ARTICLES[lane], r.ci * 2.1 + lane * 0.7);
+          }
+        } else if (r.type === "obstacle") {
+          drawObstacle3D(r.obs);
+        } else {
+          drawPlayer3D();
+        }
+      });
+
+      drawParticles();
+      drawFloatingTexts();
+      drawFlash();
+      ctx.restore();
+      drawHUD();
+      if (gs.gameOver) drawGameOver();
+    };
+
+    // ── Init ──
+    gs.laneSmooth = 1;
+    spawnCoin();
+
+    const loop = () => {
+      update();
+      render();
+      animFrameRef.current = requestAnimationFrame(loop);
+    };
+    animFrameRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", gameOverExit);
+      window.removeEventListener("resize", resize);
+      canvas.removeEventListener("touchstart", handleTouchStart);
+      canvas.removeEventListener("touchend", handleTouchEnd);
+      canvas.removeEventListener("click", handleClick);
+      canvas.removeEventListener("click", gameOverExit);
+      canvas.removeEventListener("touchstart", gameOverExit);
+    };
+  }, [queue]);
+
+  return (
+    <div style={{display:"flex",justifyContent:"center",alignItems:"center",width:"100vw",height:"100vh",background:"#09090b",position:"fixed",top:0,left:0,zIndex:50}}>
+      <canvas ref={canvasRef} style={{display:"block",touchAction:"none"}} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
 function GermanNounGame() {
@@ -980,7 +2024,7 @@ function GermanNounGame() {
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
-  const [gameMode, setGameMode] = useState("classic"); // classic|reverse|matching|verb_forms|verb_prepositions|blitz_type|timed|survival
+  const [gameMode, setGameMode] = useState("classic"); // classic|reverse|matching|verb_forms|verb_prepositions|timed|survival
   const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives|verbs|mixed
   const [playStyle, setPlayStyle] = useState("practice"); // practice|timed|survival
   const [timedSeconds, setTimedSeconds] = useState(10);
@@ -996,15 +2040,6 @@ function GermanNounGame() {
   // Verb Prepositions state
   const [verbPrepInputs, setVerbPrepInputs] = useState({preposition: "", case: ""});
   const verbPrepRef = useRef(null);
-  // Blitz Type state
-  const [blitzQueue, setBlitzQueue] = useState([]); // [{type, german, english, article}]
-  const [blitzIndex, setBlitzIndex] = useState(0);
-  const [blitzInput, setBlitzInput] = useState("");
-  const [blitzElapsed, setBlitzElapsed] = useState(0); // in tenths of a second
-  const [blitzPenalty, setBlitzPenalty] = useState(0); // total penalty in tenths
-  const [blitzFlash, setBlitzFlash] = useState(null); // "correct"|"wrong"|null
-  const blitzTimerRef = useRef(null);
-  const blitzInputRef = useRef(null);
   const [usedSecondChance, setUsedSecondChance] = useState(false);
   const [usedStreakShield, setUsedStreakShield] = useState(false);
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
@@ -1170,7 +2205,7 @@ function GermanNounGame() {
     // Normalize adj/verb to noun-like format [word, article, plural, english, rank]
     const normalizeAdj = (a) => [a[0], "", "", a[1], a[2]];
     const normalizeVerb = (v) => [v[0], "", "", v[1], v[2]];
-    const supportsWt = gMode === "matching" || gMode === "reverse" || gMode === "blitz_type";
+    const supportsWt = gMode === "matching" || gMode === "reverse";
 
     // Helper to resolve a word name to its entry (noun, adj, or verb)
     const resolveWordEntry = (name, forMode) => {
@@ -1190,21 +2225,7 @@ function GermanNounGame() {
       // Weakest words mode - filtered by effective word type
       const effWeakType = supportsWt ? wType : (gMode === "verb_forms" ? "verbs" : "nouns");
       const weakNames = getWeakestNouns(userData.nounStats, 30, effWeakType === "mixed" ? undefined : effWeakType);
-      if (gMode === "blitz_type") {
-        const bq = weakNames.map(name => {
-          const adj = ADJECTIVES.find(a => a[0] === name);
-          if (adj) return { type: "adj", german: adj[0], english: adj[1], article: "" };
-          const verb = VERBS.find(v => v[0] === name);
-          if (verb) return { type: "verb", german: verb[0], english: verb[1], article: "" };
-          const noun = getNounByName(name);
-          if (noun) return { type: "noun", german: noun[0], english: noun[3], article: noun[1] };
-          return null;
-        }).filter(Boolean);
-        if (bq.length < 3) { alert("Not enough data yet — play some sessions first!"); return; }
-        setBlitzQueue(shuffleArray(bq));
-        setBlitzIndex(0); setBlitzInput(""); setBlitzElapsed(0); setBlitzPenalty(0); setBlitzFlash(null);
-        nouns = [["_blitz_placeholder"]];
-      } else if (gMode === "verb_forms") {
+      if (gMode === "verb_forms") {
         const weakVerbs = weakNames.flatMap(name => { const v = IRREGULAR_VERBS.find(iv => iv[0] === name); return v ? [v] : []; });
         nouns = shuffleArray(weakVerbs);
       } else if (gMode === "matching") {
@@ -1257,17 +2278,6 @@ function GermanNounGame() {
       nouns = shuffleArray(unique.filter(v => v[1]));
       if (!nouns.length) { alert("No verb+preposition data available for this tier"); return; }
       setActiveDeck(null);
-    } else if (gMode === "blitz_type") {
-      const bq = buildBlitzQueue(t, BLITZ_TYPE_COUNT, wType === "mixed" ? null : wType, tierMinVal);
-      if (bq.length < 5) { alert("Not enough words available for this tier"); return; }
-      setBlitzQueue(bq);
-      setBlitzIndex(0);
-      setBlitzInput("");
-      setBlitzElapsed(0);
-      setBlitzPenalty(0);
-      setBlitzFlash(null);
-      nouns = [["_blitz_placeholder"]]; // non-empty so the guard below passes
-      setActiveDeck(null);
     } else if (deckId) {
       const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
       if (!deck) return;
@@ -1283,12 +2293,12 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "blitz_type" ? MODES.ARTICLE : m;
-    const effectiveDifficulty = gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "blitz_type" ? "easy" : (ps === "timed" ? "normal" : "easy");
+    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "runner" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "runner" ? "easy" : (ps === "timed" ? "normal" : "easy");
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
-    setTier(t);setQueue(gMode === "blitz_type" ? nouns : shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
+    setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
     setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
     setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
     setUsedSecondChance(false);setUsedStreakShield(false);
@@ -1356,12 +2366,7 @@ function GermanNounGame() {
 
   // End session: calculate XP, coins, achievements, tier unlocks
   const endSession = useCallback(() => {
-    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current); clearInterval(blitzTimerRef.current);
-    // Save blitz timing for results screen (if not already saved by handleBlitzSubmit)
-    if (gameMode === "blitz_type") {
-      localStorage.setItem("_blitz_elapsed", String(blitzElapsed));
-      localStorage.setItem("_blitz_penalty", String(blitzPenalty));
-    }
+    clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
     if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
     sessionAnswersRef.current = [];
 
@@ -1427,12 +2432,11 @@ function GermanNounGame() {
     });
 
     setScreen("results");
-  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, tier, campaignChallenge, blitzElapsed, blitzPenalty, sessionKey, sessionTotal]);
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, tier, campaignChallenge, sessionKey, sessionTotal]);
 
   // Per-question timer (for timed playStyle or campaign difficulty modes)
   useEffect(() => {
     if (screen!=="game"||phase!=="question") return;
-    if (gameMode==="blitz_type") return;
     // Only run if playStyle is timed, or legacy difficulty-based timer
     const isTimed = playStyle === "timed";
     const isLegacyTimed = difficulty !== "easy" && gameMode !== "timed" && gameMode !== "survival" && playStyle !== "survival";
@@ -1454,73 +2458,6 @@ function GermanNounGame() {
     }, 1000);
     return () => clearInterval(globalTimerRef.current);
   }, [screen, gameMode]);
-
-  // Blitz Type timer (counts up in tenths of seconds)
-  useEffect(() => {
-    if (screen !== "game" || gameMode !== "blitz_type") return;
-    blitzTimerRef.current = setInterval(() => {
-      setBlitzElapsed(p => p + 1);
-    }, 100);
-    return () => clearInterval(blitzTimerRef.current);
-  }, [screen, gameMode]);
-
-  const handleBlitzSubmit = useCallback((ev) => {
-    ev?.preventDefault();
-    if (gameMode !== "blitz_type" || blitzIndex >= blitzQueue.length) return;
-    const item = blitzQueue[blitzIndex];
-    const typed = blitzInput.trim();
-    if (!typed) return;
-
-    // For nouns, expect "article word" (e.g. "der Hund")
-    let correct = false;
-    if (item.type === "noun") {
-      const parts = typed.split(/\s+/);
-      if (parts.length >= 2) {
-        const typedArt = parts[0].toLowerCase();
-        const typedWord = parts.slice(1).join(" ");
-        correct = typedArt === item.article && (typedWord === item.german || normalize(typedWord) === normalize(item.german));
-      }
-    } else {
-      correct = typed === item.german || normalize(typed) === normalize(item.german);
-    }
-
-    setTotalAnswered(p => p + 1);
-
-    if (correct) {
-      setTotalCorrect(p => p + 1);
-      setScore(p => p + 100);
-      setStreak(p => { const n = p + 1; setBestStreak(b => Math.max(b, n)); return n; });
-      setBlitzFlash("correct");
-    } else {
-      setStreak(0);
-      setBlitzPenalty(p => p + BLITZ_PENALTY_SECONDS * 10);
-      setBlitzFlash("wrong");
-      setWrongAnswers(p => [...p, {
-        noun: item.german, entryId: item.german, article: item.article, plural: "", english: item.english,
-        userArticle: NO_ANSWER, userPlural: NO_ANSWER, blitzTyped: typed, blitzWordType: item.type,
-      }]);
-    }
-
-    setTimeout(() => setBlitzFlash(null), 250);
-    setBlitzInput("");
-
-    const nextIdx = blitzIndex + 1;
-    if (nextIdx >= blitzQueue.length) {
-      // Save timing data for results screen
-      const finalPenalty = blitzPenalty + (correct ? 0 : BLITZ_PENALTY_SECONDS * 10);
-      const finalElapsed = blitzElapsed;
-      const finalTime = finalElapsed + finalPenalty;
-      localStorage.setItem("_blitz_elapsed", String(finalElapsed));
-      localStorage.setItem("_blitz_penalty", String(finalPenalty));
-      const prevPb = parseFloat(localStorage.getItem(BLITZ_PB_KEY) || "999999");
-      if (finalTime < prevPb) localStorage.setItem(BLITZ_PB_KEY, String(finalTime));
-      clearInterval(blitzTimerRef.current);
-      setTimeout(() => endSession(), 300);
-    } else {
-      setBlitzIndex(nextIdx);
-    }
-    setTimeout(() => blitzInputRef.current?.focus(), 50);
-  }, [gameMode, blitzIndex, blitzQueue, blitzInput, blitzElapsed, blitzPenalty, endSession]);
 
   const handleTimeout = useCallback(() => {
     if (!currentNoun) return;
@@ -1802,7 +2739,6 @@ function GermanNounGame() {
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_forms") setTimeout(()=>verbInfRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_prepositions") setTimeout(()=>verbPrepRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
-  useEffect(() => { if(screen==="game"&&gameMode==="blitz_type") setTimeout(()=>blitzInputRef.current?.focus(),100); }, [screen,gameMode,blitzIndex]);
 
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const effectiveTimeLimit = playStyle === "timed" ? timedSeconds : timeLimit;
@@ -1825,12 +2761,6 @@ function GermanNounGame() {
       : matchingSelectedMeaning
         ? `Choose the ${matchingWordType==="adjectives"?"German adjective":matchingWordType==="verbs"?"German verb":"German noun"} for ${selectedMeaningLabel}.`
         : `Find all ${matchingBatch.length} German-English pairs in the grid.`;
-  const blitzCurrentWord = gameMode === "blitz_type" && blitzIndex < blitzQueue.length ? blitzQueue[blitzIndex] : null;
-  const blitzTotalTime = blitzElapsed + blitzPenalty;
-  const blitzTimeStr = (blitzTotalTime / 10).toFixed(1) + "s";
-  const blitzPenaltyStr = blitzPenalty > 0 ? "+" + (blitzPenalty / 10).toFixed(1) + "s" : "";
-  const blitzPb = parseFloat(localStorage.getItem(BLITZ_PB_KEY) || "0");
-  const blitzPbStr = blitzPb > 0 ? (blitzPb / 10).toFixed(1) + "s" : "";
 
   if(screen==="campaign") return <CampaignScreen
     campaignProgress={userData.campaignProgress || {}}
@@ -1851,16 +2781,6 @@ function GermanNounGame() {
     } else if (gameMode === "verb_prepositions") {
       const wrongKeys = new Set(wrongAnswers.map(w => w.vpVerb+"|"+w.vpPreposition));
       nd = VERB_PREPOSITIONS.filter(v => wrongKeys.has(v[0]+"|"+v[3]));
-    } else if (gameMode === "blitz_type") {
-      // Rebuild blitz queue from wrong answers
-      const bq = wrongAnswers.map(w => ({ type: w.blitzWordType || "noun", german: w.noun, english: w.english, article: w.article }));
-      setBlitzQueue(shuffleArray(bq));
-      setBlitzIndex(0);
-      setBlitzInput("");
-      setBlitzElapsed(0);
-      setBlitzPenalty(0);
-      setBlitzFlash(null);
-      nd = [["_blitz_placeholder"]];
     } else {
       nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDrillEntriesByName(w.entryId || w.noun));
     }
@@ -1872,65 +2792,76 @@ function GermanNounGame() {
     setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(noTimer?0:(playStyle==="timed"?timedSeconds:timeLimit));setScreen("game");
   }}/>;
 
+  // Artikel Runner mode — full-screen canvas game
+  if (gameMode === "runner" && screen === "game") {
+    const handleRunnerEnd = (results) => {
+      // Transfer runner results into main state
+      sessionAnswersRef.current = results.sessionAnswers;
+      setScore(results.score);
+      setTotalCorrect(results.totalCorrect);
+      setTotalAnswered(results.totalAnswered);
+      setBestStreak(results.bestStreak);
+      setStreak(results.streak);
+      setWrongAnswers(results.wrongAnswers);
+      // Direct transition to results - inline the endSession logic
+      clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
+      if (results.sessionAnswers.length) updateNounStats(results.sessionAnswers);
+      const rewards = calcSessionRewards(results.totalCorrect, results.totalAnswered, results.bestStreak, mode, difficulty, userData.activePerks || [], gameMode, playStyle);
+      setSessionRewards(rewards);
+      setUserData(prev => {
+        const newXp = (prev.xp || 0) + rewards.xp;
+        const newLevel = levelFromXp(newXp);
+        const newCoins = (prev.coins || 0) + rewards.coins;
+        const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
+        const newSessions = (prev.totalSessions || 0) + 1;
+        const acc = results.totalAnswered > 0 ? results.totalCorrect / results.totalAnswered : 0;
+        let sessionAch = [];
+        if (acc >= 1 && results.totalAnswered >= 5) sessionAch.push("perfect_session");
+        if (results.bestStreak >= 10) sessionAch.push("streak_10");
+        if (results.bestStreak >= 25) sessionAch.push("streak_25");
+        if (results.bestStreak >= 50) sessionAch.push("streak_50");
+        const updated = { ...prev, xp: newXp, level: newLevel, coins: newCoins, dailyStreak: newStreak, totalSessions: newSessions, activePerks: [] };
+        const allNew = checkAchievements(updated, sessionAch.filter(a => !(prev.achievements||[]).includes(a)));
+        updated.achievements = [...new Set([...(prev.achievements || []), ...allNew])];
+        setNewAchievements(allNew.filter(a => !(prev.achievements||[]).includes(a)));
+        if (sessionKey && results.totalAnswered > 0) {
+          const denom = sessionTotal > 0 ? sessionTotal : results.totalAnswered;
+          const pct = Math.round((results.totalCorrect / denom) * 100);
+          const bs = { ...(updated.bestScores || {}) };
+          const prev_best = bs[sessionKey];
+          if (!prev_best || pct > prev_best.pct) bs[sessionKey] = { correct: results.totalCorrect, total: denom, pct };
+          updated.bestScores = bs;
+        }
+        if (getPat()) { setSyncStatus("saving"); saveGistData(updated).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error")); }
+        return updated;
+      });
+      setScreen("results");
+    };
+    return <ArtikelRunner queue={queue} onEnd={handleRunnerEnd} />;
+  }
+
   return (
     <div style={S.container}>
       <div style={S.header}>
         <button onClick={endSession} style={S.endBtn}>End</button>
         <div style={{textAlign:"center"}}>
-          {gameMode==="blitz_type"?(
-            <span style={{fontSize:22,fontWeight:900,color:"#f1f5f9",fontVariantNumeric:"tabular-nums"}}>{blitzTimeStr}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
-          ):(
-            <span style={S.scoreLabel}>{score.toLocaleString()}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
-          )}
+          <span style={S.scoreLabel}>{score.toLocaleString()}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
         </div>
         <div style={{textAlign:"right"}}>
           {(playStyle==="survival"||gameMode==="survival")&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
           {gameMode==="timed"&&<span style={{fontSize:20,fontWeight:900,color:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981"}}>{globalTimer}s</span>}
           {gameMode==="matching"&&<span style={S.progressText}>{matchingProgress} / {queue.length}</span>}
-          {gameMode==="blitz_type"&&<span style={S.progressText}>{blitzIndex + 1} / {blitzQueue.length}</span>}
-          {playStyle!=="survival"&&gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="matching"&&gameMode!=="blitz_type"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
+          {playStyle!=="survival"&&gameMode!=="survival"&&gameMode!=="timed"&&gameMode!=="matching"&&<span style={S.progressText}>{totalAnswered+1} / {queue.length}</span>}
         </div>
       </div>
       {(playStyle==="timed"||(difficulty!=="easy"&&gameMode!=="timed"&&playStyle!=="survival"&&gameMode!=="survival"))&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${timerPct}%`,backgroundColor:timerColor,transition:phase==="question"?"width 1s linear":"none"}}/></div>}
       {gameMode==="timed"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(globalTimer/TIMED_CHALLENGE_DURATION)*100}%`,backgroundColor:globalTimer<=10?"#EF4444":globalTimer<=30?"#F59E0B":"#10B981",transition:"width 1s linear"}}/></div>}
-      {gameMode==="blitz_type"&&<div style={S.timerBarOuter}><div style={{...S.timerBarInner,width:`${(blitzIndex/blitzQueue.length)*100}%`,backgroundColor:"#8B5CF6",transition:"width 0.3s"}}/></div>}
       <div style={S.statsRow}>
         {[["Accuracy",`${accuracy}%`,"#cbd5e1"],["Best",bestStreak,"#cbd5e1"],["Correct",totalCorrect,"#10B981"],["Wrong",wrongAnswers.length,"#f87171"]].map(([l,v,c])=>
           <div key={l} style={S.statItem}><span style={{...S.statValue,color:c}}>{v}</span><span style={S.statLabel}>{l}</span></div>
         )}
       </div>
-      {gameMode==="blitz_type"&&blitzCurrentWord&&(
-        <div style={{...S.card,borderColor:blitzFlash==="correct"?"#10B981":blitzFlash==="wrong"?"#EF4444":"transparent",backgroundColor:blitzFlash==="correct"?"rgba(16,185,129,0.15)":blitzFlash==="wrong"?"rgba(239,68,68,0.15)":"rgba(255,255,255,0.03)",transition:"border-color 0.15s, background-color 0.15s"}}>
-          <div style={S.nounDisplay}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,marginBottom:4}}>
-              <span style={{fontSize:36,fontWeight:900,color:blitzFlash==="wrong"?"#EF4444":"#f1f5f9",fontVariantNumeric:"tabular-nums"}}>{blitzTimeStr}</span>
-              {blitzPenaltyStr&&<span style={{fontSize:14,fontWeight:700,color:"#EF4444"}}>{blitzPenaltyStr} penalty</span>}
-            </div>
-            {blitzPbStr&&<span style={{fontSize:11,color:"#64748b"}}>Personal best: {blitzPbStr}</span>}
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,margin:"12px 0 4px"}}>
-              <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,padding:"2px 8px",borderRadius:6,border:"1px solid",
-                color:blitzCurrentWord.type==="noun"?"#60a5fa":blitzCurrentWord.type==="verb"?"#a78bfa":"#f59e0b",
-                borderColor:blitzCurrentWord.type==="noun"?"rgba(96,165,250,0.4)":blitzCurrentWord.type==="verb"?"rgba(167,139,250,0.4)":"rgba(245,158,11,0.4)",
-                background:blitzCurrentWord.type==="noun"?"rgba(96,165,250,0.1)":blitzCurrentWord.type==="verb"?"rgba(167,139,250,0.1)":"rgba(245,158,11,0.1)",
-              }}>{blitzCurrentWord.type==="noun"?"noun":blitzCurrentWord.type==="verb"?"verb":"adj"}</span>
-            </div>
-            <span style={{fontSize:28,fontWeight:900,color:"#f1f5f9",textAlign:"center"}}>{getMeaningLabel(blitzCurrentWord.english)}</span>
-            {blitzCurrentWord.type==="noun"&&<span style={{fontSize:12,color:"#64748b",marginTop:2}}>Include the article (e.g. der Hund)</span>}
-          </div>
-          <form onSubmit={handleBlitzSubmit} style={{width:"100%",padding:"0 8px"}}>
-            <div style={S.inputRow}>
-              <input ref={blitzInputRef} value={blitzInput} onChange={e=>setBlitzInput(e.target.value)} placeholder={blitzCurrentWord.type==="noun"?"der/die/das + Noun":"German word..."} style={S.pluralInput} autoComplete="off" autoFocus/>
-              <button type="submit" style={S.submitBtn}>→</button>
-            </div>
-            <div style={S.umlauts}>
-              {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} type="button" onClick={()=>{setBlitzInput(p=>p+c);blitzInputRef.current?.focus();}} style={S.umlautBtn}>{c}</button>)}
-            </div>
-          </form>
-          {streak>=3&&<div style={{textAlign:"center",fontSize:14,fontWeight:800,color:"#F59E0B",marginTop:4}}>🔥 {streak} streak!</div>}
-          <div style={S.shortcutHint}>Translate {blitzQueue.length} words as fast as you can. Wrong answers add +{BLITZ_PENALTY_SECONDS}s penalty.</div>
-        </div>
-      )}
-      {currentNoun&&gameMode!=="blitz_type"&&(
+      {currentNoun&&(
         <div style={{...S.card,borderColor:phase==="feedback"?(feedback?.correct?"#10B981":"#EF4444"):"transparent",backgroundColor:phase==="feedback"?(feedback?.correct?"rgba(16,185,129,0.2)":"rgba(239,68,68,0.2)"):"rgba(255,255,255,0.03)"}}>
           {gameMode==="matching"?(
             <div style={S.nounDisplay}>
@@ -2227,7 +3158,7 @@ function DeckBuilder({onSave, onCancel}) {
   );
 }
 
-function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard}) {
+function LegacyMenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard}) {
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [tier,setTier]=useState(500);
   const [tierMin,setTierMin]=useState(0);
@@ -2249,7 +3180,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     if (patInput.trim()) onSyncRefresh();
   };
 
-  const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse" || selectedGameMode === "blitz_type";
+  const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse";
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
@@ -2377,9 +3308,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       </div>
       {selectedGameMode==="verb_forms"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the Infinitiv, Präteritum (ich), and Partizip Perfekt for each irregular verb. {IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.</div>}
       {selectedGameMode==="verb_prepositions"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the fixed preposition and select the governed case for each verb. {VERB_PREPOSITIONS.length} verb+preposition combos available.</div>}
-      {selectedGameMode==="blitz_type"&&(()=>{const pb=parseFloat(localStorage.getItem(BLITZ_PB_KEY)||"0");const wtLabel=matchWordType==="nouns"?"nouns":matchWordType==="adjectives"?"adjectives":matchWordType==="verbs"?"verbs":"mixed words (nouns, verbs, adjectives)";return <div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Translate {BLITZ_TYPE_COUNT} {wtLabel} from English to German as fast as you can. Wrong answers add +{BLITZ_PENALTY_SECONDS}s penalty.{(matchWordType==="nouns"||matchWordType==="mixed")&&" For nouns, include the article."}{pb>0&&<span style={{color:"#10B981",fontWeight:700}}>{" "}PB: {(pb/10).toFixed(1)}s</span>}</div>;})()}
 
-      {/* ── Word type for matching/reverse/blitz ── */}
+      {/* ── Word type for matching/reverse ── */}
       {supportsWordType&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Word Type</label>
@@ -2668,7 +3598,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       {/* ── Answer type (hidden for reverse and special game modes) ── */}
-      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&selectedGameMode!=="blitz_type"&&(
+      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&(
         <div style={S.menuSection}>
           <label style={S.menuLabel}>Answer Type</label>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -2681,38 +3611,35 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      {/* ── Play Style (hidden for Blitz Type, which has its own timing) ── */}
-      {selectedGameMode!=="blitz_type"&&(
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Play Style</label>
-          <div style={{display:"flex",gap:8}}>
-            <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
-              <span style={{fontSize:10,color:"#64748b"}}>No constraints</span>
-            </button>
-            <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
-              <span style={{fontSize:10,color:"#64748b"}}>Per-question timer</span>
-            </button>
-            <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
-              <span style={{fontSize:10,color:"#64748b"}}>3 lives</span>
-            </button>
-          </div>
-          {playStyle==="timed"&&(
-            <div style={{marginTop:8}}>
-              <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                {[5,8,10,15,20,30].map(s=>
-                  <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
-                    <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+      <div style={S.menuSection}>
+        <label style={S.menuLabel}>Play Style</label>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
+            <span style={{fontSize:10,color:"#64748b"}}>No constraints</span>
+          </button>
+          <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
+            <span style={{fontSize:10,color:"#64748b"}}>Per-question timer</span>
+          </button>
+          <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
+            <span style={{fontSize:10,color:"#64748b"}}>3 lives</span>
+          </button>
         </div>
-      )}
+        {playStyle==="timed"&&(
+          <div style={{marginTop:8}}>
+            <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+              {[5,8,10,15,20,30].map(s=>
+                <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck} style={{...S.startBtn,opacity:(source==="deck"&&!selectedDeck)?0.4:1}}>Start Game</button>
       <button onClick={onOpenCampaign} style={{...S.startBtn,background:"linear-gradient(135deg,#7C3AED,#2563EB)",marginTop:0}}>Campaign Mode</button>
@@ -2725,6 +3652,615 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 // ═══════════════════════════════════════════════════════════════
 // PROGRESS DASHBOARD
 // ═══════════════════════════════════════════════════════════════
+function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard}) {
+  const [mode,setMode]=useState(MODES.ARTICLE);
+  const [tier,setTier]=useState(500);
+  const [tierMin,setTierMin]=useState(0);
+  const [tierMode,setTierMode]=useState("cumulative");
+  const [source,setSource]=useState("tier");
+  const [selectedDeck,setSelectedDeck]=useState(null);
+  const [showSettings,setShowSettings]=useState(false);
+  const [showDeckBuilder,setShowDeckBuilder]=useState(false);
+  const [selectedGameMode,setSelectedGameMode]=useState("classic");
+  const [matchWordType,setMatchWordType]=useState("nouns");
+  const [playStyle,setPlayStyle]=useState("practice");
+  const [timedSeconds,setTimedSeconds]=useState(10);
+  const [patInput,setPatInput]=useState(getPat());
+  const [patSaved,setPatSaved]=useState(false);
+  const [activeStep,setActiveStep]=useState(1);
+
+  const handleSavePat = () => {
+    setPat(patInput.trim());
+    setPatSaved(true);
+    setTimeout(() => setPatSaved(false), 2000);
+    if (patInput.trim()) onSyncRefresh();
+  };
+
+  const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse";
+  const answerTypeAllowed = selectedGameMode !== "reverse" && selectedGameMode !== "matching" && selectedGameMode !== "verb_forms" && selectedGameMode !== "verb_prepositions" && selectedGameMode !== "runner";
+  const effectiveWordType = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : selectedGameMode === "verb_prepositions" ? "verb_prep" : "nouns");
+  const deckAllowed = !((supportsWordType && matchWordType !== "nouns") || selectedGameMode === "verb_forms" || selectedGameMode === "verb_prepositions");
+  const weakestAllowed = selectedGameMode !== "verb_prepositions";
+  const allDecks = useMemo(() => [...BUILTIN_DECKS, ...(userData.decks || [])], [userData.decks]);
+  const selectedDeckData = allDecks.find(dk => dk.id === selectedDeck) || null;
+  const sourceOptions = useMemo(() => {
+    const options = [{ id: "tier", name: "Vocab Level", desc: "Pick a tier or range" }];
+    if (deckAllowed) options.push({ id: "deck", name: "Saved Deck", desc: `${allDecks.length} available` });
+    if (weakestAllowed) options.push({ id: "weakest", name: "Weakest", desc: "Use your worst words" });
+    return options;
+  }, [deckAllowed, weakestAllowed, allDecks.length]);
+
+  useEffect(() => {
+    if (!supportsWordType && matchWordType !== "nouns") setMatchWordType("nouns");
+  }, [supportsWordType, matchWordType]);
+
+  useEffect(() => {
+    if (!answerTypeAllowed && mode !== MODES.ARTICLE) setMode(MODES.ARTICLE);
+  }, [answerTypeAllowed, mode]);
+
+  useEffect(() => {
+    const validSources = new Set(sourceOptions.map(opt => opt.id));
+    if (!validSources.has(source)) {
+      setSource("tier");
+      setSelectedDeck(null);
+    }
+  }, [source, sourceOptions]);
+
+  useEffect(() => {
+    if (selectedDeck && !allDecks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
+  }, [selectedDeck, allDecks]);
+
+  useEffect(() => {
+    if (activeStep === 3 && source === "deck" && !selectedDeck) setActiveStep(2);
+  }, [activeStep, source, selectedDeck]);
+
+  const handleStart = () => {
+    const wType = supportsWordType ? matchWordType : "nouns";
+    const diff = playStyle === "timed" ? "normal" : "easy";
+    const isRange = source === "tier" && tierMode === "range";
+    const effectiveTierMin = isRange ? tierMin : 0;
+    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
+  };
+
+  const handleGameModeSelect = (gameModeId) => {
+    setSelectedGameMode(gameModeId);
+    setActiveStep(2);
+  };
+
+  const openStep = (step) => {
+    if (step === 3 && source === "deck" && !selectedDeck) {
+      setActiveStep(2);
+      return;
+    }
+    setActiveStep(step);
+  };
+
+  const prog = xpProgress(userData.xp || 0);
+  const title = getTitle(prog.level);
+  const syncDot = {idle:"#64748b",loading:"#F59E0B",saving:"#F59E0B",synced:"#10B981",error:"#EF4444"}[syncStatus];
+  const dailyStreak = userData.dailyStreak || {current:0,best:0};
+  const totalNouns = NOUNS.length;
+  const masteredCount = (userData.masteredNouns||[]).length;
+  const masteryPct = totalNouns > 0 ? Math.round((masteredCount / totalNouns) * 100) : 0;
+  const masteryColor = masteryPct >= 100 ? "#F59E0B" : masteryPct >= 50 ? "#10B981" : "#8B5CF6";
+  const bestScores = userData.bestScores || {};
+  const nounStats = userData.nounStats || {};
+  const modeStats = userData.modeStats || {};
+  const masteredSet = new Set(userData.masteredNouns || []);
+  const gameModeMeta = GAME_MODES.find(gm => gm.id === selectedGameMode) || GAME_MODES[0];
+  const contentReady = source !== "deck" || !!selectedDeck;
+  const canStart = contentReady;
+
+  const wordTypeLabel = (wType) => {
+    if (wType === "nouns") return "Nouns";
+    if (wType === "adjectives") return "Adjectives";
+    if (wType === "verbs") return selectedGameMode === "verb_forms" ? "Irregular Verbs" : "Verbs";
+    if (wType === "verb_prep") return "Verb + Prep";
+    return "Mixed";
+  };
+
+  const countForTier = (tv) => {
+    if (effectiveWordType === "nouns") return getNounsForTier(tv).length;
+    if (effectiveWordType === "adjectives") return getAdjectivesForTier(tv).length;
+    if (effectiveWordType === "verb_prep") return getVerbPrepositionsForTier(tv).length;
+    if (effectiveWordType === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(tv) : getVerbsForTier(tv)).length;
+    return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
+  };
+
+  const countForRange = (min, max) => {
+    if (effectiveWordType === "nouns") return getNounsForTier(max, min).length;
+    if (effectiveWordType === "adjectives") return getAdjectivesForTier(max, min).length;
+    if (effectiveWordType === "verb_prep") return getVerbPrepositionsForTier(max, min).length;
+    if (effectiveWordType === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
+    return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
+  };
+
+  const wordsInRange = (min, max) => {
+    const words = [];
+    if (effectiveWordType === "nouns" || effectiveWordType === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
+    if (effectiveWordType === "adjectives" || effectiveWordType === "mixed") getAdjectivesForTier(max, min).forEach(a => words.push(a[0]));
+    if (effectiveWordType === "verbs" || effectiveWordType === "mixed") {
+      const verbs = selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min);
+      verbs.forEach(v => words.push(v[0]));
+    }
+    if (effectiveWordType === "verb_prep") getVerbPrepositionsForTier(max, min).forEach(v => words.push(v[0]+"|"+v[3]));
+    return words;
+  };
+
+  const masteryForRange = (min, max) => {
+    const words = wordsInRange(min, max);
+    if (!words.length) return { mastered: 0, total: 0, pct: 0 };
+    let mastered = 0;
+    words.forEach(w => {
+      if (masteredSet.has(w)) { mastered++; return; }
+      const s = nounStats[w];
+      if (s && (s.consecutiveCorrect || 0) >= 5) mastered++;
+    });
+    return { mastered, total: words.length, pct: Math.round((mastered / words.length) * 100) };
+  };
+
+  const modeMasteryInRange = (modeId, min, max) => {
+    if (effectiveWordType !== "nouns") return null;
+    const words = getNounsForTier(max, min || undefined);
+    if (!words.length) return null;
+    let mastered = 0;
+    words.forEach(n => {
+      const s = modeStats[modeId+":"+n[0]];
+      if (s && (s.consecutiveCorrect||0) >= 5) mastered++;
+    });
+    return { pct: Math.round((mastered / words.length) * 100) };
+  };
+
+  const describeTierSelection = () => {
+    const count = tierMode === "range" ? countForRange(tierMin, tier) : countForTier(tier);
+    const label = wordTypeLabel(effectiveWordType).toLowerCase();
+    if (!count) return "Choose vocabulary";
+    if (tierMode === "range") return `${tierMin + 1}-${tier} ${label} (${count.toLocaleString()})`;
+    const maxAvailable = countForTier(99999);
+    if (count >= maxAvailable) return `All ${label} (${count.toLocaleString()})`;
+    return `Top ${count.toLocaleString()} ${label}`;
+  };
+
+  const activitySummary = gameModeMeta.name;
+  const contentSummary = source === "deck"
+    ? (selectedDeckData ? `Deck: ${selectedDeckData.name}` : "Choose a deck")
+    : source === "weakest"
+      ? `Weakest ${wordTypeLabel(effectiveWordType).toLowerCase()}`
+      : describeTierSelection();
+  const rulesSummaryParts = [];
+  if (supportsWordType) rulesSummaryParts.push(wordTypeLabel(matchWordType));
+  if (answerTypeAllowed) rulesSummaryParts.push(mode === MODES.ARTICLE ? "Articles" : mode === MODES.PLURAL ? "Plurals" : "Both");
+  rulesSummaryParts.push(selectedGameMode === "runner" ? "3 Lives" : playStyle === "timed" ? `Timed ${timedSeconds}s` : playStyle === "survival" ? "Survival" : "Practice");
+  const rulesSummary = rulesSummaryParts.length ? rulesSummaryParts.join(" / ") : "Mode defaults";
+
+  const renderActivityHint = () => {
+    if (selectedGameMode === "verb_forms") return `Type the Infinitiv, Prateritum (ich), and Partizip Perfekt for each irregular verb. ${IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.`;
+    if (selectedGameMode === "verb_prepositions") return `Type the fixed preposition and select the governed case for each verb. ${VERB_PREPOSITIONS.length.toLocaleString()} combos available.`;
+    if (selectedGameMode === "runner") return "Endless runner game! Dodge into the correct article lane (der/die/das) for each noun. 3 lives, increasing speed.";
+    return gameModeMeta.desc;
+  };
+
+  const renderTierSelector = () => {
+    const maxAvailable = countForTier(99999);
+    const seenCounts = new Set();
+    const filteredTiers = TIER_OPTIONS.filter(t => {
+      const c = countForTier(t.value);
+      if (c <= 0) return false;
+      if (seenCounts.has(c)) return false;
+      seenCounts.add(c);
+      return true;
+    });
+    const ranges = [];
+    const rangeSize = 100;
+    const maxRankTier = TIER_OPTIONS[TIER_OPTIONS.length - 1].value;
+    for (let i = 0; i < maxRankTier; i += rangeSize) {
+      const rMin = i;
+      const rMax = i + rangeSize;
+      const c = countForRange(rMin, rMax);
+      if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
+    }
+    const totalMastery = masteryForRange(0, 99999);
+    const rangesCompleted = ranges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
+    const rangesStarted = ranges.filter(r => {
+      const mastery = masteryForRange(r.min, r.max);
+      return mastery.pct > 0 && mastery.pct < 100;
+    }).length;
+
+    const ProgressRing = ({pct, size, stroke, color, bgColor}) => {
+      const r = (size - stroke) / 2;
+      const circ = 2 * Math.PI * r;
+      const offset = circ - (pct / 100) * circ;
+      return (
+        <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0}}>
+          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={bgColor||"rgba(255,255,255,0.06)"} strokeWidth={stroke}/>
+          {pct > 0 && <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color||"#10B981"} strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease"}}/>}
+        </svg>
+      );
+    };
+
+    return (
+      <div style={S.menuSection}>
+        <div style={S.inlineSummaryCard}>
+          <span style={S.inlineSummaryLabel}>Current Selection</span>
+          <span style={S.inlineSummaryValue}>{describeTierSelection()}</span>
+        </div>
+        <div style={{display:"flex",gap:6}}>
+          <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="cumulative"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Cumulative</span>
+            <span style={{fontSize:10,color:"#64748b"}}>Top N words</span>
+          </button>
+          <button onClick={()=>setTierMode("range")} style={{...S.diffBtn,flex:1,borderColor:tierMode==="range"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="range"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Ranges</span>
+            <span style={{fontSize:10,color:"#64748b"}}>100-word chunks</span>
+          </button>
+        </div>
+        {tierMode==="cumulative"?(
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+            {filteredTiers.map(t=>{
+              const count = countForTier(t.value);
+              const capped = effectiveWordType !== "mixed" && count < t.value;
+              const label = capped ? `Top ${count.toLocaleString()}` : t.label;
+              const tierKey = `${selectedGameMode}:tier:${t.value}`;
+              const tierBest = bestScores[tierKey];
+              const tierPct = tierBest ? tierBest.pct : 0;
+              const tm = masteryForRange(0, t.value);
+              const ringColor = tm.pct >= 100 ? "#F59E0B" : tm.pct >= 50 ? "#10B981" : "#8B5CF6";
+              return (
+                <button key={t.value} className={tm.pct>=100?"range-gold":""} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":tm.pct>=100?"rgba(245,158,11,0.5)":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":tm.pct>=100?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
+                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:tm.pct>=100?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
+                    <ProgressRing pct={tm.pct} size={36} stroke={3} color={ringColor}/>
+                    <span style={{position:"absolute",fontSize:9,fontWeight:800,color:ringColor}}>{tm.pct>=100?"\u2713":tm.pct>0?tm.pct+"%":""}</span>
+                  </div>
+                  <span style={{fontSize:13,fontWeight:700,color:tm.pct>=100?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
+                  <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{tm.mastered}/{tm.total} mastered</span>
+                  {tierPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {tierPct}%</span>}
+                  {count >= maxAvailable && <span style={{fontSize:8,color:"#94a3b8",position:"relative"}}>All</span>}
+                </button>
+              );
+            })}
+          </div>
+        ):(
+          <>
+            <div style={S.inlineSummaryCard}>
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <ProgressRing pct={totalMastery.pct} size={48} stroke={4} color={totalMastery.pct>=100?"#F59E0B":totalMastery.pct>=50?"#10B981":"#8B5CF6"}/>
+                  <span style={{position:"absolute",fontSize:12,fontWeight:800,color:totalMastery.pct>=100?"#F59E0B":"#e2e8f0"}}>{totalMastery.pct}%</span>
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{totalMastery.mastered.toLocaleString()} / {totalMastery.total.toLocaleString()} words mastered</div>
+                  <div style={{position:"relative",height:6,background:"rgba(255,255,255,0.06)",borderRadius:3,overflow:"hidden",marginTop:4}}>
+                    <div style={{height:"100%",width:`${totalMastery.pct}%`,background:totalMastery.pct>=100?"linear-gradient(90deg,#F59E0B,#EF4444)":totalMastery.pct>=50?"linear-gradient(90deg,#10B981,#3B82F6)":"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:3,transition:"width 0.5s"}}/>
+                  </div>
+                  <div style={{display:"flex",gap:12,marginTop:4,flexWrap:"wrap"}}>
+                    {rangesCompleted>0&&<span style={{fontSize:10,color:"#F59E0B",fontWeight:700}}>{rangesCompleted} completed</span>}
+                    {rangesStarted>0&&<span style={{fontSize:10,color:"#10B981",fontWeight:700}}>{rangesStarted} in progress</span>}
+                    <span style={{fontSize:10,color:"#64748b"}}>{ranges.length} total ranges</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:320,overflowY:"auto",paddingRight:4}}>
+              {ranges.map(r=>{
+                const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
+                const rangeKey = `${selectedGameMode}:range:${r.min+1}-${r.max}`;
+                const rangeBest = bestScores[rangeKey];
+                const rangePct = rangeBest ? rangeBest.pct : 0;
+                const rm = masteryForRange(r.min, r.max);
+                const isComplete = rm.pct >= 100;
+                const isStarted = rm.pct > 0;
+                const ringColor = isComplete ? "#F59E0B" : rm.pct >= 50 ? "#10B981" : rm.pct > 0 ? "#8B5CF6" : "rgba(255,255,255,0.1)";
+                const borderColor = isSelected ? "#8B5CF6" : isComplete ? "rgba(245,158,11,0.5)" : rangePct >= 90 ? "rgba(16,185,129,0.5)" : isStarted ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.08)";
+                const bgColor = isSelected ? "rgba(139,92,246,0.1)" : isComplete ? "rgba(245,158,11,0.06)" : "transparent";
+                return (
+                  <button key={r.min} className={isComplete?"range-gold":""} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden",padding:"10px 6px",gap:1}}>
+                    {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:isComplete?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.25), rgba(16,185,129,0.08))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                    <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:1}}>
+                      <ProgressRing pct={rm.pct} size={32} stroke={2.5} color={ringColor}/>
+                      <span style={{position:"absolute",fontSize:isComplete?11:8,fontWeight:800,color:ringColor}}>{isComplete?"\u2713":rm.pct>0?rm.pct+"%":""}</span>
+                    </div>
+                    <span style={{fontSize:12,fontWeight:700,color:isComplete?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}-{r.max}</span>
+                    <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{rm.mastered}/{rm.total}</span>
+                    {(()=>{
+                      const am = modeMasteryInRange("article", r.min, r.max);
+                      const pm = modeMasteryInRange("plural", r.min, r.max);
+                      if (!am && !pm) return null;
+                      return (
+                        <div style={{display:"flex",gap:3,position:"relative",alignItems:"center",justifyContent:"center"}}>
+                          {am&&<div title={`Articles: ${am.pct}%`} style={{width:6,height:6,borderRadius:3,background:am.pct>=100?"#F59E0B":am.pct>0?"#3B82F6":"rgba(255,255,255,0.1)"}}/>}
+                          {pm&&<div title={`Plurals: ${pm.pct}%`} style={{width:6,height:6,borderRadius:3,background:pm.pct>=100?"#F59E0B":pm.pct>0?"#EC4899":"rgba(255,255,255,0.1)"}}/>}
+                        </div>
+                      );
+                    })()}
+                    {rangePct>=90&&<span style={{fontSize:8,position:"relative",color:rangePct>=100?"#F59E0B":"#10B981",fontWeight:700}}>{rangePct>=100?"\u2605 "+rangePct+"%":rangePct+"%"}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+  const renderDeckSelector = () => (
+    <div style={S.menuSection}>
+      {selectedDeckData && (
+        <div style={S.inlineSummaryCard}>
+          <span style={S.inlineSummaryLabel}>Current Deck</span>
+          <span style={S.inlineSummaryValue}>{selectedDeckData.name}</span>
+        </div>
+      )}
+      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
+        {BUILTIN_DECKS.map(dk=>{
+          const dkKey = `${selectedGameMode}:deck:${dk.id}`;
+          const dkBest = bestScores[dkKey];
+          const dkPct = dkBest ? dkBest.pct : 0;
+          return (
+            <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
+              <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
+                <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in{dkPct>0?` · Best: ${dkPct}%`:""}</span>
+              </button>
+            </div>
+          );
+        })}
+        {userData.decks.map(dk=>{
+          const dkKey = `${selectedGameMode}:deck:${dk.id}`;
+          const dkBest = bestScores[dkKey];
+          const dkPct = dkBest ? dkBest.pct : 0;
+          return (
+            <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
+              <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
+                <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}{dkPct>0?` · Best: ${dkPct}%`:""}</span>
+              </button>
+              <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
+            </div>
+          );
+        })}
+        {userData.decks.length===0&&BUILTIN_DECKS.length===0&&<p style={{fontSize:12,color:"#475569",textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
+      </div>
+      <button onClick={()=>setShowDeckBuilder(true)} style={{...S.practiceBtn,borderColor:"rgba(139,92,246,0.3)",color:"#a78bfa",background:"rgba(139,92,246,0.1)",marginTop:4}}>
+        + Create Custom Deck
+      </button>
+    </div>
+  );
+
+  const StepCard = ({ step, title, summary, complete, children, locked }) => {
+    const active = activeStep === step;
+    return (
+      <div style={{...S.wizardCard,borderColor:active?"rgba(139,92,246,0.38)":"rgba(255,255,255,0.08)",boxShadow:active?"0 14px 40px rgba(15,23,42,0.22)":"none",opacity:locked&&!active?0.72:1}}>
+        <button onClick={()=>!locked&&openStep(step)} style={{...S.wizardHeaderBtn,cursor:locked?"not-allowed":"pointer"}}>
+          <span style={{...S.wizardStepBadge,background:complete?"rgba(16,185,129,0.18)":active?"rgba(139,92,246,0.22)":"rgba(255,255,255,0.06)",borderColor:complete?"rgba(16,185,129,0.34)":active?"rgba(139,92,246,0.38)":"rgba(255,255,255,0.08)",color:complete?"#10B981":"#cbd5e1"}}>{complete?"\u2713":step}</span>
+          <div style={S.wizardHeaderText}>
+            <span style={S.wizardTitle}>{title}</span>
+            <span style={S.wizardSummary}>{summary}</span>
+          </div>
+          <span style={S.wizardEdit}>{locked ? "Locked" : active ? "Open" : "Edit"}</span>
+        </button>
+        {active && <div style={S.wizardBody}>{children}</div>}
+      </div>
+    );
+  };
+  if (showDeckBuilder) {
+    return <DeckBuilder onSave={(name, nouns) => { onSaveDeck(name, nouns); setShowDeckBuilder(false); setSource("deck"); setActiveStep(2); }}
+      onCancel={() => setShowDeckBuilder(false)} />;
+  }
+
+  return (
+    <div style={S.container}><div style={{...S.menuInner,paddingBottom:164,gap:18}}>
+      <div style={{textAlign:"center",position:"relative"}}>
+        <button onClick={()=>setShowSettings(!showSettings)} style={S.gearBtn} title="Sync Settings">
+          <span style={{fontSize:18}}>&#9881;</span>
+          <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot,display:"inline-block",marginLeft:4}}/>
+        </button>
+        <div style={{fontSize:28,marginBottom:8,letterSpacing:2}}><span style={{color:"#3B82F6",fontWeight:900}}>der</span><span style={{color:"#EC4899",fontWeight:900}}> die</span><span style={{color:"#10B981",fontWeight:900}}> das</span></div>
+        <h1 style={S.menuTitle}>Artikel Blitz</h1>
+        <p style={{fontSize:13,color:"#64748b",margin:0}}>Master {NOUNS.length.toLocaleString()} German nouns - {WORDS_META.source ? "Leipzig JSON dataset" : "JSON word dataset"}</p>
+      </div>
+
+      <div style={S.menuTopStats}>
+        <div style={S.menuStatChip}>
+          <span style={S.menuStatValue}>Lv {prog.level}</span>
+          <span style={S.menuStatLabel}>{title[1]} {title[2]}</span>
+        </div>
+        <div style={S.menuStatChip}>
+          <span style={{...S.menuStatValue,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current}</span>
+          <span style={S.menuStatLabel}>Day Streak</span>
+        </div>
+        <div style={{...S.menuStatChip,borderColor:`${masteryColor}33`,background:`${masteryColor}14`}}>
+          <span style={{...S.menuStatValue,color:masteryColor}}>{masteryPct}%</span>
+          <span style={S.menuStatLabel}>Mastery</span>
+        </div>
+      </div>
+
+      <div style={S.menuQuickRow}>
+        <button onClick={onOpenCampaign} style={{...S.secondaryActionBtn,background:"linear-gradient(135deg, rgba(124,58,237,0.22), rgba(37,99,235,0.16))",borderColor:"rgba(124,58,237,0.28)"}}>Campaign</button>
+        <button onClick={onOpenDashboard} style={{...S.secondaryActionBtn,background:"linear-gradient(135deg, rgba(16,185,129,0.18), rgba(6,182,212,0.14))",borderColor:"rgba(16,185,129,0.24)"}}>Progress</button>
+      </div>
+
+      <div style={S.menuProgressLine}>
+        <span>{prog.needed > 0 ? `${prog.current} / ${prog.needed} XP to Lv. ${prog.level+1}` : "Max level reached"}</span>
+        <span>{masteredCount.toLocaleString()} / {totalNouns.toLocaleString()} nouns mastered</span>
+      </div>
+
+      {showSettings&&(
+        <div style={S.settingsPanel}>
+          <label style={S.menuLabel}>GitHub PAT (for cloud sync)</label>
+          <p style={{fontSize:11,color:"#64748b",margin:"0 0 6px"}}>Create a token with <strong>gist</strong> scope at github.com/settings/tokens</p>
+          <div style={{display:"flex",gap:8}}>
+            <input value={patInput} onChange={e=>setPatInput(e.target.value)} placeholder="ghp_xxxxxxxxxxxx" type="password"
+              style={{...S.pluralInput,fontSize:13,textAlign:"left",flex:1,padding:"8px 12px"}}/>
+            <button onClick={handleSavePat} style={{...S.submitBtn,fontSize:13,padding:"8px 16px"}}>{patSaved?"Saved!":"Save"}</button>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
+            <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot}}/>
+            <span style={{fontSize:11,color:"#94a3b8"}}>
+              {syncStatus==="idle"?"Not connected":syncStatus==="loading"?"Loading...":syncStatus==="saving"?"Saving...":syncStatus==="synced"?"Synced":syncStatus==="error"?"Sync error - check PAT":""}
+            </span>
+            {getGistId()&&<span style={{fontSize:10,color:"#475569",marginLeft:"auto"}}>Gist: {getGistId().slice(0,8)}...</span>}
+          </div>
+        </div>
+      )}
+
+      <StepCard step={1} title="Activity" summary={activitySummary} complete={activeStep > 1}>
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Choose a mode</label>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+            {GAME_MODES.map(gm=>{
+              const selected = selectedGameMode===gm.id;
+              const modeScores = Object.keys(bestScores).filter(k => k.startsWith(gm.id + ":")).map(k => bestScores[k].pct);
+              const bestPct = modeScores.length > 0 ? Math.max(...modeScores) : 0;
+              return (
+                <button key={gm.id} onClick={()=>handleGameModeSelect(gm.id)}
+                  style={{...S.modeCard,borderColor:selected?"#8B5CF6":bestPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+                  {bestPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${bestPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <span style={{fontSize:18,position:"relative"}}>{gm.icon}</span>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{gm.name}</span>
+                  <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{gm.desc}</span>
+                  {bestPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {bestPct}%</span>}
+                </button>
+              );
+            })}
+          </div>
+          <div style={S.stepNote}>{renderActivityHint()}</div>
+          <div style={S.stepActionRow}>
+            <button onClick={()=>setActiveStep(2)} style={S.stepPrimaryBtn}>Continue to Content</button>
+          </div>
+        </div>
+      </StepCard>
+
+      <StepCard step={2} title="Content" summary={contentSummary} complete={contentReady && activeStep > 2}>
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Play from</label>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+            {sourceOptions.map(opt=>(
+              <button key={opt.id} onClick={()=>{setSource(opt.id);if(opt.id!=="deck")setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source===opt.id?(opt.id==="weakest"?"#EF4444":"#8B5CF6"):"rgba(255,255,255,0.1)",backgroundColor:source===opt.id?(opt.id==="weakest"?"rgba(239,68,68,0.1)":"rgba(139,92,246,0.1)"):"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{opt.name}</span>
+                <span style={{fontSize:10,color:"#64748b"}}>{opt.desc}</span>
+              </button>
+            ))}
+          </div>
+          {source==="weakest"&&<div style={S.stepNote}>Practice your weakest words based on past performance. This works best after a few sessions.</div>}
+          {source==="tier"&&renderTierSelector()}
+          {source==="deck"&&renderDeckSelector()}
+          <div style={S.stepActionRow}>
+            <button onClick={()=>setActiveStep(1)} style={S.stepSecondaryBtn}>Back</button>
+            <button onClick={()=>setActiveStep(3)} disabled={!contentReady} style={{...S.stepPrimaryBtn,opacity:contentReady?1:0.45,cursor:contentReady?"pointer":"not-allowed"}}>Continue to Rules</button>
+          </div>
+        </div>
+      </StepCard>
+
+      <StepCard step={3} title="Rules" summary={rulesSummary} complete={false} locked={!contentReady}>
+        <div style={S.menuSection}>
+          {supportsWordType&&(
+            <div style={S.menuSection}>
+              <label style={S.menuLabel}>Word Type</label>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                <button onClick={()=>setMatchWordType("nouns")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="nouns"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="nouns"?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Nouns</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>{NOUNS.length.toLocaleString()} words</span>
+                </button>
+                <button onClick={()=>setMatchWordType("adjectives")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="adjectives"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="adjectives"?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Adjectives</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>{ADJECTIVES.length.toLocaleString()} words</span>
+                </button>
+                <button onClick={()=>setMatchWordType("verbs")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="verbs"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="verbs"?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Verbs</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>{VERBS.length.toLocaleString()} words</span>
+                </button>
+                <button onClick={()=>setMatchWordType("mixed")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="mixed"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="mixed"?"rgba(139,92,246,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>All Mixed</span>
+                  <span style={{fontSize:10,color:"#64748b"}}>Everything</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {answerTypeAllowed&&(
+            <div style={S.menuSection}>
+              <label style={S.menuLabel}>Answer Type</label>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Choose the plural form"],[MODES.BOTH,"Both","Article + plural choice"]].map(([m,t,d])=>
+                  <button key={m} onClick={()=>setMode(m)} style={{...S.modeCard,borderColor:mode===m?"#3B82F6":"rgba(255,255,255,0.1)",backgroundColor:mode===m?"rgba(59,130,246,0.1)":"transparent"}}>
+                    <span style={{fontSize:16,fontWeight:700,color:"#e2e8f0"}}>{t}</span>
+                    <span style={{fontSize:12,color:"#64748b"}}>{d}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {selectedGameMode !== "runner" && (
+          <div style={S.menuSection}>
+            <label style={S.menuLabel}>Play Style</label>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
+                <span style={{fontSize:10,color:"#64748b"}}>No constraints</span>
+              </button>
+              <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
+                <span style={{fontSize:10,color:"#64748b"}}>Per-question timer</span>
+              </button>
+              <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
+                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
+                <span style={{fontSize:10,color:"#64748b"}}>3 lives</span>
+              </button>
+            </div>
+            {playStyle==="timed"&&(
+              <div style={{marginTop:8}}>
+                <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  {[5,8,10,15,20,30].map(s=>
+                    <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
+                      <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          )}
+          {selectedGameMode === "runner" && (
+            <div style={S.menuSection}>
+              <div style={{padding:16,borderRadius:10,border:"1px solid rgba(139,92,246,0.2)",background:"rgba(139,92,246,0.06)"}}>
+                <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0",marginBottom:6}}>How to play</div>
+                <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6}}>
+                  Run through lanes and collect the correct article coin!<br/>
+                  <span style={{color:"#3B82F6",fontWeight:700}}>Left = der</span> · <span style={{color:"#EC4899",fontWeight:700}}>Middle = die</span> · <span style={{color:"#10B981",fontWeight:700}}>Right = das</span><br/>
+                  Use arrow keys, A/D, tap left/right, or swipe to move.<br/>
+                  3 lives — wrong article or missed coin costs a life!
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div style={S.stepActionRow}>
+            <button onClick={()=>setActiveStep(2)} style={S.stepSecondaryBtn}>Back</button>
+            <button onClick={handleStart} disabled={!canStart} style={{...S.stepPrimaryBtn,opacity:canStart?1:0.45,cursor:canStart?"pointer":"not-allowed"}}>Start Session</button>
+          </div>
+        </div>
+      </StepCard>
+
+      <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} precomputed grammar explanations loaded</div>
+
+      <div style={S.menuStickyFooter}>
+        <div style={S.menuStickySummary}>
+          <span style={S.menuStickyLabel}>Session</span>
+          <span style={S.menuStickyValue}>{activitySummary} / {contentSummary} / {rulesSummary}</span>
+        </div>
+        <button onClick={handleStart} disabled={!canStart} style={{...S.startBtn,width:"auto",minWidth:150,marginTop:0,opacity:canStart?1:0.45}}>Start Game</button>
+      </div>
+    </div></div>
+  );
+}
+
 function ProgressDashboard({ userData, onBack }) {
   const modeStats = userData.modeStats || {};
   const modeMastered = userData.modeMastered || {};
@@ -2907,7 +4443,6 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
   const isMatching = gameMode === "matching";
   const isVerbForms = gameMode === "verb_forms";
   const isVerbPrep = gameMode === "verb_prepositions";
-  const isBlitz = gameMode === "blitz_type";
   const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
   return (
     <div style={S.container}><div style={S.resultsInner}>
@@ -2929,46 +4464,22 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
       )}
 
       <h2 style={{fontSize:24,fontWeight:800,color:"#f1f5f9",margin:0}}>Session Complete</h2>
-      {isBlitz?(()=>{
-        const elapsed = parseFloat(localStorage.getItem("_blitz_elapsed")||"0");
-        const penalty = parseFloat(localStorage.getItem("_blitz_penalty")||"0");
-        const total = elapsed + penalty;
-        const pb = parseFloat(localStorage.getItem(BLITZ_PB_KEY)||"0");
-        const isNewPb = pb > 0 && total <= pb;
-        return (
-          <div style={{width:"100%",textAlign:"center",display:"flex",flexDirection:"column",gap:4,alignItems:"center"}}>
-            <span style={{fontSize:48,fontWeight:900,color:"#f1f5f9",fontVariantNumeric:"tabular-nums"}}>{(total/10).toFixed(1)}s</span>
-            <div style={{display:"flex",gap:16,justifyContent:"center",fontSize:13,color:"#94a3b8"}}>
-              <span>Base: {(elapsed/10).toFixed(1)}s</span>
-              {penalty>0&&<span style={{color:"#f87171"}}>Penalty: +{(penalty/10).toFixed(1)}s</span>}
-            </div>
-            {isNewPb&&<span style={{fontSize:16,fontWeight:800,color:"#10B981",marginTop:4}}>New Personal Best!</span>}
-            {pb>0&&!isNewPb&&<span style={{fontSize:12,color:"#64748b"}}>Personal best: {(pb/10).toFixed(1)}s</span>}
-            <div style={{display:"flex",gap:16,justifyContent:"center",fontSize:13,color:"#94a3b8",marginTop:8}}>
-              <span>Accuracy: <span style={{color:"#e2e8f0",fontWeight:700}}>{accuracy}%</span></span>
-              <span>Streak: <span style={{color:"#e2e8f0",fontWeight:700}}>🔥 {bestStreak}</span></span>
-              <span>{totalCorrect}/{totalAnswered} correct</span>
-            </div>
-          </div>
-        );
-      })():(
       <div style={S.resultsGrid}>
         {[["Score",score.toLocaleString()],["Accuracy",`${accuracy}%`],["Correct",`${totalCorrect}/${totalAnswered}`],["Best Streak",`🔥 ${bestStreak}`]].map(([l,v])=>
           <div key={l} style={S.resultCard}><span style={S.resultValue}>{v}</span><span style={S.resultLabel}>{l}</span></div>
         )}
       </div>
-      )}
 
       {reviewWrongAnswers.length>0&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
           <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {reviewWrongAnswers.length} mistake{reviewWrongAnswers.length>1?"s":""}</h3>
-          {!isMatching&&!isVerbForms&&!isVerbPrep&&!isBlitz&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
+          {!isMatching&&!isVerbForms&&!isVerbPrep&&<p style={{fontSize:12,color:"#64748b",margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:500,overflowY:"auto",paddingRight:4}}>
             {reviewWrongAnswers.map((w,i)=>{
               const expl=EXPLANATIONS.get(w.noun);
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms&&!isVerbPrep&&!isBlitz) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching&&!isVerbForms&&!isVerbPrep&&!isBlitz?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms||isVerbPrep||isBlitz?"default":"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms&&!isVerbPrep) setExpandedIdx(isOpen?null:i); }} style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${isOpen&&!isMatching&&!isVerbForms&&!isVerbPrep?"rgba(251,191,36,0.4)":"rgba(255,255,255,0.08)"}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms||isVerbPrep?"default":"pointer",transition:"border-color 0.2s"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
                     {isVerbForms?(
                       <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}>{getMeaningLabel(w.english)}</span>
@@ -2977,12 +4488,6 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                         <span style={{fontWeight:800,fontSize:17,color:"#f1f5f9"}}>{w.vpVerb}</span>
                         <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>
                       </div>
-                    ):isBlitz?(
-                      <div style={{display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap"}}>
-                        <span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>
-                        <span style={{fontSize:13,color:"#64748b"}}>→</span>
-                        <span style={{fontWeight:800,fontSize:15,color:"#10B981"}}>{w.article?w.article+" ":""}{w.noun}</span>
-                      </div>
                     ):(
                     <div style={{display:"flex",alignItems:"baseline",gap:2}}>
                       <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15}}>{w.article}</span>
@@ -2990,7 +4495,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                       <span style={{color:"#64748b",fontSize:13,marginLeft:6}}>{"->"} {formatPluralAttempt(w.plural)}</span>
                     </div>
                     )}
-                    {!isVerbForms&&!isBlitz&&<span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>}
+                    {!isVerbForms&&<span style={{fontSize:12,color:"#94a3b8",fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>}
                   </div>
                   <div style={{display:"flex",flexDirection:"column",gap:2,marginTop:6}}>
                     {isVerbForms&&w.verbInfinitive&&(
@@ -3008,11 +4513,6 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                         <span style={{fontSize:12,color:"#94a3b8"}}>Case: <span style={{color:w.userCase===w.vpCase?"#10B981":"#f87171",fontWeight:700}}>{w.userCase===NO_ANSWER?"—":w.userCase}</span></span>
                         {w.vpExample&&<span style={{fontSize:11,color:"#64748b",fontStyle:"italic",marginTop:2}}>{w.vpExample}</span>}
                       </>
-                    )}
-                    {isBlitz&&w.blitzTyped&&(
-                      <span style={{fontSize:12,color:"#94a3b8"}}>
-                        You typed: <span style={{color:"#f87171",fontWeight:700}}>{w.blitzTyped}</span>
-                      </span>
                     )}
                     {isMatching&&(
                       <>
@@ -3036,9 +4536,9 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                         <span style={{color:"#10B981"}}>{" -> "}{formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {!isMatching&&!isVerbForms&&!isBlitz&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {!isMatching&&!isVerbForms&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
-                  {!isMatching&&!isVerbForms&&!isBlitz&&isOpen&&expl&&(
+                  {!isMatching&&!isVerbForms&&isOpen&&expl&&(
                     <div style={{marginTop:10,padding:"10px 12px",background:"rgba(251,191,36,0.05)",border:"1px solid rgba(251,191,36,0.15)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
                       <div style={{display:"flex",flexDirection:"column",gap:3}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Why {w.article}?</span>
@@ -3050,7 +4550,7 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                       </div>
                     </div>
                   )}
-                  {!isMatching&&!isVerbForms&&!isBlitz&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
+                  {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
                 </div>
               );
             })}
@@ -3136,6 +4636,32 @@ const S = {
   menuTitle:{fontSize:36,fontWeight:900,color:"#f1f5f9",margin:"4px 0",letterSpacing:"-1px"},
   menuSection:{display:"flex",flexDirection:"column",gap:10},
   menuLabel:{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:2,fontWeight:600},
+  menuTopStats:{display:"grid",gridTemplateColumns:"repeat(3, minmax(0, 1fr))",gap:8},
+  menuStatChip:{display:"flex",flexDirection:"column",gap:4,padding:"12px 10px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.03)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",minWidth:0},
+  menuStatValue:{fontSize:18,fontWeight:800,color:"#f8fafc",lineHeight:1},
+  menuStatLabel:{fontSize:10,color:"#94a3b8",textTransform:"uppercase",letterSpacing:1.2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
+  menuQuickRow:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8},
+  secondaryActionBtn:{padding:"12px 14px",borderRadius:12,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.04)",color:"#e2e8f0",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"},
+  menuProgressLine:{display:"flex",justifyContent:"space-between",gap:10,flexWrap:"wrap",fontSize:11,color:"#94a3b8",padding:"0 2px"},
+  wizardCard:{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,overflow:"hidden",transition:"border-color 0.15s ease, box-shadow 0.15s ease"},
+  wizardHeaderBtn:{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"16px 18px",background:"transparent",border:"none",color:"inherit",textAlign:"left",fontFamily:"inherit"},
+  wizardStepBadge:{width:32,height:32,flexShrink:0,borderRadius:999,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,border:"1px solid rgba(255,255,255,0.08)"},
+  wizardHeaderText:{display:"flex",flexDirection:"column",gap:4,minWidth:0,flex:1},
+  wizardTitle:{fontSize:15,fontWeight:800,color:"#f1f5f9"},
+  wizardSummary:{fontSize:11,color:"#94a3b8",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
+  wizardEdit:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1.4,fontWeight:700},
+  wizardBody:{padding:"0 18px 18px",display:"flex",flexDirection:"column",gap:14},
+  stepNote:{fontSize:12,color:"#94a3b8",lineHeight:1.5,background:"rgba(15,23,42,0.28)",border:"1px solid rgba(148,163,184,0.14)",borderRadius:12,padding:"12px 14px"},
+  stepActionRow:{display:"flex",gap:8,flexWrap:"wrap"},
+  stepPrimaryBtn:{flex:1,padding:"13px 16px",border:"none",borderRadius:12,background:"linear-gradient(135deg,#8B5CF6,#6366F1)",color:"#fff",fontSize:14,fontWeight:800,cursor:"pointer",fontFamily:"inherit",minWidth:140},
+  stepSecondaryBtn:{padding:"13px 16px",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,background:"rgba(255,255,255,0.03)",color:"#cbd5e1",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",minWidth:100},
+  inlineSummaryCard:{background:"rgba(15,23,42,0.26)",border:"1px solid rgba(148,163,184,0.14)",borderRadius:12,padding:"12px 14px",display:"flex",flexDirection:"column",gap:4},
+  inlineSummaryLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1.2,fontWeight:700},
+  inlineSummaryValue:{fontSize:14,color:"#e2e8f0",fontWeight:700},
+  menuStickyFooter:{position:"sticky",bottom:12,zIndex:8,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap",padding:"14px 16px",borderRadius:18,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(9,9,11,0.86)",backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",boxShadow:"0 16px 40px rgba(2,6,23,0.35)"},
+  menuStickySummary:{display:"flex",flexDirection:"column",gap:4,minWidth:0,flex:1},
+  menuStickyLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700},
+  menuStickyValue:{fontSize:13,color:"#f1f5f9",fontWeight:700,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
   tierBtn:{padding:"10px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.15s ease"},
   modeCard:{padding:"14px 16px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"left",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
   diffBtn:{flex:1,padding:"12px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
