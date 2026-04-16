@@ -945,6 +945,63 @@ function dedupeMistakesByNoun(mistakes) {
 // ARTIKEL RUNNER — Subway Surfer-style der/die/das game
 // ═══════════════════════════════════════════════════════════════
 function ArtikelRunner({ queue, onEnd }) {
+  const iframeRef = useRef(null);
+  const onEndRef = useRef(onEnd);
+  onEndRef.current = onEnd;
+
+  useEffect(() => {
+    // Pass word list to the Godot game via a global
+    const words = queue.map(q => ({ noun: q[0], article: q[1] }));
+    window._artikelRunnerWords = words;
+
+    // Listen for results from Godot via postMessage
+    const handleMessage = (event) => {
+      let data = event.data;
+      if (typeof data === "string") {
+        try { data = JSON.parse(data); } catch(e) { return; }
+      }
+      if (data && data.type === "game_over") {
+        // Map Godot results to the format expected by handleRunnerEnd
+        const sessionAnswers = (data.results || []).map(r => ({
+          noun: r.noun, correct: r.correct, modes: ["article"]
+        }));
+        const wrongAnswers = (data.results || []).filter(r => !r.correct).map(r => ({
+          noun: r.noun, article: r.correct_article, userArticle: r.picked_article
+        }));
+        onEndRef.current({
+          score: data.score || 0,
+          totalCorrect: data.correct || 0,
+          totalAnswered: (data.correct || 0) + (data.wrong || 0),
+          bestStreak: data.score || 0,
+          streak: 0,
+          wrongAnswers,
+          sessionAnswers,
+        });
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      delete window._artikelRunnerWords;
+    };
+  }, [queue]);
+
+  return (
+    <div style={{position:"fixed",top:0,left:0,width:"100vw",height:"100vh",background:"#09090b",zIndex:50,display:"flex",justifyContent:"center",alignItems:"center"}}>
+      <iframe
+        ref={iframeRef}
+        src="godot-runner/build/index.html"
+        style={{width:"100%",height:"100%",border:"none"}}
+        allow="autoplay; fullscreen"
+      />
+    </div>
+  );
+}
+
+/* Canvas-based ArtikelRunner fallback (legacy) — kept for reference.
+   To use the canvas version instead of Godot, rename this to ArtikelRunner
+   and remove the Godot iframe version above. */
+function ArtikelRunnerCanvas({ queue, onEnd }) {
   const canvasRef = useRef(null);
   const stateRef = useRef(null);
   const animFrameRef = useRef(null);

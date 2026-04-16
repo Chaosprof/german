@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Artikel Runner</title>
+	<style>
+		* { margin: 0; padding: 0; }
+		html, body { width: 100%; height: 100%; overflow: hidden; background: #09090b; }
+		#canvas {
+			display: block;
+			width: 100vw;
+			height: 100vh;
+			outline: none;
+		}
+		#status {
+			position: absolute;
+			top: 50%; left: 50%;
+			transform: translate(-50%, -50%);
+			color: #a78bfa;
+			font-family: system-ui, sans-serif;
+			font-size: 18px;
+			text-align: center;
+		}
+		#status .progress {
+			width: 260px;
+			height: 6px;
+			background: #1e1b4b;
+			border-radius: 3px;
+			margin: 16px auto 0;
+			overflow: hidden;
+		}
+		#status .progress-bar {
+			height: 100%;
+			background: #7c3aed;
+			border-radius: 3px;
+			width: 0%;
+			transition: width 0.2s;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" tabindex="0">
+		Your browser does not support the canvas element.
+	</canvas>
+
+	<div id="status">
+		<div>Loading Artikel Runner...</div>
+		<div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+	</div>
+
+	<script>
+		// This file is the entry point for the Godot HTML5 export.
+		// After exporting from Godot, you'll get:
+		//   - ArtikelRunner.wasm
+		//   - ArtikelRunner.pck
+		//   - ArtikelRunner.js (the engine loader)
+		//   - ArtikelRunner.worker.js (optional, for threads)
+		//
+		// Place those files in this same directory (godot-runner/build/).
+		// The export name below must match what you set in Godot's export settings.
+
+		const GODOT_EXPORT_NAME = "ArtikelRunner";
+		const statusEl = document.getElementById("status");
+		const progressBar = document.getElementById("progress-bar");
+		const canvas = document.getElementById("canvas");
+
+		// Focus canvas for keyboard input
+		canvas.focus();
+		canvas.addEventListener("click", () => canvas.focus());
+
+		// Load the Godot engine
+		const script = document.createElement("script");
+		script.src = GODOT_EXPORT_NAME + ".js";
+		script.onload = () => {
+			const engine = new Engine({
+				args: [],
+				canvasResizePolicy: 2,  // Adaptive
+				executable: GODOT_EXPORT_NAME,
+				experimentalVK: false,
+				fileSizes: {},
+				focusCanvas: true,
+				gdextensionLibs: [],
+			});
+
+			engine.startGame({
+				canvas: canvas,
+				onProgress: (current, total) => {
+					if (total > 0) {
+						progressBar.style.width = (current / total * 100) + "%";
+					}
+				},
+			}).then(() => {
+				statusEl.style.display = "none";
+				canvas.focus();
+			}).catch((err) => {
+				statusEl.innerHTML = "<div style='color:#ef4444'>Failed to load game</div>" +
+					"<div style='font-size:13px;color:#94a3b8;margin-top:8px'>" + err.message + "</div>";
+			});
+		};
+		script.onerror = () => {
+			statusEl.innerHTML =
+				"<div style='color:#ef4444'>Godot export not found</div>" +
+				"<div style='font-size:13px;color:#94a3b8;margin-top:12px;max-width:400px'>" +
+				"To build the game:<br><br>" +
+				"1. Install <a href='https://godotengine.org' style='color:#a78bfa'>Godot 4.3+</a><br>" +
+				"2. Open the <code>godot-runner/</code> project<br>" +
+				"3. Export &rarr; Web (HTML5)<br>" +
+				"4. Export as <code>ArtikelRunner</code> into this <code>build/</code> folder" +
+				"</div>";
+		};
+		document.body.appendChild(script);
+	</script>
+</body>
+</html>
