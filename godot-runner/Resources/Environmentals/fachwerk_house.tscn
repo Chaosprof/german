@@ -1,0 +1,187 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/plaster_wall.gdshader" id="shader_plaster"]
+[ext_resource type="Shader" path="res://Assets/Shaders/timber.gdshader" id="shader_timber"]
+[ext_resource type="Shader" path="res://Assets/Shaders/roof_tiles.gdshader" id="shader_roof"]
+[ext_resource type="Shader" path="res://Assets/Shaders/window_glass.gdshader" id="shader_window"]
+
+[sub_resource type="ShaderMaterial" id="mat_wall"]
+shader = ExtResource("shader_plaster")
+shader_parameter/base_color = Vector3(0.94, 0.90, 0.80)
+shader_parameter/stain_color = Vector3(0.82, 0.78, 0.68)
+shader_parameter/roughness_val = 0.88
+shader_parameter/scale = 25.0
+shader_parameter/stain_amount = 0.25
+
+[sub_resource type="ShaderMaterial" id="mat_timber"]
+shader = ExtResource("shader_timber")
+shader_parameter/wood_dark = Vector3(0.22, 0.12, 0.04)
+shader_parameter/wood_light = Vector3(0.38, 0.22, 0.10)
+shader_parameter/roughness_val = 0.72
+shader_parameter/grain_scale = 14.0
+
+[sub_resource type="ShaderMaterial" id="mat_roof"]
+shader = ExtResource("shader_roof")
+shader_parameter/tile_color = Vector3(0.55, 0.20, 0.12)
+shader_parameter/tile_dark = Vector3(0.38, 0.13, 0.08)
+shader_parameter/moss_color = Vector3(0.25, 0.32, 0.15)
+shader_parameter/roughness_val = 0.82
+shader_parameter/tile_rows = 10.0
+shader_parameter/tile_cols = 8.0
+
+[sub_resource type="ShaderMaterial" id="mat_window"]
+shader = ExtResource("shader_window")
+shader_parameter/glass_color = Vector3(0.55, 0.72, 0.88)
+shader_parameter/warm_glow = Vector3(0.95, 0.80, 0.45)
+shader_parameter/glow_strength = 0.6
+shader_parameter/roughness_val = 0.12
+shader_parameter/pane_cols = 2.0
+shader_parameter/pane_rows = 3.0
+
+[sub_resource type="StandardMaterial3D" id="mat_door"]
+albedo_color = Color(0.35, 0.20, 0.08, 1)
+roughness = 0.70
+
+[sub_resource type="StandardMaterial3D" id="mat_chimney"]
+albedo_color = Color(0.50, 0.25, 0.15, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="mat_gold_trim"]
+albedo_color = Color(0.85, 0.68, 0.0, 1)
+roughness = 0.35
+metallic = 0.6
+
+[sub_resource type="StandardMaterial3D" id="mat_flag_black"]
+albedo_color = Color(0.06, 0.06, 0.06, 1)
+roughness = 0.70
+
+[sub_resource type="StandardMaterial3D" id="mat_flag_red"]
+albedo_color = Color(0.85, 0.10, 0.08, 1)
+roughness = 0.70
+
+[sub_resource type="StandardMaterial3D" id="mat_flag_gold"]
+albedo_color = Color(0.90, 0.72, 0.0, 1)
+roughness = 0.50
+metallic = 0.3
+
+[sub_resource type="BoxMesh" id="mesh_body"]
+size = Vector3(3.2, 4.5, 2.8)
+
+[sub_resource type="BoxMesh" id="mesh_flag_stripe"]
+size = Vector3(0.45, 0.12, 0.04)
+
+[sub_resource type="BoxMesh" id="mesh_beam_h"]
+size = Vector3(3.3, 0.1, 0.13)
+
+[sub_resource type="BoxMesh" id="mesh_beam_v"]
+size = Vector3(0.1, 1.8, 0.13)
+
+[sub_resource type="PrismMesh" id="mesh_roof"]
+size = Vector3(3.8, 2.0, 3.2)
+
+[node name="FachwerkHouse" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+mesh = SubResource("mesh_body")
+material_override = SubResource("mat_wall")
+
+[node name="BeamBot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 1.41)
+mesh = SubResource("mesh_beam_h")
+material_override = SubResource("mat_timber")
+
+[node name="BeamMid1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 1.41)
+mesh = SubResource("mesh_beam_h")
+material_override = SubResource("mat_timber")
+
+[node name="BeamMid2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 1.41)
+mesh = SubResource("mesh_beam_h")
+material_override = SubResource("mat_timber")
+
+[node name="BeamTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 1.41)
+mesh = SubResource("mesh_beam_h")
+material_override = SubResource("mat_timber")
+
+[node name="BeamVL1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 1.4, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="BeamVR1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1.4, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="BeamVL2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 3.2, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="BeamVR2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 3.2, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="BeamVC" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="DiagL" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 1, -0.6, 1.4, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="DiagR" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0.6, 1.4, 1.41)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_timber")
+
+[node name="WindowL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 2.8, 1.42)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_window")
+
+[node name="WindowR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 2.8, 1.42)
+mesh = SubResource("mesh_beam_v")
+material_override = SubResource("mat_window")
+
+[node name="Door" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.6, 0, 0, 0, 0.5, 0, 0.55, 1.42)
+mesh = SubResource("mesh_body")
+material_override = SubResource("mat_door")
+
+[node name="GoldTrim" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.52, 1.41)
+mesh = SubResource("mesh_beam_h")
+material_override = SubResource("mat_gold_trim")
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, 0)
+mesh = SubResource("mesh_roof")
+material_override = SubResource("mat_roof")
+
+[node name="Chimney" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.15, 0, 0, 0, 0.5, 0, 0, 0, 0.15, 1.0, 6.2, 0)
+mesh = SubResource("mesh_body")
+material_override = SubResource("mat_chimney")
+
+[node name="FlagBlack" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 3.8, 1.43)
+mesh = SubResource("mesh_flag_stripe")
+material_override = SubResource("mat_flag_black")
+
+[node name="FlagRed" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 3.68, 1.43)
+mesh = SubResource("mesh_flag_stripe")
+material_override = SubResource("mat_flag_red")
+
+[node name="FlagGold" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 3.56, 1.43)
+mesh = SubResource("mesh_flag_stripe")
+material_override = SubResource("mat_flag_gold")

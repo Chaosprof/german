@@ -1,0 +1,105 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/stone.gdshader" id="shader_stone"]
+
+[sub_resource type="ShaderMaterial" id="mat_stone"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.70, 0.66, 0.58)
+shader_parameter/stone_dark = Vector3(0.50, 0.47, 0.42)
+shader_parameter/moss_tint = Vector3(0.28, 0.35, 0.18)
+shader_parameter/roughness_val = 0.78
+shader_parameter/block_rows = 6.0
+shader_parameter/block_cols = 6.0
+
+[sub_resource type="ShaderMaterial" id="mat_stone_dark"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.55, 0.52, 0.46)
+shader_parameter/stone_dark = Vector3(0.40, 0.38, 0.34)
+shader_parameter/moss_tint = Vector3(0.22, 0.28, 0.14)
+shader_parameter/roughness_val = 0.85
+shader_parameter/block_rows = 4.0
+shader_parameter/block_cols = 4.0
+
+[sub_resource type="ShaderMaterial" id="mat_edge"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.48, 0.45, 0.40)
+shader_parameter/stone_dark = Vector3(0.35, 0.33, 0.30)
+shader_parameter/moss_tint = Vector3(0.25, 0.32, 0.16)
+shader_parameter/roughness_val = 0.88
+shader_parameter/block_rows = 3.0
+shader_parameter/block_cols = 3.0
+
+[sub_resource type="ShaderMaterial" id="mat_inlay"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.60, 0.58, 0.52)
+shader_parameter/stone_dark = Vector3(0.45, 0.43, 0.38)
+shader_parameter/moss_tint = Vector3(0.26, 0.33, 0.17)
+shader_parameter/roughness_val = 0.80
+shader_parameter/block_rows = 4.0
+shader_parameter/block_cols = 4.0
+
+[sub_resource type="BoxMesh" id="mesh_main"]
+size = Vector3(4, 0.35, 4)
+
+[sub_resource type="BoxMesh" id="mesh_edge"]
+size = Vector3(0.18, 0.40, 4)
+
+[sub_resource type="BoxMesh" id="mesh_inlay"]
+size = Vector3(1.2, 0.02, 1.2)
+
+[sub_resource type="BoxShape3D" id="col_ground"]
+size = Vector3(4, 0.35, 4)
+
+[sub_resource type="BoxShape3D" id="col_wall"]
+size = Vector3(5, 10, 1)
+
+[node name="StonePlatform" type="Node3D"]
+
+[node name="Surface" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_main")
+material_override = SubResource("mat_stone")
+
+[node name="InlayA" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0.185, -0.7)
+mesh = SubResource("mesh_inlay")
+material_override = SubResource("mat_inlay")
+
+[node name="InlayB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.185, 0.7)
+mesh = SubResource("mesh_inlay")
+material_override = SubResource("mat_inlay")
+
+[node name="EdgeLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.91, 0.025, 0)
+mesh = SubResource("mesh_edge")
+material_override = SubResource("mat_edge")
+
+[node name="EdgeRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.91, 0.025, 0)
+mesh = SubResource("mesh_edge")
+material_override = SubResource("mat_edge")
+
+[node name="EdgeDarkL" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.85, 0, 0, 0, 1, -1.80, 0.02, 0)
+mesh = SubResource("mesh_edge")
+material_override = SubResource("mat_stone_dark")
+
+[node name="EdgeDarkR" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.85, 0, 0, 0, 1, 1.80, 0.02, 0)
+mesh = SubResource("mesh_edge")
+material_override = SubResource("mat_stone_dark")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("col_ground")
+
+[node name="Boundaries" type="StaticBody3D" parent="."]
+
+[node name="WallLeft" type="CollisionShape3D" parent="Boundaries"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, 0)
+shape = SubResource("col_wall")
+
+[node name="WallRight" type="CollisionShape3D" parent="Boundaries"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.5, 0, 0)
+shape = SubResource("col_wall")

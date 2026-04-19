@@ -36,9 +36,8 @@ func _on_body_entered(body):
 			Global.lives -= 1
 			Global.lives_updated.emit()
 			damage_sfx.play()
-			print("Deducting Lives")
-		else:
-			print("Game over")
+		if body.has_method("play_impact_fx"):
+			body.play_impact_fx()
 		
 # Move Advanced Obstacles
 func move_obstacle(obstacle_instance):

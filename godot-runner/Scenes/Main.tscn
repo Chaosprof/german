@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c5e837atilcil"]
+[gd_scene load_steps=14 format=3 uid="uid://c5e837atilcil"]
 
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_5icag"]
 [ext_resource type="PackedScene" uid="uid://6yvfoo4q2dqe" path="res://Scenes/Player.tscn" id="1_54ub6"]
@@ -6,12 +6,13 @@
 [ext_resource type="FontFile" uid="uid://2nj8hcjkivqc" path="res://Assets/Fonts/montreal/Montreal-Bold.ttf" id="3_ymi0i"]
 [ext_resource type="AudioStream" uid="uid://c8menbmpoydct" path="res://Assets/Music/menu_music.mp3" id="5_dmodb"]
 [ext_resource type="AudioStream" uid="uid://kivxf1k4tu8s" path="res://Assets/Music/background_music.mp3" id="6_fqrjh"]
+[ext_resource type="Shader" path="res://Assets/Shaders/chromatic_aberration.gdshader" id="7_caber"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_trikq"]
-sky_top_color = Color(0.356863, 0.815686, 0.933333, 1)
-sky_horizon_color = Color(0.737255, 0.603922, 0.729412, 1)
-ground_bottom_color = Color(0.254902, 0.588235, 0.862745, 1)
-ground_horizon_color = Color(0.443137, 0.752941, 0.968627, 1)
+sky_top_color = Color(0.42, 0.62, 0.85, 1)
+sky_horizon_color = Color(0.78, 0.72, 0.68, 1)
+ground_bottom_color = Color(0.35, 0.33, 0.30, 1)
+ground_horizon_color = Color(0.55, 0.52, 0.48, 1)
 
 [sub_resource type="Sky" id="Sky_5okwd"]
 sky_material = SubResource("ProceduralSkyMaterial_trikq")
@@ -19,17 +20,41 @@ sky_material = SubResource("ProceduralSkyMaterial_trikq")
 [sub_resource type="Environment" id="Environment_1ohtv"]
 background_mode = 2
 sky = SubResource("Sky_5okwd")
+tonemap_mode = 3
+tonemap_exposure = 1.1
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 0.8
+ssao_intensity = 1.0
+ssao_power = 1.2
+ssao_detail = 0.3
+ssil_enabled = false
+glow_enabled = true
+glow_intensity = 0.6
+glow_strength = 0.8
+glow_bloom = 0.05
+glow_blend_mode = 1
+glow_hdr_threshold = 1.4
+glow_hdr_scale = 2.0
 fog_enabled = true
-fog_light_color = Color(0.356863, 0.815686, 0.933333, 1)
-fog_light_energy = 0.3
-fog_sky_affect = 0.3
-volumetric_fog_density = 0.005
-volumetric_fog_sky_affect = 0.4
+fog_light_color = Color(0.65, 0.62, 0.58, 1)
+fog_light_energy = 0.15
+fog_sky_affect = 0.15
+volumetric_fog_density = 0.002
+volumetric_fog_sky_affect = 0.2
+adjustment_enabled = true
+adjustment_brightness = 1.02
+adjustment_contrast = 1.08
+adjustment_saturation = 1.15
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_6px5d"]
-dof_blur_far_enabled = true
-dof_blur_far_distance = 30.0
-dof_blur_amount = 1.0
+dof_blur_far_enabled = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_caber"]
+shader = ExtResource("7_caber")
+shader_parameter/strength = 0.002
+shader_parameter/vignette_strength = 0.35
+shader_parameter/vignette_softness = 0.7
 
 [node name="Main" type="Node3D"]
 process_mode = 3
@@ -158,6 +183,18 @@ stream = ExtResource("5_dmodb")
 
 [node name="LevelMusic" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("6_fqrjh")
+
+[node name="PostFX" type="CanvasLayer" parent="."]
+layer = 0
+
+[node name="ChromaticAberration" type="ColorRect" parent="PostFX"]
+material = SubResource("ShaderMaterial_caber")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [connection signal="pressed" from="Menu/Container/ButtonStart" to="." method="_on_button_start_pressed"]
 [connection signal="pressed" from="Menu/Container/ButtonLoad" to="." method="_on_button_load_pressed"]

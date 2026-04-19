@@ -1,0 +1,92 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/cobblestone.gdshader" id="shader_cobble"]
+
+[sub_resource type="ShaderMaterial" id="mat_cobble"]
+shader = ExtResource("shader_cobble")
+shader_parameter/stone_base = Vector3(0.38, 0.35, 0.32)
+shader_parameter/stone_light = Vector3(0.52, 0.48, 0.44)
+shader_parameter/grout_color = Vector3(0.22, 0.20, 0.18)
+shader_parameter/roughness_val = 0.90
+shader_parameter/scale = 12.0
+
+[sub_resource type="ShaderMaterial" id="mat_cobble_light"]
+shader = ExtResource("shader_cobble")
+shader_parameter/stone_base = Vector3(0.48, 0.45, 0.40)
+shader_parameter/stone_light = Vector3(0.58, 0.55, 0.50)
+shader_parameter/grout_color = Vector3(0.30, 0.28, 0.25)
+shader_parameter/roughness_val = 0.88
+shader_parameter/scale = 10.0
+
+[sub_resource type="ShaderMaterial" id="mat_curb"]
+shader = ExtResource("shader_cobble")
+shader_parameter/stone_base = Vector3(0.52, 0.50, 0.46)
+shader_parameter/stone_light = Vector3(0.60, 0.57, 0.52)
+shader_parameter/grout_color = Vector3(0.35, 0.33, 0.30)
+shader_parameter/roughness_val = 0.82
+shader_parameter/scale = 6.0
+
+[sub_resource type="StandardMaterial3D" id="mat_gutter"]
+albedo_color = Color(0.28, 0.26, 0.24, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="mesh_main"]
+size = Vector3(4, 0.35, 4)
+
+[sub_resource type="BoxMesh" id="mesh_curb"]
+size = Vector3(0.18, 0.18, 4)
+
+[sub_resource type="BoxMesh" id="mesh_gutter"]
+size = Vector3(0.25, 0.02, 4)
+
+[sub_resource type="BoxShape3D" id="col_ground"]
+size = Vector3(4, 0.35, 4)
+
+[sub_resource type="BoxShape3D" id="col_wall"]
+size = Vector3(5, 10, 1)
+
+[node name="CobblePlatform" type="Node3D"]
+
+[node name="Surface" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_main")
+material_override = SubResource("mat_cobble")
+
+[node name="CenterStrip" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.01, 0, 0, 0, 1, 0, 0.185, 0)
+mesh = SubResource("mesh_main")
+material_override = SubResource("mat_cobble_light")
+
+[node name="CurbLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.91, 0.265, 0)
+mesh = SubResource("mesh_curb")
+material_override = SubResource("mat_curb")
+
+[node name="CurbRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.91, 0.265, 0)
+mesh = SubResource("mesh_curb")
+material_override = SubResource("mat_curb")
+
+[node name="GutterL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.75, 0.185, 0)
+mesh = SubResource("mesh_gutter")
+material_override = SubResource("mat_gutter")
+
+[node name="GutterR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 0.185, 0)
+mesh = SubResource("mesh_gutter")
+material_override = SubResource("mat_gutter")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("col_ground")
+
+[node name="Boundaries" type="StaticBody3D" parent="."]
+
+[node name="WallLeft" type="CollisionShape3D" parent="Boundaries"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, 0)
+shape = SubResource("col_wall")
+
+[node name="WallRight" type="CollisionShape3D" parent="Boundaries"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.5, 0, 0)
+shape = SubResource("col_wall")

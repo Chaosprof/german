@@ -1,0 +1,100 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/stone.gdshader" id="shader_stone"]
+
+[sub_resource type="ShaderMaterial" id="mat_brick"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.62, 0.30, 0.20)
+shader_parameter/stone_dark = Vector3(0.45, 0.20, 0.14)
+shader_parameter/moss_tint = Vector3(0.22, 0.28, 0.12)
+shader_parameter/roughness_val = 0.86
+shader_parameter/block_rows = 16.0
+shader_parameter/block_cols = 8.0
+
+[sub_resource type="ShaderMaterial" id="mat_brick_alt"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.55, 0.25, 0.18)
+shader_parameter/stone_dark = Vector3(0.40, 0.18, 0.12)
+shader_parameter/moss_tint = Vector3(0.20, 0.25, 0.10)
+shader_parameter/roughness_val = 0.88
+shader_parameter/block_rows = 16.0
+shader_parameter/block_cols = 8.0
+
+[sub_resource type="ShaderMaterial" id="mat_curb"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.50, 0.48, 0.44)
+shader_parameter/stone_dark = Vector3(0.38, 0.36, 0.33)
+shader_parameter/moss_tint = Vector3(0.25, 0.30, 0.15)
+shader_parameter/roughness_val = 0.82
+shader_parameter/block_rows = 4.0
+shader_parameter/block_cols = 6.0
+
+[sub_resource type="StandardMaterial3D" id="mat_mortar"]
+albedo_color = Color(0.72, 0.68, 0.60, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="mesh_main"]
+size = Vector3(4, 0.35, 4)
+
+[sub_resource type="BoxMesh" id="mesh_strip"]
+size = Vector3(4, 0.03, 0.45)
+
+[sub_resource type="BoxMesh" id="mesh_curb"]
+size = Vector3(0.18, 0.18, 4)
+
+[sub_resource type="BoxShape3D" id="col_ground"]
+size = Vector3(4, 0.35, 4)
+
+[sub_resource type="BoxShape3D" id="col_wall"]
+size = Vector3(5, 10, 1)
+
+[node name="BrickPlatform" type="Node3D"]
+
+[node name="Surface" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_main")
+material_override = SubResource("mat_brick")
+
+[node name="AltRow1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.185, -1.5)
+mesh = SubResource("mesh_strip")
+material_override = SubResource("mat_brick_alt")
+
+[node name="AltRow2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.185, 0.5)
+mesh = SubResource("mesh_strip")
+material_override = SubResource("mat_brick_alt")
+
+[node name="MortarA" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.183, -1.0)
+mesh = SubResource("mesh_strip")
+material_override = SubResource("mat_mortar")
+
+[node name="MortarB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.183, 1.0)
+mesh = SubResource("mesh_strip")
+material_override = SubResource("mat_mortar")
+
+[node name="CurbLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.91, 0.265, 0)
+mesh = SubResource("mesh_curb")
+material_override = SubResource("mat_curb")
+
+[node name="CurbRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.91, 0.265, 0)
+mesh = SubResource("mesh_curb")
+material_override = SubResource("mat_curb")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("col_ground")
+
+[node name="Boundaries" type="StaticBody3D" parent="."]
+
+[node name="WallLeft" type="CollisionShape3D" parent="Boundaries"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, 0)
+shape = SubResource("col_wall")
+
+[node name="WallRight" type="CollisionShape3D" parent="Boundaries"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.5, 0, 0)
+shape = SubResource("col_wall")

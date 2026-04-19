@@ -1,0 +1,117 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/stone.gdshader" id="shader_stone"]
+[ext_resource type="Shader" path="res://Assets/Shaders/window_glass.gdshader" id="shader_window"]
+
+[sub_resource type="ShaderMaterial" id="mat_stone"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.72, 0.68, 0.62)
+shader_parameter/stone_dark = Vector3(0.50, 0.47, 0.42)
+shader_parameter/moss_tint = Vector3(0.28, 0.35, 0.18)
+shader_parameter/roughness_val = 0.85
+shader_parameter/block_rows = 12.0
+shader_parameter/block_cols = 6.0
+
+[sub_resource type="ShaderMaterial" id="mat_stone_dark"]
+shader = ExtResource("shader_stone")
+shader_parameter/stone_light = Vector3(0.55, 0.52, 0.48)
+shader_parameter/stone_dark = Vector3(0.40, 0.38, 0.35)
+shader_parameter/moss_tint = Vector3(0.22, 0.30, 0.15)
+shader_parameter/roughness_val = 0.88
+shader_parameter/block_rows = 4.0
+shader_parameter/block_cols = 8.0
+
+[sub_resource type="ShaderMaterial" id="mat_window"]
+shader = ExtResource("shader_window")
+shader_parameter/glass_color = Vector3(0.65, 0.58, 0.35)
+shader_parameter/warm_glow = Vector3(0.95, 0.82, 0.40)
+shader_parameter/glow_strength = 1.0
+shader_parameter/roughness_val = 0.15
+shader_parameter/pane_cols = 2.0
+shader_parameter/pane_rows = 4.0
+
+[sub_resource type="StandardMaterial3D" id="mat_spire"]
+albedo_color = Color(0.25, 0.30, 0.28, 1)
+roughness = 0.45
+metallic = 0.35
+
+[sub_resource type="StandardMaterial3D" id="mat_gold"]
+albedo_color = Color(0.90, 0.72, 0.0, 1)
+roughness = 0.25
+metallic = 0.8
+
+[sub_resource type="BoxMesh" id="mesh_tower"]
+size = Vector3(2.2, 8.0, 2.2)
+
+[sub_resource type="BoxMesh" id="mesh_ledge"]
+size = Vector3(2.6, 0.25, 2.6)
+
+[sub_resource type="BoxMesh" id="mesh_window"]
+size = Vector3(0.4, 0.8, 0.05)
+
+[sub_resource type="PrismMesh" id="mesh_spire"]
+size = Vector3(2.0, 4.5, 2.0)
+
+[sub_resource type="CylinderMesh" id="mesh_cross_v"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 1.2
+radial_segments = 6
+
+[sub_resource type="CylinderMesh" id="mesh_cross_h"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.7
+radial_segments = 6
+
+[node name="ChurchSteeple" type="Node3D"]
+
+[node name="Tower" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+mesh = SubResource("mesh_tower")
+material_override = SubResource("mat_stone")
+
+[node name="LedgeBot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("mesh_ledge")
+material_override = SubResource("mat_stone_dark")
+
+[node name="LedgeMid" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+mesh = SubResource("mesh_ledge")
+material_override = SubResource("mat_stone_dark")
+
+[node name="LedgeTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.0, 0)
+mesh = SubResource("mesh_ledge")
+material_override = SubResource("mat_stone_dark")
+
+[node name="WinF1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 1.13)
+mesh = SubResource("mesh_window")
+material_override = SubResource("mat_window")
+
+[node name="WinF2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, 1.13)
+mesh = SubResource("mesh_window")
+material_override = SubResource("mat_window")
+
+[node name="WinF3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.8, 1.13)
+mesh = SubResource("mesh_window")
+material_override = SubResource("mat_window")
+
+[node name="Spire" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.35, 0)
+mesh = SubResource("mesh_spire")
+material_override = SubResource("mat_spire")
+
+[node name="CrossV" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.8, 0)
+mesh = SubResource("mesh_cross_v")
+material_override = SubResource("mat_gold")
+
+[node name="CrossH" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 12.5, 0)
+mesh = SubResource("mesh_cross_h")
+material_override = SubResource("mat_gold")

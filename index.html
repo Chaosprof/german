@@ -52,6 +52,51 @@
     border-radius: 10px;
     pointer-events: none;
   }
+  /* ── Best-score medals (perfect runs) ───────────────────────── */
+  @keyframes medalShine {
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(245,158,11,0.6)); }
+    50% { filter: drop-shadow(0 0 8px rgba(245,158,11,1)); }
+  }
+  @keyframes medalPop {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .medal-gold { animation: medalShine 2.2s ease-in-out infinite; }
+  /* Perfect-run card: stronger gold border + shimmer band */
+  .perfect-card {
+    animation: goldPulse 2.4s ease-in-out infinite;
+  }
+  .perfect-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 10%, rgba(252,211,77,0.22) 45%, rgba(252,211,77,0.08) 55%, transparent 90%);
+    background-size: 250% 100%;
+    animation: goldShimmer 3.2s ease-in-out infinite;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  /* Results-screen celebration banner */
+  @keyframes bannerRise {
+    0% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .celebrate-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    animation: bannerRise 0.45s ease-out both;
+  }
+  .celebrate-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.18) 50%, transparent 80%);
+    background-size: 220% 100%;
+    animation: goldShimmer 2.6s ease-in-out infinite;
+    pointer-events: none;
+  }
   /* Scrollbar for range grid */
   .range-grid::-webkit-scrollbar { width: 4px; }
   .range-grid::-webkit-scrollbar-track { background: transparent; }
@@ -347,6 +392,47 @@ const TITLES = [
   [25, "Wortschatz-Legende", "Vocab Legend"],
 ];
 function getTitle(level) { let t = TITLES[0]; for (const r of TITLES) if (level >= r[0]) t = r; return t; }
+
+// ── Best-score medal tiering ──────────────────────────────────
+// Returns { tier: "gold"|"silver"|"bronze"|null, label, color, next, nextLabel, gapToNext }
+function bestScoreMedal(pct) {
+  if (pct == null || pct <= 0) return { tier: null, label: null, color: null, next: 75, nextLabel: "Bronze", gapToNext: 75 };
+  if (pct >= 100) return { tier: "gold", label: "PERFECT", color: "#F59E0B", next: null, nextLabel: null, gapToNext: 0 };
+  if (pct >= 90)  return { tier: "silver", label: "Silver", color: "#CBD5E1", next: 100, nextLabel: "Perfect", gapToNext: 100 - pct };
+  if (pct >= 75)  return { tier: "bronze", label: "Bronze", color: "#D97706", next: 90, nextLabel: "Silver", gapToNext: 90 - pct };
+  return { tier: null, label: null, color: "#94a3b8", next: 75, nextLabel: "Bronze", gapToNext: 75 - pct };
+}
+
+// Small medal badge — shows trophy/medal with pct centered, styled by tier
+function Medal({ pct, size = 28, showLabel = false }) {
+  const m = bestScoreMedal(pct);
+  if (m.tier === null && (!pct || pct <= 0)) return null;
+  const bg = m.tier === "gold"
+    ? "linear-gradient(135deg,#FCD34D 0%,#F59E0B 55%,#B45309 100%)"
+    : m.tier === "silver"
+    ? "linear-gradient(135deg,#F1F5F9 0%,#CBD5E1 55%,#64748B 100%)"
+    : m.tier === "bronze"
+    ? "linear-gradient(135deg,#FCD9B6 0%,#D97706 55%,#7C2D12 100%)"
+    : "linear-gradient(135deg,#475569 0%,#334155 100%)";
+  const border = m.tier === "gold" ? "rgba(252,211,77,0.9)" : m.tier === "silver" ? "rgba(203,213,225,0.8)" : m.tier === "bronze" ? "rgba(217,119,6,0.85)" : "rgba(148,163,184,0.5)";
+  const textColor = m.tier === "silver" ? "#0f172a" : "#ffffff";
+  const fs = size >= 30 ? 11 : size >= 24 ? 10 : 9;
+  return (
+    <div style={{display:"inline-flex",alignItems:"center",gap:4}}>
+      <div className={m.tier === "gold" ? "medal-gold" : ""} style={{
+        width: size, height: size, borderRadius: "50%",
+        background: bg, border: `1.5px solid ${border}`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        boxShadow: m.tier === "gold" ? "0 0 10px rgba(245,158,11,0.55), inset 0 1px 2px rgba(255,255,255,0.5)" : "inset 0 1px 2px rgba(255,255,255,0.35)",
+        color: textColor, fontWeight: 900, fontSize: fs, lineHeight: 1,
+        flexShrink: 0,
+      }}>
+        {m.tier === "gold" ? "★" : Math.round(pct) + "%"}
+      </div>
+      {showLabel && m.label && <span style={{fontSize:10,fontWeight:800,letterSpacing:0.5,color:m.color,textTransform:"uppercase"}}>{m.label}</span>}
+    </div>
+  );
+}
 
 // Perks
 const PERKS = [
@@ -2429,7 +2515,22 @@ function GermanNounGame() {
 
     // Calculate rewards
     const rewards = calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, difficulty, userData.activePerks || [], gameMode, playStyle);
-    setSessionRewards(rewards);
+    // Best-score snapshot for celebration on results screen (resolved below once we know the outcome)
+    let sessionBestInfo = null;
+    if (sessionKey && totalAnswered > 0) {
+      const denom = sessionTotal > 0 ? sessionTotal : totalAnswered;
+      const pct = Math.round((totalCorrect / denom) * 100);
+      const prev = (userData.bestScores || {})[sessionKey];
+      const prevPct = prev ? prev.pct : 0;
+      sessionBestInfo = {
+        sessionKey,
+        pct,
+        prevPct,
+        isNewBest: !prev || pct > prevPct,
+        isPerfect: pct >= 100,
+      };
+    }
+    setSessionRewards({ ...rewards, best: sessionBestInfo });
 
     // Update userData with rewards
     setUserData(prev => {
@@ -2489,7 +2590,7 @@ function GermanNounGame() {
     });
 
     setScreen("results");
-  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, tier, campaignChallenge, sessionKey, sessionTotal]);
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, userData.bestScores, tier, campaignChallenge, sessionKey, sessionTotal]);
 
   // Per-question timer (for timed playStyle or campaign difficulty modes)
   useEffect(() => {
@@ -3964,16 +4065,21 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               const tierPct = tierBest ? tierBest.pct : 0;
               const tm = masteryForRange(0, t.value);
               const ringColor = tm.pct >= 100 ? "#F59E0B" : tm.pct >= 50 ? "#10B981" : "#8B5CF6";
+              const isPerfectRun = tierPct >= 100;
+              const isMasteryDone = tm.pct >= 100;
+              const goldState = isPerfectRun || isMasteryDone;
+              const cardClass = isPerfectRun ? "perfect-card" : goldState ? "range-gold" : "";
               return (
-                <button key={t.value} className={tm.pct>=100?"range-gold":""} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":tm.pct>=100?"rgba(245,158,11,0.5)":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":tm.pct>=100?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
-                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:tm.pct>=100?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":goldState?"rgba(245,158,11,0.65)":tierPct>=90?"rgba(203,213,225,0.45)":tierPct>=75?"rgba(217,119,6,0.45)":tierPct>0?"rgba(16,185,129,0.35)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":goldState?"rgba(245,158,11,0.08)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
+                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:isPerfectRun?"linear-gradient(to top, rgba(245,158,11,0.3), rgba(245,158,11,0.06))":tierPct>=90?"linear-gradient(to top, rgba(203,213,225,0.28), rgba(203,213,225,0.06))":tierPct>=75?"linear-gradient(to top, rgba(217,119,6,0.3), rgba(217,119,6,0.06))":"linear-gradient(to top, rgba(16,185,129,0.3), rgba(16,185,129,0.08))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  {tierPct>0&&<div style={{position:"absolute",top:6,right:6,zIndex:2}}><Medal pct={tierPct} size={24}/></div>}
                   <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
                     <ProgressRing pct={tm.pct} size={36} stroke={3} color={ringColor}/>
                     <span style={{position:"absolute",fontSize:9,fontWeight:800,color:ringColor}}>{tm.pct>=100?"\u2713":tm.pct>0?tm.pct+"%":""}</span>
                   </div>
-                  <span style={{fontSize:13,fontWeight:700,color:tm.pct>=100?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
+                  <span style={{fontSize:13,fontWeight:700,color:goldState?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
                   <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{tm.mastered}/{tm.total} mastered</span>
-                  {tierPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {tierPct}%</span>}
+                  {isPerfectRun&&<span style={{fontSize:9,color:"#F59E0B",fontWeight:800,letterSpacing:0.8,position:"relative"}}>PERFECT</span>}
                   {count >= maxAvailable && <span style={{fontSize:8,color:"#94a3b8",position:"relative"}}>All</span>}
                 </button>
               );
@@ -4008,18 +4114,22 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 const rangePct = rangeBest ? rangeBest.pct : 0;
                 const rm = masteryForRange(r.min, r.max);
                 const isComplete = rm.pct >= 100;
+                const isPerfectRun = rangePct >= 100;
+                const goldState = isComplete || isPerfectRun;
                 const isStarted = rm.pct > 0;
                 const ringColor = isComplete ? "#F59E0B" : rm.pct >= 50 ? "#10B981" : rm.pct > 0 ? "#8B5CF6" : "rgba(255,255,255,0.1)";
-                const borderColor = isSelected ? "#8B5CF6" : isComplete ? "rgba(245,158,11,0.5)" : rangePct >= 90 ? "rgba(16,185,129,0.5)" : isStarted ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.08)";
-                const bgColor = isSelected ? "rgba(139,92,246,0.1)" : isComplete ? "rgba(245,158,11,0.06)" : "transparent";
+                const borderColor = isSelected ? "#8B5CF6" : goldState ? "rgba(245,158,11,0.65)" : rangePct >= 90 ? "rgba(203,213,225,0.45)" : rangePct >= 75 ? "rgba(217,119,6,0.45)" : isStarted ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.08)";
+                const bgColor = isSelected ? "rgba(139,92,246,0.1)" : goldState ? "rgba(245,158,11,0.08)" : "transparent";
+                const cardClass = isPerfectRun ? "perfect-card" : goldState ? "range-gold" : "";
                 return (
-                  <button key={r.min} className={isComplete?"range-gold":""} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden",padding:"10px 6px",gap:1}}>
-                    {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:isComplete?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.25), rgba(16,185,129,0.08))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <button key={r.min} className={cardClass} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden",padding:"10px 6px",gap:1}}>
+                    {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:isPerfectRun?"linear-gradient(to top, rgba(245,158,11,0.3), rgba(245,158,11,0.06))":rangePct>=90?"linear-gradient(to top, rgba(203,213,225,0.26), rgba(203,213,225,0.06))":rangePct>=75?"linear-gradient(to top, rgba(217,119,6,0.28), rgba(217,119,6,0.06))":"linear-gradient(to top, rgba(16,185,129,0.28), rgba(16,185,129,0.06))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                    {rangePct>0&&<div style={{position:"absolute",top:4,right:4,zIndex:2}}><Medal pct={rangePct} size={22}/></div>}
                     <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:1}}>
                       <ProgressRing pct={rm.pct} size={32} stroke={2.5} color={ringColor}/>
                       <span style={{position:"absolute",fontSize:isComplete?11:8,fontWeight:800,color:ringColor}}>{isComplete?"\u2713":rm.pct>0?rm.pct+"%":""}</span>
                     </div>
-                    <span style={{fontSize:12,fontWeight:700,color:isComplete?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}-{r.max}</span>
+                    <span style={{fontSize:12,fontWeight:700,color:goldState?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}-{r.max}</span>
                     <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{rm.mastered}/{rm.total}</span>
                     {(()=>{
                       const am = modeMasteryInRange("article", r.min, r.max);
@@ -4032,7 +4142,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                         </div>
                       );
                     })()}
-                    {rangePct>=90&&<span style={{fontSize:8,position:"relative",color:rangePct>=100?"#F59E0B":"#10B981",fontWeight:700}}>{rangePct>=100?"\u2605 "+rangePct+"%":rangePct+"%"}</span>}
+                    {isPerfectRun&&<span style={{fontSize:9,position:"relative",color:"#F59E0B",fontWeight:800,letterSpacing:0.8}}>PERFECT</span>}
                   </button>
                 );
               })}
@@ -4055,12 +4165,19 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           const dkKey = `${selectedGameMode}:deck:${dk.id}`;
           const dkBest = bestScores[dkKey];
           const dkPct = dkBest ? dkBest.pct : 0;
+          const isPerfect = dkPct >= 100;
+          const m = bestScoreMedal(dkPct);
+          const borderColor = selectedDeck===dk.id ? "#8B5CF6" : isPerfect ? "rgba(245,158,11,0.65)" : m.tier === "silver" ? "rgba(203,213,225,0.5)" : m.tier === "bronze" ? "rgba(217,119,6,0.5)" : dkPct>0 ? "rgba(16,185,129,0.35)" : "rgba(255,255,255,0.1)";
+          const bgColor = selectedDeck===dk.id ? "rgba(139,92,246,0.1)" : isPerfect ? "rgba(245,158,11,0.08)" : "transparent";
+          const fillBg = isPerfect ? "linear-gradient(to top, rgba(245,158,11,0.3), rgba(245,158,11,0.06))" : m.tier === "silver" ? "linear-gradient(to top, rgba(203,213,225,0.26), rgba(203,213,225,0.05))" : m.tier === "bronze" ? "linear-gradient(to top, rgba(217,119,6,0.28), rgba(217,119,6,0.05))" : "linear-gradient(to top, rgba(16,185,129,0.3), rgba(16,185,129,0.1))";
+          const cardClass = isPerfect ? "perfect-card" : "";
           return (
             <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-              <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
-                <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in{dkPct>0?` · Best: ${dkPct}%`:""}</span>
+              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden"}}>
+                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:fillBg,borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                {dkPct>0&&<div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",gap:6}}><Medal pct={dkPct} size={30} showLabel={isPerfect}/></div>}
+                <span style={{fontSize:15,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{dk.name}</span>
+                <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in</span>
               </button>
             </div>
           );
@@ -4069,12 +4186,19 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           const dkKey = `${selectedGameMode}:deck:${dk.id}`;
           const dkBest = bestScores[dkKey];
           const dkPct = dkBest ? dkBest.pct : 0;
+          const isPerfect = dkPct >= 100;
+          const m = bestScoreMedal(dkPct);
+          const borderColor = selectedDeck===dk.id ? "#8B5CF6" : isPerfect ? "rgba(245,158,11,0.65)" : m.tier === "silver" ? "rgba(203,213,225,0.5)" : m.tier === "bronze" ? "rgba(217,119,6,0.5)" : dkPct>0 ? "rgba(16,185,129,0.35)" : "rgba(255,255,255,0.1)";
+          const bgColor = selectedDeck===dk.id ? "rgba(139,92,246,0.1)" : isPerfect ? "rgba(245,158,11,0.08)" : "transparent";
+          const fillBg = isPerfect ? "linear-gradient(to top, rgba(245,158,11,0.3), rgba(245,158,11,0.06))" : m.tier === "silver" ? "linear-gradient(to top, rgba(203,213,225,0.26), rgba(203,213,225,0.05))" : m.tier === "bronze" ? "linear-gradient(to top, rgba(217,119,6,0.28), rgba(217,119,6,0.05))" : "linear-gradient(to top, rgba(16,185,129,0.3), rgba(16,185,129,0.1))";
+          const cardClass = isPerfect ? "perfect-card" : "";
           return (
             <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-              <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
-                <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}{dkPct>0?` · Best: ${dkPct}%`:""}</span>
+              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden"}}>
+                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:fillBg,borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                {dkPct>0&&<div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",gap:6}}><Medal pct={dkPct} size={30} showLabel={isPerfect}/></div>}
+                <span style={{fontSize:15,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{dk.name}</span>
+                <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}</span>
               </button>
               <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
             </div>
@@ -4501,9 +4625,63 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
   const isVerbForms = gameMode === "verb_forms";
   const isVerbPrep = gameMode === "verb_prepositions";
   const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
+  // Best-score celebration (new best, perfect run, next-goal hint)
+  const best = sessionRewards && sessionRewards.best;
+  const showPerfect = best && best.isPerfect;
+  const showNewBest = best && best.isNewBest && !best.isPerfect && best.pct > 0;
+  const nextGoal = best ? bestScoreMedal(best.pct) : null;
   return (
     <div style={S.container}><div style={S.resultsInner}>
       <div style={{...S.gradeCircle,borderColor:gc,color:gc}}>{grade}</div>
+
+      {/* ── Celebration banner (perfect / new best) ── */}
+      {showPerfect && (
+        <div className="celebrate-banner" style={{width:"100%",padding:"18px 20px",background:"linear-gradient(135deg, rgba(252,211,77,0.22) 0%, rgba(245,158,11,0.14) 50%, rgba(180,83,9,0.18) 100%)",border:"1.5px solid rgba(252,211,77,0.7)",display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,position:"relative",zIndex:1}}>
+            <Medal pct={100} size={42}/>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-start"}}>
+              <span style={{fontSize:22,fontWeight:900,color:"#FCD34D",letterSpacing:1.2}}>PERFECT RUN!</span>
+              <span style={{fontSize:12,color:"#FDE68A",fontWeight:600}}>Gold medal locked in</span>
+            </div>
+          </div>
+          {best.prevPct > 0 && best.prevPct < 100 && (
+            <span style={{fontSize:11,color:"#FDE68A",position:"relative",zIndex:1}}>Previous best: {best.prevPct}% → <b style={{color:"#FCD34D"}}>100%</b></span>
+          )}
+        </div>
+      )}
+      {showNewBest && (
+        <div className="celebrate-banner" style={{width:"100%",padding:"14px 18px",background:"linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(59,130,246,0.14) 100%)",border:"1.5px solid rgba(16,185,129,0.5)",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,position:"relative",zIndex:1}}>
+            <Medal pct={best.pct} size={36}/>
+            <div style={{display:"flex",flexDirection:"column"}}>
+              <span style={{fontSize:16,fontWeight:900,color:"#6EE7B7",letterSpacing:0.6}}>NEW BEST!</span>
+              <span style={{fontSize:12,color:"#94a3b8"}}>
+                {best.prevPct > 0 ? <>Previous: {best.prevPct}% → <b style={{color:"#6EE7B7"}}>{best.pct}%</b></> : <>First run: <b style={{color:"#6EE7B7"}}>{best.pct}%</b></>}
+              </span>
+            </div>
+          </div>
+          {nextGoal && nextGoal.next && (
+            <div style={{textAlign:"right",position:"relative",zIndex:1}}>
+              <div style={{fontSize:10,color:"#94a3b8",letterSpacing:0.5,textTransform:"uppercase"}}>Next goal</div>
+              <div style={{fontSize:13,fontWeight:800,color:nextGoal.nextLabel==="Perfect"?"#FCD34D":nextGoal.nextLabel==="Silver"?"#CBD5E1":"#D97706"}}>{Math.ceil(nextGoal.gapToNext)}% to {nextGoal.nextLabel}</div>
+            </div>
+          )}
+        </div>
+      )}
+      {/* Existing best but didn't beat it — still show encouragement */}
+      {best && !showNewBest && !showPerfect && best.prevPct > 0 && (
+        <div style={{width:"100%",padding:"10px 14px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <Medal pct={best.prevPct} size={28}/>
+            <div style={{display:"flex",flexDirection:"column"}}>
+              <span style={{fontSize:12,color:"#94a3b8"}}>This run: <b style={{color:"#e2e8f0"}}>{best.pct}%</b> · Best: <b style={{color:"#e2e8f0"}}>{best.prevPct}%</b></span>
+              {nextGoal && nextGoal.next && (
+                <span style={{fontSize:11,color:"#64748b"}}>One clean run away — <b style={{color:nextGoal.nextLabel==="Perfect"?"#FCD34D":nextGoal.nextLabel==="Silver"?"#CBD5E1":"#D97706"}}>{Math.ceil(nextGoal.gapToNext)}% to {nextGoal.nextLabel}</b></span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── XP & Rewards panel ── */}
       {sessionRewards&&(

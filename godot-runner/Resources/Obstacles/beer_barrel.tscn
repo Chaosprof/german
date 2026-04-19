@@ -1,0 +1,75 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/timber.gdshader" id="shader_timber"]
+[ext_resource type="Shader" path="res://Assets/Shaders/aged_metal.gdshader" id="shader_metal"]
+
+[sub_resource type="ShaderMaterial" id="mat_wood"]
+shader = ExtResource("shader_timber")
+shader_parameter/wood_dark = Vector3(0.35, 0.20, 0.08)
+shader_parameter/wood_light = Vector3(0.55, 0.35, 0.16)
+shader_parameter/roughness_val = 0.72
+shader_parameter/grain_scale = 8.0
+
+[sub_resource type="ShaderMaterial" id="mat_wood_dark"]
+shader = ExtResource("shader_timber")
+shader_parameter/wood_dark = Vector3(0.25, 0.14, 0.05)
+shader_parameter/wood_light = Vector3(0.40, 0.24, 0.10)
+shader_parameter/roughness_val = 0.80
+shader_parameter/grain_scale = 10.0
+
+[sub_resource type="ShaderMaterial" id="mat_band"]
+shader = ExtResource("shader_metal")
+shader_parameter/metal_color = Vector3(0.25, 0.24, 0.22)
+shader_parameter/patina_color = Vector3(0.30, 0.35, 0.28)
+shader_parameter/roughness_val = 0.35
+shader_parameter/metallic_val = 0.70
+shader_parameter/patina_amount = 0.15
+
+[sub_resource type="StandardMaterial3D" id="mat_tap"]
+albedo_color = Color(0.85, 0.70, 0.0, 1)
+roughness = 0.25
+metallic = 0.85
+
+[sub_resource type="CylinderMesh" id="mesh_barrel"]
+top_radius = 0.32
+bottom_radius = 0.32
+height = 0.85
+radial_segments = 16
+
+[sub_resource type="TorusMesh" id="mesh_band"]
+inner_radius = 0.30
+outer_radius = 0.35
+rings = 16
+ring_segments = 12
+
+[node name="BeerBarrel" type="Node3D"]
+
+[node name="Barrel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.33, 0)
+mesh = SubResource("mesh_barrel")
+material_override = SubResource("mat_wood")
+
+[node name="BarrelBulge" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.08, 0, 0, 0, 0, -0.4, 0, 1.08, 0, 0, 0.33, 0)
+mesh = SubResource("mesh_barrel")
+material_override = SubResource("mat_wood_dark")
+
+[node name="BandFront" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.33, 0.30)
+mesh = SubResource("mesh_band")
+material_override = SubResource("mat_band")
+
+[node name="BandMid" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.33, 0.0)
+mesh = SubResource("mesh_band")
+material_override = SubResource("mat_band")
+
+[node name="BandBack" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.33, -0.30)
+mesh = SubResource("mesh_band")
+material_override = SubResource("mat_band")
+
+[node name="Tap" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0, -0.04, 0, 0.15, 0, 0, 0.15, 0.44)
+mesh = SubResource("mesh_barrel")
+material_override = SubResource("mat_tap")

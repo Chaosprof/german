@@ -1,0 +1,77 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Shader" path="res://Assets/Shaders/aged_metal.gdshader" id="shader_metal"]
+
+[sub_resource type="ShaderMaterial" id="mat_pole"]
+shader = ExtResource("shader_metal")
+shader_parameter/metal_color = Vector3(0.15, 0.18, 0.15)
+shader_parameter/patina_color = Vector3(0.25, 0.38, 0.30)
+shader_parameter/roughness_val = 0.35
+shader_parameter/metallic_val = 0.75
+shader_parameter/patina_amount = 0.3
+
+[sub_resource type="ShaderMaterial" id="mat_bracket"]
+shader = ExtResource("shader_metal")
+shader_parameter/metal_color = Vector3(0.20, 0.22, 0.18)
+shader_parameter/patina_color = Vector3(0.28, 0.35, 0.25)
+shader_parameter/roughness_val = 0.40
+shader_parameter/metallic_val = 0.70
+shader_parameter/patina_amount = 0.2
+
+[sub_resource type="StandardMaterial3D" id="mat_lamp"]
+albedo_color = Color(1.0, 0.92, 0.65, 1)
+roughness = 0.20
+emission_enabled = true
+emission = Color(1.0, 0.88, 0.50, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CylinderMesh" id="mesh_pole"]
+top_radius = 0.04
+bottom_radius = 0.07
+height = 4.0
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="mesh_bracket"]
+top_radius = 0.02
+bottom_radius = 0.02
+height = 0.6
+radial_segments = 6
+
+[sub_resource type="SphereMesh" id="mesh_lamp"]
+radius = 0.20
+height = 0.35
+radial_segments = 10
+rings = 8
+
+[sub_resource type="CylinderMesh" id="mesh_base_ring"]
+top_radius = 0.12
+bottom_radius = 0.14
+height = 0.08
+radial_segments = 10
+
+[node name="StreetLamp" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.8, 0, 0, 0, 0.04, 0, 0, 0, 1.8, 0, 0.02, 0)
+mesh = SubResource("mesh_lamp")
+material_override = SubResource("mat_pole")
+
+[node name="BaseRing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+mesh = SubResource("mesh_base_ring")
+material_override = SubResource("mat_bracket")
+
+[node name="Pole" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+mesh = SubResource("mesh_pole")
+material_override = SubResource("mat_pole")
+
+[node name="Bracket" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0.3, 3.9, 0)
+mesh = SubResource("mesh_bracket")
+material_override = SubResource("mat_bracket")
+
+[node name="Lamp" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 3.85, 0)
+mesh = SubResource("mesh_lamp")
+material_override = SubResource("mat_lamp")

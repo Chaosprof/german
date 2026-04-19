@@ -16,15 +16,14 @@ var initial_platform_count = 8
 var cleanup_object_count = 8
 var player
 
-# Environmental variables
-const min_platform_distance = 10.0
-const max_platform_distance = 30.0
+# Environmental variables — German city layout (tight framing like Subway Surfers)
+const min_platform_distance = 3.2
+const max_platform_distance = 5.5
 const left_side = -1
 const right_side = 1
-const min_cloud_height = -1.0
-const max_cloud_height = 10.0
+const building_position = -1.0
 const ground_position = -1
-const water_position = -1.5
+const sidewalk_position = -1.0
 
 func _ready():
 	initialize_game_elements()
@@ -38,9 +37,9 @@ func initialize_game_elements():
 	for i in range(initial_platform_count):
 		spawn_platform_segment()
 		spawn_air_platform_segments()
-		spawn_obstacle()   
+		spawn_obstacle()
 		spawn_environmental_segment(last_platform_position.z)
-		spawn_water(i * platform_length, water_position)
+		spawn_sidewalk(i * platform_length, sidewalk_position)
 	
 # Spawn and cleanup objects
 func _on_timer_timeout():
@@ -49,7 +48,7 @@ func _on_timer_timeout():
 	if player.velocity.length() > 0 and player_position.z <= last_platform_position.z - initial_platform_count:
 		spawn_platform_segment()
 		spawn_air_platform_segments()
-		spawn_obstacle()   
+		spawn_obstacle()
 		spawn_environmental_segment(last_platform_position.z)
 	cleanup_old_objects()
 	
@@ -102,23 +101,20 @@ func spawn_obstacle():
 			obstacles.add_child(obstacle_instance)
 	
 
-# Spawn Environmentals	
-func spawn_water(along_z: float, water_level: float):
-	var water_resource = Global.environment_resources["water"][0] # First water scene
-	var distance_from_platform = 3.0
-	var water_extent = 15
+# Spawn sidewalk/pavement on both sides of the track
+func spawn_sidewalk(along_z: float, y_level: float):
+	var sidewalk_resource = Global.environment_resources["sidewalk"][0]
+	var distance_from_platform = 2.5
+	var extent = 2
 
-	# Spawn water on the left side
-	for i in range(water_extent):
-		var water_instance_left = water_resource.instantiate()
-		water_instance_left.transform.origin = Vector3(-distance_from_platform - (i * platform_length), water_level, along_z)
-		environment.add_child(water_instance_left)
+	for i in range(extent):
+		var left = sidewalk_resource.instantiate()
+		left.transform.origin = Vector3(-distance_from_platform - (i * platform_length), y_level, along_z)
+		environment.add_child(left)
 
-	# Spawn water on the right side
-	for i in range(water_extent):
-		var water_instance_right = water_resource.instantiate()
-		water_instance_right.transform.origin = Vector3(distance_from_platform + (i * platform_length), water_level, along_z)
-		environment.add_child(water_instance_right)
+		var right = sidewalk_resource.instantiate()
+		right.transform.origin = Vector3(distance_from_platform + (i * platform_length), y_level, along_z)
+		environment.add_child(right)
 
 func spawn_ground_and_clouds(asset_category, along_z, y_pos):
 	var random_index = randi() % asset_category.size()
@@ -136,20 +132,20 @@ func spawn_ground_and_clouds(asset_category, along_z, y_pos):
 	environment.add_child(instance)
 	
 func spawn_environmental_segment(along_z: float):
-	# Spawn clouds
+	# Spawn buildings at ground level on the sides of the track
 	spawn_ground_and_clouds(
-		Global.environment_resources["clouds"],
+		Global.environment_resources["buildings"],
 		along_z,
-		randf_range(min_cloud_height, max_cloud_height)
+		building_position
 	)
-	# Spawn ground instances
+	# Spawn ground details (cobblestone patches)
 	spawn_ground_and_clouds(
 		Global.environment_resources["ground"],
 		along_z,
 		ground_position
 	)
-	# Spawn water on both sides of the path
-	spawn_water(along_z, water_position) 
+	# Spawn sidewalk on both sides
+	spawn_sidewalk(along_z, sidewalk_position)
 	
 # Spawn Collectibles — Artikel Runner: spawn 3 article coins per platform
 # One per lane (x=-1, 0, 1), labeled der / die / das.

@@ -2,11 +2,11 @@
 
 extends Node
 
-# Platform Resources
+# Platform Resources — German streetscape
 var platform_resources = [
-	preload("res://Resources/Platforms/dirt_platform.tscn"),
-	preload("res://Resources/Platforms/grass_platform.tscn"),
-	preload("res://Resources/Platforms/wood_platform.tscn")
+	preload("res://Resources/Platforms/cobblestone_platform.tscn"),
+	preload("res://Resources/Platforms/brick_platform.tscn"),
+	preload("res://Resources/Platforms/stone_platform.tscn")
 ]
 
 # Air Platform Resources
@@ -15,29 +15,29 @@ var air_platforms_resources = [
 ]
 var air_platform_spawn_chance = 0.5
 
-# Obstacle Resources
+# Obstacle Resources — German street obstacles
 var obstacle_resources = [
-	preload("res://Resources/Obstacles/crate.tscn"),
-	preload("res://Resources/Obstacles/rock_1.tscn"),
-	preload("res://Resources/Obstacles/rock_2.tscn"),
-	preload("res://Resources/Obstacles/rock_3.tscn"),
-	preload("res://Resources/Obstacles/tree_stump.tscn"),
+	preload("res://Resources/Obstacles/beer_barrel.tscn"),
+	preload("res://Resources/Obstacles/pretzel_stand.tscn"),
+	preload("res://Resources/Obstacles/construction_barrier.tscn"),
+	preload("res://Resources/Obstacles/bollard.tscn"),
+	preload("res://Resources/Obstacles/fire_hydrant.tscn"),
 ]
 var obstacle_scene = preload("res://Scenes/Obstacles.tscn")
 var obstacle_spawn_chance = 0.5
 
-# Environmental Resources
+# Environmental Resources — German city
 var environment_resources = {
-	"clouds": [
-		preload("res://Resources/Environmentals/cloud_1.tscn"),
-		preload("res://Resources/Environmentals/cloud_2.tscn"),
-		preload("res://Resources/Environmentals/cloud_3.tscn")
+	"buildings": [
+		preload("res://Resources/Environmentals/fachwerk_house.tscn"),
+		preload("res://Resources/Environmentals/church_steeple.tscn"),
+		preload("res://Resources/Environmentals/street_lamp.tscn")
 		],
 	"ground": [
-		preload("res://Resources/Environmentals/lilypad.tscn")
+		preload("res://Resources/Environmentals/cobblestone_ground.tscn")
 		],
-	"water": [
-		preload("res://Resources/Environmentals/water_4.tscn")
+	"sidewalk": [
+		preload("res://Resources/Environmentals/sidewalk.tscn")
 	]
 }
 
@@ -116,6 +116,18 @@ var current_word: Dictionary = {"noun": "", "article": "der"}
 var correct_count: int = 0
 var wrong_count: int = 0
 var session_results: Array = []
+
+# ── Outfit / mastery system ──────────────────────────────────
+var mastered_nouns: Dictionary = {}
+var total_mastered: int = 0
+const OUTFIT_TIERS := {
+	0: "default",
+	50: "berlin",
+	100: "bayern",
+	200: "hamburg",
+}
+var current_outfit: String = "default"
+signal outfit_changed
 
 signal current_word_updated
 
@@ -205,7 +217,10 @@ func save_game():
 	save_data.set_value("game", "obstacle_spawn_chance", obstacle_spawn_chance)
 	save_data.set_value("game", "advanced_obstacle_spawn_chance", advanced_obstacle_spawn_chance)
 	save_data.set_value("game", "score_requirement_reached", score_requirement_reached)
-	
+	save_data.set_value("game", "total_mastered", total_mastered)
+	save_data.set_value("game", "mastered_nouns", mastered_nouns)
+	save_data.set_value("game", "current_outfit", current_outfit)
+
 	# Save game
 	var error = save_data.save(SAVE_PATH)
 	if error == OK:
@@ -225,6 +240,11 @@ func load_game():
 		obstacle_spawn_chance = save_data.get_value("game", "obstacle_spawn_chance", 0.5)
 		advanced_obstacle_spawn_chance = save_data.get_value("game", "advanced_obstacle_spawn_chance", 0)
 		score_requirement_reached = save_data.get_value("game", "score_requirement_reached", false)
+		total_mastered = save_data.get_value("game", "total_mastered", 0)
+		var loaded_nouns = save_data.get_value("game", "mastered_nouns", {})
+		if loaded_nouns is Dictionary:
+			mastered_nouns = loaded_nouns
+		current_outfit = save_data.get_value("game", "current_outfit", "default")
 
 		# Emit signals to update HUD and other game elements
 		score_updated.emit()
@@ -286,23 +306,44 @@ func next_word():
 	current_word_updated.emit()
 
 func record_article_answer(picked_article: String):
+	var noun_key: String = current_word.get("noun", "")
 	var correct: bool = picked_article == String(current_word.get("article", ""))
 	if correct:
 		correct_count += 1
 		score += 1
 		score_updated.emit()
+		_track_mastery(noun_key)
 	else:
 		wrong_count += 1
 		if lives > 0:
 			lives -= 1
 			lives_updated.emit()
 	session_results.append({
-		"noun": current_word.get("noun", ""),
+		"noun": noun_key,
 		"correct_article": current_word.get("article", ""),
 		"picked_article": picked_article,
 		"correct": correct,
 	})
 	next_word()
+
+func _track_mastery(noun: String) -> void:
+	if noun == "":
+		return
+	if not mastered_nouns.has(noun):
+		mastered_nouns[noun] = 0
+	mastered_nouns[noun] += 1
+	if mastered_nouns[noun] == 3:
+		total_mastered += 1
+		_check_outfit_unlock()
+
+func _check_outfit_unlock() -> void:
+	var best: String = "default"
+	for threshold in OUTFIT_TIERS:
+		if total_mastered >= threshold:
+			best = OUTFIT_TIERS[threshold]
+	if best != current_outfit:
+		current_outfit = best
+		outfit_changed.emit()
 
 func send_results_to_js():
 	if not OS.has_feature("web"):
