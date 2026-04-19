@@ -358,6 +358,35 @@ async function loadGistData() {
   return sanitizePersistedData(JSON.parse(file.content));
 }
 
+// ── Gist save queue: serialize writes, coalesce concurrent updates ──
+// Without this, two overlapping saveGistData() PATCHes (e.g. updateNounStats +
+// endSession firing back-to-back) race on the same gist and whichever lands
+// last wins — commonly losing the newer bestScores entry.
+let _gistSaveInFlight = null;
+let _gistSavePending = null;
+let _gistStatusSetter = null;
+function registerGistStatusSetter(fn) { _gistStatusSetter = fn; }
+async function _drainGistSave() {
+  try {
+    while (_gistSavePending) {
+      const data = _gistSavePending;
+      _gistSavePending = null;
+      await saveGistData(data);
+    }
+    if (_gistStatusSetter) _gistStatusSetter("synced");
+  } catch (e) {
+    if (_gistStatusSetter) _gistStatusSetter("error");
+  } finally {
+    _gistSaveInFlight = null;
+  }
+}
+function queueGistSave(data) {
+  if (!getPat()) return;
+  _gistSavePending = data; // coalesce to latest
+  if (_gistStatusSetter) _gistStatusSetter("saving");
+  if (!_gistSaveInFlight) _gistSaveInFlight = _drainGistSave();
+}
+
 async function saveGistData(data) {
   const sanitized = sanitizePersistedData(data);
   const gistId = getGistId();
@@ -2228,6 +2257,7 @@ function GermanNounGame() {
   }, [gameMode, matchingBatch, matchingRightItems, matchingWordType]);
 
   useEffect(() => {
+    registerGistStatusSetter(setSyncStatus);
     if (!getPat()) return;
     setSyncStatus("loading");
     loadGistData().then(d => {
@@ -2252,10 +2282,7 @@ function GermanNounGame() {
   const persistData = useCallback(async (newData) => {
     const sanitized = sanitizePersistedData(newData);
     setUserData(sanitized);
-    if (!getPat()) return;
-    setSyncStatus("saving");
-    try { await saveGistData(sanitized); setSyncStatus("synced"); }
-    catch { setSyncStatus("error"); }
+    queueGistSave(sanitized);
   }, []);
 
   const updateNounStats = useCallback((answered) => {
@@ -2287,10 +2314,9 @@ function GermanNounGame() {
         }
       });
       const newData = { ...prev, nounStats: stats, masteredNouns: [...mastered], modeStats, modeMastered };
-      if (getPat()) {
-        setSyncStatus("saving");
-        saveGistData(newData).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error"));
-      }
+      // Note: no gist save here — callers (endSession paths) always follow with
+      // their own save that includes these updates plus bestScores. Saving here
+      // raced with that follow-up and could clobber new bestScores.
       return newData;
     });
   }, []);
@@ -2582,10 +2608,7 @@ function GermanNounGame() {
         updated.bestScores = bs;
       }
 
-      if (getPat()) {
-        setSyncStatus("saving");
-        saveGistData(updated).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error"));
-      }
+      queueGistSave(updated);
       return updated;
     });
 
@@ -2990,7 +3013,7 @@ function GermanNounGame() {
           if (!prev_best || pct > prev_best.pct) bs[sessionKey] = { correct: results.totalCorrect, total: denom, pct };
           updated.bestScores = bs;
         }
-        if (getPat()) { setSyncStatus("saving"); saveGistData(updated).then(() => setSyncStatus("synced")).catch(() => setSyncStatus("error")); }
+        queueGistSave(updated);
         return updated;
       });
       setScreen("results");
