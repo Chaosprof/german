@@ -7,29 +7,46 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #09090b; overflow-x: hidden; }
+  /* German flag theme — black / red / gold from top to bottom.
+     Kept subdued so card content remains readable on all three zones. */
+  body { background: #07070a; overflow-x: hidden; }
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 120% 60% at 50% -20%, rgba(139,92,246,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 80% 50% at 0% 50%, rgba(59,130,246,0.04) 0%, transparent 60%),
-      radial-gradient(ellipse 80% 50% at 100% 50%, rgba(236,72,153,0.03) 0%, transparent 60%);
+      radial-gradient(ellipse 130% 55% at 50% 50%, rgba(221,0,0,0.22) 0%, transparent 65%),
+      radial-gradient(ellipse 130% 55% at 50% 100%, rgba(255,206,0,0.16) 0%, transparent 70%),
+      linear-gradient(
+        to bottom,
+        #07070a 0%,
+        #07070a 30%,
+        #140404 45%,
+        #1f0606 55%,
+        #140404 65%,
+        #0d0803 80%,
+        #0a0802 100%
+      );
     pointer-events: none;
   }
   #root { min-height: 100vh; position: relative; z-index: 1; }
+  /* Top accent bar — the three German flag colors. */
   body::after {
     content: '';
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     z-index: 100;
-    background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
-    opacity: 0.6;
+    background: linear-gradient(
+      to bottom,
+      #000000 0%, #000000 33.33%,
+      #DD0000 33.33%, #DD0000 66.66%,
+      #FFCE00 66.66%, #FFCE00 100%
+    );
+    opacity: 0.95;
   }
   @keyframes goldPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
