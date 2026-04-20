@@ -4306,8 +4306,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
             {GAME_MODES.map(gm=>{
               const selected = selectedGameMode===gm.id;
-              const modeScores = Object.keys(bestScores).filter(k => k.startsWith(gm.id + ":")).map(k => bestScores[k].pct);
-              const bestPct = modeScores.length > 0 ? Math.max(...modeScores) : 0;
               const subOptions = gm.id === "classic"
                 ? [[MODES.ARTICLE,"Articles","#3B82F6"],[MODES.PLURAL,"Plurals","#EC4899"],[MODES.BOTH,"Both","#8B5CF6"]]
                 : (gm.id === "reverse" || gm.id === "matching")
@@ -4315,15 +4313,12 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                   : null;
               const subValue = gm.id === "classic" ? mode : (gm.id === "reverse" || gm.id === "matching") ? matchWordType : null;
               const setSub = gm.id === "classic" ? setMode : setMatchWordType;
-              const subKeyBase = (v) => gm.id === "classic" ? `classic:${v}:` : `${gm.id}:${v}:`;
               const expanded = selected && subOptions;
-              const tileStyle = {...S.modeCard,borderColor:selected?"#8B5CF6":bestPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden",gridColumn:expanded?"1 / -1":"auto"};
+              const tileStyle = {...S.modeCard,borderColor:selected?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden",gridColumn:expanded?"1 / -1":"auto"};
               const header = (
                 <>
-                  {bestPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${bestPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <span style={{fontSize:18,position:"relative"}}>{gm.icon}</span>
                   <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{gm.name}</span>
-                  {bestPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {bestPct}%</span>}
                 </>
               );
               if (!expanded) {
@@ -4341,15 +4336,12 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                   <div style={{display:"grid",gridTemplateColumns:`repeat(${subOptions.length},1fr)`,gap:6,position:"relative"}}>
                     {subOptions.map(([sv,slbl,sclr])=>{
                       const sel = subValue===sv;
-                      const subScores = Object.keys(bestScores).filter(k => k.startsWith(subKeyBase(sv))).map(k => bestScores[k].pct);
-                      const sBest = subScores.length > 0 ? Math.max(...subScores) : 0;
                       return (
                         <button key={sv} onClick={e=>{e.stopPropagation();setSub(sv);}} style={{...S.diffBtn,padding:"10px 8px 8px",borderColor:sel?sclr:"rgba(255,255,255,0.1)",backgroundColor:sel?`${sclr}1a`:"rgba(255,255,255,0.03)",position:"relative"}}>
                           <span style={{position:"absolute",top:6,left:6,width:12,height:12,borderRadius:"50%",border:`2px solid ${sel?sclr:"rgba(255,255,255,0.3)"}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
                             {sel && <span style={{width:5,height:5,borderRadius:"50%",background:sclr}}/>}
                           </span>
                           <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>{slbl}</span>
-                          {sBest>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700}}>{sBest}%</span>}
                         </button>
                       );
                     })}
