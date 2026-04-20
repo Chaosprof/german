@@ -4050,21 +4050,21 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     if (pct >= 100) return "#F59E0B";
     if (pct >= 90)  return "#CBD5E1";
     if (pct >= 80)  return "#D97706";
-    if (pct > 0)    return "#10B981";
+    if (pct > 0)    return "#EF4444";
     return "rgba(255,255,255,0.12)";
   };
   const medalBorderColor = (pct) => {
     if (pct >= 100) return "rgba(245,158,11,0.65)";
     if (pct >= 90)  return "rgba(203,213,225,0.5)";
     if (pct >= 80)  return "rgba(217,119,6,0.5)";
-    if (pct > 0)    return "rgba(16,185,129,0.35)";
+    if (pct > 0)    return "rgba(239,68,68,0.35)";
     return "rgba(255,255,255,0.1)";
   };
   const medalFill = (pct) => {
     if (pct >= 100) return "linear-gradient(to top, rgba(245,158,11,0.32), rgba(245,158,11,0.06))";
     if (pct >= 90)  return "linear-gradient(to top, rgba(203,213,225,0.28), rgba(203,213,225,0.05))";
     if (pct >= 80)  return "linear-gradient(to top, rgba(217,119,6,0.3), rgba(217,119,6,0.05))";
-    return "linear-gradient(to top, rgba(16,185,129,0.3), rgba(16,185,129,0.08))";
+    return "linear-gradient(to top, rgba(239,68,68,0.3), rgba(239,68,68,0.08))";
   };
   const medalCardClass = (pct) => pct >= 100 ? "perfect-card" : "";
 
