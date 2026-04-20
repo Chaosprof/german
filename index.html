@@ -841,7 +841,7 @@ function updateDailyStreak(streak) {
 // Game modes
 const GAME_MODES = [
   { id: "classic", name: "Article & Plural", desc: "Practice articles and plurals", icon: "📖" },
-  { id: "reverse", name: "Reverse", desc: "English to German translation", icon: "🔄" },
+  { id: "reverse", name: "Translation", desc: "English to German translation", icon: "🔄" },
   { id: "matching", name: "Matching", desc: "Pair words and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "verb_prepositions", name: "Verb + Preposition", desc: "Practice verb-preposition combos & case", icon: "🎯" },
@@ -2499,7 +2499,12 @@ function GermanNounGame() {
     else { setTimeLeft(0); }
     // Build session key for best-score tracking
     const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : isRange ? `range:${tierMinVal+1}-${t}` : `tier:${t}`;
-    setSessionKey(`${gMode}:${sSource}`);
+    const ruleSeg = gMode === "classic"
+      ? `:${effectiveMode}`
+      : (gMode === "reverse" || gMode === "matching")
+        ? `:${wType}`
+        : "";
+    setSessionKey(`${gMode}${ruleSeg}:${sSource}`);
     setSessionTotal(nouns.length);
     setScreen("game");
   }, [userData]);
@@ -3864,7 +3869,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [timedSeconds,setTimedSeconds]=useState(10);
   const [patInput,setPatInput]=useState(getPat());
   const [patSaved,setPatSaved]=useState(false);
-  const [activeStep,setActiveStep]=useState(1);
 
   const handleSavePat = () => {
     setPat(patInput.trim());
@@ -3907,10 +3911,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     if (selectedDeck && !allDecks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
   }, [selectedDeck, allDecks]);
 
-  useEffect(() => {
-    if (activeStep === 3 && source === "deck" && !selectedDeck) setActiveStep(2);
-  }, [activeStep, source, selectedDeck]);
-
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
@@ -3923,15 +3923,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
   const handleGameModeSelect = (gameModeId) => {
     setSelectedGameMode(gameModeId);
-    setActiveStep(2);
-  };
-
-  const openStep = (step) => {
-    if (step === 3 && source === "deck" && !selectedDeck) {
-      setActiveStep(2);
-      return;
-    }
-    setActiveStep(step);
   };
 
   const prog = xpProgress(userData.xp || 0);
@@ -3947,6 +3938,11 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const modeStats = userData.modeStats || {};
   const masteredSet = new Set(userData.masteredNouns || []);
   const gameModeMeta = GAME_MODES.find(gm => gm.id === selectedGameMode) || GAME_MODES[0];
+  const bestScoreKeyPrefix = selectedGameMode === "classic"
+    ? `${selectedGameMode}:${mode}`
+    : (selectedGameMode === "reverse" || selectedGameMode === "matching")
+      ? `${selectedGameMode}:${matchWordType}`
+      : selectedGameMode;
   const contentReady = source !== "deck" || !!selectedDeck;
   const canStart = contentReady;
 
@@ -4036,7 +4032,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     if (selectedGameMode === "verb_forms") return `Type the Infinitiv, Prateritum (ich), and Partizip Perfekt for each irregular verb. ${IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.`;
     if (selectedGameMode === "verb_prepositions") return `Type the fixed preposition and select the governed case for each verb. ${VERB_PREPOSITIONS.length.toLocaleString()} combos available.`;
     if (selectedGameMode === "runner") return "Endless runner game! Dodge into the correct article lane (der/die/das) for each noun. 3 lives, increasing speed.";
-    return gameModeMeta.desc;
+    return "";
   };
 
   const renderTierSelector = () => {
@@ -4099,7 +4095,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               const count = countForTier(t.value);
               const capped = effectiveWordType !== "mixed" && count < t.value;
               const label = capped ? `Top ${count.toLocaleString()}` : t.label;
-              const tierKey = `${selectedGameMode}:tier:${t.value}`;
+              const tierKey = `${bestScoreKeyPrefix}:tier:${t.value}`;
               const tierBest = bestScores[tierKey];
               const tierPct = tierBest ? tierBest.pct : 0;
               const tm = masteryForRange(0, t.value);
@@ -4148,7 +4144,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
             <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:320,overflowY:"auto",paddingRight:4}}>
               {ranges.map(r=>{
                 const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
-                const rangeKey = `${selectedGameMode}:range:${r.min+1}-${r.max}`;
+                const rangeKey = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
                 const rangeBest = bestScores[rangeKey];
                 const rangePct = rangeBest ? rangeBest.pct : 0;
                 const rm = masteryForRange(r.min, r.max);
@@ -4201,7 +4197,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
       <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
         {BUILTIN_DECKS.map(dk=>{
-          const dkKey = `${selectedGameMode}:deck:${dk.id}`;
+          const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
           const dkBest = bestScores[dkKey];
           const dkPct = dkBest ? dkBest.pct : 0;
           const isPerfect = dkPct >= 100;
@@ -4222,7 +4218,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           );
         })}
         {userData.decks.map(dk=>{
-          const dkKey = `${selectedGameMode}:deck:${dk.id}`;
+          const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
           const dkBest = bestScores[dkKey];
           const dkPct = dkBest ? dkBest.pct : 0;
           const isPerfect = dkPct >= 100;
@@ -4251,24 +4247,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     </div>
   );
 
-  const StepCard = ({ step, title, summary, complete, children, locked }) => {
-    const active = activeStep === step;
-    return (
-      <div style={{...S.wizardCard,borderColor:active?"rgba(139,92,246,0.38)":"rgba(255,255,255,0.08)",boxShadow:active?"0 14px 40px rgba(15,23,42,0.22)":"none",opacity:locked&&!active?0.72:1}}>
-        <button onClick={()=>!locked&&openStep(step)} style={{...S.wizardHeaderBtn,cursor:locked?"not-allowed":"pointer"}}>
-          <span style={{...S.wizardStepBadge,background:complete?"rgba(16,185,129,0.18)":active?"rgba(139,92,246,0.22)":"rgba(255,255,255,0.06)",borderColor:complete?"rgba(16,185,129,0.34)":active?"rgba(139,92,246,0.38)":"rgba(255,255,255,0.08)",color:complete?"#10B981":"#cbd5e1"}}>{complete?"\u2713":step}</span>
-          <div style={S.wizardHeaderText}>
-            <span style={S.wizardTitle}>{title}</span>
-            <span style={S.wizardSummary}>{summary}</span>
-          </div>
-          <span style={S.wizardEdit}>{locked ? "Locked" : active ? "Open" : "Edit"}</span>
-        </button>
-        {active && <div style={S.wizardBody}>{children}</div>}
-      </div>
-    );
-  };
   if (showDeckBuilder) {
-    return <DeckBuilder onSave={(name, nouns) => { onSaveDeck(name, nouns); setShowDeckBuilder(false); setSource("deck"); setActiveStep(2); }}
+    return <DeckBuilder onSave={(name, nouns) => { onSaveDeck(name, nouns); setShowDeckBuilder(false); setSource("deck"); }}
       onCancel={() => setShowDeckBuilder(false)} />;
   }
 
@@ -4327,145 +4307,121 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
       )}
 
-      <StepCard step={1} title="Activity" summary={activitySummary} complete={activeStep > 1}>
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Choose a mode</label>
+      <div style={S.menuSection}>
+          <label style={S.menuLabel}>Activity</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
             {GAME_MODES.map(gm=>{
               const selected = selectedGameMode===gm.id;
               const modeScores = Object.keys(bestScores).filter(k => k.startsWith(gm.id + ":")).map(k => bestScores[k].pct);
               const bestPct = modeScores.length > 0 ? Math.max(...modeScores) : 0;
-              return (
-                <button key={gm.id} onClick={()=>handleGameModeSelect(gm.id)}
-                  style={{...S.modeCard,borderColor:selected?"#8B5CF6":bestPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
+              const subOptions = gm.id === "classic"
+                ? [[MODES.ARTICLE,"Articles","#3B82F6"],[MODES.PLURAL,"Plurals","#EC4899"],[MODES.BOTH,"Both","#8B5CF6"]]
+                : (gm.id === "reverse" || gm.id === "matching")
+                  ? [["nouns","Nouns","#8B5CF6"],["adjectives","Adjectives","#F59E0B"],["verbs","Verbs","#10B981"],["mixed","All Mixed","#EC4899"]]
+                  : null;
+              const subValue = gm.id === "classic" ? mode : (gm.id === "reverse" || gm.id === "matching") ? matchWordType : null;
+              const setSub = gm.id === "classic" ? setMode : setMatchWordType;
+              const subKeyBase = (v) => gm.id === "classic" ? `classic:${v}:` : `${gm.id}:${v}:`;
+              const expanded = selected && subOptions;
+              const tileStyle = {...S.modeCard,borderColor:selected?"#8B5CF6":bestPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden",gridColumn:expanded?"1 / -1":"auto"};
+              const header = (
+                <>
                   {bestPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${bestPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <span style={{fontSize:18,position:"relative"}}>{gm.icon}</span>
                   <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{gm.name}</span>
-                  <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{gm.desc}</span>
                   {bestPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {bestPct}%</span>}
-                </button>
+                </>
+              );
+              if (!expanded) {
+                return (
+                  <button key={gm.id} onClick={()=>handleGameModeSelect(gm.id)} style={tileStyle}>
+                    {header}
+                  </button>
+                );
+              }
+              return (
+                <div key={gm.id} style={{...tileStyle,cursor:"default",display:"flex",flexDirection:"column",gap:10,alignItems:"stretch",padding:14}}>
+                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,position:"relative"}}>
+                    {header}
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:`repeat(${subOptions.length},1fr)`,gap:6,position:"relative"}}>
+                    {subOptions.map(([sv,slbl,sclr])=>{
+                      const sel = subValue===sv;
+                      const subScores = Object.keys(bestScores).filter(k => k.startsWith(subKeyBase(sv))).map(k => bestScores[k].pct);
+                      const sBest = subScores.length > 0 ? Math.max(...subScores) : 0;
+                      return (
+                        <button key={sv} onClick={e=>{e.stopPropagation();setSub(sv);}} style={{...S.diffBtn,padding:"10px 8px 8px",borderColor:sel?sclr:"rgba(255,255,255,0.1)",backgroundColor:sel?`${sclr}1a`:"rgba(255,255,255,0.03)",position:"relative"}}>
+                          <span style={{position:"absolute",top:6,left:6,width:12,height:12,borderRadius:"50%",border:`2px solid ${sel?sclr:"rgba(255,255,255,0.3)"}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                            {sel && <span style={{width:5,height:5,borderRadius:"50%",background:sclr}}/>}
+                          </span>
+                          <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>{slbl}</span>
+                          {sBest>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700}}>{sBest}%</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
-          <div style={S.stepNote}>{renderActivityHint()}</div>
-          <div style={S.stepActionRow}>
-            <button onClick={()=>setActiveStep(2)} style={S.stepPrimaryBtn}>Continue to Content</button>
-          </div>
+          {renderActivityHint() && <div style={S.stepNote}>{renderActivityHint()}</div>}
+      </div>
+
+      <div style={S.menuSection}>
+        <label style={S.menuLabel}>Content</label>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          {sourceOptions.map(opt=>(
+            <button key={opt.id} onClick={()=>{setSource(opt.id);if(opt.id!=="deck")setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source===opt.id?(opt.id==="weakest"?"#EF4444":"#8B5CF6"):"rgba(255,255,255,0.1)",backgroundColor:source===opt.id?(opt.id==="weakest"?"rgba(239,68,68,0.1)":"rgba(139,92,246,0.1)"):"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{opt.name}</span>
+            </button>
+          ))}
         </div>
-      </StepCard>
+        {source==="weakest"&&<div style={S.stepNote}>Practice your weakest words based on past performance. This works best after a few sessions.</div>}
+        {source==="tier"&&renderTierSelector()}
+        {source==="deck"&&renderDeckSelector()}
+      </div>
 
-      <StepCard step={2} title="Content" summary={contentSummary} complete={contentReady && activeStep > 2}>
+      {selectedGameMode !== "runner" && (
         <div style={S.menuSection}>
-          <label style={S.menuLabel}>Play from</label>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-            {sourceOptions.map(opt=>(
-              <button key={opt.id} onClick={()=>{setSource(opt.id);if(opt.id!=="deck")setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source===opt.id?(opt.id==="weakest"?"#EF4444":"#8B5CF6"):"rgba(255,255,255,0.1)",backgroundColor:source===opt.id?(opt.id==="weakest"?"rgba(239,68,68,0.1)":"rgba(139,92,246,0.1)"):"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{opt.name}</span>
-                <span style={{fontSize:10,color:"#64748b"}}>{opt.desc}</span>
-              </button>
-            ))}
+          <label style={S.menuLabel}>Play Style</label>
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
+            </button>
+            <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
+            </button>
+            <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
+              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
+            </button>
           </div>
-          {source==="weakest"&&<div style={S.stepNote}>Practice your weakest words based on past performance. This works best after a few sessions.</div>}
-          {source==="tier"&&renderTierSelector()}
-          {source==="deck"&&renderDeckSelector()}
-          <div style={S.stepActionRow}>
-            <button onClick={()=>setActiveStep(1)} style={S.stepSecondaryBtn}>Back</button>
-            <button onClick={()=>setActiveStep(3)} disabled={!contentReady} style={{...S.stepPrimaryBtn,opacity:contentReady?1:0.45,cursor:contentReady?"pointer":"not-allowed"}}>Continue to Rules</button>
-          </div>
-        </div>
-      </StepCard>
-
-      <StepCard step={3} title="Rules" summary={rulesSummary} complete={false} locked={!contentReady}>
-        <div style={S.menuSection}>
-          {supportsWordType&&(
-            <div style={S.menuSection}>
-              <label style={S.menuLabel}>Word Type</label>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                <button onClick={()=>setMatchWordType("nouns")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="nouns"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="nouns"?"rgba(139,92,246,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Nouns</span>
-                  <span style={{fontSize:10,color:"#64748b"}}>{NOUNS.length.toLocaleString()} words</span>
-                </button>
-                <button onClick={()=>setMatchWordType("adjectives")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="adjectives"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="adjectives"?"rgba(139,92,246,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Adjectives</span>
-                  <span style={{fontSize:10,color:"#64748b"}}>{ADJECTIVES.length.toLocaleString()} words</span>
-                </button>
-                <button onClick={()=>setMatchWordType("verbs")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="verbs"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="verbs"?"rgba(139,92,246,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Verbs</span>
-                  <span style={{fontSize:10,color:"#64748b"}}>{VERBS.length.toLocaleString()} words</span>
-                </button>
-                <button onClick={()=>setMatchWordType("mixed")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="mixed"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="mixed"?"rgba(139,92,246,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>All Mixed</span>
-                  <span style={{fontSize:10,color:"#64748b"}}>Everything</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {answerTypeAllowed&&(
-            <div style={S.menuSection}>
-              <label style={S.menuLabel}>Answer Type</label>
-              <div style={{display:"flex",flexDirection:"column",gap:8}}>
-                {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Choose the plural form"],[MODES.BOTH,"Both","Article + plural choice"]].map(([m,t,d])=>
-                  <button key={m} onClick={()=>setMode(m)} style={{...S.modeCard,borderColor:mode===m?"#3B82F6":"rgba(255,255,255,0.1)",backgroundColor:mode===m?"rgba(59,130,246,0.1)":"transparent"}}>
-                    <span style={{fontSize:16,fontWeight:700,color:"#e2e8f0"}}>{t}</span>
-                    <span style={{fontSize:12,color:"#64748b"}}>{d}</span>
+          {playStyle==="timed"&&(
+            <div style={{marginTop:8}}>
+              <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                {[5,8,10,15,20,30].map(s=>
+                  <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
+                    <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
                   </button>
                 )}
               </div>
             </div>
           )}
-
-          {selectedGameMode !== "runner" && (
-          <div style={S.menuSection}>
-            <label style={S.menuLabel}>Play Style</label>
-            <div style={{display:"flex",gap:8}}>
-              <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
-                <span style={{fontSize:10,color:"#64748b"}}>No constraints</span>
-              </button>
-              <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
-                <span style={{fontSize:10,color:"#64748b"}}>Per-question timer</span>
-              </button>
-              <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
-                <span style={{fontSize:10,color:"#64748b"}}>3 lives</span>
-              </button>
+        </div>
+      )}
+      {selectedGameMode === "runner" && (
+        <div style={S.menuSection}>
+          <div style={{padding:16,borderRadius:10,border:"1px solid rgba(139,92,246,0.2)",background:"rgba(139,92,246,0.06)"}}>
+            <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0",marginBottom:6}}>How to play</div>
+            <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6}}>
+              Run through lanes and collect the correct article coin!<br/>
+              <span style={{color:"#3B82F6",fontWeight:700}}>Left = der</span> · <span style={{color:"#EC4899",fontWeight:700}}>Middle = die</span> · <span style={{color:"#10B981",fontWeight:700}}>Right = das</span><br/>
+              Use arrow keys, A/D, tap left/right, or swipe to move.<br/>
+              3 lives — wrong article or missed coin costs a life!
             </div>
-            {playStyle==="timed"&&(
-              <div style={{marginTop:8}}>
-                <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
-                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                  {[5,8,10,15,20,30].map(s=>
-                    <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
-                      <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          )}
-          {selectedGameMode === "runner" && (
-            <div style={S.menuSection}>
-              <div style={{padding:16,borderRadius:10,border:"1px solid rgba(139,92,246,0.2)",background:"rgba(139,92,246,0.06)"}}>
-                <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0",marginBottom:6}}>How to play</div>
-                <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6}}>
-                  Run through lanes and collect the correct article coin!<br/>
-                  <span style={{color:"#3B82F6",fontWeight:700}}>Left = der</span> · <span style={{color:"#EC4899",fontWeight:700}}>Middle = die</span> · <span style={{color:"#10B981",fontWeight:700}}>Right = das</span><br/>
-                  Use arrow keys, A/D, tap left/right, or swipe to move.<br/>
-                  3 lives — wrong article or missed coin costs a life!
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div style={S.stepActionRow}>
-            <button onClick={()=>setActiveStep(2)} style={S.stepSecondaryBtn}>Back</button>
-            <button onClick={handleStart} disabled={!canStart} style={{...S.stepPrimaryBtn,opacity:canStart?1:0.45,cursor:canStart?"pointer":"not-allowed"}}>Start Session</button>
           </div>
         </div>
-      </StepCard>
+      )}
 
       <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} precomputed grammar explanations loaded</div>
 
@@ -4491,7 +4447,7 @@ function ProgressDashboard({ userData, onBack }) {
     { id: "article", label: "Articles", color: "#3B82F6", icon: "der/die/das" },
     { id: "plural", label: "Plurals", color: "#EC4899", icon: "die ..." },
     { id: "matching", label: "Matching", color: "#8B5CF6", icon: "DE \u2194 EN" },
-    { id: "reverse", label: "Reverse", color: "#F59E0B", icon: "EN \u2192 DE" },
+    { id: "reverse", label: "Translation", color: "#F59E0B", icon: "EN \u2192 DE" },
     { id: "verb_forms", label: "Verb Forms", color: "#10B981", icon: "Pr\u00e4t/Perf" },
     { id: "verb_prep", label: "Verb+Prep", color: "#06B6D4", icon: "auf+Akk" },
   ];
