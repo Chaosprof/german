@@ -337,13 +337,10 @@ const PAT_KEY = "artikel-blitz-pat";
 const GIST_ID_KEY = "artikel-blitz-gist-id";
 const DEFAULT_DATA = {
   decks: [], nounStats: {},
-  xp: 0, level: 1, coins: 0,
   dailyStreak: { current: 0, lastDate: null, best: 0 },
-  achievements: [],
   unlockedTiers: [100],
   masteredNouns: [],
   totalSessions: 0,
-  activePerks: [],
   campaignProgress: {},
   bestScores: {},  // { "gameMode:tier_or_deck": { correct, total, pct } }
   modeStats: {},   // { "article:Haus": {attempts,correct,consecutiveCorrect}, "plural:Haus": {...}, ... }
@@ -421,23 +418,8 @@ async function saveGistData(data) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// GAME SYSTEMS — XP, Levels, Achievements, Perks, SRS
+// GAME SYSTEMS — SRS, medals
 // ═══════════════════════════════════════════════════════════════
-
-// XP: level N requires 50*N*(N-1) total XP
-function xpForLevel(n) { return 50 * n * (n - 1); }
-function levelFromXp(xp) { let l = 1; while (xpForLevel(l + 1) <= xp) l++; return l; }
-function xpProgress(xp) { const l = levelFromXp(xp); const cur = xpForLevel(l); const nxt = xpForLevel(l + 1); return { level: l, current: xp - cur, needed: nxt - cur, total: xp }; }
-
-const TITLES = [
-  [1, "Anfänger", "Beginner"],
-  [5, "Fortgeschritten", "Intermediate"],
-  [10, "Kenner", "Expert"],
-  [15, "Meister", "Master"],
-  [20, "Sprachgenie", "Language Genius"],
-  [25, "Wortschatz-Legende", "Vocab Legend"],
-];
-function getTitle(level) { let t = TITLES[0]; for (const r of TITLES) if (level >= r[0]) t = r; return t; }
 
 // ── Best-score medal tiering ──────────────────────────────────
 // Returns { tier: "gold"|"silver"|"bronze"|null, label, color, next, nextLabel, gapToNext }
@@ -479,39 +461,6 @@ function Medal({ pct, size = 28, showLabel = false }) {
     </div>
   );
 }
-
-// Perks
-const PERKS = [
-  { id: "streak_shield", name: "Streak Shield", desc: "First miss won't break your streak", cost: 50, icon: "🛡️" },
-  { id: "time_freeze", name: "Time Freeze", desc: "+5 seconds per question", cost: 40, icon: "❄️" },
-  { id: "double_xp", name: "Double XP", desc: "2× XP this session", cost: 80, icon: "⚡" },
-  { id: "score_boost", name: "Score Boost", desc: "1.5× score multiplier", cost: 50, icon: "🚀" },
-  { id: "second_chance", name: "Second Chance", desc: "One free retry per session", cost: 60, icon: "🔄" },
-];
-
-// Achievements
-const ACHIEVEMENTS = [
-  { id: "first_session", name: "First Steps", desc: "Complete your first session", icon: "🎯", check: d => d.totalSessions >= 1 },
-  { id: "perfect_session", name: "Flawless", desc: "100% accuracy in a session", icon: "💎", check: null },
-  { id: "streak_10", name: "On Fire", desc: "10 correct in a row", icon: "🔥", check: null },
-  { id: "streak_25", name: "Unstoppable", desc: "25 correct in a row", icon: "💥", check: null },
-  { id: "streak_50", name: "Legendary Streak", desc: "50 correct in a row", icon: "⭐", check: null },
-  { id: "mastered_10", name: "Collector", desc: "Master 10 nouns", icon: "📦", check: d => d.masteredNouns.length >= 10 },
-  { id: "mastered_50", name: "Hoarder", desc: "Master 50 nouns", icon: "🏆", check: d => d.masteredNouns.length >= 50 },
-  { id: "mastered_100", name: "Centurion", desc: "Master 100 nouns", icon: "👑", check: d => d.masteredNouns.length >= 100 },
-  { id: "mastered_500", name: "Lexicon", desc: "Master 500 nouns", icon: "📚", check: d => d.masteredNouns.length >= 500 },
-  { id: "daily_3", name: "Consistent", desc: "3-day streak", icon: "📅", check: d => d.dailyStreak.current >= 3 },
-  { id: "daily_7", name: "Dedicated", desc: "7-day streak", icon: "🗓️", check: d => d.dailyStreak.current >= 7 },
-  { id: "daily_30", name: "Committed", desc: "30-day streak", icon: "💪", check: d => d.dailyStreak.current >= 30 },
-  { id: "level_5", name: "Rising Star", desc: "Reach level 5", icon: "🌟", check: d => d.level >= 5 },
-  { id: "level_10", name: "Veteran", desc: "Reach level 10", icon: "🎖️", check: d => d.level >= 10 },
-  { id: "level_20", name: "Grandmaster", desc: "Reach level 20", icon: "🏅", check: d => d.level >= 20 },
-  { id: "sessions_10", name: "Regular", desc: "Complete 10 sessions", icon: "🔁", check: d => d.totalSessions >= 10 },
-  { id: "sessions_50", name: "Addict", desc: "Complete 50 sessions", icon: "🎮", check: d => d.totalSessions >= 50 },
-  { id: "speed_demon", name: "Speed Demon", desc: "20 correct in 60s challenge", icon: "⚡", check: null },
-  { id: "survivor", name: "Survivor", desc: "Survive 30+ nouns in survival mode", icon: "❤️", check: null },
-  { id: "tier_unlock_all", name: "Unlocker", desc: "Unlock all vocabulary tiers", icon: "🔓", check: d => TIER_OPTIONS.every(t => d.unlockedTiers.includes(t.value)) },
-];
 
 // ═══════════════════════════════════════════════════════════════
 // CAMPAIGN MODE — Bundesland map progression
@@ -743,38 +692,6 @@ function isChallengeUnlocked(state, challengeIndex, campaignProgress) {
   return (sp[prevChallenge.id] || 0) >= 1;
 }
 
-function checkAchievements(data, sessionAchievements = []) {
-  const newlyEarned = [];
-  const all = [...data.achievements, ...sessionAchievements];
-  for (const a of ACHIEVEMENTS) {
-    if (all.includes(a.id)) continue;
-    if (a.check && a.check(data)) newlyEarned.push(a.id);
-  }
-  return [...sessionAchievements, ...newlyEarned];
-}
-
-// Session XP/coin calculator
-function calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, difficulty, activePerks, gameMode, playStyle) {
-  let xp = totalCorrect * 10 + (totalAnswered - totalCorrect) * 3;
-  xp += bestStreak * 2;
-  const acc = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
-  if (acc >= 1) xp += 200; else if (acc >= 0.9) xp += 100; else if (acc >= 0.8) xp += 50;
-  if (mode === MODES.PLURAL) xp = Math.floor(xp * 1.2);
-  if (mode === MODES.BOTH) xp = Math.floor(xp * 1.5);
-  if (difficulty === "normal") xp = Math.floor(xp * 1.25);
-  if (difficulty === "hard") xp = Math.floor(xp * 1.5);
-  if (playStyle === "timed" || gameMode === "timed") xp = Math.floor(xp * 1.3);
-  if (playStyle === "survival" || gameMode === "survival") xp = Math.floor(xp * 1.4);
-  if (activePerks.includes("double_xp")) xp *= 2;
-
-  let coins = totalCorrect;
-  if (bestStreak >= 10) coins += 5;
-  if (bestStreak >= 25) coins += 10;
-  if (acc >= 1 && totalAnswered >= 5) coins += 15;
-
-  return { xp: Math.floor(xp), coins };
-}
-
 // SRS: build a weighted queue — struggling nouns appear more, mastered less
 function buildSrsQueue(nouns, nounStats, maxSize) {
   const weighted = nouns.map(n => {
@@ -854,7 +771,6 @@ const MATCHING_BATCH_SIZE = 10;
 const TIMED_CHALLENGE_DURATION = 60;
 const PERSISTED_BEST_SCORE_MODE_IDS = new Set([...GAME_MODES.map(({ id }) => id), "timed", "survival"]);
 const VALID_PERSISTED_MODE_STAT_IDS = new Set(["article", "plural", "matching", "reverse", "verb_forms", "verb_prep"]);
-const VALID_ACHIEVEMENT_IDS = new Set(ACHIEVEMENTS.map(({ id }) => id));
 const VALID_CAMPAIGN_CHALLENGES = CAMPAIGN_STATES.reduce((acc, state) => {
   acc[state.id] = new Set(state.challenges.map(ch => ch.id));
   return acc;
@@ -862,7 +778,6 @@ const VALID_CAMPAIGN_CHALLENGES = CAMPAIGN_STATES.reduce((acc, state) => {
 
 function sanitizePersistedData(data) {
   if (!data || typeof data !== "object") return { ...DEFAULT_DATA };
-  const achievements = [...new Set((data.achievements || []).filter(id => VALID_ACHIEVEMENT_IDS.has(id)))];
   const bestScores = Object.fromEntries(
     Object.entries(data.bestScores || {}).filter(([key]) => PERSISTED_BEST_SCORE_MODE_IDS.has(key.split(":")[0]))
   );
@@ -882,7 +797,7 @@ function sanitizePersistedData(data) {
       return Object.keys(cleaned).length ? [[stateId, cleaned]] : [];
     })
   );
-  return { ...data, achievements, bestScores, modeStats, modeMastered, campaignProgress };
+  return { ...data, bestScores, modeStats, modeMastered, campaignProgress };
 }
 
 const PLURAL_FAMILY_PRIORITY = {
@@ -2219,8 +2134,7 @@ function GermanNounGame() {
   const [timedSeconds, setTimedSeconds] = useState(10);
   const [lives, setLives] = useState(3);
   const [globalTimer, setGlobalTimer] = useState(60);
-  const [sessionRewards, setSessionRewards] = useState(null);
-  const [newAchievements, setNewAchievements] = useState([]);
+  const [sessionBest, setSessionBest] = useState(null);
   const [reverseInput, setReverseInput] = useState("");
   const [verbFormInputs, setVerbFormInputs] = useState({infinitive: "", prateritum: "", perfekt: ""});
   const verbInfRef = useRef(null);
@@ -2229,8 +2143,6 @@ function GermanNounGame() {
   // Verb Prepositions state
   const [verbPrepInputs, setVerbPrepInputs] = useState({preposition: "", case: ""});
   const verbPrepRef = useRef(null);
-  const [usedSecondChance, setUsedSecondChance] = useState(false);
-  const [usedStreakShield, setUsedStreakShield] = useState(false);
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
   const [sessionKey, setSessionKey] = useState(null); // "gameMode:source:id" for best-score tracking
   const [sessionTotal, setSessionTotal] = useState(0); // total words in queue at session start
@@ -2279,7 +2191,6 @@ function GermanNounGame() {
     setSyncStatus("loading");
     loadGistData().then(d => {
       const merged = sanitizePersistedData({ ...DEFAULT_DATA, ...d, dailyStreak: { ...DEFAULT_DATA.dailyStreak, ...(d.dailyStreak||{}) } });
-      merged.level = levelFromXp(merged.xp);
       setUserData(merged); setSyncStatus("synced");
     }).catch(() => setSyncStatus("error"));
   }, []);
@@ -2347,19 +2258,6 @@ function GermanNounGame() {
 
   const deleteDeck = useCallback((deckId) => {
     const newData = { ...userData, decks: userData.decks.filter(d => d.id !== deckId) };
-    persistData(newData);
-  }, [userData, persistData]);
-
-  const buyPerk = useCallback((perkId) => {
-    const perk = PERKS.find(p => p.id === perkId);
-    if (!perk || userData.coins < perk.cost) return false;
-    const newData = { ...userData, coins: userData.coins - perk.cost, activePerks: [...(userData.activePerks||[]), perkId] };
-    persistData(newData);
-    return true;
-  }, [userData, persistData]);
-
-  const deactivatePerk = useCallback((perkId) => {
-    const newData = { ...userData, activePerks: (userData.activePerks||[]).filter(p => p !== perkId) };
     persistData(newData);
   }, [userData, persistData]);
 
@@ -2486,8 +2384,7 @@ function GermanNounGame() {
     setDifficulty(effectiveDifficulty);
     setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
     setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
-    setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionRewards(null);setNewAchievements([]);
-    setUsedSecondChance(false);setUsedStreakShield(false);
+    setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionBest(null);
     setMatchingRightItems([]);
     setMatchingMatchedIds([]);
     setMatchingSelectedWord(null);
@@ -2544,8 +2441,7 @@ function GermanNounGame() {
     setDifficulty(effectiveDifficulty);
     setTier(t); setQueue(shuffleArray(nouns)); setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
     setTotalAnswered(0); setTotalCorrect(0); setFeedback(null); setArticleChoice(null); setReverseInput(""); setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
-    setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionRewards(null); setNewAchievements([]);
-    setUsedSecondChance(false); setUsedStreakShield(false);
+    setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionBest(null);
     setMatchingRightItems([]); setMatchingMatchedIds([]); setMatchingSelectedWord(null); setMatchingSelectedMeaning(null); setMatchingMismatch(null);
     setActiveDeck(null);
     // Set playStyle based on campaign gameMode
@@ -2555,15 +2451,13 @@ function GermanNounGame() {
     setScreen("game");
   }, []);
 
-  // End session: calculate XP, coins, achievements, tier unlocks
+  // End session: update streak, best scores, and campaign progress
   const endSession = useCallback(() => {
     clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
     if (sessionAnswersRef.current.length) updateNounStats(sessionAnswersRef.current);
     sessionAnswersRef.current = [];
 
-    // Calculate rewards
-    const rewards = calcSessionRewards(totalCorrect, totalAnswered, bestStreak, mode, difficulty, userData.activePerks || [], gameMode, playStyle);
-    // Best-score snapshot for celebration on results screen (resolved below once we know the outcome)
+    // Best-score snapshot for celebration on results screen
     let sessionBestInfo = null;
     if (sessionKey && totalAnswered > 0) {
       const denom = sessionTotal > 0 ? sessionTotal : totalAnswered;
@@ -2578,32 +2472,13 @@ function GermanNounGame() {
         isPerfect: pct >= 100,
       };
     }
-    setSessionRewards({ ...rewards, best: sessionBestInfo });
+    setSessionBest(sessionBestInfo);
 
-    // Update userData with rewards
     setUserData(prev => {
-      const newXp = (prev.xp || 0) + rewards.xp;
-      const newLevel = levelFromXp(newXp);
-      const newCoins = (prev.coins || 0) + rewards.coins;
       const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
       const newSessions = (prev.totalSessions || 0) + 1;
 
-      const acc = totalAnswered > 0 ? totalCorrect / totalAnswered : 0;
-
-      // Session-based achievements
-      let sessionAch = [];
-      if (acc >= 1 && totalAnswered >= 5) sessionAch.push("perfect_session");
-      if (bestStreak >= 10) sessionAch.push("streak_10");
-      if (bestStreak >= 25) sessionAch.push("streak_25");
-      if (bestStreak >= 50) sessionAch.push("streak_50");
-      if ((playStyle === "timed" || gameMode === "timed") && totalCorrect >= 20) sessionAch.push("speed_demon");
-      if ((playStyle === "survival" || gameMode === "survival") && totalAnswered >= 30) sessionAch.push("survivor");
-
-      const updated = { ...prev, xp: newXp, level: newLevel, coins: newCoins, dailyStreak: newStreak,
-        totalSessions: newSessions, activePerks: [] }; // perks consumed after session
-      const allNew = checkAchievements(updated, sessionAch.filter(a => !(prev.achievements||[]).includes(a)));
-      updated.achievements = [...new Set([...(prev.achievements || []), ...allNew])];
-      setNewAchievements(allNew.filter(a => !(prev.achievements||[]).includes(a)));
+      const updated = { ...prev, dailyStreak: newStreak, totalSessions: newSessions };
 
       // Campaign progress update
       if (campaignChallenge && totalAnswered > 0) {
@@ -2635,7 +2510,7 @@ function GermanNounGame() {
     });
 
     setScreen("results");
-  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.activePerks, userData.bestScores, tier, campaignChallenge, sessionKey, sessionTotal]);
+  }, [updateNounStats, totalCorrect, totalAnswered, bestStreak, mode, difficulty, gameMode, playStyle, userData.bestScores, tier, campaignChallenge, sessionKey, sessionTotal]);
 
   // Per-question timer (for timed playStyle or campaign difficulty modes)
   useEffect(() => {
@@ -2645,8 +2520,7 @@ function GermanNounGame() {
     const isLegacyTimed = difficulty !== "easy" && gameMode !== "timed" && gameMode !== "survival" && playStyle !== "survival";
     if (!isTimed && !isLegacyTimed) return;
     const baseTime = isTimed ? timedSeconds : timeLimit;
-    const tl = (userData.activePerks||[]).includes("time_freeze") ? baseTime + 5 : baseTime;
-    setTimeLeft(tl);
+    setTimeLeft(baseTime);
     timerRef.current = setInterval(() => {
       setTimeLeft(p => { if(p<=1){clearInterval(timerRef.current);handleTimeout();return 0;} return p-1; });
     }, 1000);
@@ -2737,28 +2611,15 @@ function GermanNounGame() {
       if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=chosenPlural||"";if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
     }
 
-    const perks = userData.activePerks || [];
-    const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
-
     const registerCorrect = () => {
       const sb=Math.floor(streak/5)*10, tb=(playStyle==="timed"||difficulty!=="easy")?Math.floor(timeLeft*2):0;
-      setScore(pr=>pr+Math.floor((100+sb+tb)*scoreMultiplier));
+      setScore(pr=>pr+100+sb+tb);
       setStreak(pr=>{const n=pr+1;setBestStreak(b=>Math.max(b,n));return n;});
       setTotalCorrect(pr=>pr+1);
     };
 
     const registerWrong = () => {
-      if (perks.includes("second_chance") && !usedSecondChance) {
-        setUsedSecondChance(true);
-        setFeedback({correct:false,article:a,plural:p,noun:s,english:e,secondChance:true});
-        setPhase("feedback");
-        return false;
-      }
-      if (perks.includes("streak_shield") && !usedStreakShield && streak > 0) {
-        setUsedStreakShield(true);
-      } else {
-        setStreak(0);
-      }
+      setStreak(0);
       if (gameMode === "verb_forms") {
         setWrongAnswers(pr=>[...pr,{noun:s,entryId:s,article:"",plural:"",english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER,
           verbInfinitive:s,verbPrateritum:currentNoun[3],verbPerfekt:currentNoun[4],
@@ -2791,7 +2652,7 @@ function GermanNounGame() {
       setFeedback({correct,article:a,plural:p,noun:s,english:e});
     }
     setPhase("feedback");
-  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, playStyle, userData.activePerks, usedSecondChance, usedStreakShield, nextQuestion, endSession, verbFormInputs, verbPrepInputs]);
+  }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, playStyle, nextQuestion, endSession, verbFormInputs, verbPrepInputs]);
 
   const handleArticle = useCallback((art) => {
     if(phase!=="question") return;
@@ -2818,13 +2679,11 @@ function GermanNounGame() {
     const english = isSimple ? item[1] : item[3];
     const entryId = isSimple ? word : getNounEntryId(item);
     const correct = wordId === meaningId;
-    const perks = userData.activePerks || [];
-    const scoreMultiplier = perks.includes("score_boost") ? 1.5 : 1;
 
     setTotalAnswered(prev => prev + 1);
 
     if (correct) {
-      setScore(prev => prev + Math.floor(120 * scoreMultiplier));
+      setScore(prev => prev + 120);
       setTotalCorrect(prev => prev + 1);
       setStreak(prev => {
         const next = prev + 1;
@@ -2839,11 +2698,7 @@ function GermanNounGame() {
       return;
     }
 
-    if (perks.includes("streak_shield") && !usedStreakShield && streak > 0) {
-      setUsedStreakShield(true);
-    } else {
-      setStreak(0);
-    }
+    setStreak(0);
 
     sessionAnswersRef.current.push({ noun: entryId, correct: false, modes: ["matching"] });
     setWrongAnswers(prev => [...prev, {
@@ -2867,7 +2722,7 @@ function GermanNounGame() {
     setMatchingSelectedMeaning(null);
     clearTimeout(matchingMismatchTimerRef.current);
     matchingMismatchTimerRef.current = setTimeout(() => setMatchingMismatch(null), 450);
-  }, [matchingBatch, matchingRightItems, matchingWordType, userData.activePerks, usedStreakShield, streak, playStyle, gameMode, endSession]);
+  }, [matchingBatch, matchingRightItems, matchingWordType, playStyle, gameMode, endSession]);
 
   const handleMatchingWordSelect = useCallback((wordId) => {
     if (gameMode !== "matching" || phase !== "question" || matchingMatchedIds.includes(wordId)) return;
@@ -2973,9 +2828,9 @@ function GermanNounGame() {
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
   if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
-    loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});m.level=levelFromXp(m.xp);setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
+    loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
-  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionRewards={sessionRewards} newAchievements={newAchievements} userData={userData} gameMode={gameMode} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
+  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionBest={sessionBest} userData={userData} gameMode={gameMode} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
     let nd;
     if (gameMode === "verb_forms") {
@@ -3009,24 +2864,19 @@ function GermanNounGame() {
       // Direct transition to results - inline the endSession logic
       clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
       if (results.sessionAnswers.length) updateNounStats(results.sessionAnswers);
-      const rewards = calcSessionRewards(results.totalCorrect, results.totalAnswered, results.bestStreak, mode, difficulty, userData.activePerks || [], gameMode, playStyle);
-      setSessionRewards(rewards);
+      let sessionBestInfo = null;
+      if (sessionKey && results.totalAnswered > 0) {
+        const denom = sessionTotal > 0 ? sessionTotal : results.totalAnswered;
+        const pct = Math.round((results.totalCorrect / denom) * 100);
+        const prev = (userData.bestScores || {})[sessionKey];
+        const prevPct = prev ? prev.pct : 0;
+        sessionBestInfo = { sessionKey, pct, prevPct, isNewBest: !prev || pct > prevPct, isPerfect: pct >= 100 };
+      }
+      setSessionBest(sessionBestInfo);
       setUserData(prev => {
-        const newXp = (prev.xp || 0) + rewards.xp;
-        const newLevel = levelFromXp(newXp);
-        const newCoins = (prev.coins || 0) + rewards.coins;
         const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
         const newSessions = (prev.totalSessions || 0) + 1;
-        const acc = results.totalAnswered > 0 ? results.totalCorrect / results.totalAnswered : 0;
-        let sessionAch = [];
-        if (acc >= 1 && results.totalAnswered >= 5) sessionAch.push("perfect_session");
-        if (results.bestStreak >= 10) sessionAch.push("streak_10");
-        if (results.bestStreak >= 25) sessionAch.push("streak_25");
-        if (results.bestStreak >= 50) sessionAch.push("streak_50");
-        const updated = { ...prev, xp: newXp, level: newLevel, coins: newCoins, dailyStreak: newStreak, totalSessions: newSessions, activePerks: [] };
-        const allNew = checkAchievements(updated, sessionAch.filter(a => !(prev.achievements||[]).includes(a)));
-        updated.achievements = [...new Set([...(prev.achievements || []), ...allNew])];
-        setNewAchievements(allNew.filter(a => !(prev.achievements||[]).includes(a)));
+        const updated = { ...prev, dailyStreak: newStreak, totalSessions: newSessions };
         if (sessionKey && results.totalAnswered > 0) {
           const denom = sessionTotal > 0 ? sessionTotal : results.totalAnswered;
           const pct = Math.round((results.totalCorrect / denom) * 100);
@@ -3361,495 +3211,6 @@ function DeckBuilder({onSave, onCancel}) {
   );
 }
 
-function LegacyMenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard}) {
-  const [mode,setMode]=useState(MODES.ARTICLE);
-  const [tier,setTier]=useState(500);
-  const [tierMin,setTierMin]=useState(0);
-  const [tierMode,setTierMode]=useState("cumulative"); // "cumulative" or "range"
-  const [source,setSource]=useState("tier");
-  const [selectedDeck,setSelectedDeck]=useState(null);
-  const [showSettings,setShowSettings]=useState(false);
-  const [showDeckBuilder,setShowDeckBuilder]=useState(false);
-  const [selectedGameMode,setSelectedGameMode]=useState("classic");
-  const [matchWordType,setMatchWordType]=useState("nouns");
-  const [playStyle,setPlayStyle]=useState("practice");
-  const [timedSeconds,setTimedSeconds]=useState(10);
-  const [patInput,setPatInput]=useState(getPat());
-  const [patSaved,setPatSaved]=useState(false);
-
-  const handleSavePat = () => {
-    setPat(patInput.trim()); setPatSaved(true);
-    setTimeout(() => setPatSaved(false), 2000);
-    if (patInput.trim()) onSyncRefresh();
-  };
-
-  const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse";
-  const handleStart = () => {
-    const wType = supportsWordType ? matchWordType : "nouns";
-    const diff = playStyle === "timed" ? "normal" : "easy";
-    const isRange = source === "tier" && tierMode === "range";
-    const effectiveTierMin = isRange ? tierMin : 0;
-    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
-  };
-
-  const prog = xpProgress(userData.xp || 0);
-  const title = getTitle(prog.level);
-  const syncDot = {idle:"#64748b",loading:"#F59E0B",saving:"#F59E0B",synced:"#10B981",error:"#EF4444"}[syncStatus];
-  const dailyStreak = userData.dailyStreak || {current:0,best:0};
-
-  if (showDeckBuilder) {
-    return <DeckBuilder onSave={(name, nouns) => { onSaveDeck(name, nouns); setShowDeckBuilder(false); setSource("deck"); }}
-      onCancel={() => setShowDeckBuilder(false)} />;
-  }
-
-  return (
-    <div style={S.container}><div style={S.menuInner}>
-      <div style={{textAlign:"center",position:"relative"}}>
-        <button onClick={()=>setShowSettings(!showSettings)} style={S.gearBtn} title="Sync Settings">
-          <span style={{fontSize:18}}>&#9881;</span>
-          <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot,display:"inline-block",marginLeft:4}}/>
-        </button>
-        <div style={{fontSize:28,marginBottom:8,letterSpacing:2}}><span style={{color:"#3B82F6",fontWeight:900}}>der</span><span style={{color:"#EC4899",fontWeight:900}}> die</span><span style={{color:"#10B981",fontWeight:900}}> das</span></div>
-        <h1 style={S.menuTitle}>Artikel Blitz</h1>
-      </div>
-
-      {/* ── Profile card ── */}
-      {(()=>{
-        const totalNouns = NOUNS.length;
-        const masteredCount = (userData.masteredNouns||[]).length;
-        const masteryPct = totalNouns > 0 ? Math.round((masteredCount / totalNouns) * 100) : 0;
-        const masteryColor = masteryPct >= 100 ? "#F59E0B" : masteryPct >= 50 ? "#10B981" : "#8B5CF6";
-        return (
-      <div style={{...S.settingsPanel,textAlign:"center",position:"relative",overflow:"hidden"}}>
-        {/* Subtle shimmer for high mastery */}
-        {masteryPct >= 25 && <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg, transparent, ${masteryColor}44, transparent)`,opacity:0.6}}/>}
-        <div style={{display:"flex",alignItems:"center",gap:14,justifyContent:"center"}}>
-          {/* XP level ring */}
-          <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <svg width={56} height={56} style={{transform:"rotate(-90deg)"}}>
-              <circle cx={28} cy={28} r={24} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={4}/>
-              <circle cx={28} cy={28} r={24} fill="none" stroke="#8B5CF6" strokeWidth={4}
-                strokeDasharray={2*Math.PI*24} strokeDashoffset={2*Math.PI*24-(prog.needed>0?(prog.current/prog.needed):1)*2*Math.PI*24}
-                strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease"}}/>
-            </svg>
-            <span style={{position:"absolute",fontSize:18,fontWeight:900,color:"#e2e8f0"}}>{prog.level}</span>
-          </div>
-          <div style={{textAlign:"left"}}>
-            <div style={{fontSize:18,fontWeight:900,color:"#e2e8f0"}}>{title[1]} <span style={{fontSize:12,color:"#94a3b8",fontWeight:600}}>{title[2]}</span></div>
-            <div style={{fontSize:11,color:"#64748b"}}>{prog.current} / {prog.needed} XP to Lv. {prog.level+1}</div>
-          </div>
-        </div>
-        {/* Stats row */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:10}}>
-          <div style={{background:dailyStreak.current>=3?"rgba(239,68,68,0.06)":"rgba(255,255,255,0.02)",border:`1px solid ${dailyStreak.current>=3?"rgba(239,68,68,0.2)":"rgba(255,255,255,0.06)"}`,borderRadius:8,padding:"8px 4px"}}>
-            <div style={{fontSize:18,fontWeight:800,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current>=1?"\uD83D\uDD25":""}{dailyStreak.current}</div>
-            <div style={{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:1}}>Day Streak</div>
-          </div>
-          <div style={{background:`${masteryColor}0F`,border:`1px solid ${masteryColor}33`,borderRadius:8,padding:"8px 4px"}}>
-            <div style={{fontSize:18,fontWeight:800,color:masteryColor}}>{masteredCount.toLocaleString()}</div>
-            <div style={{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:1}}>Mastered</div>
-          </div>
-        </div>
-        {/* Mastery progress bar */}
-        <div style={{marginTop:8}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
-            <span style={{fontSize:10,color:"#94a3b8",fontWeight:600}}>Overall Mastery</span>
-            <span style={{fontSize:10,fontWeight:700,color:masteryColor}}>{masteryPct}% ({masteredCount.toLocaleString()} / {totalNouns.toLocaleString()})</span>
-          </div>
-          <div style={{position:"relative",height:8,background:"rgba(255,255,255,0.06)",borderRadius:4,overflow:"hidden"}}>
-            <div style={{height:"100%",width:`${masteryPct}%`,background:masteryPct>=100?"linear-gradient(90deg,#F59E0B,#EF4444)":masteryPct>=50?"linear-gradient(90deg,#10B981,#3B82F6)":"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:4,transition:"width 0.5s ease",boxShadow:masteryPct>10?`0 0 8px ${masteryColor}44`:"none"}}/>
-          </div>
-        </div>
-      </div>
-        );
-      })()}
-
-      {showSettings&&(
-        <div style={S.settingsPanel}>
-          <label style={S.menuLabel}>GitHub PAT (for cloud sync)</label>
-          <p style={{fontSize:11,color:"#64748b",margin:"0 0 6px"}}>Create a token with <strong>gist</strong> scope at github.com/settings/tokens</p>
-          <div style={{display:"flex",gap:8}}>
-            <input value={patInput} onChange={e=>setPatInput(e.target.value)} placeholder="ghp_xxxxxxxxxxxx" type="password"
-              style={{...S.pluralInput,fontSize:13,textAlign:"left",flex:1,padding:"8px 12px"}}/>
-            <button onClick={handleSavePat} style={{...S.submitBtn,fontSize:13,padding:"8px 16px"}}>{patSaved?"Saved!":"Save"}</button>
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginTop:6}}>
-            <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot}}/>
-            <span style={{fontSize:11,color:"#94a3b8"}}>
-              {syncStatus==="idle"?"Not connected":syncStatus==="loading"?"Loading...":syncStatus==="saving"?"Saving...":syncStatus==="synced"?"Synced":syncStatus==="error"?"Sync error — check PAT":""}
-            </span>
-            {getGistId()&&<span style={{fontSize:10,color:"#475569",marginLeft:"auto"}}>Gist: {getGistId().slice(0,8)}...</span>}
-          </div>
-        </div>
-      )}
-
-      {/* ── Game Mode selection ── */}
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Game Mode</label>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-          {GAME_MODES.map(gm=>{
-            const selected = selectedGameMode===gm.id;
-            // Best score across all sources/tiers for this game mode
-            const bs = userData.bestScores || {};
-            const modeScores = Object.keys(bs).filter(k => k.startsWith(gm.id + ":")).map(k => bs[k].pct);
-            const bestPct = modeScores.length > 0 ? Math.max(...modeScores) : 0;
-            return (
-              <button key={gm.id} onClick={()=>{setSelectedGameMode(gm.id);if(source==="deck")setSource("tier");}}
-                style={{...S.modeCard,borderColor:selected?"#8B5CF6":bestPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selected?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                {bestPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${bestPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                <span style={{fontSize:18,position:"relative"}}>{gm.icon}</span>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{gm.name}</span>
-                <span style={{fontSize:10,color:"#64748b",position:"relative"}}>{gm.desc}</span>
-                {bestPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {bestPct}%</span>}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      {selectedGameMode==="verb_forms"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the Infinitiv, Präteritum (ich), and Partizip Perfekt for each irregular verb. {IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.</div>}
-      {selectedGameMode==="verb_prepositions"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Type the fixed preposition and select the governed case for each verb. {VERB_PREPOSITIONS.length} verb+preposition combos available.</div>}
-
-      {/* ── Word type for matching/reverse ── */}
-      {supportsWordType&&(
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Word Type</label>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-            <button onClick={()=>setMatchWordType("nouns")} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="nouns"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="nouns"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Nouns</span>
-              <span style={{fontSize:10,color:"#64748b"}}>{NOUNS.length.toLocaleString()} words</span>
-            </button>
-            <button onClick={()=>{setMatchWordType("adjectives");if(source==="deck")setSource("tier");}} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="adjectives"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="adjectives"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Adjectives</span>
-              <span style={{fontSize:10,color:"#64748b"}}>{ADJECTIVES.length.toLocaleString()} words</span>
-            </button>
-            <button onClick={()=>{setMatchWordType("verbs");if(source==="deck")setSource("tier");}} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="verbs"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="verbs"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Verbs</span>
-              <span style={{fontSize:10,color:"#64748b"}}>{VERBS.length.toLocaleString()} words</span>
-            </button>
-            <button onClick={()=>{setMatchWordType("mixed");if(source==="deck")setSource("tier");}} style={{...S.diffBtn,flex:1,borderColor:matchWordType==="mixed"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:matchWordType==="mixed"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>All Mixed</span>
-              <span style={{fontSize:10,color:"#64748b"}}>Everything</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── Source selection ── */}
-      {(()=>{
-        const showDeck = !((supportsWordType&&matchWordType!=="nouns")||selectedGameMode==="verb_forms");
-        return (
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Play from</label>
-          <div style={{display:"flex",gap:8}}>
-            <button onClick={()=>{setSource("tier");setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source==="tier"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="tier"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Vocab Level</span>
-            </button>
-            {showDeck&&(
-              <button onClick={()=>setSource("deck")} style={{...S.diffBtn,flex:1,borderColor:source==="deck"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:source==="deck"?"rgba(139,92,246,0.1)":"transparent"}}>
-                <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Saved Deck</span>
-                {(userData.decks.length+BUILTIN_DECKS.length)>0&&<span style={{fontSize:10,color:"#64748b"}}>{userData.decks.length+BUILTIN_DECKS.length} deck{(userData.decks.length+BUILTIN_DECKS.length)>1?"s":""}</span>}
-              </button>
-            )}
-            <button onClick={()=>setSource("weakest")} style={{...S.diffBtn,flex:1,borderColor:source==="weakest"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:source==="weakest"?"rgba(239,68,68,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Weakest</span>
-              <span style={{fontSize:10,color:"#64748b"}}>Your worst words</span>
-            </button>
-          </div>
-        </div>
-        );
-      })()}
-
-      {source==="weakest"&&<div style={{fontSize:12,color:"#94a3b8",textAlign:"center"}}>Practice your weakest words based on past performance. Requires at least a few sessions of play data.</div>}
-
-      {source!=="weakest"&&(source==="tier"||selectedGameMode==="verb_forms"||selectedGameMode==="verb_prepositions"||(supportsWordType&&matchWordType!=="nouns"))&&(()=>{
-        // Compute effective word type for tier labels
-        const effWt = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : selectedGameMode === "verb_prepositions" ? "verb_prep" : "nouns");
-        const countForTier = (tv) => {
-          if (effWt === "nouns") return getNounsForTier(tv).length;
-          if (effWt === "adjectives") return getAdjectivesForTier(tv).length;
-          if (effWt === "verb_prep") return getVerbPrepositionsForTier(tv).length;
-          if (effWt === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(tv) : getVerbsForTier(tv)).length;
-          // mixed
-          return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
-        };
-        const countForRange = (min, max) => {
-          if (effWt === "nouns") return getNounsForTier(max, min).length;
-          if (effWt === "adjectives") return getAdjectivesForTier(max, min).length;
-          if (effWt === "verb_prep") return getVerbPrepositionsForTier(max, min).length;
-          if (effWt === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
-          return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
-        };
-        // Mastery: count mastered words in a range
-        const masteredSet = new Set(userData.masteredNouns || []);
-        const nounStats = userData.nounStats || {};
-        const uModeStats = userData.modeStats || {};
-        // Per-mode mastery for nouns in a range
-        const modeMasteryInRange = (modeId, min, max) => {
-          if (effWt !== "nouns") return null;
-          const words = getNounsForTier(max, min || undefined);
-          if (!words.length) return null;
-          let m = 0;
-          words.forEach(n => { const s = uModeStats[modeId+":"+n[0]]; if (s && (s.consecutiveCorrect||0) >= 5) m++; });
-          return { pct: Math.round((m / words.length) * 100) };
-        };
-        const wordsInRange = (min, max) => {
-          const words = [];
-          if (effWt === "nouns" || effWt === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
-          if (effWt === "adjectives" || effWt === "mixed") getAdjectivesForTier(max, min).forEach(a => words.push(a[0]));
-          if (effWt === "verbs" || effWt === "mixed") getVerbsForTier(max, min).forEach(v => words.push(v[0]));
-          if (effWt === "verb_prep") getVerbPrepositionsForTier(max, min).forEach(v => words.push(v[0]+"|"+v[3]));
-          return words;
-        };
-        const masteryForRange = (min, max) => {
-          const words = wordsInRange(min, max);
-          if (!words.length) return { mastered: 0, total: 0, pct: 0 };
-          let m = 0;
-          words.forEach(w => {
-            if (masteredSet.has(w)) { m++; return; }
-            const s = nounStats[w];
-            if (s && (s.consecutiveCorrect || 0) >= 5) m++;
-          });
-          return { mastered: m, total: words.length, pct: Math.round((m / words.length) * 100) };
-        };
-        const maxAvailable = countForTier(99999);
-        // Filter out tiers with 0 words, and dedupe tiers that yield the same count
-        const seenCounts = new Set();
-        const filteredTiers = TIER_OPTIONS.filter(t => {
-          const c = countForTier(t.value);
-          if (c <= 0) return false;
-          if (seenCounts.has(c)) return false;
-          seenCounts.add(c);
-          return true;
-        });
-        // Build 100-word incremental ranges based on rank values
-        const rangeSize = 100;
-        const ranges = [];
-        const maxRankTier = TIER_OPTIONS[TIER_OPTIONS.length - 1].value;
-        for (let i = 0; i < maxRankTier; i += rangeSize) {
-          const rMin = i;
-          const rMax = i + rangeSize;
-          const c = countForRange(rMin, rMax);
-          if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
-        }
-        // SVG progress ring helper
-        const ProgressRing = ({pct, size, stroke, color, bgColor}) => {
-          const r = (size - stroke) / 2;
-          const circ = 2 * Math.PI * r;
-          const offset = circ - (pct / 100) * circ;
-          return (
-            <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0}}>
-              <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={bgColor||"rgba(255,255,255,0.06)"} strokeWidth={stroke}/>
-              {pct > 0 && <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color||"#10B981"} strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease"}}/>}
-            </svg>
-          );
-        };
-        // Compute overall mastery for the header
-        const totalMastery = masteryForRange(0, 99999);
-        const rangesCompleted = ranges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
-        const rangesStarted = ranges.filter(r => { const m = masteryForRange(r.min, r.max); return m.pct > 0 && m.pct < 100; }).length;
-        return (
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Vocabulary Level</label>
-          <div style={{display:"flex",gap:6,marginBottom:10}}>
-            <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="cumulative"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Cumulative</span>
-              <span style={{fontSize:10,color:"#64748b"}}>Top N words</span>
-            </button>
-            <button onClick={()=>{setTierMode("range");}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="range"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="range"?"rgba(139,92,246,0.1)":"transparent"}}>
-              <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Ranges</span>
-              <span style={{fontSize:10,color:"#64748b"}}>100-word chunks</span>
-            </button>
-          </div>
-          {tierMode==="cumulative"?(
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-            {filteredTiers.map(t=>{
-                const count = countForTier(t.value);
-                const capped = effWt !== "mixed" && count < t.value;
-                const label = capped ? `Top ${count.toLocaleString()}` : t.label;
-                const isAll = count >= maxAvailable;
-                const desc = isAll
-                  ? `All ${effWt === "mixed" ? "words" : effWt} (${count.toLocaleString()})`
-                  : effWt === "mixed"
-                    ? `${count.toLocaleString()} words`
-                    : (capped ? `${count.toLocaleString()} available` : t.desc);
-                const tierKey = `${selectedGameMode}:tier:${t.value}`;
-                const tierBest = (userData.bestScores || {})[tierKey];
-                const tierPct = tierBest ? tierBest.pct : 0;
-                const tm = masteryForRange(0, t.value);
-                const ringColor = tm.pct >= 100 ? "#F59E0B" : tm.pct >= 50 ? "#10B981" : "#8B5CF6";
-                return (
-                <button key={t.value} className={tm.pct>=100?"range-gold":""} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:tier===t.value&&tierMin===0?"#8B5CF6":tm.pct>=100?"rgba(245,158,11,0.5)":tierPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:tier===t.value&&tierMin===0?"rgba(139,92,246,0.1)":tm.pct>=100?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
-                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:tm.pct>=100?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
-                    <ProgressRing pct={tm.pct} size={36} stroke={3} color={ringColor}/>
-                    <span style={{position:"absolute",fontSize:9,fontWeight:800,color:ringColor}}>{tm.pct>=100?"\u2713":tm.pct>0?tm.pct+"%":""}</span>
-                  </div>
-                  <span style={{fontSize:13,fontWeight:700,color:tm.pct>=100?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
-                  <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{tm.mastered}/{tm.total} mastered</span>
-                  {tierPct>0&&<span style={{fontSize:9,color:"#10B981",fontWeight:700,position:"relative"}}>Best: {tierPct}%</span>}
-                </button>
-                );
-            })}
-          </div>
-          ):(
-          <>
-          {/* Overall mastery summary for ranges */}
-          <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,padding:"12px 16px",marginBottom:10}}>
-            <div style={{display:"flex",alignItems:"center",gap:12}}>
-              <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <ProgressRing pct={totalMastery.pct} size={48} stroke={4} color={totalMastery.pct>=100?"#F59E0B":totalMastery.pct>=50?"#10B981":"#8B5CF6"}/>
-                <span style={{position:"absolute",fontSize:12,fontWeight:800,color:totalMastery.pct>=100?"#F59E0B":"#e2e8f0"}}>{totalMastery.pct}%</span>
-              </div>
-              <div style={{flex:1}}>
-                <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{totalMastery.mastered.toLocaleString()} / {totalMastery.total.toLocaleString()} words mastered</div>
-                <div style={{position:"relative",height:6,background:"rgba(255,255,255,0.06)",borderRadius:3,overflow:"hidden",marginTop:4}}>
-                  <div style={{height:"100%",width:`${totalMastery.pct}%`,background:totalMastery.pct>=100?"linear-gradient(90deg,#F59E0B,#EF4444)":totalMastery.pct>=50?"linear-gradient(90deg,#10B981,#3B82F6)":"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:3,transition:"width 0.5s"}}/>
-                </div>
-                <div style={{display:"flex",gap:12,marginTop:4}}>
-                  {rangesCompleted>0&&<span style={{fontSize:10,color:"#F59E0B",fontWeight:700}}>{rangesCompleted} completed</span>}
-                  {rangesStarted>0&&<span style={{fontSize:10,color:"#10B981",fontWeight:700}}>{rangesStarted} in progress</span>}
-                  <span style={{fontSize:10,color:"#64748b"}}>{ranges.length} total ranges</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:400,overflowY:"auto",paddingRight:4}}>
-            {ranges.map(r=>{
-                const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
-                const rangeKey = `${selectedGameMode}:range:${r.min+1}-${r.max}`;
-                const rangeBest = (userData.bestScores || {})[rangeKey];
-                const rangePct = rangeBest ? rangeBest.pct : 0;
-                const rm = masteryForRange(r.min, r.max);
-                const isComplete = rm.pct >= 100;
-                const isStarted = rm.pct > 0;
-                const ringColor = isComplete ? "#F59E0B" : rm.pct >= 50 ? "#10B981" : rm.pct > 0 ? "#8B5CF6" : "rgba(255,255,255,0.1)";
-                const borderColor = isSelected ? "#8B5CF6" : isComplete ? "rgba(245,158,11,0.5)" : rangePct >= 90 ? "rgba(16,185,129,0.5)" : isStarted ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.08)";
-                const bgColor = isSelected ? "rgba(139,92,246,0.1)" : isComplete ? "rgba(245,158,11,0.06)" : "transparent";
-                return (
-                <button key={r.min} className={isComplete?"range-gold":""} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden",padding:"10px 6px",gap:1}}>
-                  {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:isComplete?"linear-gradient(to top, rgba(245,158,11,0.2), rgba(245,158,11,0.05))":"linear-gradient(to top, rgba(16,185,129,0.25), rgba(16,185,129,0.08))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:1}}>
-                    <ProgressRing pct={rm.pct} size={32} stroke={2.5} color={ringColor}/>
-                    <span style={{position:"absolute",fontSize:isComplete?11:8,fontWeight:800,color:ringColor}}>{isComplete?"\u2713":rm.pct>0?rm.pct+"%":""}</span>
-                  </div>
-                  <span style={{fontSize:12,fontWeight:700,color:isComplete?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}–{r.max}</span>
-                  <span style={{fontSize:9,color:"#64748b",position:"relative"}}>{rm.mastered}/{rm.total}</span>
-                  {(()=>{
-                    const am = modeMasteryInRange("article", r.min, r.max);
-                    const pm = modeMasteryInRange("plural", r.min, r.max);
-                    if (!am && !pm) return null;
-                    return (
-                      <div style={{display:"flex",gap:3,position:"relative",alignItems:"center",justifyContent:"center"}}>
-                        {am&&<div title={`Articles: ${am.pct}%`} style={{width:6,height:6,borderRadius:3,background:am.pct>=100?"#F59E0B":am.pct>0?"#3B82F6":"rgba(255,255,255,0.1)"}}/>}
-                        {pm&&<div title={`Plurals: ${pm.pct}%`} style={{width:6,height:6,borderRadius:3,background:pm.pct>=100?"#F59E0B":pm.pct>0?"#EC4899":"rgba(255,255,255,0.1)"}}/>}
-                      </div>
-                    );
-                  })()}
-                  {rangePct>=90&&<span style={{fontSize:8,position:"relative",color:rangePct>=100?"#F59E0B":"#10B981",fontWeight:700}}>{rangePct>=100?"\u2605 "+rangePct+"%":rangePct+"%"}</span>}
-                </button>
-                );
-            })}
-          </div>
-          </>
-          )}
-        </div>
-        );
-      })()}
-
-      {source==="deck"&&(
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Select Deck</label>
-          <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
-            {BUILTIN_DECKS.map(dk=>{
-              const dkKey = `${selectedGameMode}:deck:${dk.id}`;
-              const dkBest = (userData.bestScores || {})[dkKey];
-              const dkPct = dkBest ? dkBest.pct : 0;
-              return (
-              <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
-                  <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in{dkPct>0?` · Best: ${dkPct}%`:""}</span>
-                </button>
-              </div>
-              );
-            })}
-            {userData.decks.map(dk=>{
-              const dkKey = `${selectedGameMode}:deck:${dk.id}`;
-              const dkBest = (userData.bestScores || {})[dkKey];
-              const dkPct = dkBest ? dkBest.pct : 0;
-              return (
-              <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-                <button onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor:selectedDeck===dk.id?"#8B5CF6":dkPct>0?"rgba(16,185,129,0.4)":"rgba(255,255,255,0.1)",backgroundColor:selectedDeck===dk.id?"rgba(139,92,246,0.1)":"transparent",position:"relative",overflow:"hidden"}}>
-                  {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:"linear-gradient(to top, rgba(16,185,129,0.35), rgba(16,185,129,0.15))",borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <span style={{fontSize:15,fontWeight:700,color:"#e2e8f0",position:"relative"}}>{dk.name}</span>
-                  <span style={{fontSize:11,color:"#64748b",position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}{dkPct>0?` · Best: ${dkPct}%`:""}</span>
-                </button>
-                <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
-              </div>
-              );
-            })}
-            {userData.decks.length===0&&BUILTIN_DECKS.length===0&&<p style={{fontSize:12,color:"#475569",textAlign:"center",margin:"8px 0"}}>No decks yet — create one or save mistakes after a session</p>}
-          </div>
-          <button onClick={()=>setShowDeckBuilder(true)} style={{...S.practiceBtn,borderColor:"rgba(139,92,246,0.3)",color:"#a78bfa",background:"rgba(139,92,246,0.1)",marginTop:4}}>
-            + Create Custom Deck
-          </button>
-        </div>
-      )}
-
-      {/* ── Answer type (hidden for reverse and special game modes) ── */}
-      {selectedGameMode!=="reverse"&&selectedGameMode!=="matching"&&selectedGameMode!=="verb_forms"&&(
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Answer Type</label>
-          <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {[[MODES.ARTICLE,"Articles","der / die / das"],[MODES.PLURAL,"Plurals","Choose the plural form"],[MODES.BOTH,"Both","Article + plural choice"]].map(([m,t,d])=>
-              <button key={m} onClick={()=>setMode(m)} style={{...S.modeCard,borderColor:mode===m?"#3B82F6":"rgba(255,255,255,0.1)",backgroundColor:mode===m?"rgba(59,130,246,0.1)":"transparent"}}>
-                <span style={{fontSize:16,fontWeight:700,color:"#e2e8f0"}}>{t}</span><span style={{fontSize:12,color:"#64748b"}}>{d}</span>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Play Style</label>
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
-            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
-            <span style={{fontSize:10,color:"#64748b"}}>No constraints</span>
-          </button>
-          <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
-            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
-            <span style={{fontSize:10,color:"#64748b"}}>Per-question timer</span>
-          </button>
-          <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
-            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
-            <span style={{fontSize:10,color:"#64748b"}}>3 lives</span>
-          </button>
-        </div>
-        {playStyle==="timed"&&(
-          <div style={{marginTop:8}}>
-            <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
-            <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-              {[5,8,10,15,20,30].map(s=>
-                <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <button onClick={handleStart} disabled={source==="deck"&&!selectedDeck} style={{...S.startBtn,opacity:(source==="deck"&&!selectedDeck)?0.4:1}}>Start Game</button>
-      <button onClick={onOpenCampaign} style={{...S.startBtn,background:"linear-gradient(135deg,#7C3AED,#2563EB)",marginTop:0}}>Campaign Mode</button>
-      <button onClick={onOpenDashboard} style={{...S.startBtn,background:"linear-gradient(135deg,#10B981,#06B6D4)",marginTop:0}}>Progress Dashboard</button>
-      <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} precomputed grammar explanations loaded</div>
-    </div></div>
-  );
-}
 
 // ═══════════════════════════════════════════════════════════════
 // PROGRESS DASHBOARD
@@ -3925,8 +3286,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     setSelectedGameMode(gameModeId);
   };
 
-  const prog = xpProgress(userData.xp || 0);
-  const title = getTitle(prog.level);
   const syncDot = {idle:"#64748b",loading:"#F59E0B",saving:"#F59E0B",synced:"#10B981",error:"#EF4444"}[syncStatus];
   const dailyStreak = userData.dailyStreak || {current:0,best:0};
   const totalNouns = NOUNS.length;
@@ -4259,10 +3618,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
       <div style={S.menuTopStats}>
         <div style={S.menuStatChip}>
-          <span style={S.menuStatValue}>Lv {prog.level}</span>
-          <span style={S.menuStatLabel}>{title[1]} {title[2]}</span>
-        </div>
-        <div style={S.menuStatChip}>
           <span style={{...S.menuStatValue,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current}</span>
           <span style={S.menuStatLabel}>Day Streak</span>
         </div>
@@ -4278,7 +3633,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       </div>
 
       <div style={S.menuProgressLine}>
-        <span>{prog.needed > 0 ? `${prog.current} / ${prog.needed} XP to Lv. ${prog.level+1}` : "Max level reached"}</span>
         <span>{masteredCount.toLocaleString()} / {totalNouns.toLocaleString()} nouns mastered</span>
       </div>
 
@@ -4408,8 +3762,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           </div>
         </div>
       )}
-
-      <div style={{textAlign:"center",fontSize:12,color:"#475569"}}>{EXPLANATIONS.size} precomputed grammar explanations loaded</div>
 
       <div style={S.menuStickyFooter}>
         <div style={S.menuStickySummary}>
@@ -4582,7 +3934,6 @@ function ProgressDashboard({ userData, onBack }) {
           <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:"#e2e8f0"}}>{userData.totalSessions||0}</div><div style={{fontSize:9,color:"#64748b",textTransform:"uppercase"}}>Sessions</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:"#e2e8f0"}}>{Object.keys(nounStats).length}</div><div style={{fontSize:9,color:"#64748b",textTransform:"uppercase"}}>Words Attempted</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:"#e2e8f0"}}>{(userData.dailyStreak||{}).best||0}</div><div style={{fontSize:9,color:"#64748b",textTransform:"uppercase"}}>Best Streak (days)</div></div>
-          <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:"#e2e8f0"}}>{userData.xp||0}</div><div style={{fontSize:9,color:"#64748b",textTransform:"uppercase"}}>Total XP</div></div>
         </div>
       </div>
     </div></div>
@@ -4592,21 +3943,19 @@ function ProgressDashboard({ userData, onBack }) {
 // ═══════════════════════════════════════════════════════════════
 // RESULTS — detailed review with grammar explanations
 // ═══════════════════════════════════════════════════════════════
-function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionRewards,newAchievements,userData,gameMode,onRestart,onPracticeWrong}) {
+function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionBest,userData,gameMode,onRestart,onPracticeWrong}) {
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [deckName,setDeckName]=useState("");
   const [deckSaved,setDeckSaved]=useState(false);
   const accuracy=totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const grade=accuracy>=95?"S":accuracy>=85?"A":accuracy>=70?"B":accuracy>=55?"C":"D";
   const gc={S:"#F59E0B",A:"#10B981",B:"#3B82F6",C:"#8B5CF6",D:"#EF4444"}[grade];
-  const prog = xpProgress(userData.xp || 0);
-  const title = getTitle(prog.level);
   const isMatching = gameMode === "matching";
   const isVerbForms = gameMode === "verb_forms";
   const isVerbPrep = gameMode === "verb_prepositions";
   const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
   // Best-score celebration (new best, perfect run, next-goal hint)
-  const best = sessionRewards && sessionRewards.best;
+  const best = sessionBest;
   const showPerfect = best && best.isPerfect;
   const showNewBest = best && best.isNewBest && !best.isPerfect && best.pct > 0;
   const nextGoal = best ? bestScoreMedal(best.pct) : null;
@@ -4663,19 +4012,8 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
         </div>
       )}
 
-      {/* ── XP & Rewards panel ── */}
-      {sessionRewards&&(
-        <div style={{...S.settingsPanel,textAlign:"center",borderColor:"rgba(139,92,246,0.3)"}}>
-          <div style={{fontSize:24,fontWeight:900,color:"#8B5CF6"}}>+{sessionRewards.xp} XP</div>
-          <div style={{fontSize:14,color:"#F59E0B",fontWeight:700}}>+{sessionRewards.coins} coins</div>
-          <div style={{position:"relative",height:10,background:"rgba(255,255,255,0.06)",borderRadius:5,overflow:"hidden",margin:"6px 0"}}>
-            <div style={{height:"100%",width:`${prog.needed>0?(prog.current/prog.needed)*100:100}%`,background:"linear-gradient(90deg,#8B5CF6,#6366F1)",borderRadius:5,transition:"width 1s"}}/>
-          </div>
-          <div style={{fontSize:12,color:"#94a3b8"}}>Lv. {prog.level} {title[1]} — {prog.current}/{prog.needed} XP</div>
-          {(userData.dailyStreak||{}).current>=1&&(
-            <div style={{fontSize:13,color:"#EF4444",fontWeight:700,marginTop:4}}>🔥 {userData.dailyStreak.current} day streak{(userData.dailyStreak||{}).current>=(userData.dailyStreak||{}).best?" (new best!)":""}</div>
-          )}
-        </div>
+      {(userData.dailyStreak||{}).current>=1&&(
+        <div style={{fontSize:13,color:"#EF4444",fontWeight:700,textAlign:"center"}}>🔥 {userData.dailyStreak.current} day streak{(userData.dailyStreak||{}).current>=(userData.dailyStreak||{}).best?" (new best!)":""}</div>
       )}
 
       <h2 style={{fontSize:24,fontWeight:800,color:"#f1f5f9",margin:0}}>Session Complete</h2>
