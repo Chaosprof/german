@@ -56,19 +56,6 @@
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
-  .range-gold {
-    animation: goldPulse 3s ease-in-out infinite;
-  }
-  .range-gold::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.08) 50%, transparent 100%);
-    background-size: 200% 100%;
-    animation: goldShimmer 4s ease-in-out infinite;
-    border-radius: 10px;
-    pointer-events: none;
-  }
   /* ── Best-score medals (perfect runs) ───────────────────────── */
   @keyframes medalShine {
     0%, 100% { filter: drop-shadow(0 0 2px rgba(245,158,11,0.6)); }
@@ -114,11 +101,6 @@
     animation: goldShimmer 2.6s ease-in-out infinite;
     pointer-events: none;
   }
-  /* Scrollbar for range grid */
-  .range-grid::-webkit-scrollbar { width: 4px; }
-  .range-grid::-webkit-scrollbar-track { background: transparent; }
-  .range-grid::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 2px; }
-  .range-grid::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.5); }
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -293,7 +275,6 @@ function getAnswerModes(mode, gameMode) {
   if (gameMode === "reverse") return ["reverse"];
   if (gameMode === "verb_forms") return ["verb_forms"];
   if (gameMode === "verb_prepositions") return ["verb_prep"];
-  if (gameMode === "runner") return ["article"];
   if (mode === MODES.BOTH) return ["article", "plural"];
   if (mode === MODES.PLURAL) return ["plural"];
   return ["article"];
@@ -762,7 +743,6 @@ const GAME_MODES = [
   { id: "matching", name: "Matching", desc: "Pair words and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "verb_prepositions", name: "Verb + Preposition", desc: "Practice verb-preposition combos & case", icon: "🎯" },
-  { id: "runner", name: "Artikel Runner", desc: "Subway Surfer-style article game", icon: "🏃" },
 ];
 
 const NO_ANSWER = "__unanswered__";
@@ -989,1115 +969,6 @@ function dedupeMistakesByNoun(mistakes) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ARTIKEL RUNNER — Subway Surfer-style der/die/das game
-// ═══════════════════════════════════════════════════════════════
-function ArtikelRunner({ queue, onEnd }) {
-  const iframeRef = useRef(null);
-  const onEndRef = useRef(onEnd);
-  onEndRef.current = onEnd;
-
-  useEffect(() => {
-    // Pass word list to the Godot game via a global
-    const words = queue.map(q => ({ noun: q[0], article: q[1] }));
-    window._artikelRunnerWords = words;
-
-    // Listen for results from Godot via postMessage
-    const handleMessage = (event) => {
-      let data = event.data;
-      if (typeof data === "string") {
-        try { data = JSON.parse(data); } catch(e) { return; }
-      }
-      if (data && data.type === "game_over") {
-        // Map Godot results to the format expected by handleRunnerEnd
-        const sessionAnswers = (data.results || []).map(r => ({
-          noun: r.noun, correct: r.correct, modes: ["article"]
-        }));
-        const wrongAnswers = (data.results || []).filter(r => !r.correct).map(r => ({
-          noun: r.noun, article: r.correct_article, userArticle: r.picked_article
-        }));
-        onEndRef.current({
-          score: data.score || 0,
-          totalCorrect: data.correct || 0,
-          totalAnswered: (data.correct || 0) + (data.wrong || 0),
-          bestStreak: data.score || 0,
-          streak: 0,
-          wrongAnswers,
-          sessionAnswers,
-        });
-      }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => {
-      window.removeEventListener("message", handleMessage);
-      delete window._artikelRunnerWords;
-    };
-  }, [queue]);
-
-  return (
-    <div style={{position:"fixed",top:0,left:0,width:"100vw",height:"100vh",background:"#09090b",zIndex:50,display:"flex",justifyContent:"center",alignItems:"center"}}>
-      <iframe
-        ref={iframeRef}
-        src="godot-runner/build/index.html"
-        style={{width:"100%",height:"100%",border:"none"}}
-        allow="autoplay; fullscreen"
-      />
-    </div>
-  );
-}
-
-/* Canvas-based ArtikelRunner fallback (legacy) — kept for reference.
-   To use the canvas version instead of Godot, rename this to ArtikelRunner
-   and remove the Godot iframe version above. */
-function ArtikelRunnerCanvas({ queue, onEnd }) {
-  const canvasRef = useRef(null);
-  const stateRef = useRef(null);
-  const animFrameRef = useRef(null);
-  const touchStartRef = useRef(null);
-  const onEndRef = useRef(onEnd);
-  onEndRef.current = onEnd;
-  const resultsRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const dpr = window.devicePixelRatio || 1;
-    let cw = 0, ch = 0;
-    const resize = () => {
-      cw = Math.min(window.innerWidth, 500);
-      ch = Math.min(window.innerHeight, 920);
-      canvas.style.width = cw + "px";
-      canvas.style.height = ch + "px";
-      canvas.width = cw * dpr;
-      canvas.height = ch * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    // ── 3D Perspective ──
-    const HORIZON = 0.30;
-    const VP_X = 0.5;
-    const ROAD_W_TOP = 0.05;
-    const ROAD_W_BOT = 0.48;
-    const PLAYER_Z_BASE = 0.84;
-    const ARTICLES = ["der", "die", "das"];
-    const ART_COLORS = { "der": "#3B82F6", "die": "#EC4899", "das": "#10B981" };
-    const ART_DARK  = { "der": "#1e40af", "die": "#9d174d", "das": "#065f46" };
-    const ART_GLOW  = { "der": "rgba(59,130,246,", "die": "rgba(236,72,153,", "das": "rgba(16,185,129," };
-    const LIVES = 3;
-    const INITIAL_SPEED = 0.016;
-    const MAX_SPEED = 0.035;
-    const SPEED_INC = 0.00035;
-    const STRIPE_COUNT = 28;
-    const TILE_ROWS = 18;
-
-    const projY = (z) => (HORIZON + z * (1 - HORIZON)) * ch;
-    const projScale = (z) => ROAD_W_TOP + z * (ROAD_W_BOT - ROAD_W_TOP);
-    const projX = (lane, z) => {
-      const hw = projScale(z) * cw;
-      return VP_X * cw + (lane - 1) * hw * 0.6;
-    };
-    const projHW = (z) => projScale(z) * cw;
-
-    // ── Game state ──
-    const gs = {
-      lane: 1, targetLane: 1, laneSmooth: 1,
-      coins: [],
-      obstacles: [],     // { z, lane, hit }
-      wordIndex: 0,
-      speed: INITIAL_SPEED,
-      lives: LIVES,
-      score: 0, streak: 0, bestStreak: 0,
-      totalCorrect: 0, totalAnswered: 0,
-      wrongAnswers: [], sessionAnswers: [],
-      gameOver: false, gameOverTimer: 0,
-      frame: 0, stripeOffset: 0,
-      particles: [],
-      floatingTexts: [],
-      flashColor: null, flashTimer: 0,
-      shakeTimer: 0, shakeX: 0, shakeY: 0,
-      coinSpawnTimer: 0, coinSpawnInterval: 50,
-      obstacleTimer: 0, obstacleInterval: 180,
-      jumpVel: 0, jumpY: 0, isJumping: false,
-      tileOffset: 0,
-      distance: 0,
-    };
-    stateRef.current = gs;
-
-    const spawnCoin = () => {
-      const idx = gs.wordIndex % queue.length;
-      gs.coins.push({ z: -0.15, wordIndex: idx, passed: false });
-      gs.wordIndex++;
-    };
-    const spawnObstacle = () => {
-      const lane = Math.floor(Math.random() * 3);
-      // Don't spawn obstacle too close to a coin
-      const tooClose = gs.coins.some(c => !c.passed && Math.abs(c.z - (-0.15)) < 0.2);
-      if (tooClose) return;
-      gs.obstacles.push({ z: -0.15, lane, hit: false });
-    };
-
-    const getCurrentWord = () => {
-      for (const c of gs.coins) if (!c.passed) return queue[c.wordIndex % queue.length];
-      return queue[gs.wordIndex % queue.length];
-    };
-
-    const addParticles = (sx, sy, color, count, spread) => {
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const v = 2 + Math.random() * (spread || 5);
-        gs.particles.push({ x: sx, y: sy, vx: Math.cos(angle)*v, vy: Math.sin(angle)*v - 3,
-          life: 20 + Math.random()*25, maxLife: 45, color, size: 2+Math.random()*5 });
-      }
-    };
-    const addFloatingText = (text, x, y, color, big) => {
-      gs.floatingTexts.push({ text, x, y, vy: -2.5, life: 45, maxLife: 45, color, big: !!big });
-    };
-
-    // ── Input ──
-    const moveLane = (dir) => {
-      if (gs.gameOver) return;
-      gs.targetLane = Math.max(0, Math.min(2, gs.targetLane + dir));
-    };
-    const jump = () => {
-      if (gs.gameOver || gs.isJumping) return;
-      gs.isJumping = true;
-      gs.jumpVel = -12;
-    };
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowLeft" || e.key === "a") { e.preventDefault(); moveLane(-1); }
-      else if (e.key === "ArrowRight" || e.key === "d") { e.preventDefault(); moveLane(1); }
-      else if (e.key === "ArrowUp" || e.key === "w" || e.key === " ") { e.preventDefault(); jump(); }
-    };
-    const handleTouchStart = (e) => {
-      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
-    };
-    const handleTouchEnd = (e) => {
-      if (!touchStartRef.current) return;
-      const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
-      const dy = e.changedTouches[0].clientY - touchStartRef.current.y;
-      if (Math.abs(dy) > Math.abs(dx) && dy < -30) { jump(); }
-      else if (Math.abs(dx) > 25) moveLane(dx > 0 ? 1 : -1);
-      touchStartRef.current = null;
-    };
-    const handleClick = (e) => {
-      if (gs.gameOver) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      moveLane(x < cw/2 ? -1 : 1);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
-    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
-    canvas.addEventListener("click", handleClick);
-
-    // ── Drawing ──
-    const drawSky = () => {
-      const hLine = HORIZON * ch;
-      const sky = ctx.createLinearGradient(0, 0, 0, hLine);
-      sky.addColorStop(0, "#050518");
-      sky.addColorStop(0.4, "#0c0c2a");
-      sky.addColorStop(0.8, "#151540");
-      sky.addColorStop(1, "#1f1f55");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, cw, hLine + 2);
-      // Stars
-      const rng = (seed) => { let s = seed; return () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; };
-      const r = rng(42);
-      for (let i = 0; i < 80; i++) {
-        const sx = r() * cw, sy = r() * hLine * 0.88;
-        const twinkle = Math.sin(gs.frame * 0.025 + i * 2.3) * 0.35 + 0.65;
-        ctx.globalAlpha = (0.25 + r() * 0.55) * twinkle;
-        ctx.fillStyle = "#fff";
-        const sz = 0.8 + r() * 1.5;
-        ctx.fillRect(sx, sy, sz, sz);
-      }
-      ctx.globalAlpha = 1;
-      // Moon
-      ctx.fillStyle = "rgba(200,200,255,0.06)";
-      ctx.beginPath(); ctx.arc(cw * 0.78, hLine * 0.22, 28, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = "rgba(220,220,255,0.12)";
-      ctx.beginPath(); ctx.arc(cw * 0.78, hLine * 0.22, 18, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = "rgba(240,240,255,0.25)";
-      ctx.beginPath(); ctx.arc(cw * 0.78, hLine * 0.22, 12, 0, Math.PI*2); ctx.fill();
-      // City skyline
-      const r2 = rng(77);
-      for (let i = 0; i < 40; i++) {
-        const bx = r2() * cw;
-        const bw = 6 + r2() * 28;
-        const bh = 8 + r2() * 55;
-        const brightness = 15 + r2() * 20;
-        ctx.fillStyle = `rgb(${brightness},${brightness},${brightness + 15})`;
-        ctx.fillRect(bx - bw/2, hLine - bh, bw, bh + 2);
-        // Windows
-        if (bw > 12 && bh > 20) {
-          for (let wy = hLine - bh + 4; wy < hLine - 3; wy += 8) {
-            for (let wx = bx - bw/2 + 3; wx < bx + bw/2 - 3; wx += 7) {
-              if (r2() > 0.5) {
-                ctx.fillStyle = `rgba(255,220,100,${0.15 + r2() * 0.25})`;
-                ctx.fillRect(wx, wy, 3, 4);
-              }
-            }
-          }
-        }
-      }
-    };
-
-    const drawRoad = () => {
-      const hLine = HORIZON * ch;
-      // Main road trapezoid
-      const topL = VP_X * cw - ROAD_W_TOP * cw;
-      const topR = VP_X * cw + ROAD_W_TOP * cw;
-      const botL = VP_X * cw - ROAD_W_BOT * cw;
-      const botR = VP_X * cw + ROAD_W_BOT * cw;
-
-      // Sidewalk / ground outside road
-      const gndGrad = ctx.createLinearGradient(0, hLine, 0, ch);
-      gndGrad.addColorStop(0, "#1a1a35");
-      gndGrad.addColorStop(1, "#12122a");
-      ctx.fillStyle = gndGrad;
-      ctx.fillRect(0, hLine, cw, ch - hLine);
-
-      // Road surface with slight texture
-      const roadGrad = ctx.createLinearGradient(0, hLine, 0, ch);
-      roadGrad.addColorStop(0, "#333355");
-      roadGrad.addColorStop(0.15, "#2a2a48");
-      roadGrad.addColorStop(0.5, "#252540");
-      roadGrad.addColorStop(1, "#1e1e38");
-      ctx.fillStyle = roadGrad;
-      ctx.beginPath();
-      ctx.moveTo(topL, hLine); ctx.lineTo(topR, hLine);
-      ctx.lineTo(botR, ch); ctx.lineTo(botL, ch);
-      ctx.closePath(); ctx.fill();
-
-      // Checkered ground tiles (perspective)
-      gs.tileOffset = (gs.tileOffset + gs.speed * 55) % (2 / TILE_ROWS);
-      for (let i = 0; i < TILE_ROWS; i++) {
-        const zFrac = ((i / TILE_ROWS + gs.tileOffset) % 1);
-        const z = zFrac * zFrac;
-        const y1 = projY(z);
-        const zFrac2 = (((i+1) / TILE_ROWS + gs.tileOffset) % 1);
-        const z2 = zFrac2 * zFrac2;
-        const y2 = projY(z2);
-        if (y2 <= y1) continue;
-        const hw1 = projHW(z);
-        const hw2 = projHW(z2);
-        const cx = VP_X * cw;
-        // Alternating stripe on road
-        if (i % 2 === 0) {
-          ctx.fillStyle = `rgba(255,255,255,${Math.min(0.04, z * 0.08)})`;
-          ctx.beginPath();
-          ctx.moveTo(cx - hw1, y1); ctx.lineTo(cx + hw1, y1);
-          ctx.lineTo(cx + hw2, y2); ctx.lineTo(cx - hw2, y2);
-          ctx.closePath(); ctx.fill();
-        }
-      }
-
-      // Animated dashed center stripes
-      gs.stripeOffset = (gs.stripeOffset + gs.speed * 50) % (2 / STRIPE_COUNT);
-      for (let i = 0; i < STRIPE_COUNT; i++) {
-        const zFrac = ((i / STRIPE_COUNT + gs.stripeOffset) % 1);
-        const z = zFrac * zFrac;
-        const y = projY(z);
-        const hw = projHW(z);
-        const cx = VP_X * cw;
-        const alpha = Math.min(1, z * 3) * 0.22;
-        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-        ctx.lineWidth = 1 + z * 2.5;
-        ctx.beginPath();
-        ctx.moveTo(cx - hw, y); ctx.lineTo(cx + hw, y);
-        ctx.stroke();
-      }
-
-      // Lane dividers (converging dashed lines)
-      for (let side = -1; side <= 1; side += 2) {
-        const laneOff = side * 0.333;
-        ctx.setLineDash([8, 12]);
-        ctx.strokeStyle = "rgba(255,255,200,0.18)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        for (let i = 0; i <= 40; i++) {
-          const z = (i/40) * (i/40);
-          const y = projY(z);
-          const hw = projHW(z);
-          const x = VP_X * cw + laneOff * hw;
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // Side walls with neon rails
-      for (const sign of [-1, 1]) {
-        // Wall fill
-        ctx.fillStyle = "rgba(30,30,60,0.6)";
-        ctx.beginPath();
-        for (let i = 0; i <= 40; i++) {
-          const z = (i/40)*(i/40);
-          const y = projY(z);
-          const hw = projHW(z);
-          const x = VP_X * cw + sign * (hw + 4);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        for (let i = 40; i >= 0; i--) {
-          const z = (i/40)*(i/40);
-          const y = projY(z);
-          const hw = projHW(z);
-          const wallH = 3 + z * 18;
-          const x = VP_X * cw + sign * (hw + 4);
-          ctx.lineTo(x, y - wallH);
-        }
-        ctx.closePath(); ctx.fill();
-
-        // Neon rail on top of wall
-        ctx.strokeStyle = "rgba(139,92,246,0.7)";
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = "rgba(139,92,246,0.5)";
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        for (let i = 0; i <= 40; i++) {
-          const z = (i/40)*(i/40);
-          const y = projY(z);
-          const hw = projHW(z);
-          const wallH = 3 + z * 18;
-          const x = VP_X * cw + sign * (hw + 4);
-          if (i === 0) ctx.moveTo(x, y - wallH); else ctx.lineTo(x, y - wallH);
-        }
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-
-        // Ground neon line
-        ctx.strokeStyle = "rgba(100,80,200,0.25)";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        for (let i = 0; i <= 40; i++) {
-          const z = (i/40)*(i/40);
-          const y = projY(z);
-          const hw = projHW(z);
-          const x = VP_X * cw + sign * hw;
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-    };
-
-    const drawObstacle3D = (obs) => {
-      const z = obs.z;
-      if (z < 0 || z > 1.15) return;
-      const zz = z * z;
-      const scale = projScale(zz);
-      const sx = projX(obs.lane, zz);
-      const sy = projY(zz);
-      const hw = scale * cw * 0.09;
-      const hh = scale * cw * 0.14;
-      if (hw < 2) return;
-
-      // Shadow
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      ctx.beginPath();
-      ctx.ellipse(sx, sy + 2, hw * 1.1, hw * 0.2, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Barrier body (3D box look)
-      // Front face
-      const fGrad = ctx.createLinearGradient(sx - hw, sy - hh, sx + hw, sy);
-      fGrad.addColorStop(0, "#ef4444");
-      fGrad.addColorStop(0.5, "#dc2626");
-      fGrad.addColorStop(1, "#b91c1c");
-      ctx.fillStyle = fGrad;
-      ctx.beginPath();
-      ctx.moveTo(sx - hw, sy);
-      ctx.lineTo(sx - hw, sy - hh);
-      ctx.lineTo(sx + hw, sy - hh);
-      ctx.lineTo(sx + hw, sy);
-      ctx.closePath();
-      ctx.fill();
-
-      // Top face (3D effect)
-      const topDepth = hh * 0.2;
-      ctx.fillStyle = "#f87171";
-      ctx.beginPath();
-      ctx.moveTo(sx - hw, sy - hh);
-      ctx.lineTo(sx - hw * 0.7, sy - hh - topDepth);
-      ctx.lineTo(sx + hw * 1.3, sy - hh - topDepth);
-      ctx.lineTo(sx + hw, sy - hh);
-      ctx.closePath();
-      ctx.fill();
-
-      // Right face
-      ctx.fillStyle = "#991b1b";
-      ctx.beginPath();
-      ctx.moveTo(sx + hw, sy - hh);
-      ctx.lineTo(sx + hw * 1.3, sy - hh - topDepth);
-      ctx.lineTo(sx + hw * 1.3, sy - topDepth);
-      ctx.lineTo(sx + hw, sy);
-      ctx.closePath();
-      ctx.fill();
-
-      // Warning stripes
-      const stripeW = hw * 0.35;
-      ctx.fillStyle = "rgba(255,255,255,0.25)";
-      for (let si = 0; si < 3; si++) {
-        const sx2 = sx - hw + stripeW * si * 2.2 + hw * 0.15;
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(sx - hw, sy); ctx.lineTo(sx - hw, sy - hh);
-        ctx.lineTo(sx + hw, sy - hh); ctx.lineTo(sx + hw, sy);
-        ctx.closePath(); ctx.clip();
-        ctx.translate(sx2, sy - hh/2);
-        ctx.rotate(-0.4);
-        ctx.fillRect(-stripeW/2, -hh, stripeW, hh * 2);
-        ctx.restore();
-      }
-
-      // Danger glow
-      const dGlow = ctx.createRadialGradient(sx, sy - hh/2, 0, sx, sy - hh/2, hw * 2);
-      dGlow.addColorStop(0, "rgba(239,68,68,0.15)");
-      dGlow.addColorStop(1, "rgba(239,68,68,0)");
-      ctx.fillStyle = dGlow;
-      ctx.beginPath();
-      ctx.arc(sx, sy - hh/2, hw * 2, 0, Math.PI*2);
-      ctx.fill();
-    };
-
-    const drawCoin3D = (lane, z, article, bobOffset) => {
-      if (z < -0.05 || z > 1.12) return;
-      const zz = z * z;
-      const scale = projScale(zz);
-      const screenX = projX(lane, zz);
-      const screenY = projY(zz);
-      const radius = scale * cw * 0.12;  // MUCH bigger coins
-      if (radius < 4) return;
-      const color = ART_COLORS[article];
-      const dark = ART_DARK[article];
-      const glowBase = ART_GLOW[article];
-      const bob = Math.sin(gs.frame * 0.09 + bobOffset) * radius * 0.1;
-      const cy = screenY + bob - radius * 0.3; // float above road
-      const spin = gs.frame * 0.04 + bobOffset; // rotation feel
-      const stretch = 0.85 + Math.sin(spin) * 0.12; // slight wobble
-
-      // Shadow on road
-      ctx.fillStyle = "rgba(0,0,0,0.3)";
-      ctx.beginPath();
-      ctx.ellipse(screenX, screenY + 3, radius * 0.7, radius * 0.15, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Outer glow (big and colorful)
-      const glow = ctx.createRadialGradient(screenX, cy, radius * 0.2, screenX, cy, radius * 2.2);
-      glow.addColorStop(0, glowBase + "0.3)");
-      glow.addColorStop(0.5, glowBase + "0.08)");
-      glow.addColorStop(1, glowBase + "0)");
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(screenX, cy, radius * 2.2, 0, Math.PI*2);
-      ctx.fill();
-
-      // Coin edge (3D rim — thick dark ring behind)
-      ctx.fillStyle = dark;
-      ctx.beginPath();
-      ctx.ellipse(screenX + 1.5, cy + 3, radius * stretch + 3, radius + 3, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Coin main face — rich gradient
-      const faceGrad = ctx.createRadialGradient(
-        screenX - radius*0.25, cy - radius*0.25, radius * 0.05,
-        screenX, cy, radius * stretch
-      );
-      faceGrad.addColorStop(0, "#ffffff");
-      faceGrad.addColorStop(0.12, color);
-      faceGrad.addColorStop(0.55, color);
-      faceGrad.addColorStop(0.85, dark);
-      faceGrad.addColorStop(1, dark);
-      ctx.fillStyle = faceGrad;
-      ctx.beginPath();
-      ctx.ellipse(screenX, cy, radius * stretch, radius, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Inner ring (gold-ish border)
-      ctx.strokeStyle = "rgba(255,255,255,0.3)";
-      ctx.lineWidth = Math.max(1.5, radius * 0.06);
-      ctx.beginPath();
-      ctx.ellipse(screenX, cy, radius * stretch * 0.78, radius * 0.78, 0, 0, Math.PI*2);
-      ctx.stroke();
-
-      // Second inner ring
-      ctx.strokeStyle = "rgba(255,255,255,0.12)";
-      ctx.lineWidth = Math.max(1, radius * 0.04);
-      ctx.beginPath();
-      ctx.ellipse(screenX, cy, radius * stretch * 0.88, radius * 0.88, 0, 0, Math.PI*2);
-      ctx.stroke();
-
-      // Specular highlight (top-left sheen)
-      ctx.fillStyle = "rgba(255,255,255,0.35)";
-      ctx.beginPath();
-      ctx.ellipse(screenX - radius*0.2, cy - radius*0.28, radius*0.38, radius*0.22, -0.3, 0, Math.PI*2);
-      ctx.fill();
-      // Secondary softer highlight
-      ctx.fillStyle = "rgba(255,255,255,0.1)";
-      ctx.beginPath();
-      ctx.ellipse(screenX + radius*0.1, cy + radius*0.25, radius*0.45, radius*0.18, 0.2, 0, Math.PI*2);
-      ctx.fill();
-
-      // Article text — BIG and bold inside coin
-      const fontSize = Math.max(10, radius * 0.95);
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      // Text shadow
-      ctx.fillStyle = "rgba(0,0,0,0.4)";
-      ctx.font = `900 ${fontSize}px JetBrains Mono, sans-serif`;
-      ctx.fillText(article, screenX + 1, cy + 2);
-      // Main text
-      ctx.fillStyle = "#fff";
-      ctx.font = `900 ${fontSize}px JetBrains Mono, sans-serif`;
-      ctx.fillText(article, screenX, cy);
-    };
-
-    const drawPlayer3D = () => {
-      const pz = PLAYER_Z_BASE;
-      const scale = projScale(pz) * cw;
-      const px = projX(gs.laneSmooth, pz);
-      const baseY = projY(pz);
-      const jumpOffset = gs.jumpY;
-      const py = baseY + jumpOffset;
-      const sz = scale * 0.15;
-      const bob = gs.isJumping ? 0 : Math.sin(gs.frame * 0.28) * sz * 0.06;
-      const lean = (gs.targetLane - gs.laneSmooth) * 0.3;
-      const legCycle = gs.frame * 0.35;
-      const runAmp = gs.isJumping ? 0.15 : 1;
-
-      ctx.save();
-      ctx.translate(px, py + bob);
-      ctx.rotate(lean);
-
-      // Shadow on ground (at baseY, not affected by jump)
-      ctx.save();
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.translate(px * dpr, baseY * dpr);
-      const shadowScale = 1 - Math.min(1, Math.abs(jumpOffset) / 80) * 0.4;
-      ctx.scale(shadowScale, shadowScale);
-      ctx.fillStyle = `rgba(0,0,0,${0.35 * shadowScale})`;
-      ctx.beginPath();
-      ctx.ellipse(0, 4 * dpr, sz * 0.9 * dpr, sz * 0.15 * dpr, 0, 0, Math.PI*2);
-      ctx.fill();
-      ctx.restore();
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.translate(px, py + bob);
-      ctx.rotate(lean);
-
-      // Shoes
-      const legSpread = Math.sin(legCycle) * sz * 0.5 * runAmp;
-      ctx.fillStyle = "#1e1b4b";
-      ctx.beginPath();
-      ctx.ellipse(-sz*0.15 - legSpread*0.3, sz*0.92, sz*0.14, sz*0.08, 0, 0, Math.PI*2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(sz*0.15 + legSpread*0.3, sz*0.92, sz*0.14, sz*0.08, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Legs
-      ctx.strokeStyle = "#4338ca";
-      ctx.lineWidth = sz * 0.24;
-      ctx.lineCap = "round";
-      ctx.beginPath(); ctx.moveTo(-sz*0.1, sz*0.2);
-      ctx.lineTo(-sz*0.15 - legSpread*0.3, sz*0.85 + Math.abs(legSpread)*0.12);
-      ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(sz*0.1, sz*0.2);
-      ctx.lineTo(sz*0.15 + legSpread*0.3, sz*0.85 - Math.abs(legSpread)*0.12);
-      ctx.stroke();
-
-      // Body (torso with hoodie look)
-      const bodyGrad = ctx.createLinearGradient(0, -sz*0.65, 0, sz*0.3);
-      bodyGrad.addColorStop(0, "#7c3aed");
-      bodyGrad.addColorStop(0.6, "#6d28d9");
-      bodyGrad.addColorStop(1, "#5b21b6");
-      ctx.fillStyle = bodyGrad;
-      ctx.beginPath();
-      ctx.moveTo(-sz*0.34, sz*0.2);
-      ctx.quadraticCurveTo(-sz*0.38, -sz*0.15, -sz*0.3, -sz*0.5);
-      ctx.quadraticCurveTo(0, -sz*0.72, sz*0.3, -sz*0.5);
-      ctx.quadraticCurveTo(sz*0.38, -sz*0.15, sz*0.34, sz*0.2);
-      ctx.closePath();
-      ctx.fill();
-      // Hoodie front line
-      ctx.strokeStyle = "rgba(0,0,0,0.15)";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, -sz*0.55); ctx.lineTo(0, sz*0.15); ctx.stroke();
-
-      // Arms
-      const armSwing = Math.sin(legCycle + Math.PI) * sz * 0.4 * runAmp;
-      ctx.strokeStyle = "#7c3aed";
-      ctx.lineWidth = sz * 0.2;
-      ctx.lineCap = "round";
-      ctx.beginPath(); ctx.moveTo(-sz*0.32, -sz*0.25);
-      ctx.lineTo(-sz*0.52 - armSwing*0.3, sz*0.1 + armSwing*0.25);
-      ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(sz*0.32, -sz*0.25);
-      ctx.lineTo(sz*0.52 + armSwing*0.3, sz*0.1 - armSwing*0.25);
-      ctx.stroke();
-      // Hands
-      ctx.fillStyle = "#fde68a";
-      ctx.beginPath();
-      ctx.arc(-sz*0.52 - armSwing*0.3, sz*0.1 + armSwing*0.25, sz*0.07, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath();
-      ctx.arc(sz*0.52 + armSwing*0.3, sz*0.1 - armSwing*0.25, sz*0.07, 0, Math.PI*2); ctx.fill();
-
-      // Head
-      const headR = sz * 0.26;
-      const headGrad = ctx.createRadialGradient(-headR*0.15, -sz*0.72 - headR*0.15, 0, 0, -sz*0.72, headR);
-      headGrad.addColorStop(0, "#fef3c7");
-      headGrad.addColorStop(1, "#fbbf24");
-      ctx.fillStyle = headGrad;
-      ctx.beginPath();
-      ctx.arc(0, -sz*0.72, headR, 0, Math.PI*2);
-      ctx.fill();
-
-      // Hair
-      ctx.fillStyle = "#78350f";
-      ctx.beginPath();
-      ctx.ellipse(0, -sz*0.72 - headR*0.5, headR*0.9, headR*0.5, 0, Math.PI, Math.PI*2);
-      ctx.fill();
-      // Hair side
-      ctx.fillRect(-headR*0.85, -sz*0.72 - headR*0.2, headR*0.2, headR*0.5);
-      ctx.fillRect(headR*0.65, -sz*0.72 - headR*0.2, headR*0.2, headR*0.5);
-
-      // Eyes
-      ctx.fillStyle = "#fff";
-      ctx.beginPath();
-      ctx.ellipse(-headR*0.32, -sz*0.73, headR*0.15, headR*0.13, 0, 0, Math.PI*2); ctx.fill();
-      ctx.ellipse(headR*0.32, -sz*0.73, headR*0.15, headR*0.13, 0, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = "#1e1b4b";
-      ctx.beginPath();
-      ctx.arc(-headR*0.3, -sz*0.73, headR*0.07, 0, Math.PI*2); ctx.fill();
-      ctx.arc(headR*0.34, -sz*0.73, headR*0.07, 0, Math.PI*2); ctx.fill();
-
-      // Mouth
-      ctx.strokeStyle = "#92400e";
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.arc(0, -sz*0.64, headR*0.2, 0.15, Math.PI - 0.15);
-      ctx.stroke();
-
-      ctx.restore();
-
-      // Glow trail behind player
-      const trailGrad = ctx.createRadialGradient(px, baseY, 0, px, baseY, sz * 2.5);
-      trailGrad.addColorStop(0, "rgba(124,58,237,0.2)");
-      trailGrad.addColorStop(1, "rgba(124,58,237,0)");
-      ctx.fillStyle = trailGrad;
-      ctx.beginPath();
-      ctx.arc(px, baseY, sz * 2.5, 0, Math.PI*2);
-      ctx.fill();
-    };
-
-    const drawHUD = () => {
-      const noun = getCurrentWord();
-      const word = noun ? noun[0] : "";
-      const english = noun ? noun[3] : "";
-
-      // Top gradient overlay
-      const topGrad = ctx.createLinearGradient(0, 0, 0, 105);
-      topGrad.addColorStop(0, "rgba(5,5,20,0.94)");
-      topGrad.addColorStop(0.7, "rgba(5,5,20,0.5)");
-      topGrad.addColorStop(1, "rgba(5,5,20,0)");
-      ctx.fillStyle = topGrad;
-      ctx.fillRect(0, 0, cw, 105);
-
-      // Word (huge, centered)
-      ctx.textBaseline = "top";
-      ctx.textAlign = "center";
-      ctx.shadowColor = "rgba(139,92,246,0.8)";
-      ctx.shadowBlur = 20;
-      ctx.fillStyle = "#fff";
-      ctx.font = `900 ${Math.min(42, cw*0.09)}px JetBrains Mono, sans-serif`;
-      ctx.fillText(word, cw/2, 10);
-      ctx.shadowBlur = 0;
-
-      // English
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = `500 ${Math.min(15, cw*0.033)}px JetBrains Mono, sans-serif`;
-      ctx.fillText(english, cw/2, 56);
-
-      // Score (top right)
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#f1f5f9";
-      ctx.font = `800 22px JetBrains Mono, sans-serif`;
-      ctx.fillText(gs.score.toLocaleString(), cw - 12, 10);
-
-      // Streak
-      if (gs.streak >= 3) {
-        const pulse = 1 + Math.sin(gs.frame * 0.15) * 0.12;
-        ctx.font = `700 ${15 * pulse}px JetBrains Mono, sans-serif`;
-        ctx.fillStyle = gs.streak >= 10 ? "#EF4444" : "#F59E0B";
-        ctx.fillText(`x${gs.streak}`, cw - 12, 36);
-      }
-
-      // Lives
-      ctx.textAlign = "left";
-      for (let i = 0; i < LIVES; i++) {
-        const hx = 12 + i * 30, hy = 16;
-        const alive = i < gs.lives;
-        ctx.fillStyle = alive ? "#EF4444" : "rgba(255,255,255,0.1)";
-        if (alive) { ctx.shadowColor = "rgba(239,68,68,0.6)"; ctx.shadowBlur = 8; }
-        ctx.beginPath();
-        ctx.moveTo(hx, hy + 4);
-        ctx.bezierCurveTo(hx, hy, hx - 9, hy - 3, hx - 9, hy + 5);
-        ctx.bezierCurveTo(hx - 9, hy + 11, hx, hy + 17, hx, hy + 19);
-        ctx.bezierCurveTo(hx, hy + 17, hx + 9, hy + 11, hx + 9, hy + 5);
-        ctx.bezierCurveTo(hx + 9, hy - 3, hx, hy, hx, hy + 4);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-
-      // Speed bar
-      const speedPct = Math.min(1, (gs.speed - INITIAL_SPEED) / (MAX_SPEED - INITIAL_SPEED));
-      ctx.fillStyle = "rgba(255,255,255,0.06)";
-      const barY = 42;
-      ctx.beginPath(); ctx.roundRect(12, barY, 75, 5, 3); ctx.fill();
-      const spClr = speedPct > 0.7 ? "#EF4444" : speedPct > 0.4 ? "#F59E0B" : "#10B981";
-      ctx.fillStyle = spClr;
-      ctx.beginPath(); ctx.roundRect(12, barY, 75 * speedPct, 5, 3); ctx.fill();
-
-      // Bottom lane labels
-      ctx.textBaseline = "bottom";
-      const labels = ["der", "die", "das"];
-      for (let i = 0; i < 3; i++) {
-        const lx = projX(i, PLAYER_Z_BASE + 0.07);
-        const ly = ch - 6;
-        ctx.fillStyle = ART_COLORS[labels[i]];
-        ctx.font = `900 18px JetBrains Mono, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.globalAlpha = gs.lane === i ? 1 : 0.35;
-        ctx.shadowColor = ART_COLORS[labels[i]];
-        ctx.shadowBlur = gs.lane === i ? 10 : 0;
-        ctx.fillText(labels[i], lx, ly);
-        ctx.shadowBlur = 0;
-      }
-      ctx.globalAlpha = 1;
-
-      // Jump hint (subtle)
-      if (gs.frame < 180 && gs.obstacles.length === 0) {
-        ctx.globalAlpha = 0.5 - gs.frame * 0.002;
-        if (ctx.globalAlpha > 0) {
-          ctx.fillStyle = "#94a3b8";
-          ctx.font = "500 12px JetBrains Mono, sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "top";
-          ctx.fillText("Swipe up / Space / W to jump obstacles", cw/2, 76);
-        }
-        ctx.globalAlpha = 1;
-      }
-    };
-
-    const drawParticles = () => {
-      gs.particles.forEach(p => {
-        const alpha = p.life / p.maxLife;
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 4;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * (0.4 + alpha * 0.6), 0, Math.PI*2);
-        ctx.fill();
-      });
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
-    };
-
-    const drawFloatingTexts = () => {
-      gs.floatingTexts.forEach(ft => {
-        const alpha = ft.life / ft.maxLife;
-        const scale = ft.big ? 1.6 : 1;
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = ft.color;
-        ctx.font = `900 ${(20 + (1-alpha)*10) * scale}px JetBrains Mono, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.shadowColor = ft.color;
-        ctx.shadowBlur = 12;
-        ctx.fillText(ft.text, ft.x, ft.y);
-        ctx.shadowBlur = 0;
-      });
-      ctx.globalAlpha = 1;
-    };
-
-    const drawFlash = () => {
-      if (gs.flashTimer <= 0) return;
-      const alpha = (gs.flashTimer / 20) * 0.25;
-      ctx.fillStyle = gs.flashColor === "green"
-        ? `rgba(16,185,129,${alpha})` : `rgba(239,68,68,${alpha})`;
-      ctx.fillRect(0, 0, cw, ch);
-    };
-
-    const drawGameOver = () => {
-      ctx.fillStyle = "rgba(5,5,15,0.9)";
-      ctx.fillRect(0, 0, cw, ch);
-      const cy = ch / 2 - 40;
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.shadowColor = "rgba(239,68,68,0.5)"; ctx.shadowBlur = 25;
-      ctx.fillStyle = "#f1f5f9";
-      ctx.font = "900 46px JetBrains Mono, sans-serif";
-      ctx.fillText("GAME OVER", cw/2, cy - 55);
-      ctx.shadowBlur = 0;
-
-      // Score panel
-      ctx.fillStyle = "rgba(139,92,246,0.1)";
-      ctx.strokeStyle = "rgba(139,92,246,0.25)";
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.roundRect(cw/2-120, cy-15, 240, 120, 14); ctx.fill(); ctx.stroke();
-
-      ctx.fillStyle = "#a78bfa";
-      ctx.font = "800 36px JetBrains Mono, sans-serif";
-      ctx.fillText(gs.score.toLocaleString(), cw/2, cy + 18);
-      ctx.fillStyle = "#64748b";
-      ctx.font = "600 12px JetBrains Mono, sans-serif";
-      ctx.fillText("SCORE", cw/2, cy + 44);
-
-      const acc = gs.totalAnswered > 0 ? Math.round((gs.totalCorrect/gs.totalAnswered)*100) : 0;
-      ctx.fillStyle = "#cbd5e1";
-      ctx.font = "600 14px JetBrains Mono, sans-serif";
-      ctx.fillText(`${gs.totalCorrect}/${gs.totalAnswered} correct (${acc}%)`, cw/2, cy + 72);
-      ctx.fillText(`Best streak: ${gs.bestStreak}`, cw/2, cy + 94);
-
-      const pulse = 0.45 + Math.sin(gs.frame * 0.06) * 0.35;
-      ctx.globalAlpha = pulse;
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = "500 14px JetBrains Mono, sans-serif";
-      ctx.fillText("Tap or press any key", cw/2, cy + 145);
-      ctx.globalAlpha = 1;
-    };
-
-    // ── Game Over exit ──
-    let gameOverHandled = false;
-    const gameOverExit = () => {
-      if (!gs.gameOver || gameOverHandled || gs.gameOverTimer > 0) return;
-      gameOverHandled = true;
-      resultsRef.current = {
-        score: gs.score, totalCorrect: gs.totalCorrect, totalAnswered: gs.totalAnswered,
-        bestStreak: gs.bestStreak, streak: gs.streak,
-        wrongAnswers: gs.wrongAnswers, sessionAnswers: gs.sessionAnswers,
-      };
-      onEndRef.current(resultsRef.current);
-    };
-    window.addEventListener("keydown", gameOverExit);
-    canvas.addEventListener("click", gameOverExit);
-    canvas.addEventListener("touchstart", gameOverExit);
-
-    // ── Update ──
-    const update = () => {
-      gs.frame++;
-      if (gs.gameOver) { gs.gameOverTimer--; return; }
-
-      // Lane smoothing
-      gs.laneSmooth += (gs.targetLane - gs.laneSmooth) * 0.22;
-      gs.lane = gs.targetLane;
-
-      // Jump physics
-      if (gs.isJumping) {
-        gs.jumpY += gs.jumpVel;
-        gs.jumpVel += 0.65; // gravity
-        if (gs.jumpY >= 0) { gs.jumpY = 0; gs.jumpVel = 0; gs.isJumping = false; }
-      }
-
-      // Speed ramp
-      gs.speed = Math.min(MAX_SPEED, INITIAL_SPEED + gs.totalAnswered * SPEED_INC);
-      gs.distance += gs.speed;
-
-      // Spawn coins (frequently!)
-      gs.coinSpawnTimer++;
-      if (gs.coinSpawnTimer >= gs.coinSpawnInterval) {
-        spawnCoin();
-        gs.coinSpawnTimer = 0;
-        gs.coinSpawnInterval = Math.max(28, 50 - gs.totalAnswered * 0.5);
-      }
-
-      // Spawn obstacles
-      gs.obstacleTimer++;
-      if (gs.obstacleTimer >= gs.obstacleInterval && gs.totalAnswered >= 3) {
-        spawnObstacle();
-        gs.obstacleTimer = 0;
-        gs.obstacleInterval = Math.max(90, 180 - gs.totalAnswered * 2);
-      }
-
-      // Move everything forward
-      gs.coins.forEach(c => { c.z += gs.speed; });
-      gs.obstacles.forEach(o => { o.z += gs.speed; });
-
-      // Coin collision
-      const hitZone = 0.045;
-      gs.coins.forEach(coin => {
-        if (coin.passed) return;
-        const czz = coin.z * coin.z;
-        if (czz >= PLAYER_Z_BASE - hitZone && czz <= PLAYER_Z_BASE + hitZone) {
-          coin.passed = true;
-          const noun = queue[coin.wordIndex % queue.length];
-          const correctArticle = noun[1];
-          const pickedArticle = ARTICLES[gs.lane];
-          const entryId = noun[5] || noun[0];
-          const sx = projX(gs.lane, PLAYER_Z_BASE);
-          const sy = projY(PLAYER_Z_BASE) + gs.jumpY;
-
-          gs.totalAnswered++;
-          if (pickedArticle === correctArticle) {
-            gs.totalCorrect++;
-            gs.streak++;
-            gs.bestStreak = Math.max(gs.bestStreak, gs.streak);
-            const bonus = gs.streak >= 20 ? 50 : gs.streak >= 10 ? 30 : gs.streak >= 5 ? 20 : 10;
-            gs.score += bonus;
-            gs.flashColor = "green"; gs.flashTimer = 16;
-            addParticles(sx, sy, ART_COLORS[correctArticle], 22, 6);
-            addFloatingText(`+${bonus}`, sx, sy - 40, ART_COLORS[correctArticle]);
-            if (gs.streak === 5) addFloatingText("GREAT!", cw/2, ch*0.38, "#F59E0B", true);
-            if (gs.streak === 10) addFloatingText("AMAZING!", cw/2, ch*0.38, "#EF4444", true);
-            if (gs.streak === 25) addFloatingText("LEGENDARY!", cw/2, ch*0.38, "#8B5CF6", true);
-            gs.sessionAnswers.push({ noun: entryId, correct: true, modes: ["article"] });
-          } else {
-            gs.streak = 0;
-            gs.lives--;
-            gs.flashColor = "red"; gs.flashTimer = 20;
-            gs.shakeTimer = 14;
-            addParticles(sx, sy, "#EF4444", 14, 4);
-            addFloatingText(correctArticle, sx, sy - 35, ART_COLORS[correctArticle]);
-            gs.wrongAnswers.push({ noun: noun[0], entryId, article: correctArticle, plural: noun[2], english: noun[3], userArticle: pickedArticle });
-            gs.sessionAnswers.push({ noun: entryId, correct: false, modes: ["article"] });
-            if (gs.lives <= 0) { gs.gameOver = true; gs.gameOverTimer = 50; }
-          }
-        }
-      });
-
-      // Obstacle collision
-      gs.obstacles.forEach(obs => {
-        if (obs.hit) return;
-        const ozz = obs.z * obs.z;
-        if (ozz >= PLAYER_Z_BASE - 0.04 && ozz <= PLAYER_Z_BASE + 0.03) {
-          if (obs.lane === gs.lane && !gs.isJumping) {
-            // Hit obstacle!
-            obs.hit = true;
-            gs.lives--;
-            gs.flashColor = "red"; gs.flashTimer = 25;
-            gs.shakeTimer = 18;
-            const sx = projX(obs.lane, PLAYER_Z_BASE);
-            const sy = projY(PLAYER_Z_BASE);
-            addParticles(sx, sy, "#EF4444", 20, 6);
-            addFloatingText("CRASH!", sx, sy - 40, "#EF4444", true);
-            if (gs.lives <= 0) { gs.gameOver = true; gs.gameOverTimer = 50; }
-          } else if (obs.lane === gs.lane && gs.isJumping) {
-            // Jumped over it — bonus!
-            obs.hit = true;
-            gs.score += 5;
-            const sx = projX(obs.lane, PLAYER_Z_BASE);
-            const sy = projY(PLAYER_Z_BASE) + gs.jumpY;
-            addFloatingText("+5", sx, sy - 30, "#a78bfa");
-            addParticles(sx, sy + 20, "#a78bfa", 8, 3);
-          }
-        }
-      });
-
-      // Cleanup coins
-      gs.coins = gs.coins.filter(c => {
-        if (c.z > 1.15 && !c.passed) {
-          const noun = queue[c.wordIndex % queue.length];
-          const entryId = noun[5] || noun[0];
-          gs.totalAnswered++;
-          gs.streak = 0;
-          gs.lives--;
-          gs.flashColor = "red"; gs.flashTimer = 16;
-          gs.shakeTimer = 10;
-          addFloatingText("MISS!", cw/2, ch*0.55, "#EF4444", true);
-          gs.wrongAnswers.push({ noun: noun[0], entryId, article: noun[1], plural: noun[2], english: noun[3], userArticle: "__missed__" });
-          gs.sessionAnswers.push({ noun: entryId, correct: false, modes: ["article"] });
-          if (gs.lives <= 0) { gs.gameOver = true; gs.gameOverTimer = 50; }
-          return false;
-        }
-        return c.z <= 1.3;
-      });
-      // Cleanup obstacles
-      gs.obstacles = gs.obstacles.filter(o => o.z <= 1.3);
-
-      // Particles & floating texts
-      gs.particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.14; p.life--; });
-      gs.particles = gs.particles.filter(p => p.life > 0);
-      gs.floatingTexts.forEach(ft => { ft.y += ft.vy; ft.life--; });
-      gs.floatingTexts = gs.floatingTexts.filter(ft => ft.life > 0);
-      if (gs.flashTimer > 0) gs.flashTimer--;
-      if (gs.shakeTimer > 0) {
-        gs.shakeX = (Math.random()-0.5) * 8;
-        gs.shakeY = (Math.random()-0.5) * 5;
-        gs.shakeTimer--;
-      } else { gs.shakeX = 0; gs.shakeY = 0; }
-    };
-
-    // ── Render ──
-    const render = () => {
-      ctx.save();
-      ctx.translate(gs.shakeX, gs.shakeY);
-      ctx.clearRect(-10, -10, cw+20, ch+20);
-      drawSky();
-      drawRoad();
-
-      // Collect all z-sorted renderables
-      const renderables = [];
-      gs.coins.filter(c => !c.passed).forEach((coin, ci) => {
-        renderables.push({ type: "coin", z: coin.z, coin, ci });
-      });
-      gs.obstacles.filter(o => !o.hit).forEach(obs => {
-        renderables.push({ type: "obstacle", z: obs.z, obs });
-      });
-      renderables.push({ type: "player", z: Math.sqrt(PLAYER_Z_BASE) });
-      renderables.sort((a, b) => a.z - b.z);
-
-      renderables.forEach(r => {
-        if (r.type === "coin") {
-          for (let lane = 0; lane < 3; lane++) {
-            drawCoin3D(lane, r.coin.z, ARTICLES[lane], r.ci * 2.1 + lane * 0.7);
-          }
-        } else if (r.type === "obstacle") {
-          drawObstacle3D(r.obs);
-        } else {
-          drawPlayer3D();
-        }
-      });
-
-      drawParticles();
-      drawFloatingTexts();
-      drawFlash();
-      ctx.restore();
-      drawHUD();
-      if (gs.gameOver) drawGameOver();
-    };
-
-    // ── Init ──
-    gs.laneSmooth = 1;
-    spawnCoin();
-
-    const loop = () => {
-      update();
-      render();
-      animFrameRef.current = requestAnimationFrame(loop);
-    };
-    animFrameRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(animFrameRef.current);
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keydown", gameOverExit);
-      window.removeEventListener("resize", resize);
-      canvas.removeEventListener("touchstart", handleTouchStart);
-      canvas.removeEventListener("touchend", handleTouchEnd);
-      canvas.removeEventListener("click", handleClick);
-      canvas.removeEventListener("click", gameOverExit);
-      canvas.removeEventListener("touchstart", gameOverExit);
-    };
-  }, [queue]);
-
-  return (
-    <div style={{display:"flex",justifyContent:"center",alignItems:"center",width:"100vw",height:"100vh",background:"#09090b",position:"fixed",top:0,left:0,zIndex:50}}>
-      <canvas ref={canvasRef} style={{display:"block",touchAction:"none"}} />
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
 function GermanNounGame() {
@@ -2263,13 +1134,13 @@ function GermanNounGame() {
 
   const sessionAnswersRef = useRef([]);
 
-  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs, tMin, isRange) => {
+  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs) => {
     let nouns;
     const gMode = gm || "classic";
     const wType = wordType || "nouns";
     const ps = pStyle || "practice";
     const ts = tSecs || 10;
-    const tierMinVal = tMin || 0;
+    const tierMinVal = 0;
     setMatchingWordType(wType);
     setPlayStyle(ps);
     setTimedSeconds(ts);
@@ -2377,8 +1248,8 @@ function GermanNounGame() {
     }
     if (!nouns.length) return;
     sessionAnswersRef.current = [];
-    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "runner" ? MODES.ARTICLE : m;
-    const effectiveDifficulty = gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" || gMode === "runner" ? "easy" : (ps === "timed" ? "normal" : "easy");
+    const effectiveMode = gMode === "reverse" || gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" ? MODES.ARTICLE : m;
+    const effectiveDifficulty = gMode === "matching" || gMode === "verb_forms" || gMode === "verb_prepositions" ? "easy" : (ps === "timed" ? "normal" : "easy");
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
@@ -2395,7 +1266,7 @@ function GermanNounGame() {
     else if (ps === "timed") { setTimeLeft(ts); }
     else { setTimeLeft(0); }
     // Build session key for best-score tracking
-    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : isRange ? `range:${tierMinVal+1}-${t}` : `tier:${t}`;
+    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : `tier:${t}`;
     const ruleSeg = gMode === "classic"
       ? `:${effectiveMode}`
       : (gMode === "reverse" || gMode === "matching")
@@ -2826,7 +1697,7 @@ function GermanNounGame() {
     onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
   />;
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
-  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
+  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
@@ -2849,49 +1720,6 @@ function GermanNounGame() {
     const noTimer = gameMode==="timed"||playStyle==="survival"||gameMode==="survival";
     setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(noTimer?0:(playStyle==="timed"?timedSeconds:timeLimit));setScreen("game");
   }}/>;
-
-  // Artikel Runner mode — full-screen canvas game
-  if (gameMode === "runner" && screen === "game") {
-    const handleRunnerEnd = (results) => {
-      // Transfer runner results into main state
-      sessionAnswersRef.current = results.sessionAnswers;
-      setScore(results.score);
-      setTotalCorrect(results.totalCorrect);
-      setTotalAnswered(results.totalAnswered);
-      setBestStreak(results.bestStreak);
-      setStreak(results.streak);
-      setWrongAnswers(results.wrongAnswers);
-      // Direct transition to results - inline the endSession logic
-      clearInterval(timerRef.current); clearTimeout(feedbackTimerRef.current); clearInterval(globalTimerRef.current);
-      if (results.sessionAnswers.length) updateNounStats(results.sessionAnswers);
-      let sessionBestInfo = null;
-      if (sessionKey && results.totalAnswered > 0) {
-        const denom = sessionTotal > 0 ? sessionTotal : results.totalAnswered;
-        const pct = Math.round((results.totalCorrect / denom) * 100);
-        const prev = (userData.bestScores || {})[sessionKey];
-        const prevPct = prev ? prev.pct : 0;
-        sessionBestInfo = { sessionKey, pct, prevPct, isNewBest: !prev || pct > prevPct, isPerfect: pct >= 100 };
-      }
-      setSessionBest(sessionBestInfo);
-      setUserData(prev => {
-        const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
-        const newSessions = (prev.totalSessions || 0) + 1;
-        const updated = { ...prev, dailyStreak: newStreak, totalSessions: newSessions };
-        if (sessionKey && results.totalAnswered > 0) {
-          const denom = sessionTotal > 0 ? sessionTotal : results.totalAnswered;
-          const pct = Math.round((results.totalCorrect / denom) * 100);
-          const bs = { ...(updated.bestScores || {}) };
-          const prev_best = bs[sessionKey];
-          if (!prev_best || pct > prev_best.pct) bs[sessionKey] = { correct: results.totalCorrect, total: denom, pct };
-          updated.bestScores = bs;
-        }
-        queueGistSave(updated);
-        return updated;
-      });
-      setScreen("results");
-    };
-    return <ArtikelRunner queue={queue} onEnd={handleRunnerEnd} />;
-  }
 
   return (
     <div style={S.container}>
@@ -3219,7 +2047,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [tier,setTier]=useState(500);
   const [tierMin,setTierMin]=useState(0);
-  const [tierMode,setTierMode]=useState("cumulative");
   const [source,setSource]=useState("tier");
   const [selectedDeck,setSelectedDeck]=useState(null);
   const [showSettings,setShowSettings]=useState(false);
@@ -3239,7 +2066,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   };
 
   const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse";
-  const answerTypeAllowed = selectedGameMode !== "reverse" && selectedGameMode !== "matching" && selectedGameMode !== "verb_forms" && selectedGameMode !== "verb_prepositions" && selectedGameMode !== "runner";
+  const answerTypeAllowed = selectedGameMode !== "reverse" && selectedGameMode !== "matching" && selectedGameMode !== "verb_forms" && selectedGameMode !== "verb_prepositions";
   const effectiveWordType = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : selectedGameMode === "verb_prepositions" ? "verb_prep" : "nouns");
   const deckAllowed = !((supportsWordType && matchWordType !== "nouns") || selectedGameMode === "verb_forms" || selectedGameMode === "verb_prepositions");
   const weakestAllowed = selectedGameMode !== "verb_prepositions";
@@ -3275,11 +2102,9 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    const isRange = source === "tier" && tierMode === "range";
-    const effectiveTierMin = isRange ? tierMin : 0;
-    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
+    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds);
+    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds);
+    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds);
   };
 
   const handleGameModeSelect = (gameModeId) => {
@@ -3321,55 +2146,10 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
   };
 
-  const countForRange = (min, max) => {
-    if (effectiveWordType === "nouns") return getNounsForTier(max, min).length;
-    if (effectiveWordType === "adjectives") return getAdjectivesForTier(max, min).length;
-    if (effectiveWordType === "verb_prep") return getVerbPrepositionsForTier(max, min).length;
-    if (effectiveWordType === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
-    return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
-  };
-
-  const wordsInRange = (min, max) => {
-    const words = [];
-    if (effectiveWordType === "nouns" || effectiveWordType === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
-    if (effectiveWordType === "adjectives" || effectiveWordType === "mixed") getAdjectivesForTier(max, min).forEach(a => words.push(a[0]));
-    if (effectiveWordType === "verbs" || effectiveWordType === "mixed") {
-      const verbs = selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min);
-      verbs.forEach(v => words.push(v[0]));
-    }
-    if (effectiveWordType === "verb_prep") getVerbPrepositionsForTier(max, min).forEach(v => words.push(v[0]+"|"+v[3]));
-    return words;
-  };
-
-  const masteryForRange = (min, max) => {
-    const words = wordsInRange(min, max);
-    if (!words.length) return { mastered: 0, total: 0, pct: 0 };
-    let mastered = 0;
-    words.forEach(w => {
-      if (masteredSet.has(w)) { mastered++; return; }
-      const s = nounStats[w];
-      if (s && (s.consecutiveCorrect || 0) >= 5) mastered++;
-    });
-    return { mastered, total: words.length, pct: Math.round((mastered / words.length) * 100) };
-  };
-
-  const modeMasteryInRange = (modeId, min, max) => {
-    if (effectiveWordType !== "nouns") return null;
-    const words = getNounsForTier(max, min || undefined);
-    if (!words.length) return null;
-    let mastered = 0;
-    words.forEach(n => {
-      const s = modeStats[modeId+":"+n[0]];
-      if (s && (s.consecutiveCorrect||0) >= 5) mastered++;
-    });
-    return { pct: Math.round((mastered / words.length) * 100) };
-  };
-
   const describeTierSelection = () => {
-    const count = tierMode === "range" ? countForRange(tierMin, tier) : countForTier(tier);
+    const count = countForTier(tier);
     const label = wordTypeLabel(effectiveWordType).toLowerCase();
     if (!count) return "Choose vocabulary";
-    if (tierMode === "range") return `${tierMin + 1}-${tier} ${label} (${count.toLocaleString()})`;
     const maxAvailable = countForTier(99999);
     if (count >= maxAvailable) return `All ${label} (${count.toLocaleString()})`;
     return `Top ${count.toLocaleString()} ${label}`;
@@ -3384,13 +2164,12 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const rulesSummaryParts = [];
   if (supportsWordType) rulesSummaryParts.push(wordTypeLabel(matchWordType));
   if (answerTypeAllowed) rulesSummaryParts.push(mode === MODES.ARTICLE ? "Articles" : mode === MODES.PLURAL ? "Plurals" : "Both");
-  rulesSummaryParts.push(selectedGameMode === "runner" ? "3 Lives" : playStyle === "timed" ? `Timed ${timedSeconds}s` : playStyle === "survival" ? "Survival" : "Practice");
+  rulesSummaryParts.push(playStyle === "timed" ? `Timed ${timedSeconds}s` : playStyle === "survival" ? "Survival" : "Practice");
   const rulesSummary = rulesSummaryParts.length ? rulesSummaryParts.join(" / ") : "Mode defaults";
 
   const renderActivityHint = () => {
     if (selectedGameMode === "verb_forms") return `Type the Infinitiv, Prateritum (ich), and Partizip Perfekt for each irregular verb. ${IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.`;
     if (selectedGameMode === "verb_prepositions") return `Type the fixed preposition and select the governed case for each verb. ${VERB_PREPOSITIONS.length.toLocaleString()} combos available.`;
-    if (selectedGameMode === "runner") return "Endless runner game! Dodge into the correct article lane (der/die/das) for each noun. 3 lives, increasing speed.";
     return "";
   };
 
@@ -3437,102 +2216,36 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       seenCounts.add(c);
       return true;
     });
-    const ranges = [];
-    const rangeSize = 100;
-    const maxRankTier = TIER_OPTIONS[TIER_OPTIONS.length - 1].value;
-    for (let i = 0; i < maxRankTier; i += rangeSize) {
-      const rMin = i;
-      const rMax = i + rangeSize;
-      const c = countForRange(rMin, rMax);
-      if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
-    }
-    const totalMastery = masteryForRange(0, 99999);
-    const rangesCompleted = ranges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
-    const rangesStarted = ranges.filter(r => {
-      const mastery = masteryForRange(r.min, r.max);
-      return mastery.pct > 0 && mastery.pct < 100;
-    }).length;
-
-    const rangesWithMedal = ranges.filter(r => {
-      const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
-      return (bestScores[key]?.pct || 0) >= 80;
-    }).length;
-    const rangesPerfect = ranges.filter(r => {
-      const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
-      return (bestScores[key]?.pct || 0) >= 100;
-    }).length;
-
     return (
       <div style={S.menuSection}>
         <div style={S.inlineSummaryCard}>
           <span style={S.inlineSummaryLabel}>Current Selection</span>
           <span style={S.inlineSummaryValue}>{describeTierSelection()}</span>
         </div>
-        <div style={{display:"flex",gap:6}}>
-          <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="cumulative"?"rgba(139,92,246,0.1)":"transparent"}}>
-            <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Cumulative</span>
-          </button>
-          <button onClick={()=>setTierMode("range")} style={{...S.diffBtn,flex:1,borderColor:tierMode==="range"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="range"?"rgba(139,92,246,0.1)":"transparent"}}>
-            <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Ranges</span>
-          </button>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+          {filteredTiers.map(t=>{
+            const count = countForTier(t.value);
+            const capped = effectiveWordType !== "mixed" && count < t.value;
+            const label = capped ? `Top ${count.toLocaleString()}` : t.label;
+            const tierKey = `${bestScoreKeyPrefix}:tier:${t.value}`;
+            const tierBest = bestScores[tierKey];
+            const tierPct = tierBest ? tierBest.pct : 0;
+            const isSelected = tier===t.value && tierMin===0;
+            const ringColor = medalRingColor(tierPct);
+            const cardClass = medalCardClass(tierPct);
+            const isPerfect = tierPct >= 100;
+            return (
+              <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":medalBorderColor(tierPct),backgroundColor:isSelected?"rgba(139,92,246,0.1)":tierPct>=80?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
+                {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
+                  <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
+                  <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
+                </div>
+                <span style={{fontSize:13,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
+              </button>
+            );
+          })}
         </div>
-        {tierMode==="cumulative"?(
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-            {filteredTiers.map(t=>{
-              const count = countForTier(t.value);
-              const capped = effectiveWordType !== "mixed" && count < t.value;
-              const label = capped ? `Top ${count.toLocaleString()}` : t.label;
-              const tierKey = `${bestScoreKeyPrefix}:tier:${t.value}`;
-              const tierBest = bestScores[tierKey];
-              const tierPct = tierBest ? tierBest.pct : 0;
-              const isSelected = tier===t.value && tierMin===0;
-              const ringColor = medalRingColor(tierPct);
-              const cardClass = medalCardClass(tierPct);
-              const isPerfect = tierPct >= 100;
-              return (
-                <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":medalBorderColor(tierPct),backgroundColor:isSelected?"rgba(139,92,246,0.1)":tierPct>=80?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
-                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
-                    <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
-                    <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
-                  </div>
-                  <span style={{fontSize:13,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
-                </button>
-              );
-            })}
-          </div>
-        ):(
-          <>
-            {(rangesWithMedal>0||rangesPerfect>0)&&(
-              <div style={{display:"flex",gap:10,justifyContent:"center",padding:"6px 0"}}>
-                {rangesPerfect>0&&<span style={{fontSize:11,color:"#F59E0B",fontWeight:700}}>{rangesPerfect} Perfect</span>}
-                {rangesWithMedal-rangesPerfect>0&&<span style={{fontSize:11,color:"#CBD5E1",fontWeight:700}}>{rangesWithMedal-rangesPerfect} medalled</span>}
-                <span style={{fontSize:11,color:"#64748b"}}>{ranges.length} total</span>
-              </div>
-            )}
-            <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:320,overflowY:"auto",paddingRight:4}}>
-              {ranges.map(r=>{
-                const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
-                const rangeKey = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
-                const rangeBest = bestScores[rangeKey];
-                const rangePct = rangeBest ? rangeBest.pct : 0;
-                const ringColor = medalRingColor(rangePct);
-                const cardClass = medalCardClass(rangePct);
-                const isPerfect = rangePct >= 100;
-                return (
-                  <button key={r.min} className={cardClass} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":medalBorderColor(rangePct),backgroundColor:isSelected?"rgba(139,92,246,0.1)":rangePct>=80?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"10px 6px",gap:2}}>
-                    {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:medalFill(rangePct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                    <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
-                      <ProgressRing pct={rangePct} size={34} stroke={2.5} color={ringColor}/>
-                      <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?12:9,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":rangePct>0?rangePct+"%":""}</span>
-                    </div>
-                    <span style={{fontSize:12,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}-{r.max}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
       </div>
     );
   };
@@ -3721,47 +2434,32 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         {source==="deck"&&renderDeckSelector()}
       </div>
 
-      {selectedGameMode !== "runner" && (
-        <div style={S.menuSection}>
-          <label style={S.menuLabel}>Play Style</label>
-          <div style={{display:"flex",gap:8}}>
-            <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
-            </button>
-            <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
-            </button>
-            <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
-              <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
-            </button>
-          </div>
-          {playStyle==="timed"&&(
-            <div style={{marginTop:8}}>
-              <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                {[5,8,10,15,20,30].map(s=>
-                  <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
-                    <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+      <div style={S.menuSection}>
+        <label style={S.menuLabel}>Play Style</label>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?"#10B981":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="practice"?"rgba(16,185,129,0.1)":"transparent"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Practice</span>
+          </button>
+          <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="timed"?"rgba(245,158,11,0.1)":"transparent"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Timed</span>
+          </button>
+          <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?"#EF4444":"rgba(255,255,255,0.1)",backgroundColor:playStyle==="survival"?"rgba(239,68,68,0.1)":"transparent"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Survival</span>
+          </button>
         </div>
-      )}
-      {selectedGameMode === "runner" && (
-        <div style={S.menuSection}>
-          <div style={{padding:16,borderRadius:10,border:"1px solid rgba(139,92,246,0.2)",background:"rgba(139,92,246,0.06)"}}>
-            <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0",marginBottom:6}}>How to play</div>
-            <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6}}>
-              Run through lanes and collect the correct article coin!<br/>
-              <span style={{color:"#3B82F6",fontWeight:700}}>Left = der</span> · <span style={{color:"#EC4899",fontWeight:700}}>Middle = die</span> · <span style={{color:"#10B981",fontWeight:700}}>Right = das</span><br/>
-              Use arrow keys, A/D, tap left/right, or swipe to move.<br/>
-              3 lives — wrong article or missed coin costs a life!
+        {playStyle==="timed"&&(
+          <div style={{marginTop:8}}>
+            <label style={{fontSize:12,color:"#94a3b8",marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+              {[5,8,10,15,20,30].map(s=>
+                <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?"#F59E0B":"rgba(255,255,255,0.1)",backgroundColor:timedSeconds===s?"rgba(245,158,11,0.1)":"transparent"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>{s}s</span>
+                </button>
+              )}
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div style={S.menuStickyFooter}>
         <div style={S.menuStickySummary}>
@@ -3790,9 +2488,9 @@ function ProgressDashboard({ userData, onBack }) {
     { id: "verb_prep", label: "Verb+Prep", color: "#06B6D4", icon: "auf+Akk" },
   ];
 
-  // Compute per-mode mastery for a range
-  const modeMasteryForRange = (modeId, min, max) => {
-    const words = getNounsForTier(max, min || undefined);
+  // Compute overall mode mastery (all nouns)
+  const modeMasteryOverall = (modeId) => {
+    const words = getNounsForTier(99999);
     if (!words.length) return { mastered: 0, total: 0, pct: 0 };
     let m = 0;
     words.forEach(n => {
@@ -3803,23 +2501,12 @@ function ProgressDashboard({ userData, onBack }) {
     return { mastered: m, total: words.length, pct: words.length > 0 ? Math.round((m / words.length) * 100) : 0 };
   };
 
-  // Compute overall mode mastery (all nouns)
-  const modeMasteryOverall = (modeId) => modeMasteryForRange(modeId, 0, 99999);
-
   // Overall mastery (any mode)
   const overallMastery = (() => {
     const total = NOUNS.length;
     const m = masteredSet.size;
     return { mastered: m, total, pct: total > 0 ? Math.round((m / total) * 100) : 0 };
   })();
-
-  // Build ranges for breakdown
-  const rangeSize = 100;
-  const ranges = [];
-  for (let i = 0; i < 2500; i += rangeSize) {
-    const c = getNounsForTier(i + rangeSize, i).length;
-    if (c > 0) ranges.push({ min: i, max: i + rangeSize, count: c });
-  }
 
   // Progress ring
   const Ring = ({ pct, size, stroke, color }) => {
@@ -3882,45 +2569,6 @@ function ProgressDashboard({ userData, onBack }) {
                 </div>
                 <Bar pct={mm.pct} color={mm.pct>=100?"#F59E0B":tm.color} height={5}/>
                 {mm.pct > 0 && <div style={{fontSize:10,color:"#64748b",marginTop:3}}>{mm.pct}% mastered (5+ consecutive correct)</div>}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── Range breakdown for articles & plurals ── */}
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Range Breakdown (Top 2500)</label>
-        <div style={{display:"flex",gap:4,marginBottom:6}}>
-          <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:4,background:"#3B82F6"}}/><span style={{fontSize:10,color:"#64748b"}}>Articles</span></div>
-          <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:4,background:"#EC4899"}}/><span style={{fontSize:10,color:"#64748b"}}>Plurals</span></div>
-          <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:4,background:"#10B981"}}/><span style={{fontSize:10,color:"#64748b"}}>Overall</span></div>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:4,maxHeight:400,overflowY:"auto"}} className="range-grid">
-          {ranges.map(r => {
-            const am = modeMasteryForRange("article", r.min, r.max);
-            const pm = modeMasteryForRange("plural", r.min, r.max);
-            // Overall mastery for this range
-            let om = 0;
-            getNounsForTier(r.max, r.min).forEach(n => { if (masteredSet.has(n[0])) om++; });
-            const oPct = r.count > 0 ? Math.round((om / r.count) * 100) : 0;
-            const allComplete = am.pct >= 100 && pm.pct >= 100;
-            return (
-              <div key={r.min} className={allComplete?"range-gold":""} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 12px",background:allComplete?"rgba(245,158,11,0.06)":"rgba(255,255,255,0.02)",border:`1px solid ${allComplete?"rgba(245,158,11,0.3)":"rgba(255,255,255,0.06)"}`,borderRadius:8,position:"relative",overflow:"hidden"}}>
-                <span style={{fontSize:12,fontWeight:700,color:allComplete?"#F59E0B":"#e2e8f0",minWidth:52,position:"relative"}}>{r.min+1}–{r.max}</span>
-                <div style={{flex:1,display:"flex",flexDirection:"column",gap:3,position:"relative"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    <span style={{fontSize:9,color:"#3B82F6",minWidth:14,fontWeight:700}}>A</span>
-                    <Bar pct={am.pct} color={am.pct>=100?"#F59E0B":"#3B82F6"} height={4}/>
-                    <span style={{fontSize:9,color:"#64748b",minWidth:28,textAlign:"right"}}>{am.pct}%</span>
-                  </div>
-                  <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    <span style={{fontSize:9,color:"#EC4899",minWidth:14,fontWeight:700}}>P</span>
-                    <Bar pct={pm.pct} color={pm.pct>=100?"#F59E0B":"#EC4899"} height={4}/>
-                    <span style={{fontSize:9,color:"#64748b",minWidth:28,textAlign:"right"}}>{pm.pct}%</span>
-                  </div>
-                </div>
-                {allComplete && <span style={{fontSize:14,color:"#F59E0B",position:"relative"}}>{"\u2605"}</span>}
               </div>
             );
           })}
