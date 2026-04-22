@@ -12,7 +12,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "person/human being",
+          "english": "person/human/human being",
           "plural": "Menschen",
           "singularOnly": false,
           "pluralOnly": false
@@ -59,7 +59,7 @@
         },
         {
           "article": "das",
-          "english": "part (concrete: ein Ersatzteil)",
+          "english": "part/piece/part (concrete: ein Ersatzteil)",
           "plural": "Teile",
           "singularOnly": false,
           "pluralOnly": false
@@ -173,7 +173,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "federation/alliance",
+          "english": "federation/federal government/alliance",
           "plural": "Bünde",
           "singularOnly": false,
           "pluralOnly": false
@@ -208,7 +208,7 @@
         },
         {
           "article": "das",
-          "english": "ribbon/tape",
+          "english": "ribbon/tape/band",
           "plural": "Bänder",
           "singularOnly": false,
           "pluralOnly": false
@@ -243,7 +243,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "moment (time)",
+          "english": "moment/moment (time)",
           "plural": "Momente",
           "singularOnly": false,
           "pluralOnly": false
@@ -313,7 +313,7 @@
         },
         {
           "article": "das",
-          "english": "gate/goal",
+          "english": "goal/gate",
           "plural": "Tore",
           "singularOnly": false,
           "pluralOnly": false
@@ -415,7 +415,7 @@
         },
         {
           "article": "der",
-          "english": "lack/deficiency",
+          "english": "lack/shortage/deficiency",
           "plural": "Mängel",
           "singularOnly": false,
           "pluralOnly": false
@@ -634,7 +634,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "turn/change (die Wende = reunification)",
+          "english": "flip turn/front vault/tumble turn/turn/change (die Wende = reunification)",
           "plural": "Wenden",
           "singularOnly": false,
           "pluralOnly": false
@@ -661,7 +661,7 @@
         },
         {
           "article": "das",
-          "english": "model (fashion)",
+          "english": "model/model (fashion)",
           "plural": "Models",
           "singularOnly": false,
           "pluralOnly": false
@@ -696,7 +696,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "mark (currency)",
+          "english": "march/mark/mark (currency)",
           "plural": "Mark",
           "singularOnly": false,
           "pluralOnly": false
@@ -717,7 +717,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "earnings/income",
+          "english": "earnings/income/wages",
           "plural": "Verdienste",
           "singularOnly": false,
           "pluralOnly": false
@@ -745,7 +745,7 @@
         },
         {
           "article": "das",
-          "english": "praise",
+          "english": "accolade/praise",
           "plural": "Lobe",
           "singularOnly": false,
           "pluralOnly": false
@@ -765,7 +765,7 @@
         },
         {
           "article": "der",
-          "english": "hallway/corridor",
+          "english": "corridor/hall/hallway",
           "plural": "Flure",
           "singularOnly": false,
           "pluralOnly": false
@@ -779,7 +779,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "pen/pencil",
+          "english": "apprentice/kid/lad/pen/pencil",
           "plural": "Stifte",
           "singularOnly": false,
           "pluralOnly": false
@@ -821,7 +821,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "gulf",
+          "english": "Golf/gulf",
           "plural": "Golfe",
           "singularOnly": false,
           "pluralOnly": false
@@ -849,7 +849,7 @@
         },
         {
           "article": "das",
-          "english": "military/army",
+          "english": "army/military",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -909,7 +909,7 @@
         },
         {
           "article": "das",
-          "english": "lens/objective (camera)",
+          "english": "lens/objective/objective (camera)",
           "plural": "Objektive",
           "singularOnly": false,
           "pluralOnly": false
@@ -922,7 +922,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "intention/resolution",
+          "english": "intention/prefix/resolution",
           "plural": "Vorsätze",
           "singularOnly": false,
           "pluralOnly": false
@@ -956,7 +956,7 @@
         },
         {
           "article": "das",
-          "english": "poison",
+          "english": "poison/toxin",
           "plural": "Gifte",
           "singularOnly": false,
           "pluralOnly": false
@@ -997,7 +997,7 @@
         },
         {
           "article": "der",
-          "english": "heathen/pagan",
+          "english": "atheist/heathen/pagan",
           "plural": "Heiden",
           "singularOnly": false,
           "pluralOnly": false
@@ -1011,7 +1011,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "bumblebee",
+          "english": "bumblebee/dumbledore/hommel",
           "plural": "Hummeln",
           "singularOnly": false,
           "pluralOnly": false
@@ -1051,7 +1051,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "quark (curd cheese)",
+          "english": "cottage cheese/curd cheese/fromage frais/quark (curd cheese)",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -1071,7 +1071,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "pine tree",
+          "english": "pine/pine tree/pinewood",
           "plural": "Kiefern",
           "singularOnly": false,
           "pluralOnly": false
@@ -1099,7 +1099,7 @@
         },
         {
           "article": "der",
-          "english": "mast/pole/pylon",
+          "english": "mast/pylon/pole",
           "plural": "Maste",
           "singularOnly": false,
           "pluralOnly": false
@@ -1182,7 +1182,7 @@
         },
         {
           "article": "das",
-          "english": "pony (small horse)",
+          "english": "pony/pony (small horse)",
           "plural": "Ponys",
           "singularOnly": false,
           "pluralOnly": false
@@ -1203,7 +1203,7 @@
         },
         {
           "article": "der",
-          "english": "Pole (Polish person)",
+          "english": "Pole/Pole (Polish person)",
           "plural": "Polen",
           "singularOnly": false,
           "pluralOnly": false
@@ -1223,7 +1223,7 @@
         },
         {
           "article": "der",
-          "english": "bull/cop (slang)",
+          "english": "bull/cop/copper/cop (slang)",
           "plural": "Bullen",
           "singularOnly": false,
           "pluralOnly": false
@@ -1244,7 +1244,7 @@
         },
         {
           "article": "das",
-          "english": "zinc (metal)",
+          "english": "zinc/zinc (metal)",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -1264,7 +1264,7 @@
         },
         {
           "article": "der",
-          "english": "ex (former partner)",
+          "english": "ex/ex (former partner)",
           "plural": "Ex",
           "singularOnly": false,
           "pluralOnly": false
@@ -1277,7 +1277,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "yeast",
+          "english": "barm/dregs/driving force/yeast",
           "plural": "Hefen",
           "singularOnly": false,
           "pluralOnly": false
@@ -1317,7 +1317,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "orange (fruit)",
+          "english": "China orange/bitter orange/orange/orange (fruit)",
           "plural": "Orangen",
           "singularOnly": false,
           "pluralOnly": false
@@ -1365,7 +1365,7 @@
         },
         {
           "article": "das",
-          "english": "titanium (element)",
+          "english": "titanium/titanium (element)",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -1412,7 +1412,7 @@
         },
         {
           "article": "das",
-          "english": "llama (animal)",
+          "english": "llama/llama (animal)",
           "plural": "Lamas",
           "singularOnly": false,
           "pluralOnly": false
@@ -1447,7 +1447,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "python (snake)",
+          "english": "python/python (snake)",
           "plural": "Pythons",
           "singularOnly": false,
           "pluralOnly": false
@@ -1488,7 +1488,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "mowing",
+          "english": "mowing/swath/swathe",
           "plural": "Mahden",
           "singularOnly": false,
           "pluralOnly": false
@@ -1575,7 +1575,7 @@
         },
         {
           "article": "der",
-          "english": "bellboy/page (attendant)",
+          "english": "bellboy/bellhop/bellman/page (attendant)",
           "plural": "Pagen",
           "singularOnly": false,
           "pluralOnly": false
@@ -1595,7 +1595,7 @@
         },
         {
           "article": "das",
-          "english": "heroin (drug)",
+          "english": "heroin/heroin (drug)",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -1648,7 +1648,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "arbor/bower",
+          "english": "arbor/arbour/arcade/bower",
           "plural": "Lauben",
           "singularOnly": false,
           "pluralOnly": false
@@ -1710,7 +1710,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "husband (formal)",
+          "english": "husband/spouse/husband (formal)",
           "plural": "Gemahle",
           "singularOnly": false,
           "pluralOnly": false
@@ -1730,7 +1730,7 @@
       "genders": [
         {
           "article": "die",
-          "english": "pod (botany)",
+          "english": "pod/silique/pod (botany)",
           "plural": "Schoten",
           "singularOnly": false,
           "pluralOnly": false
@@ -1750,7 +1750,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "ace",
+          "english": "as/ace",
           "plural": "Asse",
           "singularOnly": false,
           "pluralOnly": false
@@ -1777,7 +1777,7 @@
         },
         {
           "article": "das",
-          "english": "ohm (unit)",
+          "english": "ohm/ohm (unit)",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -1818,7 +1818,7 @@
         },
         {
           "article": "das",
-          "english": "spades (card suit)",
+          "english": "spade/spades (card suit)",
           "plural": "?",
           "singularOnly": true,
           "pluralOnly": false
@@ -1831,7 +1831,7 @@
       "genders": [
         {
           "article": "der",
-          "english": "hat",
+          "english": "cap/hat",
           "plural": "Hüte",
           "singularOnly": false,
           "pluralOnly": false
