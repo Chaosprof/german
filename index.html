@@ -56,6 +56,19 @@
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
+  .range-gold {
+    animation: goldPulse 3s ease-in-out infinite;
+  }
+  .range-gold::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.08) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: goldShimmer 4s ease-in-out infinite;
+    border-radius: 10px;
+    pointer-events: none;
+  }
   /* ── Best-score medals (perfect runs) ───────────────────────── */
   @keyframes medalShine {
     0%, 100% { filter: drop-shadow(0 0 2px rgba(245,158,11,0.6)); }
@@ -101,6 +114,11 @@
     animation: goldShimmer 2.6s ease-in-out infinite;
     pointer-events: none;
   }
+  /* Scrollbar for range grid */
+  .range-grid::-webkit-scrollbar { width: 4px; }
+  .range-grid::-webkit-scrollbar-track { background: transparent; }
+  .range-grid::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 2px; }
+  .range-grid::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.5); }
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -968,6 +986,7 @@ function dedupeMistakesByNoun(mistakes) {
   return [...latestByNoun.values()];
 }
 
+
 // ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
@@ -1134,13 +1153,13 @@ function GermanNounGame() {
 
   const sessionAnswersRef = useRef([]);
 
-  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs) => {
+  const startGame = useCallback((m, d, t, deckId, gm, wordType, pStyle, tSecs, tMin, isRange) => {
     let nouns;
     const gMode = gm || "classic";
     const wType = wordType || "nouns";
     const ps = pStyle || "practice";
     const ts = tSecs || 10;
-    const tierMinVal = 0;
+    const tierMinVal = tMin || 0;
     setMatchingWordType(wType);
     setPlayStyle(ps);
     setTimedSeconds(ts);
@@ -1266,7 +1285,7 @@ function GermanNounGame() {
     else if (ps === "timed") { setTimeLeft(ts); }
     else { setTimeLeft(0); }
     // Build session key for best-score tracking
-    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : `tier:${t}`;
+    const sSource = deckId === "__weakest__" ? "weakest" : deckId ? `deck:${deckId}` : isRange ? `range:${tierMinVal+1}-${t}` : `tier:${t}`;
     const ruleSeg = gMode === "classic"
       ? `:${effectiveMode}`
       : (gMode === "reverse" || gMode === "matching")
@@ -1697,7 +1716,7 @@ function GermanNounGame() {
     onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
   />;
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
-  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
+  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
@@ -2047,6 +2066,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [mode,setMode]=useState(MODES.ARTICLE);
   const [tier,setTier]=useState(500);
   const [tierMin,setTierMin]=useState(0);
+  const [tierMode,setTierMode]=useState("cumulative");
   const [source,setSource]=useState("tier");
   const [selectedDeck,setSelectedDeck]=useState(null);
   const [showSettings,setShowSettings]=useState(false);
@@ -2102,9 +2122,11 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds);
-    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds);
-    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds);
+    const isRange = source === "tier" && tierMode === "range";
+    const effectiveTierMin = isRange ? tierMin : 0;
+    if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
   };
 
   const handleGameModeSelect = (gameModeId) => {
@@ -2146,10 +2168,55 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
   };
 
+  const countForRange = (min, max) => {
+    if (effectiveWordType === "nouns") return getNounsForTier(max, min).length;
+    if (effectiveWordType === "adjectives") return getAdjectivesForTier(max, min).length;
+    if (effectiveWordType === "verb_prep") return getVerbPrepositionsForTier(max, min).length;
+    if (effectiveWordType === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
+    return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
+  };
+
+  const wordsInRange = (min, max) => {
+    const words = [];
+    if (effectiveWordType === "nouns" || effectiveWordType === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
+    if (effectiveWordType === "adjectives" || effectiveWordType === "mixed") getAdjectivesForTier(max, min).forEach(a => words.push(a[0]));
+    if (effectiveWordType === "verbs" || effectiveWordType === "mixed") {
+      const verbs = selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min);
+      verbs.forEach(v => words.push(v[0]));
+    }
+    if (effectiveWordType === "verb_prep") getVerbPrepositionsForTier(max, min).forEach(v => words.push(v[0]+"|"+v[3]));
+    return words;
+  };
+
+  const masteryForRange = (min, max) => {
+    const words = wordsInRange(min, max);
+    if (!words.length) return { mastered: 0, total: 0, pct: 0 };
+    let mastered = 0;
+    words.forEach(w => {
+      if (masteredSet.has(w)) { mastered++; return; }
+      const s = nounStats[w];
+      if (s && (s.consecutiveCorrect || 0) >= 5) mastered++;
+    });
+    return { mastered, total: words.length, pct: Math.round((mastered / words.length) * 100) };
+  };
+
+  const modeMasteryInRange = (modeId, min, max) => {
+    if (effectiveWordType !== "nouns") return null;
+    const words = getNounsForTier(max, min || undefined);
+    if (!words.length) return null;
+    let mastered = 0;
+    words.forEach(n => {
+      const s = modeStats[modeId+":"+n[0]];
+      if (s && (s.consecutiveCorrect||0) >= 5) mastered++;
+    });
+    return { pct: Math.round((mastered / words.length) * 100) };
+  };
+
   const describeTierSelection = () => {
-    const count = countForTier(tier);
+    const count = tierMode === "range" ? countForRange(tierMin, tier) : countForTier(tier);
     const label = wordTypeLabel(effectiveWordType).toLowerCase();
     if (!count) return "Choose vocabulary";
+    if (tierMode === "range") return `${tierMin + 1}-${tier} ${label} (${count.toLocaleString()})`;
     const maxAvailable = countForTier(99999);
     if (count >= maxAvailable) return `All ${label} (${count.toLocaleString()})`;
     return `Top ${count.toLocaleString()} ${label}`;
@@ -2216,36 +2283,102 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       seenCounts.add(c);
       return true;
     });
+    const ranges = [];
+    const rangeSize = 100;
+    const maxRankTier = TIER_OPTIONS[TIER_OPTIONS.length - 1].value;
+    for (let i = 0; i < maxRankTier; i += rangeSize) {
+      const rMin = i;
+      const rMax = i + rangeSize;
+      const c = countForRange(rMin, rMax);
+      if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
+    }
+    const totalMastery = masteryForRange(0, 99999);
+    const rangesCompleted = ranges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
+    const rangesStarted = ranges.filter(r => {
+      const mastery = masteryForRange(r.min, r.max);
+      return mastery.pct > 0 && mastery.pct < 100;
+    }).length;
+
+    const rangesWithMedal = ranges.filter(r => {
+      const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
+      return (bestScores[key]?.pct || 0) >= 80;
+    }).length;
+    const rangesPerfect = ranges.filter(r => {
+      const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
+      return (bestScores[key]?.pct || 0) >= 100;
+    }).length;
+
     return (
       <div style={S.menuSection}>
         <div style={S.inlineSummaryCard}>
           <span style={S.inlineSummaryLabel}>Current Selection</span>
           <span style={S.inlineSummaryValue}>{describeTierSelection()}</span>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-          {filteredTiers.map(t=>{
-            const count = countForTier(t.value);
-            const capped = effectiveWordType !== "mixed" && count < t.value;
-            const label = capped ? `Top ${count.toLocaleString()}` : t.label;
-            const tierKey = `${bestScoreKeyPrefix}:tier:${t.value}`;
-            const tierBest = bestScores[tierKey];
-            const tierPct = tierBest ? tierBest.pct : 0;
-            const isSelected = tier===t.value && tierMin===0;
-            const ringColor = medalRingColor(tierPct);
-            const cardClass = medalCardClass(tierPct);
-            const isPerfect = tierPct >= 100;
-            return (
-              <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":medalBorderColor(tierPct),backgroundColor:isSelected?"rgba(139,92,246,0.1)":tierPct>=80?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
-                {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
-                  <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
-                  <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
-                </div>
-                <span style={{fontSize:13,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
-              </button>
-            );
-          })}
+        <div style={{display:"flex",gap:6}}>
+          <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="cumulative"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Cumulative</span>
+          </button>
+          <button onClick={()=>setTierMode("range")} style={{...S.diffBtn,flex:1,borderColor:tierMode==="range"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="range"?"rgba(139,92,246,0.1)":"transparent"}}>
+            <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Ranges</span>
+          </button>
         </div>
+        {tierMode==="cumulative"?(
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+            {filteredTiers.map(t=>{
+              const count = countForTier(t.value);
+              const capped = effectiveWordType !== "mixed" && count < t.value;
+              const label = capped ? `Top ${count.toLocaleString()}` : t.label;
+              const tierKey = `${bestScoreKeyPrefix}:tier:${t.value}`;
+              const tierBest = bestScores[tierKey];
+              const tierPct = tierBest ? tierBest.pct : 0;
+              const isSelected = tier===t.value && tierMin===0;
+              const ringColor = medalRingColor(tierPct);
+              const cardClass = medalCardClass(tierPct);
+              const isPerfect = tierPct >= 100;
+              return (
+                <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":medalBorderColor(tierPct),backgroundColor:isSelected?"rgba(139,92,246,0.1)":tierPct>=80?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"12px 8px"}}>
+                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
+                    <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
+                    <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
+                  </div>
+                  <span style={{fontSize:13,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        ):(
+          <>
+            {(rangesWithMedal>0||rangesPerfect>0)&&(
+              <div style={{display:"flex",gap:10,justifyContent:"center",padding:"6px 0"}}>
+                {rangesPerfect>0&&<span style={{fontSize:11,color:"#F59E0B",fontWeight:700}}>{rangesPerfect} Perfect</span>}
+                {rangesWithMedal-rangesPerfect>0&&<span style={{fontSize:11,color:"#CBD5E1",fontWeight:700}}>{rangesWithMedal-rangesPerfect} medalled</span>}
+                <span style={{fontSize:11,color:"#64748b"}}>{ranges.length} total</span>
+              </div>
+            )}
+            <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:320,overflowY:"auto",paddingRight:4}}>
+              {ranges.map(r=>{
+                const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
+                const rangeKey = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
+                const rangeBest = bestScores[rangeKey];
+                const rangePct = rangeBest ? rangeBest.pct : 0;
+                const ringColor = medalRingColor(rangePct);
+                const cardClass = medalCardClass(rangePct);
+                const isPerfect = rangePct >= 100;
+                return (
+                  <button key={r.min} className={cardClass} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor:isSelected?"#8B5CF6":medalBorderColor(rangePct),backgroundColor:isSelected?"rgba(139,92,246,0.1)":rangePct>=80?"rgba(245,158,11,0.06)":"transparent",position:"relative",overflow:"hidden",padding:"10px 6px",gap:2}}>
+                    {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:medalFill(rangePct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+                    <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
+                      <ProgressRing pct={rangePct} size={34} stroke={2.5} color={ringColor}/>
+                      <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?12:9,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":rangePct>0?rangePct+"%":""}</span>
+                    </div>
+                    <span style={{fontSize:12,fontWeight:700,color:isPerfect?"#F59E0B":"#e2e8f0",position:"relative"}}>{r.min+1}-{r.max}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     );
   };
