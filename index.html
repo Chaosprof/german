@@ -1016,7 +1016,6 @@ function GermanNounGame() {
   const [tier, setTier] = useState(500);
   const [queue, setQueue] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
@@ -1294,7 +1293,7 @@ function GermanNounGame() {
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
-    setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
+    setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setStreak(0);setBestStreak(0);
     setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
     setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionBest(null);setStreakBumped(false);
     setMatchingRightItems([]);
@@ -1352,7 +1351,7 @@ function GermanNounGame() {
     setGameMode(gMode);
     setMode(effectiveMode);
     setDifficulty(effectiveDifficulty);
-    setTier(t); setQueue(shuffleArray(nouns)); setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
+    setTier(t); setQueue(shuffleArray(nouns)); setCurrentIndex(0); setStreak(0); setBestStreak(0);
     setTotalAnswered(0); setTotalCorrect(0); setFeedback(null); setArticleChoice(null); setReverseInput(""); setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
     setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionBest(null); setStreakBumped(false);
     setMatchingRightItems([]); setMatchingMatchedIds([]); setMatchingSelectedWord(null); setMatchingSelectedMeaning(null); setMatchingMismatch(null);
@@ -1531,8 +1530,6 @@ function GermanNounGame() {
     }
 
     const registerCorrect = () => {
-      const sb=Math.floor(streak/5)*10, tb=(playStyle==="timed"||difficulty!=="easy")?Math.floor(timeLeft*2):0;
-      setScore(pr=>pr+100+sb+tb);
       setStreak(pr=>{const n=pr+1;setBestStreak(b=>Math.max(b,n));return n;});
       setTotalCorrect(pr=>pr+1);
     };
@@ -1602,7 +1599,6 @@ function GermanNounGame() {
     setTotalAnswered(prev => prev + 1);
 
     if (correct) {
-      setScore(prev => prev + 120);
       setTotalCorrect(prev => prev + 1);
       setStreak(prev => {
         const next = prev + 1;
@@ -1764,7 +1760,7 @@ function GermanNounGame() {
     sessionAnswersRef.current = [];
     if (playStyle === "survival" || gameMode === "survival") setLives(3);
     if (gameMode === "timed") setGlobalTimer(TIMED_CHALLENGE_DURATION);
-    setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
+    setQueue(shuffleArray(nd));setCurrentIndex(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
     // Missed-words practice doesn't count toward best scores or medal progress
     setSessionKey(null);setSessionTotal(0);setSessionBest(null);setStreakBumped(false);
     const noTimer = gameMode==="timed"||playStyle==="survival"||gameMode==="survival";
@@ -1776,7 +1772,7 @@ function GermanNounGame() {
       <div style={S.header}>
         <button onClick={endSession} style={S.endBtn}>End</button>
         <div style={{textAlign:"center"}}>
-          <span style={S.scoreLabel}>{score.toLocaleString()}{streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}</span>
+          {streak>=3&&<span style={S.streakBadge}>🔥 {streak}</span>}
         </div>
         <div style={{textAlign:"right"}}>
           {(playStyle==="survival"||gameMode==="survival")&&<span style={{fontSize:22,letterSpacing:4}}>{"❤️".repeat(lives)}{"🖤".repeat(3-lives)}</span>}
@@ -2781,8 +2777,6 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
   const [deckName,setDeckName]=useState("");
   const [deckSaved,setDeckSaved]=useState(false);
   const accuracy=totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
-  const grade=accuracy>=95?"S":accuracy>=85?"A":accuracy>=70?"B":accuracy>=55?"C":"D";
-  const gc={S:"#F59E0B",A:"#10B981",B:"#3B82F6",C:"#8B5CF6",D:"#EF4444"}[grade];
   const isMatching = gameMode === "matching";
   const isVerbForms = gameMode === "verb_forms";
   const isVerbPrep = gameMode === "verb_prepositions";
@@ -2794,7 +2788,6 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
   const nextGoal = best ? bestScoreMedal(best.pct) : null;
   return (
     <div style={S.container}><div style={S.resultsInner}>
-      <div style={{...S.gradeCircle,borderColor:gc,color:gc}}>{grade}</div>
 
       {/* ── Celebration banner (perfect / new best) ── */}
       {showPerfect && (
@@ -3005,8 +2998,7 @@ const S = {
   container:{minHeight:"100vh",background:"transparent",color:"#e2e8f0",fontFamily:"'JetBrains Mono','SF Mono','Fira Code',monospace",display:"flex",flexDirection:"column",alignItems:"center",padding:0},
   header:{width:"100%",maxWidth:600,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 8px",boxSizing:"border-box"},
   endBtn:{background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.3)",color:"#f87171",fontSize:13,fontWeight:700,padding:"6px 14px",borderRadius:8,cursor:"pointer",fontFamily:"inherit"},
-  scoreLabel:{fontSize:28,fontWeight:800,color:"#F59E0B",letterSpacing:"-0.5px"},
-  streakBadge:{fontSize:14,marginLeft:8,background:"rgba(239,68,68,0.15)",padding:"2px 8px",borderRadius:12,color:"#EF4444",verticalAlign:"middle"},
+  streakBadge:{fontSize:14,background:"rgba(239,68,68,0.15)",padding:"2px 10px",borderRadius:12,color:"#EF4444",verticalAlign:"middle"},
   progressText:{fontSize:13,color:"#64748b"},
   timerBarOuter:{width:"100%",maxWidth:600,height:4,background:"rgba(255,255,255,0.06)",borderRadius:2,overflow:"hidden",margin:"4px auto 0"},
   timerBarInner:{height:"100%",borderRadius:2},
@@ -3081,7 +3073,6 @@ const S = {
   diffBtn:{flex:1,padding:"12px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
   startBtn:{width:"100%",padding:"16px",background:"linear-gradient(135deg, #8B5CF6, #6366F1)",border:"none",borderRadius:12,fontSize:18,fontWeight:800,color:"#fff",cursor:"pointer",letterSpacing:1,textTransform:"uppercase",marginTop:4,fontFamily:"inherit"},
   resultsInner:{width:"100%",maxWidth:600,padding:"32px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:20,boxSizing:"border-box"},
-  gradeCircle:{width:80,height:80,borderRadius:"50%",border:"3px solid",display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,fontWeight:900},
   resultsGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,width:"100%"},
   resultCard:{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,padding:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3},
   resultValue:{fontSize:20,fontWeight:800,color:"#f1f5f9"},
