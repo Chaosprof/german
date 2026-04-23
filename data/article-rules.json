@@ -213,15 +213,15 @@
       "description": "Most non-European rivers are masculine: der Amazonas, der Mississippi, der Kongo, der Nil.",
       "exceptions": [
         {
-          "word": "Lena",
-          "article": "die"
-        },
-        {
           "word": "Angara",
           "article": "die"
         },
         {
           "word": "Kolyma",
+          "article": "die"
+        },
+        {
+          "word": "Lena",
           "article": "die"
         }
       ]
@@ -275,8 +275,8 @@
     },
     "die.suffix_ade": {
       "article": "die",
-      "name": "Foreign suffix -ade",
-      "description": "Nouns ending in -ade are feminine. Examples: die Hitparade, die Marmelade, die Limonade.",
+      "name": "Suffix -ade",
+      "description": "Nouns ending in -ade are feminine. In practice these are nearly all French/Italian loanwords: die Marmelade, die Limonade, die Hitparade, die Parade, die Blockade.",
       "exceptions": [
         {
           "word": "Nomade",
@@ -290,8 +290,8 @@
     },
     "die.suffix_age": {
       "article": "die",
-      "name": "Foreign suffix -age",
-      "description": "Nouns ending in -age are feminine. Examples: die Garage, die Passage, die Etage.",
+      "name": "Suffix -age",
+      "description": "Nouns ending in -age are feminine. Two unrelated groups give the same outcome: (a) native German verb-derived nouns such as die Lage, die Frage, die Sage, die Klage, die Plage, die Waage and their compounds (die Niederlage, die Anfrage, die Aussage, die Anklage, …); and (b) French/Italian loanwords with the foreign -age suffix such as die Garage, die Passage, die Etage, die Massage. Both groups land on die, but the mechanism is different — don't let the article's 'foreign suffix' label mislead you on native-looking words.",
       "exceptions": [
         {
           "word": "Image",
@@ -309,8 +309,8 @@
     },
     "die.suffix_anz": {
       "article": "die",
-      "name": "Foreign suffix -anz",
-      "description": "Nouns ending in -anz are feminine. Examples: die Eleganz, die Dominanz, die Toleranz.",
+      "name": "Suffix -anz",
+      "description": "Latin/French loanwords ending in -anz are feminine: die Eleganz, die Dominanz, die Toleranz, die Bilanz. Native German words that happen to end in -anz (der Tanz, der Kranz, der Glanz, der Schwanz) are NOT from this suffix — they're masculine.",
       "exceptions": [
         {
           "word": "Glanz",
@@ -332,8 +332,8 @@
     },
     "die.suffix_enz": {
       "article": "die",
-      "name": "Foreign suffix -enz",
-      "description": "Nouns ending in -enz (typically verb-derived, Latin origin) are feminine. Examples: die Existenz, die Tendenz, die Konferenz.",
+      "name": "Suffix -enz",
+      "description": "Latin-origin -enz loanwords are feminine: die Existenz, die Tendenz, die Konferenz, die Konkurrenz. The archaic native masculine der Lenz ('spring') is the lone exception.",
       "exceptions": [
         {
           "word": "Lenz",
@@ -343,8 +343,8 @@
     },
     "die.suffix_ik": {
       "article": "die",
-      "name": "Foreign suffix -ik",
-      "description": "Nouns ending in -ik are feminine. Examples: die Kritik, die Musik, die Politik.",
+      "name": "Suffix -ik",
+      "description": "Loanwords ending in -ik (from Greek/Latin) are feminine: die Kritik, die Musik, die Politik, die Technik, die Fabrik. Beware: non-suffix -ik endings differ — agent nouns in -iker are masculine (der Katholik), and Germanic -streik words are masculine (der Streik).",
       "exceptions": [
         {
           "word": "Katholik",
@@ -366,8 +366,8 @@
     },
     "die.suffix_ion": {
       "article": "die",
-      "name": "Foreign suffix -ion",
-      "description": "Nouns ending in -ion are feminine. Examples: die Diskussion, die Koalition, die Information.",
+      "name": "Suffix -ion",
+      "description": "Latin-derived -ion loanwords (from Latin -io, -ionis) are feminine: die Diskussion, die Koalition, die Information, die Nation. Greek-origin -ion neuter nouns do NOT follow this pattern — das Stadion, das Symposion, das Anion, das Ganglion. Animate/agent -ion loans take der (der Spion, der Champion, der Skorpion).",
       "exceptions": [
         {
           "word": "Champion",
@@ -385,14 +385,14 @@
     },
     "die.suffix_taet": {
       "article": "die",
-      "name": "Foreign suffix -tät",
-      "description": "Nouns ending in -tät are feminine. Examples: die Identität, die Qualität, die Universität.",
+      "name": "Suffix -tät",
+      "description": "Nouns ending in -tät (from Latin -tas/-tatis, the abstract-quality suffix) are feminine. These are all loanwords — German has no native -tät: die Identität, die Qualität, die Universität, die Aktivität, die Realität.",
       "exceptions": []
     },
     "die.suffix_ur": {
       "article": "die",
-      "name": "Foreign suffix -ur",
-      "description": "Nouns ending in -ur are feminine. Examples: die Agentur, die Reparatur, die Natur.",
+      "name": "Suffix -ur",
+      "description": "Latin-derived -ur loanwords are feminine: die Agentur, die Reparatur, die Natur, die Kultur, die Literatur. Beware: native German -ur stems (der Schwur, der Flur) are masculine, many -ur loans from other routes are neuter (das Abitur, das Futur, das Interieur), and the French agent suffix -eur is a separate pattern (→ der Ingenieur, der Friseur) with its own rule.",
       "exceptions": [
         {
           "word": "Abitur",
@@ -439,10 +439,6 @@
       "exceptions": [
         {
           "word": "Accessoire",
-          "article": "das"
-        },
-        {
-          "word": "Achtzigerjahre",
           "article": "das"
         },
         {
@@ -526,10 +522,6 @@
           "article": "das"
         },
         {
-          "word": "Bergleute",
-          "article": "das"
-        },
-        {
           "word": "Bike",
           "article": "das"
         },
@@ -572,10 +564,6 @@
         {
           "word": "Bulle",
           "article": "der"
-        },
-        {
-          "word": "Bundesjugendspiele",
-          "article": "das"
         },
         {
           "word": "Bürge",
@@ -666,10 +654,6 @@
           "article": "der"
         },
         {
-          "word": "Eheleute",
-          "article": "das"
-        },
-        {
           "word": "Empire",
           "article": "das"
         },
@@ -710,19 +694,7 @@
           "article": "der"
         },
         {
-          "word": "Familienverhältnisse",
-          "article": "das"
-        },
-        {
           "word": "Fanzine",
-          "article": "das"
-        },
-        {
-          "word": "Feuerwehrleute",
-          "article": "das"
-        },
-        {
-          "word": "Filmfestspiele",
           "article": "das"
         },
         {
@@ -1002,10 +974,6 @@
           "article": "der"
         },
         {
-          "word": "Kameraleute",
-          "article": "das"
-        },
-        {
           "word": "Kanute",
           "article": "der"
         },
@@ -1078,10 +1046,6 @@
           "article": "der"
         },
         {
-          "word": "Körpermitte",
-          "article": "das"
-        },
-        {
           "word": "Krake",
           "article": "der"
         },
@@ -1103,10 +1067,6 @@
         },
         {
           "word": "Ländle",
-          "article": "das"
-        },
-        {
-          "word": "Landsleute",
           "article": "das"
         },
         {
@@ -1178,10 +1138,6 @@
           "article": "der"
         },
         {
-          "word": "Neunzigerjahre",
-          "article": "das"
-        },
-        {
           "word": "Ochse",
           "article": "der"
         },
@@ -1230,10 +1186,6 @@
           "article": "der"
         },
         {
-          "word": "Platzgründe",
-          "article": "das"
-        },
-        {
           "word": "Podologe",
           "article": "der"
         },
@@ -1259,10 +1211,6 @@
         },
         {
           "word": "Prestige",
-          "article": "das"
-        },
-        {
-          "word": "Privatleute",
           "article": "das"
         },
         {
@@ -1422,16 +1370,8 @@
           "article": "der"
         },
         {
-          "word": "Sechzigerjahre",
-          "article": "das"
-        },
-        {
           "word": "See",
           "article": "der"
-        },
-        {
-          "word": "Seeleute",
-          "article": "das"
         },
         {
           "word": "Serbe",
@@ -1510,10 +1450,6 @@
           "article": "der"
         },
         {
-          "word": "Verkehrsverhältnisse",
-          "article": "das"
-        },
-        {
           "word": "Vietnamese",
           "article": "der"
         },
@@ -1534,10 +1470,6 @@
           "article": "der"
         },
         {
-          "word": "Wechseljahre",
-          "article": "das"
-        },
-        {
           "word": "Weichteile",
           "article": "der"
         },
@@ -1550,16 +1482,8 @@
           "article": "der"
         },
         {
-          "word": "Wetterverhältnisse",
-          "article": "das"
-        },
-        {
           "word": "Wille",
           "article": "der"
-        },
-        {
-          "word": "Winterspiele",
-          "article": "das"
         },
         {
           "word": "Zelte",
@@ -2377,32 +2301,8 @@
       "description": "Fractions (except one half) are neuter: das Drittel (⅓), das Viertel (¼), das Zehntel, das Hundertstel.",
       "exceptions": [
         {
-          "word": "Fünftel",
-          "article": "der"
-        },
-        {
           "word": "Hälfte",
           "article": "die"
-        },
-        {
-          "word": "Hundertstel",
-          "article": "der"
-        },
-        {
-          "word": "Sechstel",
-          "article": "der"
-        },
-        {
-          "word": "Tausendstel",
-          "article": "der"
-        },
-        {
-          "word": "Viertel",
-          "article": "der"
-        },
-        {
-          "word": "Zehntel",
-          "article": "der"
         }
       ]
     },
