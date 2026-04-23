@@ -2167,11 +2167,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   };
 
   const syncDot = {idle:"#64748b",loading:"#F59E0B",saving:"#F59E0B",synced:"#10B981",error:"#EF4444"}[syncStatus];
-  const dailyStreak = userData.dailyStreak || {current:0,best:0};
-  const totalNouns = NOUNS.length;
-  const masteredCount = (userData.masteredNouns||[]).length;
-  const masteryPct = totalNouns > 0 ? Math.round((masteredCount / totalNouns) * 100) : 0;
-  const masteryColor = masteryPct >= 100 ? "#F59E0B" : masteryPct >= 50 ? "#10B981" : "#8B5CF6";
   const bestScores = userData.bestScores || {};
   const nounStats = userData.nounStats || {};
   const modeStats = userData.modeStats || {};
@@ -2495,24 +2490,9 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         <h1 style={S.menuTitle}>Artikel Blitz</h1>
       </div>
 
-      <div style={S.menuTopStats}>
-        <div style={S.menuStatChip}>
-          <span style={{...S.menuStatValue,color:dailyStreak.current>=3?"#EF4444":"#e2e8f0"}}>{dailyStreak.current}</span>
-          <span style={S.menuStatLabel}>Day Streak</span>
-        </div>
-        <div style={{...S.menuStatChip,borderColor:`${masteryColor}33`,background:`${masteryColor}14`}}>
-          <span style={{...S.menuStatValue,color:masteryColor}}>{masteryPct}%</span>
-          <span style={S.menuStatLabel}>Mastery</span>
-        </div>
-      </div>
-
       <div style={S.menuQuickRow}>
         <button onClick={onOpenCampaign} style={{...S.secondaryActionBtn,background:"linear-gradient(135deg, rgba(124,58,237,0.22), rgba(37,99,235,0.16))",borderColor:"rgba(124,58,237,0.28)"}}>Campaign</button>
         <button onClick={onOpenDashboard} style={{...S.secondaryActionBtn,background:"linear-gradient(135deg, rgba(16,185,129,0.18), rgba(6,182,212,0.14))",borderColor:"rgba(16,185,129,0.24)"}}>Progress</button>
-      </div>
-
-      <div style={S.menuProgressLine}>
-        <span>{masteredCount.toLocaleString()} / {totalNouns.toLocaleString()} nouns mastered</span>
       </div>
 
       {showSettings&&(
