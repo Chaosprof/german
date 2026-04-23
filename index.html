@@ -1045,6 +1045,7 @@ function GermanNounGame() {
   const [lives, setLives] = useState(3);
   const [globalTimer, setGlobalTimer] = useState(60);
   const [sessionBest, setSessionBest] = useState(null);
+  const [streakBumped, setStreakBumped] = useState(false);
   const [reverseInput, setReverseInput] = useState("");
   const [verbFormInputs, setVerbFormInputs] = useState({infinitive: "", prateritum: "", perfekt: ""});
   const verbInfRef = useRef(null);
@@ -1295,7 +1296,7 @@ function GermanNounGame() {
     setDifficulty(effectiveDifficulty);
     setTier(t);setQueue(shuffleArray(nouns));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);
     setTotalAnswered(0);setTotalCorrect(0);setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
-    setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionBest(null);
+    setPhase("question");setShowHint(false);setWrongAnswers([]);setSessionBest(null);setStreakBumped(false);
     setMatchingRightItems([]);
     setMatchingMatchedIds([]);
     setMatchingSelectedWord(null);
@@ -1353,7 +1354,7 @@ function GermanNounGame() {
     setDifficulty(effectiveDifficulty);
     setTier(t); setQueue(shuffleArray(nouns)); setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
     setTotalAnswered(0); setTotalCorrect(0); setFeedback(null); setArticleChoice(null); setReverseInput(""); setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});
-    setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionBest(null);
+    setPhase("question"); setShowHint(false); setWrongAnswers([]); setSessionBest(null); setStreakBumped(false);
     setMatchingRightItems([]); setMatchingMatchedIds([]); setMatchingSelectedWord(null); setMatchingSelectedMeaning(null); setMatchingMismatch(null);
     setActiveDeck(null);
     // Set playStyle based on campaign gameMode
@@ -1385,6 +1386,12 @@ function GermanNounGame() {
       };
     }
     setSessionBest(sessionBestInfo);
+
+    // Detect whether this session is the one that moved the daily streak —
+    // used by the results screen to announce the streak only once per day.
+    const snapshotStreak = userData.dailyStreak || { current: 0, lastDate: null, best: 0 };
+    const projectedStreak = updateDailyStreak(snapshotStreak);
+    setStreakBumped(projectedStreak.lastDate !== snapshotStreak.lastDate);
 
     setUserData(prev => {
       const newStreak = updateDailyStreak(prev.dailyStreak || { current: 0, lastDate: null, best: 0 });
@@ -1742,7 +1749,7 @@ function GermanNounGame() {
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
-  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionBest={sessionBest} userData={userData} gameMode={gameMode} canReplay={!!lastStartArgs && !campaignChallenge} onReplay={()=>{ if (!lastStartArgs) return; const a = lastStartArgs; startGame(a.m, a.d, a.t, a.deckId, a.gm, a.wordType, a.pStyle, a.tSecs, a.tMin, a.isRange); }} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
+  if(screen==="results") return <ResultsScreen totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionBest={sessionBest} streakBumped={streakBumped} userData={userData} gameMode={gameMode} canReplay={!!lastStartArgs && !campaignChallenge} onReplay={()=>{ if (!lastStartArgs) return; const a = lastStartArgs; startGame(a.m, a.d, a.t, a.deckId, a.gm, a.wordType, a.pStyle, a.tSecs, a.tMin, a.isRange); }} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
     let nd;
     if (gameMode === "verb_forms") {
@@ -1759,7 +1766,7 @@ function GermanNounGame() {
     if (gameMode === "timed") setGlobalTimer(TIMED_CHALLENGE_DURATION);
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
     // Missed-words practice doesn't count toward best scores or medal progress
-    setSessionKey(null);setSessionTotal(0);setSessionBest(null);
+    setSessionKey(null);setSessionTotal(0);setSessionBest(null);setStreakBumped(false);
     const noTimer = gameMode==="timed"||playStyle==="survival"||gameMode==="survival";
     setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(noTimer?0:(playStyle==="timed"?timedSeconds:timeLimit));setScreen("game");
   }}/>;
@@ -2789,7 +2796,7 @@ function ExceptionsList({ exceptions, currentWord }) {
     </div>
   );
 }
-function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionBest,userData,gameMode,onRestart,onPracticeWrong,onReplay,canReplay}) {
+function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionBest,streakBumped,userData,gameMode,onRestart,onPracticeWrong,onReplay,canReplay}) {
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [deckName,setDeckName]=useState("");
   const [deckSaved,setDeckSaved]=useState(false);
@@ -2858,15 +2865,21 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
         </div>
       )}
 
-      {(userData.dailyStreak||{}).current>=1&&(
+      {streakBumped&&(userData.dailyStreak||{}).current>=1&&(
         <div style={{fontSize:13,color:"#EF4444",fontWeight:700,textAlign:"center"}}>🔥 {userData.dailyStreak.current} day streak{(userData.dailyStreak||{}).current>=(userData.dailyStreak||{}).best?" (new best!)":""}</div>
       )}
 
       <h2 style={{fontSize:24,fontWeight:800,color:"#f1f5f9",margin:0}}>Session Complete</h2>
       <div style={S.resultsGrid}>
-        {[["Score",score.toLocaleString()],["Accuracy",`${accuracy}%`],["Correct",`${totalCorrect}/${totalAnswered}`],["Best Streak",`🔥 ${bestStreak}`]].map(([l,v])=>
-          <div key={l} style={S.resultCard}><span style={S.resultValue}>{v}</span><span style={S.resultLabel}>{l}</span></div>
-        )}
+        <div style={S.resultCard}>
+          <span style={S.resultValue}>{accuracy}%</span>
+          <span style={S.resultLabel}>Accuracy</span>
+          <span style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{totalCorrect}/{totalAnswered} correct</span>
+        </div>
+        <div style={S.resultCard}>
+          <span style={S.resultValue}>🔥 {bestStreak}</span>
+          <span style={S.resultLabel}>Best Streak</span>
+        </div>
       </div>
 
       {reviewWrongAnswers.length>0&&(
