@@ -1736,6 +1736,8 @@ function GermanNounGame() {
     if (playStyle === "survival" || gameMode === "survival") setLives(3);
     if (gameMode === "timed") setGlobalTimer(TIMED_CHALLENGE_DURATION);
     setQueue(shuffleArray(nd));setCurrentIndex(0);setScore(0);setStreak(0);setBestStreak(0);setTotalAnswered(0);setTotalCorrect(0);
+    // Missed-words practice doesn't count toward best scores or medal progress
+    setSessionKey(null);setSessionTotal(0);setSessionBest(null);
     const noTimer = gameMode==="timed"||playStyle==="survival"||gameMode==="survival";
     setFeedback(null);setArticleChoice(null);setReverseInput("");setVerbFormInputs({infinitive:"",prateritum:"",perfekt:""});setVerbPrepInputs({preposition:"",case:""});setPhase("question");setShowHint(false);setWrongAnswers([]);setTimeLeft(noTimer?0:(playStyle==="timed"?timedSeconds:timeLimit));setScreen("game");
   }}/>;
