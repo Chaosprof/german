@@ -1036,6 +1036,7 @@ function GermanNounGame() {
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
   const [sessionKey, setSessionKey] = useState(null); // "gameMode:source:id" for best-score tracking
   const [sessionTotal, setSessionTotal] = useState(0); // total words in queue at session start
+  const [lastStartArgs, setLastStartArgs] = useState(null); // remembers last menu selection for Replay / New Game
   const globalTimerRef = useRef(null);
   const pluralOptions = useMemo(() => {
     if (!currentNoun || gameMode === "reverse" || mode === MODES.ARTICLE) return [];
@@ -1293,6 +1294,7 @@ function GermanNounGame() {
         : "";
     setSessionKey(`${gMode}${ruleSeg}:${sSource}`);
     setSessionTotal(nouns.length);
+    setLastStartArgs({ m, d, t, deckId, gm: gMode, wordType: wType, pStyle: ps, tSecs: ts, tMin: tierMinVal, isRange: !!isRange });
     setScreen("game");
   }, [userData]);
 
@@ -1716,11 +1718,11 @@ function GermanNounGame() {
     onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
   />;
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
-  if(screen==="menu") return <MenuScreen onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
+  if(screen==="menu") return <MenuScreen initialSelection={lastStartArgs} onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
-  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionBest={sessionBest} userData={userData} gameMode={gameMode} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
+  if(screen==="results") return <ResultsScreen score={score} totalCorrect={totalCorrect} totalAnswered={totalAnswered} bestStreak={bestStreak} wrongAnswers={wrongAnswers} mode={mode} onSaveDeck={saveDeck} syncStatus={syncStatus} sessionBest={sessionBest} userData={userData} gameMode={gameMode} canReplay={!!lastStartArgs && !campaignChallenge} onReplay={()=>{ if (!lastStartArgs) return; const a = lastStartArgs; startGame(a.m, a.d, a.t, a.deckId, a.gm, a.wordType, a.pStyle, a.tSecs, a.tMin, a.isRange); }} onRestart={()=>{ if(campaignChallenge) { setCampaignChallenge(null); setScreen("campaign"); } else setScreen("menu"); }} onPracticeWrong={()=>{
     if(!wrongAnswers.length) return;
     let nd;
     if (gameMode === "verb_forms") {
@@ -2064,19 +2066,21 @@ function DeckBuilder({onSave, onCancel}) {
 // ═══════════════════════════════════════════════════════════════
 // PROGRESS DASHBOARD
 // ═══════════════════════════════════════════════════════════════
-function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard}) {
-  const [mode,setMode]=useState(MODES.ARTICLE);
-  const [tier,setTier]=useState(500);
-  const [tierMin,setTierMin]=useState(0);
-  const [tierMode,setTierMode]=useState("cumulative");
-  const [source,setSource]=useState("tier");
-  const [selectedDeck,setSelectedDeck]=useState(null);
+function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard, initialSelection}) {
+  const init = initialSelection || {};
+  const initSource = init.deckId === "__weakest__" ? "weakest" : init.deckId ? "deck" : (init.gm !== undefined ? "tier" : "tier");
+  const [mode,setMode]=useState(init.m ?? MODES.ARTICLE);
+  const [tier,setTier]=useState(init.t ?? 500);
+  const [tierMin,setTierMin]=useState(init.tMin ?? 0);
+  const [tierMode,setTierMode]=useState(init.isRange ? "range" : "cumulative");
+  const [source,setSource]=useState(initSource);
+  const [selectedDeck,setSelectedDeck]=useState(init.deckId && init.deckId !== "__weakest__" ? init.deckId : null);
   const [showSettings,setShowSettings]=useState(false);
   const [showDeckBuilder,setShowDeckBuilder]=useState(false);
-  const [selectedGameMode,setSelectedGameMode]=useState("classic");
-  const [matchWordType,setMatchWordType]=useState("nouns");
-  const [playStyle,setPlayStyle]=useState("practice");
-  const [timedSeconds,setTimedSeconds]=useState(10);
+  const [selectedGameMode,setSelectedGameMode]=useState(init.gm ?? "classic");
+  const [matchWordType,setMatchWordType]=useState(init.wordType ?? "nouns");
+  const [playStyle,setPlayStyle]=useState(init.pStyle ?? "practice");
+  const [timedSeconds,setTimedSeconds]=useState(init.tSecs ?? 10);
   const [patInput,setPatInput]=useState(getPat());
   const [patSaved,setPatSaved]=useState(false);
 
@@ -2726,7 +2730,7 @@ function ProgressDashboard({ userData, onBack }) {
 // ═══════════════════════════════════════════════════════════════
 // RESULTS — detailed review with grammar explanations
 // ═══════════════════════════════════════════════════════════════
-function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionBest,userData,gameMode,onRestart,onPracticeWrong}) {
+function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionBest,userData,gameMode,onRestart,onPracticeWrong,onReplay,canReplay}) {
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [deckName,setDeckName]=useState("");
   const [deckSaved,setDeckSaved]=useState(false);
@@ -2914,7 +2918,10 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
 
       <div style={{display:"flex",gap:10,width:"100%",flexDirection:"column"}}>
         {reviewWrongAnswers.length>0&&<button onClick={onPracticeWrong} style={S.practiceBtn}>Practice {reviewWrongAnswers.length} Missed {isVerbForms?"Verb":isVerbPrep?"Verb":"Word"}{reviewWrongAnswers.length>1?"s":""}</button>}
-        <button onClick={onRestart} style={S.restartBtn}>New Game</button>
+        <div style={{display:"flex",gap:10,width:"100%"}}>
+          <button onClick={onRestart} style={{...S.restartBtn,flex:1}}>New Game</button>
+          {canReplay && <button onClick={onReplay} style={{...S.restartBtn,flex:1,background:"rgba(16,185,129,0.15)",border:"1px solid rgba(16,185,129,0.4)",color:"#6EE7B7"}}>Replay</button>}
+        </div>
       </div>
     </div></div>
   );
