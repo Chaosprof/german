@@ -137,9 +137,11 @@ const ADJECTIVES_DATA_PATH = "./data/adjectives.json";
 const VERBS_DATA_PATH = "./data/verbs.json";
 const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json";
 const VERB_PREP_PATH = "./data/verbs-with-prepositions.json";
+const ARTICLE_RULES_PATH = "./data/article-rules.json";
 let NOUNS = [];
 let NOUN_INDEX = new Map();
 let EXPLANATIONS = new Map();
+let ARTICLE_RULES = {};
 let WORDS_META = {};
 let BUILTIN_DECKS = [];
 let DUAL_GENDER_WORDS = new Set();
@@ -172,7 +174,7 @@ function hydrateWordData(payload) {
   const nounEntries = Array.isArray(payload?.nouns) ? payload.nouns : [];
   NOUNS = nounEntries.map(({ word, article, plural, english, rank }) => [word, article, plural, english, rank]);
   NOUN_INDEX = new Map(NOUNS.map(noun => [noun[0], noun]));
-  EXPLANATIONS = new Map(nounEntries.map(({ word, articleHelp, pluralHelp }) => [word, { article: articleHelp || "", plural: pluralHelp || "" }]));
+  EXPLANATIONS = new Map(nounEntries.map(({ word, articleHelp, pluralHelp, ruleId, isException }) => [word, { article: articleHelp || "", plural: pluralHelp || "", ruleId: ruleId || null, isException: !!isException }]));
   WORDS_META = payload?.meta || {};
 }
 
@@ -229,6 +231,14 @@ async function loadWordData() {
       VERB_PREPOSITIONS = (vpData.verbs || []).map(({ verb, english, rank, preposition, case: cas, example }) => [verb, english, rank, preposition, cas, example]);
     }
   } catch(e) { console.warn("Could not load verbs with prepositions:", e); }
+  // Load article rules
+  try {
+    const arResp = await fetch(ARTICLE_RULES_PATH);
+    if (arResp.ok) {
+      const arData = await arResp.json();
+      ARTICLE_RULES = arData.rules || {};
+    }
+  } catch(e) { console.warn("Could not load article rules:", e); }
 }
 
 function getNounByName(name) {
@@ -320,7 +330,17 @@ function getNounsForTier(tier, minRank) {
 // GRAMMAR EXPLANATIONS - precomputed in JSON
 // ═══════════════════════════════════════════════════════════════
 
-// Grammar explanations are precomputed in data/nouns.json.
+// Per-noun articleHelp/pluralHelp live in data/nouns.json. Suffix and
+// semantic article rules live in data/article-rules.json; nouns are tagged
+// with ruleId (+ isException) and we render the shared rule text.
+
+function getRuleExceptionsInBank(rule) {
+  if (!rule || !Array.isArray(rule.exceptions)) return [];
+  return rule.exceptions.filter(exc => {
+    const noun = NOUN_INDEX.get(exc.word);
+    return noun && noun[1] === exc.article;
+  });
+}
 // UTILITIES
 // ═══════════════════════════════════════════════════════════════
 const ARTICLE_COLORS = { "der": "#3B82F6", "die": "#EC4899", "das": "#10B981" };
@@ -2730,6 +2750,45 @@ function ProgressDashboard({ userData, onBack }) {
 // ═══════════════════════════════════════════════════════════════
 // RESULTS — detailed review with grammar explanations
 // ═══════════════════════════════════════════════════════════════
+const EXCEPTIONS_COLLAPSED_LIMIT = 12;
+function ExceptionsList({ exceptions, currentWord }) {
+  const [expanded, setExpanded] = useState(false);
+  const ordered = useMemo(() => {
+    if (!currentWord) return exceptions;
+    const hit = exceptions.find(e => e.word === currentWord);
+    if (!hit) return exceptions;
+    return [hit, ...exceptions.filter(e => e.word !== currentWord)];
+  }, [exceptions, currentWord]);
+  const visible = expanded ? ordered : ordered.slice(0, EXCEPTIONS_COLLAPSED_LIMIT);
+  const remaining = ordered.length - visible.length;
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:2,marginTop:4}}>
+      <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Exceptions ({ordered.length})</span>
+      <span style={{fontSize:12,color:"#cbd5e1",lineHeight:1.6}}>
+        {visible.map((exc, idx) => (
+          <React.Fragment key={exc.word}>
+            {idx > 0 && ", "}
+            <span style={{color:ARTICLE_COLORS[exc.article],fontWeight:700}}>{exc.article}</span>
+            {" "}
+            <span style={{fontWeight: exc.word === currentWord ? 800 : 600, textDecoration: exc.word === currentWord ? "underline" : "none"}}>{exc.word}</span>
+          </React.Fragment>
+        ))}
+        {remaining > 0 && (
+          <>
+            {" … "}
+            <button onClick={e => { e.stopPropagation(); setExpanded(true); }} style={{background:"none",border:"none",color:"#fbbf24",fontSize:12,cursor:"pointer",padding:0,fontFamily:"inherit",textDecoration:"underline"}}>+{remaining} more</button>
+          </>
+        )}
+        {expanded && ordered.length > EXCEPTIONS_COLLAPSED_LIMIT && (
+          <>
+            {" "}
+            <button onClick={e => { e.stopPropagation(); setExpanded(false); }} style={{background:"none",border:"none",color:"#94a3b8",fontSize:11,cursor:"pointer",padding:0,fontFamily:"inherit",textDecoration:"underline"}}>collapse</button>
+          </>
+        )}
+      </span>
+    </div>
+  );
+}
 function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,onSaveDeck,syncStatus,sessionBest,userData,gameMode,onRestart,onPracticeWrong,onReplay,canReplay}) {
   const [expandedIdx,setExpandedIdx]=useState(null);
   const [deckName,setDeckName]=useState("");
@@ -2878,18 +2937,37 @@ function ResultsScreen({score,totalCorrect,totalAnswered,bestStreak,wrongAnswers
                     )}
                     {!isMatching&&!isVerbForms&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
-                  {!isMatching&&!isVerbForms&&isOpen&&expl&&(
+                  {!isMatching&&!isVerbForms&&isOpen&&expl&&(() => {
+                    const rule = expl.ruleId ? ARTICLE_RULES[expl.ruleId] : null;
+                    const exceptionsInBank = getRuleExceptionsInBank(rule);
+                    return (
                     <div style={{marginTop:10,padding:"10px 12px",background:"rgba(251,191,36,0.05)",border:"1px solid rgba(251,191,36,0.15)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
-                      <div style={{display:"flex",flexDirection:"column",gap:3}}>
+                      <div style={{display:"flex",flexDirection:"column",gap:5}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Why {w.article}?</span>
-                        <span style={{fontSize:13,color:"#e2e8f0",lineHeight:1.55}}>{expl.article}</span>
+                        {rule ? (
+                          <>
+                            {expl.isException ? (
+                              <span style={{fontSize:12,fontWeight:700,color:"#f87171",textTransform:"uppercase",letterSpacing:1}}>⚠ Exception to "{rule.name}"</span>
+                            ) : (
+                              <span style={{fontSize:12,fontWeight:700,color:"#a7f3d0"}}>Rule: {rule.name} → {rule.article}</span>
+                            )}
+                            {expl.isException && <span style={{fontSize:13,color:"#e2e8f0",lineHeight:1.55}}>{w.noun} is one of the known exceptions — it takes <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800}}>{w.article}</span> instead of <span style={{color:ARTICLE_COLORS[rule.article],fontWeight:800}}>{rule.article}</span>.</span>}
+                            <span style={{fontSize:13,color:"#e2e8f0",lineHeight:1.55}}>{rule.description}</span>
+                            {exceptionsInBank.length > 0 && (
+                              <ExceptionsList exceptions={exceptionsInBank} currentWord={w.noun} />
+                            )}
+                          </>
+                        ) : (
+                          <span style={{fontSize:13,color:"#e2e8f0",lineHeight:1.55}}>{expl.article}</span>
+                        )}
                       </div>
                       <div style={{display:"flex",flexDirection:"column",gap:3}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Plural pattern</span>
                         <span style={{fontSize:13,color:"#e2e8f0",lineHeight:1.55}}>{expl.plural}</span>
                       </div>
                     </div>
-                  )}
+                    );
+                  })()}
                   {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:"#475569",textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
                 </div>
               );

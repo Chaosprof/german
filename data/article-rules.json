@@ -1,0 +1,2421 @@
+{
+  "meta": {
+    "source": "https://www.passion4teq.com/articles/der-die-das-gender-article-rules/",
+    "sections": "1-3",
+    "note": "Rule set for predicting der/die/das by suffix or semantic category. Exceptions listed here mirror the article; the app filters the exception list shown on cards to those present in the local word bank."
+  },
+  "rules": {
+    "der.suffix_er": {
+      "article": "der",
+      "name": "Suffix -er (from verbs)",
+      "description": "Agent nouns formed from verbs with the suffix -er take der. Examples: der Fahrer (drive → driver), der Lehrer (teach → teacher), der Spieler (play → player).",
+      "exceptions": []
+    },
+    "der.suffix_ismus": {
+      "article": "der",
+      "name": "Suffix -ismus",
+      "description": "Nouns ending in -ismus are always masculine. Examples: der Kapitalismus, der Journalismus, der Tourismus.",
+      "exceptions": []
+    },
+    "der.suffix_ant": {
+      "article": "der",
+      "name": "Suffix -ant",
+      "description": "Most nouns ending in -ant are masculine. Examples: der Demonstrant, der Elefant, der Mutant.",
+      "exceptions": [
+        {
+          "word": "Croissant",
+          "article": "das"
+        },
+        {
+          "word": "Pendant",
+          "article": "das"
+        },
+        {
+          "word": "Restaurant",
+          "article": "das"
+        }
+      ]
+    },
+    "der.suffix_ling": {
+      "article": "der",
+      "name": "Suffix -ling",
+      "description": "Most nouns ending in -ling are masculine. Examples: der Lehrling, der Schützling, der Frühling.",
+      "exceptions": [
+        {
+          "word": "Bowling",
+          "article": "das"
+        },
+        {
+          "word": "Controlling",
+          "article": "das"
+        },
+        {
+          "word": "Dribbling",
+          "article": "das"
+        },
+        {
+          "word": "Feeling",
+          "article": "das"
+        },
+        {
+          "word": "Handling",
+          "article": "das"
+        },
+        {
+          "word": "Mailing",
+          "article": "das"
+        },
+        {
+          "word": "Peeling",
+          "article": "das"
+        },
+        {
+          "word": "Profiling",
+          "article": "das"
+        },
+        {
+          "word": "Recycling",
+          "article": "das"
+        },
+        {
+          "word": "Styling",
+          "article": "das"
+        },
+        {
+          "word": "Upcycling",
+          "article": "das"
+        }
+      ]
+    },
+    "der.suffix_ner": {
+      "article": "der",
+      "name": "Suffix -ner",
+      "description": "Most nouns ending in -ner are masculine. Examples: der Rentner, der Schaffner, der Zöllner.",
+      "exceptions": [
+        {
+          "word": "Banner",
+          "article": "das"
+        },
+        {
+          "word": "Wiener",
+          "article": "die"
+        }
+      ]
+    },
+    "der.suffix_or": {
+      "article": "der",
+      "name": "Suffix -or",
+      "description": "Most nouns ending in -or are masculine. Examples: der Motor, der Traktor, der Direktor.",
+      "exceptions": [
+        {
+          "word": "Chlor",
+          "article": "das"
+        },
+        {
+          "word": "Gegentor",
+          "article": "das"
+        },
+        {
+          "word": "Labor",
+          "article": "das"
+        },
+        {
+          "word": "Moor",
+          "article": "das"
+        },
+        {
+          "word": "Styropor",
+          "article": "das"
+        },
+        {
+          "word": "Tor",
+          "article": "das"
+        }
+      ]
+    },
+    "der.masculine_persons": {
+      "article": "der",
+      "name": "Masculine persons, roles, professions",
+      "description": "Nouns denoting male persons, family roles, or male professions take der. Examples: der Vater, der Pilot, der Arzt, der Bruder, der König.",
+      "exceptions": []
+    },
+    "der.seasons": {
+      "article": "der",
+      "name": "Seasons",
+      "description": "The four seasons are masculine: der Frühling, der Sommer, der Herbst, der Winter. Note: das Frühjahr (the alternative word for spring) is neuter.",
+      "exceptions": [
+        {
+          "word": "Frühjahr",
+          "article": "das"
+        }
+      ]
+    },
+    "der.months": {
+      "article": "der",
+      "name": "Months",
+      "description": "All months are masculine: der Januar, der Februar, der März, … der Dezember.",
+      "exceptions": []
+    },
+    "der.days": {
+      "article": "der",
+      "name": "Days of the week",
+      "description": "All weekdays are masculine: der Montag, der Dienstag, …, der Sonntag.",
+      "exceptions": []
+    },
+    "der.compass": {
+      "article": "der",
+      "name": "Compass directions",
+      "description": "Cardinal and intercardinal directions are masculine: der Norden, der Süden, der Osten, der Westen, der Nordwesten, etc.",
+      "exceptions": []
+    },
+    "der.precipitations": {
+      "article": "der",
+      "name": "Precipitations",
+      "description": "Forms of precipitation are masculine: der Regen, der Schnee, der Hagel, der Nebel, der Tau.",
+      "exceptions": []
+    },
+    "der.car_brands": {
+      "article": "der",
+      "name": "Car brands",
+      "description": "Car brand names are masculine: der Audi, der BMW, der Mercedes, der VW.",
+      "exceptions": []
+    },
+    "der.trains": {
+      "article": "der",
+      "name": "Trains",
+      "description": "Train (type) names are masculine: der IC, der ICE, der RE.",
+      "exceptions": []
+    },
+    "der.verb_derived_no_suffix": {
+      "article": "der",
+      "name": "Verb-derived nouns (no suffix)",
+      "description": "Nouns formed from a verb stem without an added suffix are usually masculine. Examples: der Gang (gehen), der Fang (fangen), der Wurf (werfen), der Schlaf (schlafen).",
+      "exceptions": []
+    },
+    "der.alcoholic_beverages": {
+      "article": "der",
+      "name": "Alcoholic beverages",
+      "description": "Most alcoholic drinks are masculine: der Wein, der Cognac, der Whiskey, der Schnaps, der Wodka, der Rum, der Sekt, der Likör.",
+      "exceptions": [
+        {
+          "word": "Bier",
+          "article": "das"
+        },
+        {
+          "word": "Korn",
+          "article": "das"
+        }
+      ]
+    },
+    "der.rivers_outside_europe": {
+      "article": "der",
+      "name": "Rivers outside Europe",
+      "description": "Most non-European rivers are masculine: der Amazonas, der Mississippi, der Kongo, der Nil.",
+      "exceptions": [
+        {
+          "word": "Lena",
+          "article": "die"
+        },
+        {
+          "word": "Angara",
+          "article": "die"
+        },
+        {
+          "word": "Kolyma",
+          "article": "die"
+        }
+      ]
+    },
+    "der.mountains": {
+      "article": "der",
+      "name": "Mountains",
+      "description": "Most mountains are masculine: der Mont Blanc, der Kilimandscharo, der Montblanc.",
+      "exceptions": [
+        {
+          "word": "Zugspitze",
+          "article": "die"
+        }
+      ]
+    },
+    "die.suffix_falt": {
+      "article": "die",
+      "name": "Suffix -falt",
+      "description": "Nouns ending in -falt are feminine. Examples: die Vielfalt, die Einfalt.",
+      "exceptions": []
+    },
+    "die.suffix_heit": {
+      "article": "die",
+      "name": "Suffix -heit",
+      "description": "All nouns ending in -heit are feminine. Examples: die Freiheit, die Sicherheit, die Krankheit.",
+      "exceptions": []
+    },
+    "die.suffix_keit": {
+      "article": "die",
+      "name": "Suffix -keit",
+      "description": "All nouns ending in -keit are feminine. Examples: die Möglichkeit, die Schnelligkeit, die Einsamkeit.",
+      "exceptions": []
+    },
+    "die.suffix_schaft": {
+      "article": "die",
+      "name": "Suffix -schaft",
+      "description": "All nouns ending in -schaft are feminine. Examples: die Freundschaft, die Mannschaft, die Wirtschaft.",
+      "exceptions": []
+    },
+    "die.suffix_t_verb": {
+      "article": "die",
+      "name": "Suffix -t (from verbs)",
+      "description": "Nouns ending in -t that are derived from a verb are feminine. Examples: die Fahrt (fahren), die Tat (tun), die Sicht (sehen), die Flucht (fliehen).",
+      "exceptions": []
+    },
+    "die.suffix_ung": {
+      "article": "die",
+      "name": "Suffix -ung",
+      "description": "All nouns ending in -ung are feminine. Examples: die Leitung, die Zeitung, die Wohnung, die Bedeutung.",
+      "exceptions": []
+    },
+    "die.suffix_ade": {
+      "article": "die",
+      "name": "Foreign suffix -ade",
+      "description": "Nouns ending in -ade are feminine. Examples: die Hitparade, die Marmelade, die Limonade.",
+      "exceptions": [
+        {
+          "word": "Nomade",
+          "article": "der"
+        },
+        {
+          "word": "Upgrade",
+          "article": "das"
+        }
+      ]
+    },
+    "die.suffix_age": {
+      "article": "die",
+      "name": "Foreign suffix -age",
+      "description": "Nouns ending in -age are feminine. Examples: die Garage, die Passage, die Etage.",
+      "exceptions": [
+        {
+          "word": "Image",
+          "article": "das"
+        },
+        {
+          "word": "Page",
+          "article": "der"
+        },
+        {
+          "word": "Vintage",
+          "article": "das"
+        }
+      ]
+    },
+    "die.suffix_anz": {
+      "article": "die",
+      "name": "Foreign suffix -anz",
+      "description": "Nouns ending in -anz are feminine. Examples: die Eleganz, die Dominanz, die Toleranz.",
+      "exceptions": [
+        {
+          "word": "Glanz",
+          "article": "der"
+        },
+        {
+          "word": "Kranz",
+          "article": "der"
+        },
+        {
+          "word": "Schwanz",
+          "article": "der"
+        },
+        {
+          "word": "Tanz",
+          "article": "der"
+        }
+      ]
+    },
+    "die.suffix_enz": {
+      "article": "die",
+      "name": "Foreign suffix -enz",
+      "description": "Nouns ending in -enz (typically verb-derived, Latin origin) are feminine. Examples: die Existenz, die Tendenz, die Konferenz.",
+      "exceptions": [
+        {
+          "word": "Lenz",
+          "article": "der"
+        }
+      ]
+    },
+    "die.suffix_ik": {
+      "article": "die",
+      "name": "Foreign suffix -ik",
+      "description": "Nouns ending in -ik are feminine. Examples: die Kritik, die Musik, die Politik.",
+      "exceptions": [
+        {
+          "word": "Katholik",
+          "article": "der"
+        },
+        {
+          "word": "Mikroplastik",
+          "article": "der"
+        },
+        {
+          "word": "Pik",
+          "article": "das"
+        },
+        {
+          "word": "Streik",
+          "article": "der"
+        }
+      ]
+    },
+    "die.suffix_ion": {
+      "article": "die",
+      "name": "Foreign suffix -ion",
+      "description": "Nouns ending in -ion are feminine. Examples: die Diskussion, die Koalition, die Information.",
+      "exceptions": [
+        {
+          "word": "Champion",
+          "article": "der"
+        },
+        {
+          "word": "Skorpion",
+          "article": "der"
+        },
+        {
+          "word": "Spion",
+          "article": "der"
+        }
+      ]
+    },
+    "die.suffix_taet": {
+      "article": "die",
+      "name": "Foreign suffix -tät",
+      "description": "Nouns ending in -tät are feminine. Examples: die Identität, die Qualität, die Universität.",
+      "exceptions": []
+    },
+    "die.suffix_ur": {
+      "article": "die",
+      "name": "Foreign suffix -ur",
+      "description": "Nouns ending in -ur are feminine. Examples: die Agentur, die Reparatur, die Natur.",
+      "exceptions": [
+        {
+          "word": "Abitur",
+          "article": "das"
+        },
+        {
+          "word": "Bulgur",
+          "article": "der"
+        },
+        {
+          "word": "Flur",
+          "article": "der"
+        },
+        {
+          "word": "Futur",
+          "article": "das"
+        },
+        {
+          "word": "Glamour",
+          "article": "der"
+        },
+        {
+          "word": "Kontur",
+          "article": "der"
+        },
+        {
+          "word": "Lemur",
+          "article": "der"
+        },
+        {
+          "word": "Parkour",
+          "article": "der"
+        },
+        {
+          "word": "Schwur",
+          "article": "der"
+        }
+      ]
+    },
+    "die.suffix_e": {
+      "article": "die",
+      "name": "Suffix -e",
+      "description": "Most nouns ending in -e are feminine. Examples: die Grenze, die Lampe, die Blume, die Sonne.",
+      "exceptions": [
+        {
+          "word": "Accessoire",
+          "article": "das"
+        },
+        {
+          "word": "Achtzigerjahre",
+          "article": "das"
+        },
+        {
+          "word": "Affe",
+          "article": "der"
+        },
+        {
+          "word": "Afghane",
+          "article": "der"
+        },
+        {
+          "word": "Ahne",
+          "article": "der"
+        },
+        {
+          "word": "Alleinerbe",
+          "article": "der"
+        },
+        {
+          "word": "Ambiente",
+          "article": "das"
+        },
+        {
+          "word": "Ampere",
+          "article": "das"
+        },
+        {
+          "word": "Androide",
+          "article": "der"
+        },
+        {
+          "word": "Anime",
+          "article": "der"
+        },
+        {
+          "word": "Anthropologe",
+          "article": "der"
+        },
+        {
+          "word": "Apache",
+          "article": "der"
+        },
+        {
+          "word": "Archäologe",
+          "article": "der"
+        },
+        {
+          "word": "Archivale",
+          "article": "das"
+        },
+        {
+          "word": "Asiate",
+          "article": "der"
+        },
+        {
+          "word": "Audiofile",
+          "article": "der"
+        },
+        {
+          "word": "Auge",
+          "article": "das"
+        },
+        {
+          "word": "Backbone",
+          "article": "der"
+        },
+        {
+          "word": "Barbecue",
+          "article": "das"
+        },
+        {
+          "word": "Barde",
+          "article": "der"
+        },
+        {
+          "word": "Beduine",
+          "article": "der"
+        },
+        {
+          "word": "Beige",
+          "article": "das"
+        },
+        {
+          "word": "Bergleute",
+          "article": "das"
+        },
+        {
+          "word": "Bike",
+          "article": "das"
+        },
+        {
+          "word": "Biologe",
+          "article": "der"
+        },
+        {
+          "word": "Bolide",
+          "article": "der"
+        },
+        {
+          "word": "Bolognese",
+          "article": "der"
+        },
+        {
+          "word": "Bote",
+          "article": "der"
+        },
+        {
+          "word": "Braille",
+          "article": "das"
+        },
+        {
+          "word": "Brite",
+          "article": "der"
+        },
+        {
+          "word": "Bube",
+          "article": "der"
+        },
+        {
+          "word": "Buchstabe",
+          "article": "der"
+        },
+        {
+          "word": "Bulgare",
+          "article": "der"
+        },
+        {
+          "word": "Bulle",
+          "article": "der"
+        },
+        {
+          "word": "Bundesjugendspiele",
+          "article": "das"
+        },
+        {
+          "word": "Bürge",
+          "article": "der"
+        },
+        {
+          "word": "Bursche",
+          "article": "der"
+        },
+        {
+          "word": "Byte",
+          "article": "das"
+        },
+        {
+          "word": "Cache",
+          "article": "der"
+        },
+        {
+          "word": "Cape",
+          "article": "das"
+        },
+        {
+          "word": "Challenge",
+          "article": "der"
+        },
+        {
+          "word": "Charme",
+          "article": "der"
+        },
+        {
+          "word": "Chinese",
+          "article": "der"
+        },
+        {
+          "word": "Code",
+          "article": "der"
+        },
+        {
+          "word": "College",
+          "article": "das"
+        },
+        {
+          "word": "Concierge",
+          "article": "der"
+        },
+        {
+          "word": "Cupcake",
+          "article": "der"
+        },
+        {
+          "word": "Cyberspace",
+          "article": "der"
+        },
+        {
+          "word": "Däne",
+          "article": "der"
+        },
+        {
+          "word": "Date",
+          "article": "das"
+        },
+        {
+          "word": "Dermatologe",
+          "article": "der"
+        },
+        {
+          "word": "Dongle",
+          "article": "der"
+        },
+        {
+          "word": "Doodle",
+          "article": "der"
+        },
+        {
+          "word": "Double",
+          "article": "das"
+        },
+        {
+          "word": "Drache",
+          "article": "der"
+        },
+        {
+          "word": "Drive",
+          "article": "der"
+        },
+        {
+          "word": "Druide",
+          "article": "der"
+        },
+        {
+          "word": "Eheleute",
+          "article": "das"
+        },
+        {
+          "word": "Empire",
+          "article": "das"
+        },
+        {
+          "word": "Ende",
+          "article": "das"
+        },
+        {
+          "word": "Ensemble",
+          "article": "das"
+        },
+        {
+          "word": "Erbe",
+          "article": "das"
+        },
+        {
+          "word": "Este",
+          "article": "der"
+        },
+        {
+          "word": "Experte",
+          "article": "der"
+        },
+        {
+          "word": "Faible",
+          "article": "das"
+        },
+        {
+          "word": "Fake",
+          "article": "der"
+        },
+        {
+          "word": "Faksimile",
+          "article": "das"
+        },
+        {
+          "word": "Falke",
+          "article": "der"
+        },
+        {
+          "word": "Familienverhältnisse",
+          "article": "das"
+        },
+        {
+          "word": "Fanzine",
+          "article": "das"
+        },
+        {
+          "word": "Feuerwehrleute",
+          "article": "das"
+        },
+        {
+          "word": "Filmfestspiele",
+          "article": "das"
+        },
+        {
+          "word": "Finale",
+          "article": "das"
+        },
+        {
+          "word": "Finne",
+          "article": "der"
+        },
+        {
+          "word": "Frame",
+          "article": "der"
+        },
+        {
+          "word": "Franchise",
+          "article": "das"
+        },
+        {
+          "word": "Franke",
+          "article": "der"
+        },
+        {
+          "word": "Franzose",
+          "article": "der"
+        },
+        {
+          "word": "Friede",
+          "article": "der"
+        },
+        {
+          "word": "Funke",
+          "article": "der"
+        },
+        {
+          "word": "Ganove",
+          "article": "der"
+        },
+        {
+          "word": "Gate",
+          "article": "das"
+        },
+        {
+          "word": "Gatte",
+          "article": "der"
+        },
+        {
+          "word": "Gebäude",
+          "article": "das"
+        },
+        {
+          "word": "Gebilde",
+          "article": "das"
+        },
+        {
+          "word": "Gebinde",
+          "article": "das"
+        },
+        {
+          "word": "Gebirge",
+          "article": "das"
+        },
+        {
+          "word": "Gebläse",
+          "article": "das"
+        },
+        {
+          "word": "Gedanke",
+          "article": "der"
+        },
+        {
+          "word": "Gedränge",
+          "article": "das"
+        },
+        {
+          "word": "Gefährte",
+          "article": "der"
+        },
+        {
+          "word": "Gefälle",
+          "article": "das"
+        },
+        {
+          "word": "Gefilde",
+          "article": "das"
+        },
+        {
+          "word": "Gefolge",
+          "article": "das"
+        },
+        {
+          "word": "Gefüge",
+          "article": "das"
+        },
+        {
+          "word": "Gehäuse",
+          "article": "das"
+        },
+        {
+          "word": "Gehege",
+          "article": "das"
+        },
+        {
+          "word": "Gehilfe",
+          "article": "der"
+        },
+        {
+          "word": "Gelände",
+          "article": "das"
+        },
+        {
+          "word": "Gelege",
+          "article": "das"
+        },
+        {
+          "word": "Gemälde",
+          "article": "das"
+        },
+        {
+          "word": "Gemüse",
+          "article": "das"
+        },
+        {
+          "word": "Genosse",
+          "article": "der"
+        },
+        {
+          "word": "Genre",
+          "article": "das"
+        },
+        {
+          "word": "Geologe",
+          "article": "der"
+        },
+        {
+          "word": "Gerede",
+          "article": "das"
+        },
+        {
+          "word": "Germane",
+          "article": "der"
+        },
+        {
+          "word": "Geselle",
+          "article": "der"
+        },
+        {
+          "word": "Gesinde",
+          "article": "das"
+        },
+        {
+          "word": "Getöse",
+          "article": "das"
+        },
+        {
+          "word": "Getreide",
+          "article": "das"
+        },
+        {
+          "word": "Getriebe",
+          "article": "das"
+        },
+        {
+          "word": "Gewebe",
+          "article": "das"
+        },
+        {
+          "word": "Gewinde",
+          "article": "das"
+        },
+        {
+          "word": "Gewölbe",
+          "article": "das"
+        },
+        {
+          "word": "Glaube",
+          "article": "der"
+        },
+        {
+          "word": "Grieche",
+          "article": "der"
+        },
+        {
+          "word": "Groove",
+          "article": "der"
+        },
+        {
+          "word": "Großtrappe",
+          "article": "der"
+        },
+        {
+          "word": "Guide",
+          "article": "der"
+        },
+        {
+          "word": "Gynäkologe",
+          "article": "der"
+        },
+        {
+          "word": "Hase",
+          "article": "der"
+        },
+        {
+          "word": "Haufe",
+          "article": "der"
+        },
+        {
+          "word": "Heide",
+          "article": "der"
+        },
+        {
+          "word": "Hesse",
+          "article": "der"
+        },
+        {
+          "word": "Heute",
+          "article": "das"
+        },
+        {
+          "word": "Hirte",
+          "article": "der"
+        },
+        {
+          "word": "Hole",
+          "article": "das"
+        },
+        {
+          "word": "Homeoffice",
+          "article": "das"
+        },
+        {
+          "word": "Hugenotte",
+          "article": "der"
+        },
+        {
+          "word": "Hybride",
+          "article": "der"
+        },
+        {
+          "word": "Hype",
+          "article": "der"
+        },
+        {
+          "word": "Incentive",
+          "article": "das"
+        },
+        {
+          "word": "Insasse",
+          "article": "der"
+        },
+        {
+          "word": "Interesse",
+          "article": "das"
+        },
+        {
+          "word": "Interface",
+          "article": "das"
+        },
+        {
+          "word": "Jeside",
+          "article": "der"
+        },
+        {
+          "word": "Jingle",
+          "article": "der"
+        },
+        {
+          "word": "Jude",
+          "article": "der"
+        },
+        {
+          "word": "Junge",
+          "article": "der"
+        },
+        {
+          "word": "Kaffee",
+          "article": "der"
+        },
+        {
+          "word": "Kameraleute",
+          "article": "das"
+        },
+        {
+          "word": "Kanute",
+          "article": "der"
+        },
+        {
+          "word": "Karate",
+          "article": "das"
+        },
+        {
+          "word": "Kardiologe",
+          "article": "der"
+        },
+        {
+          "word": "Käse",
+          "article": "der"
+        },
+        {
+          "word": "Katalane",
+          "article": "der"
+        },
+        {
+          "word": "Kerle",
+          "article": "der"
+        },
+        {
+          "word": "Klischee",
+          "article": "das"
+        },
+        {
+          "word": "Knabe",
+          "article": "der"
+        },
+        {
+          "word": "Knappe",
+          "article": "der"
+        },
+        {
+          "word": "Kode",
+          "article": "der"
+        },
+        {
+          "word": "Kollege",
+          "article": "der"
+        },
+        {
+          "word": "Komitee",
+          "article": "das"
+        },
+        {
+          "word": "Kommilitone",
+          "article": "der"
+        },
+        {
+          "word": "Komparse",
+          "article": "der"
+        },
+        {
+          "word": "Komplize",
+          "article": "der"
+        },
+        {
+          "word": "Kongolese",
+          "article": "der"
+        },
+        {
+          "word": "Konklave",
+          "article": "das"
+        },
+        {
+          "word": "Konsorte",
+          "article": "der"
+        },
+        {
+          "word": "Körpermitte",
+          "article": "das"
+        },
+        {
+          "word": "Krake",
+          "article": "der"
+        },
+        {
+          "word": "Kroate",
+          "article": "der"
+        },
+        {
+          "word": "Kunde",
+          "article": "der"
+        },
+        {
+          "word": "Kurde",
+          "article": "der"
+        },
+        {
+          "word": "Kure",
+          "article": "der"
+        },
+        {
+          "word": "Ländle",
+          "article": "das"
+        },
+        {
+          "word": "Landsleute",
+          "article": "das"
+        },
+        {
+          "word": "Lifestyle",
+          "article": "der"
+        },
+        {
+          "word": "Like",
+          "article": "der"
+        },
+        {
+          "word": "Live",
+          "article": "der"
+        },
+        {
+          "word": "Logopäde",
+          "article": "der"
+        },
+        {
+          "word": "Lotse",
+          "article": "der"
+        },
+        {
+          "word": "Löwe",
+          "article": "der"
+        },
+        {
+          "word": "Mascarpone",
+          "article": "der"
+        },
+        {
+          "word": "Matrose",
+          "article": "der"
+        },
+        {
+          "word": "Meme",
+          "article": "das"
+        },
+        {
+          "word": "Meteorologe",
+          "article": "der"
+        },
+        {
+          "word": "Miterbe",
+          "article": "der"
+        },
+        {
+          "word": "Mobile",
+          "article": "das"
+        },
+        {
+          "word": "Nachfahre",
+          "article": "der"
+        },
+        {
+          "word": "Nachkomme",
+          "article": "der"
+        },
+        {
+          "word": "Name",
+          "article": "der"
+        },
+        {
+          "word": "Neffe",
+          "article": "der"
+        },
+        {
+          "word": "Nematode",
+          "article": "der"
+        },
+        {
+          "word": "Neunzigerjahre",
+          "article": "das"
+        },
+        {
+          "word": "Ochse",
+          "article": "der"
+        },
+        {
+          "word": "Onkologe",
+          "article": "der"
+        },
+        {
+          "word": "Ornithologe",
+          "article": "der"
+        },
+        {
+          "word": "Orthopäde",
+          "article": "der"
+        },
+        {
+          "word": "Osmane",
+          "article": "der"
+        },
+        {
+          "word": "Pädagoge",
+          "article": "der"
+        },
+        {
+          "word": "Paläontologe",
+          "article": "der"
+        },
+        {
+          "word": "Pate",
+          "article": "der"
+        },
+        {
+          "word": "Pathologe",
+          "article": "der"
+        },
+        {
+          "word": "Penthouse",
+          "article": "das"
+        },
+        {
+          "word": "Pharmakologe",
+          "article": "der"
+        },
+        {
+          "word": "Philologe",
+          "article": "der"
+        },
+        {
+          "word": "Platzgründe",
+          "article": "das"
+        },
+        {
+          "word": "Podologe",
+          "article": "der"
+        },
+        {
+          "word": "Pole",
+          "article": "der"
+        },
+        {
+          "word": "Politologe",
+          "article": "der"
+        },
+        {
+          "word": "Porridge",
+          "article": "der"
+        },
+        {
+          "word": "Portmonee",
+          "article": "das"
+        },
+        {
+          "word": "Portugiese",
+          "article": "der"
+        },
+        {
+          "word": "Prestige",
+          "article": "das"
+        },
+        {
+          "word": "Privatleute",
+          "article": "das"
+        },
+        {
+          "word": "Procedere",
+          "article": "das"
+        },
+        {
+          "word": "Promille",
+          "article": "das"
+        },
+        {
+          "word": "Prozedere",
+          "article": "das"
+        },
+        {
+          "word": "Psychologe",
+          "article": "der"
+        },
+        {
+          "word": "Püree",
+          "article": "das"
+        },
+        {
+          "word": "Puzzle",
+          "article": "das"
+        },
+        {
+          "word": "Rabe",
+          "article": "der"
+        },
+        {
+          "word": "Radiologe",
+          "article": "der"
+        },
+        {
+          "word": "Range",
+          "article": "der"
+        },
+        {
+          "word": "Re",
+          "article": "das"
+        },
+        {
+          "word": "Recke",
+          "article": "der"
+        },
+        {
+          "word": "Referee",
+          "article": "der"
+        },
+        {
+          "word": "Refugee",
+          "article": "der"
+        },
+        {
+          "word": "Reggae",
+          "article": "der"
+        },
+        {
+          "word": "Regime",
+          "article": "das"
+        },
+        {
+          "word": "Release",
+          "article": "der"
+        },
+        {
+          "word": "Remake",
+          "article": "das"
+        },
+        {
+          "word": "Renommee",
+          "article": "das"
+        },
+        {
+          "word": "Repertoire",
+          "article": "das"
+        },
+        {
+          "word": "Resümee",
+          "article": "das"
+        },
+        {
+          "word": "Rheumatologe",
+          "article": "der"
+        },
+        {
+          "word": "Riese",
+          "article": "der"
+        },
+        {
+          "word": "Rivale",
+          "article": "der"
+        },
+        {
+          "word": "Romane",
+          "article": "der"
+        },
+        {
+          "word": "Roulette",
+          "article": "das"
+        },
+        {
+          "word": "Rüde",
+          "article": "der"
+        },
+        {
+          "word": "Rumäne",
+          "article": "der"
+        },
+        {
+          "word": "Russe",
+          "article": "der"
+        },
+        {
+          "word": "Sachse",
+          "article": "der"
+        },
+        {
+          "word": "Safe",
+          "article": "der"
+        },
+        {
+          "word": "Same",
+          "article": "der"
+        },
+        {
+          "word": "Sample",
+          "article": "das"
+        },
+        {
+          "word": "Schamane",
+          "article": "der"
+        },
+        {
+          "word": "Schimpanse",
+          "article": "der"
+        },
+        {
+          "word": "Schöffe",
+          "article": "der"
+        },
+        {
+          "word": "Schurke",
+          "article": "der"
+        },
+        {
+          "word": "Schütze",
+          "article": "der"
+        },
+        {
+          "word": "Schwabe",
+          "article": "der"
+        },
+        {
+          "word": "Schwede",
+          "article": "der"
+        },
+        {
+          "word": "Sechzigerjahre",
+          "article": "das"
+        },
+        {
+          "word": "See",
+          "article": "der"
+        },
+        {
+          "word": "Seeleute",
+          "article": "das"
+        },
+        {
+          "word": "Serbe",
+          "article": "der"
+        },
+        {
+          "word": "Service",
+          "article": "der"
+        },
+        {
+          "word": "Shuttle",
+          "article": "der"
+        },
+        {
+          "word": "Single",
+          "article": "der"
+        },
+        {
+          "word": "Sklave",
+          "article": "der"
+        },
+        {
+          "word": "Smartphone",
+          "article": "das"
+        },
+        {
+          "word": "Soziologe",
+          "article": "der"
+        },
+        {
+          "word": "Spätzle",
+          "article": "das"
+        },
+        {
+          "word": "Stratege",
+          "article": "der"
+        },
+        {
+          "word": "Tape",
+          "article": "der"
+        },
+        {
+          "word": "Tee",
+          "article": "der"
+        },
+        {
+          "word": "Tele",
+          "article": "das"
+        },
+        {
+          "word": "Template",
+          "article": "das"
+        },
+        {
+          "word": "Terme",
+          "article": "der"
+        },
+        {
+          "word": "Theologe",
+          "article": "der"
+        },
+        {
+          "word": "Trainee",
+          "article": "der"
+        },
+        {
+          "word": "Tscheche",
+          "article": "der"
+        },
+        {
+          "word": "Türke",
+          "article": "der"
+        },
+        {
+          "word": "Urologe",
+          "article": "der"
+        },
+        {
+          "word": "Verkehrsverhältnisse",
+          "article": "das"
+        },
+        {
+          "word": "Vietnamese",
+          "article": "der"
+        },
+        {
+          "word": "Virtuose",
+          "article": "der"
+        },
+        {
+          "word": "Vize",
+          "article": "der"
+        },
+        {
+          "word": "Waise",
+          "article": "der"
+        },
+        {
+          "word": "Webspace",
+          "article": "der"
+        },
+        {
+          "word": "Wechseljahre",
+          "article": "das"
+        },
+        {
+          "word": "Weichteile",
+          "article": "der"
+        },
+        {
+          "word": "Welpe",
+          "article": "der"
+        },
+        {
+          "word": "Westfale",
+          "article": "der"
+        },
+        {
+          "word": "Wetterverhältnisse",
+          "article": "das"
+        },
+        {
+          "word": "Wille",
+          "article": "der"
+        },
+        {
+          "word": "Winterspiele",
+          "article": "das"
+        },
+        {
+          "word": "Zelte",
+          "article": "der"
+        },
+        {
+          "word": "Zeuge",
+          "article": "der"
+        },
+        {
+          "word": "Zoologe",
+          "article": "der"
+        },
+        {
+          "word": "Zuhause",
+          "article": "das"
+        }
+      ]
+    },
+    "die.suffix_ei": {
+      "article": "die",
+      "name": "Suffix -ei",
+      "description": "Most nouns ending in -ei are feminine. Examples: die Abtei, die Metzgerei, die Polizei, die Bäckerei.",
+      "exceptions": [
+        {
+          "word": "Brei",
+          "article": "der"
+        },
+        {
+          "word": "Ei",
+          "article": "das"
+        },
+        {
+          "word": "Frei",
+          "article": "das"
+        },
+        {
+          "word": "Geschrei",
+          "article": "das"
+        },
+        {
+          "word": "Hühnerei",
+          "article": "das"
+        },
+        {
+          "word": "Osterei",
+          "article": "das"
+        },
+        {
+          "word": "Papagei",
+          "article": "der"
+        },
+        {
+          "word": "Rührei",
+          "article": "das"
+        },
+        {
+          "word": "Salbei",
+          "article": "der"
+        },
+        {
+          "word": "Schrei",
+          "article": "der"
+        },
+        {
+          "word": "Spiegelei",
+          "article": "das"
+        },
+        {
+          "word": "Überraschungsei",
+          "article": "das"
+        }
+      ]
+    },
+    "die.suffix_ie": {
+      "article": "die",
+      "name": "Suffix -ie",
+      "description": "Most nouns ending in -ie are feminine. Examples: die Diplomatie, die Psychologie, die Industrie, die Theorie.",
+      "exceptions": [
+        {
+          "word": "Cookie",
+          "article": "der"
+        },
+        {
+          "word": "Dummie",
+          "article": "der"
+        },
+        {
+          "word": "Genie",
+          "article": "das"
+        },
+        {
+          "word": "Goodie",
+          "article": "das"
+        },
+        {
+          "word": "Hippie",
+          "article": "der"
+        },
+        {
+          "word": "Hoodie",
+          "article": "der"
+        },
+        {
+          "word": "Junkie",
+          "article": "der"
+        },
+        {
+          "word": "Kiddie",
+          "article": "das"
+        },
+        {
+          "word": "Knie",
+          "article": "das"
+        },
+        {
+          "word": "Kyrie",
+          "article": "das"
+        },
+        {
+          "word": "Laie",
+          "article": "der"
+        },
+        {
+          "word": "Movie",
+          "article": "der"
+        },
+        {
+          "word": "Oldie",
+          "article": "der"
+        },
+        {
+          "word": "Portemonnaie",
+          "article": "das"
+        },
+        {
+          "word": "Roadmovie",
+          "article": "das"
+        },
+        {
+          "word": "Selfie",
+          "article": "das"
+        },
+        {
+          "word": "Sellerie",
+          "article": "der"
+        },
+        {
+          "word": "Smoothie",
+          "article": "der"
+        },
+        {
+          "word": "Teenie",
+          "article": "der"
+        },
+        {
+          "word": "Wie",
+          "article": "das"
+        },
+        {
+          "word": "Zombie",
+          "article": "der"
+        }
+      ]
+    },
+    "die.suffix_in": {
+      "article": "die",
+      "name": "Suffix -in",
+      "description": "Most nouns ending in -in (especially feminine job/role suffixes) are feminine. Examples: die Ärztin, die Studentin, die Freundin.",
+      "exceptions": [
+        {
+          "word": "Admin",
+          "article": "der"
+        },
+        {
+          "word": "Adrenalin",
+          "article": "das"
+        },
+        {
+          "word": "Aflatoxin",
+          "article": "das"
+        },
+        {
+          "word": "Amin",
+          "article": "das"
+        },
+        {
+          "word": "Aspirin",
+          "article": "das"
+        },
+        {
+          "word": "Baldachin",
+          "article": "der"
+        },
+        {
+          "word": "Benzin",
+          "article": "das"
+        },
+        {
+          "word": "Benzodiazepin",
+          "article": "das"
+        },
+        {
+          "word": "Biotin",
+          "article": "das"
+        },
+        {
+          "word": "Bulletin",
+          "article": "das"
+        },
+        {
+          "word": "Cholesterin",
+          "article": "das"
+        },
+        {
+          "word": "Cousin",
+          "article": "der"
+        },
+        {
+          "word": "Delfin",
+          "article": "der"
+        },
+        {
+          "word": "Delphin",
+          "article": "der"
+        },
+        {
+          "word": "Dioxin",
+          "article": "das"
+        },
+        {
+          "word": "Glycerin",
+          "article": "das"
+        },
+        {
+          "word": "Harlekin",
+          "article": "der"
+        },
+        {
+          "word": "Insulin",
+          "article": "das"
+        },
+        {
+          "word": "Kamin",
+          "article": "der"
+        },
+        {
+          "word": "Kerosin",
+          "article": "das"
+        },
+        {
+          "word": "Magazin",
+          "article": "das"
+        },
+        {
+          "word": "Mandarin",
+          "article": "der"
+        },
+        {
+          "word": "Metformin",
+          "article": "das"
+        },
+        {
+          "word": "Morphin",
+          "article": "das"
+        },
+        {
+          "word": "Muffin",
+          "article": "der"
+        },
+        {
+          "word": "Nikotin",
+          "article": "das"
+        },
+        {
+          "word": "Oxytocin",
+          "article": "das"
+        },
+        {
+          "word": "Pinguin",
+          "article": "der"
+        },
+        {
+          "word": "Plugin",
+          "article": "das"
+        },
+        {
+          "word": "Ritalin",
+          "article": "das"
+        },
+        {
+          "word": "Rosmarin",
+          "article": "der"
+        },
+        {
+          "word": "Ruin",
+          "article": "der"
+        },
+        {
+          "word": "Skin",
+          "article": "der"
+        },
+        {
+          "word": "Spin",
+          "article": "der"
+        },
+        {
+          "word": "Statin",
+          "article": "das"
+        },
+        {
+          "word": "Termin",
+          "article": "der"
+        },
+        {
+          "word": "Trampolin",
+          "article": "das"
+        },
+        {
+          "word": "Urin",
+          "article": "der"
+        },
+        {
+          "word": "Vanillin",
+          "article": "das"
+        }
+      ]
+    },
+    "die.feminine_persons": {
+      "article": "die",
+      "name": "Feminine persons, roles, professions",
+      "description": "Nouns denoting female persons, family roles, or female professions take die. Examples: die Mutter, die Schwester, die Ärztin, die Königin.",
+      "exceptions": []
+    },
+    "die.motorcycle_brands": {
+      "article": "die",
+      "name": "Motorcycle brands",
+      "description": "Motorcycle brand names are feminine: die Harley Davidson, die Yamaha, die BMW (as motorcycle), die Kawasaki.",
+      "exceptions": []
+    },
+    "die.planes_ships": {
+      "article": "die",
+      "name": "Planes and ships",
+      "description": "Names of planes and ships are feminine: die Boeing 747, die Titanic, die Queen Mary.",
+      "exceptions": []
+    },
+    "die.cardinal_numbers": {
+      "article": "die",
+      "name": "Cardinal numbers (as nouns)",
+      "description": "Cardinal numbers used as nouns are feminine: die Eins, die Zwei, die Drei, die Hundert, die Million.",
+      "exceptions": []
+    },
+    "die.plants_trees": {
+      "article": "die",
+      "name": "Plants and trees",
+      "description": "Most plants and trees are feminine: die Birke, die Chrysantheme, die Rose, die Tulpe, die Eiche.",
+      "exceptions": [
+        {
+          "word": "Ahorn",
+          "article": "der"
+        },
+        {
+          "word": "Veilchen",
+          "article": "das"
+        }
+      ]
+    },
+    "das.suffix_ial": {
+      "article": "das",
+      "name": "Suffix -ial",
+      "description": "Nouns ending in -ial are neuter. Examples: das Material, das Potenzial, das Sozial.",
+      "exceptions": []
+    },
+    "das.suffix_ment": {
+      "article": "das",
+      "name": "Suffix -ment",
+      "description": "Most nouns ending in -ment are neuter. Examples: das Instrument, das Parlament, das Dokument, das Argument.",
+      "exceptions": [
+        {
+          "word": "Konsument",
+          "article": "der"
+        },
+        {
+          "word": "Moment",
+          "article": "der"
+        },
+        {
+          "word": "Zement",
+          "article": "der"
+        }
+      ]
+    },
+    "das.suffix_nis": {
+      "article": "das",
+      "name": "Suffix -nis",
+      "description": "Most nouns ending in -nis are neuter. Examples: das Ergebnis, das Tennis, das Zeugnis, das Ereignis.",
+      "exceptions": [
+        {
+          "word": "Anis",
+          "article": "der"
+        },
+        {
+          "word": "Bedrängnis",
+          "article": "die"
+        },
+        {
+          "word": "Befugnis",
+          "article": "die"
+        },
+        {
+          "word": "Besorgnis",
+          "article": "die"
+        },
+        {
+          "word": "Erlaubnis",
+          "article": "die"
+        },
+        {
+          "word": "Ersparnis",
+          "article": "die"
+        },
+        {
+          "word": "Fahrerlaubnis",
+          "article": "die"
+        },
+        {
+          "word": "Finsternis",
+          "article": "die"
+        },
+        {
+          "word": "Kenntnis",
+          "article": "die"
+        },
+        {
+          "word": "Penis",
+          "article": "der"
+        },
+        {
+          "word": "Versäumnis",
+          "article": "die"
+        },
+        {
+          "word": "Wildnis",
+          "article": "die"
+        }
+      ]
+    },
+    "das.suffix_o": {
+      "article": "das",
+      "name": "Suffix -o",
+      "description": "Most nouns ending in -o are neuter. Examples: das Auto, das Konto, das Büro, das Kino.",
+      "exceptions": [
+        {
+          "word": "Antipasto",
+          "article": "der"
+        },
+        {
+          "word": "Avocado",
+          "article": "die"
+        },
+        {
+          "word": "Bongo",
+          "article": "die"
+        },
+        {
+          "word": "Cappuccino",
+          "article": "der"
+        },
+        {
+          "word": "Cargo",
+          "article": "der"
+        },
+        {
+          "word": "Demo",
+          "article": "die"
+        },
+        {
+          "word": "Dino",
+          "article": "der"
+        },
+        {
+          "word": "Disco",
+          "article": "die"
+        },
+        {
+          "word": "Disko",
+          "article": "die"
+        },
+        {
+          "word": "Embryo",
+          "article": "der"
+        },
+        {
+          "word": "Espresso",
+          "article": "der"
+        },
+        {
+          "word": "Euro",
+          "article": "der"
+        },
+        {
+          "word": "Expo",
+          "article": "die"
+        },
+        {
+          "word": "Flamingo",
+          "article": "der"
+        },
+        {
+          "word": "Gecko",
+          "article": "der"
+        },
+        {
+          "word": "Gestapo",
+          "article": "die"
+        },
+        {
+          "word": "Ghetto",
+          "article": "der"
+        },
+        {
+          "word": "Graffito",
+          "article": "der"
+        },
+        {
+          "word": "GroKo",
+          "article": "die"
+        },
+        {
+          "word": "Gruppenfoto",
+          "article": "die"
+        },
+        {
+          "word": "Gusto",
+          "article": "der"
+        },
+        {
+          "word": "Hokkaido",
+          "article": "der"
+        },
+        {
+          "word": "Info",
+          "article": "die"
+        },
+        {
+          "word": "Kakao",
+          "article": "der"
+        },
+        {
+          "word": "Kilo",
+          "article": "der"
+        },
+        {
+          "word": "Kimono",
+          "article": "der"
+        },
+        {
+          "word": "Klassenfoto",
+          "article": "die"
+        },
+        {
+          "word": "Kripo",
+          "article": "die"
+        },
+        {
+          "word": "Laudatio",
+          "article": "die"
+        },
+        {
+          "word": "Leporello",
+          "article": "der"
+        },
+        {
+          "word": "Libido",
+          "article": "die"
+        },
+        {
+          "word": "Limo",
+          "article": "die"
+        },
+        {
+          "word": "Logo",
+          "article": "der"
+        },
+        {
+          "word": "Macho",
+          "article": "der"
+        },
+        {
+          "word": "Mango",
+          "article": "die"
+        },
+        {
+          "word": "Mayo",
+          "article": "die"
+        },
+        {
+          "word": "Metro",
+          "article": "die"
+        },
+        {
+          "word": "Öko",
+          "article": "der"
+        },
+        {
+          "word": "Pesto",
+          "article": "der"
+        },
+        {
+          "word": "Pharao",
+          "article": "der"
+        },
+        {
+          "word": "Po",
+          "article": "der"
+        },
+        {
+          "word": "Polio",
+          "article": "die"
+        },
+        {
+          "word": "Poncho",
+          "article": "der"
+        },
+        {
+          "word": "Porno",
+          "article": "der"
+        },
+        {
+          "word": "Promo",
+          "article": "die"
+        },
+        {
+          "word": "Prosecco",
+          "article": "der"
+        },
+        {
+          "word": "Radio",
+          "article": "der"
+        },
+        {
+          "word": "Ratio",
+          "article": "die"
+        },
+        {
+          "word": "Risotto",
+          "article": "der"
+        },
+        {
+          "word": "Rollo",
+          "article": "die"
+        },
+        {
+          "word": "Sakko",
+          "article": "der"
+        },
+        {
+          "word": "Saldo",
+          "article": "der"
+        },
+        {
+          "word": "Salto",
+          "article": "der"
+        },
+        {
+          "word": "Silo",
+          "article": "der"
+        },
+        {
+          "word": "Sinto",
+          "article": "der"
+        },
+        {
+          "word": "Skonto",
+          "article": "der"
+        },
+        {
+          "word": "Tacho",
+          "article": "der"
+        },
+        {
+          "word": "Tango",
+          "article": "der"
+        },
+        {
+          "word": "Tattoo",
+          "article": "der"
+        },
+        {
+          "word": "Techno",
+          "article": "der"
+        },
+        {
+          "word": "Tornado",
+          "article": "der"
+        },
+        {
+          "word": "Urlaubsfoto",
+          "article": "die"
+        },
+        {
+          "word": "Zoo",
+          "article": "der"
+        }
+      ]
+    },
+    "das.suffix_tum": {
+      "article": "das",
+      "name": "Suffix -tum",
+      "description": "Most nouns ending in -tum are neuter. Examples: das Quantum, das Ultimatum, das Eigentum, das Wachstum.",
+      "exceptions": [
+        {
+          "word": "Irrtum",
+          "article": "der"
+        },
+        {
+          "word": "Reichtum",
+          "article": "der"
+        }
+      ]
+    },
+    "das.suffix_um_latin": {
+      "article": "das",
+      "name": "Suffix -um (Latin origin)",
+      "description": "Nouns of Latin origin ending in -um are neuter. Examples: das Publikum, das Museum, das Stadium, das Zentrum.",
+      "exceptions": [
+        {
+          "word": "Konsum",
+          "article": "der"
+        },
+        {
+          "word": "Slum",
+          "article": "der"
+        }
+      ]
+    },
+    "das.diminutives": {
+      "article": "das",
+      "name": "Diminutives (-chen, -lein)",
+      "description": "All diminutives formed with -chen or -lein are neuter, even when the base word is masculine or feminine. Examples: das Mädchen, das Kaninchen, das Fräulein, das Büchlein.",
+      "exceptions": []
+    },
+    "das.nominalized_infinitive": {
+      "article": "das",
+      "name": "Nominalized infinitives",
+      "description": "Any German verb infinitive can be used as a noun (capitalized), and it is always neuter. Examples: das Essen (to eat → food), das Schreiben, das Leben, das Laufen.",
+      "exceptions": []
+    },
+    "das.nominalized_adjective": {
+      "article": "das",
+      "name": "Nominalized adjectives (abstract sense)",
+      "description": "Adjectives turned into abstract nouns (the quality itself) are neuter. Examples: das Gute, das Böse, das Schöne, das Neue.",
+      "exceptions": []
+    },
+    "das.colors": {
+      "article": "das",
+      "name": "Colours",
+      "description": "Colours as nouns are neuter: das Rot, das Gelb, das Blau, das Grün, das Schwarz.",
+      "exceptions": [
+        {
+          "word": "Orange",
+          "article": "die"
+        }
+      ]
+    },
+    "das.chemical_elements": {
+      "article": "das",
+      "name": "Chemical elements",
+      "description": "Nearly all of the ~112 chemical elements are neuter. Examples: das Aluminium, das Kupfer, das Uran, das Helium, das Eisen.",
+      "exceptions": [
+        {
+          "word": "Kohlenstoff",
+          "article": "der"
+        },
+        {
+          "word": "Phosphor",
+          "article": "der"
+        },
+        {
+          "word": "Sauerstoff",
+          "article": "der"
+        },
+        {
+          "word": "Schwefel",
+          "article": "der"
+        },
+        {
+          "word": "Stickstoff",
+          "article": "der"
+        },
+        {
+          "word": "Wasserstoff",
+          "article": "der"
+        }
+      ]
+    },
+    "das.metals": {
+      "article": "das",
+      "name": "Metals",
+      "description": "Most metals are neuter: das Blei, das Messing, das Zinn, das Gold, das Silber, das Eisen.",
+      "exceptions": [
+        {
+          "word": "Bronze",
+          "article": "die"
+        },
+        {
+          "word": "Stahl",
+          "article": "der"
+        }
+      ]
+    },
+    "das.fractions": {
+      "article": "das",
+      "name": "Fractions",
+      "description": "Fractions (except one half) are neuter: das Drittel (⅓), das Viertel (¼), das Zehntel, das Hundertstel.",
+      "exceptions": [
+        {
+          "word": "Fünftel",
+          "article": "der"
+        },
+        {
+          "word": "Hälfte",
+          "article": "die"
+        },
+        {
+          "word": "Hundertstel",
+          "article": "der"
+        },
+        {
+          "word": "Sechstel",
+          "article": "der"
+        },
+        {
+          "word": "Tausendstel",
+          "article": "der"
+        },
+        {
+          "word": "Viertel",
+          "article": "der"
+        },
+        {
+          "word": "Zehntel",
+          "article": "der"
+        }
+      ]
+    },
+    "der.suffix_eur": {
+      "article": "der",
+      "name": "Suffix -eur (French agent suffix)",
+      "description": "Nouns of French origin ending in -eur are masculine agent nouns. Examples: der Ingenieur, der Regisseur, der Friseur, der Chauffeur, der Amateur. (Not in the Passion4teq article; added for accuracy because -eur would otherwise be mis-matched against the feminine -ur rule.)",
+      "exceptions": [
+        {
+          "word": "Interieur",
+          "article": "das"
+        }
+      ]
+    }
+  }
+}
