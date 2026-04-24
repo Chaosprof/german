@@ -228,7 +228,9 @@ async function loadWordData() {
     const vpResp = await fetch(VERB_PREP_PATH);
     if (vpResp.ok) {
       const vpData = await vpResp.json();
-      VERB_PREPOSITIONS = (vpData.verbs || []).map(({ verb, english, rank, preposition, case: cas, example }) => [verb, english, rank, preposition, cas, example]);
+      VERB_PREPOSITIONS = (vpData.verbs || [])
+        .filter(({ preposition }) => SELECTABLE_VERB_PREPOSITIONS.has(preposition))
+        .map(({ verb, english, rank, preposition, case: cas, example }) => [verb, english, rank, preposition, cas, example]);
     }
   } catch(e) { console.warn("Could not load verbs with prepositions:", e); }
   // Load article rules
@@ -283,18 +285,21 @@ function getIrregularVerbsForTier(tier, minRank) {
   return minRank ? IRREGULAR_VERBS.filter(v => v[2] > minRank && v[2] <= tier) : IRREGULAR_VERBS.filter(v => v[2] <= tier);
 }
 
+const sortGermanStrings = values => [...values].sort((a, b) => a.localeCompare(b, "de"));
+const COMMON_VERB_PREPOSITIONS = sortGermanStrings(["an", "auf", "aus", "bei", "für", "gegen", "in", "mit", "nach", "über", "um", "von", "vor", "zu", "als"]);
+const RARE_VERB_PREPOSITIONS = sortGermanStrings(["unter", "zwischen", "durch", "gegenüber"]);
+const ALL_VERB_PREPOSITIONS = sortGermanStrings([...COMMON_VERB_PREPOSITIONS, ...RARE_VERB_PREPOSITIONS]);
+const SELECTABLE_VERB_PREPOSITIONS = new Set(ALL_VERB_PREPOSITIONS);
+const VERB_PREP_BUCKET_SIZE = 30;
+
 function getVerbPrepositionsForTier(tier, minRank) {
-  // Verb prepositions use their own rank (1-298), map tier proportionally
+  // Verb+preposition tiers use actual playable combo positions, not noun-scale ranks.
   if (!VERB_PREPOSITIONS.length) return [];
-  const maxRank = Math.max(...VERB_PREPOSITIONS.map(v => v[2]));
-  const fraction = Math.min(tier / (NOUNS.length || 25000), 1);
-  const cutoff = Math.max(Math.ceil(fraction * maxRank), 30);
-  if (minRank) {
-    const minFraction = Math.min(minRank / (NOUNS.length || 25000), 1);
-    const minCutoff = Math.ceil(minFraction * maxRank);
-    return VERB_PREPOSITIONS.filter(v => v[2] > minCutoff && v[2] <= cutoff);
-  }
-  return VERB_PREPOSITIONS.filter(v => v[2] <= cutoff);
+  const sorted = [...VERB_PREPOSITIONS].sort((a, b) => a[2] - b[2]);
+  const maxCount = sorted.length;
+  const upper = Math.max(Math.min(tier || maxCount, maxCount), 0);
+  const lower = Math.max(Math.min(minRank || 0, upper), 0);
+  return sorted.slice(lower, upper);
 }
 
 // Answer mode helpers for per-mode tracking
@@ -1052,7 +1057,6 @@ function GermanNounGame() {
   const verbPerfRef = useRef(null);
   // Verb Prepositions state
   const [verbPrepInputs, setVerbPrepInputs] = useState({preposition: "", case: ""});
-  const verbPrepRef = useRef(null);
   const [campaignChallenge, setCampaignChallenge] = useState(null); // {stateId, challengeId} when in campaign
   const [sessionKey, setSessionKey] = useState(null); // "gameMode:source:id" for best-score tracking
   const [sessionTotal, setSessionTotal] = useState(0); // total words in queue at session start
@@ -1065,6 +1069,11 @@ function GermanNounGame() {
   const matchingBatch = useMemo(() => (
     gameMode === "matching" ? queue.slice(currentIndex, currentIndex + MATCHING_BATCH_SIZE) : []
   ), [gameMode, queue, currentIndex]);
+  const verbPrepOptions = useMemo(() => {
+    if (gameMode !== "verb_prepositions") return [];
+    const hasRareOptions = queue.some(entry => RARE_VERB_PREPOSITIONS.includes(entry[3]));
+    return hasRareOptions ? ALL_VERB_PREPOSITIONS : COMMON_VERB_PREPOSITIONS;
+  }, [gameMode, queue]);
   const [matchingRightItems, setMatchingRightItems] = useState([]);
   const [matchingMatchedIds, setMatchingMatchedIds] = useState([]);
   const [matchingSelectedWord, setMatchingSelectedWord] = useState(null);
@@ -1711,8 +1720,6 @@ function GermanNounGame() {
 
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_forms") setTimeout(()=>verbInfRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
-  useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_prepositions") setTimeout(()=>verbPrepRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
-
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const effectiveTimeLimit = playStyle === "timed" ? timedSeconds : timeLimit;
   const timerPct = effectiveTimeLimit>0?(timeLeft/effectiveTimeLimit)*100:100;
@@ -1907,7 +1914,27 @@ function GermanNounGame() {
             <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",padding:"0 8px"}}>
               <div style={{display:"flex",flexDirection:"column",gap:4}}>
                 <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600}}>Preposition</label>
-                <input ref={verbPrepRef} value={verbPrepInputs.preposition} onChange={e=>setVerbPrepInputs(p=>({...p,preposition:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"&&verbPrepInputs.case){handleVerbPrepSubmit(e);}else if(e.key==="Enter"){e.preventDefault();}}} placeholder="z.B. auf, an, über..." style={S.pluralInput} autoComplete="off" autoFocus/>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(88px, 1fr))",gap:6}}>
+                  {verbPrepOptions.map(prep=>(
+                    <button
+                      key={prep}
+                      onClick={()=>setVerbPrepInputs(p=>({...p,preposition:prep}))}
+                      style={{
+                        padding:"10px 8px",
+                        borderRadius:8,
+                        border:"2px solid",
+                        fontSize:14,
+                        fontWeight:700,
+                        cursor:"pointer",
+                        borderColor:verbPrepInputs.preposition===prep?"#06B6D4":"rgba(255,255,255,0.15)",
+                        backgroundColor:verbPrepInputs.preposition===prep?"rgba(6,182,212,0.18)":"rgba(255,255,255,0.05)",
+                        color:verbPrepInputs.preposition===prep?"#67e8f9":"#cbd5e1"
+                      }}
+                    >
+                      {prep}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:4}}>
                 <label style={{fontSize:11,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600}}>Case</label>
@@ -1922,9 +1949,6 @@ function GermanNounGame() {
                 </div>
               </div>
               <button onClick={handleVerbPrepSubmit} style={S.submitBtn}>Check</button>
-              <div style={S.umlauts}>
-                {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} onClick={()=>{setVerbPrepInputs(p=>({...p,preposition:p.preposition+c}));verbPrepRef.current?.focus();}} style={S.umlautBtn}>{c}</button>)}
-              </div>
             </div>
           )}
           {gameMode==="reverse"&&phase==="question"&&(
@@ -1968,7 +1992,7 @@ function GermanNounGame() {
             </div>
           )}
           {gameMode==="verb_forms"&&phase==="question"&&<div style={S.shortcutHint}>Type all three forms then press <kbd style={S.kbd}>Enter</kbd> to check. <kbd style={S.kbd}>Tab</kbd>/<kbd style={S.kbd}>Enter</kbd> to move between fields.</div>}
-          {gameMode==="verb_prepositions"&&phase==="question"&&<div style={S.shortcutHint}>Type the preposition, select the case, then press <kbd style={S.kbd}>Enter</kbd> to check.</div>}
+          {gameMode==="verb_prepositions"&&phase==="question"&&<div style={S.shortcutHint}>Select the fixed preposition and the case, then press Check.</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das | <kbd style={S.kbd}>H</kbd> hint</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural | <kbd style={S.kbd}>H</kbd> hint</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural | <kbd style={S.kbd}>H</kbd> hint</div>}
@@ -2200,6 +2224,49 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
   };
 
+  const activeTierOptions = useMemo(() => {
+    if (effectiveWordType !== "verb_prep") return TIER_OPTIONS;
+    const options = [];
+    const total = VERB_PREPOSITIONS.length;
+    for (let value = VERB_PREP_BUCKET_SIZE; value < total; value += VERB_PREP_BUCKET_SIZE) {
+      options.push({ value, label: `Top ${value}`, desc: `${value} verb+prep combos` });
+    }
+    if (total > 0) options.push({ value: total, label: `All ${total}`, desc: "All verb+prep combos" });
+    return options;
+  }, [effectiveWordType]);
+
+  const activeRangeSize = effectiveWordType === "verb_prep" ? VERB_PREP_BUCKET_SIZE : 100;
+
+  const activeRanges = useMemo(() => {
+    const maxAvailable = countForTier(99999);
+    const ranges = [];
+    for (let min = 0; min < maxAvailable; min += activeRangeSize) {
+      const max = Math.min(min + activeRangeSize, maxAvailable);
+      const count = countForRange(min, max);
+      if (count > 0) ranges.push({ min, max, count });
+    }
+    return ranges;
+  }, [activeRangeSize, effectiveWordType, selectedGameMode]);
+
+  useEffect(() => {
+    if (effectiveWordType !== "verb_prep") return;
+    if (tierMode === "cumulative") {
+      const validTiers = activeTierOptions.map(opt => opt.value);
+      if (!validTiers.length) return;
+      if (!validTiers.includes(tier) || tierMin !== 0) {
+        setTier(validTiers[0]);
+        setTierMin(0);
+      }
+      return;
+    }
+    if (!activeRanges.length) return;
+    const hasMatch = activeRanges.some(r => r.min === tierMin && r.max === tier);
+    if (!hasMatch) {
+      setTierMin(activeRanges[0].min);
+      setTier(activeRanges[0].max);
+    }
+  }, [effectiveWordType, tierMode, tier, tierMin, activeTierOptions, activeRanges]);
+
   const wordsInRange = (min, max) => {
     const words = [];
     if (effectiveWordType === "nouns" || effectiveWordType === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
@@ -2260,7 +2327,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
   const renderActivityHint = () => {
     if (selectedGameMode === "verb_forms") return `Type the Infinitiv, Prateritum (ich), and Partizip Perfekt for each irregular verb. ${IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.`;
-    if (selectedGameMode === "verb_prepositions") return `Type the fixed preposition and select the governed case for each verb. ${VERB_PREPOSITIONS.length.toLocaleString()} combos available.`;
+    if (selectedGameMode === "verb_prepositions") return `Select the fixed preposition and the governed case for each verb. ${VERB_PREPOSITIONS.length.toLocaleString()} combos available.`;
     return "";
   };
 
@@ -2300,34 +2367,25 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const renderTierSelector = () => {
     const maxAvailable = countForTier(99999);
     const seenCounts = new Set();
-    const filteredTiers = TIER_OPTIONS.filter(t => {
+    const filteredTiers = activeTierOptions.filter(t => {
       const c = countForTier(t.value);
       if (c <= 0) return false;
       if (seenCounts.has(c)) return false;
       seenCounts.add(c);
       return true;
     });
-    const ranges = [];
-    const rangeSize = 100;
-    const maxRankTier = TIER_OPTIONS[TIER_OPTIONS.length - 1].value;
-    for (let i = 0; i < maxRankTier; i += rangeSize) {
-      const rMin = i;
-      const rMax = i + rangeSize;
-      const c = countForRange(rMin, rMax);
-      if (c > 0) ranges.push({ min: rMin, max: rMax, count: c });
-    }
     const totalMastery = masteryForRange(0, 99999);
-    const rangesCompleted = ranges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
-    const rangesStarted = ranges.filter(r => {
+    const rangesCompleted = activeRanges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
+    const rangesStarted = activeRanges.filter(r => {
       const mastery = masteryForRange(r.min, r.max);
       return mastery.pct > 0 && mastery.pct < 100;
     }).length;
 
-    const rangesWithMedal = ranges.filter(r => {
+    const rangesWithMedal = activeRanges.filter(r => {
       const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
       return (bestScores[key]?.pct || 0) >= 80;
     }).length;
-    const rangesPerfect = ranges.filter(r => {
+    const rangesPerfect = activeRanges.filter(r => {
       const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
       return (bestScores[key]?.pct || 0) >= 100;
     }).length;
@@ -2377,11 +2435,11 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               <div style={{display:"flex",gap:10,justifyContent:"center",padding:"6px 0"}}>
                 {rangesPerfect>0&&<span style={{fontSize:11,color:"#F59E0B",fontWeight:700}}>{rangesPerfect} Perfect</span>}
                 {rangesWithMedal-rangesPerfect>0&&<span style={{fontSize:11,color:"#CBD5E1",fontWeight:700}}>{rangesWithMedal-rangesPerfect} medalled</span>}
-                <span style={{fontSize:11,color:"#64748b"}}>{ranges.length} total</span>
+                <span style={{fontSize:11,color:"#64748b"}}>{activeRanges.length} total</span>
               </div>
             )}
             <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:320,overflowY:"auto",paddingRight:4}}>
-              {ranges.map(r=>{
+              {activeRanges.map(r=>{
                 const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
                 const rangeKey = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
                 const rangeBest = bestScores[rangeKey];
