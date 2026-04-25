@@ -255,6 +255,23 @@ function getDeckEntriesByName(name) {
   return noun ? [noun] : [];
 }
 
+const ARTICLE_SORT_ORDER = { der: 0, die: 1, das: 2 };
+
+function sortArticles(articles) {
+  return [...new Set(articles.filter(Boolean))].sort((a, b) => {
+    const orderDiff = (ARTICLE_SORT_ORDER[a] ?? 99) - (ARTICLE_SORT_ORDER[b] ?? 99);
+    return orderDiff || a.localeCompare(b, "de");
+  });
+}
+
+function getArticlesForNounName(name) {
+  return sortArticles(getDeckEntriesByName(name).map(entry => entry[1]));
+}
+
+function getMeaningsForNounName(name) {
+  return [...new Set(getDeckEntriesByName(name).map(entry => entry[3]).filter(Boolean))];
+}
+
 // Like getDeckEntriesByName, but only expands to both genders for Category A words.
 // Category B/C dual-gender words return only their primary (nouns.json) entry.
 function getDrillEntriesByName(name) {
@@ -2010,14 +2027,33 @@ function DeckBuilder({onSave, onCancel}) {
   const [search,setSearch]=useState("");
   const [selected,setSelected]=useState(new Set());
   const searchRef = useRef(null);
+  const searchEntries = useMemo(() => {
+    const words = [...new Set([...NOUNS.map(noun => noun[0]), ...DUAL_GENDER_SENSES.keys()])];
+    return words
+      .map(word => {
+        const entries = getDeckEntriesByName(word);
+        if (!entries.length) return null;
+        const meanings = getMeaningsForNounName(word);
+        const articles = getArticlesForNounName(word);
+        const rank = Math.min(...entries.map(entry => entry[4] || Number.MAX_SAFE_INTEGER));
+        const meaningPreview = meanings
+          .slice(0, 2)
+          .map(meaning => meaning.split("/")[0].trim())
+          .join(" • ");
+        const extraCount = meanings.length > 2 ? meanings.length - 2 : 0;
+        return { word, articles, meanings, rank, meaningPreview, extraCount };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.rank - b.rank || a.word.localeCompare(b.word, "de"));
+  }, []);
 
   const results = useMemo(()=>{
     if(!search.trim()) return [];
     const q = search.trim().toLowerCase();
-    return NOUNS.filter(n =>
-      n[0].toLowerCase().includes(q) || n[3].toLowerCase().includes(q)
+    return searchEntries.filter(entry =>
+      entry.word.toLowerCase().includes(q) || entry.meanings.some(meaning => meaning.toLowerCase().includes(q))
     ).slice(0, 50);
-  },[search]);
+  },[search, searchEntries]);
 
   const toggle = (noun) => {
     setSelected(prev => {
@@ -2047,7 +2083,7 @@ function DeckBuilder({onSave, onCancel}) {
       </div>
 
       <div style={S.menuSection}>
-        <label style={S.menuLabel}>Search nouns ({NOUNS.length.toLocaleString()} available)</label>
+        <label style={S.menuLabel}>Search nouns ({searchEntries.length.toLocaleString()} available)</label>
         <input ref={searchRef} value={search} onChange={e=>setSearch(e.target.value)} placeholder="Type German or English..."
           style={{...S.pluralInput,fontSize:14,textAlign:"left",padding:"10px 14px"}} autoFocus/>
       </div>
@@ -2055,18 +2091,20 @@ function DeckBuilder({onSave, onCancel}) {
       {results.length>0&&(
         <div style={{display:"flex",flexDirection:"column",gap:4,maxHeight:250,overflowY:"auto",paddingRight:4}}>
           {results.map(n=>{
-            const inDeck = selected.has(n[0]);
+            const inDeck = selected.has(n.word);
             return (
-              <button key={n[0]} onClick={()=>toggle(n[0])} style={{
+              <button key={n.word} onClick={()=>toggle(n.word)} style={{
                 display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",
                 background:inDeck?"rgba(139,92,246,0.15)":"rgba(255,255,255,0.03)",
                 border:`1px solid ${inDeck?"rgba(139,92,246,0.4)":"rgba(255,255,255,0.08)"}`,
                 borderRadius:8,cursor:"pointer",transition:"all 0.15s",textAlign:"left"
               }}>
-                <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-                  <span style={{color:ARTICLE_COLORS[n[1]],fontWeight:800,fontSize:13}}>{n[1]}</span>
-                  <span style={{fontWeight:700,fontSize:15,color:"#f1f5f9"}}>{n[0]}</span>
-                  <span style={{fontSize:11,color:"#64748b"}}>{n[3].split("/")[0]}</span>
+                <div style={{display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap"}}>
+                  {n.articles.map(article=>(
+                    <span key={article} style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>
+                  ))}
+                  <span style={{fontWeight:700,fontSize:15,color:"#f1f5f9"}}>{n.word}</span>
+                  {n.meaningPreview&&<span style={{fontSize:11,color:"#64748b"}}>{n.meaningPreview}{n.extraCount>0?` +${n.extraCount}`:""}</span>}
                 </div>
                 <span style={{fontSize:14,color:inDeck?"#10B981":"#475569"}}>{inDeck?"✓":"+"}</span>
               </button>
@@ -2084,14 +2122,14 @@ function DeckBuilder({onSave, onCancel}) {
           <label style={S.menuLabel}>Selected ({selected.size} noun{selected.size>1?"s":""})</label>
           <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
             {[...selected].map(noun=>{
-              const n = getNounByName(noun);
+              const articles = getArticlesForNounName(noun);
               return (
                 <button key={noun} onClick={()=>toggle(noun)} style={{
                   display:"flex",alignItems:"center",gap:4,padding:"4px 10px",
                   background:"rgba(139,92,246,0.1)",border:"1px solid rgba(139,92,246,0.3)",
                   borderRadius:16,cursor:"pointer",fontSize:12,color:"#e2e8f0"
                 }}>
-                  {n&&<span style={{color:ARTICLE_COLORS[n[1]],fontWeight:700}}>{n[1]}</span>}
+                  {articles.map(article=><span key={article} style={{color:ARTICLE_COLORS[article],fontWeight:700}}>{article}</span>)}
                   <span style={{fontWeight:600}}>{noun}</span>
                   <span style={{color:"#f87171",marginLeft:2}}>×</span>
                 </button>
@@ -2313,18 +2351,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     return `Top ${count.toLocaleString()} ${label}`;
   };
 
-  const activitySummary = gameModeMeta.name;
-  const contentSummary = source === "deck"
-    ? (selectedDeckData ? `Deck: ${selectedDeckData.name}` : "Choose a deck")
-    : source === "weakest"
-      ? `Weakest ${wordTypeLabel(effectiveWordType).toLowerCase()}`
-      : describeTierSelection();
-  const rulesSummaryParts = [];
-  if (supportsWordType) rulesSummaryParts.push(wordTypeLabel(matchWordType));
-  if (answerTypeAllowed) rulesSummaryParts.push(mode === MODES.ARTICLE ? "Articles" : mode === MODES.PLURAL ? "Plurals" : "Both");
-  rulesSummaryParts.push(playStyle === "timed" ? `Timed ${timedSeconds}s` : playStyle === "survival" ? "Survival" : "Practice");
-  const rulesSummary = rulesSummaryParts.length ? rulesSummaryParts.join(" / ") : "Mode defaults";
-
   const renderActivityHint = () => {
     if (selectedGameMode === "verb_forms") return `Type the Infinitiv, Prateritum (ich), and Partizip Perfekt for each irregular verb. ${IRREGULAR_VERBS.length.toLocaleString()} irregular verbs available.`;
     if (selectedGameMode === "verb_prepositions") return `Select the fixed preposition and the governed case for each verb. ${VERB_PREPOSITIONS.length.toLocaleString()} combos available.`;
@@ -2392,10 +2418,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
     return (
       <div style={S.menuSection}>
-        <div style={S.inlineSummaryCard}>
-          <span style={S.inlineSummaryLabel}>Current Selection</span>
-          <span style={S.inlineSummaryValue}>{describeTierSelection()}</span>
-        </div>
         <div style={{display:"flex",gap:6}}>
           <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?"#8B5CF6":"rgba(255,255,255,0.1)",backgroundColor:tierMode==="cumulative"?"rgba(139,92,246,0.1)":"transparent"}}>
             <span style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Cumulative</span>
@@ -2662,11 +2684,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       </div>
 
       <div style={S.menuStickyFooter}>
-        <div style={S.menuStickySummary}>
-          <span style={S.menuStickyLabel}>Session</span>
-          <span style={S.menuStickyValue}>{activitySummary} / {contentSummary} / {rulesSummary}</span>
-        </div>
-        <button onClick={handleStart} disabled={!canStart} style={{...S.startBtn,width:"auto",minWidth:150,marginTop:0,opacity:canStart?1:0.45}}>Start Game</button>
+        <button onClick={handleStart} disabled={!canStart} style={{...S.startBtn,width:"auto",minWidth:180,marginTop:0,opacity:canStart?1:0.45}}>Start Game</button>
       </div>
     </div></div>
   );
@@ -3122,10 +3140,7 @@ const S = {
   inlineSummaryCard:{background:"rgba(15,23,42,0.26)",border:"1px solid rgba(148,163,184,0.14)",borderRadius:12,padding:"12px 14px",display:"flex",flexDirection:"column",gap:4},
   inlineSummaryLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1.2,fontWeight:700},
   inlineSummaryValue:{fontSize:14,color:"#e2e8f0",fontWeight:700},
-  menuStickyFooter:{position:"sticky",bottom:12,zIndex:8,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap",padding:"14px 16px",borderRadius:18,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(9,9,11,0.86)",backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",boxShadow:"0 16px 40px rgba(2,6,23,0.35)"},
-  menuStickySummary:{display:"flex",flexDirection:"column",gap:4,minWidth:0,flex:1},
-  menuStickyLabel:{fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700},
-  menuStickyValue:{fontSize:13,color:"#f1f5f9",fontWeight:700,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
+  menuStickyFooter:{position:"sticky",bottom:12,zIndex:8,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:16},
   tierBtn:{padding:"10px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.15s ease"},
   modeCard:{padding:"14px 16px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"left",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
   diffBtn:{flex:1,padding:"12px 8px",border:"2px solid",borderRadius:10,cursor:"pointer",background:"transparent",textAlign:"center",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
