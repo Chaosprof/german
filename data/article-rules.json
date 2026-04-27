@@ -7,9 +7,538 @@
   "rules": {
     "der.suffix_er": {
       "article": "der",
-      "name": "Suffix -er (from verbs)",
-      "description": "Agent nouns formed from verbs with the suffix -er take der. Examples: der Fahrer (drive → driver), der Lehrer (teach → teacher), der Spieler (play → player).",
-      "exceptions": []
+      "name": "Suffix -er",
+      "description": "Most nouns ending in -er are masculine — agent nouns formed from verbs (der Fahrer, der Lehrer, der Spieler), instrument nouns (der Bohrer, der Drucker, der Toaster), and many primitives (der Sommer, der Hammer, der Hunger). Three groups break the pattern and need to be memorized: (a) family/role words for women always take die (die Mutter, die Tochter, die Schwester); (b) several native nouns with non-agent -er stems are die (die Mauer, die Feier, die Nummer, die Dauer, die Feder, die Leber, die Schulter, die Steuer, die Trauer, die Oper); (c) a sizeable group is neuter — most -tier, -wasser, -zimmer, -fenster, -wetter, -alter, -theater, -lager, -fieber, -opfer, -muster, -wunder, -ufer, -kloster, -semester, -fenster, -fenster, -gewässer compounds plus primitives like das Tier, das Wasser, das Zimmer, das Wetter, das Theater, das Meer, das Klavier, das Fieber, das Foyer, das Atelier, das Quartier, das Revier (note the recurring -ier loan ending). Compound -er nouns (X-führer, X-zimmer, X-wasser, …) inherit the article of the rightmost head, not the suffix.",
+      "exceptions": [
+        {
+          "word": "Abenteuer",
+          "article": "das"
+        },
+        {
+          "word": "Aber",
+          "article": "das"
+        },
+        {
+          "word": "Ader",
+          "article": "die"
+        },
+        {
+          "word": "Alster",
+          "article": "die"
+        },
+        {
+          "word": "Alter",
+          "article": "das"
+        },
+        {
+          "word": "Ammer",
+          "article": "die"
+        },
+        {
+          "word": "Aster",
+          "article": "die"
+        },
+        {
+          "word": "Atelier",
+          "article": "das"
+        },
+        {
+          "word": "Auster",
+          "article": "die"
+        },
+        {
+          "word": "Biedermeier",
+          "article": "das"
+        },
+        {
+          "word": "Bier",
+          "article": "das"
+        },
+        {
+          "word": "Buchecker",
+          "article": "die"
+        },
+        {
+          "word": "Center",
+          "article": "das"
+        },
+        {
+          "word": "Cover",
+          "article": "das"
+        },
+        {
+          "word": "Crossover",
+          "article": "das"
+        },
+        {
+          "word": "Dauer",
+          "article": "die"
+        },
+        {
+          "word": "Desaster",
+          "article": "das"
+        },
+        {
+          "word": "Dossier",
+          "article": "das"
+        },
+        {
+          "word": "Drehleiter",
+          "article": "die"
+        },
+        {
+          "word": "Durcheinander",
+          "article": "das"
+        },
+        {
+          "word": "Elastomer",
+          "article": "das"
+        },
+        {
+          "word": "Elixier",
+          "article": "das"
+        },
+        {
+          "word": "Elster",
+          "article": "die"
+        },
+        {
+          "word": "Emscher",
+          "article": "das"
+        },
+        {
+          "word": "Erdnussbutter",
+          "article": "die"
+        },
+        {
+          "word": "Ergometer",
+          "article": "das"
+        },
+        {
+          "word": "Faser",
+          "article": "die"
+        },
+        {
+          "word": "Feder",
+          "article": "die"
+        },
+        {
+          "word": "Feier",
+          "article": "die"
+        },
+        {
+          "word": "Fenster",
+          "article": "das"
+        },
+        {
+          "word": "Feuer",
+          "article": "das"
+        },
+        {
+          "word": "Fieber",
+          "article": "das"
+        },
+        {
+          "word": "Fieberthermometer",
+          "article": "das"
+        },
+        {
+          "word": "Folter",
+          "article": "die"
+        },
+        {
+          "word": "Foyer",
+          "article": "das"
+        },
+        {
+          "word": "Furnier",
+          "article": "die"
+        },
+        {
+          "word": "Futter",
+          "article": "das"
+        },
+        {
+          "word": "Garnier",
+          "article": "das"
+        },
+        {
+          "word": "Gebrüder",
+          "article": "das"
+        },
+        {
+          "word": "Gefieder",
+          "article": "das"
+        },
+        {
+          "word": "Gegenüber",
+          "article": "das"
+        },
+        {
+          "word": "Gejammer",
+          "article": "das"
+        },
+        {
+          "word": "Gelächter",
+          "article": "das"
+        },
+        {
+          "word": "Geländer",
+          "article": "das"
+        },
+        {
+          "word": "Gemäuer",
+          "article": "das"
+        },
+        {
+          "word": "Gender",
+          "article": "das"
+        },
+        {
+          "word": "Geschwister",
+          "article": "das"
+        },
+        {
+          "word": "Gewässer",
+          "article": "das"
+        },
+        {
+          "word": "Gewitter",
+          "article": "das"
+        },
+        {
+          "word": "Gier",
+          "article": "die"
+        },
+        {
+          "word": "Gitter",
+          "article": "das"
+        },
+        {
+          "word": "Heer",
+          "article": "das"
+        },
+        {
+          "word": "Himmelsleiter",
+          "article": "die"
+        },
+        {
+          "word": "Kaliber",
+          "article": "das"
+        },
+        {
+          "word": "Kammer",
+          "article": "die"
+        },
+        {
+          "word": "Kaper",
+          "article": "die"
+        },
+        {
+          "word": "Karriereleiter",
+          "article": "die"
+        },
+        {
+          "word": "Kelter",
+          "article": "die"
+        },
+        {
+          "word": "Kiefer",
+          "article": "die"
+        },
+        {
+          "word": "Klammer",
+          "article": "die"
+        },
+        {
+          "word": "Klavier",
+          "article": "das"
+        },
+        {
+          "word": "Kloster",
+          "article": "das"
+        },
+        {
+          "word": "Kreuzotter",
+          "article": "die"
+        },
+        {
+          "word": "Lager",
+          "article": "das"
+        },
+        {
+          "word": "Laster",
+          "article": "das"
+        },
+        {
+          "word": "Lauer",
+          "article": "die"
+        },
+        {
+          "word": "Leber",
+          "article": "die"
+        },
+        {
+          "word": "Leder",
+          "article": "das"
+        },
+        {
+          "word": "Letter",
+          "article": "die"
+        },
+        {
+          "word": "Manier",
+          "article": "die"
+        },
+        {
+          "word": "Manöver",
+          "article": "das"
+        },
+        {
+          "word": "Massaker",
+          "article": "das"
+        },
+        {
+          "word": "Mauer",
+          "article": "die"
+        },
+        {
+          "word": "Meer",
+          "article": "das"
+        },
+        {
+          "word": "Messer",
+          "article": "das"
+        },
+        {
+          "word": "Metapher",
+          "article": "die"
+        },
+        {
+          "word": "Miteinander",
+          "article": "das"
+        },
+        {
+          "word": "Monster",
+          "article": "das"
+        },
+        {
+          "word": "Multimeter",
+          "article": "das"
+        },
+        {
+          "word": "Muster",
+          "article": "das"
+        },
+        {
+          "word": "Mutter",
+          "article": "die"
+        },
+        {
+          "word": "Neunziger",
+          "article": "das"
+        },
+        {
+          "word": "Nummer",
+          "article": "die"
+        },
+        {
+          "word": "Oper",
+          "article": "die"
+        },
+        {
+          "word": "Opfer",
+          "article": "das"
+        },
+        {
+          "word": "Orchester",
+          "article": "das"
+        },
+        {
+          "word": "Order",
+          "article": "die"
+        },
+        {
+          "word": "Paper",
+          "article": "das"
+        },
+        {
+          "word": "Papier",
+          "article": "das"
+        },
+        {
+          "word": "Plädoyer",
+          "article": "das"
+        },
+        {
+          "word": "Polymer",
+          "article": "das"
+        },
+        {
+          "word": "Power",
+          "article": "die"
+        },
+        {
+          "word": "Pulver",
+          "article": "das"
+        },
+        {
+          "word": "Quartier",
+          "article": "das"
+        },
+        {
+          "word": "Register",
+          "article": "das"
+        },
+        {
+          "word": "Revier",
+          "article": "das"
+        },
+        {
+          "word": "Ringelnatter",
+          "article": "die"
+        },
+        {
+          "word": "Ruder",
+          "article": "das"
+        },
+        {
+          "word": "Scharnier",
+          "article": "das"
+        },
+        {
+          "word": "Schleuder",
+          "article": "die"
+        },
+        {
+          "word": "Schulter",
+          "article": "die"
+        },
+        {
+          "word": "Schwester",
+          "article": "die"
+        },
+        {
+          "word": "Semester",
+          "article": "das"
+        },
+        {
+          "word": "Silber",
+          "article": "das"
+        },
+        {
+          "word": "Spalier",
+          "article": "das"
+        },
+        {
+          "word": "Spektrometer",
+          "article": "das"
+        },
+        {
+          "word": "Stadtväter",
+          "article": "das"
+        },
+        {
+          "word": "Steuer",
+          "article": "die"
+        },
+        {
+          "word": "Super",
+          "article": "das"
+        },
+        {
+          "word": "Theater",
+          "article": "das"
+        },
+        {
+          "word": "Tier",
+          "article": "das"
+        },
+        {
+          "word": "Tochter",
+          "article": "die"
+        },
+        {
+          "word": "Trauer",
+          "article": "die"
+        },
+        {
+          "word": "Trimester",
+          "article": "das"
+        },
+        {
+          "word": "Trümmer",
+          "article": "das"
+        },
+        {
+          "word": "Turnier",
+          "article": "das"
+        },
+        {
+          "word": "Ufer",
+          "article": "das"
+        },
+        {
+          "word": "Ungeheuer",
+          "article": "das"
+        },
+        {
+          "word": "Ungeziefer",
+          "article": "das"
+        },
+        {
+          "word": "Vaterunser",
+          "article": "das"
+        },
+        {
+          "word": "Vesper",
+          "article": "die"
+        },
+        {
+          "word": "Vier",
+          "article": "die"
+        },
+        {
+          "word": "Visier",
+          "article": "das"
+        },
+        {
+          "word": "Vogelgezwitscher",
+          "article": "das"
+        },
+        {
+          "word": "Wasser",
+          "article": "das"
+        },
+        {
+          "word": "Wetter",
+          "article": "das"
+        },
+        {
+          "word": "Wider",
+          "article": "das"
+        },
+        {
+          "word": "Wildgatter",
+          "article": "das"
+        },
+        {
+          "word": "Wimper",
+          "article": "die"
+        },
+        {
+          "word": "Wunder",
+          "article": "das"
+        },
+        {
+          "word": "Ziffer",
+          "article": "die"
+        },
+        {
+          "word": "Zimmer",
+          "article": "das"
+        }
+      ]
     },
     "der.suffix_ismus": {
       "article": "der",
@@ -742,132 +1271,8 @@
           "article": "der"
         },
         {
-          "word": "Gebäude",
-          "article": "das"
-        },
-        {
-          "word": "Gebilde",
-          "article": "das"
-        },
-        {
-          "word": "Gebinde",
-          "article": "das"
-        },
-        {
-          "word": "Gebirge",
-          "article": "das"
-        },
-        {
-          "word": "Gebläse",
-          "article": "das"
-        },
-        {
-          "word": "Gedanke",
-          "article": "der"
-        },
-        {
-          "word": "Gedränge",
-          "article": "das"
-        },
-        {
-          "word": "Gefährte",
-          "article": "der"
-        },
-        {
-          "word": "Gefälle",
-          "article": "das"
-        },
-        {
-          "word": "Gefilde",
-          "article": "das"
-        },
-        {
-          "word": "Gefolge",
-          "article": "das"
-        },
-        {
-          "word": "Gefüge",
-          "article": "das"
-        },
-        {
-          "word": "Gehäuse",
-          "article": "das"
-        },
-        {
-          "word": "Gehege",
-          "article": "das"
-        },
-        {
-          "word": "Gehilfe",
-          "article": "der"
-        },
-        {
-          "word": "Gelände",
-          "article": "das"
-        },
-        {
-          "word": "Gelege",
-          "article": "das"
-        },
-        {
-          "word": "Gemälde",
-          "article": "das"
-        },
-        {
-          "word": "Gemüse",
-          "article": "das"
-        },
-        {
-          "word": "Genosse",
-          "article": "der"
-        },
-        {
-          "word": "Genre",
-          "article": "das"
-        },
-        {
           "word": "Geologe",
           "article": "der"
-        },
-        {
-          "word": "Gerede",
-          "article": "das"
-        },
-        {
-          "word": "Germane",
-          "article": "der"
-        },
-        {
-          "word": "Geselle",
-          "article": "der"
-        },
-        {
-          "word": "Gesinde",
-          "article": "das"
-        },
-        {
-          "word": "Getöse",
-          "article": "das"
-        },
-        {
-          "word": "Getreide",
-          "article": "das"
-        },
-        {
-          "word": "Getriebe",
-          "article": "das"
-        },
-        {
-          "word": "Gewebe",
-          "article": "das"
-        },
-        {
-          "word": "Gewinde",
-          "article": "das"
-        },
-        {
-          "word": "Gewölbe",
-          "article": "das"
         },
         {
           "word": "Glaube",
@@ -1993,14 +2398,6 @@
           "article": "der"
         },
         {
-          "word": "Gecko",
-          "article": "der"
-        },
-        {
-          "word": "Gestapo",
-          "article": "die"
-        },
-        {
           "word": "Ghetto",
           "article": "der"
         },
@@ -2216,6 +2613,241 @@
         },
         {
           "word": "Slum",
+          "article": "der"
+        }
+      ]
+    },
+    "das.prefix_ge": {
+      "article": "das",
+      "name": "Prefix Ge- (collective / verbal abstract)",
+      "description": "Collective and abstract nouns formed with the Germanic Ge- prefix (often Ge- + verb stem, frequently with an -e ending) are neuter. This is the productive Ge- pattern: das Gebäude (build → building), das Gebirge (mountain range), das Gemüse (vegetables), das Geschirr (dishware), das Gepäck (luggage), das Gewölbe (vault), das Gefieder (plumage), das Geräusch (noise), das Gewässer (body of water), das Geschwister (siblings), das Geschenk (gift), das Geheimnis (secret), das Gericht (dish/court), das Gesetz (law), das Gebiet (area), das Gefühl (feeling). Two systematic ways the rule fails: (1) some primitive Ge- nouns are masculine (der Geist, der Genuss, der Geschmack, der Geruch, der Gesang, der Gewinn, der Gedanke, der Gehorsam) or feminine (die Geste, die Gerade, die Gerste, die Geige, die Gemeinde, die Geburt, die Geduld, die Gestalt, die Geschichte). (2) Many words happen to start with 'Ge' without containing the Germanic Ge- prefix at all — Greek/Latin loans like Generation, General, Genie, Genetik, Geometrie, Geographie are NOT Ge- collective nouns and follow their own suffix rules (e.g., Generation → -ion → die). Compound Ge- nouns (Geschäftsführer, Gegenstand, Gesetzgeber, …) inherit the article of their rightmost head and are NOT covered by this rule.",
+      "exceptions": [
+        {
+          "word": "Gebärde",
+          "article": "die"
+        },
+        {
+          "word": "Gebäudeteil",
+          "article": "der"
+        },
+        {
+          "word": "Gebrauch",
+          "article": "der"
+        },
+        {
+          "word": "Gebühr",
+          "article": "die"
+        },
+        {
+          "word": "Geburt",
+          "article": "die"
+        },
+        {
+          "word": "Gecko",
+          "article": "der"
+        },
+        {
+          "word": "Gedanke",
+          "article": "der"
+        },
+        {
+          "word": "Gedichtband",
+          "article": "der"
+        },
+        {
+          "word": "Geduld",
+          "article": "die"
+        },
+        {
+          "word": "Gefahr",
+          "article": "die"
+        },
+        {
+          "word": "Gefährte",
+          "article": "der"
+        },
+        {
+          "word": "Gefallen",
+          "article": "der"
+        },
+        {
+          "word": "Gegend",
+          "article": "die"
+        },
+        {
+          "word": "Gegenpart",
+          "article": "der"
+        },
+        {
+          "word": "Gegenwehr",
+          "article": "die"
+        },
+        {
+          "word": "Gehalt",
+          "article": "der"
+        },
+        {
+          "word": "Gehilfe",
+          "article": "der"
+        },
+        {
+          "word": "Gehorsam",
+          "article": "der"
+        },
+        {
+          "word": "Geige",
+          "article": "die"
+        },
+        {
+          "word": "Geisel",
+          "article": "der"
+        },
+        {
+          "word": "Geiselnahme",
+          "article": "die"
+        },
+        {
+          "word": "Geist",
+          "article": "der"
+        },
+        {
+          "word": "Geiz",
+          "article": "der"
+        },
+        {
+          "word": "Gelatine",
+          "article": "die"
+        },
+        {
+          "word": "Gemahl",
+          "article": "der"
+        },
+        {
+          "word": "Gemeinde",
+          "article": "die"
+        },
+        {
+          "word": "Gemeine",
+          "article": "die"
+        },
+        {
+          "word": "General",
+          "article": "der"
+        },
+        {
+          "word": "Generalist",
+          "article": "der"
+        },
+        {
+          "word": "Genese",
+          "article": "die"
+        },
+        {
+          "word": "Genesis",
+          "article": "die"
+        },
+        {
+          "word": "Genitiv",
+          "article": "der"
+        },
+        {
+          "word": "Genius",
+          "article": "der"
+        },
+        {
+          "word": "Genosse",
+          "article": "der"
+        },
+        {
+          "word": "Genozid",
+          "article": "der"
+        },
+        {
+          "word": "Gentleman",
+          "article": "der"
+        },
+        {
+          "word": "Genua",
+          "article": "die"
+        },
+        {
+          "word": "Genüge",
+          "article": "die"
+        },
+        {
+          "word": "Genuss",
+          "article": "der"
+        },
+        {
+          "word": "Gepard",
+          "article": "der"
+        },
+        {
+          "word": "Gerade",
+          "article": "die"
+        },
+        {
+          "word": "Germane",
+          "article": "der"
+        },
+        {
+          "word": "Gerste",
+          "article": "die"
+        },
+        {
+          "word": "Geruch",
+          "article": "der"
+        },
+        {
+          "word": "Gesang",
+          "article": "der"
+        },
+        {
+          "word": "Geschichte",
+          "article": "die"
+        },
+        {
+          "word": "Geschmack",
+          "article": "der"
+        },
+        {
+          "word": "Geschwulst",
+          "article": "die"
+        },
+        {
+          "word": "Geselle",
+          "article": "der"
+        },
+        {
+          "word": "Gestalt",
+          "article": "die"
+        },
+        {
+          "word": "Gestapo",
+          "article": "die"
+        },
+        {
+          "word": "Geste",
+          "article": "die"
+        },
+        {
+          "word": "Gestus",
+          "article": "der"
+        },
+        {
+          "word": "Gewähr",
+          "article": "die"
+        },
+        {
+          "word": "Gewahrsam",
+          "article": "der"
+        },
+        {
+          "word": "Gewalt",
+          "article": "die"
+        },
+        {
+          "word": "Gewinn",
           "article": "der"
         }
       ]
