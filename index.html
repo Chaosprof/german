@@ -2164,34 +2164,45 @@ function DeckBuilder({onSave, onCancel}) {
           {results.map(n=>{
             const inDeck = selected.has(n.word);
             const isExpanded = expanded.has(n.word);
-            const borderColor = inDeck?UI.gold:UI.line;
             return (
               <div key={n.word} style={{
                 background:inDeck?UI.goldSoft:UI.panel,
-                border:`1px solid ${borderColor}`,
+                border:`1px solid ${inDeck?UI.gold:UI.line}`,
                 borderRadius:12,overflow:"hidden",transition:"all 0.15s"
               }}>
-                <div style={{display:"flex",alignItems:"stretch"}}>
-                  <button onClick={()=>toggle(n.word)} style={{
-                    flex:1,display:"flex",justifyContent:"space-between",alignItems:"center",
-                    padding:"8px 12px",background:"transparent",border:"none",cursor:"pointer",textAlign:"left",font:"inherit"
-                  }}>
-                    <div style={{display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap"}}>
-                      {n.articles.map(article=>(
-                        <span key={article} style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>
-                      ))}
-                      <span style={{fontWeight:700,fontSize:15,color:UI.textStrong}}>{n.word}</span>
-                      {n.meaningPreview&&<span style={{fontSize:11,color:UI.faint}}>{n.meaningPreview}{n.extraCount>0?` +${n.extraCount}`:""}</span>}
-                    </div>
-                    <span style={{fontSize:14,color:inDeck?UI.success:UI.faint}}>{inDeck?"✓":"+"}</span>
-                  </button>
-                  <button onClick={()=>toggleExpand(n.word)} title={isExpanded?"Hide explanation":"Show explanation"} style={{
-                    padding:"0 14px",background:"transparent",border:"none",borderLeft:`1px solid ${borderColor}`,
-                    cursor:"pointer",color:UI.muted,fontSize:11,fontWeight:700
-                  }}>
-                    {isExpanded?"▲":"▼"}
-                  </button>
-                </div>
+                <button onClick={()=>toggle(n.word)} style={{
+                  display:"flex",justifyContent:"space-between",alignItems:"center",
+                  width:"100%",padding:"8px 12px",
+                  background:"transparent",border:"none",cursor:"pointer",
+                  textAlign:"left",font:"inherit",gap:8
+                }}>
+                  <div style={{display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap",flex:1,minWidth:0}}>
+                    {n.articles.map(article=>(
+                      <span key={article} style={{color:ARTICLE_COLORS[article],fontWeight:800,fontSize:13}}>{article}</span>
+                    ))}
+                    <span style={{fontWeight:700,fontSize:15,color:UI.textStrong}}>{n.word}</span>
+                    {n.meaningPreview&&<span style={{fontSize:11,color:UI.faint}}>{n.meaningPreview}{n.extraCount>0?` +${n.extraCount}`:""}</span>}
+                  </div>
+                  <span style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={e=>{ e.stopPropagation(); toggleExpand(n.word); }}
+                      onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); toggleExpand(n.word); } }}
+                      title={isExpanded?"Hide explanation":"Show explanation"}
+                      aria-label={isExpanded?"Hide explanation":"Show explanation"}
+                      style={{
+                        display:"inline-flex",alignItems:"center",justifyContent:"center",
+                        minWidth:24,height:22,padding:"0 6px",
+                        border:`1px solid ${UI.line}`,borderRadius:6,
+                        fontSize:11,fontWeight:700,color:UI.muted,cursor:"pointer",userSelect:"none"
+                      }}
+                    >
+                      {isExpanded?"▲":"ⓘ"}
+                    </span>
+                    <span style={{fontSize:16,fontWeight:700,color:inDeck?UI.success:UI.faint,minWidth:14,textAlign:"center"}}>{inDeck?"✓":"+"}</span>
+                  </span>
+                </button>
                 {isExpanded && <DeckBuilderHelp word={n.word} />}
               </div>
             );
