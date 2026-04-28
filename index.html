@@ -295,6 +295,41 @@ const ALL_VERB_PREPOSITIONS = sortGermanStrings([...COMMON_VERB_PREPOSITIONS, ..
 const SELECTABLE_VERB_PREPOSITIONS = new Set(ALL_VERB_PREPOSITIONS);
 const VERB_PREP_BUCKET_SIZE = 30;
 
+// Preposition hints shown on the review screen for failed verb+prep cards.
+// category: "fixed-akk" | "fixed-dat" | "fixed-gen" | "two-way" | "special"
+const PREPOSITION_HINTS = {
+  // Always Accusative
+  durch:     { category: "fixed-akk", rule: "durch always governs Accusative." },
+  für:       { category: "fixed-akk", rule: "für always governs Accusative." },
+  gegen:     { category: "fixed-akk", rule: "gegen always governs Accusative." },
+  um:        { category: "fixed-akk", rule: "um always governs Accusative." },
+  // Always Dative
+  aus:       { category: "fixed-dat", rule: "aus always governs Dative." },
+  bei:       { category: "fixed-dat", rule: "bei always governs Dative." },
+  mit:       { category: "fixed-dat", rule: "mit always governs Dative." },
+  nach:      { category: "fixed-dat", rule: "nach always governs Dative." },
+  von:       { category: "fixed-dat", rule: "von always governs Dative." },
+  zu:        { category: "fixed-dat", rule: "zu always governs Dative." },
+  gegenüber: { category: "fixed-dat", rule: "gegenüber always governs Dative." },
+  // Two-way (Wechselpräpositionen)
+  an:        { category: "two-way", rule: "an is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
+  auf:       { category: "two-way", rule: "auf is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
+  in:        { category: "two-way", rule: "in is a two-way preposition. Locally it takes Akk for direction (into), Dat for static location (in) — but with fixed-preposition verbs the case is set by the verb." },
+  über:      { category: "two-way", rule: "über is a two-way preposition. Locally it takes Akk for direction (over), Dat for static location — but with fixed-preposition verbs it almost always takes Akk (e.g. sprechen / nachdenken / sich freuen über + Akk)." },
+  unter:     { category: "two-way", rule: "unter is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb (often Dat: leiden unter + Dat)." },
+  vor:       { category: "two-way", rule: "vor is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it almost always takes Dat (Angst / sich fürchten / warnen vor + Dat)." },
+  zwischen:  { category: "two-way", rule: "zwischen is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it usually takes Dat (unterscheiden zwischen + Dat)." },
+  hinter:    { category: "two-way", rule: "hinter is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
+  neben:     { category: "two-way", rule: "neben is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
+  // Special: not really a preposition
+  als:       { category: "special", rule: "als is a comparison particle, not a true preposition. After verbs like halten / ansehen / bezeichnen + Akk + als, the noun after 'als' agrees with the object's case (Akk)." },
+};
+
+function getPrepositionHint(prep) {
+  if (!prep) return null;
+  return PREPOSITION_HINTS[prep] || null;
+}
+
 function getVerbPrepositionsForTier(tier, minRank) {
   // Verb+preposition tiers use actual playable combo positions, not noun-scale ranks.
   if (!VERB_PREPOSITIONS.length) return [];
@@ -3037,13 +3072,13 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
       {reviewWrongAnswers.length>0&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
           <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {reviewWrongAnswers.length} mistake{reviewWrongAnswers.length>1?"s":""}</h3>
-          {!isMatching&&!isVerbForms&&!isVerbPrep&&<p style={{fontSize:12,color:UI.faint,margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
+          {!isMatching&&!isVerbForms&&<p style={{fontSize:12,color:UI.faint,margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:500,overflowY:"auto",paddingRight:4}}>
             {reviewWrongAnswers.map((w,i)=>{
               const expl=EXPLANATIONS.get(w.noun);
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms&&!isVerbPrep) setExpandedIdx(isOpen?null:i); }} style={{background:UI.panel,border:`1px solid ${isOpen&&!isMatching&&!isVerbForms&&!isVerbPrep?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms||isVerbPrep?"default":"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms) setExpandedIdx(isOpen?null:i); }} style={{background:UI.panel,border:`1px solid ${isOpen&&!isMatching&&!isVerbForms?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms?"default":"pointer",transition:"border-color 0.2s"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
                     {isVerbForms?(
                       <span style={{fontWeight:800,fontSize:17,color:UI.textStrong}}>{getMeaningLabel(w.english)}</span>
@@ -3100,9 +3135,31 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                         <span style={{color:"#10B981"}}>{" -> "}{formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {!isMatching&&!isVerbForms&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {!isMatching&&!isVerbForms&&!isVerbPrep&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {isVerbPrep&&w.userPreposition===NO_ANSWER&&w.userCase===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
-                  {!isMatching&&!isVerbForms&&isOpen&&expl&&(() => {
+                  {isVerbPrep&&isOpen&&(() => {
+                    const hint = getPrepositionHint(w.vpPreposition);
+                    const categoryColor = hint?.category === "two-way" ? "#a78bfa" : hint?.category === "fixed-akk" ? "#f472b6" : hint?.category === "fixed-dat" ? "#60a5fa" : "#fbbf24";
+                    const categoryLabel = hint?.category === "two-way" ? "Wechselpräposition" : hint?.category === "fixed-akk" ? "Always Accusative" : hint?.category === "fixed-dat" ? "Always Dative" : hint?.category === "special" ? "Comparison particle" : "Preposition";
+                    return (
+                    <div style={{marginTop:10,padding:"10px 12px",background:"rgba(167,139,250,0.05)",border:"1px solid rgba(167,139,250,0.18)",borderRadius:8,display:"flex",flexDirection:"column",gap:10}}>
+                      <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                        <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:categoryColor}}>{categoryLabel}</span>
+                        {hint ? (
+                          <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}>{hint.rule}</span>
+                        ) : (
+                          <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}>{w.vpPreposition} governs <b>{w.vpCase}</b> with this verb.</span>
+                        )}
+                      </div>
+                      <div style={{display:"flex",flexDirection:"column",gap:3}}>
+                        <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:categoryColor}}>This combo</span>
+                        <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}><b>{w.vpVerb}</b> + <b>{w.vpPreposition}</b> takes <b>{w.vpCase === "Akk" ? "Accusative" : w.vpCase === "Dat" ? "Dative" : w.vpCase === "Gen" ? "Genitive" : w.vpCase}</b>.</span>
+                      </div>
+                    </div>
+                    );
+                  })()}
+                  {!isMatching&&!isVerbForms&&!isVerbPrep&&isOpen&&expl&&(() => {
                     const rule = expl.ruleId ? ARTICLE_RULES[expl.ruleId] : null;
                     const exceptionsInBank = getRuleExceptionsInBank(rule);
                     return (
@@ -3133,7 +3190,7 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                     </div>
                     );
                   })()}
-                  {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:UI.muted,textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":"▼ tap for explanation"}</div>}
+                  {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:UI.muted,textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":isVerbPrep?"▼ tap for preposition rule":"▼ tap for explanation"}</div>}
                 </div>
               );
             })}
