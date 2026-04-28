@@ -330,6 +330,94 @@ function getPrepositionHint(prep) {
   return PREPOSITION_HINTS[prep] || null;
 }
 
+// Verb-form patterns for the Grammar Rules browser. Order matters — shown top-down.
+const VERB_FORM_RULES = [
+  {
+    id: "weak",
+    name: "Weak (regular) verbs",
+    summary: "Stem + -te in Präteritum, ge-…-t in Perfekt",
+    description: "The default pattern. Take the stem (drop -en), add -te for Präteritum, and wrap with ge-…-t for the Partizip II. Auxiliary in Perfekt is haben for transitives. Examples: machen → machte → gemacht; spielen → spielte → gespielt; lernen → lernte → gelernt.",
+    examples: ["sagen → sagte → gesagt", "kaufen → kaufte → gekauft", "arbeiten → arbeitete → gearbeitet (extra -e- after stems ending in -t/-d)"],
+  },
+  {
+    id: "strong",
+    name: "Strong (irregular) verbs",
+    summary: "Vowel change in stem; Partizip ends in -en",
+    description: "Strong verbs change their stem vowel (Ablaut) and form the Partizip II with ge-…-en (not -t). Common Ablaut classes: i-a-u (singen → sang → gesungen), ei-ie-ie (schreiben → schrieb → geschrieben), ie-o-o (fliegen → flog → geflogen), e-a-o (sprechen → sprach → gesprochen), a-u-a (fahren → fuhr → gefahren). The base list of ~200 strong verbs has to be memorized.",
+    examples: ["sehen → sah → gesehen", "geben → gab → gegeben", "kommen → kam → gekommen", "trinken → trank → getrunken"],
+  },
+  {
+    id: "mixed",
+    name: "Mixed verbs",
+    summary: "Vowel change like strong verbs, but -te / ge-…-t endings",
+    description: "A small but high-frequency set behaves like a hybrid: the stem vowel changes (like strong verbs), but the endings are weak (-te in Präteritum, ge-…-t in Perfekt). Memorize the list — it's closed: brennen, bringen, denken, kennen, nennen, rennen, senden, wenden, wissen.",
+    examples: ["denken → dachte → gedacht", "bringen → brachte → gebracht", "kennen → kannte → gekannt", "wissen → wusste → gewusst"],
+  },
+  {
+    id: "modals",
+    name: "Modal verbs",
+    summary: "Their own paradigm — irregular present and Präteritum",
+    description: "The six modals (dürfen, können, mögen, müssen, sollen, wollen) plus wissen share a special pattern: in the present singular they drop the umlaut and take no ending in ich/er forms (ich kann, er kann). Präteritum is weak with the umlaut dropped (konnte, durfte, musste). When used with another infinitive, the Perfekt uses the double-infinitive construction (Ich habe es nicht machen können — not gekonnt).",
+    examples: ["können → konnte → gekonnt / hat … können", "müssen → musste → gemusst / hat … müssen", "wollen → wollte → gewollt / hat … wollen"],
+  },
+  {
+    id: "auxiliary",
+    name: "Perfekt auxiliary: haben vs sein",
+    summary: "sein for motion / change-of-state intransitives, haben otherwise",
+    description: "Most verbs take haben in the Perfekt. Use sein when (a) the verb expresses directed motion to a destination (gehen, fahren, fliegen, kommen, laufen, reisen, schwimmen when going somewhere), (b) the verb expresses a change of state (aufwachen, einschlafen, sterben, wachsen, werden), or (c) it is one of the lexical items sein, bleiben, werden, geschehen, passieren, gelingen. Reflexive and transitive verbs always take haben.",
+    examples: ["Ich bin nach Berlin gefahren. (motion to)", "Er ist eingeschlafen. (change of state)", "Ich habe ein Buch gelesen. (default haben)", "Ich habe geschwommen. vs Ich bin zum Ufer geschwommen. (manner vs goal)"],
+  },
+  {
+    id: "separable",
+    name: "Separable-prefix verbs",
+    summary: "Prefix splits off in main clauses; -ge- inserted in Partizip",
+    description: "Common separable prefixes are ab-, an-, auf-, aus-, bei-, ein-, mit-, nach-, vor-, weg-, zu-, zurück-, weiter-, zusammen-. Stress falls on the prefix. In a main clause the prefix moves to the end (Ich rufe meinen Freund an). The Partizip II inserts -ge- between prefix and stem (angerufen, aufgestanden). In the infinitive with zu, the zu also slots in (anzurufen).",
+    examples: ["anrufen → rief … an → angerufen", "aufstehen → stand … auf → aufgestanden (sein)", "mitkommen → kam … mit → mitgekommen (sein)"],
+  },
+  {
+    id: "inseparable",
+    name: "Inseparable-prefix verbs",
+    summary: "Prefix never splits; no ge- in Partizip",
+    description: "The fixed inseparable prefixes are be-, emp-, ent-, er-, ge-, miss-, ver-, zer-. Stress falls on the stem, never the prefix. The prefix never separates, and the Partizip II takes NO ge- (verstanden, bekommen, erzählt). A handful of prefixes (durch-, über-, um-, unter-, wider-) can be either separable or inseparable depending on meaning — the inseparable use is usually metaphorical (übersetzen 'to translate' = inseparable; übersetzen 'to ferry across' = separable).",
+    examples: ["verstehen → verstand → verstanden", "bekommen → bekam → bekommen", "erzählen → erzählte → erzählt"],
+  },
+  {
+    id: "stem_change_present",
+    name: "Stem-changing verbs (present tense)",
+    summary: "e→i / e→ie / a→ä in du and er/sie/es",
+    description: "Many strong verbs change their stem vowel only in the 2nd and 3rd person singular present, while ich and the plural forms keep the original vowel. Three classes: e→i (geben → du gibst, er gibt; helfen, sprechen, essen, treffen, brechen), e→ie (sehen → du siehst, er sieht; lesen, empfehlen, geschehen), a→ä (fahren → du fährst, er fährt; schlafen, tragen, fallen, halten, lassen). The Imperativ du-form usually picks up the same change for the e-class (Gib mir das! Sieh mal!) but NOT for a→ä (Fahr! not Fähr!).",
+    examples: ["geben: ich gebe, du gibst, er gibt, wir geben", "fahren: ich fahre, du fährst, er fährt, wir fahren", "lesen: ich lese, du liest, er liest"],
+  },
+  {
+    id: "reflexive",
+    name: "Reflexive verbs",
+    summary: "Take a reflexive pronoun (sich), usually Akkusativ",
+    description: "True reflexive verbs (sich freuen, sich beeilen, sich erinnern) require a reflexive pronoun and have no separate object. Reflexive pronouns: mich/dich/sich/uns/euch/sich (Akk) — mir/dir/sich/uns/euch/sich (Dat). Most reflexives take Akk; Dat reflexive shows up when there is a separate accusative object (Ich wasche mir die Hände). Perfekt always uses haben.",
+    examples: ["sich freuen → ich freue mich", "sich die Zähne putzen → ich putze mir die Zähne (Dat reflexive + Akk object)", "sich beeilen → beeil dich!"],
+  },
+  {
+    id: "imperative",
+    name: "Imperativ",
+    summary: "du-form drops -st; ihr-form = present plural; Sie-form inverted",
+    description: "du-form: take the present du form, drop -st, optionally drop the trailing -e (komm! geh! mach!). e→i strong verbs keep the change (gib! sieh! nimm!) but a→ä verbs do NOT (fahr! schlaf!). ihr-form is identical to the present plural (kommt! macht!). Sie-form inverts subject and verb (Kommen Sie! Machen Sie!). wir-form is the same inversion (Gehen wir! 'Let's go!').",
+    examples: ["du-form: Komm! Sieh mal! Gib mir das! (no umlaut: Fahr!)", "ihr-form: Kommt! Macht das!", "Sie-form: Kommen Sie! Setzen Sie sich!"],
+  },
+  {
+    id: "konjunktiv2",
+    name: "Konjunktiv II (subjunctive)",
+    summary: "Hypotheticals, polite requests, contrary-to-fact statements",
+    description: "Used for unreal situations, polite requests, and indirect speech. For most verbs in spoken German, the periphrastic 'würde + infinitive' is preferred (ich würde gehen). Three verbs use synthetic forms even in speech: sein (wäre), haben (hätte), and the modals (könnte, müsste, sollte, wollte, dürfte, möchte). For strong verbs the synthetic form is built by adding an umlaut (where possible) plus -e/-est/-e/-en/-et/-en to the Präteritum stem (käme, ginge, träfe — bookish in modern German).",
+    examples: ["Ich würde gerne kommen. (polite)", "Wenn ich Zeit hätte, würde ich kommen. (hypothetical)", "Könntest du mir helfen? (polite request)", "Ich wäre froh. / Ich hätte gern …"],
+  },
+  {
+    id: "passive",
+    name: "Passive (werden + Partizip II)",
+    summary: "Vorgangs- (werden) vs Zustands- (sein) Passiv",
+    description: "Two passives. Process passive (Vorgangspassiv): werden + Partizip II — focuses on the action (Das Haus wird gebaut). State passive (Zustandspassiv): sein + Partizip II — focuses on the resulting state (Das Haus ist gebaut). The agent, when expressed, is introduced by von (animate) or durch (means). Modals + passive: modal stays finite, werden infinitive joins the Partizip (Es muss gemacht werden).",
+    examples: ["Vorgangspassiv: Der Brief wird geschrieben. (currently being written)", "Zustandspassiv: Der Brief ist geschrieben. (already done)", "Es kann nicht erklärt werden. (modal + passive)"],
+  },
+];
+
 function getVerbPrepositionsForTier(tier, minRank) {
   // Verb+preposition tiers use actual playable combo positions, not noun-scale ranks.
   if (!VERB_PREPOSITIONS.length) return [];
@@ -1810,7 +1898,8 @@ function GermanNounGame() {
     onBack={() => { setCampaignChallenge(null); setScreen("menu"); }}
   />;
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
-  if(screen==="menu") return <MenuScreen initialSelection={lastStartArgs} onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onSyncRefresh={()=>{
+  if(screen==="grammar") return <GrammarScreen onBack={()=>setScreen("menu")}/>;
+  if(screen==="menu") return <MenuScreen initialSelection={lastStartArgs} onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onOpenGrammar={()=>setScreen("grammar")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
   }}/>;
@@ -2285,7 +2374,7 @@ function DeckBuilder({onSave, onCancel}) {
 // ═══════════════════════════════════════════════════════════════
 // PROGRESS DASHBOARD
 // ═══════════════════════════════════════════════════════════════
-function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard, initialSelection}) {
+function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard, onOpenGrammar, initialSelection}) {
   const init = initialSelection || {};
   const initSource = init.deckId === "__weakest__" ? "weakest" : init.deckId ? "deck" : (init.gm !== undefined ? "tier" : "tier");
   const [mode,setMode]=useState(init.m ?? MODES.ARTICLE);
@@ -2710,6 +2799,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       <div style={S.menuQuickRow}>
         <button onClick={onOpenCampaign} style={S.secondaryActionBtn}>Campaign</button>
         <button onClick={onOpenDashboard} style={S.secondaryActionBtn}>Progress</button>
+        <button onClick={onOpenGrammar} style={S.secondaryActionBtn}>Grammar</button>
       </div>
 
       {showSettings&&(
@@ -3281,7 +3371,7 @@ const S = {
   menuStatChip:{display:"flex",flexDirection:"column",gap:4,padding:"12px 10px",borderRadius:16,border:`1px solid ${UI.line}`,background:UI.panel,boxShadow:"0 10px 26px rgba(15,23,42,0.06)",minWidth:0},
   menuStatValue:{fontSize:18,fontWeight:800,color:UI.textStrong,lineHeight:1},
   menuStatLabel:{fontSize:10,color:UI.muted,textTransform:"uppercase",letterSpacing:1.2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
-  menuQuickRow:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8},
+  menuQuickRow:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8},
   secondaryActionBtn:{padding:"12px 14px",borderRadius:16,border:`1px solid ${UI.line}`,background:UI.panel,color:UI.textStrong,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"},
   menuProgressLine:{display:"flex",justifyContent:"space-between",gap:10,flexWrap:"wrap",fontSize:11,color:UI.muted,padding:"0 2px"},
   wizardCard:{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:20,overflow:"hidden",transition:"border-color 0.15s ease, box-shadow 0.15s ease",boxShadow:"0 10px 30px rgba(15,23,42,0.06)"},
@@ -3575,6 +3665,203 @@ function CampaignScreen({ campaignProgress, onSelectChallenge, onBack }) {
         })}
       </div>
     </div></div>
+  );
+}
+
+function GrammarScreen({ onBack }) {
+  const [tab, setTab] = useState("articles"); // articles | verb_forms | verb_prep
+  const [expandedRule, setExpandedRule] = useState(null);
+
+  // Reset expansion when changing tabs.
+  useEffect(() => { setExpandedRule(null); }, [tab]);
+
+  const tabs = [
+    { id: "articles", label: "Articles", count: Object.keys(ARTICLE_RULES).length },
+    { id: "verb_forms", label: "Verb Forms", count: VERB_FORM_RULES.length },
+    { id: "verb_prep", label: "Verb + Prep", count: Object.keys(PREPOSITION_HINTS).length },
+  ];
+
+  const TabButton = ({ id, label, count }) => {
+    const active = tab === id;
+    return (
+      <button onClick={()=>setTab(id)} style={{
+        flex:1,
+        padding:"10px 8px",
+        borderRadius:12,
+        border:`1px solid ${active?"rgba(210,161,74,0.4)":UI.line}`,
+        background:active?UI.goldSoft:UI.panel,
+        color:active?UI.textStrong:UI.muted,
+        fontSize:12,fontWeight:800,letterSpacing:0.4,
+        cursor:"pointer",fontFamily:"inherit",
+        display:"flex",flexDirection:"column",gap:2,alignItems:"center",
+      }}>
+        <span>{label}</span>
+        <span style={{fontSize:10,fontWeight:600,color:active?UI.muted:UI.faint}}>{count} rule{count===1?"":"s"}</span>
+      </button>
+    );
+  };
+
+  return (
+    <div style={S.container}><div style={{...S.menuInner, maxWidth: 560}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <button onClick={onBack} style={S.endBtn}>Back</button>
+        <h2 style={{fontSize:24,fontWeight:700,color:UI.textStrong,margin:0,fontFamily:FONT_SERIF}}>Grammar Rules</h2>
+        <div style={{minWidth:60}}/>
+      </div>
+
+      <div style={{display:"flex",gap:6}}>
+        {tabs.map(t => <TabButton key={t.id} id={t.id} label={t.label} count={t.count}/>)}
+      </div>
+
+      {tab==="articles" && <ArticleRulesPanel expandedRule={expandedRule} setExpandedRule={setExpandedRule}/>}
+      {tab==="verb_forms" && <VerbFormRulesPanel expandedRule={expandedRule} setExpandedRule={setExpandedRule}/>}
+      {tab==="verb_prep" && <VerbPrepRulesPanel/>}
+    </div></div>
+  );
+}
+
+function ArticleRulesPanel({ expandedRule, setExpandedRule }) {
+  // Group rules by article
+  const rulesByArticle = { der: [], die: [], das: [] };
+  Object.entries(ARTICLE_RULES).forEach(([id, rule]) => {
+    if (rulesByArticle[rule.article]) rulesByArticle[rule.article].push({ id, ...rule });
+  });
+  const articleLabels = { der: "der (masculine)", die: "die (feminine)", das: "das (neuter)" };
+
+  if (!Object.keys(ARTICLE_RULES).length) {
+    return <div style={{textAlign:"center",padding:24,color:UI.muted,fontSize:13}}>Article rules failed to load. Check data/article-rules.json.</div>;
+  }
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>Patterns for predicting der/die/das. Tap any rule for the description and known exceptions.</p>
+      {(["der","die","das"]).map(art => {
+        const list = rulesByArticle[art] || [];
+        if (!list.length) return null;
+        return (
+          <div key={art} style={{display:"flex",flexDirection:"column",gap:8}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+              <span style={{fontSize:18,fontWeight:900,color:ARTICLE_COLORS[art],fontFamily:FONT_SERIF}}>{articleLabels[art]}</span>
+              <span style={{fontSize:11,color:UI.faint}}>{list.length} rule{list.length===1?"":"s"}</span>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              {list.map(rule => {
+                const isOpen = expandedRule === rule.id;
+                const exCount = (rule.exceptions || []).length;
+                return (
+                  <div key={rule.id} onClick={()=>setExpandedRule(isOpen?null:rule.id)}
+                    style={{background:UI.panel,border:`1px solid ${isOpen?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"10px 12px",cursor:"pointer",transition:"border-color 0.15s"}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
+                      <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{rule.name}</span>
+                      <span style={{fontSize:10,color:UI.faint,whiteSpace:"nowrap"}}>{exCount > 0 ? `${exCount} exception${exCount===1?"":"s"}` : "no exceptions"}</span>
+                    </div>
+                    {isOpen && (
+                      <div style={{marginTop:8,display:"flex",flexDirection:"column",gap:8}}>
+                        <span style={{fontSize:13,color:UI.text,lineHeight:1.55}}>{rule.description}</span>
+                        {exCount > 0 && (
+                          <div style={{display:"flex",flexDirection:"column",gap:3,padding:"8px 10px",background:UI.panelSoft,borderRadius:8}}>
+                            <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:UI.faint}}>Exceptions ({exCount})</span>
+                            <span style={{fontSize:12,color:UI.muted,lineHeight:1.6}}>
+                              {rule.exceptions.slice(0, 30).map((ex,i)=>(
+                                <span key={ex.word}>
+                                  {i>0&&", "}
+                                  <span style={{color:ARTICLE_COLORS[ex.article],fontWeight:700}}>{ex.article}</span>{" "}{ex.word}
+                                </span>
+                              ))}
+                              {exCount > 30 && <span style={{color:UI.faint}}>{` … +${exCount-30} more`}</span>}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function VerbFormRulesPanel({ expandedRule, setExpandedRule }) {
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:8}}>
+      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>How to form Präteritum, Perfekt, present-tense changes, imperatives, passive, and Konjunktiv II. Tap any rule for details and examples.</p>
+      {VERB_FORM_RULES.map(rule => {
+        const isOpen = expandedRule === rule.id;
+        return (
+          <div key={rule.id} onClick={()=>setExpandedRule(isOpen?null:rule.id)}
+            style={{background:UI.panel,border:`1px solid ${isOpen?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"10px 12px",cursor:"pointer",transition:"border-color 0.15s"}}>
+            <div style={{display:"flex",flexDirection:"column",gap:2}}>
+              <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{rule.name}</span>
+              <span style={{fontSize:11,color:UI.muted,fontStyle:"italic"}}>{rule.summary}</span>
+            </div>
+            {isOpen && (
+              <div style={{marginTop:8,display:"flex",flexDirection:"column",gap:8}}>
+                <span style={{fontSize:13,color:UI.text,lineHeight:1.55}}>{rule.description}</span>
+                {rule.examples && rule.examples.length > 0 && (
+                  <div style={{display:"flex",flexDirection:"column",gap:3,padding:"8px 10px",background:UI.panelSoft,borderRadius:8}}>
+                    <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:UI.faint}}>Examples</span>
+                    {rule.examples.map((ex,i)=>(
+                      <span key={i} style={{fontSize:12,color:UI.muted,lineHeight:1.55,fontFamily:FONT_MONO}}>{ex}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function VerbPrepRulesPanel() {
+  // Group prepositions by category
+  const groups = { "fixed-akk": [], "fixed-dat": [], "two-way": [], special: [] };
+  Object.entries(PREPOSITION_HINTS).forEach(([prep, hint]) => {
+    if (groups[hint.category]) groups[hint.category].push({ prep, ...hint });
+  });
+  // Sort each group alphabetically
+  Object.values(groups).forEach(arr => arr.sort((a,b)=>a.prep.localeCompare(b.prep, "de")));
+
+  const groupMeta = {
+    "fixed-akk":  { label: "Always Accusative",      color: "#f472b6", note: "These prepositions always govern the Accusative case, independent of verb." },
+    "fixed-dat":  { label: "Always Dative",          color: "#60a5fa", note: "These prepositions always govern the Dative case, independent of verb." },
+    "two-way":    { label: "Wechselpräpositionen",   color: "#a78bfa", note: "Two-way: Akk for direction/movement, Dat for static location. With fixed-preposition verbs, the verb sets the case." },
+    "special":    { label: "Special",                color: "#fbbf24", note: "Comparison particles and edge cases." },
+  };
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>How prepositions govern case. Some are fixed (always Akk or always Dat); two-way prepositions depend on context. Verb+preposition combos lock the case to whatever the verb requires.</p>
+      {(["fixed-akk","fixed-dat","two-way","special"]).map(cat => {
+        const list = groups[cat];
+        if (!list.length) return null;
+        const meta = groupMeta[cat];
+        return (
+          <div key={cat} style={{display:"flex",flexDirection:"column",gap:8}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+              <span style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:meta.color}}>{meta.label}</span>
+              <span style={{fontSize:11,color:UI.faint}}>{list.length}</span>
+            </div>
+            <span style={{fontSize:12,color:UI.muted,lineHeight:1.55}}>{meta.note}</span>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              {list.map(item => (
+                <div key={item.prep} style={{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:12,padding:"10px 12px"}}>
+                  <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:3}}>
+                    <span style={{fontSize:16,fontWeight:900,color:UI.textStrong,fontFamily:FONT_SERIF}}>{item.prep}</span>
+                  </div>
+                  <span style={{fontSize:13,color:UI.text,lineHeight:1.55}}>{item.rule}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
