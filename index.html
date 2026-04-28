@@ -128,10 +128,14 @@ const VERBS_DATA_PATH = "./data/verbs.json";
 const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json";
 const VERB_PREP_PATH = "./data/verbs-with-prepositions.json";
 const ARTICLE_RULES_PATH = "./data/article-rules.json";
+const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json";
+const PREPOSITION_RULES_PATH = "./data/preposition-rules.json";
 let NOUNS = [];
 let NOUN_INDEX = new Map();
 let EXPLANATIONS = new Map();
 let ARTICLE_RULES = {};
+let VERB_FORM_RULES = [];
+let PREPOSITION_HINTS = {};
 let WORDS_META = {};
 let BUILTIN_DECKS = [];
 let DUAL_GENDER_WORDS = new Set();
@@ -231,6 +235,22 @@ async function loadWordData() {
       ARTICLE_RULES = arData.rules || {};
     }
   } catch(e) { console.warn("Could not load article rules:", e); }
+  // Load verb-form rules
+  try {
+    const vfResp = await fetch(VERB_FORM_RULES_PATH);
+    if (vfResp.ok) {
+      const vfData = await vfResp.json();
+      VERB_FORM_RULES = Array.isArray(vfData.rules) ? vfData.rules : [];
+    }
+  } catch(e) { console.warn("Could not load verb-form rules:", e); }
+  // Load preposition rules
+  try {
+    const prResp = await fetch(PREPOSITION_RULES_PATH);
+    if (prResp.ok) {
+      const prData = await prResp.json();
+      PREPOSITION_HINTS = prData.prepositions || {};
+    }
+  } catch(e) { console.warn("Could not load preposition rules:", e); }
 }
 
 function getNounByName(name) {
@@ -295,128 +315,10 @@ const ALL_VERB_PREPOSITIONS = sortGermanStrings([...COMMON_VERB_PREPOSITIONS, ..
 const SELECTABLE_VERB_PREPOSITIONS = new Set(ALL_VERB_PREPOSITIONS);
 const VERB_PREP_BUCKET_SIZE = 30;
 
-// Preposition hints shown on the review screen for failed verb+prep cards.
-// category: "fixed-akk" | "fixed-dat" | "fixed-gen" | "two-way" | "special"
-const PREPOSITION_HINTS = {
-  // Always Accusative
-  durch:     { category: "fixed-akk", rule: "durch always governs Accusative." },
-  für:       { category: "fixed-akk", rule: "für always governs Accusative." },
-  gegen:     { category: "fixed-akk", rule: "gegen always governs Accusative." },
-  um:        { category: "fixed-akk", rule: "um always governs Accusative." },
-  // Always Dative
-  aus:       { category: "fixed-dat", rule: "aus always governs Dative." },
-  bei:       { category: "fixed-dat", rule: "bei always governs Dative." },
-  mit:       { category: "fixed-dat", rule: "mit always governs Dative." },
-  nach:      { category: "fixed-dat", rule: "nach always governs Dative." },
-  von:       { category: "fixed-dat", rule: "von always governs Dative." },
-  zu:        { category: "fixed-dat", rule: "zu always governs Dative." },
-  gegenüber: { category: "fixed-dat", rule: "gegenüber always governs Dative." },
-  // Two-way (Wechselpräpositionen)
-  an:        { category: "two-way", rule: "an is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
-  auf:       { category: "two-way", rule: "auf is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
-  in:        { category: "two-way", rule: "in is a two-way preposition. Locally it takes Akk for direction (into), Dat for static location (in) — but with fixed-preposition verbs the case is set by the verb." },
-  über:      { category: "two-way", rule: "über is a two-way preposition. Locally it takes Akk for direction (over), Dat for static location — but with fixed-preposition verbs it almost always takes Akk (e.g. sprechen / nachdenken / sich freuen über + Akk)." },
-  unter:     { category: "two-way", rule: "unter is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb (often Dat: leiden unter + Dat)." },
-  vor:       { category: "two-way", rule: "vor is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it almost always takes Dat (Angst / sich fürchten / warnen vor + Dat)." },
-  zwischen:  { category: "two-way", rule: "zwischen is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it usually takes Dat (unterscheiden zwischen + Dat)." },
-  hinter:    { category: "two-way", rule: "hinter is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
-  neben:     { category: "two-way", rule: "neben is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
-  // Special: not really a preposition
-  als:       { category: "special", rule: "als is a comparison particle, not a true preposition. After verbs like halten / ansehen / bezeichnen + Akk + als, the noun after 'als' agrees with the object's case (Akk)." },
-};
-
 function getPrepositionHint(prep) {
   if (!prep) return null;
   return PREPOSITION_HINTS[prep] || null;
 }
-
-// Verb-form patterns for the Grammar Rules browser. Order matters — shown top-down.
-const VERB_FORM_RULES = [
-  {
-    id: "weak",
-    name: "Weak (regular) verbs",
-    summary: "Stem + -te in Präteritum, ge-…-t in Perfekt",
-    description: "The default pattern. Take the stem (drop -en), add -te for Präteritum, and wrap with ge-…-t for the Partizip II. Auxiliary in Perfekt is haben for transitives. Examples: machen → machte → gemacht; spielen → spielte → gespielt; lernen → lernte → gelernt.",
-    examples: ["sagen → sagte → gesagt", "kaufen → kaufte → gekauft", "arbeiten → arbeitete → gearbeitet (extra -e- after stems ending in -t/-d)"],
-  },
-  {
-    id: "strong",
-    name: "Strong (irregular) verbs",
-    summary: "Vowel change in stem; Partizip ends in -en",
-    description: "Strong verbs change their stem vowel (Ablaut) and form the Partizip II with ge-…-en (not -t). Common Ablaut classes: i-a-u (singen → sang → gesungen), ei-ie-ie (schreiben → schrieb → geschrieben), ie-o-o (fliegen → flog → geflogen), e-a-o (sprechen → sprach → gesprochen), a-u-a (fahren → fuhr → gefahren). The base list of ~200 strong verbs has to be memorized.",
-    examples: ["sehen → sah → gesehen", "geben → gab → gegeben", "kommen → kam → gekommen", "trinken → trank → getrunken"],
-  },
-  {
-    id: "mixed",
-    name: "Mixed verbs",
-    summary: "Vowel change like strong verbs, but -te / ge-…-t endings",
-    description: "A small but high-frequency set behaves like a hybrid: the stem vowel changes (like strong verbs), but the endings are weak (-te in Präteritum, ge-…-t in Perfekt). Memorize the list — it's closed: brennen, bringen, denken, kennen, nennen, rennen, senden, wenden, wissen.",
-    examples: ["denken → dachte → gedacht", "bringen → brachte → gebracht", "kennen → kannte → gekannt", "wissen → wusste → gewusst"],
-  },
-  {
-    id: "modals",
-    name: "Modal verbs",
-    summary: "Their own paradigm — irregular present and Präteritum",
-    description: "The six modals (dürfen, können, mögen, müssen, sollen, wollen) plus wissen share a special pattern: in the present singular they drop the umlaut and take no ending in ich/er forms (ich kann, er kann). Präteritum is weak with the umlaut dropped (konnte, durfte, musste). When used with another infinitive, the Perfekt uses the double-infinitive construction (Ich habe es nicht machen können — not gekonnt).",
-    examples: ["können → konnte → gekonnt / hat … können", "müssen → musste → gemusst / hat … müssen", "wollen → wollte → gewollt / hat … wollen"],
-  },
-  {
-    id: "auxiliary",
-    name: "Perfekt auxiliary: haben vs sein",
-    summary: "sein for motion / change-of-state intransitives, haben otherwise",
-    description: "Most verbs take haben in the Perfekt. Use sein when (a) the verb expresses directed motion to a destination (gehen, fahren, fliegen, kommen, laufen, reisen, schwimmen when going somewhere), (b) the verb expresses a change of state (aufwachen, einschlafen, sterben, wachsen, werden), or (c) it is one of the lexical items sein, bleiben, werden, geschehen, passieren, gelingen. Reflexive and transitive verbs always take haben.",
-    examples: ["Ich bin nach Berlin gefahren. (motion to)", "Er ist eingeschlafen. (change of state)", "Ich habe ein Buch gelesen. (default haben)", "Ich habe geschwommen. vs Ich bin zum Ufer geschwommen. (manner vs goal)"],
-  },
-  {
-    id: "separable",
-    name: "Separable-prefix verbs",
-    summary: "Prefix splits off in main clauses; -ge- inserted in Partizip",
-    description: "Common separable prefixes are ab-, an-, auf-, aus-, bei-, ein-, mit-, nach-, vor-, weg-, zu-, zurück-, weiter-, zusammen-. Stress falls on the prefix. In a main clause the prefix moves to the end (Ich rufe meinen Freund an). The Partizip II inserts -ge- between prefix and stem (angerufen, aufgestanden). In the infinitive with zu, the zu also slots in (anzurufen).",
-    examples: ["anrufen → rief … an → angerufen", "aufstehen → stand … auf → aufgestanden (sein)", "mitkommen → kam … mit → mitgekommen (sein)"],
-  },
-  {
-    id: "inseparable",
-    name: "Inseparable-prefix verbs",
-    summary: "Prefix never splits; no ge- in Partizip",
-    description: "The fixed inseparable prefixes are be-, emp-, ent-, er-, ge-, miss-, ver-, zer-. Stress falls on the stem, never the prefix. The prefix never separates, and the Partizip II takes NO ge- (verstanden, bekommen, erzählt). A handful of prefixes (durch-, über-, um-, unter-, wider-) can be either separable or inseparable depending on meaning — the inseparable use is usually metaphorical (übersetzen 'to translate' = inseparable; übersetzen 'to ferry across' = separable).",
-    examples: ["verstehen → verstand → verstanden", "bekommen → bekam → bekommen", "erzählen → erzählte → erzählt"],
-  },
-  {
-    id: "stem_change_present",
-    name: "Stem-changing verbs (present tense)",
-    summary: "e→i / e→ie / a→ä in du and er/sie/es",
-    description: "Many strong verbs change their stem vowel only in the 2nd and 3rd person singular present, while ich and the plural forms keep the original vowel. Three classes: e→i (geben → du gibst, er gibt; helfen, sprechen, essen, treffen, brechen), e→ie (sehen → du siehst, er sieht; lesen, empfehlen, geschehen), a→ä (fahren → du fährst, er fährt; schlafen, tragen, fallen, halten, lassen). The Imperativ du-form usually picks up the same change for the e-class (Gib mir das! Sieh mal!) but NOT for a→ä (Fahr! not Fähr!).",
-    examples: ["geben: ich gebe, du gibst, er gibt, wir geben", "fahren: ich fahre, du fährst, er fährt, wir fahren", "lesen: ich lese, du liest, er liest"],
-  },
-  {
-    id: "reflexive",
-    name: "Reflexive verbs",
-    summary: "Take a reflexive pronoun (sich), usually Akkusativ",
-    description: "True reflexive verbs (sich freuen, sich beeilen, sich erinnern) require a reflexive pronoun and have no separate object. Reflexive pronouns: mich/dich/sich/uns/euch/sich (Akk) — mir/dir/sich/uns/euch/sich (Dat). Most reflexives take Akk; Dat reflexive shows up when there is a separate accusative object (Ich wasche mir die Hände). Perfekt always uses haben.",
-    examples: ["sich freuen → ich freue mich", "sich die Zähne putzen → ich putze mir die Zähne (Dat reflexive + Akk object)", "sich beeilen → beeil dich!"],
-  },
-  {
-    id: "imperative",
-    name: "Imperativ",
-    summary: "du-form drops -st; ihr-form = present plural; Sie-form inverted",
-    description: "du-form: take the present du form, drop -st, optionally drop the trailing -e (komm! geh! mach!). e→i strong verbs keep the change (gib! sieh! nimm!) but a→ä verbs do NOT (fahr! schlaf!). ihr-form is identical to the present plural (kommt! macht!). Sie-form inverts subject and verb (Kommen Sie! Machen Sie!). wir-form is the same inversion (Gehen wir! 'Let's go!').",
-    examples: ["du-form: Komm! Sieh mal! Gib mir das! (no umlaut: Fahr!)", "ihr-form: Kommt! Macht das!", "Sie-form: Kommen Sie! Setzen Sie sich!"],
-  },
-  {
-    id: "konjunktiv2",
-    name: "Konjunktiv II (subjunctive)",
-    summary: "Hypotheticals, polite requests, contrary-to-fact statements",
-    description: "Used for unreal situations, polite requests, and indirect speech. For most verbs in spoken German, the periphrastic 'würde + infinitive' is preferred (ich würde gehen). Three verbs use synthetic forms even in speech: sein (wäre), haben (hätte), and the modals (könnte, müsste, sollte, wollte, dürfte, möchte). For strong verbs the synthetic form is built by adding an umlaut (where possible) plus -e/-est/-e/-en/-et/-en to the Präteritum stem (käme, ginge, träfe — bookish in modern German).",
-    examples: ["Ich würde gerne kommen. (polite)", "Wenn ich Zeit hätte, würde ich kommen. (hypothetical)", "Könntest du mir helfen? (polite request)", "Ich wäre froh. / Ich hätte gern …"],
-  },
-  {
-    id: "passive",
-    name: "Passive (werden + Partizip II)",
-    summary: "Vorgangs- (werden) vs Zustands- (sein) Passiv",
-    description: "Two passives. Process passive (Vorgangspassiv): werden + Partizip II — focuses on the action (Das Haus wird gebaut). State passive (Zustandspassiv): sein + Partizip II — focuses on the resulting state (Das Haus ist gebaut). The agent, when expressed, is introduced by von (animate) or durch (means). Modals + passive: modal stays finite, werden infinitive joins the Partizip (Es muss gemacht werden).",
-    examples: ["Vorgangspassiv: Der Brief wird geschrieben. (currently being written)", "Zustandspassiv: Der Brief ist geschrieben. (already done)", "Es kann nicht erklärt werden. (modal + passive)"],
-  },
-];
 
 function getVerbPrepositionsForTier(tier, minRank) {
   // Verb+preposition tiers use actual playable combo positions, not noun-scale ranks.

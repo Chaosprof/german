@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "name": "Preposition Case Rules",
+    "description": "Rules for German prepositions: which case each governs, with notes for two-way (Wechsel) prepositions and special cases. Used by the Grammar Rules browser and the verb+preposition review hints.",
+    "version": 1,
+    "categories": {
+      "fixed-akk": "Always governs Accusative",
+      "fixed-dat": "Always governs Dative",
+      "two-way": "Wechselpräposition — Akk for direction, Dat for static location; with fixed-preposition verbs the verb sets the case",
+      "special": "Comparison particles or edge cases"
+    }
+  },
+  "prepositions": {
+    "durch":     { "category": "fixed-akk", "rule": "durch always governs Accusative." },
+    "für":       { "category": "fixed-akk", "rule": "für always governs Accusative." },
+    "gegen":     { "category": "fixed-akk", "rule": "gegen always governs Accusative." },
+    "um":        { "category": "fixed-akk", "rule": "um always governs Accusative." },
+    "aus":       { "category": "fixed-dat", "rule": "aus always governs Dative." },
+    "bei":       { "category": "fixed-dat", "rule": "bei always governs Dative." },
+    "mit":       { "category": "fixed-dat", "rule": "mit always governs Dative." },
+    "nach":      { "category": "fixed-dat", "rule": "nach always governs Dative." },
+    "von":       { "category": "fixed-dat", "rule": "von always governs Dative." },
+    "zu":        { "category": "fixed-dat", "rule": "zu always governs Dative." },
+    "gegenüber": { "category": "fixed-dat", "rule": "gegenüber always governs Dative." },
+    "an":        { "category": "two-way", "rule": "an is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
+    "auf":       { "category": "two-way", "rule": "auf is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
+    "in":        { "category": "two-way", "rule": "in is a two-way preposition. Locally it takes Akk for direction (into), Dat for static location (in) — but with fixed-preposition verbs the case is set by the verb." },
+    "über":      { "category": "two-way", "rule": "über is a two-way preposition. Locally it takes Akk for direction (over), Dat for static location — but with fixed-preposition verbs it almost always takes Akk (e.g. sprechen / nachdenken / sich freuen über + Akk)." },
+    "unter":     { "category": "two-way", "rule": "unter is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb (often Dat: leiden unter + Dat)." },
+    "vor":       { "category": "two-way", "rule": "vor is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it almost always takes Dat (Angst / sich fürchten / warnen vor + Dat)." },
+    "zwischen":  { "category": "two-way", "rule": "zwischen is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it usually takes Dat (unterscheiden zwischen + Dat)." },
+    "hinter":    { "category": "two-way", "rule": "hinter is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
+    "neben":     { "category": "two-way", "rule": "neben is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
+    "als":       { "category": "special", "rule": "als is a comparison particle, not a true preposition. After verbs like halten / ansehen / bezeichnen + Akk + als, the noun after 'als' agrees with the object's case (Akk)." }
+  }
+}
