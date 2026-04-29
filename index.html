@@ -61,15 +61,20 @@
   }
   /* ── Best-score medals (perfect runs) ───────────────────────── */
   @keyframes medalShine {
-    0%, 100% { filter: drop-shadow(0 0 2px rgba(245,158,11,0.6)); }
-    50% { filter: drop-shadow(0 0 8px rgba(245,158,11,1)); }
+    0%, 100% { filter: drop-shadow(0 0 3px var(--medal-glow-soft)); }
+    50% { filter: drop-shadow(0 0 11px var(--medal-glow)); }
   }
   @keyframes medalPop {
     0% { transform: scale(0.6); opacity: 0; }
     60% { transform: scale(1.15); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
-  .medal-gold { animation: medalShine 2.2s ease-in-out infinite; }
+  .medal-gold,
+  .medal-silver,
+  .medal-bronze { animation: medalShine 2.2s ease-in-out infinite; }
+  .medal-gold { --medal-glow: rgba(245,158,11,1); --medal-glow-soft: rgba(245,158,11,0.7); }
+  .medal-silver { --medal-glow: rgba(148,163,184,1); --medal-glow-soft: rgba(148,163,184,0.72); }
+  .medal-bronze { --medal-glow: rgba(217,119,6,1); --medal-glow-soft: rgba(217,119,6,0.7); }
   /* Perfect-run card: stronger gold border + shimmer band */
   .perfect-card {
     animation: goldPulse 2.4s ease-in-out infinite;
@@ -505,8 +510,8 @@ async function saveGistData(data) {
 function bestScoreMedal(pct) {
   if (pct == null || pct <= 0) return { tier: null, label: null, color: null, next: 80, nextLabel: "Bronze", gapToNext: 80 };
   if (pct >= 100) return { tier: "gold", label: "PERFECT", color: "#F59E0B", next: null, nextLabel: null, gapToNext: 0 };
-  if (pct >= 90)  return { tier: "silver", label: "Silver", color: "#CBD5E1", next: 100, nextLabel: "Perfect", gapToNext: 100 - pct };
-  if (pct >= 80)  return { tier: "bronze", label: "Bronze", color: "#D97706", next: 90, nextLabel: "Silver", gapToNext: 90 - pct };
+  if (pct >= 90)  return { tier: "silver", label: "Silver", color: "#64748B", next: 100, nextLabel: "Perfect", gapToNext: 100 - pct };
+  if (pct >= 80)  return { tier: "bronze", label: "Bronze", color: "#B45309", next: 90, nextLabel: "Silver", gapToNext: 90 - pct };
   return { tier: null, label: null, color: UI.muted, next: 80, nextLabel: "Bronze", gapToNext: 80 - pct };
 }
 
@@ -515,22 +520,29 @@ function Medal({ pct, size = 28, showLabel = false }) {
   const m = bestScoreMedal(pct);
   if (m.tier === null && (!pct || pct <= 0)) return null;
   const bg = m.tier === "gold"
-    ? "linear-gradient(135deg,#FCD34D 0%,#F59E0B 55%,#B45309 100%)"
+    ? "linear-gradient(135deg,#FFF7AD 0%,#FCD34D 28%,#F59E0B 58%,#92400E 100%)"
     : m.tier === "silver"
-    ? "linear-gradient(135deg,#F1F5F9 0%,#CBD5E1 55%,#64748B 100%)"
+    ? "linear-gradient(135deg,#FFFFFF 0%,#E2E8F0 30%,#94A3B8 62%,#475569 100%)"
     : m.tier === "bronze"
-    ? "linear-gradient(135deg,#FCD9B6 0%,#D97706 55%,#7C2D12 100%)"
+    ? "linear-gradient(135deg,#FFE7C2 0%,#F59E0B 28%,#B45309 62%,#7C2D12 100%)"
     : "linear-gradient(135deg,#6b6257 0%,#3f3831 100%)";
-  const border = m.tier === "gold" ? "rgba(252,211,77,0.9)" : m.tier === "silver" ? "rgba(203,213,225,0.8)" : m.tier === "bronze" ? "rgba(217,119,6,0.85)" : "rgba(148,163,184,0.5)";
+  const border = m.tier === "gold" ? "rgba(245,158,11,0.98)" : m.tier === "silver" ? "rgba(100,116,139,0.92)" : m.tier === "bronze" ? "rgba(180,83,9,0.95)" : "rgba(148,163,184,0.5)";
   const textColor = m.tier === "silver" ? "#0f172a" : "#ffffff";
   const fs = size >= 30 ? 11 : size >= 24 ? 10 : 9;
+  const medalClass = m.tier ? `medal-${m.tier}` : "";
   return (
     <div style={{display:"inline-flex",alignItems:"center",gap:4}}>
-      <div className={m.tier === "gold" ? "medal-gold" : ""} style={{
+      <div className={medalClass} style={{
         width: size, height: size, borderRadius: "50%",
         background: bg, border: `1.5px solid ${border}`,
         display: "flex", alignItems: "center", justifyContent: "center",
-        boxShadow: m.tier === "gold" ? "0 0 10px rgba(245,158,11,0.55), inset 0 1px 2px rgba(255,255,255,0.5)" : "inset 0 1px 2px rgba(255,255,255,0.35)",
+        boxShadow: m.tier === "gold"
+          ? "0 0 14px rgba(245,158,11,0.7), inset 0 2px 3px rgba(255,255,255,0.72), inset 0 -3px 5px rgba(120,53,15,0.35)"
+          : m.tier === "silver"
+          ? "0 0 12px rgba(148,163,184,0.7), inset 0 2px 3px rgba(255,255,255,0.82), inset 0 -3px 5px rgba(51,65,85,0.28)"
+          : m.tier === "bronze"
+          ? "0 0 12px rgba(217,119,6,0.7), inset 0 2px 3px rgba(255,255,255,0.64), inset 0 -3px 5px rgba(124,45,18,0.35)"
+          : "inset 0 1px 2px rgba(255,255,255,0.35)",
         color: textColor, fontWeight: 900, fontSize: fs, lineHeight: 1,
         flexShrink: 0,
       }}>
@@ -2486,34 +2498,44 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     const r = (size - stroke) / 2;
     const circ = 2 * Math.PI * r;
     const offset = circ - (pct / 100) * circ;
+    const trackColor = bgColor || "rgba(15,23,42,0.24)";
+    const activeColor = color || "#059669";
     return (
-      <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0}}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={bgColor||"rgba(255,255,255,0.06)"} strokeWidth={stroke}/>
-        {pct > 0 && <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color||"#10B981"} strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease"}}/>}
+      <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0,overflow:"visible",filter:"drop-shadow(0 2px 4px rgba(15,23,42,0.24))"}}>
+        <circle cx={size/2} cy={size/2} r={(size / 2) - 1} fill="rgba(255,255,255,0.92)" stroke="rgba(15,23,42,0.12)" strokeWidth="1"/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={trackColor} strokeWidth={stroke}/>
+        {pct > 0 && <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={activeColor} strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" style={{transition:"stroke-dashoffset 0.5s ease",filter:`drop-shadow(0 0 4px ${activeColor})`}}/>}
       </svg>
     );
   };
   const medalRingColor = (pct) => {
     if (pct >= 100) return "#F59E0B";
-    if (pct >= 90)  return "#CBD5E1";
-    if (pct >= 80)  return "#D97706";
+    if (pct >= 90)  return "#64748B";
+    if (pct >= 80)  return "#B45309";
     if (pct > 0)    return "#EF4444";
-    return "rgba(255,255,255,0.12)";
+    return "rgba(15,23,42,0.26)";
   };
   const medalBorderColor = (pct) => {
-    if (pct >= 100) return "rgba(245,158,11,0.65)";
-    if (pct >= 90)  return "rgba(203,213,225,0.5)";
-    if (pct >= 80)  return "rgba(217,119,6,0.5)";
+    if (pct >= 100) return "rgba(245,158,11,0.92)";
+    if (pct >= 90)  return "rgba(100,116,139,0.82)";
+    if (pct >= 80)  return "rgba(180,83,9,0.82)";
     if (pct > 0)    return "rgba(239,68,68,0.35)";
     return UI.lineStrong;
   };
   const medalFill = (pct) => {
-    if (pct >= 100) return "linear-gradient(to top, rgba(245,158,11,0.32), rgba(245,158,11,0.06))";
-    if (pct >= 90)  return "linear-gradient(to top, rgba(203,213,225,0.28), rgba(203,213,225,0.05))";
-    if (pct >= 80)  return "linear-gradient(to top, rgba(217,119,6,0.3), rgba(217,119,6,0.05))";
+    if (pct >= 100) return "linear-gradient(to top, rgba(245,158,11,0.5), rgba(252,211,77,0.22) 58%, rgba(255,255,255,0.32))";
+    if (pct >= 90)  return "linear-gradient(to top, rgba(100,116,139,0.4), rgba(226,232,240,0.26) 58%, rgba(255,255,255,0.36))";
+    if (pct >= 80)  return "linear-gradient(to top, rgba(180,83,9,0.44), rgba(245,158,11,0.2) 58%, rgba(255,255,255,0.28))";
     return "linear-gradient(to top, rgba(239,68,68,0.3), rgba(239,68,68,0.08))";
   };
   const medalCardClass = (pct) => pct >= 100 ? "perfect-card" : "";
+  const medalTextClass = (pct) => pct >= 100 ? "medal-gold" : pct >= 90 ? "medal-silver" : pct >= 80 ? "medal-bronze" : "";
+  const medalCardBg = (pct) => {
+    if (pct >= 100) return "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(252,211,77,0.2))";
+    if (pct >= 90)  return "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(148,163,184,0.22))";
+    if (pct >= 80)  return "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(217,119,6,0.18))";
+    return UI.panel;
+  };
 
   const renderTierSelector = () => {
     const maxAvailable = countForTier(99999);
@@ -2569,7 +2591,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                   {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
                     <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
-                    <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
+                    <span className={medalTextClass(tierPct)} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
                   </div>
                   <span style={{fontSize:13,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{label}</span>
                 </button>
@@ -2599,7 +2621,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                     {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:medalFill(rangePct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                     <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
                       <ProgressRing pct={rangePct} size={34} stroke={2.5} color={ringColor}/>
-                      <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?12:9,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":rangePct>0?rangePct+"%":""}</span>
+                      <span className={medalTextClass(rangePct)} style={{position:"absolute",fontSize:isPerfect?12:9,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":rangePct>0?rangePct+"%":""}</span>
                     </div>
                     <span style={{fontSize:12,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{r.min+1}-{r.max}</span>
                   </button>
@@ -2628,14 +2650,14 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           const ringColor = medalRingColor(dkPct);
           const cardClass = medalCardClass(dkPct);
           const borderColor = selectedDeck===dk.id ? UI.gold : medalBorderColor(dkPct);
-          const bgColor = selectedDeck===dk.id ? UI.goldSoft : dkPct>=80 ? UI.goldSoft : UI.panel;
+          const bg = selectedDeck===dk.id ? UI.goldSoft : medalCardBg(dkPct);
           return (
             <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden"}}>
+              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
                 {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                 <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <ProgressRing pct={dkPct} size={36} stroke={3} color={ringColor}/>
-                  <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
+                  <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
+                  <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
                 </div>
                 <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
                 <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in</span>
@@ -2651,14 +2673,14 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           const ringColor = medalRingColor(dkPct);
           const cardClass = medalCardClass(dkPct);
           const borderColor = selectedDeck===dk.id ? UI.gold : medalBorderColor(dkPct);
-          const bgColor = selectedDeck===dk.id ? UI.goldSoft : dkPct>=80 ? UI.goldSoft : UI.panel;
+          const bg = selectedDeck===dk.id ? UI.goldSoft : medalCardBg(dkPct);
           return (
             <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,backgroundColor:bgColor,position:"relative",overflow:"hidden"}}>
+              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
                 {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                 <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <ProgressRing pct={dkPct} size={36} stroke={3} color={ringColor}/>
-                  <span className={isPerfect?"medal-gold":""} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
+                  <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
+                  <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
                 </div>
                 <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
                 <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}</span>
@@ -2695,7 +2717,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
             ))}
           </div>
           <h1 style={S.menuTitle}>Artikel Blitz</h1>
-          <p style={{fontSize:13,color:UI.muted,maxWidth:360,margin:"10px auto 0",lineHeight:1.55}}>A German study desk for articles, plurals, verb forms, and fixed prepositions.</p>
         </div>
 
       <div style={S.menuQuickRow}>
