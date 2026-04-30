@@ -724,14 +724,10 @@
     "der.alcoholic_beverages": {
       "article": "der",
       "name": "Alcoholic beverages",
-      "description": "Most alcoholic drinks are masculine: der Wein, der Cognac, der Whiskey, der Schnaps, der Wodka, der Rum, der Sekt, der Likör.",
+      "description": "Most alcoholic drinks are masculine: der Wein, der Cognac, der Whiskey, der Schnaps, der Wodka, der Rum, der Sekt, der Likör. The grain spirit der Korn is masculine and follows the rule (das Korn is a different word — the grain/cereal kernel, unrelated to drinks).",
       "exceptions": [
         {
           "word": "Bier",
-          "article": "das"
-        },
-        {
-          "word": "Korn",
           "article": "das"
         }
       ]
@@ -2873,13 +2869,8 @@
     "das.colors": {
       "article": "das",
       "name": "Colours",
-      "description": "Colours as nouns are neuter: das Rot, das Gelb, das Blau, das Grün, das Schwarz.",
-      "exceptions": [
-        {
-          "word": "Orange",
-          "article": "die"
-        }
-      ]
+      "description": "Colours as nouns are neuter: das Rot, das Gelb, das Blau, das Grün, das Schwarz. The colour das Orange is neuter and follows the rule; die Orange is the unrelated word for the fruit and falls under the -e suffix rule.",
+      "exceptions": []
     },
     "das.chemical_elements": {
       "article": "das",

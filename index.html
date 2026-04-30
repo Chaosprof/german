@@ -278,8 +278,21 @@ function buildRuleDecks() {
   const byRank = (a, b) => (a[4] || 1e9) - (b[4] || 1e9);
   for (const [ruleKey, rule] of Object.entries(ARTICLE_RULES)) {
     const matched = byRule.get(ruleKey) || [];
-    if (matched.length < MIN_PER_DECK) continue;
-    const exceptions = matched.filter(n => EXPLANATIONS.get(n[0])?.isException).sort(byRank);
+    const seen = new Set(matched.map(n => n[0]));
+    // Pull in any curated exceptions named in article-rules.json that aren't
+    // tagged with this ruleId (a noun gets only one ruleId, but it can be a
+    // listed exception under multiple rules — e.g. Bier under -er and beverages).
+    const extraExceptions = [];
+    for (const exc of (rule.exceptions || [])) {
+      if (seen.has(exc.word)) continue;
+      const noun = NOUN_INDEX.get(exc.word);
+      if (!noun || noun[1] !== exc.article) continue;
+      extraExceptions.push(noun);
+      seen.add(exc.word);
+    }
+    if (matched.length + extraExceptions.length < MIN_PER_DECK) continue;
+    const taggedExceptions = matched.filter(n => EXPLANATIONS.get(n[0])?.isException);
+    const exceptions = [...taggedExceptions, ...extraExceptions].sort(byRank);
     const followers = matched.filter(n => !EXPLANATIONS.get(n[0])?.isException).sort(byRank);
     // All exceptions are kept (they're the high-value content); followers capped at FOLLOWER_BUDGET by rank.
     const selected = [...exceptions, ...followers.slice(0, FOLLOWER_BUDGET)].sort(byRank);
