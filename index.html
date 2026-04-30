@@ -238,6 +238,7 @@ async function loadWordData() {
     if (arResp.ok) {
       const arData = await arResp.json();
       ARTICLE_RULES = arData.rules || {};
+      buildRuleDecks();
     }
   } catch(e) { console.warn("Could not load article rules:", e); }
   // Load verb-form rules
@@ -256,6 +257,44 @@ async function loadWordData() {
       PREPOSITION_HINTS = prData.prepositions || {};
     }
   } catch(e) { console.warn("Could not load preposition rules:", e); }
+}
+
+function buildRuleDecks() {
+  if (!ARTICLE_RULES || !Object.keys(ARTICLE_RULES).length || !NOUNS.length) return;
+  const RULE_DECK_PREFIX = "__rule_";
+  const MIN_PER_DECK = 5;
+  const FOLLOWER_BUDGET = 100;
+  // Drop any previously built rule decks (re-entrant safety)
+  for (let i = BUILTIN_DECKS.length - 1; i >= 0; i--) {
+    if (BUILTIN_DECKS[i].id?.startsWith(RULE_DECK_PREFIX)) BUILTIN_DECKS.splice(i, 1);
+  }
+  const byRule = new Map();
+  for (const noun of NOUNS) {
+    const rid = EXPLANATIONS.get(noun[0])?.ruleId;
+    if (!rid) continue;
+    if (!byRule.has(rid)) byRule.set(rid, []);
+    byRule.get(rid).push(noun);
+  }
+  const byRank = (a, b) => (a[4] || 1e9) - (b[4] || 1e9);
+  for (const [ruleKey, rule] of Object.entries(ARTICLE_RULES)) {
+    const matched = byRule.get(ruleKey) || [];
+    if (matched.length < MIN_PER_DECK) continue;
+    const exceptions = matched.filter(n => EXPLANATIONS.get(n[0])?.isException).sort(byRank);
+    const followers = matched.filter(n => !EXPLANATIONS.get(n[0])?.isException).sort(byRank);
+    // All exceptions are kept (they're the high-value content); followers capped at FOLLOWER_BUDGET by rank.
+    const selected = [...exceptions, ...followers.slice(0, FOLLOWER_BUDGET)].sort(byRank);
+    const excCount = exceptions.length;
+    const desc = excCount > 0
+      ? `${rule.article} · ${selected.length} nouns (${excCount} exception${excCount===1?"":"s"})`
+      : `${rule.article} · ${selected.length} nouns`;
+    BUILTIN_DECKS.push({
+      id: `${RULE_DECK_PREFIX}${ruleKey}__`,
+      name: `${rule.article} · ${rule.name}`,
+      description: desc,
+      nouns: selected.map(n => n[0]),
+      builtin: true
+    });
+  }
 }
 
 function getNounByName(name) {
@@ -2843,39 +2882,57 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
 function ProgressDashboard({ userData, onBack }) {
   const modeStats = userData.modeStats || {};
-  const modeMastered = userData.modeMastered || {};
-  const nounStats = userData.nounStats || {};
-  const masteredSet = new Set(userData.masteredNouns || []);
 
-  // Tracked answer modes with labels and colors
-  const TRACKED_MODES = [
-    { id: "article", label: "Articles", color: UI.teal, icon: "der/die/das" },
-    { id: "plural", label: "Plurals", color: UI.accent, icon: "die ..." },
-    { id: "matching", label: "Matching", color: UI.gold, icon: "DE \u2194 EN" },
-    { id: "reverse", label: "Translation", color: UI.accentDeep, icon: "EN \u2192 DE" },
-    { id: "verb_forms", label: "Verb Forms", color: UI.success, icon: "Pr\u00e4t/Perf" },
-    { id: "verb_prep", label: "Verb+Prep", color: UI.teal, icon: "auf+Akk" },
-  ];
-
-  // Compute overall mode mastery (all nouns)
-  const modeMasteryOverall = (modeId) => {
-    const words = getNounsForTier(99999);
-    if (!words.length) return { mastered: 0, total: 0, pct: 0 };
+  // Mastery threshold: 5+ consecutive correct in that specific mode
+  const isMastered = (key) => {
+    const s = modeStats[key];
+    return !!(s && (s.consecutiveCorrect || 0) >= 5);
+  };
+  const countMastered = (words, modeId, keyFn) => {
+    if (!words.length) return 0;
+    const kf = keyFn || (w => w[0]);
     let m = 0;
-    words.forEach(n => {
-      const key = modeId + ":" + n[0];
-      const s = modeStats[key];
-      if (s && (s.consecutiveCorrect || 0) >= 5) m++;
-    });
-    return { mastered: m, total: words.length, pct: words.length > 0 ? Math.round((m / words.length) * 100) : 0 };
+    for (const w of words) if (isMastered(modeId + ":" + kf(w))) m++;
+    return m;
   };
 
-  // Overall mastery (any mode)
-  const overallMastery = (() => {
-    const total = NOUNS.length;
-    const m = masteredSet.size;
-    return { mastered: m, total, pct: total > 0 ? Math.round((m / total) * 100) : 0 };
-  })();
+  // Per-category, per-skill mastery
+  const stats = useMemo(() => {
+    const vpKey = v => v[0] + "|" + v[3];
+    return {
+      nouns: {
+        total: NOUNS.length,
+        articles: countMastered(NOUNS, "article"),
+        plurals: countMastered(NOUNS, "plural"),
+        translation: countMastered(NOUNS, "reverse"),
+        matching: countMastered(NOUNS, "matching"),
+      },
+      adjectives: {
+        total: ADJECTIVES.length,
+        translation: countMastered(ADJECTIVES, "reverse"),
+        matching: countMastered(ADJECTIVES, "matching"),
+      },
+      verbs: {
+        total: VERBS.length,
+        irregularTotal: IRREGULAR_VERBS.length,
+        verbPrepTotal: VERB_PREPOSITIONS.length,
+        translation: countMastered(VERBS, "reverse"),
+        matching: countMastered(VERBS, "matching"),
+        verbForms: countMastered(IRREGULAR_VERBS, "verb_forms"),
+        verbPrep: countMastered(VERB_PREPOSITIONS, "verb_prep", vpKey),
+      },
+    };
+  }, [modeStats]);
+
+  const totalMastered =
+    stats.nouns.articles + stats.nouns.plurals + stats.nouns.translation + stats.nouns.matching +
+    stats.adjectives.translation + stats.adjectives.matching +
+    stats.verbs.translation + stats.verbs.matching + stats.verbs.verbForms + stats.verbs.verbPrep;
+  const totalCells =
+    stats.nouns.total * 4 +
+    stats.adjectives.total * 2 +
+    stats.verbs.total * 2 + stats.verbs.irregularTotal + stats.verbs.verbPrepTotal;
+  const overallPct = totalCells > 0 ? Math.round((totalMastered / totalCells) * 100) : 0;
 
   // Progress ring
   const Ring = ({ pct, size, stroke, color }) => {
@@ -2893,9 +2950,56 @@ function ProgressDashboard({ userData, onBack }) {
   // Bar helper
   const Bar = ({ pct, color, height }) => (
     <div style={{position:"relative",height:height||6,background:UI.line,borderRadius:3,overflow:"hidden",width:"100%"}}>
-      <div style={{height:"100%",width:`${pct}%`,background:color,borderRadius:3,transition:"width 0.5s"}}/>
+      <div style={{height:"100%",width:`${Math.min(100,pct)}%`,background:color,borderRadius:3,transition:"width 0.5s"}}/>
     </div>
   );
+
+  // Single skill row inside a category card
+  const SkillRow = ({ label, icon, color, mastered, total }) => {
+    const pct = total > 0 ? (mastered / total) * 100 : 0;
+    const displayPct = pct >= 100 ? 100 : (pct > 0 && pct < 1 ? Math.round(pct * 10) / 10 : Math.round(pct));
+    const swatch = pct >= 100 ? UI.gold : color;
+    return (
+      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,minWidth:0}}>
+            <div style={{width:8,height:8,borderRadius:4,background:swatch,flexShrink:0}}/>
+            <span style={{fontSize:13,fontWeight:700,color:UI.textStrong}}>{label}</span>
+            {icon && <span style={{fontSize:10,color:UI.faint}}>{icon}</span>}
+          </div>
+          <div style={{display:"flex",alignItems:"baseline",gap:6,flexShrink:0}}>
+            <span style={{fontSize:12,fontWeight:700,color:pct>=100?UI.gold:pct>0?UI.textStrong:UI.faint}}>{mastered.toLocaleString()}<span style={{color:UI.faint,fontWeight:500}}> / {total.toLocaleString()}</span></span>
+            <span style={{fontSize:10,color:UI.muted,minWidth:34,textAlign:"right"}}>{displayPct}%</span>
+          </div>
+        </div>
+        <Bar pct={pct} color={swatch} height={5}/>
+      </div>
+    );
+  };
+
+  // Section card for a vocabulary category
+  const CategoryCard = ({ title, summary, skills }) => {
+    const totalMast = skills.reduce((a, s) => a + s.mastered, 0);
+    const totalDen = skills.reduce((a, s) => a + s.total, 0);
+    const pct = totalDen > 0 ? Math.round((totalMast / totalDen) * 100) : 0;
+    return (
+      <div style={{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:18,padding:16,display:"flex",flexDirection:"column",gap:14,boxShadow:"0 10px 30px rgba(15,23,42,0.06)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+          <div style={{display:"flex",flexDirection:"column",minWidth:0}}>
+            <span style={{fontSize:17,fontWeight:800,color:UI.textStrong,fontFamily:FONT_SERIF,letterSpacing:0.2}}>{title}</span>
+            <span style={{fontSize:11,color:UI.muted}}>{summary}</span>
+          </div>
+          <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <Ring pct={pct} size={46} stroke={4} color={pct>=100?UI.gold:pct>=50?UI.success:UI.accentDeep}/>
+            <span style={{position:"absolute",fontSize:11,fontWeight:800,color:UI.textStrong}}>{pct}%</span>
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {skills.map(s => <SkillRow key={s.label} {...s}/>)}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div style={S.container}><div style={S.menuInner}>
@@ -2904,52 +3008,65 @@ function ProgressDashboard({ userData, onBack }) {
         <button onClick={onBack} style={S.endBtn}>Back</button>
       </div>
 
-      {/* ── Overall ── */}
+      {/* Overall summary */}
       <div style={{...S.settingsPanel,textAlign:"center"}}>
-        <div style={{fontSize:11,color:UI.faint,textTransform:"uppercase",letterSpacing:2,fontWeight:600,marginBottom:6}}>Overall Noun Mastery</div>
+        <div style={{fontSize:11,color:UI.faint,textTransform:"uppercase",letterSpacing:2,fontWeight:600,marginBottom:6}}>Overall Mastery</div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16}}>
           <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <Ring pct={overallMastery.pct} size={72} stroke={5} color={overallMastery.pct>=100?UI.gold:overallMastery.pct>=50?UI.success:UI.accent}/>
-            <span style={{position:"absolute",fontSize:18,fontWeight:900,color:UI.textStrong}}>{overallMastery.pct}%</span>
+            <Ring pct={overallPct} size={72} stroke={5} color={overallPct>=100?UI.gold:overallPct>=50?UI.success:UI.accent}/>
+            <span style={{position:"absolute",fontSize:18,fontWeight:900,color:UI.textStrong}}>{overallPct}%</span>
           </div>
           <div style={{textAlign:"left"}}>
-            <div style={{fontSize:24,fontWeight:900,color:UI.textStrong}}>{overallMastery.mastered.toLocaleString()}</div>
-            <div style={{fontSize:12,color:UI.muted}}>of {overallMastery.total.toLocaleString()} nouns mastered</div>
+            <div style={{fontSize:24,fontWeight:900,color:UI.textStrong}}>{totalMastered.toLocaleString()}</div>
+            <div style={{fontSize:12,color:UI.muted}}>of {totalCells.toLocaleString()} skills mastered</div>
+            <div style={{fontSize:10,color:UI.faint,marginTop:2}}>5+ consecutive correct in a mode</div>
           </div>
         </div>
       </div>
 
-      {/* ── Per-mode overview ── */}
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Mastery by Mode</label>
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {TRACKED_MODES.map(tm => {
-            const mm = modeMasteryOverall(tm.id);
-            const mmList = modeMastered[tm.id] || [];
-            return (
-              <div key={tm.id} style={{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:14,padding:"12px 14px"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8}}>
-                    <div style={{width:8,height:8,borderRadius:4,background:tm.color,flexShrink:0}}/>
-                    <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{tm.label}</span>
-                    <span style={{fontSize:10,color:UI.muted}}>{tm.icon}</span>
-                  </div>
-                  <span style={{fontSize:12,fontWeight:700,color:mm.pct>=100?UI.gold:mm.pct>0?tm.color:UI.faint}}>{mm.mastered} / {mm.total}</span>
-                </div>
-                <Bar pct={mm.pct} color={mm.pct>=100?UI.gold:tm.color} height={5}/>
-                {mm.pct > 0 && <div style={{fontSize:10,color:UI.muted,marginTop:3}}>{mm.pct}% mastered (5+ consecutive correct)</div>}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {/* Nouns */}
+      <CategoryCard
+        title="Nouns"
+        summary={`${stats.nouns.total.toLocaleString()} nouns total`}
+        skills={[
+          { label:"Articles",    icon:"der/die/das",    color:UI.teal,       mastered:stats.nouns.articles,    total:stats.nouns.total },
+          { label:"Plurals",     icon:"die …",     color:UI.accentDeep, mastered:stats.nouns.plurals,     total:stats.nouns.total },
+          { label:"Translation", icon:"EN → DE",   color:UI.gold,       mastered:stats.nouns.translation, total:stats.nouns.total },
+          { label:"Matching",    icon:"DE ↔ EN",   color:UI.success,    mastered:stats.nouns.matching,    total:stats.nouns.total },
+        ]}
+      />
 
-      {/* ── Session stats ── */}
+      {/* Adjectives */}
+      {stats.adjectives.total > 0 && (
+        <CategoryCard
+          title="Adjectives"
+          summary={`${stats.adjectives.total.toLocaleString()} adjectives total`}
+          skills={[
+            { label:"Translation", icon:"EN → DE", color:UI.gold,    mastered:stats.adjectives.translation, total:stats.adjectives.total },
+            { label:"Matching",    icon:"DE ↔ EN", color:UI.success, mastered:stats.adjectives.matching,    total:stats.adjectives.total },
+          ]}
+        />
+      )}
+
+      {/* Verbs */}
+      {stats.verbs.total > 0 && (
+        <CategoryCard
+          title="Verbs"
+          summary={`${stats.verbs.total.toLocaleString()} verbs · ${stats.verbs.irregularTotal.toLocaleString()} irregular · ${stats.verbs.verbPrepTotal.toLocaleString()} verb+prep`}
+          skills={[
+            { label:"Translation",         icon:"EN → DE",  color:UI.gold,       mastered:stats.verbs.translation, total:stats.verbs.total },
+            { label:"Matching",            icon:"DE ↔ EN",  color:UI.success,    mastered:stats.verbs.matching,    total:stats.verbs.total },
+            { label:"Verb Forms",          icon:"Prät/Perf",color:UI.accentDeep, mastered:stats.verbs.verbForms,   total:stats.verbs.irregularTotal },
+            { label:"Verb + Prepositions", icon:"auf+Akk",       color:UI.teal,       mastered:stats.verbs.verbPrep,    total:stats.verbs.verbPrepTotal },
+          ]}
+        />
+      )}
+
+      {/* Session stats */}
       <div style={{...S.settingsPanel}}>
         <div style={{fontSize:11,color:UI.faint,textTransform:"uppercase",letterSpacing:2,fontWeight:600,marginBottom:4}}>Stats</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
           <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:UI.textStrong}}>{userData.totalSessions||0}</div><div style={{fontSize:9,color:UI.faint,textTransform:"uppercase"}}>Sessions</div></div>
-          <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:UI.textStrong}}>{Object.keys(nounStats).length}</div><div style={{fontSize:9,color:UI.faint,textTransform:"uppercase"}}>Words Attempted</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:20,fontWeight:800,color:UI.textStrong}}>{(userData.dailyStreak||{}).best||0}</div><div style={{fontSize:9,color:UI.faint,textTransform:"uppercase"}}>Best Streak (days)</div></div>
         </div>
       </div>
