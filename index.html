@@ -1184,6 +1184,7 @@ function GermanNounGame() {
   const [syncStatus, setSyncStatus] = useState("idle");
   const [activeDeck, setActiveDeck] = useState(null);
   const [gameMode, setGameMode] = useState("classic"); // classic|reverse|matching|verb_forms|verb_prepositions|timed|survival
+  const isReverseNoun = gameMode === "reverse" && !!currentNoun?.[1];
   const [matchingWordType, setMatchingWordType] = useState("nouns"); // nouns|adjectives|verbs|mixed
   const [playStyle, setPlayStyle] = useState("practice"); // practice|timed|survival
   const [timedSeconds, setTimedSeconds] = useState(10);
@@ -1610,8 +1611,8 @@ function GermanNounGame() {
     const entryId = getNounEntryId(currentNoun);
     setStreak(0);setTotalAnswered(pr=>pr+1);
     setFeedback({correct:false,article:a,plural:p,noun:s,english:e});
-    setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER}]);
-    sessionAnswersRef.current.push({ noun: entryId, correct: false, modes: getAnswerModes(mode, gameMode) });
+    setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER,userReverse:gameMode==="reverse"?NO_ANSWER:undefined}]);
+    sessionAnswersRef.current.push({ noun: entryId, correct: false, modes: gameMode === "reverse" && a ? ["reverse", "article"] : getAnswerModes(mode, gameMode) });
     setPhase("feedback");
   }, [currentNoun, mode, gameMode]);
 
@@ -1674,6 +1675,7 @@ function GermanNounGame() {
     } else if (gameMode === "reverse") {
       const typed = (typedReverse||"").trim();
       correct = typed === s || normalize(typed) === normalize(s);
+      if (a && chosenArt !== a) correct = false;
     } else {
       if(mode===MODES.ARTICLE||mode===MODES.BOTH) if(chosenArt!==a) correct=false;
       if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=chosenPlural||"";if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
@@ -1694,6 +1696,8 @@ function GermanNounGame() {
         setWrongAnswers(pr=>[...pr,{noun:s,entryId:s+"|"+currentNoun[3],article:"",plural:"",english:e,userArticle:NO_ANSWER,userPlural:NO_ANSWER,
           vpVerb:s,vpPreposition:currentNoun[3],vpCase:currentNoun[4],vpExample:currentNoun[5],
           userPreposition:verbPrepInputs.preposition.trim()||NO_ANSWER,userCase:verbPrepInputs.case||NO_ANSWER}]);
+      } else if (gameMode === "reverse") {
+        setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:NO_ANSWER,userReverse:(typedReverse||"").trim()||NO_ANSWER}]);
       } else {
         setWrongAnswers(pr=>[...pr,{noun:s,entryId,article:a,plural:p,english:e,userArticle:chosenArt||NO_ANSWER,userPlural:chosenPlural||NO_ANSWER}]);
       }
@@ -1708,7 +1712,7 @@ function GermanNounGame() {
 
     if(correct) registerCorrect();
     else if (!registerWrong()) return;
-    sessionAnswersRef.current.push({ noun: entryId, correct, modes: getAnswerModes(mode, gameMode) });
+    sessionAnswersRef.current.push({ noun: entryId, correct, modes: gameMode === "reverse" && a ? ["reverse", "article"] : getAnswerModes(mode, gameMode) });
     setTotalAnswered(pr=>pr+1);
     if (gameMode === "verb_forms") {
       setFeedback({correct,noun:s,english:e,article:"",plural:"",verbInfinitive:s,verbPrateritum:currentNoun[3],verbPerfekt:currentNoun[4]});
@@ -1817,8 +1821,10 @@ function GermanNounGame() {
 
   const handleReverseSubmit = useCallback((ev) => {
     ev?.preventDefault(); if(phase!=="question"||gameMode!=="reverse") return;
-    checkAnswer("","",reverseInput);
-  }, [phase,gameMode,reverseInput,checkAnswer]);
+    const needsArticle = !!currentNoun?.[1];
+    if (needsArticle && !articleChoice) return;
+    checkAnswer(needsArticle ? articleChoice : "", "", reverseInput);
+  }, [phase,gameMode,currentNoun,articleChoice,reverseInput,checkAnswer]);
 
   const handleVerbFormsSubmit = useCallback((ev) => {
     ev?.preventDefault(); if(phase!=="question"||gameMode!=="verb_forms") return;
@@ -1844,9 +1850,17 @@ function GermanNounGame() {
   useEffect(() => {
     if(screen!=="game"||phase!=="question"||gameMode==="matching") return;
     const h=(ev)=>{
-      if(ev.target.tagName==="INPUT")return;
       const choiceIndex = ["1","2","3"].indexOf(ev.key);
+      if(gameMode==="reverse"&&isReverseNoun&&choiceIndex!==-1){
+        ev.preventDefault();
+        setArticleChoice(["der","die","das"][choiceIndex]);
+        return;
+      }
+      if(ev.target.tagName==="INPUT")return;
       if(choiceIndex===-1)return;
+      if(gameMode==="reverse"){
+        return;
+      }
       if(mode===MODES.ARTICLE){handleArticle(["der","die","das"][choiceIndex]);return;}
       if(mode===MODES.PLURAL){const choice = pluralOptions[choiceIndex]; if(choice) handlePluralChoice(choice); return;}
       if(mode===MODES.BOTH){
@@ -1856,7 +1870,7 @@ function GermanNounGame() {
       }
     };
     window.addEventListener("keydown",h); return()=>window.removeEventListener("keydown",h);
-  }, [screen,phase,gameMode,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
+  }, [screen,phase,gameMode,isReverseNoun,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
 
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
   useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_forms") setTimeout(()=>verbInfRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
@@ -1967,7 +1981,6 @@ function GermanNounGame() {
             <div style={S.nounDisplay}>
               <span style={{fontSize:13,color:UI.faint,textTransform:"uppercase",letterSpacing:2}}>Translate to German</span>
               <span style={{fontSize:28,fontWeight:900,color:UI.textStrong}}>{(currentNoun[3]||"").split("/")[0]}</span>
-              {currentNoun[1]&&<span style={{fontSize:14,color:ARTICLE_COLORS[currentNoun[1]],fontWeight:700}}>({currentNoun[1]})</span>}
             </div>
           ):(
             <div style={S.nounDisplay}>
@@ -2023,7 +2036,8 @@ function GermanNounGame() {
             <div style={S.feedbackFlash}>
               <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":feedback.secondChance?"🔄":"✗"}</span>
               {feedback.secondChance&&<span style={{fontSize:13,color:"#F59E0B",fontWeight:700}}>Second chance! Try again...</span>}
-              {!feedback.correct&&!feedback.secondChance&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} {"->"} {formatPluralAttempt(feedback.plural)}</span>}
+              {!feedback.correct&&!feedback.secondChance&&gameMode==="reverse"&&<span style={S.flashCorrection}>{feedback.article ? `${feedback.article} ` : ""}{feedback.noun}</span>}
+              {!feedback.correct&&!feedback.secondChance&&gameMode!=="reverse"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} {"->"} {formatPluralAttempt(feedback.plural)}</span>}
               {!feedback.correct&&!feedback.secondChance&&gameMode==="verb_forms"&&<span style={S.flashCorrection}>{feedback.verbInfinitive} — {feedback.verbPrateritum} — {feedback.verbPerfekt}</span>}
               {!feedback.correct&&!feedback.secondChance&&gameMode==="verb_prepositions"&&<span style={S.flashCorrection}>{feedback.vpVerb} + {feedback.vpPreposition} ({feedback.vpCase})</span>}
             </div>
@@ -2091,10 +2105,20 @@ function GermanNounGame() {
           )}
           {gameMode==="reverse"&&phase==="question"&&(
             <div style={S.pluralSection}>
-              <label style={S.pluralLabel}>German word:</label>
+              {isReverseNoun&&(
+                <div style={S.articleRow}>
+                  {["der","die","das"].map(art=>(
+                    <button key={art} onClick={()=>setArticleChoice(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
+                      <span style={S.articleBtnMain}>{art}</span>
+                      <span style={S.articleBtnSub}>{art==="der"?"masc":art==="die"?"fem":"neut"}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <label style={S.pluralLabel}>{isReverseNoun&&!articleChoice?"Choose the article, then type the noun":"German word:"}</label>
               <div style={S.inputRow}>
-                <input ref={inputRef} value={reverseInput} onChange={e=>setReverseInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handleReverseSubmit(e);}} placeholder="Type the word..." style={S.pluralInput} autoComplete="off" autoFocus/>
-                <button onClick={handleReverseSubmit} style={S.submitBtn}>→</button>
+                <input ref={inputRef} value={reverseInput} onChange={e=>setReverseInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")handleReverseSubmit(e);}} placeholder={isReverseNoun?"Type noun only...":"Type the word..."} style={S.pluralInput} autoComplete="off" autoFocus/>
+                <button onClick={handleReverseSubmit} disabled={isReverseNoun&&!articleChoice} style={{...S.submitBtn,opacity:isReverseNoun&&!articleChoice?0.45:1,cursor:isReverseNoun&&!articleChoice?"not-allowed":"pointer"}}>→</button>
               </div>
               <div style={S.umlauts}>
                 {["ä","ö","ü","ß","Ä","Ö","Ü"].map(c=><button key={c} onClick={()=>{setReverseInput(p=>p+c);inputRef.current?.focus();}} style={S.umlautBtn}>{c}</button>)}
@@ -2131,6 +2155,7 @@ function GermanNounGame() {
           )}
           {gameMode==="verb_forms"&&phase==="question"&&<div style={S.shortcutHint}>Type all three forms then press <kbd style={S.kbd}>Enter</kbd> to check. <kbd style={S.kbd}>Tab</kbd>/<kbd style={S.kbd}>Enter</kbd> to move between fields.</div>}
           {gameMode==="verb_prepositions"&&phase==="question"&&<div style={S.shortcutHint}>Select the fixed preposition and the case, then press Check.</div>}
+          {gameMode==="reverse"&&isReverseNoun&&phase==="question"&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.ARTICLE&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> der | <kbd style={S.kbd}>2</kbd> die | <kbd style={S.kbd}>3</kbd> das</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.PLURAL&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> choose plural</div>}
           {gameMode!=="reverse"&&gameMode!=="matching"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&phase==="question"&&mode===MODES.BOTH&&<div style={S.shortcutHint}>Keys: <kbd style={S.kbd}>1</kbd> <kbd style={S.kbd}>2</kbd> <kbd style={S.kbd}>3</kbd> article first, then plural</div>}
@@ -3158,6 +3183,7 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
   const [deckSaved,setDeckSaved]=useState(false);
   const accuracy=totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const isMatching = gameMode === "matching";
+  const isReverse = gameMode === "reverse";
   const isVerbForms = gameMode === "verb_forms";
   const isVerbPrep = gameMode === "verb_prepositions";
   const reviewWrongAnswers = isMatching ? dedupeMistakesByNoun(wrongAnswers) : wrongAnswers;
@@ -3289,6 +3315,12 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                         </span>
                       </>
                     )}
+                    {isReverse&&w.userReverse&&w.userReverse!==NO_ANSWER&&(
+                      <span style={{fontSize:12,color:UI.muted}}>
+                        Your word: <span style={{color:normalize(w.userReverse||"")===normalize(w.noun)?"#10B981":"#f87171",fontWeight:700}}>{w.userReverse===NO_ANSWER?"—":w.userReverse}</span>
+                        {normalize(w.userReverse||"")!==normalize(w.noun)&&<span style={{color:"#10B981"}}>{" -> "}{w.noun}</span>}
+                      </span>
+                    )}
                     {(mode===MODES.ARTICLE||mode===MODES.BOTH)&&w.userArticle!==NO_ANSWER&&(
                       <span style={{fontSize:12,color:UI.muted}}>
                         Your article: <span style={{color:w.userArticle===w.article?"#10B981":"#f87171",fontWeight:700}}>{formatArticleAttempt(w.userArticle)}</span>
@@ -3301,7 +3333,8 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                         <span style={{color:"#10B981"}}>{" -> "}{formatPluralAttempt(w.plural)}</span>
                       </span>
                     )}
-                    {!isMatching&&!isVerbForms&&!isVerbPrep&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {!isMatching&&!isReverse&&!isVerbForms&&!isVerbPrep&&w.userArticle===NO_ANSWER&&w.userPlural===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
+                    {isReverse&&w.userArticle===NO_ANSWER&&w.userReverse===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                     {isVerbPrep&&w.userPreposition===NO_ANSWER&&w.userCase===NO_ANSWER&&<span style={{fontSize:12,color:"#f59e0b"}}>Time expired</span>}
                   </div>
                   {isVerbPrep&&isOpen&&(() => {
