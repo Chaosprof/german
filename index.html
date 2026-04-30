@@ -222,6 +222,7 @@ async function loadWordData() {
       }
     }
   } catch(e) { console.warn("Could not load dual-gender deck:", e); }
+  buildWeakNounsDeck();
   // Load verbs with prepositions
   try {
     const vpResp = await fetch(VERB_PREP_PATH);
@@ -257,6 +258,28 @@ async function loadWordData() {
       PREPOSITION_HINTS = prData.prepositions || {};
     }
   } catch(e) { console.warn("Could not load preposition rules:", e); }
+}
+
+function buildWeakNounsDeck() {
+  if (!NOUNS.length) return;
+  // Detected via the explicit "⚠ Weak noun" marker that nouns.json articleHelp
+  // uses to flag genuine n-Deklination nouns (vs. generic mentions of the category).
+  const WEAK_MARKER = "⚠ Weak noun";
+  const DECK_ID = "__weak_nouns__";
+  for (let i = BUILTIN_DECKS.length - 1; i >= 0; i--) {
+    if (BUILTIN_DECKS[i].id === DECK_ID) BUILTIN_DECKS.splice(i, 1);
+  }
+  const weak = NOUNS
+    .filter(n => (EXPLANATIONS.get(n[0])?.article || "").includes(WEAK_MARKER))
+    .sort((a, b) => (a[4] || 1e9) - (b[4] || 1e9));
+  if (weak.length < 5) return;
+  BUILTIN_DECKS.push({
+    id: DECK_ID,
+    name: "Weak Nouns (n-Deklination)",
+    description: `Masculine nouns that take -(e)n in every case except nominative singular. ${weak.length} nouns.`,
+    nouns: weak.map(n => n[0]),
+    builtin: true
+  });
 }
 
 function buildRuleDecks() {
