@@ -3,7 +3,7 @@
     "name": "Verbs with Prepositions",
     "description": "German verbs with fixed prepositions (Verben mit festen Präpositionen). Includes the governed case and English meaning. Essential for B2–C2 learners and native-level fluency.",
     "version": 1,
-    "count": 298,
+    "count": 297,
     "generatedAt": "2026-04-10T00:00:00.000000+00:00"
   },
   "verbs": [
@@ -1784,14 +1784,6 @@
       "rank": 222
     },
     {
-      "verb": "hinterfragen",
-      "preposition": "nach",
-      "case": "Dat",
-      "english": "question about",
-      "example": "Man sollte alles kritisch hinterfragen.",
-      "rank": 223
-    },
-    {
       "verb": "hungern",
       "preposition": "nach",
       "case": "Dat",
@@ -2108,7 +2100,7 @@
       "preposition": "als",
       "case": "Akk",
       "english": "count as / credit as",
-      "example": "Das rechne ich dir hoch an.",
+      "example": "Das wird dir als Berufserfahrung angerechnet.",
       "rank": 263
     },
     {
@@ -2312,14 +2304,6 @@
       "rank": 288
     },
     {
-      "verb": "sich widersetzen",
-      "preposition": "gegen",
-      "case": "Akk",
-      "english": "oppose / resist",
-      "example": "Sie widersetzt sich den Anweisungen.",
-      "rank": 289
-    },
-    {
       "verb": "sich zurechtfinden",
       "preposition": "in",
       "case": "Dat",
@@ -2390,6 +2374,15 @@
       "english": "distrust / be suspicious of",
       "example": "Sie misstraut dem Angebot gegenüber.",
       "rank": 298
+    },
+    {
+      "verb": "helfen",
+      "preposition": "bei",
+      "case": "Dat",
+      "english": "help with",
+      "example": "Ich helfe dir bei den Hausaufgaben.",
+      "rank": 299,
+      "manuallyAdded": true
     }
   ]
 }

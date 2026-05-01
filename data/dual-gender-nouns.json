@@ -3,7 +3,7 @@
     "name": "Dual-Gender Nouns",
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
     "version": 2,
-    "count": 90,
+    "count": 89,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
@@ -487,27 +487,6 @@
       "rank": 1147,
       "leipzigRank": 1147,
       "bothInDrills": true
-    },
-    {
-      "word": "Boot",
-      "genders": [
-        {
-          "article": "der",
-          "english": "boot (footwear, from English)",
-          "plural": "Boots",
-          "singularOnly": false,
-          "pluralOnly": false
-        },
-        {
-          "article": "das",
-          "english": "boat",
-          "plural": "Boote",
-          "singularOnly": false,
-          "pluralOnly": false
-        }
-      ],
-      "rank": 1249,
-      "leipzigRank": 1249
     },
     {
       "word": "Erbe",
@@ -1044,7 +1023,7 @@
         },
         {
           "article": "der",
-          "english": "atheist/heathen/pagan",
+          "english": "heathen/pagan",
           "plural": "Heiden",
           "singularOnly": false,
           "pluralOnly": false

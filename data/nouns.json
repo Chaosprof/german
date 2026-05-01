@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 24439,
+    "count": 24448,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
@@ -559,14 +559,14 @@
       "ruleId": "die.suffix_ion"
     },
     {
-      "word": "Jugendlicher",
+      "word": "Jugendliche",
       "article": "der",
-      "plural": "Jugendliche",
+      "plural": "Jugendlichen",
       "english": "young person/teenager",
       "rank": 54,
       "leipzigRank": 54,
-      "articleHelp": "Pattern: -er ending → usually der. Covers agents, tools, instruments, and many other categories. But beware: das Fenster, das Wasser, das Messer, das Feuer, das Zimmer are common neuter exceptions.",
-      "pluralHelp": "die Jugendliche. This plural form doesn't fit a clean pattern — memorize it alongside the noun. Tip: say the full form aloud — \"der Jugendlicher, die Jugendliche\" — to build muscle memory.",
+      "articleHelp": "Adjectival noun (substantivized adjective). With definite article it takes weak endings: der Jugendliche, die Jugendliche, des Jugendlichen, dem Jugendlichen, den Jugendlichen. Without article (strong): ein Jugendlicher.",
+      "pluralHelp": "die Jugendlichen (with article — weak adj. ending). Without article: \"Jugendliche\" (strong adj. ending). Adjectival nouns are declined like their corresponding adjectives.",
       "ruleId": "der.suffix_er"
     },
     {
@@ -729,12 +729,12 @@
     {
       "word": "September",
       "article": "der",
-      "plural": "September",
+      "plural": "—",
       "english": "September",
       "rank": 70,
       "leipzigRank": 70,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "No change (die September). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Fenster→Fenster). The article change to 'die' is your only plural signal.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1187,12 +1187,12 @@
     {
       "word": "Oktober",
       "article": "der",
-      "plural": "Oktober",
+      "plural": "—",
       "english": "October",
       "rank": 113,
       "leipzigRank": 113,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "No change (die Oktober). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Fenster→Fenster). The article change to 'die' is your only plural signal.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1283,12 +1283,12 @@
     {
       "word": "Mai",
       "article": "der",
-      "plural": "Maie",
+      "plural": "—",
       "english": "May",
       "rank": 122,
       "leipzigRank": 122,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "-e (die Maie). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1348,12 +1348,12 @@
     {
       "word": "Juni",
       "article": "der",
-      "plural": "Junis",
+      "plural": "—",
       "english": "June",
       "rank": 128,
       "leipzigRank": 128,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "+s (die Junis). Rule: The -s plural is used for recent loanwords (Auto→Autos, Kino→Kinos) and nouns ending in vowels other than -e (Sofa→Sofas, Radio→Radios). This is the newest plural pattern in German, borrowed from French/English.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1550,12 +1550,12 @@
     {
       "word": "November",
       "article": "der",
-      "plural": "November",
+      "plural": "—",
       "english": "November",
       "rank": 147,
       "leipzigRank": 147,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "No change (die November). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Fenster→Fenster). The article change to 'die' is your only plural signal.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1582,12 +1582,12 @@
     {
       "word": "Januar",
       "article": "der",
-      "plural": "Januare",
+      "plural": "—",
       "english": "January",
       "rank": 150,
       "leipzigRank": 150,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "-e (die Januare). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1634,23 +1634,23 @@
     {
       "word": "März",
       "article": "der",
-      "plural": "Märze",
+      "plural": "—",
       "english": "March",
       "rank": 155,
       "leipzigRank": 155,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "-e (die Märze). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
       "word": "April",
       "article": "der",
-      "plural": "Aprile",
+      "plural": "—",
       "english": "April",
       "rank": 156,
       "leipzigRank": 156,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "-e (die Aprile). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -1995,12 +1995,12 @@
     {
       "word": "Juli",
       "article": "der",
-      "plural": "Julis",
+      "plural": "—",
       "english": "July",
       "rank": 189,
       "leipzigRank": 189,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "+s (die Julis). Rule: The -s plural is used for recent loanwords (Auto→Autos, Kino→Kinos) and nouns ending in vowels other than -e (Sofa→Sofas, Radio→Radios). This is the newest plural pattern in German, borrowed from French/English.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -2123,12 +2123,12 @@
     {
       "word": "Alter",
       "article": "das",
-      "plural": "Alte",
+      "plural": "—",
       "english": "age",
       "rank": 201,
       "leipzigRank": 201,
       "articleHelp": "Morphological: Nominalized adjective/verbal stem. \"das Alter\" (age) is neuter. Do not confuse with \"der Alte\" (the old man), which is a substantivized adjective.",
-      "pluralHelp": "die Alte. This plural form doesn't fit a clean pattern — memorize it alongside the noun. Tip: say the full form aloud — \"der Alter, die Alte\" — to build muscle memory.",
+      "pluralHelp": "das Alter (age) is normally singular only. The form \"die Alter\" exists in fixed phrases (\"in allen Altern\") but is rare. \"Alte\" is unrelated (plural of \"der/die Alte\" = old man/woman).",
       "ruleId": "der.suffix_er",
       "isException": true
     },
@@ -2271,12 +2271,12 @@
     {
       "word": "August",
       "article": "der",
-      "plural": "Auguste",
+      "plural": "—",
       "english": "August",
       "rank": 215,
       "leipzigRank": 215,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "-e (die Auguste). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -2315,12 +2315,12 @@
     {
       "word": "Dezember",
       "article": "der",
-      "plural": "Dezember",
+      "plural": "—",
       "english": "December",
       "rank": 219,
       "leipzigRank": 219,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "No change (die Dezember). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Fenster→Fenster). The article change to 'die' is your only plural signal.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -2593,24 +2593,24 @@
       "isException": true
     },
     {
-      "word": "Fällen",
+      "word": "Fallen",
       "article": "das",
       "plural": "—",
-      "english": "falling/dropping",
+      "english": "falling",
       "rank": 245,
       "leipzigRank": 245,
-      "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Neuter gender must be memorized. Tip: learn it as a chunk — 'das Ziel erreichen', not just 'das Ziel'.",
-      "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns."
+      "articleHelp": "Nominalized infinitive of \"fallen\" (to fall) → always das. Note: \"das Fällen\" (with umlaut) would mean \"the felling/rendering\" (from transitive \"fällen\"). Distinct lemma.",
+      "pluralHelp": "Substantivized infinitives are normally singular only."
     },
     {
       "word": "Februar",
       "article": "der",
-      "plural": "Februare",
+      "plural": "—",
       "english": "February",
       "rank": 246,
       "leipzigRank": 246,
       "articleHelp": "Semantic rule: Months → always der. Der Januar, der Februar, etc. No exceptions.",
-      "pluralHelp": "-e (die Februare). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Months are normally singular only in modern German. Formal plurals exist in some dictionaries (Januare, Februare, …) but are essentially unused.",
       "ruleId": "der.months"
     },
     {
@@ -7984,12 +7984,12 @@
     {
       "word": "Steuer",
       "article": "die",
-      "plural": "Steuer",
+      "plural": "Steuern",
       "english": "tax",
       "rank": 750,
       "leipzigRank": 750,
       "articleHelp": "Dual-gender noun: die Steuer = tax, das Steuer = steering wheel. Since the meaning here is \"tax,\" the article is die.",
-      "pluralHelp": "No change (die Steuer). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Fenster→Fenster). The article change to 'die' is your only plural signal.",
+      "pluralHelp": "-(e)n (die Steuern). Standard feminine plural — die Steuern (taxes).",
       "ruleId": "der.suffix_er",
       "isException": true
     },
@@ -8049,12 +8049,12 @@
     {
       "word": "Post",
       "article": "die",
-      "plural": "Posten",
+      "plural": "—",
       "english": "mail/post office",
       "rank": 756,
       "leipzigRank": 756,
       "articleHelp": "Short/monosyllabic noun — no suffix or semantic rule applies. Short feminine nouns are the rarest monosyllables (~15%). Many form plurals with umlaut + -e (Hand→Hände, Nacht→Nächte, Stadt→Städte).",
-      "pluralHelp": "-(e)n (die Posten). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right."
+      "pluralHelp": "die Post (mail/post office) is normally singular only. Note: \"der Posten\" is a different noun (post/position/item) and should not be used as a plural of \"die Post\"."
     },
     {
       "word": "Unternehmer",
@@ -22202,7 +22202,7 @@
       "word": "Arm",
       "article": "der",
       "plural": "Arme",
-      "english": "arm/ass/right-hand man",
+      "english": "arm",
       "rank": 2086,
       "leipzigRank": 2088,
       "articleHelp": "Semantic note: Body parts have no reliable gender rule — they're spread across all three genders. der Kopf, die Nase, das Auge. Each must be memorized individually.",
@@ -23135,7 +23135,7 @@
       "word": "Mond",
       "article": "der",
       "plural": "Monde",
-      "english": "Moon/crescent/moon",
+      "english": "moon/crescent",
       "rank": 2174,
       "leipzigRank": 2176,
       "articleHelp": "Short/monosyllabic noun — no suffix or semantic rule applies. Statistically, ~60% of monosyllabic German nouns are der, ~25% das, ~15% die. But that's a gamble, not a rule. Best memorized in a phrase: 'der Hund bellt', 'der Weg ist lang'.",
@@ -41446,7 +41446,7 @@
       "word": "Beamer",
       "article": "der",
       "plural": "Beamer",
-      "english": "PC projector/digital projecto/multimedia projector",
+      "english": "PC projector/digital projector/multimedia projector",
       "rank": 3898,
       "leipzigRank": 3900,
       "articleHelp": "Pattern: -er ending → usually der. Covers agents, tools, instruments, and many other categories. But beware: das Fenster, das Wasser, das Messer, das Feuer, das Zimmer are common neuter exceptions.",
@@ -53776,13 +53776,13 @@
     },
     {
       "word": "Personalkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Personalkosten",
       "english": "human resources at the expense of",
       "rank": 5057,
       "leipzigRank": 5059,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Personalkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Risikobewertung",
@@ -55025,7 +55025,7 @@
       "word": "Billion",
       "article": "die",
       "plural": "Billionen",
-      "english": "billion/trillion",
+      "english": "trillion (10^12; NOT English billion — that is \"Milliarde\")",
       "rank": 5175,
       "leipzigRank": 5177,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Feminine gender must be memorized. Tip: learn it in a short phrase — contextual memory is stronger than isolated flashcards.",
@@ -62981,13 +62981,13 @@
     },
     {
       "word": "Lebenshaltungskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Lebenshaltungskosten",
       "english": "cost of living",
       "rank": 5924,
       "leipzigRank": 5926,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Lebenshaltungskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Lesesaal",
@@ -70727,13 +70727,13 @@
     },
     {
       "word": "Folgekosten",
-      "article": "das",
+      "article": "die",
       "plural": "Folgekosten",
       "english": "consequential charges/consequential costs/follow-up costs",
       "rank": 6653,
       "leipzigRank": 6655,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Folgekosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Forschungsförderung",
@@ -75067,13 +75067,13 @@
     },
     {
       "word": "Stromkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Stromkosten",
       "english": "current at the expense of",
       "rank": 7062,
       "leipzigRank": 7064,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Stromkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Taschenlampe",
@@ -97387,13 +97387,13 @@
     },
     {
       "word": "Produktionskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Produktionskosten",
       "english": "production costs",
       "rank": 9167,
       "leipzigRank": 9169,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Produktionskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Psychotherapeutin",
@@ -102928,13 +102928,13 @@
     },
     {
       "word": "Herstellungskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Herstellungskosten",
       "english": "production costs",
       "rank": 9688,
       "leipzigRank": 9690,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Herstellungskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Herzkrankheit",
@@ -103688,13 +103688,13 @@
     },
     {
       "word": "Materialkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Materialkosten",
       "english": "material at the expense of",
       "rank": 9760,
       "leipzigRank": 9762,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Materialkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Medienlandschaft",
@@ -109660,13 +109660,13 @@
     },
     {
       "word": "Behandlungskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Behandlungskosten",
       "english": "care at the expense of",
       "rank": 10321,
       "leipzigRank": 10323,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Behandlungskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Beitragsbemessungsgrenze",
@@ -127270,13 +127270,13 @@
     },
     {
       "word": "Anwaltskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Anwaltskosten",
       "english": "attorney's fee/lawyer's fees/solicitor's fee",
       "rank": 11978,
       "leipzigRank": 11980,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Anwaltskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Anwartschaft",
@@ -130006,13 +130006,13 @@
     },
     {
       "word": "Lohnkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Lohnkosten",
       "english": "reward at the expense of",
       "rank": 12235,
       "leipzigRank": 12237,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Lohnkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Lufttemperatur",
@@ -150600,13 +150600,13 @@
     },
     {
       "word": "Mietkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Mietkosten",
       "english": "clamp at the expense of",
       "rank": 14174,
       "leipzigRank": 14176,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Mietkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Mietminderung",
@@ -152944,13 +152944,13 @@
     },
     {
       "word": "Umzugskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Umzugskosten",
       "english": "move at the expense of",
       "rank": 14397,
       "leipzigRank": 14399,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Umzugskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Unachtsamkeit",
@@ -156989,13 +156989,13 @@
     },
     {
       "word": "Gerichtskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Gerichtskosten",
       "english": "court costs",
       "rank": 14778,
       "leipzigRank": 14780,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Gerichtskosten. Similar to English 'scissors' or 'pants'.",
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\").",
       "ruleId": "das.prefix_ge"
     },
     {
@@ -169633,13 +169633,13 @@
     },
     {
       "word": "Portokosten",
-      "article": "das",
+      "article": "die",
       "plural": "Portokosten",
       "english": "postage at the expense of",
       "rank": 15968,
       "leipzigRank": 15970,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Portokosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Pose",
@@ -175984,13 +175984,13 @@
     },
     {
       "word": "Fixkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Fixkosten",
       "english": "at the expense of",
       "rank": 16569,
       "leipzigRank": 16571,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Fixkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Flashmob",
@@ -180757,13 +180757,13 @@
     },
     {
       "word": "Prozesskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Prozesskosten",
       "english": "lawsuit at the expense of",
       "rank": 17018,
       "leipzigRank": 17020,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Prozesskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Prüfziffer",
@@ -183955,13 +183955,13 @@
     },
     {
       "word": "Wartungskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Wartungskosten",
       "english": "maintenance costs",
       "rank": 17319,
       "leipzigRank": 17321,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Wartungskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Wassergraben",
@@ -197154,13 +197154,13 @@
     },
     {
       "word": "Unkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Unkosten",
       "english": "costs/expenses",
       "rank": 18562,
       "leipzigRank": 18565,
-      "articleHelp": "",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Unkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Unschuldiger",
@@ -197295,13 +197295,13 @@
     },
     {
       "word": "Verfahrenskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Verfahrenskosten",
       "english": "action at the expense of",
       "rank": 18575,
       "leipzigRank": 18578,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Verfahrenskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Verfassungsschutzbericht",
@@ -204906,13 +204906,13 @@
     },
     {
       "word": "Herstellkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Herstellkosten",
       "english": "at the expense of",
       "rank": 19289,
       "leipzigRank": 19293,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Herstellkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Herzmuskel",
@@ -218743,13 +218743,13 @@
     },
     {
       "word": "Druckkosten",
-      "article": "das",
+      "article": "die",
       "plural": "Druckkosten",
       "english": "pressing at the expense of",
       "rank": 20594,
       "leipzigRank": 20598,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Druckkosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Druckkunst",
@@ -238150,13 +238150,13 @@
     },
     {
       "word": "Bestattungskosten",
-      "article": "das",
+      "article": "die",
       "plural": "Bestattungskosten",
       "english": "burial at the expense of",
       "rank": 22420,
       "leipzigRank": 22424,
-      "articleHelp": "Compound noun — gender follows the last element: Kosten (das). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Bestattungskosten. Similar to English 'scissors' or 'pants'."
+      "articleHelp": "Plural-only compound noun ending in -kosten (\"costs\"). Always plural: die ___kosten. The singular \"die ___koste\" does not exist; this noun behaves like \"die Kosten\".",
+      "pluralHelp": "Plurale tantum (plural only). Same form for all cases except dative plural (___kosten + en is irregular here; see \"Kosten\")."
     },
     {
       "word": "Betriebsunfall",
@@ -259574,6 +259574,114 @@
       "leipzigRank": 24443,
       "articleHelp": "Compound noun — gender follows the last element: Spann (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Vorspanne). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first."
+    },
+    {
+      "word": "Eltern",
+      "article": "die",
+      "plural": "Eltern",
+      "english": "parents",
+      "rank": 24440,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum: parents."
+    },
+    {
+      "word": "Leute",
+      "article": "die",
+      "plural": "Leute",
+      "english": "people / folks",
+      "rank": 24441,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum: people (informal)."
+    },
+    {
+      "word": "Kosten",
+      "article": "die",
+      "plural": "Kosten",
+      "english": "costs / expenses",
+      "rank": 24442,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum: costs (financial)."
+    },
+    {
+      "word": "Daten",
+      "article": "die",
+      "plural": "Daten",
+      "english": "data",
+      "rank": 24443,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum in modern usage; \"das Datum\" (date) is a different lemma."
+    },
+    {
+      "word": "Ferien",
+      "article": "die",
+      "plural": "Ferien",
+      "english": "holidays / vacation",
+      "rank": 24444,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum: school/work holidays."
+    },
+    {
+      "word": "Ressourcen",
+      "article": "die",
+      "plural": "Ressourcen",
+      "english": "resources",
+      "rank": 24445,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plural; singular die Ressource exists but the plural is the common form."
+    },
+    {
+      "word": "Medien",
+      "article": "die",
+      "plural": "Medien",
+      "english": "media",
+      "rank": 24446,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plural of das Medium; commonly used as plurale tantum for \"the media\"."
+    },
+    {
+      "word": "Unterlagen",
+      "article": "die",
+      "plural": "Unterlagen",
+      "english": "documents / records",
+      "rank": 24447,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum: paperwork, records, supporting documents."
+    },
+    {
+      "word": "Hausaufgaben",
+      "article": "die",
+      "plural": "Hausaufgaben",
+      "english": "homework",
+      "rank": 24448,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "pluraleTantum": true,
+      "articleHelp": "Plural-only noun (Plurale tantum). Always die.",
+      "pluralHelp": "Plurale tantum in everyday use; singular die Hausaufgabe exists."
     }
   ]
 }
