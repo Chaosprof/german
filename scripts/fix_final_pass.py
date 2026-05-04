@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+"""Final cleanup pass - trim 3+ meanings that can be reduced."""
+import json
+
+# Words where we can safely reduce to 2 or 1 meanings
+NOUN_FINAL = {
+    'Förderung': 'support/promotion',
+    'Herr': 'Mr./gentleman',
+    'Anlage': 'facility/investment/attachment',
+    'Grenze': 'border/limit',
+    'Kraft': 'force/strength',
+    'Prüfung': 'exam/examination',
+    'Farbe': 'color/paint',
+    'Ausgabe': 'edition/expenditure',
+    'Boden': 'floor/ground',
+    'Auftrag': 'order/assignment',
+    'Karte': 'card/map/ticket',
+    'Aufnahme': 'recording/admission',
+    'Strom': 'electricity/current',
+    'Fahrt': 'journey/ride',
+    'Geschäft': 'shop/business',
+    'Vorstellung': 'idea/performance',
+    'Ablauf': 'process/procedure',
+    'Einstellung': 'attitude/setting',
+    'Erde': 'earth/ground',
+    'Leiter': 'leader/director',
+    'Bahn': 'train/railway',
+    'Anzeige': 'advertisement/display',
+    'Zeichen': 'sign/symbol',
+    'Träger': 'carrier/provider',
+    'Dank': 'thanks/gratitude',
+    'Ruhe': 'peace/quiet',
+    'Stoff': 'material/fabric',
+    'Zug': 'train/move',
+    'Gründung': 'founding/establishment',
+    'Bestimmung': 'regulation/purpose',
+    'Kampf': 'fight/battle',
+    'Strand': 'beach',
+    'Nachweis': 'proof/certificate',
+    'Spur': 'trace/track/lane',
+    'Tarif': 'rate/tariff',
+    'Fachbereich': 'department/faculty',
+    'Mehrheit': 'majority',
+    'Szene': 'scene',
+    'Einstieg': 'entry/start',
+    'Kindergarten': 'kindergarten',
+    'Genehmigung': 'approval/permit',
+    'Zulassung': 'admission/license',
+    'Täter': 'perpetrator/offender',
+    # 2-meaning ones that should be 1
+    'Risiko': 'risk',
+    'Herbst': 'autumn',
+    'Glück': 'luck/happiness',
+    'Kontrolle': 'control/check',
+    'Theater': 'theater/theatre',
+    'Anlass': 'occasion',
+    'Absatz': 'paragraph/sales',
+    'Versicherung': 'insurance',
+    'Aussage': 'statement',
+    'Rechnung': 'bill/invoice',
+    'Vergangenheit': 'past',
+    'Geschäftsführer': 'managing director',
+    'Zustand': 'condition/state',
+    'Grundstück': 'property/plot',
+    'Druck': 'pressure/print',
+    'Pflicht': 'duty',
+    'Abstand': 'distance',
+    'Bürgermeister': 'mayor',
+    'Anregung': 'suggestion',
+    'Forderung': 'demand/claim',
+    'Ausbau': 'expansion',
+    'Nachfrage': 'demand',
+    'Gegenstand': 'object/subject',
+    'Gesicht': 'face',
+    'Beteiligung': 'participation',
+    'Tochter': 'daughter',
+    'Opfer': 'victim/sacrifice',
+    'Erinnerung': 'memory/reminder',
+    'Unfall': 'accident',
+    'Anerkennung': 'recognition',
+    'Tisch': 'table',
+    'Ministerium': 'ministry',
+    'Freiheit': 'freedom/liberty',
+    'Gemeinschaft': 'community',
+    'Sieg': 'victory',
+    'Veröffentlichung': 'publication',
+    'Effekt': 'effect',
+    'Gewicht': 'weight',
+    'Erklärkung': 'explanation',
+    'Niveau': 'level',
+    'Auskunft': 'information',
+    'Wechsel': 'change',
+    'Bestand': 'stock/inventory',
+    'Entwurf': 'draft/design',
+    'Fach': 'subject/compartment',
+    'Nachteil': 'disadvantage',
+    'Abschnitt': 'section',
+    'Hauptstadt': 'capital city',
+    'Sendung': 'broadcast/shipment',
+    'Tonne': 'ton/bin',
+    'Frist': 'deadline',
+    'Einheit': 'unit/unity',
+    'Brücke': 'bridge',
+    'Stufe': 'step/level',
+    'Berg': 'mountain',
+    'Stern': 'star',
+    'Bein': 'leg',
+    'Stellungnahme': 'statement',
+    'Pause': 'break/pause',
+    'Anleitung': 'instructions/guide',
+    'Einnahme': 'income/intake',
+    'Motiv': 'motive/motif',
+    'Botschaft': 'embassy/message',
+    'Eintritt': 'entry/admission',
+    'Handwerk': 'craft',
+    'Kanal': 'canal/channel',
+    'Ansicht': 'view/opinion',
+    'Höhepunkt': 'highlight/climax',
+    'Mangel': 'lack/shortage',
+    'Spitze': 'top/peak',
+    'Rest': 'rest/remainder',
+    'Verletzung': 'injury',
+    'Vorschrift': 'regulation',
+    'Steigerung': 'increase',
+    'Verstoß': 'violation',
+    'Grundgesetz': 'Basic Law (constitution)',
+    'Berichterstattung': 'reporting',
+    # Additional ones from 1000-2000 with bad translations still
+    'Rabatte': 'discount',
+    'Schnitt': 'cut/average',
+    'Fluss': 'river',
+    'Lager': 'warehouse/camp',
+    'Speicher': 'storage/memory',
+    'Vermögen': 'assets/ability',
+    'Hof': 'courtyard/farm',
+    'Fassung': 'version/composure',
+    'Lauf': 'run/course',
+    'Bescheid': 'notification',
+    'Sprung': 'jump/crack',
+    'Decke': 'blanket/ceiling',
+    'Geist': 'spirit/mind',
+    'Abhängigkeit': 'dependence/addiction',
+}
+
+# Fix adjectives with borderline translations
+ADJ_FINAL = {
+    'Förderung': 'support/promotion',
+}
+
+with open('data/nouns.json', encoding='utf-8') as f:
+    data = json.load(f)
+
+changed = 0
+for noun in data['nouns']:
+    word = noun['word']
+    if word in NOUN_FINAL:
+        old = noun['english']
+        new = NOUN_FINAL[word]
+        if old != new:
+            noun['english'] = new
+            changed += 1
+            print(f"  {noun['rank']:4d} {word}: '{old}' -> '{new}'")
+
+with open('data/nouns.json', 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+print(f"\nFinal pass: fixed {changed} noun meanings.")
