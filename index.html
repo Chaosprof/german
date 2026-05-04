@@ -126,15 +126,19 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 
 
 // ═══════════════════════════════════════════════════════════════
-// WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site
-const WORDS_DATA_PATH = "./data/nouns.json";
-const ADJECTIVES_DATA_PATH = "./data/adjectives.json";
-const VERBS_DATA_PATH = "./data/verbs.json";
-const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json";
-const VERB_PREP_PATH = "./data/verbs-with-prepositions.json";
-const ARTICLE_RULES_PATH = "./data/article-rules.json";
-const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json";
-const PREPOSITION_RULES_PATH = "./data/preposition-rules.json";
+// WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
+// DATA_VERSION is appended as a cache-buster query string. Bump when data
+// files change so browsers and the GitHub Pages CDN serve the fresh copy.
+const DATA_VERSION = "2026-05-01-adjnouns";
+const v = `?v=${DATA_VERSION}`;
+const WORDS_DATA_PATH = "./data/nouns.json" + v;
+const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
+const VERBS_DATA_PATH = "./data/verbs.json" + v;
+const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json" + v;
+const VERB_PREP_PATH = "./data/verbs-with-prepositions.json" + v;
+const ARTICLE_RULES_PATH = "./data/article-rules.json" + v;
+const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json" + v;
+const PREPOSITION_RULES_PATH = "./data/preposition-rules.json" + v;
 let NOUNS = [];
 let NOUN_INDEX = new Map();
 let EXPLANATIONS = new Map();
