@@ -1,64 +1,38 @@
 # Dataset cleanup TODO
 
-Open issues from the April 2026 dataset review (commit `7f5d9b4`).
-The targeted, high-confidence fixes have already been applied. What follows
-is the remaining work, roughly ordered by impact.
+Open issues from the April 2026 dataset review.
+Targeted fixes were applied in `7f5d9b4`; bulk translation work continues
+across `b7966b6`, `524f11c`, `c812e28`. What follows is the remaining work,
+roughly ordered by impact.
 
-## 1. Bulk translation gaps
+## 1. Bulk translation gaps (in progress)
 
-These are large enough that they warrant a single LLM batch pass, not manual
-edits. Easiest is a script that walks the affected entries, sends German +
-existing context to a model, and writes back the gloss.
+Status as of `c812e28`:
 
-- `data/nouns.json` — **1,385 entries** (≈5.7%) have empty `english`,
-  starting around rank 5,108.
-- `data/adjectives.json` — **2,068 entries** (≈22.9%) have empty `english`,
-  starting around rank 1,999. Worst-affected file proportionally.
+- `data/nouns.json` — **1,089 blanks remain** (was 1,385). Cleared rank
+  band 5,108–9,989; gaps now start at ~rank 10,000.
+- `data/adjectives.json` — **1,433 blanks remain** (was 2,068). Cleared
+  rank band 1,999–5,000 (with gaps).
+
+Approach for remaining work: same pattern (`scripts/fill-blanks-batch*.py`)
+— translate in batches of 200–300, commit per batch, verify ambiguous cases
+against Wiktionary/Duden. Each batch script is standalone and idempotent.
 
 ## 2. Compound-noun MT contamination beyond rank ~2,500
 
-Same root cause: an unreviewed machine-translation pass that translated
-compound components in isolation, picking the wrong sense of the head morpheme.
+✅ **Done in `b7966b6`.** All 97 known-bad entries fixed:
+- 27 `-kosten` compounds with "at the expense of" → proper "X costs"
+- 33 `Fach-`/-abteilung compounds with "compartment" → "specialist/subject"
+- 15 `Steuer-`/-steuer compounds with "controls" → "tax"
+- Specific egregious errors: "verb belly", "circle bod", "compartment Earth",
+  "finance bed", "navigation structure", "fine action", etc.
 
-**Concrete examples already observed in the data:**
-
-| Rank | German | Stored EN | Should be |
-|---|---|---|---|
-| 5001 | Navigationssystem | "navigation **structure**" | navigation system |
-| 5002 | Problemlösung | "problem **answer**" | solution / problem-solving |
-| 5003 | Strafverfahren | "**fine** action" | criminal proceedings |
-| 5005 | Testergebnis | "**check** outcome" | test result |
-| 5007 | Versicherungssumme | "**affirmation** sum" | sum insured |
-| 5010 | Fachkenntnis | "**compartment acquaintance**" | expertise / specialist knowledge |
-| 5012 | Kreishaus | "**circle bod**" | district administrative building |
-| 5014 | Ortsgruppe | "**awl group**" | local branch / local chapter |
-| 5016 | Verbleib | "**verb belly**" | whereabouts |
-| 5057 | Personalkosten | "human resources at the expense of" | personnel costs |
-| 7002 | Klarstellung | "**attitude**" | clarification |
-| 7006 | Lehrjahr | "apprenticeship **age**" | apprenticeship year |
-| 7007 | Lernzeit | "**tense**" | study time / learning period |
-| 7013 | Menschenbild | "human **idea**" | image of humanity / view of mankind |
-| 10010 | Fachwelt | "**compartment Earth**" | specialist community / experts |
-| 10012 | Fertigungsverfahren | "**manufactory action**" | manufacturing process |
-| 10015 | Finanzlage | "finance **bed**" | financial situation |
-| 20005 | Steilvorlage | "**template**" | perfect setup / assist (sports) |
-| 20010 | Steueridentifikationsnummer | "**controls** identification number" | tax identification number |
-| 20011 | Steuerzahlung | "**controls** payment" | tax payment |
-
-**Pattern to fix specifically: `Steuer` translated as "controls" instead of
-"tax" inside compounds.** A regex sweep over `*Steuer*` compounds with
-"controls" in the gloss would catch most.
-
-**Pattern: `-kosten` compounds with "at the expense of".** All 22 already
-have `article: die` after the previous fix; the translations still need
-work. e.g. `Stromkosten` → "current at the expense of" should be
-"electricity costs"; `Lohnkosten` → "reward at the expense of" should be
-"wage costs"; `Mietkosten` → "clamp at the expense of" should be "rental
-costs". Likely fixable by a small targeted pass.
-
-Recommendation: rerun translation for everything from rank ≈2,500 to end-of-file,
-or at minimum filter for entries whose English contains suspicious tokens
-("at the expense of", "compartment", "controls", "verb belly", empty string).
+**Remaining sweep:** there may be similar wrong-sense MT errors with other
+head morphemes that haven't been spotted. Quick check ideas:
+- `Last` (load vs. burden vs. lorry) in compounds
+- `Bahn` (train vs. lane vs. orbit) in compounds
+- `Schein` (appearance vs. note vs. certificate) in compounds
+- Other suspicious-token sweeps similar to the original triage
 
 ## 3. Structural issues
 
