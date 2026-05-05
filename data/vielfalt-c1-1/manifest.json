@@ -1,0 +1,85 @@
+{
+  "id": "vielfalt-c1.1",
+  "name": "C1.1 Vielfalt Glossar",
+  "description": "Hueber Vielfalt C1.1 textbook (ISBN 978-3-19-201038-2) — Lernwortschatz organised by lesson.",
+  "source": "Vielfalt_C1-1_Glossar_blanko.pdf",
+  "decks": [
+    {
+      "file": "lektion-01.json",
+      "id": "vielfalt-c1.1-lektion-01",
+      "name": "Lektion 1: Was bedeutet das eigentlich?"
+    },
+    {
+      "file": "lektion-02.json",
+      "id": "vielfalt-c1.1-lektion-02",
+      "name": "Lektion 2: Hoch- und Tiefstapeln"
+    },
+    {
+      "file": "lektion-03.json",
+      "id": "vielfalt-c1.1-lektion-03",
+      "name": "Lektion 3: Wie wir Sprachen (er)leben"
+    },
+    {
+      "file": "lektion-04.json",
+      "id": "vielfalt-c1.1-lektion-04",
+      "name": "Lektion 4: Eine Frage der Gerechtigkeit?"
+    },
+    {
+      "file": "lektion-05.json",
+      "id": "vielfalt-c1.1-lektion-05",
+      "name": "Lektion 5: Mit Schwung in den Alltag"
+    },
+    {
+      "file": "lektion-06.json",
+      "id": "vielfalt-c1.1-lektion-06",
+      "name": "Lektion 6: Offene Türen und gläserne Decken"
+    },
+    {
+      "file": "lektion-07.json",
+      "id": "vielfalt-c1.1-lektion-07",
+      "name": "Lektion 7: Alles im grünen Bereich"
+    },
+    {
+      "file": "lektion-08.json",
+      "id": "vielfalt-c1.1-lektion-08",
+      "name": "Lektion 8: Ewig leben?"
+    },
+    {
+      "file": "lektion-09.json",
+      "id": "vielfalt-c1.1-lektion-09",
+      "name": "Lektion 9: Von allen Seiten beleuchtet"
+    },
+    {
+      "file": "lektion-10.json",
+      "id": "vielfalt-c1.1-lektion-10",
+      "name": "Lektion 10: Entschuldigung!"
+    },
+    {
+      "file": "lektion-11.json",
+      "id": "vielfalt-c1.1-lektion-11",
+      "name": "Lektion 11: Geschichte und Geschichten"
+    },
+    {
+      "file": "lektion-12.json",
+      "id": "vielfalt-c1.1-lektion-12",
+      "name": "Lektion 12: Alle Menschen im Blick"
+    },
+    {
+      "file": "all.json",
+      "id": "vielfalt-c1.1-all",
+      "name": "Vielfalt C1.1 — Komplettes Glossar"
+    },
+    {
+      "file": "verb-prepositions.json",
+      "id": "vielfalt-c1.1-verb-prepositions",
+      "name": "Vielfalt C1.1 - Verb + Preposition",
+      "kind": "verb_prepositions"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "vielfalt-c1.1-irregular-verbs",
+      "name": "Vielfalt C1.1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

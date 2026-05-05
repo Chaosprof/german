@@ -129,7 +129,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-05-05-adjnoun-pl";
+const DATA_VERSION = "2026-05-05-vielfalt-forms";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
@@ -139,6 +139,9 @@ const VERB_PREP_PATH = "./data/verbs-with-prepositions.json" + v;
 const ARTICLE_RULES_PATH = "./data/article-rules.json" + v;
 const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json" + v;
 const PREPOSITION_RULES_PATH = "./data/preposition-rules.json" + v;
+const VIELFALT_DIR = "./data/vielfalt-c1-1/";
+const FOLDER_BUILTIN = "Built-in";
+const FOLDER_CUSTOM = "My Decks";
 let NOUNS = [];
 let NOUN_INDEX = new Map();
 let EXPLANATIONS = new Map();
@@ -221,7 +224,8 @@ async function loadWordData() {
           name: "Dual-Gender Nouns",
           description: dgData.meta?.description || "Nouns whose meaning changes with the article",
           nouns: dualEntries.map(entry => getNounEntryId(entry)),
-          builtin: true
+          builtin: true,
+          folder: FOLDER_BUILTIN
         });
       }
     }
@@ -262,6 +266,48 @@ async function loadWordData() {
       PREPOSITION_HINTS = prData.prepositions || {};
     }
   } catch(e) { console.warn("Could not load preposition rules:", e); }
+  // Load Vielfalt C1.1 lesson decks (textbook glossary, organised by lesson).
+  // Each deck file lives in data/vielfalt-c1-1/ and is referenced from manifest.json,
+  // so the whole folder can be removed without touching the rest of the data.
+  try {
+    const manResp = await fetch(VIELFALT_DIR + "manifest.json" + v);
+    if (manResp.ok) {
+      const manifest = await manResp.json();
+      const folderName = manifest.name || "Vielfalt C1.1";
+      const deckRefs = Array.isArray(manifest.decks) ? manifest.decks : [];
+      const deckFiles = await Promise.all(deckRefs.map(ref =>
+        fetch(VIELFALT_DIR + ref.file + v).then(r => r.ok ? r.json() : null).catch(() => null)
+      ));
+      for (const deck of deckFiles) {
+        if (!deck) continue;
+        const nouns = Array.isArray(deck.nouns) ? deck.nouns : [];
+        const verbs = Array.isArray(deck.verbs) ? deck.verbs : [];
+        const adjectives = Array.isArray(deck.adjectives) ? deck.adjectives : [];
+        const verbPrepositions = Array.isArray(deck.verbPrepositions) ? deck.verbPrepositions : [];
+        const verbForms = Array.isArray(deck.verbForms) ? deck.verbForms : [];
+        const parts = [];
+        if (nouns.length) parts.push(`${nouns.length} N`);
+        if (verbs.length) parts.push(`${verbs.length} V`);
+        if (adjectives.length) parts.push(`${adjectives.length} Adj`);
+        if (verbPrepositions.length) parts.push(`${verbPrepositions.length} V+Prep`);
+        if (verbForms.length) parts.push(`${verbForms.length} Irreg`);
+        const deckDescription = parts.join(" - ");
+        BUILTIN_DECKS.push({
+          id: deck.id,
+          name: deck.shortName || deck.name,
+          description: deckDescription,
+          nouns,
+          verbs,
+          adjectives,
+          verbPrepositions,
+          verbForms,
+          builtin: true,
+          folder: folderName,
+          fullName: deck.name
+        });
+      }
+    }
+  } catch(e) { console.warn("Could not load Vielfalt C1.1 decks:", e); }
 }
 
 function buildWeakNounsDeck() {
@@ -282,7 +328,8 @@ function buildWeakNounsDeck() {
     name: "Weak Nouns (n-Deklination)",
     description: `Masculine nouns that take -(e)n in every case except nominative singular. ${weak.length} nouns.`,
     nouns: weak.map(n => n[0]),
-    builtin: true
+    builtin: true,
+    folder: FOLDER_BUILTIN
   });
 }
 
@@ -332,7 +379,8 @@ function buildRuleDecks() {
       name: `${rule.article} · ${rule.name}`,
       description: desc,
       nouns: selected.map(n => n[0]),
-      builtin: true
+      builtin: true,
+      folder: FOLDER_BUILTIN
     });
   }
 }
@@ -1370,6 +1418,45 @@ function GermanNounGame() {
       if (verb) return forMode === "reverse" ? [normalizeVerb(verb)] : [verb];
       return [];
     };
+    const resolveDeckItems = (deck, forMode, type) => {
+      const includeNouns = type === "nouns" || type === "mixed";
+      const includeAdjectives = type === "adjectives" || type === "mixed";
+      const includeVerbs = type === "verbs" || type === "mixed";
+      const includeVerbPrepositions = type === "verb_prep";
+      const includeVerbForms = type === "verb_forms";
+      const items = [];
+      if (includeNouns) {
+        (deck.nouns || []).forEach(name => {
+          items.push(...getDeckEntriesByName(name));
+        });
+      }
+      if (includeAdjectives) {
+        (deck.adjectives || []).forEach(name => {
+          const adj = ADJECTIVES.find(a => a[0] === name);
+          if (adj) items.push(forMode === "reverse" ? normalizeAdj(adj) : adj);
+        });
+      }
+      if (includeVerbs) {
+        (deck.verbs || []).forEach(name => {
+          const verb = VERBS.find(v => v[0] === name);
+          if (verb) items.push(forMode === "reverse" ? normalizeVerb(verb) : verb);
+        });
+      }
+      if (includeVerbPrepositions) {
+        (deck.verbPrepositions || []).forEach(comboKey => {
+          const [verb, prep] = comboKey.split("|");
+          const combo = VERB_PREPOSITIONS.find(v => v[0] === verb && v[3] === prep);
+          if (combo) items.push(combo);
+        });
+      }
+      if (includeVerbForms) {
+        (deck.verbForms || []).forEach(name => {
+          const verb = IRREGULAR_VERBS.find(v => v[0] === name);
+          if (verb) items.push(verb);
+        });
+      }
+      return shuffleArray(items.filter(item => item && item[1] !== undefined));
+    };
 
     if (deckId === "__weakest__") {
       // Weakest words mode - filtered by effective word type
@@ -1387,6 +1474,14 @@ function GermanNounGame() {
       }
       if (!nouns.length) { alert("Not enough data yet — play some sessions first!"); return; }
       setActiveDeck(null);
+    } else if (deckId) {
+      const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
+      if (!deck) return;
+      const deckType = gMode === "verb_prepositions" ? "verb_prep" : gMode === "verb_forms" ? "verb_forms" : supportsWt ? wType : "nouns";
+      const deckMode = gMode === "reverse" ? "reverse" : gMode === "matching" ? "matching" : "classic";
+      nouns = resolveDeckItems(deck, deckMode, deckType);
+      if (!nouns.length) { alert("No words available in this deck for the selected activity"); return; }
+      setActiveDeck(deckId);
     } else if ((gMode === "matching" || gMode === "reverse") && wType === "adjectives") {
       nouns = loadAdjectives(t, tierMinVal);
       if (gMode === "reverse") nouns = nouns.map(normalizeAdj);
@@ -1428,11 +1523,6 @@ function GermanNounGame() {
       nouns = shuffleArray(unique.filter(v => v[1]));
       if (!nouns.length) { alert("No verb+preposition data available for this tier"); return; }
       setActiveDeck(null);
-    } else if (deckId) {
-      const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
-      if (!deck) return;
-      nouns = deck.nouns.flatMap(name => getDeckEntriesByName(name));
-      setActiveDeck(deckId);
     } else {
       const tierNouns = getNounsForTier(t, tierMinVal);
       const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
@@ -2403,6 +2493,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [selectedDeck,setSelectedDeck]=useState(init.deckId && init.deckId !== "__weakest__" ? init.deckId : null);
   const [showSettings,setShowSettings]=useState(false);
   const [showDeckBuilder,setShowDeckBuilder]=useState(false);
+  const [openDeckFolders,setOpenDeckFolders]=useState({});
   const [selectedGameMode,setSelectedGameMode]=useState(init.gm ?? "classic");
   const [matchWordType,setMatchWordType]=useState(init.wordType ?? "nouns");
   const [playStyle,setPlayStyle]=useState(init.pStyle ?? "practice");
@@ -2420,16 +2511,30 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse";
   const answerTypeAllowed = selectedGameMode !== "reverse" && selectedGameMode !== "matching" && selectedGameMode !== "verb_forms" && selectedGameMode !== "verb_prepositions";
   const effectiveWordType = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : selectedGameMode === "verb_prepositions" ? "verb_prep" : "nouns");
-  const deckAllowed = !((supportsWordType && matchWordType !== "nouns") || selectedGameMode === "verb_forms" || selectedGameMode === "verb_prepositions");
+  const deckAllowed = true;
   const weakestAllowed = selectedGameMode !== "verb_prepositions";
   const allDecks = useMemo(() => [...BUILTIN_DECKS, ...(userData.decks || [])], [userData.decks]);
-  const selectedDeckData = allDecks.find(dk => dk.id === selectedDeck) || null;
+  const availableDecks = useMemo(() => {
+    const has = (dk, key) => Array.isArray(dk[key]) && dk[key].length > 0;
+    return allDecks.filter(dk => {
+      if (selectedGameMode === "verb_forms") return has(dk, "verbForms");
+      if (selectedGameMode === "verb_prepositions") return has(dk, "verbPrepositions");
+      if (selectedGameMode === "reverse" || selectedGameMode === "matching") {
+        if (matchWordType === "nouns") return has(dk, "nouns");
+        if (matchWordType === "adjectives") return has(dk, "adjectives");
+        if (matchWordType === "verbs") return has(dk, "verbs");
+        return has(dk, "nouns") || has(dk, "adjectives") || has(dk, "verbs");
+      }
+      return has(dk, "nouns");
+    });
+  }, [allDecks, selectedGameMode, matchWordType]);
+  const selectedDeckData = availableDecks.find(dk => dk.id === selectedDeck) || null;
   const sourceOptions = useMemo(() => {
     const options = [{ id: "tier", name: "Vocab Level", desc: "Pick a tier or range" }];
-    if (deckAllowed) options.push({ id: "deck", name: "Saved Deck", desc: `${allDecks.length} available` });
+    if (deckAllowed) options.push({ id: "deck", name: "Saved Deck", desc: `${availableDecks.length} available` });
     if (weakestAllowed) options.push({ id: "weakest", name: "Weakest", desc: "Use your worst words" });
     return options;
-  }, [deckAllowed, weakestAllowed, allDecks.length]);
+  }, [deckAllowed, weakestAllowed, availableDecks.length]);
 
   useEffect(() => {
     if (!supportsWordType && matchWordType !== "nouns") setMatchWordType("nouns");
@@ -2448,8 +2553,8 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   }, [source, sourceOptions]);
 
   useEffect(() => {
-    if (selectedDeck && !allDecks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
-  }, [selectedDeck, allDecks]);
+    if (selectedDeck && !availableDecks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
+  }, [selectedDeck, availableDecks]);
 
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
@@ -2737,15 +2842,87 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       </div>
     );
   };
+  const renderDeckCard = (dk) => {
+    const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
+    const dkBest = bestScores[dkKey];
+    const dkPct = dkBest ? dkBest.pct : 0;
+    const isPerfect = dkPct >= 100;
+    const ringColor = medalRingColor(dkPct);
+    const cardClass = medalCardClass(dkPct);
+    const borderColor = selectedDeck===dk.id ? UI.gold : medalBorderColor(dkPct);
+    const bg = selectedDeck===dk.id ? UI.goldSoft : medalCardBg(dkPct);
+    const userDeck = !dk.builtin;
+    const subtitle = dk.description
+      ? dk.description
+      : `${dk.nouns.length} noun${dk.nouns.length===1?"":"s"}${userDeck && dk.created ? ` · ${new Date(dk.created).toLocaleDateString()}` : ""}`;
+    return (
+      <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
+        <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
+          {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+          <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
+            <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"★":dkPct>0?dkPct+"%":""}</span>
+          </div>
+          <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
+          <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{subtitle}</span>
+        </button>
+        {userDeck && (
+          <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
+        )}
+      </div>
+    );
+  };
+
+  // Group decks by folder. FOLDER_BUILTIN first, FOLDER_CUSTOM last, others alphabetically.
+  const deckGroups = (() => {
+    const grouped = new Map();
+    const order = [];
+    const push = (folder, dk) => {
+      if (!grouped.has(folder)) { grouped.set(folder, []); order.push(folder); }
+      grouped.get(folder).push(dk);
+    };
+    for (const dk of availableDecks) push(dk.builtin ? (dk.folder || FOLDER_BUILTIN) : FOLDER_CUSTOM, dk);
+    const folderRank = (f) => f === FOLDER_BUILTIN ? 0 : f === FOLDER_CUSTOM ? 2 : 1;
+    order.sort((a, b) => folderRank(a) - folderRank(b) || a.localeCompare(b));
+    return order.map(folder => ({ folder, decks: grouped.get(folder) }));
+  })();
+
+  const folderOfSelected = deckGroups.find(g => g.decks.some(dk => dk.id === selectedDeck))?.folder || null;
+
   const renderDeckSelector = () => (
     <div style={S.menuSection}>
       {selectedDeckData && (
         <div style={S.inlineSummaryCard}>
           <span style={S.inlineSummaryLabel}>Current Deck</span>
-          <span style={S.inlineSummaryValue}>{selectedDeckData.name}</span>
+          <span style={S.inlineSummaryValue}>{selectedDeckData.fullName || selectedDeckData.name}</span>
         </div>
       )}
-      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:300,overflowY:"auto"}}>
+      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
+        {deckGroups.map(group => {
+          const isOpen = openDeckFolders[group.folder] ?? (group.folder === folderOfSelected || group.folder === FOLDER_BUILTIN);
+          return (
+            <div key={group.folder} style={{display:"flex",flexDirection:"column",gap:6}}>
+              <button onClick={()=>setOpenDeckFolders(s => ({...s, [group.folder]: !isOpen}))}
+                style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 10px",border:`1px solid ${UI.line}`,borderRadius:8,background:UI.panelSoft,cursor:"pointer",fontSize:11,fontWeight:800,color:UI.muted,letterSpacing:1.5,textTransform:"uppercase"}}>
+                <span>{group.folder}</span>
+                <span style={{fontSize:10,color:UI.faint}}>{group.decks.length} {isOpen?"▾":"▸"}</span>
+              </button>
+              {isOpen && group.decks.map(renderDeckCard)}
+            </div>
+          );
+        })}
+        {deckGroups.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
+      </div>
+      <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
+        + Create Custom Deck
+      </button>
+    </div>
+  );
+
+  // Stub-out the remaining old-style flat deck rendering (replaced above).
+  const _legacy_decks_unused = () => (
+    <div style={{display:"none"}}>
+      <div>
         {BUILTIN_DECKS.map(dk=>{
           const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
           const dkBest = bestScores[dkKey];
@@ -2794,6 +2971,68 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           );
         })}
         {userData.decks.length===0&&BUILTIN_DECKS.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
+      </div>
+      <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
+        + Create Custom Deck
+      </button>
+    </div>
+  );
+
+  const renderDeckCardClean = (dk) => {
+    const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
+    const dkBest = bestScores[dkKey];
+    const dkPct = dkBest ? dkBest.pct : 0;
+    const isPerfect = dkPct >= 100;
+    const ringColor = medalRingColor(dkPct);
+    const cardClass = medalCardClass(dkPct);
+    const borderColor = selectedDeck === dk.id ? UI.gold : medalBorderColor(dkPct);
+    const bg = selectedDeck === dk.id ? UI.goldSoft : medalCardBg(dkPct);
+    const userDeck = !dk.builtin;
+    const nounCount = (dk.nouns || []).length;
+    const subtitle = dk.description
+      ? dk.description
+      : `${nounCount} noun${nounCount === 1 ? "" : "s"}${userDeck && dk.created ? ` - ${new Date(dk.created).toLocaleDateString()}` : ""}`;
+    return (
+      <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
+        <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
+          {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+          <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
+            <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
+          </div>
+          <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
+          <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{subtitle}</span>
+        </button>
+        {userDeck && (
+          <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
+        )}
+      </div>
+    );
+  };
+
+  const renderDeckSelectorClean = () => (
+    <div style={S.menuSection}>
+      {selectedDeckData && (
+        <div style={S.inlineSummaryCard}>
+          <span style={S.inlineSummaryLabel}>Current Deck</span>
+          <span style={S.inlineSummaryValue}>{selectedDeckData.fullName || selectedDeckData.name}</span>
+        </div>
+      )}
+      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
+        {deckGroups.map(group => {
+          const isOpen = openDeckFolders[group.folder] ?? (group.folder === folderOfSelected || group.folder === FOLDER_BUILTIN);
+          return (
+            <div key={group.folder} style={{display:"flex",flexDirection:"column",gap:6}}>
+              <button onClick={()=>setOpenDeckFolders(s => ({...s, [group.folder]: !isOpen}))}
+                style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 10px",border:`1px solid ${UI.line}`,borderRadius:8,background:UI.panelSoft,cursor:"pointer",fontSize:11,fontWeight:800,color:UI.muted,letterSpacing:1.5,textTransform:"uppercase"}}>
+                <span>{group.folder}</span>
+                <span style={{fontSize:10,color:UI.faint}}>{group.decks.length} {isOpen ? "v" : ">"}</span>
+              </button>
+              {isOpen && group.decks.map(renderDeckCardClean)}
+            </div>
+          );
+        })}
+        {deckGroups.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
       </div>
       <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
         + Create Custom Deck
@@ -2908,7 +3147,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         </div>
         {source==="weakest"&&<div style={S.stepNote}>Practice your weakest words based on past performance. This works best after a few sessions.</div>}
         {source==="tier"&&renderTierSelector()}
-        {source==="deck"&&renderDeckSelector()}
+        {source==="deck"&&renderDeckSelectorClean()}
       </div>
 
       <div style={S.menuSection}>

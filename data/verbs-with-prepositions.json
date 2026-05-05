@@ -3,7 +3,7 @@
     "name": "Verbs with Prepositions",
     "description": "German verbs with fixed prepositions (Verben mit festen Präpositionen). Includes the governed case and English meaning. Essential for B2–C2 learners and native-level fluency.",
     "version": 1,
-    "count": 297,
+    "count": 312,
     "generatedAt": "2026-04-10T00:00:00.000000+00:00"
   },
   "verbs": [
@@ -2383,6 +2383,141 @@
       "example": "Ich helfe dir bei den Hausaufgaben.",
       "rank": 299,
       "manuallyAdded": true
+    },
+    {
+      "verb": "verweisen",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "refer to / point to",
+      "example": "Der Text verweist auf weitere Quellen.",
+      "rank": 300,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "bewundern",
+      "preposition": "an",
+      "case": "Dat",
+      "english": "admire about",
+      "example": "Ich bewundere an ihr ihre Gelassenheit.",
+      "rank": 301,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "übereinstimmen",
+      "preposition": "in",
+      "case": "Dat",
+      "english": "agree on / match in",
+      "example": "Die beiden Berichte stimmen in vielen Punkten überein.",
+      "rank": 302,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "verstehen",
+      "preposition": "unter",
+      "case": "Dat",
+      "english": "understand by",
+      "example": "Was verstehst du unter diesem Begriff?",
+      "rank": 303,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "verknüpfen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "link / connect with",
+      "example": "Sie verknüpft die Theorie mit praktischen Beispielen.",
+      "rank": 304,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "sich einstellen",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "adjust / prepare for",
+      "example": "Wir stellen uns auf neue Bedingungen ein.",
+      "rank": 305,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "einhergehen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "go hand in hand with",
+      "example": "Der Wandel geht mit großen Chancen einher.",
+      "rank": 306,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "hindeuten",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "point to / indicate",
+      "example": "Die Zahlen deuten auf eine Verbesserung hin.",
+      "rank": 307,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "erfüllen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "fill with",
+      "example": "Die Nachricht erfüllte sie mit Freude.",
+      "rank": 308,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "sich einschreiben",
+      "preposition": "an",
+      "case": "Dat",
+      "english": "enroll at",
+      "example": "Sie schreibt sich an der Universität ein.",
+      "rank": 309,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "sich einschreiben",
+      "preposition": "für",
+      "case": "Akk",
+      "english": "enroll / register for",
+      "example": "Er schreibt sich für den Kurs ein.",
+      "rank": 310,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "sich entfremden",
+      "preposition": "von",
+      "case": "Dat",
+      "english": "become alienated from",
+      "example": "Er entfremdete sich von seiner Familie.",
+      "rank": 311,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "investieren",
+      "preposition": "in",
+      "case": "Akk",
+      "english": "invest in",
+      "example": "Das Unternehmen investiert in neue Technologien.",
+      "rank": 312,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "geradestehen",
+      "preposition": "für",
+      "case": "Akk",
+      "english": "answer / be responsible for",
+      "example": "Jeder muss für seine Fehler geradestehen.",
+      "rank": 313,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "verb": "zeugen",
+      "preposition": "von",
+      "case": "Dat",
+      "english": "testify to / show evidence of",
+      "example": "Sein Verhalten zeugt von großem Mut.",
+      "rank": 314,
+      "source": "vielfalt-c1.1"
     }
   ]
 }

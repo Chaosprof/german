@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 5213,
+    "count": 5237,
     "irregularCount": 1150,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
@@ -15167,7 +15167,7 @@
       "irregular": true,
       "prateritum": "verschwamm",
       "perfekt": "verschwommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "versiegeln",
@@ -34794,6 +34794,204 @@
       "english": "(reflexive: sich freuen) be glad/be happy",
       "rank": 5213,
       "irregular": false
+    },
+    {
+      "word": "verdeutlichen",
+      "english": "clarify/make clear",
+      "rank": 5214,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "gebärden",
+      "english": "use sign language/gesticulate",
+      "rank": 5215,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "rüberkommen",
+      "english": "come across (as)",
+      "rank": 5216,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "kam rüber",
+      "perfekt": "rübergekommen",
+      "withSein": true
+    },
+    {
+      "word": "involvieren",
+      "english": "involve",
+      "rank": 5217,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "verschränken",
+      "english": "cross/fold (arms, legs)",
+      "rank": 5218,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "auftun",
+      "english": "(reflexive) open up/present itself",
+      "rank": 5219,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "tat auf",
+      "perfekt": "aufgetan",
+      "withSein": false
+    },
+    {
+      "word": "antrainieren",
+      "english": "(reflexive) train oneself in/acquire by training",
+      "rank": 5220,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "einbinden",
+      "english": "incorporate/integrate",
+      "rank": 5221,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "band ein",
+      "perfekt": "eingebunden",
+      "withSein": false
+    },
+    {
+      "word": "anfallen",
+      "english": "arise/accrue (of work, costs)",
+      "rank": 5222,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "fiel an",
+      "perfekt": "angefallen",
+      "withSein": true
+    },
+    {
+      "word": "wirtschaften",
+      "english": "manage resources/economise",
+      "rank": 5223,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "hinauszögern",
+      "english": "delay/postpone",
+      "rank": 5224,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "verjüngen",
+      "english": "rejuvenate",
+      "rank": 5225,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "verirren",
+      "english": "(reflexive) get lost",
+      "rank": 5226,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "ausströmen",
+      "english": "emit/escape (of gas, smell)",
+      "rank": 5227,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "einschleichen",
+      "english": "(reflexive) creep in",
+      "rank": 5228,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "schlich ein",
+      "perfekt": "eingeschlichen",
+      "withSein": false
+    },
+    {
+      "word": "anschreien",
+      "english": "shout at",
+      "rank": 5229,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "schrie an",
+      "perfekt": "angeschrien",
+      "withSein": false
+    },
+    {
+      "word": "geradestehen",
+      "english": "take responsibility (für etw.)",
+      "rank": 5230,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "stand gerade",
+      "perfekt": "geradegestanden",
+      "withSein": false
+    },
+    {
+      "word": "konfrontieren",
+      "english": "confront",
+      "rank": 5231,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "auflockern",
+      "english": "loosen up/lighten (mood, atmosphere)",
+      "rank": 5232,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "einreißen",
+      "english": "tear down/get out of hand",
+      "rank": 5233,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "riss ein",
+      "perfekt": "eingerissen",
+      "withSein": false
+    },
+    {
+      "word": "anbelangen",
+      "english": "concern (was X anbelangt — as far as X is concerned)",
+      "rank": 5234,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "hineinpassen",
+      "english": "fit in",
+      "rank": 5235,
+      "irregular": false,
+      "source": "vielfalt-c1.1"
+    },
+    {
+      "word": "einfließen",
+      "english": "flow into/be incorporated",
+      "rank": 5236,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "floss ein",
+      "perfekt": "eingeflossen",
+      "withSein": true
+    },
+    {
+      "word": "unterlaufen",
+      "english": "slip past/occur (jdm. unterläuft ein Fehler)",
+      "rank": 5237,
+      "irregular": true,
+      "source": "vielfalt-c1.1",
+      "prateritum": "unterlief",
+      "perfekt": "unterlaufen",
+      "withSein": true
     }
   ]
 }
