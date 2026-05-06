@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 5237,
+    "count": 5253,
     "irregularCount": 1150,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
@@ -15399,7 +15399,7 @@
     },
     {
       "word": "ausmalen",
-      "english": "to colour in/to imagine sth./to picture sth./to oneself",
+      "english": "colour in; imagine/picture",
       "rank": 2233,
       "irregular": false
     },
@@ -34992,6 +34992,142 @@
       "prateritum": "unterlief",
       "perfekt": "unterlaufen",
       "withSein": true
+    },
+    {
+      "word": "nachwachsen",
+      "english": "grow back/regrow",
+      "rank": 5238,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "wuchs nach",
+      "perfekt": "nachgewachsen",
+      "withSein": true
+    },
+    {
+      "word": "schämen",
+      "english": "be ashamed",
+      "rank": 5239,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "mitgeben",
+      "english": "give along/give to take with",
+      "rank": 5240,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "gab mit",
+      "perfekt": "mitgegeben",
+      "withSein": false
+    },
+    {
+      "word": "vorspielen",
+      "english": "play/perform for someone; pretend",
+      "rank": 5241,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "erschließen",
+      "english": "open up/make accessible; infer",
+      "rank": 5242,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "erschloss",
+      "perfekt": "erschlossen",
+      "withSein": false
+    },
+    {
+      "word": "einleuchten",
+      "english": "make sense/be obvious",
+      "rank": 5243,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "beschreiten",
+      "english": "take/follow (a path)",
+      "rank": 5244,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "aufpoppen",
+      "english": "pop up",
+      "rank": 5245,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "danebengehen",
+      "english": "go wrong/miss the mark",
+      "rank": 5246,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "ging daneben",
+      "perfekt": "danebengegangen",
+      "withSein": true
+    },
+    {
+      "word": "hineinversetzen",
+      "english": "put oneself into/empathise with",
+      "rank": 5247,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "nachempfinden",
+      "english": "empathise with/understand emotionally",
+      "rank": 5248,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "empfand nach",
+      "perfekt": "nachempfunden",
+      "withSein": false
+    },
+    {
+      "word": "weiterempfehlen",
+      "english": "recommend on/recommend to others",
+      "rank": 5249,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "empfahl weiter",
+      "perfekt": "weiterempfohlen",
+      "withSein": false
+    },
+    {
+      "word": "zusammenhalten",
+      "english": "stick together/hold together",
+      "rank": 5250,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "hielt zusammen",
+      "perfekt": "zusammengehalten",
+      "withSein": false
+    },
+    {
+      "word": "herumprobieren",
+      "english": "try things out/experiment around",
+      "rank": 5251,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "vorweisen",
+      "english": "show/present/produce",
+      "rank": 5252,
+      "irregular": true,
+      "source": "vielfalt-b2.2",
+      "prateritum": "wies vor",
+      "perfekt": "vorgewiesen",
+      "withSein": false
+    },
+    {
+      "word": "zujubeln",
+      "english": "cheer for/acclaim",
+      "rank": 5253,
+      "irregular": false,
+      "source": "vielfalt-b2.2"
     }
   ]
 }

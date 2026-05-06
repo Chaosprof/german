@@ -129,7 +129,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-05-05-vielfalt-forms";
+const DATA_VERSION = "2026-05-06-vielfalt-b2-2";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
@@ -139,7 +139,7 @@ const VERB_PREP_PATH = "./data/verbs-with-prepositions.json" + v;
 const ARTICLE_RULES_PATH = "./data/article-rules.json" + v;
 const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json" + v;
 const PREPOSITION_RULES_PATH = "./data/preposition-rules.json" + v;
-const VIELFALT_DIR = "./data/vielfalt-c1-1/";
+const VIELFALT_DECK_DIRS = ["./data/vielfalt-c1-1/", "./data/vielfalt-b2-2/"];
 const FOLDER_BUILTIN = "Built-in";
 const FOLDER_CUSTOM = "My Decks";
 let NOUNS = [];
@@ -266,17 +266,17 @@ async function loadWordData() {
       PREPOSITION_HINTS = prData.prepositions || {};
     }
   } catch(e) { console.warn("Could not load preposition rules:", e); }
-  // Load Vielfalt C1.1 lesson decks (textbook glossary, organised by lesson).
-  // Each deck file lives in data/vielfalt-c1-1/ and is referenced from manifest.json,
-  // so the whole folder can be removed without touching the rest of the data.
-  try {
-    const manResp = await fetch(VIELFALT_DIR + "manifest.json" + v);
-    if (manResp.ok) {
+  // Load removable textbook glossary deck collections. Each collection is a
+  // folder with a manifest.json and deck JSON files.
+  for (const deckDir of VIELFALT_DECK_DIRS) {
+    try {
+      const manResp = await fetch(deckDir + "manifest.json" + v);
+      if (!manResp.ok) continue;
       const manifest = await manResp.json();
-      const folderName = manifest.name || "Vielfalt C1.1";
+      const folderName = manifest.name || "Vielfalt Glossar";
       const deckRefs = Array.isArray(manifest.decks) ? manifest.decks : [];
       const deckFiles = await Promise.all(deckRefs.map(ref =>
-        fetch(VIELFALT_DIR + ref.file + v).then(r => r.ok ? r.json() : null).catch(() => null)
+        fetch(deckDir + ref.file + v).then(r => r.ok ? r.json() : null).catch(() => null)
       ));
       for (const deck of deckFiles) {
         if (!deck) continue;
@@ -291,11 +291,10 @@ async function loadWordData() {
         if (adjectives.length) parts.push(`${adjectives.length} Adj`);
         if (verbPrepositions.length) parts.push(`${verbPrepositions.length} V+Prep`);
         if (verbForms.length) parts.push(`${verbForms.length} Irreg`);
-        const deckDescription = parts.join(" - ");
         BUILTIN_DECKS.push({
           id: deck.id,
           name: deck.shortName || deck.name,
-          description: deckDescription,
+          description: parts.join(" - "),
           nouns,
           verbs,
           adjectives,
@@ -306,8 +305,8 @@ async function loadWordData() {
           fullName: deck.name
         });
       }
-    }
-  } catch(e) { console.warn("Could not load Vielfalt C1.1 decks:", e); }
+    } catch(e) { console.warn(`Could not load textbook decks from ${deckDir}:`, e); }
+  }
 }
 
 function buildWeakNounsDeck() {

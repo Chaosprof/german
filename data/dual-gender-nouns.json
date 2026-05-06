@@ -3,7 +3,7 @@
     "name": "Dual-Gender Nouns",
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
     "version": 2,
-    "count": 89,
+    "count": 90,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
@@ -1935,6 +1935,28 @@
       ],
       "rank": 340,
       "leipzigRank": 998,
+      "bothInDrills": true
+    },
+    {
+      "word": "Weise",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "sage/wise man",
+          "plural": "Weisen"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "die",
+          "english": "way/manner",
+          "plural": "Weisen"
+        }
+      ],
+      "rank": 165,
+      "leipzigRank": 165,
       "bothInDrills": true
     }
   ]

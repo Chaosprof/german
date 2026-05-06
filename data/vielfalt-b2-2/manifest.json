@@ -1,0 +1,85 @@
+{
+  "id": "vielfalt-b2.2",
+  "name": "B2.2 Vielfalt Glossar",
+  "description": "Hueber Vielfalt B2.2 textbook (ISBN 978-3-19-351037-2) - Lernwortschatz organised by lesson.",
+  "source": "Vielfalt_B2-2_Glossar_blanko.pdf",
+  "decks": [
+    {
+      "file": "lektion-13.json",
+      "id": "vielfalt-b2.2-lektion-13",
+      "name": "Lektion 13: Auf zwei Rädern"
+    },
+    {
+      "file": "lektion-14.json",
+      "id": "vielfalt-b2.2-lektion-14",
+      "name": "Lektion 14: Grün in der Stadt"
+    },
+    {
+      "file": "lektion-15.json",
+      "id": "vielfalt-b2.2-lektion-15",
+      "name": "Lektion 15: Ohren auf!"
+    },
+    {
+      "file": "lektion-16.json",
+      "id": "vielfalt-b2.2-lektion-16",
+      "name": "Lektion 16: Im Buchstabendschungel"
+    },
+    {
+      "file": "lektion-17.json",
+      "id": "vielfalt-b2.2-lektion-17",
+      "name": "Lektion 17: Hallo, ist da jemand?"
+    },
+    {
+      "file": "lektion-18.json",
+      "id": "vielfalt-b2.2-lektion-18",
+      "name": "Lektion 18: Jeder Mensch ist vielfältig"
+    },
+    {
+      "file": "lektion-19.json",
+      "id": "vielfalt-b2.2-lektion-19",
+      "name": "Lektion 19: Nichts verpassen"
+    },
+    {
+      "file": "lektion-20.json",
+      "id": "vielfalt-b2.2-lektion-20",
+      "name": "Lektion 20: Wenn Sekunden entscheiden"
+    },
+    {
+      "file": "lektion-21.json",
+      "id": "vielfalt-b2.2-lektion-21",
+      "name": "Lektion 21: Widerstand leisten"
+    },
+    {
+      "file": "lektion-22.json",
+      "id": "vielfalt-b2.2-lektion-22",
+      "name": "Lektion 22: Vom Hobby zum Beruf"
+    },
+    {
+      "file": "lektion-23.json",
+      "id": "vielfalt-b2.2-lektion-23",
+      "name": "Lektion 23: Ghostwriting"
+    },
+    {
+      "file": "lektion-24.json",
+      "id": "vielfalt-b2.2-lektion-24",
+      "name": "Lektion 24: Die Goldenen 20er-Jahre"
+    },
+    {
+      "file": "all.json",
+      "id": "vielfalt-b2.2-all",
+      "name": "Vielfalt B2.2 - Komplettes Glossar"
+    },
+    {
+      "file": "verb-prepositions.json",
+      "id": "vielfalt-b2.2-verb-prepositions",
+      "name": "Vielfalt B2.2 - Verb + Preposition",
+      "kind": "verb_prepositions"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "vielfalt-b2.2-irregular-verbs",
+      "name": "Vielfalt B2.2 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}
