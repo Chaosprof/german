@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 5253,
+    "count": 5271,
     "irregularCount": 1150,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
@@ -35128,6 +35128,159 @@
       "rank": 5253,
       "irregular": false,
       "source": "vielfalt-b2.2"
+    },
+    {
+      "word": "schwerfallen",
+      "english": "be difficult for someone",
+      "rank": 5254,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "fiel schwer",
+      "perfekt": "schwergefallen",
+      "withSein": true
+    },
+    {
+      "word": "sehnen",
+      "english": "long/yearn",
+      "rank": 5255,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "trödeln",
+      "english": "dawdle/waste time",
+      "rank": 5256,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "hingehören",
+      "english": "belong (in a place/context)",
+      "rank": 5257,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "bedanken",
+      "english": "thank/express thanks",
+      "rank": 5258,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "einhaken",
+      "english": "hook in; interject/follow up",
+      "rank": 5259,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "wegklicken",
+      "english": "click away/close by clicking",
+      "rank": 5260,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "hinauflaufen",
+      "english": "run/walk up",
+      "rank": 5261,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "lief hinauf",
+      "perfekt": "hinaufgelaufen",
+      "withSein": true
+    },
+    {
+      "word": "hinunterlaufen",
+      "english": "run/walk down",
+      "rank": 5262,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "lief hinunter",
+      "perfekt": "hinuntergelaufen",
+      "withSein": true
+    },
+    {
+      "word": "reinhören",
+      "english": "listen in/sample briefly",
+      "rank": 5263,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "weiterschlafen",
+      "english": "continue sleeping/go back to sleep",
+      "rank": 5264,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "schlief weiter",
+      "perfekt": "weitergeschlafen",
+      "withSein": false
+    },
+    {
+      "word": "zusammenlegen",
+      "english": "combine/merge/put together",
+      "rank": 5265,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "hinzukommen",
+      "english": "be added/join in",
+      "rank": 5266,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "kam hinzu",
+      "perfekt": "hinzugekommen",
+      "withSein": true
+    },
+    {
+      "word": "weggeben",
+      "english": "give away",
+      "rank": 5267,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "gab weg",
+      "perfekt": "weggegeben",
+      "withSein": false
+    },
+    {
+      "word": "wegtun",
+      "english": "put away/remove",
+      "rank": 5268,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "tat weg",
+      "perfekt": "weggetan",
+      "withSein": false
+    },
+    {
+      "word": "zwischenlagern",
+      "english": "store temporarily",
+      "rank": 5269,
+      "irregular": false,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "word": "draufgehen",
+      "english": "be used up/break/die (colloquial)",
+      "rank": 5270,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "ging drauf",
+      "perfekt": "draufgegangen",
+      "withSein": true
+    },
+    {
+      "word": "leichtfallen",
+      "english": "be easy for someone",
+      "rank": 5271,
+      "irregular": true,
+      "source": "vielfalt-b2.1",
+      "prateritum": "fiel leicht",
+      "perfekt": "leichtgefallen",
+      "withSein": true
     }
   ]
 }

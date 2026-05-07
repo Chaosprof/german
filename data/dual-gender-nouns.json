@@ -3,7 +3,7 @@
     "name": "Dual-Gender Nouns",
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
     "version": 2,
-    "count": 90,
+    "count": 92,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
@@ -1957,6 +1957,50 @@
       ],
       "rank": 165,
       "leipzigRank": 165,
+      "bothInDrills": true
+    },
+    {
+      "word": "Einheimische",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "local/native resident (male)",
+          "plural": "Einheimischen"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "die",
+          "english": "local/native resident (female)",
+          "plural": "Einheimischen"
+        }
+      ],
+      "rank": 24543,
+      "leipzigRank": 24543,
+      "bothInDrills": true
+    },
+    {
+      "word": "Event",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "event",
+          "plural": "Events"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "event (regional/Austrian/Swiss usage)",
+          "plural": "Events"
+        }
+      ],
+      "rank": 760,
+      "leipzigRank": 760,
       "bothInDrills": true
     }
   ]

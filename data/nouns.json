@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 24542,
+    "count": 24591,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
@@ -2231,12 +2231,12 @@
     {
       "word": "Umgang",
       "article": "der",
-      "plural": "Umgänge",
+      "plural": "—",
       "english": "dealing/handling",
       "rank": 211,
       "leipzigRank": 211,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Masculine gender must be memorized. Tip: associate it with a vivid image or phrase to anchor the article.",
-      "pluralHelp": "-e + umlaut (die Umgänge). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns."
+      "pluralHelp": "Used here as singular-only: Umgang mit + Dat. (dealing with/handling)."
     },
     {
       "word": "Hinweis",
@@ -3396,12 +3396,12 @@
     {
       "word": "Sicht",
       "article": "die",
-      "plural": "Sichten",
+      "plural": "—",
       "english": "view/perspective",
       "rank": 320,
       "leipzigRank": 320,
       "articleHelp": "Morphological: Noun ending in -t derived from a verb stem (sehen) → often die. E.g. fahren→Fahrt, fliehen→Flucht, sehen→Sicht. This is an old Germanic feminine noun pattern, though there are masculine exceptions (der Dienst, der Verlust, der Frost).",
-      "pluralHelp": "-(e)n (die Sichten). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right."
+      "pluralHelp": "Used here as singular-only: perspective/view."
     },
     {
       "word": "Anzahl",
@@ -3488,12 +3488,12 @@
     {
       "word": "Verantwortung",
       "article": "die",
-      "plural": "Verantwortungen",
+      "plural": "—",
       "english": "responsibility",
       "rank": 329,
       "leipzigRank": 329,
       "articleHelp": "Suffix rule: -ung → always die. Zero exceptions. One of the first rules to learn.",
-      "pluralHelp": "-(e)n (die Verantwortungen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "Used here as singular-only: responsibility.",
       "ruleId": "die.suffix_ung"
     },
     {
@@ -4979,12 +4979,12 @@
     {
       "word": "Freude",
       "article": "die",
-      "plural": "Freuden",
+      "plural": "—",
       "english": "joy/pleasure",
       "rank": 468,
       "leipzigRank": 468,
       "articleHelp": "Ending pattern: ~90% of nouns ending in -e are die. This is one of the strongest gender-guessing heuristics in German. When in doubt on an -e noun, guess die.",
-      "pluralHelp": "+n (die Freuden). Rule: Nouns ending in -e simply add -n. Extremely consistent for feminine nouns (Straße→Straßen, Lampe→Lampen, Schule→Schulen). Also applies to masculine weak nouns ending in -e (Kollege→Kollegen, Löwe→Löwen).",
+      "pluralHelp": "Used here as singular-only: joy.",
       "ruleId": "die.suffix_e"
     },
     {
@@ -6249,22 +6249,22 @@
     {
       "word": "Druck",
       "article": "der",
-      "plural": "Drücke",
+      "plural": "—",
       "english": "pressure/print",
       "rank": 587,
       "leipzigRank": 587,
       "articleHelp": "Morphological: Monosyllabic noun from a verb stem (drücken) → usually der. German frequently creates masculine nouns from strong verb stems by vowel change: fliegen→Flug, ziehen→Zug, fließen→Fluss. This is one of the oldest word-formation patterns.",
-      "pluralHelp": "-e + umlaut (die Drücke). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns."
+      "pluralHelp": "Used here as singular-only in the sense pressure/stress."
     },
     {
       "word": "Heimat",
       "article": "die",
-      "plural": "Heimaten",
+      "plural": "—",
       "english": "home/homeland",
       "rank": 588,
       "leipzigRank": 588,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Feminine gender must be memorized. Tip: learn it in a short phrase — contextual memory is stronger than isolated flashcards.",
-      "pluralHelp": "-(e)n (die Heimaten). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right."
+      "pluralHelp": "Used here as singular-only: home/homeland as a feeling or place of belonging."
     },
     {
       "word": "Ausnahme",
@@ -6444,12 +6444,12 @@
     {
       "word": "Verständnis",
       "article": "das",
-      "plural": "Verständnisse",
+      "plural": "—",
       "english": "understanding",
       "rank": 605,
       "leipzigRank": 605,
       "articleHelp": "Suffix pattern: -nis → often das (Ergebnis, Verständnis, Gefängnis, Geheimnis). But ~20% are die (Erkenntnis, Erlaubnis, Finsternis) — check each one.",
-      "pluralHelp": "die Verständnisse. This plural form doesn't fit a clean pattern — memorize it alongside the noun. Tip: say the full form aloud — \"das Verständnis, die Verständnisse\" — to build muscle memory.",
+      "pluralHelp": "Used here as singular-only: understanding.",
       "ruleId": "das.suffix_nis"
     },
     {
@@ -9715,12 +9715,12 @@
     {
       "word": "Architektur",
       "article": "die",
-      "plural": "Architekturen",
+      "plural": "—",
       "english": "architecture",
       "rank": 912,
       "leipzigRank": 913,
       "articleHelp": "Suffix pattern: -ur → usually die (Latin origin). E.g. Natur, Kultur, Struktur, Temperatur.",
-      "pluralHelp": "-(e)n (die Architekturen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "Used here as singular-only: architecture as a field/style.",
       "ruleId": "die.suffix_ur"
     },
     {
@@ -10876,12 +10876,12 @@
     {
       "word": "Ton",
       "article": "der",
-      "plural": "Tone",
-      "english": "clay",
+      "plural": "Töne",
+      "english": "tone/sound; clay",
       "rank": 1022,
       "leipzigRank": 1023,
       "articleHelp": "Short/monosyllabic noun — no suffix or semantic rule applies. Statistically, ~60% of monosyllabic German nouns are der, ~25% das, ~15% die. But that's a gamble, not a rule. Best memorized in a phrase: 'der Hund bellt', 'der Weg ist lang'.",
-      "pluralHelp": "-e (die Tone). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first."
+      "pluralHelp": "-e + umlaut (die Töne) for tone/sound. The clay sense can also form die Tone."
     },
     {
       "word": "User",
@@ -11144,12 +11144,12 @@
     {
       "word": "Konkurrenz",
       "article": "die",
-      "plural": "Konkurrenzen",
+      "plural": "—",
       "english": "competition",
       "rank": 1047,
       "leipzigRank": 1048,
       "articleHelp": "Suffix rule: -enz → die. Latin origin, very reliable. E.g. Konkurrenz, Konferenz, Differenz.",
-      "pluralHelp": "-(e)n (die Konkurrenzen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "Used here as singular-only: competition.",
       "ruleId": "die.suffix_enz"
     },
     {
@@ -15342,12 +15342,12 @@
     {
       "word": "Begeisterung",
       "article": "die",
-      "plural": "Begeisterungen",
+      "plural": "—",
       "english": "enthusiasm",
       "rank": 1441,
       "leipzigRank": 1442,
       "articleHelp": "Suffix rule: -ung → always die. Zero exceptions. One of the first rules to learn.",
-      "pluralHelp": "-(e)n (die Begeisterungen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "Used here as singular-only: enthusiasm as an abstract state.",
       "ruleId": "die.suffix_ung"
     },
     {
@@ -16840,12 +16840,12 @@
     {
       "word": "Migrationshintergrund",
       "article": "der",
-      "plural": "Migrationshintergründe",
+      "plural": "—",
       "english": "migration background",
       "rank": 1581,
       "leipzigRank": 1583,
       "articleHelp": "Compound noun — gender follows the last element: Grund (der). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "-e + umlaut (die Migrationshintergründe). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns."
+      "pluralHelp": "Used here as singular-only: migration background."
     },
     {
       "word": "Niederlage",
@@ -19616,12 +19616,12 @@
     {
       "word": "Zufriedenheit",
       "article": "die",
-      "plural": "—",
+      "plural": "Zufriedenheiten",
       "english": "content/satisfaction",
       "rank": 1842,
       "leipzigRank": 1844,
       "articleHelp": "Suffix rule: -heit → always die. Abstract quality nouns from adjectives/nouns. No exceptions.",
-      "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
+      "pluralHelp": "-en plural (die Zufriedenheiten), used when comparing satisfactions in different groups or areas.",
       "ruleId": "die.suffix_heit"
     },
     {
@@ -35257,12 +35257,12 @@
     {
       "word": "Schock",
       "article": "der",
-      "plural": "Schocke",
+      "plural": "—",
       "english": "shock",
       "rank": 3312,
       "leipzigRank": 3314,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Masculine gender must be memorized. Tip: associate it with a vivid image or phrase to anchor the article.",
-      "pluralHelp": "-e (die Schocke). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first."
+      "pluralHelp": "Used here as singular-only in the textbook sense."
     },
     {
       "word": "Sonnenuntergang",
@@ -48328,12 +48328,12 @@
     {
       "word": "Fürsorge",
       "article": "die",
-      "plural": "Fürsorgen",
+      "plural": "—",
       "english": "care/wellfare",
       "rank": 4539,
       "leipzigRank": 4541,
       "articleHelp": "Ending pattern: ~90% of nouns ending in -e are die. This is one of the strongest gender-guessing heuristics in German. When in doubt on an -e noun, guess die.",
-      "pluralHelp": "+n (die Fürsorgen). Rule: Nouns ending in -e simply add -n. Extremely consistent for feminine nouns (Straße→Straßen, Lampe→Lampen, Schule→Schulen). Also applies to masculine weak nouns ending in -e (Kollege→Kollegen, Löwe→Löwen).",
+      "pluralHelp": "Used here as singular-only: care.",
       "ruleId": "die.suffix_e"
     },
     {
@@ -173083,12 +173083,12 @@
     {
       "word": "Zeitmangel",
       "article": "der",
-      "plural": "Zeitmängel",
+      "plural": "—",
       "english": "lack of time",
       "rank": 16275,
       "leipzigRank": 16277,
       "articleHelp": "Compound noun — gender follows the last element: Mangel (der). This is the #1 rule in German: always look at the final component.",
-      "pluralHelp": "Umlaut only (die Zeitmängel). Some masculine/neuter nouns in -er, -el, -en add only an umlaut: Vater→Väter, Bruder→Brüder, Apfel→Äpfel."
+      "pluralHelp": "Used here as singular-only: lack of time."
     },
     {
       "word": "Zeitungsbericht",
@@ -261132,6 +261132,609 @@
       "source": "vielfalt-b2.2",
       "articleHelp": "",
       "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Führungsposition",
+      "article": "die",
+      "plural": "Führungspositionen",
+      "english": "leadership position",
+      "rank": 24543,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Einheimische",
+      "article": "der",
+      "plural": "Einheimischen",
+      "english": "local/native resident",
+      "rank": 24544,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Stammlokal",
+      "article": "das",
+      "plural": "Stammlokale",
+      "english": "regular pub/restaurant",
+      "rank": 24545,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Einkaufsviertel",
+      "article": "das",
+      "plural": "Einkaufsviertel",
+      "english": "shopping district",
+      "rank": 24546,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Pulsieren",
+      "article": "das",
+      "plural": "—",
+      "english": "pulsing/vibrancy",
+      "rank": 24547,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Melange",
+      "article": "die",
+      "plural": "Melangen",
+      "english": "mélange/mixture; Viennese coffee",
+      "rank": 24548,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Ending pattern: most nouns ending in -e are die.",
+      "pluralHelp": "+n plural for feminine -e nouns.",
+      "ruleId": "die.suffix_e"
+    },
+    {
+      "word": "Denkpause",
+      "article": "die",
+      "plural": "Denkpausen",
+      "english": "pause for thought",
+      "rank": 24549,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Ending pattern: most nouns ending in -e are die.",
+      "pluralHelp": "+n plural for feminine -e nouns.",
+      "ruleId": "die.suffix_e"
+    },
+    {
+      "word": "Fußstapfe",
+      "article": "die",
+      "plural": "Fußstapfen",
+      "english": "footstep/footprint",
+      "rank": 24550,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Ending pattern: most nouns ending in -e are die.",
+      "pluralHelp": "+n plural for feminine -e nouns.",
+      "ruleId": "die.suffix_e"
+    },
+    {
+      "word": "Zwischenüberschrift",
+      "article": "die",
+      "plural": "Zwischenüberschriften",
+      "english": "subheading",
+      "rank": 24551,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Lesedauer",
+      "article": "die",
+      "plural": "—",
+      "english": "reading time",
+      "rank": 24552,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Neukunde",
+      "article": "der",
+      "plural": "Neukunden",
+      "english": "new customer",
+      "rank": 24553,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Neukundin",
+      "article": "die",
+      "plural": "Neukundinnen",
+      "english": "new customer (female)",
+      "rank": 24554,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix pattern: -in/-erin -> die for female person nouns.",
+      "pluralHelp": "+nen plural for feminine person nouns ending in -in.",
+      "ruleId": "die.suffix_in"
+    },
+    {
+      "word": "Videokanal",
+      "article": "der",
+      "plural": "Videokanäle",
+      "english": "video channel",
+      "rank": 24555,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Miniaturansicht",
+      "article": "die",
+      "plural": "Miniaturansichten",
+      "english": "thumbnail view",
+      "rank": 24556,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Berufseinstieg",
+      "article": "der",
+      "plural": "Berufseinstiege",
+      "english": "career start/entry into working life",
+      "rank": 24557,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Eigeninitiative",
+      "article": "die",
+      "plural": "Eigeninitiativen",
+      "english": "personal initiative",
+      "rank": 24558,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Ending pattern: most nouns ending in -e are die.",
+      "pluralHelp": "+n plural for feminine -e nouns.",
+      "ruleId": "die.suffix_e"
+    },
+    {
+      "word": "Teamarbeit",
+      "article": "die",
+      "plural": "Teamarbeiten",
+      "english": "teamwork",
+      "rank": 24559,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Erachten",
+      "article": "das",
+      "plural": "—",
+      "english": "opinion/judgement (as in meines Erachtens)",
+      "rank": 24560,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Achterbahnfahren",
+      "article": "das",
+      "plural": "—",
+      "english": "riding roller coasters",
+      "rank": 24561,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Freiklettern",
+      "article": "das",
+      "plural": "—",
+      "english": "free climbing",
+      "rank": 24562,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Tiefseetauchen",
+      "article": "das",
+      "plural": "—",
+      "english": "deep-sea diving",
+      "rank": 24563,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Eisbaden",
+      "article": "das",
+      "plural": "—",
+      "english": "ice bathing",
+      "rank": 24564,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Fallschirmspringen",
+      "article": "das",
+      "plural": "—",
+      "english": "skydiving/parachuting",
+      "rank": 24565,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Selbstoptimierung",
+      "article": "die",
+      "plural": "Selbstoptimierungen",
+      "english": "self-optimization",
+      "rank": 24566,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix rule: -ung -> always die.",
+      "pluralHelp": "-en plural (die ...en). -ung nouns universally take -en.",
+      "ruleId": "die.suffix_ung"
+    },
+    {
+      "word": "Essverhalten",
+      "article": "das",
+      "plural": "—",
+      "english": "eating behaviour",
+      "rank": 24567,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Ausdauersport",
+      "article": "der",
+      "plural": "—",
+      "english": "endurance sport",
+      "rank": 24568,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Nobelpreis",
+      "article": "der",
+      "plural": "Nobelpreise",
+      "english": "Nobel Prize",
+      "rank": 24569,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Frühaufsteher",
+      "article": "der",
+      "plural": "Frühaufsteher",
+      "english": "early riser",
+      "rank": 24570,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Frühaufsteherin",
+      "article": "die",
+      "plural": "Frühaufsteherinnen",
+      "english": "early riser (female)",
+      "rank": 24571,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix pattern: -in/-erin -> die for female person nouns.",
+      "pluralHelp": "+nen plural for feminine person nouns ending in -in.",
+      "ruleId": "die.suffix_in"
+    },
+    {
+      "word": "Langschläfer",
+      "article": "der",
+      "plural": "Langschläfer",
+      "english": "late sleeper",
+      "rank": 24572,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Langschläferin",
+      "article": "die",
+      "plural": "Langschläferinnen",
+      "english": "late sleeper (female)",
+      "rank": 24573,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix pattern: -in/-erin -> die for female person nouns.",
+      "pluralHelp": "+nen plural for feminine person nouns ending in -in.",
+      "ruleId": "die.suffix_in"
+    },
+    {
+      "word": "Normaltyp",
+      "article": "der",
+      "plural": "Normaltypen",
+      "english": "normal type/average chronotype",
+      "rank": 24574,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Flugpersonal",
+      "article": "das",
+      "plural": "—",
+      "english": "flight crew",
+      "rank": 24575,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Tagesrhythmus",
+      "article": "der",
+      "plural": "Tagesrhythmen",
+      "english": "daily rhythm",
+      "rank": 24576,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Aufputschmittel",
+      "article": "das",
+      "plural": "Aufputschmittel",
+      "english": "stimulant",
+      "rank": 24577,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Studienabbrecher",
+      "article": "der",
+      "plural": "Studienabbrecher",
+      "english": "university dropout",
+      "rank": 24578,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Studienabbrecherin",
+      "article": "die",
+      "plural": "Studienabbrecherinnen",
+      "english": "university dropout (female)",
+      "rank": 24579,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix pattern: -in/-erin -> die for female person nouns.",
+      "pluralHelp": "+nen plural for feminine person nouns ending in -in.",
+      "ruleId": "die.suffix_in"
+    },
+    {
+      "word": "Krempel",
+      "article": "der",
+      "plural": "—",
+      "english": "junk/clutter",
+      "rank": 24580,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Krimskrams",
+      "article": "der",
+      "plural": "—",
+      "english": "odds and ends/bits and bobs",
+      "rank": 24581,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Aussortieren",
+      "article": "das",
+      "plural": "—",
+      "english": "sorting out/culling",
+      "rank": 24582,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Weggeben",
+      "article": "das",
+      "plural": "—",
+      "english": "giving away",
+      "rank": 24583,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Singular-only in the textbook sense."
+    },
+    {
+      "word": "Entrümpelung",
+      "article": "die",
+      "plural": "Entrümpelungen",
+      "english": "decluttering/clearing out",
+      "rank": 24584,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix rule: -ung -> always die.",
+      "pluralHelp": "-en plural (die ...en). -ung nouns universally take -en.",
+      "ruleId": "die.suffix_ung"
+    },
+    {
+      "word": "Klamotten",
+      "article": "die",
+      "plural": "Klamotten",
+      "english": "clothes",
+      "rank": 24585,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": "Plural-only noun (Plurale tantum).",
+      "pluraleTantum": true
+    },
+    {
+      "word": "Schwesterherz",
+      "article": "das",
+      "plural": "Schwesterherzen",
+      "english": "dear sister/sis",
+      "rank": 24586,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Leihopa",
+      "article": "der",
+      "plural": "Leihopas",
+      "english": "volunteer/borrowed grandpa",
+      "rank": 24587,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "",
+      "pluralHelp": ""
+    },
+    {
+      "word": "Kleinfamilie",
+      "article": "die",
+      "plural": "Kleinfamilien",
+      "english": "nuclear family",
+      "rank": 24588,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Ending pattern: most nouns ending in -e are die.",
+      "pluralHelp": "+n plural for feminine -e nouns.",
+      "ruleId": "die.suffix_e"
+    },
+    {
+      "word": "Vereinsamung",
+      "article": "die",
+      "plural": "Vereinsamungen",
+      "english": "social isolation/loneliness",
+      "rank": 24589,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix rule: -ung -> always die.",
+      "pluralHelp": "-en plural (die ...en). -ung nouns universally take -en.",
+      "ruleId": "die.suffix_ung"
+    },
+    {
+      "word": "Selbstinszenierung",
+      "article": "die",
+      "plural": "Selbstinszenierungen",
+      "english": "self-staging/self-presentation",
+      "rank": 24590,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix rule: -ung -> always die.",
+      "pluralHelp": "-en plural (die ...en). -ung nouns universally take -en.",
+      "ruleId": "die.suffix_ung"
+    },
+    {
+      "word": "Busanbindung",
+      "article": "die",
+      "plural": "Busanbindungen",
+      "english": "bus connection/access by bus",
+      "rank": 24591,
+      "leipzigRank": null,
+      "manuallyAdded": true,
+      "source": "vielfalt-b2.1",
+      "articleHelp": "Suffix rule: -ung -> always die.",
+      "pluralHelp": "-en plural (die ...en). -ung nouns universally take -en.",
+      "ruleId": "die.suffix_ung"
     }
   ]
 }

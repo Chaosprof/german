@@ -3,7 +3,7 @@
     "name": "Verbs with Prepositions",
     "description": "German verbs with fixed prepositions (Verben mit festen Präpositionen). Includes the governed case and English meaning. Essential for B2–C2 learners and native-level fluency.",
     "version": 1,
-    "count": 326,
+    "count": 344,
     "generatedAt": "2026-04-10T00:00:00.000000+00:00"
   },
   "verbs": [
@@ -2644,6 +2644,168 @@
       "example": "Die Zwanzigerjahre stehen für Aufbruch und Lebensfreude.",
       "rank": 328,
       "source": "vielfalt-b2.2"
+    },
+    {
+      "verb": "zurückkehren",
+      "preposition": "nach",
+      "case": "Dat",
+      "english": "return to",
+      "example": "Sie kehrt nach Wien zurück.",
+      "rank": 329,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "liegen",
+      "preposition": "in",
+      "case": "Dat",
+      "english": "lie/be rooted in",
+      "example": "Der Grund liegt in der Geschichte.",
+      "rank": 330,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "entscheiden",
+      "preposition": "über",
+      "case": "Akk",
+      "english": "decide on/about",
+      "example": "Die Kommission entscheidet über den Antrag.",
+      "rank": 331,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "sich auswirken",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "affect/have an impact on",
+      "example": "Der Schlafmangel wirkt sich auf die Konzentration aus.",
+      "rank": 332,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "reagieren",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "react to",
+      "example": "Sie reagiert gelassen auf Kritik.",
+      "rank": 333,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "eingehen",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "address/respond to",
+      "example": "Der Autor geht auf die Frage ein.",
+      "rank": 334,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "sich vernetzen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "network/connect with",
+      "example": "Sie vernetzt sich mit anderen Gründerinnen.",
+      "rank": 335,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "stoßen",
+      "preposition": "an",
+      "case": "Akk",
+      "english": "bump/hit against",
+      "example": "Er stößt an seine Grenzen.",
+      "rank": 336,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "trösten",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "comfort with",
+      "example": "Sie tröstet ihn mit guten Worten.",
+      "rank": 337,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "abweichen",
+      "preposition": "von",
+      "case": "Dat",
+      "english": "deviate from/differ from",
+      "example": "Die Werte weichen vom Durchschnitt ab.",
+      "rank": 338,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "aufbauen",
+      "preposition": "auf",
+      "case": "Dat",
+      "english": "build on",
+      "example": "Der Kurs baut auf Grundkenntnissen auf.",
+      "rank": 339,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "versetzen",
+      "preposition": "in",
+      "case": "Akk",
+      "english": "put into/transport into a state",
+      "example": "Die Musik versetzt sie in gute Stimmung.",
+      "rank": 340,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "sich trennen",
+      "preposition": "von",
+      "case": "Dat",
+      "english": "separate from/break up with",
+      "example": "Er trennt sich von alten Sachen.",
+      "rank": 341,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "sich streiten",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "argue with",
+      "example": "Sie streitet sich mit ihrem Bruder.",
+      "rank": 342,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "angeben",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "show off/brag about",
+      "example": "Er gibt mit seinem Erfolg an.",
+      "rank": 343,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "verbinden",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "connect/link with",
+      "example": "Viele verbinden Wien mit Kaffeehäusern.",
+      "rank": 344,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "wahrnehmen",
+      "preposition": "als",
+      "case": "Akk",
+      "english": "perceive as",
+      "example": "Sie nimmt die Situation als Chance wahr.",
+      "rank": 345,
+      "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "kommunizieren",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "communicate with",
+      "example": "Das Team kommuniziert mit den Kunden.",
+      "rank": 346,
+      "source": "vielfalt-b2.1"
     }
   ]
 }

@@ -129,7 +129,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-05-06-vielfalt-b2-2";
+const DATA_VERSION = "2026-05-07-vielfalt-b2-1";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
@@ -139,7 +139,7 @@ const VERB_PREP_PATH = "./data/verbs-with-prepositions.json" + v;
 const ARTICLE_RULES_PATH = "./data/article-rules.json" + v;
 const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json" + v;
 const PREPOSITION_RULES_PATH = "./data/preposition-rules.json" + v;
-const VIELFALT_DECK_DIRS = ["./data/vielfalt-c1-1/", "./data/vielfalt-b2-2/"];
+const VIELFALT_DECK_DIRS = ["./data/vielfalt-c1-1/", "./data/vielfalt-b2-1/", "./data/vielfalt-b2-2/"];
 const FOLDER_BUILTIN = "Built-in";
 const FOLDER_CUSTOM = "My Decks";
 let NOUNS = [];
@@ -2493,6 +2493,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [showSettings,setShowSettings]=useState(false);
   const [showDeckBuilder,setShowDeckBuilder]=useState(false);
   const [openDeckFolders,setOpenDeckFolders]=useState({});
+  const [selectedDeckCategory,setSelectedDeckCategory]=useState(null);
   const [selectedGameMode,setSelectedGameMode]=useState(init.gm ?? "classic");
   const [matchWordType,setMatchWordType]=useState(init.wordType ?? "nouns");
   const [playStyle,setPlayStyle]=useState(init.pStyle ?? "practice");
@@ -2530,7 +2531,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const selectedDeckData = availableDecks.find(dk => dk.id === selectedDeck) || null;
   const sourceOptions = useMemo(() => {
     const options = [{ id: "tier", name: "Vocab Level", desc: "Pick a tier or range" }];
-    if (deckAllowed) options.push({ id: "deck", name: "Saved Deck", desc: `${availableDecks.length} available` });
+    if (deckAllowed) options.push({ id: "deck", name: "Decks", desc: `${availableDecks.length} available` });
     if (weakestAllowed) options.push({ id: "weakest", name: "Weakest", desc: "Use your worst words" });
     return options;
   }, [deckAllowed, weakestAllowed, availableDecks.length]);
@@ -2977,6 +2978,74 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     </div>
   );
 
+  const deckItemCount = (dk) => {
+    if (selectedGameMode === "verb_forms") return (dk.verbForms || []).length;
+    if (selectedGameMode === "verb_prepositions") return (dk.verbPrepositions || []).length;
+    if (selectedGameMode === "reverse" || selectedGameMode === "matching") {
+      if (matchWordType === "nouns") return (dk.nouns || []).length;
+      if (matchWordType === "adjectives") return (dk.adjectives || []).length;
+      if (matchWordType === "verbs") return (dk.verbs || []).length;
+      return (dk.nouns || []).length + (dk.adjectives || []).length + (dk.verbs || []).length;
+    }
+    return (dk.nouns || []).length;
+  };
+
+  const deckCountLabel = (dk) => {
+    if (selectedGameMode === "verb_forms") return `${deckItemCount(dk)} irregular`;
+    if (selectedGameMode === "verb_prepositions") return `${deckItemCount(dk)} V+Prep`;
+    const parts = [];
+    if ((dk.nouns || []).length) parts.push(`${dk.nouns.length} N`);
+    if ((dk.verbs || []).length) parts.push(`${dk.verbs.length} V`);
+    if ((dk.adjectives || []).length) parts.push(`${dk.adjectives.length} Adj`);
+    return parts.length ? parts.join(" / ") : `${deckItemCount(dk)} words`;
+  };
+
+  const deckCategoryFor = (dk) => {
+    if (!dk.builtin) return { id: "custom", name: "My Decks", desc: "Saved practice decks" };
+    if (dk.folder && dk.folder !== FOLDER_BUILTIN) {
+      return { id: `folder:${dk.folder}`, name: dk.folder, desc: "Textbook glossary decks" };
+    }
+    if (dk.id === "__dual_gender__" || dk.id === "__weak_nouns__") {
+      return { id: "grammar", name: "Grammar Rules", desc: "Special noun patterns" };
+    }
+    if (dk.id?.startsWith("__rule_")) {
+      if (dk.name.startsWith("der")) return { id: "rules-der", name: "der Rules", desc: "Masculine article rules" };
+      if (dk.name.startsWith("die")) return { id: "rules-die", name: "die Rules", desc: "Feminine article rules" };
+      if (dk.name.startsWith("das")) return { id: "rules-das", name: "das Rules", desc: "Neuter article rules" };
+      return { id: "article-rules", name: "Article Rules", desc: "Der/die/das rule decks" };
+    }
+    return { id: "builtin", name: "Built-in Decks", desc: "Curated practice decks" };
+  };
+
+  const deckCategoryOrder = (id) => {
+    const order = { grammar: 0, "rules-der": 1, "rules-die": 2, "rules-das": 3, "article-rules": 4, builtin: 5, custom: 20 };
+    if (id.startsWith("folder:")) return 10;
+    return order[id] ?? 30;
+  };
+
+  const deckCategories = useMemo(() => {
+    const grouped = new Map();
+    for (const dk of availableDecks) {
+      const meta = deckCategoryFor(dk);
+      if (!grouped.has(meta.id)) grouped.set(meta.id, { ...meta, decks: [] });
+      grouped.get(meta.id).decks.push(dk);
+    }
+    return [...grouped.values()]
+      .sort((a, b) => deckCategoryOrder(a.id) - deckCategoryOrder(b.id) || a.name.localeCompare(b.name))
+      .map(group => ({
+        ...group,
+        decks: group.decks.sort((a, b) => (a.lektion ?? 999) - (b.lektion ?? 999) || (a.name || "").localeCompare(b.name || "")),
+      }));
+  }, [availableDecks]);
+
+  const activeDeckCategory = deckCategories.find(c => c.id === selectedDeckCategory) || null;
+
+  useEffect(() => {
+    if (selectedDeckCategory && !deckCategories.some(c => c.id === selectedDeckCategory)) {
+      setSelectedDeckCategory(null);
+    }
+  }, [selectedDeckCategory, deckCategories]);
+
   const renderDeckCardClean = (dk) => {
     const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
     const dkBest = bestScores[dkKey];
@@ -2987,25 +3056,46 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     const borderColor = selectedDeck === dk.id ? UI.gold : medalBorderColor(dkPct);
     const bg = selectedDeck === dk.id ? UI.goldSoft : medalCardBg(dkPct);
     const userDeck = !dk.builtin;
-    const nounCount = (dk.nouns || []).length;
     const subtitle = dk.description
       ? dk.description
-      : `${nounCount} noun${nounCount === 1 ? "" : "s"}${userDeck && dk.created ? ` - ${new Date(dk.created).toLocaleDateString()}` : ""}`;
+      : `${deckCountLabel(dk)}${userDeck && dk.created ? ` - ${new Date(dk.created).toLocaleDateString()}` : ""}`;
+    const title = dk.shortName || dk.name;
     return (
-      <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-        <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
+      <div key={dk.id} style={{display:"flex",gap:6,alignItems:"stretch",minWidth:0}}>
+        <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.tierBtn,width:"100%",minHeight:118,borderColor,background:bg,position:"relative",overflow:"hidden",padding:"10px 6px",gap:4}}>
           {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-          <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
-            <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
+          <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
+            <ProgressRing pct={dkPct} size={34} stroke={2.5} color={ringColor}/>
+            <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?12:9,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
           </div>
-          <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
-          <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{subtitle}</span>
+          <span style={{fontSize:12,fontWeight:800,color:isPerfect?UI.gold:UI.textStrong,position:"relative",lineHeight:1.2,textAlign:"center",overflowWrap:"anywhere"}}>{title}</span>
+          <span style={{fontSize:10,color:UI.muted,position:"relative",lineHeight:1.25,textAlign:"center",overflowWrap:"anywhere"}}>{subtitle}</span>
         </button>
         {userDeck && (
-          <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
+          <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 8px"}}>Del</button>
         )}
       </div>
+    );
+  };
+
+  const renderCategoryTile = (group) => {
+    const scores = group.decks.map(dk => bestScores[`${bestScoreKeyPrefix}:deck:${dk.id}`]?.pct || 0);
+    const pct = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+    const perfect = scores.filter(v => v >= 100).length;
+    const ringColor = medalRingColor(pct);
+    const cardClass = medalCardClass(pct);
+    const selected = activeDeckCategory?.id === group.id;
+    return (
+      <button key={group.id} className={cardClass} onClick={()=>setSelectedDeckCategory(group.id)}
+        style={{...S.tierBtn,minHeight:118,borderColor:selected?UI.gold:medalBorderColor(pct),backgroundColor:selected?UI.goldSoft:medalCardBg(pct),position:"relative",overflow:"hidden",padding:"12px 8px",gap:4}}>
+        {pct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${pct}%`,background:medalFill(pct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
+        <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
+          <ProgressRing pct={pct} size={38} stroke={3} color={ringColor}/>
+          <span className={medalTextClass(pct)} style={{position:"absolute",fontSize:pct>=100?14:10,fontWeight:900,color:ringColor}}>{pct>=100?"\u2605":pct>0?pct+"%":""}</span>
+        </div>
+        <span style={{fontSize:12,fontWeight:800,color:pct>=100?UI.gold:UI.textStrong,position:"relative",lineHeight:1.2,textAlign:"center"}}>{group.name}</span>
+        <span style={{fontSize:10,color:UI.muted,position:"relative",lineHeight:1.25,textAlign:"center"}}>{group.decks.length} decks{perfect ? ` / ${perfect} perfect` : ""}</span>
+      </button>
     );
   };
 
@@ -3017,22 +3107,25 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           <span style={S.inlineSummaryValue}>{selectedDeckData.fullName || selectedDeckData.name}</span>
         </div>
       )}
-      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
-        {deckGroups.map(group => {
-          const isOpen = openDeckFolders[group.folder] ?? (group.folder === folderOfSelected || group.folder === FOLDER_BUILTIN);
-          return (
-            <div key={group.folder} style={{display:"flex",flexDirection:"column",gap:6}}>
-              <button onClick={()=>setOpenDeckFolders(s => ({...s, [group.folder]: !isOpen}))}
-                style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 10px",border:`1px solid ${UI.line}`,borderRadius:8,background:UI.panelSoft,cursor:"pointer",fontSize:11,fontWeight:800,color:UI.muted,letterSpacing:1.5,textTransform:"uppercase"}}>
-                <span>{group.folder}</span>
-                <span style={{fontSize:10,color:UI.faint}}>{group.decks.length} {isOpen ? "v" : ">"}</span>
-              </button>
-              {isOpen && group.decks.map(renderDeckCardClean)}
+      {!activeDeckCategory ? (
+        <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
+          {deckCategories.map(renderCategoryTile)}
+          {deckCategories.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0",gridColumn:"1 / -1"}}>No decks yet - create one or save mistakes after a session.</p>}
+        </div>
+      ) : (
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+            <button onClick={()=>setSelectedDeckCategory(null)} style={{...S.endBtn,fontSize:11,padding:"5px 10px"}}>Back</button>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",minWidth:0}}>
+              <span style={{fontSize:13,fontWeight:800,color:UI.textStrong}}>{activeDeckCategory.name}</span>
+              <span style={{fontSize:10,color:UI.muted}}>{activeDeckCategory.desc}</span>
             </div>
-          );
-        })}
-        {deckGroups.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
-      </div>
+          </div>
+          <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
+            {activeDeckCategory.decks.map(renderDeckCardClean)}
+          </div>
+        </div>
+      )}
       <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
         + Create Custom Deck
       </button>

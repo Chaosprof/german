@@ -1,0 +1,85 @@
+{
+  "id": "vielfalt-b2.1",
+  "name": "B2.1 Vielfalt Glossar",
+  "description": "Hueber Vielfalt B2.1 textbook (ISBN 978-3-19-201037-8) - Lernwortschatz organised by lesson.",
+  "source": "Vielfalt_B2-1_Glossar_blanko.pdf",
+  "decks": [
+    {
+      "file": "lektion-01.json",
+      "id": "vielfalt-b2.1-lektion-01",
+      "name": "Lektion 1: Das Leben neu gestalten"
+    },
+    {
+      "file": "lektion-02.json",
+      "id": "vielfalt-b2.1-lektion-02",
+      "name": "Lektion 2: Ein neues Zuhause finden"
+    },
+    {
+      "file": "lektion-03.json",
+      "id": "vielfalt-b2.1-lektion-03",
+      "name": "Lektion 3: Stadtführungen mal anders"
+    },
+    {
+      "file": "lektion-04.json",
+      "id": "vielfalt-b2.1-lektion-04",
+      "name": "Lektion 4: In die Fußstapfen der Eltern treten?"
+    },
+    {
+      "file": "lektion-05.json",
+      "id": "vielfalt-b2.1-lektion-05",
+      "name": "Lektion 5: Das eigene Profil schärfen"
+    },
+    {
+      "file": "lektion-06.json",
+      "id": "vielfalt-b2.1-lektion-06",
+      "name": "Lektion 6: Chefsache"
+    },
+    {
+      "file": "lektion-07.json",
+      "id": "vielfalt-b2.1-lektion-07",
+      "name": "Lektion 7: Leben ist Bewegung"
+    },
+    {
+      "file": "lektion-08.json",
+      "id": "vielfalt-b2.1-lektion-08",
+      "name": "Lektion 8: Alles unter Kontrolle?"
+    },
+    {
+      "file": "lektion-09.json",
+      "id": "vielfalt-b2.1-lektion-09",
+      "name": "Lektion 9: So tickt unsere innere Uhr!"
+    },
+    {
+      "file": "lektion-10.json",
+      "id": "vielfalt-b2.1-lektion-10",
+      "name": "Lektion 10: Erfolgreich scheitern"
+    },
+    {
+      "file": "lektion-11.json",
+      "id": "vielfalt-b2.1-lektion-11",
+      "name": "Lektion 11: Weniger ist mehr!"
+    },
+    {
+      "file": "lektion-12.json",
+      "id": "vielfalt-b2.1-lektion-12",
+      "name": "Lektion 12: Auf gute Nachbarschaft!"
+    },
+    {
+      "file": "all.json",
+      "id": "vielfalt-b2.1-all",
+      "name": "Vielfalt B2.1 - Komplettes Glossar"
+    },
+    {
+      "file": "verb-prepositions.json",
+      "id": "vielfalt-b2.1-verb-prepositions",
+      "name": "Vielfalt B2.1 - Verb + Preposition",
+      "kind": "verb_prepositions"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "vielfalt-b2.1-irregular-verbs",
+      "name": "Vielfalt B2.1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}
