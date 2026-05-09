@@ -427,6 +427,23 @@ function getDrillEntriesByName(name) {
   return noun ? [noun] : [];
 }
 
+// Normalise adjective/verb entries to the noun-like shape [word, article, plural, english, rank]
+// so they slot into reverse-mode queues alongside nouns.
+function normalizeAdjAsNoun(a) { return [a[0], "", "", a[1], a[2]]; }
+function normalizeVerbAsNoun(v) { return [v[0], "", "", v[1], v[2]]; }
+
+// Resolve a word name to its drill entry, falling through noun → adjective → verb.
+// `forMode` controls whether non-noun entries are normalised for reverse mode.
+function resolveWordEntry(name, forMode) {
+  const nounEntries = getDrillEntriesByName(name);
+  if (nounEntries.length) return nounEntries;
+  const adj = ADJECTIVES.find(a => a[0] === name);
+  if (adj) return forMode === "reverse" ? [normalizeAdjAsNoun(adj)] : [adj];
+  const verb = VERBS.find(v => v[0] === name);
+  if (verb) return forMode === "reverse" ? [normalizeVerbAsNoun(verb)] : [verb];
+  return [];
+}
+
 function getAdjectivesForTier(tier, minRank) {
   return minRank ? ADJECTIVES.filter(a => a[2] > minRank && a[2] <= tier) : ADJECTIVES.filter(a => a[2] <= tier);
 }
@@ -2009,7 +2026,9 @@ function GermanNounGame() {
       const wrongKeys = new Set(wrongAnswers.map(w => w.vpVerb+"|"+w.vpPreposition));
       nd = VERB_PREPOSITIONS.filter(v => wrongKeys.has(v[0]+"|"+v[3]));
     } else {
-      nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w=>getDrillEntriesByName(w.entryId || w.noun));
+      // Resolve each mistake against nouns, adjectives, and verbs so that mixed-deck
+      // mistakes (reverse / matching modes) all carry over to the practice queue.
+      nd = dedupeMistakesByNoun(wrongAnswers).flatMap(w => resolveWordEntry(w.entryId || w.noun, gameMode));
     }
     sessionAnswersRef.current = [];
     if (playStyle === "survival" || gameMode === "survival") setLives(3);
