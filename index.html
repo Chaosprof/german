@@ -3309,12 +3309,13 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
       <div style={S.menuStickyFooter}>
         <button onClick={handleStart} disabled={!canStart} style={{...S.startBtn,width:"auto",minWidth:180,marginTop:0,opacity:canStart?1:0.45}}>Start Game</button>
-        <div style={S.menuQuickRow}>
-          <button onClick={onOpenCampaign} style={S.secondaryActionBtn}>Campaign</button>
-          <button onClick={onOpenDashboard} style={S.secondaryActionBtn}>Progress</button>
-          <button onClick={onOpenGrammar} style={S.secondaryActionBtn}>Grammar</button>
-          <button onClick={openCasualModes} style={{...S.secondaryActionBtn,borderColor:showCasualModes?UI.gold:UI.line,background:showCasualModes?UI.goldSoft:UI.panel}}>Casual</button>
-        </div>
+      </div>
+
+      <div style={S.menuQuickRow}>
+        <button onClick={onOpenCampaign} style={S.secondaryActionBtn}>Campaign</button>
+        <button onClick={onOpenDashboard} style={S.secondaryActionBtn}>Progress</button>
+        <button onClick={onOpenGrammar} style={S.secondaryActionBtn}>Grammar</button>
+        <button onClick={openCasualModes} style={{...S.secondaryActionBtn,borderColor:showCasualModes?UI.gold:UI.line,background:showCasualModes?UI.goldSoft:UI.panel}}>Casual</button>
       </div>
     </div></div>
   );
