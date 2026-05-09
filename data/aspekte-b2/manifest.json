@@ -1,0 +1,69 @@
+{
+  "id": "aspekte-b2",
+  "name": "B2 Aspekte Glossar",
+  "description": "Klett Aspekte neu B2 textbook Kapitelwortschatz, organised by chapter.",
+  "source": "aspekte-neu-b2-lb-kapitelwortschatz.pdf",
+  "decks": [
+    {
+      "file": "kapitel-01.json",
+      "id": "aspekte-b2-kapitel-01",
+      "name": "Kapitel 1: Heimat ist …"
+    },
+    {
+      "file": "kapitel-02.json",
+      "id": "aspekte-b2-kapitel-02",
+      "name": "Kapitel 2: Sprich mit mir!"
+    },
+    {
+      "file": "kapitel-03.json",
+      "id": "aspekte-b2-kapitel-03",
+      "name": "Kapitel 3: Arbeit ist das halbe Leben?"
+    },
+    {
+      "file": "kapitel-04.json",
+      "id": "aspekte-b2-kapitel-04",
+      "name": "Kapitel 4: Zusammen leben"
+    },
+    {
+      "file": "kapitel-05.json",
+      "id": "aspekte-b2-kapitel-05",
+      "name": "Kapitel 5: Wer Wissen schafft, macht Wissenschaft"
+    },
+    {
+      "file": "kapitel-06.json",
+      "id": "aspekte-b2-kapitel-06",
+      "name": "Kapitel 6: Fit für …"
+    },
+    {
+      "file": "kapitel-07.json",
+      "id": "aspekte-b2-kapitel-07",
+      "name": "Kapitel 7: Kulturwelten"
+    },
+    {
+      "file": "kapitel-08.json",
+      "id": "aspekte-b2-kapitel-08",
+      "name": "Kapitel 8: Das macht(e) Geschichte"
+    },
+    {
+      "file": "kapitel-09.json",
+      "id": "aspekte-b2-kapitel-09",
+      "name": "Kapitel 9: Mit viel Gefühl …"
+    },
+    {
+      "file": "kapitel-10.json",
+      "id": "aspekte-b2-kapitel-10",
+      "name": "Kapitel 10: Ein Blick in die Zukunft"
+    },
+    {
+      "file": "all.json",
+      "id": "aspekte-b2-all",
+      "name": "Aspekte neu B2 - Komplettes Glossar"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "aspekte-b2-irregular-verbs",
+      "name": "Aspekte neu B2 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

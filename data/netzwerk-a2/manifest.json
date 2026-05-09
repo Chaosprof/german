@@ -1,0 +1,79 @@
+{
+  "id": "netzwerk-a2",
+  "name": "A2 Netzwerk Glossar",
+  "description": "Klett Netzwerk neu A2 textbook glossary, organised by chapter.",
+  "source": "NWn_A2_Glossar_Englisch.pdf",
+  "decks": [
+    {
+      "file": "kapitel-01.json",
+      "id": "netzwerk-a2-kapitel-01",
+      "name": "Kapitel 1: Und was machst du?"
+    },
+    {
+      "file": "kapitel-02.json",
+      "id": "netzwerk-a2-kapitel-02",
+      "name": "Kapitel 2: Nach der Schulzeit"
+    },
+    {
+      "file": "kapitel-03.json",
+      "id": "netzwerk-a2-kapitel-03",
+      "name": "Kapitel 3: Immer online?"
+    },
+    {
+      "file": "kapitel-04.json",
+      "id": "netzwerk-a2-kapitel-04",
+      "name": "Kapitel 4: Große und kleine Gefühle"
+    },
+    {
+      "file": "kapitel-05.json",
+      "id": "netzwerk-a2-kapitel-05",
+      "name": "Kapitel 5: Leben in der Stadt"
+    },
+    {
+      "file": "kapitel-06.json",
+      "id": "netzwerk-a2-kapitel-06",
+      "name": "Kapitel 6: Arbeitswelten"
+    },
+    {
+      "file": "kapitel-07.json",
+      "id": "netzwerk-a2-kapitel-07",
+      "name": "Kapitel 7: Ganz schön mobil"
+    },
+    {
+      "file": "kapitel-08.json",
+      "id": "netzwerk-a2-kapitel-08",
+      "name": "Kapitel 8: Gelernt ist gelernt!"
+    },
+    {
+      "file": "kapitel-09.json",
+      "id": "netzwerk-a2-kapitel-09",
+      "name": "Kapitel 9: Sportlich, sportlich"
+    },
+    {
+      "file": "kapitel-10.json",
+      "id": "netzwerk-a2-kapitel-10",
+      "name": "Kapitel 10: Zusammen leben"
+    },
+    {
+      "file": "kapitel-11.json",
+      "id": "netzwerk-a2-kapitel-11",
+      "name": "Kapitel 11: Wie die Zeit vergeht!"
+    },
+    {
+      "file": "kapitel-12.json",
+      "id": "netzwerk-a2-kapitel-12",
+      "name": "Kapitel 12: Gute Unterhaltung!"
+    },
+    {
+      "file": "all.json",
+      "id": "netzwerk-a2-all",
+      "name": "Netzwerk neu A2 - Komplettes Glossar"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "netzwerk-a2-irregular-verbs",
+      "name": "Netzwerk neu A2 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": "aspekte-c1",
+  "name": "C1 Aspekte Glossar",
+  "description": "Klett Aspekte neu C1 textbook Kapitelwortschatz, organised by chapter.",
+  "source": "aspekte-neu-c1-lb-kapitelwortschatz.pdf",
+  "decks": [
+    {
+      "file": "kapitel-01.json",
+      "id": "aspekte-c1-kapitel-01",
+      "name": "Kapitel 1: Alltägliches"
+    },
+    {
+      "file": "kapitel-02.json",
+      "id": "aspekte-c1-kapitel-02",
+      "name": "Kapitel 2: Hast du Worte?"
+    },
+    {
+      "file": "kapitel-03.json",
+      "id": "aspekte-c1-kapitel-03",
+      "name": "Kapitel 3: An die Arbeit!"
+    },
+    {
+      "file": "kapitel-04.json",
+      "id": "aspekte-c1-kapitel-04",
+      "name": "Kapitel 4: Wirtschaftsgipfel"
+    },
+    {
+      "file": "kapitel-05.json",
+      "id": "aspekte-c1-kapitel-05",
+      "name": "Kapitel 5: Ziele"
+    },
+    {
+      "file": "kapitel-06.json",
+      "id": "aspekte-c1-kapitel-06",
+      "name": "Kapitel 6: Gesund und munter"
+    },
+    {
+      "file": "kapitel-07.json",
+      "id": "aspekte-c1-kapitel-07",
+      "name": "Kapitel 7: Recht so!"
+    },
+    {
+      "file": "kapitel-08.json",
+      "id": "aspekte-c1-kapitel-08",
+      "name": "Kapitel 8: Du bist, was du bist"
+    },
+    {
+      "file": "kapitel-09.json",
+      "id": "aspekte-c1-kapitel-09",
+      "name": "Kapitel 9: Die schöne Welt der Künste"
+    },
+    {
+      "file": "kapitel-10.json",
+      "id": "aspekte-c1-kapitel-10",
+      "name": "Kapitel 10: Erinnerungen"
+    },
+    {
+      "file": "all.json",
+      "id": "aspekte-c1-all",
+      "name": "Aspekte neu C1 - Komplettes Glossar"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "aspekte-c1-irregular-verbs",
+      "name": "Aspekte neu C1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

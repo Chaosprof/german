@@ -1,0 +1,79 @@
+{
+  "id": "netzwerk-a1",
+  "name": "A1 Netzwerk Glossar",
+  "description": "Klett Netzwerk neu A1 textbook glossary, organised by chapter.",
+  "source": "NWn_A1_Glossar_Deutsch-Englisch.pdf",
+  "decks": [
+    {
+      "file": "kapitel-01.json",
+      "id": "netzwerk-a1-kapitel-01",
+      "name": "Kapitel 1: Guten Tag!"
+    },
+    {
+      "file": "kapitel-02.json",
+      "id": "netzwerk-a1-kapitel-02",
+      "name": "Kapitel 2: Freunde, Kollegen und ich"
+    },
+    {
+      "file": "kapitel-03.json",
+      "id": "netzwerk-a1-kapitel-03",
+      "name": "Kapitel 3: In Hamburg"
+    },
+    {
+      "file": "kapitel-04.json",
+      "id": "netzwerk-a1-kapitel-04",
+      "name": "Kapitel 4: Guten Appetit!"
+    },
+    {
+      "file": "kapitel-05.json",
+      "id": "netzwerk-a1-kapitel-05",
+      "name": "Kapitel 5: Alltag und Familie"
+    },
+    {
+      "file": "kapitel-06.json",
+      "id": "netzwerk-a1-kapitel-06",
+      "name": "Kapitel 6: Zeit mit Freunden"
+    },
+    {
+      "file": "kapitel-07.json",
+      "id": "netzwerk-a1-kapitel-07",
+      "name": "Kapitel 7: Arbeitsalltag"
+    },
+    {
+      "file": "kapitel-08.json",
+      "id": "netzwerk-a1-kapitel-08",
+      "name": "Kapitel 8: Fit und gesund"
+    },
+    {
+      "file": "kapitel-09.json",
+      "id": "netzwerk-a1-kapitel-09",
+      "name": "Kapitel 9: Meine Wohnung"
+    },
+    {
+      "file": "kapitel-10.json",
+      "id": "netzwerk-a1-kapitel-10",
+      "name": "Kapitel 10: Studium und Beruf"
+    },
+    {
+      "file": "kapitel-11.json",
+      "id": "netzwerk-a1-kapitel-11",
+      "name": "Kapitel 11: Die Jacke gefällt mir!"
+    },
+    {
+      "file": "kapitel-12.json",
+      "id": "netzwerk-a1-kapitel-12",
+      "name": "Kapitel 12: Ab in den Urlaub!"
+    },
+    {
+      "file": "all.json",
+      "id": "netzwerk-a1-all",
+      "name": "Netzwerk neu A1 - Komplettes Glossar"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "netzwerk-a1-irregular-verbs",
+      "name": "Netzwerk neu A1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}
