@@ -1,0 +1,109 @@
+{
+  "id": "goethe-a2",
+  "name": "Goethe A2 Wortliste",
+  "description": "Goethe-Institut Goethe A2 official wordlist.",
+  "source": "Goethe-Zertifikat_A2_Wortliste.pdf",
+  "decks": [
+    {
+      "file": "all.json",
+      "id": "goethe-a2-all",
+      "name": "Goethe A2 - Wortliste"
+    },
+    {
+      "file": "wortgruppen-familie.json",
+      "id": "goethe-a2-wortgruppen-familie",
+      "name": "Goethe A2 - Familienmitglieder",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-familienstand.json",
+      "id": "goethe-a2-wortgruppen-familienstand",
+      "name": "Goethe A2 - Familienstand",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-farben.json",
+      "id": "goethe-a2-wortgruppen-farben",
+      "name": "Goethe A2 - Farben",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-berufe.json",
+      "id": "goethe-a2-wortgruppen-berufe",
+      "name": "Goethe A2 - Berufe",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-himmelsrichtungen.json",
+      "id": "goethe-a2-wortgruppen-himmelsrichtungen",
+      "name": "Goethe A2 - Himmelsrichtungen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-laender.json",
+      "id": "goethe-a2-wortgruppen-laender",
+      "name": "Goethe A2 - Länder und Nationalitäten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-schule.json",
+      "id": "goethe-a2-wortgruppen-schule",
+      "name": "Goethe A2 - Schule und Schulfächer",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-masse.json",
+      "id": "goethe-a2-wortgruppen-masse",
+      "name": "Goethe A2 - Währungen und Maße",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-feiertage.json",
+      "id": "goethe-a2-wortgruppen-feiertage",
+      "name": "Goethe A2 - Feiertage",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-jahreszeiten.json",
+      "id": "goethe-a2-wortgruppen-jahreszeiten",
+      "name": "Goethe A2 - Jahreszeiten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-monate.json",
+      "id": "goethe-a2-wortgruppen-monate",
+      "name": "Goethe A2 - Monatsnamen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-tageszeiten.json",
+      "id": "goethe-a2-wortgruppen-tageszeiten",
+      "name": "Goethe A2 - Tageszeiten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-wochentage.json",
+      "id": "goethe-a2-wortgruppen-wochentage",
+      "name": "Goethe A2 - Wochentage",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-zeitmasse.json",
+      "id": "goethe-a2-wortgruppen-zeitmasse",
+      "name": "Goethe A2 - Zeitmaße",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-zahlen.json",
+      "id": "goethe-a2-wortgruppen-zahlen",
+      "name": "Goethe A2 - Zahlen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "goethe-a2-irregular-verbs",
+      "name": "Goethe A2 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

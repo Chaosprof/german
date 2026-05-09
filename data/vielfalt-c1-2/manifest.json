@@ -1,0 +1,85 @@
+{
+  "id": "vielfalt-c1.2",
+  "name": "C1.2 Vielfalt Glossar",
+  "description": "Hueber Vielfalt C1.2 textbook (ISBN 978-3-19-351038-9) - Lernwortschatz organised by lesson.",
+  "source": "Vielfalt_C1-2_Glossar_blanko.pdf",
+  "decks": [
+    {
+      "file": "lektion-13.json",
+      "id": "vielfalt-c1.2-lektion-13",
+      "name": "Lektion 13: Kontakte knüpfen und pflegen"
+    },
+    {
+      "file": "lektion-14.json",
+      "id": "vielfalt-c1.2-lektion-14",
+      "name": "Lektion 14: Für eine bessere Welt"
+    },
+    {
+      "file": "lektion-15.json",
+      "id": "vielfalt-c1.2-lektion-15",
+      "name": "Lektion 15: Teilen, tauschen, teilhaben"
+    },
+    {
+      "file": "lektion-16.json",
+      "id": "vielfalt-c1.2-lektion-16",
+      "name": "Lektion 16: Auf der Suche nach dem Glück"
+    },
+    {
+      "file": "lektion-17.json",
+      "id": "vielfalt-c1.2-lektion-17",
+      "name": "Lektion 17: Beruf oder Berufung?"
+    },
+    {
+      "file": "lektion-18.json",
+      "id": "vielfalt-c1.2-lektion-18",
+      "name": "Lektion 18: Fair verteilt?"
+    },
+    {
+      "file": "lektion-19.json",
+      "id": "vielfalt-c1.2-lektion-19",
+      "name": "Lektion 19: Was weiß ich?!"
+    },
+    {
+      "file": "lektion-20.json",
+      "id": "vielfalt-c1.2-lektion-20",
+      "name": "Lektion 20: Das will ich wissen!"
+    },
+    {
+      "file": "lektion-21.json",
+      "id": "vielfalt-c1.2-lektion-21",
+      "name": "Lektion 21: Realitäten und Visionen"
+    },
+    {
+      "file": "lektion-22.json",
+      "id": "vielfalt-c1.2-lektion-22",
+      "name": "Lektion 22: Die große, weite Welt"
+    },
+    {
+      "file": "lektion-23.json",
+      "id": "vielfalt-c1.2-lektion-23",
+      "name": "Lektion 23: Scharf oder süß?"
+    },
+    {
+      "file": "lektion-24.json",
+      "id": "vielfalt-c1.2-lektion-24",
+      "name": "Lektion 24: Tauchen Sie ein!"
+    },
+    {
+      "file": "all.json",
+      "id": "vielfalt-c1.2-all",
+      "name": "Vielfalt C1.2 - Komplettes Glossar"
+    },
+    {
+      "file": "verb-prepositions.json",
+      "id": "vielfalt-c1.2-verb-prepositions",
+      "name": "Vielfalt C1.2 - Verb + Preposition",
+      "kind": "verb_prepositions"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "vielfalt-c1.2-irregular-verbs",
+      "name": "Vielfalt C1.2 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

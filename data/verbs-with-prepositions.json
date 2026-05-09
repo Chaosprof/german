@@ -3,7 +3,7 @@
     "name": "Verbs with Prepositions",
     "description": "German verbs with fixed prepositions (Verben mit festen Präpositionen). Includes the governed case and English meaning. Essential for B2–C2 learners and native-level fluency.",
     "version": 1,
-    "count": 344,
+    "count": 368,
     "generatedAt": "2026-04-10T00:00:00.000000+00:00"
   },
   "verbs": [
@@ -2806,6 +2806,222 @@
       "example": "Das Team kommuniziert mit den Kunden.",
       "rank": 346,
       "source": "vielfalt-b2.1"
+    },
+    {
+      "verb": "werben",
+      "preposition": "für",
+      "case": "Akk",
+      "english": "advertise/promote",
+      "example": "Sie wirbt für ein neues Produkt.",
+      "rank": 347,
+      "source": "vielfalt-b1+"
+    },
+    {
+      "verb": "sich verstehen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "get along with",
+      "example": "Er versteht sich gut mit seinen Kollegen.",
+      "rank": 348,
+      "source": "vielfalt-b1+"
+    },
+    {
+      "verb": "umgehen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "deal/handle",
+      "example": "Sie geht professionell mit Kritik um.",
+      "rank": 349,
+      "source": "vielfalt-b1+"
+    },
+    {
+      "verb": "sich halten",
+      "preposition": "an",
+      "case": "Akk",
+      "english": "stick to/abide by",
+      "example": "Wir halten uns an die Regeln.",
+      "rank": 350,
+      "source": "vielfalt-b1+"
+    },
+    {
+      "verb": "sich austauschen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "exchange ideas with",
+      "example": "Wir tauschen uns mit Kolleg:innen aus.",
+      "rank": 351,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "sich einmischen",
+      "preposition": "in",
+      "case": "Akk",
+      "english": "interfere in",
+      "example": "Mische dich nicht in fremde Angelegenheiten ein.",
+      "rank": 352,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "anknüpfen",
+      "preposition": "an",
+      "case": "Akk",
+      "english": "build on/connect with",
+      "example": "Wir knüpfen an die Vorlesung an.",
+      "rank": 353,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "vorgehen",
+      "preposition": "gegen",
+      "case": "Akk",
+      "english": "take action against",
+      "example": "Die Polizei geht gegen die Demonstranten vor.",
+      "rank": 354,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "zurückblicken",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "look back on",
+      "example": "Sie blickt auf ihr Berufsleben zurück.",
+      "rank": 355,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "ausrichten",
+      "preposition": "an",
+      "case": "Dat",
+      "english": "align/orient towards",
+      "example": "Das Konzept richtet sich an Lehrkräften aus.",
+      "rank": 356,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "sich einbringen",
+      "preposition": "in",
+      "case": "Akk",
+      "english": "contribute to/get involved in",
+      "example": "Er bringt sich aktiv in das Projekt ein.",
+      "rank": 357,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "sich verlieren",
+      "preposition": "in",
+      "case": "Dat",
+      "english": "get lost in",
+      "example": "Sie verliert sich in Details.",
+      "rank": 358,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "glänzen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "shine with/show off",
+      "example": "Er glänzt mit seinem Wissen.",
+      "rank": 359,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "heranführen",
+      "preposition": "an",
+      "case": "Akk",
+      "english": "introduce/lead up to",
+      "example": "Der Lehrer führt die Kinder an Mathematik heran.",
+      "rank": 360,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "ansetzen",
+      "preposition": "zu",
+      "case": "Dat",
+      "english": "start to/move to",
+      "example": "Sie setzt zu einer Antwort an.",
+      "rank": 361,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "sich wiederfinden",
+      "preposition": "in",
+      "case": "Dat",
+      "english": "find oneself in/relate to",
+      "example": "Viele finden sich in dieser Beschreibung wieder.",
+      "rank": 362,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "zutreffen",
+      "preposition": "auf",
+      "case": "Akk",
+      "english": "apply to/be true of",
+      "example": "Diese Aussage trifft auf alle zu.",
+      "rank": 363,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "übergehen",
+      "preposition": "zu",
+      "case": "Dat",
+      "english": "move on to",
+      "example": "Wir gehen jetzt zum nächsten Punkt über.",
+      "rank": 364,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "sich anfreunden",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "become friends with",
+      "example": "Sie freundet sich mit der Idee an.",
+      "rank": 365,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "sich auflehnen",
+      "preposition": "gegen",
+      "case": "Akk",
+      "english": "rebel against",
+      "example": "Die Jugend lehnt sich gegen die Tradition auf.",
+      "rank": 366,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "anregen",
+      "preposition": "zu",
+      "case": "Dat",
+      "english": "encourage/inspire to",
+      "example": "Der Film regt zum Nachdenken an.",
+      "rank": 367,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "experimentieren",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "experiment with",
+      "example": "Wir experimentieren mit Gewürzen.",
+      "rank": 368,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "belegen",
+      "preposition": "mit",
+      "case": "Dat",
+      "english": "cover/spread/document with",
+      "example": "Belegen Sie das Brot mit Käse.",
+      "rank": 369,
+      "source": "vielfalt-c1.2"
+    },
+    {
+      "verb": "hinwegsehen",
+      "preposition": "über",
+      "case": "Akk",
+      "english": "overlook/disregard",
+      "example": "Wir sehen über kleine Fehler hinweg.",
+      "rank": 370,
+      "source": "vielfalt-c1.2"
     }
   ]
 }

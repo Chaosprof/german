@@ -1,0 +1,79 @@
+{
+  "id": "goethe-a1",
+  "name": "Goethe A1 Wortliste",
+  "description": "Goethe-Institut Goethe A1 / Start Deutsch 1 official wordlist.",
+  "source": "A1_SD1_Wortliste_02.pdf",
+  "decks": [
+    {
+      "file": "all.json",
+      "id": "goethe-a1-all",
+      "name": "Goethe A1 / Start Deutsch 1 - Wortliste"
+    },
+    {
+      "file": "wortgruppen-zahlen.json",
+      "id": "goethe-a1-wortgruppen-zahlen",
+      "name": "Goethe A1 - Zahlen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-zeitmasse.json",
+      "id": "goethe-a1-wortgruppen-zeitmasse",
+      "name": "Goethe A1 - Zeitmaße / Zeitangaben",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-wochentage.json",
+      "id": "goethe-a1-wortgruppen-wochentage",
+      "name": "Goethe A1 - Wochentage",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-tageszeiten.json",
+      "id": "goethe-a1-wortgruppen-tageszeiten",
+      "name": "Goethe A1 - Tageszeiten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-monate.json",
+      "id": "goethe-a1-wortgruppen-monate",
+      "name": "Goethe A1 - Monatsnamen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-jahreszeiten.json",
+      "id": "goethe-a1-wortgruppen-jahreszeiten",
+      "name": "Goethe A1 - Jahreszeiten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-masse.json",
+      "id": "goethe-a1-wortgruppen-masse",
+      "name": "Goethe A1 - Währungen, Maße und Gewichte",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-laender.json",
+      "id": "goethe-a1-wortgruppen-laender",
+      "name": "Goethe A1 - Länder und Nationalitäten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-farben.json",
+      "id": "goethe-a1-wortgruppen-farben",
+      "name": "Goethe A1 - Farben",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-himmelsrichtungen.json",
+      "id": "goethe-a1-wortgruppen-himmelsrichtungen",
+      "name": "Goethe A1 - Himmelsrichtungen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "goethe-a1-irregular-verbs",
+      "name": "Goethe A1 / Start Deutsch 1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

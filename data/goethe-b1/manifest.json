@@ -1,0 +1,109 @@
+{
+  "id": "goethe-b1",
+  "name": "Goethe B1 Wortliste",
+  "description": "Goethe-Institut Goethe B1 official wordlist.",
+  "source": "Goethe-Zertifikat_B1_Wortliste.pdf",
+  "decks": [
+    {
+      "file": "all.json",
+      "id": "goethe-b1-all",
+      "name": "Goethe B1 - Wortliste"
+    },
+    {
+      "file": "wortgruppen-anglizismen.json",
+      "id": "goethe-b1-wortgruppen-anglizismen",
+      "name": "Goethe B1 - Anglizismen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-schulfaecher.json",
+      "id": "goethe-b1-wortgruppen-schulfaecher",
+      "name": "Goethe B1 - Bildung: Schulfächer",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-farben.json",
+      "id": "goethe-b1-wortgruppen-farben",
+      "name": "Goethe B1 - Farben",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-himmelsrichtungen.json",
+      "id": "goethe-b1-wortgruppen-himmelsrichtungen",
+      "name": "Goethe B1 - Himmelsrichtungen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-laender.json",
+      "id": "goethe-b1-wortgruppen-laender",
+      "name": "Goethe B1 - Länder, Nationalitäten, Sprachen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-politik.json",
+      "id": "goethe-b1-wortgruppen-politik",
+      "name": "Goethe B1 - Politische Begriffe",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-tiere.json",
+      "id": "goethe-b1-wortgruppen-tiere",
+      "name": "Goethe B1 - Tiere",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-masse.json",
+      "id": "goethe-b1-wortgruppen-masse",
+      "name": "Goethe B1 - Währungen, Maße und Gewichte",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-zahlen.json",
+      "id": "goethe-b1-wortgruppen-zahlen",
+      "name": "Goethe B1 - Zahlen, Bruchzahlen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-feiertage.json",
+      "id": "goethe-b1-wortgruppen-feiertage",
+      "name": "Goethe B1 - Feiertage",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-jahreszeiten.json",
+      "id": "goethe-b1-wortgruppen-jahreszeiten",
+      "name": "Goethe B1 - Jahreszeiten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-monate.json",
+      "id": "goethe-b1-wortgruppen-monate",
+      "name": "Goethe B1 - Monatsnamen",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-tageszeiten.json",
+      "id": "goethe-b1-wortgruppen-tageszeiten",
+      "name": "Goethe B1 - Tageszeiten",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-wochentage.json",
+      "id": "goethe-b1-wortgruppen-wochentage",
+      "name": "Goethe B1 - Wochentage",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "wortgruppen-zeitangaben.json",
+      "id": "goethe-b1-wortgruppen-zeitangaben",
+      "name": "Goethe B1 - Zeitangaben",
+      "kind": "wortgruppen"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "goethe-b1-irregular-verbs",
+      "name": "Goethe B1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}

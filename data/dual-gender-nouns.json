@@ -3,7 +3,7 @@
     "name": "Dual-Gender Nouns",
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
     "version": 2,
-    "count": 92,
+    "count": 98,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "nouns": [
@@ -2001,6 +2001,138 @@
       ],
       "rank": 760,
       "leipzigRank": 760,
+      "bothInDrills": true
+    },
+    {
+      "word": "Kajak",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "kayak",
+          "plural": "Kajaks"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "kayak",
+          "plural": "Kajaks"
+        }
+      ],
+      "rank": 30000,
+      "leipzigRank": 30000,
+      "bothInDrills": true
+    },
+    {
+      "word": "Download",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "download",
+          "plural": "Downloads"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "download",
+          "plural": "Downloads"
+        }
+      ],
+      "rank": 30001,
+      "leipzigRank": 30001,
+      "bothInDrills": true
+    },
+    {
+      "word": "Like",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "like (e.g. social media)",
+          "plural": "Likes"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "like (e.g. social media)",
+          "plural": "Likes"
+        }
+      ],
+      "rank": 30100,
+      "leipzigRank": 30100,
+      "bothInDrills": true
+    },
+    {
+      "word": "Level",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "level/stage",
+          "plural": "Level"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "level/stage",
+          "plural": "Level"
+        }
+      ],
+      "rank": 30101,
+      "leipzigRank": 30101,
+      "bothInDrills": true
+    },
+    {
+      "word": "Flakon",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "der",
+          "english": "(perfume) bottle/flacon",
+          "plural": "Flakons"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "(perfume) bottle/flacon",
+          "plural": "Flakons"
+        }
+      ],
+      "rank": 30102,
+      "leipzigRank": 30102,
+      "bothInDrills": true
+    },
+    {
+      "word": "Kurkuma",
+      "genders": [
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "die",
+          "english": "turmeric",
+          "plural": "—"
+        },
+        {
+          "singularOnly": false,
+          "pluralOnly": false,
+          "article": "das",
+          "english": "turmeric",
+          "plural": "—"
+        }
+      ],
+      "rank": 30103,
+      "leipzigRank": 30103,
       "bothInDrills": true
     }
   ]

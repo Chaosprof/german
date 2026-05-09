@@ -1,0 +1,85 @@
+{
+  "id": "vielfalt-b1plus",
+  "name": "B1+ Vielfalt Glossar",
+  "description": "Hueber Vielfalt B1+ textbook (ISBN 978-3-19-001036-3) - Lernwortschatz organised by lesson.",
+  "source": "Vielfalt_B1plus_Glossar_blanko.pdf",
+  "decks": [
+    {
+      "file": "lektion-01.json",
+      "id": "vielfalt-b1plus-lektion-01",
+      "name": "Lektion 1: Ohne Hobby glücklich?"
+    },
+    {
+      "file": "lektion-02.json",
+      "id": "vielfalt-b1plus-lektion-02",
+      "name": "Lektion 2: Raus aus dem Alltag"
+    },
+    {
+      "file": "lektion-03.json",
+      "id": "vielfalt-b1plus-lektion-03",
+      "name": "Lektion 3: Neustart als Landärztin"
+    },
+    {
+      "file": "lektion-04.json",
+      "id": "vielfalt-b1plus-lektion-04",
+      "name": "Lektion 4: Gemeinsam essen"
+    },
+    {
+      "file": "lektion-05.json",
+      "id": "vielfalt-b1plus-lektion-05",
+      "name": "Lektion 5: Im Schrank"
+    },
+    {
+      "file": "lektion-06.json",
+      "id": "vielfalt-b1plus-lektion-06",
+      "name": "Lektion 6: Getrennt und doch zusammen"
+    },
+    {
+      "file": "lektion-07.json",
+      "id": "vielfalt-b1plus-lektion-07",
+      "name": "Lektion 7: Hilfsbereit"
+    },
+    {
+      "file": "lektion-08.json",
+      "id": "vielfalt-b1plus-lektion-08",
+      "name": "Lektion 8: Wer ist schuld am Klimawandel?"
+    },
+    {
+      "file": "lektion-09.json",
+      "id": "vielfalt-b1plus-lektion-09",
+      "name": "Lektion 9: Von A nach B"
+    },
+    {
+      "file": "lektion-10.json",
+      "id": "vielfalt-b1plus-lektion-10",
+      "name": "Lektion 10: Einfach Kult!"
+    },
+    {
+      "file": "lektion-11.json",
+      "id": "vielfalt-b1plus-lektion-11",
+      "name": "Lektion 11: Bildungs(um)wege"
+    },
+    {
+      "file": "lektion-12.json",
+      "id": "vielfalt-b1plus-lektion-12",
+      "name": "Lektion 12: Erzähl doch mal!"
+    },
+    {
+      "file": "all.json",
+      "id": "vielfalt-b1plus-all",
+      "name": "Vielfalt B1+ - Komplettes Glossar"
+    },
+    {
+      "file": "verb-prepositions.json",
+      "id": "vielfalt-b1plus-verb-prepositions",
+      "name": "Vielfalt B1+ - Verb + Preposition",
+      "kind": "verb_prepositions"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "vielfalt-b1plus-irregular-verbs",
+      "name": "Vielfalt B1+ - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}
