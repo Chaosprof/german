@@ -1006,13 +1006,15 @@ const GAME_MODES = [
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "verb_prepositions", name: "Verb + Preposition", desc: "Practice verb-preposition combos & case", icon: "🎯" },
 ];
+const MAIN_GAME_MODES = GAME_MODES.filter(({ id }) => id !== "matching");
+const CASUAL_GAME_MODES = GAME_MODES.filter(({ id }) => id === "matching");
 
 const NO_ANSWER = "__unanswered__";
 const NO_PLURAL_LABEL = "kein Plural";
 const MATCHING_BATCH_SIZE = 10;
 const TIMED_CHALLENGE_DURATION = 60;
 const PERSISTED_BEST_SCORE_MODE_IDS = new Set([...GAME_MODES.map(({ id }) => id), "timed", "survival"]);
-const VALID_PERSISTED_MODE_STAT_IDS = new Set(["article", "plural", "matching", "reverse", "verb_forms", "verb_prep"]);
+const VALID_PERSISTED_MODE_STAT_IDS = new Set(["article", "plural", "reverse", "verb_forms", "verb_prep"]);
 const VALID_CAMPAIGN_CHALLENGES = CAMPAIGN_STATES.reduce((acc, state) => {
   acc[state.id] = new Set(state.challenges.map(ch => ch.id));
   return acc;
@@ -1365,8 +1367,9 @@ function GermanNounGame() {
         stats[noun] = { attempts: s.attempts + 1, correct: s.correct + (correct ? 1 : 0), consecutiveCorrect: cc };
         if (cc >= 5) mastered.add(noun);
         // Per-mode stats
-        if (modes) {
-          modes.forEach(m => {
+        const trackedModes = (modes || []).filter(m => m !== "matching");
+        if (trackedModes.length) {
+          trackedModes.forEach(m => {
             const key = m + ":" + noun;
             const ms = modeStats[key] || { attempts: 0, correct: 0, consecutiveCorrect: 0 };
             const mcc = correct ? (ms.consecutiveCorrect || 0) + 1 : 0;
@@ -2523,6 +2526,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [openDeckFolders,setOpenDeckFolders]=useState({});
   const [selectedDeckCategory,setSelectedDeckCategory]=useState(null);
   const [selectedGameMode,setSelectedGameMode]=useState(init.gm ?? "classic");
+  const [showCasualModes,setShowCasualModes]=useState((init.gm ?? "classic") === "matching");
   const [matchWordType,setMatchWordType]=useState(init.wordType ?? "nouns");
   const [playStyle,setPlayStyle]=useState(init.pStyle ?? "practice");
   const [timedSeconds,setTimedSeconds]=useState(init.tSecs ?? 10);
@@ -2596,6 +2600,18 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
   const handleGameModeSelect = (gameModeId) => {
     setSelectedGameMode(gameModeId);
+    setShowCasualModes(gameModeId === "matching");
+  };
+
+  const openCasualModes = () => {
+    if (showCasualModes) {
+      setShowCasualModes(false);
+      setSelectedGameMode("classic");
+      return;
+    }
+    setShowCasualModes(true);
+    setSelectedGameMode("matching");
+    setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0);
   };
 
   const syncDot = {idle:UI.faint,loading:UI.gold,saving:UI.gold,synced:UI.success,error:"#EF4444"}[syncStatus];
@@ -2604,6 +2620,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const modeStats = userData.modeStats || {};
   const masteredSet = new Set(userData.masteredNouns || []);
   const gameModeMeta = GAME_MODES.find(gm => gm.id === selectedGameMode) || GAME_MODES[0];
+  const visibleGameModes = showCasualModes ? CASUAL_GAME_MODES : MAIN_GAME_MODES;
   const bestScoreKeyPrefix = selectedGameMode === "classic"
     ? `${selectedGameMode}:${mode}`
     : (selectedGameMode === "reverse" || selectedGameMode === "matching")
@@ -3168,25 +3185,14 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   return (
     <div style={S.container}><div style={{...S.menuInner,paddingBottom:164,gap:18}}>
         <div style={{textAlign:"center",position:"relative"}}>
-          <button onClick={()=>setShowSettings(!showSettings)} style={S.gearBtn} title="Sync Settings">
-            <span style={{fontSize:18}}>&#9881;</span>
-            <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot,display:"inline-block",marginLeft:4}}/>
-          </button>
-          <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:14,flexWrap:"wrap"}}>
-            {["der","die","das"].map(article=>(
-              <span key={article} style={{padding:"5px 12px",borderRadius:999,border:`1px solid ${ARTICLE_COLORS[article]}`,color:ARTICLE_COLORS[article],background:UI.panel,fontSize:12,fontWeight:800,letterSpacing:1.1,textTransform:"uppercase"}}>
-                {article}
-              </span>
-            ))}
+          <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+            <h1 style={S.menuTitle}>Artikel Blitz</h1>
+            <button onClick={()=>setShowSettings(!showSettings)} style={S.gearBtn} title="GitHub PAT">
+              <span style={{fontSize:12,fontWeight:800}}>GitHub PAT</span>
+              <span style={{width:8,height:8,borderRadius:"50%",backgroundColor:syncDot,display:"inline-block",marginLeft:6}}/>
+            </button>
           </div>
-          <h1 style={S.menuTitle}>Artikel Blitz</h1>
         </div>
-
-      <div style={S.menuQuickRow}>
-        <button onClick={onOpenCampaign} style={S.secondaryActionBtn}>Campaign</button>
-        <button onClick={onOpenDashboard} style={S.secondaryActionBtn}>Progress</button>
-        <button onClick={onOpenGrammar} style={S.secondaryActionBtn}>Grammar</button>
-      </div>
 
       {showSettings&&(
         <div style={S.settingsPanel}>
@@ -3208,9 +3214,9 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       )}
 
       <div style={S.menuSection}>
-          <label style={S.menuLabel}>Activity</label>
+          <label style={S.menuLabel}>{showCasualModes ? "Casual" : "Activity"}</label>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-            {GAME_MODES.map(gm=>{
+            {visibleGameModes.map(gm=>{
               const selected = selectedGameMode===gm.id;
               const subOptions = gm.id === "classic"
                 ? [[MODES.ARTICLE,"Articles","#4B79A1"],[MODES.PLURAL,"Plurals",UI.accent],[MODES.BOTH,"Both",UI.gold]]
@@ -3299,6 +3305,12 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
       <div style={S.menuStickyFooter}>
         <button onClick={handleStart} disabled={!canStart} style={{...S.startBtn,width:"auto",minWidth:180,marginTop:0,opacity:canStart?1:0.45}}>Start Game</button>
+        <div style={S.menuQuickRow}>
+          <button onClick={onOpenCampaign} style={S.secondaryActionBtn}>Campaign</button>
+          <button onClick={onOpenDashboard} style={S.secondaryActionBtn}>Progress</button>
+          <button onClick={onOpenGrammar} style={S.secondaryActionBtn}>Grammar</button>
+          <button onClick={openCasualModes} style={{...S.secondaryActionBtn,borderColor:showCasualModes?UI.gold:UI.line,background:showCasualModes?UI.goldSoft:UI.panel}}>Casual</button>
+        </div>
       </div>
     </div></div>
   );
@@ -3329,19 +3341,16 @@ function ProgressDashboard({ userData, onBack }) {
         articles: countMastered(NOUNS, "article"),
         plurals: countMastered(NOUNS, "plural"),
         translation: countMastered(NOUNS, "reverse"),
-        matching: countMastered(NOUNS, "matching"),
       },
       adjectives: {
         total: ADJECTIVES.length,
         translation: countMastered(ADJECTIVES, "reverse"),
-        matching: countMastered(ADJECTIVES, "matching"),
       },
       verbs: {
         total: VERBS.length,
         irregularTotal: IRREGULAR_VERBS.length,
         verbPrepTotal: VERB_PREPOSITIONS.length,
         translation: countMastered(VERBS, "reverse"),
-        matching: countMastered(VERBS, "matching"),
         verbForms: countMastered(IRREGULAR_VERBS, "verb_forms"),
         verbPrep: countMastered(VERB_PREPOSITIONS, "verb_prep", vpKey),
       },
@@ -3349,13 +3358,13 @@ function ProgressDashboard({ userData, onBack }) {
   }, [modeStats]);
 
   const totalMastered =
-    stats.nouns.articles + stats.nouns.plurals + stats.nouns.translation + stats.nouns.matching +
-    stats.adjectives.translation + stats.adjectives.matching +
-    stats.verbs.translation + stats.verbs.matching + stats.verbs.verbForms + stats.verbs.verbPrep;
+    stats.nouns.articles + stats.nouns.plurals + stats.nouns.translation +
+    stats.adjectives.translation +
+    stats.verbs.translation + stats.verbs.verbForms + stats.verbs.verbPrep;
   const totalCells =
-    stats.nouns.total * 4 +
-    stats.adjectives.total * 2 +
-    stats.verbs.total * 2 + stats.verbs.irregularTotal + stats.verbs.verbPrepTotal;
+    stats.nouns.total * 3 +
+    stats.adjectives.total +
+    stats.verbs.total + stats.verbs.irregularTotal + stats.verbs.verbPrepTotal;
   const overallPct = totalCells > 0 ? Math.round((totalMastered / totalCells) * 100) : 0;
 
   // Progress ring
@@ -3456,7 +3465,6 @@ function ProgressDashboard({ userData, onBack }) {
           { label:"Articles",    icon:"der/die/das",    color:UI.teal,       mastered:stats.nouns.articles,    total:stats.nouns.total },
           { label:"Plurals",     icon:"die …",     color:UI.accentDeep, mastered:stats.nouns.plurals,     total:stats.nouns.total },
           { label:"Translation", icon:"EN → DE",   color:UI.gold,       mastered:stats.nouns.translation, total:stats.nouns.total },
-          { label:"Matching",    icon:"DE ↔ EN",   color:UI.success,    mastered:stats.nouns.matching,    total:stats.nouns.total },
         ]}
       />
 
@@ -3467,7 +3475,6 @@ function ProgressDashboard({ userData, onBack }) {
           summary={`${stats.adjectives.total.toLocaleString()} adjectives total`}
           skills={[
             { label:"Translation", icon:"EN → DE", color:UI.gold,    mastered:stats.adjectives.translation, total:stats.adjectives.total },
-            { label:"Matching",    icon:"DE ↔ EN", color:UI.success, mastered:stats.adjectives.matching,    total:stats.adjectives.total },
           ]}
         />
       )}
@@ -3479,7 +3486,6 @@ function ProgressDashboard({ userData, onBack }) {
           summary={`${stats.verbs.total.toLocaleString()} verbs · ${stats.verbs.irregularTotal.toLocaleString()} irregular · ${stats.verbs.verbPrepTotal.toLocaleString()} verb+prep`}
           skills={[
             { label:"Translation",         icon:"EN → DE",  color:UI.gold,       mastered:stats.verbs.translation, total:stats.verbs.total },
-            { label:"Matching",            icon:"DE ↔ EN",  color:UI.success,    mastered:stats.verbs.matching,    total:stats.verbs.total },
             { label:"Verb Forms",          icon:"Prät/Perf",color:UI.accentDeep, mastered:stats.verbs.verbForms,   total:stats.verbs.irregularTotal },
             { label:"Verb + Prepositions", icon:"auf+Akk",       color:UI.teal,       mastered:stats.verbs.verbPrep,    total:stats.verbs.verbPrepTotal },
           ]}
@@ -3843,7 +3849,7 @@ const S = {
   menuStatChip:{display:"flex",flexDirection:"column",gap:4,padding:"12px 10px",borderRadius:16,border:`1px solid ${UI.line}`,background:UI.panel,boxShadow:"0 10px 26px rgba(15,23,42,0.06)",minWidth:0},
   menuStatValue:{fontSize:18,fontWeight:800,color:UI.textStrong,lineHeight:1},
   menuStatLabel:{fontSize:10,color:UI.muted,textTransform:"uppercase",letterSpacing:1.2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},
-  menuQuickRow:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8},
+  menuQuickRow:{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(106px, 1fr))",gap:8,width:"100%"},
   secondaryActionBtn:{padding:"12px 14px",borderRadius:16,border:`1px solid ${UI.line}`,background:UI.panel,color:UI.textStrong,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"},
   menuProgressLine:{display:"flex",justifyContent:"space-between",gap:10,flexWrap:"wrap",fontSize:11,color:UI.muted,padding:"0 2px"},
   wizardCard:{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:20,overflow:"hidden",transition:"border-color 0.15s ease, box-shadow 0.15s ease",boxShadow:"0 10px 30px rgba(15,23,42,0.06)"},
@@ -3861,7 +3867,7 @@ const S = {
   inlineSummaryCard:{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:16,padding:"12px 14px",display:"flex",flexDirection:"column",gap:4},
   inlineSummaryLabel:{fontSize:10,color:UI.faint,textTransform:"uppercase",letterSpacing:1.2,fontWeight:700},
   inlineSummaryValue:{fontSize:14,color:UI.textStrong,fontWeight:700},
-  menuStickyFooter:{position:"sticky",bottom:12,zIndex:8,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:16},
+  menuStickyFooter:{position:"sticky",bottom:12,zIndex:8,display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",gap:10,paddingTop:16,width:"100%"},
   tierBtn:{padding:"10px 8px",border:"2px solid",borderRadius:14,cursor:"pointer",background:UI.panel,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.15s ease"},
   modeCard:{padding:"14px 16px",border:"2px solid",borderRadius:16,cursor:"pointer",background:UI.panel,textAlign:"left",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
   diffBtn:{flex:1,padding:"12px 8px",border:"2px solid",borderRadius:14,cursor:"pointer",background:UI.panel,textAlign:"center",display:"flex",flexDirection:"column",gap:2,transition:"all 0.15s ease"},
@@ -3873,7 +3879,7 @@ const S = {
   resultLabel:{fontSize:10,color:UI.faint,textTransform:"uppercase",letterSpacing:1},
   practiceBtn:{width:"100%",padding:"14px",background:UI.dangerSoft,border:`2px solid ${UI.danger}`,borderRadius:16,fontSize:15,fontWeight:700,color:UI.textStrong,cursor:"pointer",fontFamily:"inherit"},
   restartBtn:{width:"100%",padding:"14px",background:UI.tealSoft,border:`1px solid ${UI.lineStrong}`,borderRadius:999,fontSize:15,fontWeight:800,color:UI.textStrong,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.03em",textTransform:"none"},
-  gearBtn:{position:"absolute",top:0,right:0,background:UI.panelAlt,border:`1px solid ${UI.line}`,borderRadius:999,padding:"6px 12px",cursor:"pointer",color:UI.muted,display:"flex",alignItems:"center"},
+  gearBtn:{position:"static",background:UI.panelAlt,border:`1px solid ${UI.line}`,borderRadius:999,padding:"7px 12px",cursor:"pointer",color:UI.muted,display:"flex",alignItems:"center",whiteSpace:"nowrap",fontFamily:"inherit"},
   settingsPanel:{background:UI.panel,border:`1px solid ${UI.line}`,borderRadius:18,padding:16,display:"flex",flexDirection:"column",gap:6,boxShadow:"0 10px 30px rgba(15,23,42,0.06)"},
 };
 
