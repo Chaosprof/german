@@ -1,0 +1,79 @@
+{
+  "id": "netzwerk-b1",
+  "name": "B1 Netzwerk Glossar",
+  "description": "Klett Netzwerk neu B1 textbook glossary, organised by chapter.",
+  "source": "NWn_B1_Glossar_Englisch.pdf",
+  "decks": [
+    {
+      "file": "kapitel-01.json",
+      "id": "netzwerk-b1-kapitel-01",
+      "name": "Kapitel 1: Gute Reise!"
+    },
+    {
+      "file": "kapitel-02.json",
+      "id": "netzwerk-b1-kapitel-02",
+      "name": "Kapitel 2: Das ist ja praktisch!"
+    },
+    {
+      "file": "kapitel-03.json",
+      "id": "netzwerk-b1-kapitel-03",
+      "name": "Kapitel 3: Veränderungen"
+    },
+    {
+      "file": "kapitel-04.json",
+      "id": "netzwerk-b1-kapitel-04",
+      "name": "Kapitel 4: Arbeitswelt"
+    },
+    {
+      "file": "kapitel-05.json",
+      "id": "netzwerk-b1-kapitel-05",
+      "name": "Kapitel 5: Umweltfreundlich?"
+    },
+    {
+      "file": "kapitel-06.json",
+      "id": "netzwerk-b1-kapitel-06",
+      "name": "Kapitel 6: Blick nach vorn"
+    },
+    {
+      "file": "kapitel-07.json",
+      "id": "netzwerk-b1-kapitel-07",
+      "name": "Kapitel 7: Zwischenmenschliches"
+    },
+    {
+      "file": "kapitel-08.json",
+      "id": "netzwerk-b1-kapitel-08",
+      "name": "Kapitel 8: Rund um Körper und Geist"
+    },
+    {
+      "file": "kapitel-09.json",
+      "id": "netzwerk-b1-kapitel-09",
+      "name": "Kapitel 9: Kunststücke"
+    },
+    {
+      "file": "kapitel-10.json",
+      "id": "netzwerk-b1-kapitel-10",
+      "name": "Kapitel 10: Miteinander"
+    },
+    {
+      "file": "kapitel-11.json",
+      "id": "netzwerk-b1-kapitel-11",
+      "name": "Kapitel 11: Stadt, Land, Fluss"
+    },
+    {
+      "file": "kapitel-12.json",
+      "id": "netzwerk-b1-kapitel-12",
+      "name": "Kapitel 12: Geld regiert die Welt?"
+    },
+    {
+      "file": "all.json",
+      "id": "netzwerk-b1-all",
+      "name": "Netzwerk neu B1 - Komplettes Glossar"
+    },
+    {
+      "file": "irregular-verbs.json",
+      "id": "netzwerk-b1-irregular-verbs",
+      "name": "Netzwerk neu B1 - Irregular Verbs",
+      "kind": "verb_forms"
+    }
+  ]
+}
