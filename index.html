@@ -290,9 +290,12 @@ async function loadWordData() {
       const folderName = manifest.name || "Vielfalt Glossar";
       const deckRefs = Array.isArray(manifest.decks) ? manifest.decks : [];
       const deckFiles = await Promise.all(deckRefs.map(ref =>
-        fetch(deckDir + ref.file + v).then(r => r.ok ? r.json() : null).catch(() => null)
+        fetch(deckDir + ref.file + v)
+          .then(r => r.ok ? r.json() : null)
+          .then(deck => ({ ref, deck }))
+          .catch(() => ({ ref, deck: null }))
       ));
-      for (const deck of deckFiles) {
+      for (const { ref, deck } of deckFiles) {
         if (!deck) continue;
         const nouns = Array.isArray(deck.nouns) ? deck.nouns : [];
         const verbs = Array.isArray(deck.verbs) ? deck.verbs : [];
@@ -316,7 +319,9 @@ async function loadWordData() {
           verbForms,
           builtin: true,
           folder: folderName,
-          fullName: deck.name
+          fullName: deck.name,
+          lektion: typeof deck.lektion === "number" ? deck.lektion : null,
+          deckFile: ref.file || ""
         });
       }
     } catch(e) { console.warn(`Could not load textbook decks from ${deckDir}:`, e); }
@@ -2519,7 +2524,7 @@ function DeckBuilder({onSave, onCancel}) {
 // ═══════════════════════════════════════════════════════════════
 function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard, onOpenGrammar, initialSelection}) {
   const init = initialSelection || {};
-  const initSource = init.deckId === "__weakest__" ? "weakest" : init.deckId ? "deck" : (init.gm !== undefined ? "tier" : "tier");
+  const initSource = init.deckId === "__weakest__" ? "weakest" : init.deckId ? "deck" : init.isRange ? "hundred-slices" : "top-n";
   const [mode,setMode]=useState(init.m ?? MODES.ARTICLE);
   const [tier,setTier]=useState(init.t ?? 500);
   const [tierMin,setTierMin]=useState(init.tMin ?? 0);
@@ -2529,7 +2534,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const [showSettings,setShowSettings]=useState(false);
   const [showDeckBuilder,setShowDeckBuilder]=useState(false);
   const [openDeckFolders,setOpenDeckFolders]=useState({});
-  const [selectedDeckCategory,setSelectedDeckCategory]=useState(null);
+  const [contentMenuOpen,setContentMenuOpen]=useState(false);
   const [selectedGameMode,setSelectedGameMode]=useState(init.gm ?? "classic");
   const [showCasualModes,setShowCasualModes]=useState((init.gm ?? "classic") === "matching");
   const [matchWordType,setMatchWordType]=useState(init.wordType ?? "nouns");
@@ -2548,7 +2553,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const supportsWordType = selectedGameMode === "matching" || selectedGameMode === "reverse";
   const answerTypeAllowed = selectedGameMode !== "reverse" && selectedGameMode !== "matching" && selectedGameMode !== "verb_forms" && selectedGameMode !== "verb_prepositions";
   const effectiveWordType = supportsWordType ? matchWordType : (selectedGameMode === "verb_forms" ? "verbs" : selectedGameMode === "verb_prepositions" ? "verb_prep" : "nouns");
-  const deckAllowed = true;
   const weakestAllowed = selectedGameMode !== "verb_prepositions";
   const allDecks = useMemo(() => [...BUILTIN_DECKS, ...(userData.decks || [])], [userData.decks]);
   const availableDecks = useMemo(() => {
@@ -2566,12 +2570,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     });
   }, [allDecks, selectedGameMode, matchWordType]);
   const selectedDeckData = availableDecks.find(dk => dk.id === selectedDeck) || null;
-  const sourceOptions = useMemo(() => {
-    const options = [{ id: "tier", name: "Vocab Level", desc: "Pick a tier or range" }];
-    if (deckAllowed) options.push({ id: "deck", name: "Decks", desc: `${availableDecks.length} available` });
-    if (weakestAllowed) options.push({ id: "weakest", name: "Weakest", desc: "Use your worst words" });
-    return options;
-  }, [deckAllowed, weakestAllowed, availableDecks.length]);
 
   useEffect(() => {
     if (!supportsWordType && matchWordType !== "nouns") setMatchWordType("nouns");
@@ -2582,24 +2580,16 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   }, [answerTypeAllowed, mode]);
 
   useEffect(() => {
-    const validSources = new Set(sourceOptions.map(opt => opt.id));
-    if (!validSources.has(source)) {
-      setSource("tier");
-      setSelectedDeck(null);
-    }
-  }, [source, sourceOptions]);
-
-  useEffect(() => {
     if (selectedDeck && !availableDecks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
   }, [selectedDeck, availableDecks]);
 
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    const isRange = source === "tier" && tierMode === "range";
+    const isRange = source === "hundred-slices";
     const effectiveTierMin = isRange ? tierMin : 0;
     if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else if (source === "deck" && selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+    else if (selectedDeck && source !== "top-n" && source !== "hundred-slices") onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
     else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
   };
 
@@ -2631,7 +2621,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     : (selectedGameMode === "reverse" || selectedGameMode === "matching")
       ? `${selectedGameMode}:${matchWordType}`
       : selectedGameMode;
-  const contentReady = source !== "deck" || !!selectedDeck;
+  const contentReady = source === "top-n" || source === "hundred-slices" || source === "weakest" || !!selectedDeck;
   const canStart = contentReady;
 
   const wordTypeLabel = (wType) => {
@@ -2797,6 +2787,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   };
 
   const renderTierSelector = () => {
+    const showRanges = source === "hundred-slices";
     const maxAvailable = countForTier(99999);
     const seenCounts = new Set();
     const filteredTiers = activeTierOptions.filter(t => {
@@ -2824,15 +2815,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
     return (
       <div style={S.menuSection}>
-        <div style={{display:"flex",gap:6}}>
-          <button onClick={()=>{setTierMode("cumulative");setTierMin(0);}} style={{...S.diffBtn,flex:1,borderColor:tierMode==="cumulative"?UI.gold:UI.line,backgroundColor:tierMode==="cumulative"?UI.goldSoft:UI.panel}}>
-            <span style={{fontSize:13,fontWeight:700,color:UI.textStrong}}>Cumulative</span>
-          </button>
-          <button onClick={()=>setTierMode("range")} style={{...S.diffBtn,flex:1,borderColor:tierMode==="range"?UI.gold:UI.line,backgroundColor:tierMode==="range"?UI.goldSoft:UI.panel}}>
-            <span style={{fontSize:13,fontWeight:700,color:UI.textStrong}}>Ranges</span>
-          </button>
-        </div>
-        {tierMode==="cumulative"?(
+        {!showRanges ? (
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
             {filteredTiers.map(t=>{
               const count = countForTier(t.value);
@@ -2846,7 +2829,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
               const cardClass = medalCardClass(tierPct);
               const isPerfect = tierPct >= 100;
               return (
-                <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);}} style={{...S.tierBtn,borderColor:isSelected?UI.gold:medalBorderColor(tierPct),backgroundColor:isSelected?UI.goldSoft:tierPct>=80?UI.goldSoft:UI.panel,position:"relative",overflow:"hidden",padding:"12px 8px"}}>
+                <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);setTierMode("cumulative");}} style={{...S.tierBtn,borderColor:isSelected?UI.gold:medalBorderColor(tierPct),backgroundColor:isSelected?UI.goldSoft:tierPct>=80?UI.goldSoft:UI.panel,position:"relative",overflow:"hidden",padding:"12px 8px"}}>
                   {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                   <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
                     <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
@@ -2876,7 +2859,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
                 const cardClass = medalCardClass(rangePct);
                 const isPerfect = rangePct >= 100;
                 return (
-                  <button key={r.min} className={cardClass} onClick={()=>{setTier(r.max);setTierMin(r.min);}} style={{...S.tierBtn,borderColor:isSelected?UI.gold:medalBorderColor(rangePct),backgroundColor:isSelected?UI.goldSoft:rangePct>=80?UI.goldSoft:UI.panel,position:"relative",overflow:"hidden",padding:"10px 6px",gap:2}}>
+                  <button key={r.min} className={cardClass} onClick={()=>{setTier(r.max);setTierMin(r.min);setTierMode("range");}} style={{...S.tierBtn,borderColor:isSelected?UI.gold:medalBorderColor(rangePct),backgroundColor:isSelected?UI.goldSoft:rangePct>=80?UI.goldSoft:UI.panel,position:"relative",overflow:"hidden",padding:"10px 6px",gap:2}}>
                     {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:medalFill(rangePct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
                     <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
                       <ProgressRing pct={rangePct} size={34} stroke={2.5} color={ringColor}/>
@@ -3051,7 +3034,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   };
 
   const deckCategoryFor = (dk) => {
-    if (!dk.builtin) return { id: "custom", name: "My Decks", desc: "Saved practice decks" };
+    if (!dk.builtin) return { id: "custom", name: "Custom Decks", desc: "Saved practice decks" };
     if (dk.folder && dk.folder !== FOLDER_BUILTIN) {
       return { id: `folder:${dk.folder}`, name: dk.folder, desc: "Textbook glossary decks" };
     }
@@ -3059,42 +3042,89 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       return { id: "grammar", name: "Grammar Rules", desc: "Special noun patterns" };
     }
     if (dk.id?.startsWith("__rule_")) {
-      if (dk.name.startsWith("der")) return { id: "rules-der", name: "der Rules", desc: "Masculine article rules" };
-      if (dk.name.startsWith("die")) return { id: "rules-die", name: "die Rules", desc: "Feminine article rules" };
-      if (dk.name.startsWith("das")) return { id: "rules-das", name: "das Rules", desc: "Neuter article rules" };
-      return { id: "article-rules", name: "Article Rules", desc: "Der/die/das rule decks" };
+      return { id: "grammar", name: "Grammar Rules", desc: "Der/die/das rules, weak nouns, and special noun patterns" };
     }
-    return { id: "builtin", name: "Built-in Decks", desc: "Curated practice decks" };
+    return { id: "grammar", name: "Grammar Rules", desc: "Curated grammar practice decks" };
   };
 
   const deckCategoryOrder = (id) => {
-    const order = { grammar: 0, "rules-der": 1, "rules-die": 2, "rules-das": 3, "article-rules": 4, builtin: 5, custom: 20 };
+    const order = { grammar: 0, custom: 20 };
     if (id.startsWith("folder:")) return 10;
     return order[id] ?? 30;
   };
 
+  const deckSortParts = (dk) => {
+    const label = `${dk.name || ""} ${dk.fullName || ""} ${dk.deckFile || ""}`;
+    const lessonMatch = label.match(/\b(?:kapitel|lektion)[-\s_]*(\d+)/i);
+    const lessonNo = typeof dk.lektion === "number" ? dk.lektion : (lessonMatch ? Number(lessonMatch[1]) : null);
+    if ((dk.deckFile || "").toLowerCase() === "all.json" || /^(komplett|all\b)/i.test(dk.name || "")) return { bucket: 0, number: 0 };
+    if (lessonNo !== null) return { bucket: 1, number: lessonNo };
+    return { bucket: 2, number: 9999 };
+  };
+
+  const compareDecks = (a, b) => {
+    const ak = deckSortParts(a);
+    const bk = deckSortParts(b);
+    return ak.bucket - bk.bucket
+      || ak.number - bk.number
+      || (a.name || "").localeCompare(b.name || "", undefined, { numeric: true, sensitivity: "base" });
+  };
+
   const deckCategories = useMemo(() => {
     const grouped = new Map();
-    for (const dk of availableDecks) {
+    const availableIds = new Set(availableDecks.map(dk => dk.id));
+    grouped.set("custom", { id: "custom", name: "Custom Decks", desc: "Saved practice decks", decks: [] });
+    for (const dk of allDecks) {
       const meta = deckCategoryFor(dk);
       if (!grouped.has(meta.id)) grouped.set(meta.id, { ...meta, decks: [] });
-      grouped.get(meta.id).decks.push(dk);
+      if (availableIds.has(dk.id)) grouped.get(meta.id).decks.push(dk);
     }
     return [...grouped.values()]
       .sort((a, b) => deckCategoryOrder(a.id) - deckCategoryOrder(b.id) || a.name.localeCompare(b.name))
       .map(group => ({
         ...group,
-        decks: group.decks.sort((a, b) => (a.lektion ?? 999) - (b.lektion ?? 999) || (a.name || "").localeCompare(b.name || "")),
+        decks: group.decks.sort(compareDecks),
       }));
-  }, [availableDecks]);
+  }, [allDecks, availableDecks]);
 
-  const activeDeckCategory = deckCategories.find(c => c.id === selectedDeckCategory) || null;
+  const contentCategories = useMemo(() => {
+    const options = [
+      { id: "top-n", name: "Top N", desc: "Cumulative vocabulary decks" },
+      { id: "hundred-slices", name: "Hundred slices", desc: "100-word range decks" },
+    ];
+    if (weakestAllowed) options.push({ id: "weakest", name: "Weakest", desc: "Use your worst words" });
+    return [...options, ...deckCategories];
+  }, [deckCategories, weakestAllowed]);
+
+  const activeDeckCategory = deckCategories.find(c => c.id === source) || null;
+  const activeContentCategory = contentCategories.find(c => c.id === source) || contentCategories[0] || null;
+
+  const selectContentCategory = (next) => {
+    setSource(next);
+    setContentMenuOpen(false);
+    if (next === "top-n") { setSelectedDeck(null); setTierMode("cumulative"); setTierMin(0); }
+    else if (next === "hundred-slices") { setSelectedDeck(null); setTierMode("range"); }
+    else if (next === "weakest") setSelectedDeck(null);
+    else if (!deckCategories.find(c => c.id === next)?.decks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
+  };
 
   useEffect(() => {
-    if (selectedDeckCategory && !deckCategories.some(c => c.id === selectedDeckCategory)) {
-      setSelectedDeckCategory(null);
+    if (source === "deck" && selectedDeck) {
+      const category = deckCategories.find(c => c.decks.some(dk => dk.id === selectedDeck));
+      setSource(category?.id || "top-n");
+      return;
     }
-  }, [selectedDeckCategory, deckCategories]);
+    if (!contentCategories.some(c => c.id === source)) {
+      setSource(contentCategories[0]?.id || "top-n");
+    }
+  }, [source, selectedDeck, deckCategories, contentCategories]);
+
+  useEffect(() => {
+    if (!activeDeckCategory) return;
+    if (selectedDeck && !activeDeckCategory.decks.some(dk => dk.id === selectedDeck)) {
+      setSelectedDeck(null);
+    }
+  }, [activeDeckCategory, selectedDeck]);
 
   const renderDeckCardClean = (dk) => {
     const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
@@ -3128,62 +3158,37 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     );
   };
 
-  const renderCategoryTile = (group) => {
-    const scores = group.decks.map(dk => bestScores[`${bestScoreKeyPrefix}:deck:${dk.id}`]?.pct || 0);
-    const pct = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-    const perfect = scores.filter(v => v >= 100).length;
-    const ringColor = medalRingColor(pct);
-    const cardClass = medalCardClass(pct);
-    const selected = activeDeckCategory?.id === group.id;
+  const renderDeckSelectorClean = () => {
+    if (!activeDeckCategory) return null;
     return (
-      <button key={group.id} className={cardClass} onClick={()=>setSelectedDeckCategory(group.id)}
-        style={{...S.tierBtn,minHeight:118,borderColor:selected?UI.gold:medalBorderColor(pct),backgroundColor:selected?UI.goldSoft:medalCardBg(pct),position:"relative",overflow:"hidden",padding:"12px 8px",gap:4}}>
-        {pct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${pct}%`,background:medalFill(pct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-        <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
-          <ProgressRing pct={pct} size={38} stroke={3} color={ringColor}/>
-          <span className={medalTextClass(pct)} style={{position:"absolute",fontSize:pct>=100?14:10,fontWeight:900,color:ringColor}}>{pct>=100?"\u2605":pct>0?pct+"%":""}</span>
-        </div>
-        <span style={{fontSize:12,fontWeight:800,color:pct>=100?UI.gold:UI.textStrong,position:"relative",lineHeight:1.2,textAlign:"center"}}>{group.name}</span>
-        <span style={{fontSize:10,color:UI.muted,position:"relative",lineHeight:1.25,textAlign:"center"}}>{group.decks.length} decks{perfect ? ` / ${perfect} perfect` : ""}</span>
-      </button>
-    );
-  };
-
-  const renderDeckSelectorClean = () => (
-    <div style={S.menuSection}>
-      {selectedDeckData && (
-        <div style={S.inlineSummaryCard}>
-          <span style={S.inlineSummaryLabel}>Current Deck</span>
-          <span style={S.inlineSummaryValue}>{selectedDeckData.fullName || selectedDeckData.name}</span>
-        </div>
-      )}
-      {!activeDeckCategory ? (
-        <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
-          {deckCategories.map(renderCategoryTile)}
-          {deckCategories.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0",gridColumn:"1 / -1"}}>No decks yet - create one or save mistakes after a session.</p>}
-        </div>
-      ) : (
+      <div style={S.menuSection}>
+        {selectedDeckData && (
+          <div style={S.inlineSummaryCard}>
+            <span style={S.inlineSummaryLabel}>Current Deck</span>
+            <span style={S.inlineSummaryValue}>{selectedDeckData.fullName || selectedDeckData.name}</span>
+          </div>
+        )}
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
-            <button onClick={()=>setSelectedDeckCategory(null)} style={{...S.endBtn,fontSize:11,padding:"5px 10px"}}>Back</button>
-            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",minWidth:0}}>
+            <div style={{display:"flex",flexDirection:"column",minWidth:0}}>
               <span style={{fontSize:13,fontWeight:800,color:UI.textStrong}}>{activeDeckCategory.name}</span>
-              <span style={{fontSize:10,color:UI.muted}}>{activeDeckCategory.desc}</span>
+              <span style={{fontSize:10,color:UI.muted}}>{activeDeckCategory.decks.length} decks - {activeDeckCategory.desc}</span>
             </div>
           </div>
           <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
             {activeDeckCategory.decks.map(renderDeckCardClean)}
+            {activeDeckCategory.decks.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0",gridColumn:"1 / -1"}}>No decks available for this activity.</p>}
           </div>
         </div>
-      )}
-      <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
-        + Create Custom Deck
-      </button>
-    </div>
-  );
+        <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
+          + Create Custom Deck
+        </button>
+      </div>
+    );
+  };
 
   if (showDeckBuilder) {
-    return <DeckBuilder onSave={(name, nouns) => { onSaveDeck(name, nouns); setShowDeckBuilder(false); setSource("deck"); }}
+    return <DeckBuilder onSave={(name, nouns) => { const deck = onSaveDeck(name, nouns); if (deck?.id) setSelectedDeck(deck.id); setShowDeckBuilder(false); setSource("custom"); }}
       onCancel={() => setShowDeckBuilder(false)} />;
   }
 
@@ -3269,16 +3274,33 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
       <div style={S.menuSection}>
         <label style={S.menuLabel}>Content</label>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-          {sourceOptions.map(opt=>(
-            <button key={opt.id} onClick={()=>{setSource(opt.id);if(opt.id!=="deck")setSelectedDeck(null);}} style={{...S.diffBtn,flex:1,borderColor:source===opt.id?UI.gold:UI.line,backgroundColor:source===opt.id?UI.goldSoft:UI.panel}}>
-              <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{opt.name}</span>
-            </button>
-          ))}
+        <div style={{position:"relative"}}>
+          <button onClick={()=>setContentMenuOpen(v => !v)} style={{...S.pluralInput,fontSize:14,textAlign:"left",padding:"10px 12px",width:"100%",fontWeight:700,color:UI.textStrong,background:UI.panel,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+            <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{activeContentCategory?.name || "Choose content"}</span>
+            <span style={{fontSize:12,color:UI.faint}}>{contentMenuOpen ? "▴" : "▾"}</span>
+          </button>
+          {contentMenuOpen&&(
+            <div className="range-grid" style={{position:"absolute",zIndex:40,top:"calc(100% + 6px)",left:0,right:0,maxHeight:300,overflowY:"auto",background:UI.panel,border:`1px solid ${UI.lineStrong}`,borderRadius:12,boxShadow:"0 18px 42px rgba(15,23,42,0.18)",padding:6,display:"flex",flexDirection:"column",gap:4}}>
+              {contentCategories.map(opt=>(
+                <button key={opt.id} onClick={()=>selectContentCategory(opt.id)} style={{border:"none",borderRadius:8,background:source===opt.id?UI.goldSoft:"transparent",padding:"9px 10px",textAlign:"left",cursor:"pointer",fontFamily:"inherit",display:"flex",justifyContent:"space-between",gap:10,alignItems:"baseline"}}>
+                  <span style={{fontSize:13,fontWeight:800,color:UI.textStrong,overflowWrap:"anywhere"}}>{opt.name}</span>
+                  {Array.isArray(opt.decks)&&<span style={{fontSize:10,color:UI.muted,whiteSpace:"nowrap"}}>{opt.decks.length}</span>}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {source==="weakest"&&<div style={S.stepNote}>Practice your weakest words based on past performance. This works best after a few sessions.</div>}
-        {source==="tier"&&renderTierSelector()}
-        {source==="deck"&&renderDeckSelectorClean()}
+        {(source==="top-n"||source==="hundred-slices")&&renderTierSelector()}
+        {activeDeckCategory&&renderDeckSelectorClean()}
+        {!activeDeckCategory&&source!=="top-n"&&source!=="hundred-slices"&&source!=="weakest"&&(
+          <p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks available for this activity.</p>
+        )}
+        {!activeDeckCategory&&(
+          <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4,width:"100%"}}>
+            + Create Custom Deck
+          </button>
+        )}
       </div>
 
       <div style={S.menuSection}>

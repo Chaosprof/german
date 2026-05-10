@@ -3,7 +3,7 @@
     "name": "Verbs with Prepositions",
     "description": "German verbs with fixed prepositions (Verben mit festen Präpositionen). Includes the governed case and English meaning. Essential for B2–C2 learners and native-level fluency.",
     "version": 1,
-    "count": 368,
+    "count": 364,
     "generatedAt": "2026-04-10T00:00:00.000000+00:00"
   },
   "verbs": [
@@ -1536,14 +1536,6 @@
       "rank": 191
     },
     {
-      "verb": "sich bemächtigen",
-      "preposition": "einer Sache",
-      "case": "Gen",
-      "english": "seize / take possession of",
-      "example": "Er bemächtigt sich des Throns.",
-      "rank": 192
-    },
-    {
       "verb": "sich beraten",
       "preposition": "mit",
       "case": "Dat",
@@ -2344,36 +2336,12 @@
       "rank": 294
     },
     {
-      "verb": "sich entziehen",
-      "preposition": "einer Sache",
-      "case": "Dat",
-      "english": "evade / withdraw from",
-      "example": "Er entzieht sich seiner Verantwortung.",
-      "rank": 110
-    },
-    {
-      "verb": "sich erbarmen",
-      "preposition": "über",
-      "case": "Akk",
-      "english": "have mercy on",
-      "example": "Erbarme dich über uns.",
-      "rank": 280
-    },
-    {
       "verb": "sich hervortun",
       "preposition": "durch",
       "case": "Akk",
       "english": "distinguish oneself through",
       "example": "Er tut sich durch Fleiß hervor.",
       "rank": 297
-    },
-    {
-      "verb": "misstrauen",
-      "preposition": "gegenüber",
-      "case": "Dat",
-      "english": "distrust / be suspicious of",
-      "example": "Sie misstraut dem Angebot gegenüber.",
-      "rank": 298
     },
     {
       "verb": "helfen",
@@ -2889,11 +2857,11 @@
       "source": "vielfalt-c1.2"
     },
     {
-      "verb": "ausrichten",
+      "verb": "sich ausrichten",
       "preposition": "an",
       "case": "Dat",
-      "english": "align/orient towards",
-      "example": "Das Konzept richtet sich an Lehrkräften aus.",
+      "english": "align/orient oneself with",
+      "example": "Das Konzept richtet sich an den Bedürfnissen der Lernenden aus.",
       "rank": 356,
       "source": "vielfalt-c1.2"
     },
