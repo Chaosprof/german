@@ -1,0 +1,249 @@
+{
+  "articleHelp": {
+    "country.articleless": "Country and region names like Deutschland, Finnland, Mexiko, and Europa are normally used without an article. When an article is required, they are neuter: das Deutschland der 1990er.",
+    "country.die": "Some country names are used with a fixed article. Feminine examples take die: die Türkei, die Schweiz, die Ukraine.",
+    "plural_only.die": "Plural-only noun (Pluralia tantum). It has no singular form and always uses die.",
+    "nominalized_infinitive": "Morphological: nominalized infinitive -> always das. Any German verb can be used as a noun when capitalized: das Wiederhören, das Essen, das Schreiben.",
+    "standard_die_butter": "Standard German uses die Butter. Der Butter is regional, so learners should memorize die Butter.",
+    "medical_field": "Die Medizin is feminine, but this is not the female-person suffix -in. Memorize it as die Medizin.",
+    "neuter_country_region": "Proper-name geography term: used without an article in most contexts; grammatically neuter when an article is needed.",
+    "compound_bahn": "Compound noun: gender follows the final element Bahn (die). This is the key compound rule in German.",
+    "compound_mann": "Compound noun: gender follows the final element Mann (der). The plural follows Mann -> Männer.",
+    "compound_tag": "Compound noun: gender follows the final element Tag (der). Geburtstag therefore takes der.",
+    "gegen_not_ge": "This is not the Ge- collective prefix pattern. Memorize the article with the noun.",
+    "young_animal": "Das Junge means a young animal/offspring. It is neuter; do not confuse it with der Junge (boy).",
+    "abbreviation_loan": "Abbreviation/loanword. The article is fixed by usage, so memorize it with the abbreviation.",
+    "cafe_loan": "French loanword ending in stressed -é. Das Café is neuter; memorize it with its accent and article."
+  },
+  "pluralHelp": {
+    "country.none": "Country and region names are normally singular only.",
+    "plural_only.generic": "Plural-only noun (Pluralia tantum): there is no singular form to learn.",
+    "singular_only.normal": "Normally singular-only in this meaning.",
+    "singular_only.items": "Normally singular-only in this meaning; use a compound for individual items.",
+    "rare_special_plural": "The stored plural is correct but rare/specialized; the everyday meaning is usually singular.",
+    "types_plural": "This plural is mainly used for types, varieties, or separate traditions, not for the ordinary mass/abstract meaning.",
+    "institution_plural": "This plural is mainly used for separate institutions/forces or policy approaches, not for the broad abstract meaning.",
+    "limited_marked_plural": "This plural is limited or marked; learn the common singular meaning first.",
+    "risiko": "Main plural: die Risiken. The form Risikos also exists, but Risiken is the more useful learner form.",
+    "konto": "Irregular learned plural: das Konto -> die Konten. Memorize the full pair.",
+    "stadion": "Greek neuter -ion pattern: das Stadion -> die Stadien. Similar neuter Greek-origin nouns can have -ien plurals.",
+    "mal": "Plural die Male is used for marks/times as nouns. Counting expressions usually use lowercase mal: zweimal, drei Mal.",
+    "geld": "Die Gelder means funds/monies allocated from different sources. Geld as money in general is usually singular.",
+    "unterricht": "Die Unterrichte is uncommon. For individual lessons/classes, Unterrichtsstunden is usually more natural.",
+    "sicht": "Regular useful plural: die Sichten, especially for views/perspectives.",
+    "handel": "Trade/commerce is normally singular-only. Händel is a different word meaning quarrels.",
+    "weiterbildung": "Plural die Weiterbildungen is common for training courses/programs.",
+    "pommes": "Plural-only noun: die Pommes. There is no singular form.",
+    "lkw": "Plural: die Lkw or die Lkws. Both are used for the abbreviation.",
+    "cd": "Plural: die CDs. Abbreviations commonly add -s.",
+    "email": "Plural: die E-Mails. English-style loanwords commonly add -s.",
+    "cafe": "Plural: die Cafés. Loanwords ending in a stressed vowel commonly add -s.",
+    "sbahn": "Plural: die S-Bahnen, following Bahn -> Bahnen.",
+    "hausmann": "Plural follows Mann -> Männer: der Hausmann -> die Hausmänner.",
+    "young_animal": "Plural: die Jungen. This entry means offspring/young animals, not der Junge (boy)."
+  },
+  "overrides": {
+    "Zukunft": {
+      "pluralHelpKey": "rare_special_plural"
+    },
+    "Mal": {
+      "pluralHelpKey": "mal"
+    },
+    "Geld": {
+      "pluralHelpKey": "geld"
+    },
+    "Musik": {
+      "pluralHelpKey": "types_plural"
+    },
+    "Natur": {
+      "pluralHelpKey": "types_plural"
+    },
+    "Politik": {
+      "pluralHelpKey": "institution_plural"
+    },
+    "Gepäck": {
+      "plural": "—",
+      "pluralHelpKey": "singular_only.items"
+    },
+    "Unterricht": {
+      "pluralHelpKey": "unterricht"
+    },
+    "Polizei": {
+      "pluralHelpKey": "institution_plural"
+    },
+    "Sicht": {
+      "plural": "Sichten",
+      "pluralHelpKey": "sicht"
+    },
+    "Liebe": {
+      "pluralHelpKey": "limited_marked_plural"
+    },
+    "Luft": {
+      "pluralHelpKey": "limited_marked_plural"
+    },
+    "Öffentlichkeit": {
+      "pluralHelpKey": "rare_special_plural"
+    },
+    "Handel": {
+      "plural": "—",
+      "pluralHelpKey": "handel"
+    },
+    "Junge": {
+      "articleHelpKey": "young_animal",
+      "pluralHelpKey": "young_animal",
+      "onlyIfArticle": "das",
+      "ruleId": null,
+      "isException": false
+    },
+    "Gewalt": {
+      "pluralHelpKey": "limited_marked_plural"
+    },
+    "Risiko": {
+      "pluralHelpKey": "risiko"
+    },
+    "Vergangenheit": {
+      "pluralHelpKey": "rare_special_plural"
+    },
+    "Weiterbildung": {
+      "plural": "Weiterbildungen",
+      "pluralHelpKey": "weiterbildung"
+    },
+    "Stadion": {
+      "articleHelp": "Greek-origin neuter -ion noun: das Stadion. This does not follow the Latin -tion/-sion feminine pattern.",
+      "pluralHelpKey": "stadion",
+      "ruleId": "das.greek_ion_neuter",
+      "isException": false
+    },
+    "Gegenstand": {
+      "articleHelpKey": "gegen_not_ge",
+      "ruleId": null,
+      "isException": false
+    },
+    "Lust": {
+      "pluralHelpKey": "limited_marked_plural"
+    },
+    "Gegensatz": {
+      "articleHelpKey": "gegen_not_ge",
+      "ruleId": null,
+      "isException": false
+    },
+    "Schmuck": {
+      "plural": "—",
+      "pluralHelpKey": "singular_only.items"
+    },
+    "Honig": {
+      "pluralHelpKey": "types_plural"
+    },
+    "Butter": {
+      "article": "die",
+      "articleHelpKey": "standard_die_butter",
+      "plural": "—",
+      "pluralHelpKey": "singular_only.normal",
+      "ruleId": "der.suffix_er",
+      "isException": true
+    },
+    "Medizin": {
+      "articleHelpKey": "medical_field",
+      "plural": "—",
+      "pluralHelpKey": "singular_only.normal",
+      "ruleId": null,
+      "isException": false
+    },
+    "Konto": {
+      "pluralHelpKey": "konto"
+    },
+    "Englisch": {
+      "articleHelp": "Language names are neuter when substantivized: das Englisch. In ordinary use they often appear without an article: Ich lerne Englisch.",
+      "pluralHelpKey": "singular_only.normal"
+    },
+    "Pommes": {
+      "article": "die",
+      "articleHelpKey": "plural_only.die",
+      "pluralHelpKey": "pommes",
+      "ruleId": "die.plural_only",
+      "pluraleTantum": true
+    },
+    "Geburtstag": {
+      "articleHelpKey": "compound_tag",
+      "ruleId": null,
+      "isException": false
+    },
+    "Kleidung": {
+      "plural": "—",
+      "pluralHelpKey": "singular_only.items"
+    },
+    "Literatur": {
+      "pluralHelpKey": "rare_special_plural"
+    },
+    "Architektur": {
+      "plural": "Architekturen",
+      "pluralHelpKey": "rare_special_plural"
+    },
+    "Café": {
+      "articleHelpKey": "cafe_loan",
+      "pluralHelpKey": "cafe"
+    },
+    "CD": {
+      "articleHelpKey": "abbreviation_loan",
+      "pluralHelpKey": "cd"
+    },
+    "E-Mail": {
+      "articleHelp": "English loanword compound. Die E-Mail follows die Mail and is the standard learner article.",
+      "pluralHelpKey": "email"
+    },
+    "Großeltern": {
+      "articleHelpKey": "plural_only.die",
+      "pluralHelpKey": "plural_only.generic",
+      "ruleId": "die.plural_only",
+      "pluraleTantum": true
+    },
+    "Hausmann": {
+      "articleHelpKey": "compound_mann",
+      "pluralHelpKey": "hausmann"
+    },
+    "Lkw": {
+      "articleHelpKey": "abbreviation_loan",
+      "pluralHelpKey": "lkw"
+    },
+    "Papiere": {
+      "articleHelpKey": "plural_only.die",
+      "pluralHelpKey": "plural_only.generic",
+      "ruleId": "die.plural_only",
+      "pluraleTantum": true
+    },
+    "S-Bahn": {
+      "articleHelpKey": "compound_bahn",
+      "pluralHelpKey": "sbahn"
+    },
+    "Wiederhören": {
+      "articleHelpKey": "nominalized_infinitive",
+      "pluralHelpKey": "singular_only.normal",
+      "ruleId": "das.nominalized_infinitive"
+    },
+    "Deutschland": {
+      "articleHelpKey": "country.articleless",
+      "pluralHelpKey": "country.none",
+      "ruleId": "das.country_articleless"
+    },
+    "Europa": {
+      "articleHelpKey": "country.articleless",
+      "pluralHelpKey": "country.none",
+      "ruleId": "das.country_articleless"
+    },
+    "Türkei": {
+      "articleHelpKey": "country.die",
+      "pluralHelpKey": "country.none",
+      "ruleId": "die.country_with_article"
+    },
+    "Finnland": {
+      "articleHelpKey": "country.articleless",
+      "pluralHelpKey": "country.none",
+      "ruleId": "das.country_articleless"
+    },
+    "Mexiko": {
+      "articleHelpKey": "country.articleless",
+      "pluralHelpKey": "country.none",
+      "ruleId": "das.country_articleless"
+    }
+  }
+}

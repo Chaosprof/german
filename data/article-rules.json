@@ -537,6 +537,10 @@
         {
           "word": "Zimmer",
           "article": "das"
+        },
+        {
+          "word": "Butter",
+          "article": "die"
         }
       ]
     },
@@ -2939,6 +2943,30 @@
           "article": "das"
         }
       ]
+    },
+    "das.country_articleless": {
+      "article": "das",
+      "name": "Articleless country and region names",
+      "description": "Most country and region names are used without an article in ordinary German: Deutschland, Österreich, Finnland, Mexiko, Europa. Grammatically they are neuter when an article is needed for a modifier or historical/style contrast: das Deutschland der 1990er.",
+      "exceptions": []
+    },
+    "die.country_with_article": {
+      "article": "die",
+      "name": "Country names with fixed article",
+      "description": "A small group of country names is used with a fixed article. Feminine country names take die: die Türkei, die Schweiz, die Ukraine. They are singular-only in ordinary use.",
+      "exceptions": []
+    },
+    "die.plural_only": {
+      "article": "die",
+      "name": "Plural-only nouns",
+      "description": "Plural-only nouns (Pluralia tantum) have no singular form and always use die: die Eltern, die Leute, die Kosten, die Großeltern, die Pommes.",
+      "exceptions": []
+    },
+    "das.greek_ion_neuter": {
+      "article": "das",
+      "name": "Greek neuter -ion nouns",
+      "description": "Some Greek-origin nouns ending in -ion are neuter and do not follow the Latin -tion/-sion feminine pattern: das Stadion, das Symposion, das Anion, das Ganglion.",
+      "exceptions": []
     }
   }
 }

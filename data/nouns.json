@@ -678,7 +678,7 @@
       "rank": 59,
       "leipzigRank": 59,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Feminine gender must be memorized. Tip: learn it in a short phrase — contextual memory is stronger than isolated flashcards.",
-      "pluralHelp": "-e + umlaut (die Zukünfte). Feminine nouns with -e plural are less common but important — they almost always take umlaut: Hand→Hände, Nacht→Nächte, Kraft→Kräfte, Stadt→Städte, Wand→Wände, Angst→Ängste. These are mostly monosyllabic. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns.",
+      "pluralHelp": "The stored plural is correct but rare/specialized; the everyday meaning is usually singular.",
       "cefrLevel": "A2"
     },
     {
@@ -956,7 +956,7 @@
       "rank": 83,
       "leipzigRank": 83,
       "articleHelp": "Short/monosyllabic noun — no suffix or semantic rule applies. Short neuter nouns are less common (~25% of monosyllables). Many short das-nouns form -er plurals (Buch→Bücher, Kind→Kinder, Haus→Häuser). Memorize in context.",
-      "pluralHelp": "-e (die Male). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
+      "pluralHelp": "Plural die Male is used for marks/times as nouns. Counting expressions usually use lowercase mal: zweimal, drei Mal.",
       "cefrLevel": "A1"
     },
     {
@@ -1036,7 +1036,7 @@
       "rank": 90,
       "leipzigRank": 90,
       "articleHelp": "Morphological: Ge- prefix → often das. This prefix creates collective or result nouns: Gebiet, Gesetz, Gehirn, Gewicht, Gespräch, Gebirge, Getränk, Geschenk. Strong pattern with few exceptions (der Gedanke, der Gebrauch, die Gefahr, die Geschichte).",
-      "pluralHelp": "-er (die Gelder). Rule: The -er plural is the signature neuter pattern for short nouns. E.g. Kind→Kinder, Buch→Bücher, Haus→Häuser, Bild→Bilder. Almost always adds umlaut if possible.",
+      "pluralHelp": "Die Gelder means funds/monies allocated from different sources. Geld as money in general is usually singular.",
       "ruleId": "das.prefix_ge",
       "cefrLevel": "A1"
     },
@@ -1686,7 +1686,7 @@
       "rank": 146,
       "leipzigRank": 146,
       "articleHelp": "Suffix pattern: -ik → usually die. E.g. Musik, Kritik, Logik, Technik, Fabrik, Statistik.",
-      "pluralHelp": "-(e)n (die Musiken). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "This plural is mainly used for types, varieties, or separate traditions, not for the ordinary mass/abstract meaning.",
       "ruleId": "die.suffix_ik",
       "cefrLevel": "A1"
     },
@@ -2197,7 +2197,7 @@
       "rank": 190,
       "leipzigRank": 190,
       "articleHelp": "Suffix pattern: -ur → usually die (Latin origin). E.g. Natur, Kultur, Struktur, Temperatur.",
-      "pluralHelp": "-(e)n (die Naturen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "This plural is mainly used for types, varieties, or separate traditions, not for the ordinary mass/abstract meaning.",
       "ruleId": "die.suffix_ur",
       "cefrLevel": "A1"
     },
@@ -2418,7 +2418,7 @@
       "rank": 209,
       "leipzigRank": 209,
       "articleHelp": "Suffix pattern: -ik → usually die. E.g. Musik, Kritik, Logik, Technik, Fabrik, Statistik.",
-      "pluralHelp": "-(e)n (die Politiken). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "This plural is mainly used for separate institutions/forces or policy approaches, not for the broad abstract meaning.",
       "ruleId": "die.suffix_ik",
       "cefrLevel": "A1"
     },
@@ -2991,7 +2991,7 @@
       "rank": 258,
       "leipzigRank": 258,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Masculine gender must be memorized. Tip: associate it with a vivid image or phrase to anchor the article.",
-      "pluralHelp": "-e (die Unterrichte). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Die Unterrichte is uncommon. For individual lessons/classes, Unterrichtsstunden is usually more natural.",
       "cefrLevel": "A1"
     },
     {
@@ -3469,7 +3469,7 @@
       "rank": 299,
       "leipzigRank": 299,
       "articleHelp": "Suffix pattern: -ei → usually die. E.g. Polizei, Partei, Türkei.",
-      "pluralHelp": "-(e)n (die Polizeien). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "This plural is mainly used for separate institutions/forces or policy approaches, not for the broad abstract meaning.",
       "ruleId": "die.suffix_ei",
       "cefrLevel": "A1"
     },
@@ -3709,12 +3709,12 @@
     {
       "word": "Sicht",
       "article": "die",
-      "plural": "—",
+      "plural": "Sichten",
       "english": "view/perspective",
       "rank": 320,
       "leipzigRank": 320,
       "articleHelp": "Morphological: Noun ending in -t derived from a verb stem (sehen) → often die. E.g. fahren→Fahrt, fliehen→Flucht, sehen→Sicht. This is an old Germanic feminine noun pattern, though there are masculine exceptions (der Dienst, der Verlust, der Frost).",
-      "pluralHelp": "Used here as singular-only: perspective/view.",
+      "pluralHelp": "Regular useful plural: die Sichten, especially for views/perspectives.",
       "cefrLevel": "B2"
     },
     {
@@ -4922,7 +4922,7 @@
       "rank": 424,
       "leipzigRank": 424,
       "articleHelp": "Ending pattern: ~90% of nouns ending in -e are die. This is one of the strongest gender-guessing heuristics in German. When in doubt on an -e noun, guess die.",
-      "pluralHelp": "+n (die Lieben). Rule: Nouns ending in -e simply add -n. Extremely consistent for feminine nouns (Straße→Straßen, Lampe→Lampen, Schule→Schulen). Also applies to masculine weak nouns ending in -e (Kollege→Kollegen, Löwe→Löwen).",
+      "pluralHelp": "This plural is limited or marked; learn the common singular meaning first.",
       "ruleId": "die.suffix_e",
       "cefrLevel": "A2"
     },
@@ -5347,7 +5347,7 @@
       "rank": 460,
       "leipzigRank": 460,
       "articleHelp": "Short/monosyllabic noun — no suffix or semantic rule applies. Short feminine nouns are the rarest monosyllables (~15%). Many form plurals with umlaut + -e (Hand→Hände, Nacht→Nächte, Stadt→Städte).",
-      "pluralHelp": "-e + umlaut (die Lüfte). Feminine nouns with -e plural are less common but important — they almost always take umlaut: Hand→Hände, Nacht→Nächte, Kraft→Kräfte, Stadt→Städte, Wand→Wände, Angst→Ängste. These are mostly monosyllabic. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns.",
+      "pluralHelp": "This plural is limited or marked; learn the common singular meaning first.",
       "cefrLevel": "A2"
     },
     {
@@ -5450,7 +5450,7 @@
       "rank": 469,
       "leipzigRank": 469,
       "articleHelp": "Suffix rule: -keit → always die. Variant of -heit (used after -ig, -lich, -bar, -sam). No exceptions.",
-      "pluralHelp": "-(e)n (die Öffentlichkeiten). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "The stored plural is correct but rare/specialized; the everyday meaning is usually singular.",
       "ruleId": "die.suffix_keit",
       "cefrLevel": "B1"
     },
@@ -5651,12 +5651,12 @@
     {
       "word": "Handel",
       "article": "der",
-      "plural": "Händel",
+      "plural": "—",
       "english": "trade/commerce",
       "rank": 487,
       "leipzigRank": 487,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Masculine gender must be memorized. Tip: associate it with a vivid image or phrase to anchor the article.",
-      "pluralHelp": "Umlaut only, no ending added (die Händel). Rule: Some -er/-el/-en nouns add an umlaut without changing the ending: Vater→Väter, Mutter→Mütter, Bruder→Brüder, Boden→Böden, Ofen→Öfen. This is the same \"no change\" pattern as Fenster→Fenster, but with an umlaut added. Must memorize which nouns umlaut and which don't.",
+      "pluralHelp": "Trade/commerce is normally singular-only. Händel is a different word meaning quarrels.",
       "cefrLevel": "B1"
     },
     {
@@ -5666,8 +5666,8 @@
       "english": "young animal/cub",
       "rank": 488,
       "leipzigRank": 488,
-      "articleHelp": "Adjectival noun (substantivized adjective). With the definite article it takes weak adjective endings: der/die Junge (sg.), die Jungen (pl.). Without article (strong endings): ein Junges, Junge (pl.).",
-      "pluralHelp": "die Jungen (with article — weak endings). Without article: \"Junge\" (strong endings). Adjectival nouns are declined like their corresponding adjectives.",
+      "articleHelp": "Das Junge means a young animal/offspring. It is neuter; do not confuse it with der Junge (boy).",
+      "pluralHelp": "Plural: die Jungen. This entry means offspring/young animals, not der Junge (boy).",
       "adjectivalNoun": true,
       "cefrLevel": "A1"
     },
@@ -5762,7 +5762,7 @@
       "rank": 496,
       "leipzigRank": 496,
       "articleHelp": "Exception: Most Ge- nouns are das, but this one is die. Notable feminine Ge- exceptions: die Gefahr, die Geburt, die Geduld, die Gemeinde, die Geschichte, die Gestalt, die Gewalt.",
-      "pluralHelp": "-(e)n (die Gewalten). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "This plural is limited or marked; learn the common singular meaning first.",
       "ruleId": "das.prefix_ge",
       "isException": true,
       "cefrLevel": "A2"
@@ -5869,7 +5869,7 @@
       "rank": 505,
       "leipzigRank": 505,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Neuter gender must be memorized. Tip: learn it as a chunk — 'das Ziel erreichen', not just 'das Ziel'.",
-      "pluralHelp": "-en (die Risiken). Note: das Risiko commonly forms the plural die Risiken. The +s form Risikos also exists, but this word bank stores Risiken, so learn that form here.",
+      "pluralHelp": "Main plural: die Risiken. The form Risikos also exists, but Risiken is the more useful learner form.",
       "ruleId": "das.suffix_o",
       "cefrLevel": "A2"
     },
@@ -5985,7 +5985,7 @@
       "rank": 515,
       "leipzigRank": 515,
       "articleHelp": "Suffix rule: -heit → always die. Abstract quality nouns from adjectives/nouns. No exceptions.",
-      "pluralHelp": "-(e)n (die Vergangenheiten). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "The stored plural is correct but rare/specialized; the everyday meaning is usually singular.",
       "ruleId": "die.suffix_heit",
       "cefrLevel": "B1"
     },
@@ -6276,12 +6276,12 @@
     {
       "word": "Weiterbildung",
       "article": "die",
-      "plural": "—",
+      "plural": "Weiterbildungen",
       "english": "further education",
       "rank": 540,
       "leipzigRank": 540,
       "articleHelp": "Suffix rule: -ung → always die. Zero exceptions. One of the first rules to learn.",
-      "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
+      "pluralHelp": "Plural die Weiterbildungen is common for training courses/programs.",
       "ruleId": "die.suffix_ung",
       "cefrLevel": "B1"
     },
@@ -7388,10 +7388,8 @@
       "english": "object/subject",
       "rank": 636,
       "leipzigRank": 636,
-      "articleHelp": "Exception: Most Ge- nouns are das, but this one is der. Notable masculine Ge- exceptions: der Gedanke, der Gebrauch, der Gehalt, der Genuss, der Geruch, der Geschmack, der Gewinn.",
+      "articleHelp": "This is not the Ge- collective prefix pattern. Memorize the article with the noun.",
       "pluralHelp": "-e + umlaut (die Gegenstände). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns.",
-      "ruleId": "das.prefix_ge",
-      "isException": true,
       "cefrLevel": "A2"
     },
     {
@@ -7887,7 +7885,7 @@
       "rank": 679,
       "leipzigRank": 679,
       "articleHelp": "Short/monosyllabic noun — no suffix or semantic rule applies. Short feminine nouns are the rarest monosyllables (~15%). Many form plurals with umlaut + -e (Hand→Hände, Nacht→Nächte, Stadt→Städte).",
-      "pluralHelp": "-e + umlaut (die Lüste). Feminine nouns with -e plural are less common but important — they almost always take umlaut: Hand→Hände, Nacht→Nächte, Kraft→Kräfte, Stadt→Städte, Wand→Wände, Angst→Ängste. These are mostly monosyllabic. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns.",
+      "pluralHelp": "This plural is limited or marked; learn the common singular meaning first.",
       "cefrLevel": "A1"
     },
     {
@@ -7897,10 +7895,8 @@
       "english": "contrast/opposite",
       "rank": 680,
       "leipzigRank": 680,
-      "articleHelp": "Exception: Most Ge- nouns are das, but this one is der. Notable masculine Ge- exceptions: der Gedanke, der Gebrauch, der Gehalt, der Genuss, der Geruch, der Geschmack, der Gewinn.",
+      "articleHelp": "This is not the Ge- collective prefix pattern. Memorize the article with the noun.",
       "pluralHelp": "-e + umlaut (die Gegensätze). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first. The umlaut shifts the stem vowel (a→ä, o→ö, u→ü) — this is common in monosyllabic masculine and feminine nouns.",
-      "ruleId": "das.prefix_ge",
-      "isException": true,
       "cefrLevel": "B1"
     },
     {
@@ -9199,13 +9195,12 @@
     {
       "word": "Medizin",
       "article": "die",
-      "plural": "Medizinen",
+      "plural": "—",
       "english": "medicine",
       "rank": 793,
       "leipzigRank": 793,
-      "articleHelp": "Suffix rule: -in (female person) → always die. Die Lehrerin, die Ärztin, die Schülerin, die Kollegin. This is one of the most reliable feminine markers — 100% consistent.",
-      "pluralHelp": "-(e)n (die Medizinen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
-      "ruleId": "die.suffix_in",
+      "articleHelp": "Die Medizin is feminine, but this is not the female-person suffix -in. Memorize it as die Medizin.",
+      "pluralHelp": "Normally singular-only in this meaning.",
       "cefrLevel": "A2"
     },
     {
@@ -9339,7 +9334,7 @@
       "rank": 805,
       "leipzigRank": 806,
       "articleHelp": "Loanword ending in -o → often das. Das Auto, das Kino, das Büro, das Foto. Most -o loanwords are neuter.",
-      "pluralHelp": "-(e)n (die Konten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
+      "pluralHelp": "Irregular learned plural: das Konto -> die Konten. Memorize the full pair.",
       "ruleId": "das.suffix_o",
       "cefrLevel": "A1"
     },
@@ -9500,8 +9495,8 @@
       "english": "English",
       "rank": 819,
       "leipzigRank": 820,
-      "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Neuter gender must be memorized. Tip: learn it as a chunk — 'das Ziel erreichen', not just 'das Ziel'.",
-      "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
+      "articleHelp": "Language names are neuter when substantivized: das Englisch. In ordinary use they often appear without an article: Ich lerne Englisch.",
+      "pluralHelp": "Normally singular-only in this meaning.",
       "cefrLevel": "A2"
     },
     {
@@ -9777,10 +9772,8 @@
       "english": "birthday/day of birth",
       "rank": 843,
       "leipzigRank": 844,
-      "articleHelp": "Exception: Most Ge- nouns are das, but this one is der. Notable masculine Ge- exceptions: der Gedanke, der Gebrauch, der Gehalt, der Genuss, der Geruch, der Geschmack, der Gewinn.",
+      "articleHelp": "Compound noun: gender follows the final element Tag (der). Geburtstag therefore takes der.",
       "pluralHelp": "-e (die Geburtstage). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "das.prefix_ge",
-      "isException": true,
       "cefrLevel": "A1"
     },
     {
@@ -10078,12 +10071,12 @@
     {
       "word": "Kleidung",
       "article": "die",
-      "plural": "Kleidungen",
+      "plural": "—",
       "english": "clothing/clothes",
       "rank": 870,
       "leipzigRank": 871,
       "articleHelp": "Suffix rule: -ung → always die. Zero exceptions. One of the first rules to learn.",
-      "pluralHelp": "-(e)n (die Kleidungen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "Normally singular-only in this meaning; use a compound for individual items.",
       "ruleId": "die.suffix_ung",
       "cefrLevel": "A1"
     },
@@ -10460,7 +10453,7 @@
       "rank": 903,
       "leipzigRank": 904,
       "articleHelp": "Suffix pattern: -ur → usually die (Latin origin). E.g. Natur, Kultur, Struktur, Temperatur.",
-      "pluralHelp": "-(e)n (die Literaturen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
+      "pluralHelp": "The stored plural is correct but rare/specialized; the everyday meaning is usually singular.",
       "ruleId": "die.suffix_ur",
       "cefrLevel": "B1"
     },
@@ -10562,12 +10555,12 @@
     {
       "word": "Architektur",
       "article": "die",
-      "plural": "—",
+      "plural": "Architekturen",
       "english": "architecture",
       "rank": 912,
       "leipzigRank": 913,
       "articleHelp": "Suffix pattern: -ur → usually die (Latin origin). E.g. Natur, Kultur, Struktur, Temperatur.",
-      "pluralHelp": "Used here as singular-only: architecture as a field/style.",
+      "pluralHelp": "The stored plural is correct but rare/specialized; the everyday meaning is usually singular.",
       "ruleId": "die.suffix_ur",
       "cefrLevel": "A1"
     },
@@ -23408,12 +23401,12 @@
     {
       "word": "Gepäck",
       "article": "das",
-      "plural": "Gepäcke",
+      "plural": "—",
       "english": "luggage",
       "rank": 245,
       "leipzigRank": 2044,
       "articleHelp": "Morphological: Ge- prefix → often das. This prefix creates collective or result nouns: Gebiet, Gesetz, Gehirn, Gewicht, Gespräch, Gebirge, Getränk, Geschenk. Strong pattern with few exceptions (der Gedanke, der Gebrauch, die Gefahr, die Geschichte).",
-      "pluralHelp": "-e (die Gepäcke). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
+      "pluralHelp": "Normally singular-only in this meaning; use a compound for individual items.",
       "ruleId": "das.prefix_ge",
       "cefrLevel": "A1"
     },
@@ -25349,10 +25342,9 @@
       "english": "stadium",
       "rank": 606,
       "leipzigRank": 2216,
-      "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Neuter gender must be memorized. Tip: learn it as a chunk — 'das Ziel erreichen', not just 'das Ziel'.",
-      "pluralHelp": "-(e)n (die Stadien). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "die.suffix_ion",
-      "isException": true,
+      "articleHelp": "Greek-origin neuter -ion noun: das Stadion. This does not follow the Latin -tion/-sion feminine pattern.",
+      "pluralHelp": "Greek neuter -ion pattern: das Stadion -> die Stadien. Similar neuter Greek-origin nouns can have -ien plurals.",
+      "ruleId": "das.greek_ion_neuter",
       "cefrLevel": "A1"
     },
     {
@@ -27600,12 +27592,12 @@
     {
       "word": "Schmuck",
       "article": "der",
-      "plural": "Schmucke",
+      "plural": "—",
       "english": "jewellery",
       "rank": 743,
       "leipzigRank": 2417,
       "articleHelp": "No standard suffix, semantic, or morphological rule applies cleanly. Masculine gender must be memorized. Tip: associate it with a vivid image or phrase to anchor the article.",
-      "pluralHelp": "-e (die Schmucke). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "Normally singular-only in this meaning; use a compound for individual items.",
       "cefrLevel": "A1"
     },
     {
@@ -27857,7 +27849,7 @@
       "rank": 772,
       "leipzigRank": 2439,
       "articleHelp": "No standard suffix or semantic rule applies cleanly. Masculine gender must be memorized. Tip: ~60% of monosyllabic German nouns are der, but \"Honig\" has 2 syllables — memorize with a phrase.",
-      "pluralHelp": "-e (die Honige). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
+      "pluralHelp": "This plural is mainly used for types, varieties, or separate traditions, not for the ordinary mass/abstract meaning.",
       "cefrLevel": "A1"
     },
     {
@@ -28131,15 +28123,16 @@
     },
     {
       "word": "Butter",
-      "article": "der",
+      "article": "die",
       "plural": "—",
       "english": "butter",
       "rank": 781,
       "leipzigRank": 2464,
-      "articleHelp": "Pattern: -er ending → usually der. Covers agents, tools, instruments, and many other categories. But beware: das Fenster, das Wasser, das Messer, das Feuer, das Zimmer are common neuter exceptions.",
-      "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
+      "articleHelp": "Standard German uses die Butter. Der Butter is regional, so learners should memorize die Butter.",
+      "pluralHelp": "Normally singular-only in this meaning.",
       "ruleId": "der.suffix_er",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "isException": true
     },
     {
       "word": "Erneuerung",
@@ -62751,14 +62744,16 @@
     },
     {
       "word": "Pommes",
-      "article": "das",
+      "article": "die",
       "plural": "Pommes",
       "english": "fries/chips (informal)",
       "rank": 829,
       "leipzigRank": 5617,
-      "articleHelp": "",
-      "pluralHelp": "This noun is plural only (Pluraletantum) — it has no singular form. Die Pommes. Similar to English 'scissors' or 'pants'.",
-      "cefrLevel": "A1"
+      "articleHelp": "Plural-only noun (Pluralia tantum). It has no singular form and always uses die.",
+      "pluralHelp": "Plural-only noun: die Pommes. There is no singular form.",
+      "cefrLevel": "A1",
+      "ruleId": "die.plural_only",
+      "pluraleTantum": true
     },
     {
       "word": "Projektmanager",
@@ -267832,8 +267827,8 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "",
+      "articleHelp": "French loanword ending in stressed -é. Das Café is neuter; memorize it with its accent and article.",
+      "pluralHelp": "Plural: die Cafés. Loanwords ending in a stressed vowel commonly add -s.",
       "cefrLevel": "A1"
     },
     {
@@ -267845,8 +267840,8 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "",
+      "articleHelp": "Abbreviation/loanword. The article is fixed by usage, so memorize it with the abbreviation.",
+      "pluralHelp": "Plural: die CDs. Abbreviations commonly add -s.",
       "cefrLevel": "A1"
     },
     {
@@ -267858,8 +267853,8 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "",
+      "articleHelp": "English loanword compound. Die E-Mail follows die Mail and is the standard learner article.",
+      "pluralHelp": "Plural: die E-Mails. English-style loanwords commonly add -s.",
       "cefrLevel": "A1"
     },
     {
@@ -267871,10 +267866,11 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "Plural-only noun (Plurale tantum).",
+      "articleHelp": "Plural-only noun (Pluralia tantum). It has no singular form and always uses die.",
+      "pluralHelp": "Plural-only noun (Pluralia tantum): there is no singular form to learn.",
       "pluraleTantum": true,
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "ruleId": "die.plural_only"
     },
     {
       "word": "Hausmann",
@@ -267885,8 +267881,8 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "",
+      "articleHelp": "Compound noun: gender follows the final element Mann (der). The plural follows Mann -> Männer.",
+      "pluralHelp": "Plural follows Mann -> Männer: der Hausmann -> die Hausmänner.",
       "cefrLevel": "A1"
     },
     {
@@ -267898,8 +267894,8 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "",
+      "articleHelp": "Abbreviation/loanword. The article is fixed by usage, so memorize it with the abbreviation.",
+      "pluralHelp": "Plural: die Lkw or die Lkws. Both are used for the abbreviation.",
       "cefrLevel": "A1"
     },
     {
@@ -267911,9 +267907,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "Most -e nouns are die.",
-      "pluralHelp": "Plural-only noun (Plurale tantum).",
-      "ruleId": "die.suffix_e",
+      "articleHelp": "Plural-only noun (Pluralia tantum). It has no singular form and always uses die.",
+      "pluralHelp": "Plural-only noun (Pluralia tantum): there is no singular form to learn.",
+      "ruleId": "die.plural_only",
       "pluraleTantum": true,
       "cefrLevel": "A1"
     },
@@ -267940,8 +267936,8 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "",
+      "articleHelp": "Compound noun: gender follows the final element Bahn (die). This is the key compound rule in German.",
+      "pluralHelp": "Plural: die S-Bahnen, following Bahn -> Bahnen.",
       "cefrLevel": "A1"
     },
     {
@@ -267953,9 +267949,10 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wordlist",
-      "articleHelp": "",
-      "pluralHelp": "Singular-only.",
-      "cefrLevel": "A1"
+      "articleHelp": "Morphological: nominalized infinitive -> always das. Any German verb can be used as a noun when capitalized: das Wiederhören, das Essen, das Schreiben.",
+      "pluralHelp": "Normally singular-only in this meaning.",
+      "cefrLevel": "A1",
+      "ruleId": "das.nominalized_infinitive"
     },
     {
       "word": "Schweiz",
@@ -269245,9 +269242,10 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wortgruppen",
-      "articleHelp": "",
-      "pluralHelp": "Singular-only.",
-      "cefrLevel": "A1"
+      "articleHelp": "Country and region names like Deutschland, Finnland, Mexiko, and Europa are normally used without an article. When an article is required, they are neuter: das Deutschland der 1990er.",
+      "pluralHelp": "Country and region names are normally singular only.",
+      "cefrLevel": "A1",
+      "ruleId": "das.country_articleless"
     },
     {
       "word": "Österreich",
@@ -269284,9 +269282,10 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wortgruppen",
-      "articleHelp": "",
-      "pluralHelp": "Singular-only.",
-      "cefrLevel": "A1"
+      "articleHelp": "Country and region names like Deutschland, Finnland, Mexiko, and Europa are normally used without an article. When an article is required, they are neuter: das Deutschland der 1990er.",
+      "pluralHelp": "Country and region names are normally singular only.",
+      "cefrLevel": "A1",
+      "ruleId": "das.country_articleless"
     },
     {
       "word": "Türkei",
@@ -269297,9 +269296,10 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wortgruppen",
-      "articleHelp": "",
-      "pluralHelp": "Singular-only.",
-      "cefrLevel": "A1"
+      "articleHelp": "Some country names are used with a fixed article. Feminine examples take die: die Türkei, die Schweiz, die Ukraine.",
+      "pluralHelp": "Country and region names are normally singular only.",
+      "cefrLevel": "A1",
+      "ruleId": "die.country_with_article"
     },
     {
       "word": "Griechenland",
@@ -269337,9 +269337,10 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wortgruppen",
-      "articleHelp": "",
-      "pluralHelp": "Singular-only.",
-      "cefrLevel": "A1"
+      "articleHelp": "Country and region names like Deutschland, Finnland, Mexiko, and Europa are normally used without an article. When an article is required, they are neuter: das Deutschland der 1990er.",
+      "pluralHelp": "Country and region names are normally singular only.",
+      "cefrLevel": "A1",
+      "ruleId": "das.country_articleless"
     },
     {
       "word": "Mexiko",
@@ -269350,9 +269351,10 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "goethe-wortgruppen",
-      "articleHelp": "",
-      "pluralHelp": "Singular-only.",
-      "cefrLevel": "A1"
+      "articleHelp": "Country and region names like Deutschland, Finnland, Mexiko, and Europa are normally used without an article. When an article is required, they are neuter: das Deutschland der 1990er.",
+      "pluralHelp": "Country and region names are normally singular only.",
+      "cefrLevel": "A1",
+      "ruleId": "das.country_articleless"
     },
     {
       "word": "Österreicherin",
