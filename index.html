@@ -43,7 +43,8 @@
     opacity: 0.55;
   }
   ::selection { background: rgba(176,98,57,0.22); color: #1a1410; }
-  button, input, select, textarea { font-family: inherit; }
+  button, input, select, textarea { font-family: inherit; touch-action: manipulation; }
+  button { -webkit-tap-highlight-color: transparent; }
   button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline: 2px solid rgba(176,98,57,0.45);
     outline-offset: 2px;
@@ -1974,6 +1975,22 @@ function GermanNounGame() {
     checkAnswer(needsArticle ? articleChoice : "", "", reverseInput);
   }, [phase,gameMode,currentNoun,articleChoice,reverseInput,checkAnswer]);
 
+  const focusReverseInput = useCallback(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  const handleReverseArticle = useCallback((art) => {
+    if (phase !== "question" || gameMode !== "reverse") return;
+    setArticleChoice(art);
+    focusReverseInput();
+  }, [phase, gameMode, focusReverseInput]);
+
+  const fastReverseArticleTap = useCallback((art) => (ev) => {
+    if (ev.pointerType === "mouse") return;
+    ev.preventDefault();
+    handleReverseArticle(art);
+  }, [handleReverseArticle]);
+
   const handleVerbFormsSubmit = useCallback((ev) => {
     ev?.preventDefault(); if(phase!=="question"||gameMode!=="verb_forms") return;
     checkAnswer("","");
@@ -2001,7 +2018,7 @@ function GermanNounGame() {
       const choiceIndex = ["1","2","3"].indexOf(ev.key);
       if(gameMode==="reverse"&&isReverseNoun&&choiceIndex!==-1){
         ev.preventDefault();
-        setArticleChoice(["der","die","das"][choiceIndex]);
+        handleReverseArticle(["der","die","das"][choiceIndex]);
         return;
       }
       if(ev.target.tagName==="INPUT")return;
@@ -2018,10 +2035,18 @@ function GermanNounGame() {
       }
     };
     window.addEventListener("keydown",h); return()=>window.removeEventListener("keydown",h);
-  }, [screen,phase,gameMode,isReverseNoun,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice]);
+  }, [screen,phase,gameMode,isReverseNoun,mode,articleChoice,pluralOptions,handleArticle,handlePluralChoice,handleReverseArticle]);
 
-  useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="reverse") setTimeout(()=>inputRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
-  useEffect(() => { if(screen==="game"&&phase==="question"&&gameMode==="verb_forms") setTimeout(()=>verbInfRef.current?.focus(),100); }, [screen,phase,currentIndex,gameMode]);
+  useEffect(() => {
+    if(screen!=="game"||phase!=="question"||gameMode!=="reverse") return;
+    const frame = requestAnimationFrame(focusReverseInput);
+    return () => cancelAnimationFrame(frame);
+  }, [screen,phase,currentIndex,gameMode,focusReverseInput]);
+  useEffect(() => {
+    if(screen!=="game"||phase!=="question"||gameMode!=="verb_forms") return;
+    const frame = requestAnimationFrame(() => verbInfRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [screen,phase,currentIndex,gameMode]);
   const accuracy = totalAnswered>0?Math.round((totalCorrect/totalAnswered)*100):0;
   const effectiveTimeLimit = playStyle === "timed" ? timedSeconds : timeLimit;
   const timerPct = effectiveTimeLimit>0?(timeLeft/effectiveTimeLimit)*100:100;
@@ -2258,7 +2283,7 @@ function GermanNounGame() {
               {isReverseNoun&&(
                 <div style={S.articleRow}>
                   {["der","die","das"].map(art=>(
-                    <button key={art} onClick={()=>setArticleChoice(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
+                    <button key={art} onPointerDown={fastReverseArticleTap(art)} onClick={()=>handleReverseArticle(art)} style={{...S.articleBtn,backgroundColor:articleChoice===art?ARTICLE_COLORS[art]:"transparent",borderColor:ARTICLE_COLORS[art],color:articleChoice===art?"#fff":ARTICLE_COLORS[art]}}>
                       <span style={S.articleBtnMain}>{art}</span>
                       <span style={S.articleBtnSub}>{art==="der"?"masc":art==="die"?"fem":"neut"}</span>
                     </button>
