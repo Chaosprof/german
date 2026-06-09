@@ -146,7 +146,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-05-10-netzwerk-b1";
+const DATA_VERSION = "2026-06-09b-synonym-gloss-fixes";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
@@ -590,6 +590,56 @@ const UI = {
 };
 function shuffleArray(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
 function normalize(s) { return s.trim().toLowerCase().replace(/ß/g,"ss").replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue"); }
+
+// ── Reverse-mode synonym acceptance ─────────────────────────────
+// Many English glosses are shared by several German words ("errand" →
+// Besorgung & Erledigung; "nonsense" → Quatsch, Blödsinn, Unsinn). When the
+// typed word is not the one we asked for, accept it if it is another word of
+// the same class whose glosses overlap the asked word's — validating the
+// chosen article against the typed word for nouns. The asked word keeps the
+// stats credit; the feedback names it so the player still learns it.
+function glossKeySet(english) {
+  return new Set((english || "").split("/")
+    .map(g => g.replace(/\([^)]*\)/g, "").trim().toLowerCase())
+    .filter(Boolean));
+}
+let _reverseSynonymLookup = null;
+function getReverseSynonymLookup() {
+  if (_reverseSynonymLookup) return _reverseSynonymLookup;
+  const map = new Map();
+  const add = (kind, word, payload) => {
+    const key = normalize(word);
+    if (!key) return;
+    if (!map.has(key)) map.set(key, { nouns: [], plain: [] });
+    map.get(key)[kind].push(payload);
+  };
+  NOUNS.forEach(n => add("nouns", n[0], n));
+  DUAL_GENDER_INDEX.forEach(entry => add("nouns", entry[0], entry));
+  ADJECTIVES.forEach(a => add("plain", a[0], a));
+  VERBS.forEach(v => add("plain", v[0], v));
+  _reverseSynonymLookup = map;
+  return map;
+}
+function findReverseSynonym(typed, expectedEntry, chosenArt) {
+  const key = normalize((typed || "").trim());
+  if (!key) return null;
+  const bucket = getReverseSynonymLookup().get(key);
+  if (!bucket) return null;
+  const wanted = glossKeySet(expectedEntry[3]);
+  if (!wanted.size) return null;
+  const overlaps = english => {
+    for (const g of glossKeySet(english)) if (wanted.has(g)) return true;
+    return false;
+  };
+  if (expectedEntry[1]) {
+    // Noun prompt: the typed word must be a noun and the chosen article
+    // must be correct for the TYPED word (die Besorgung vs die Erledigung).
+    const hit = bucket.nouns.find(n => n[1] === chosenArt && overlaps(n[3]));
+    return hit ? { word: hit[0], article: hit[1] } : null;
+  }
+  const hit = bucket.plain.find(item => overlaps(item[1]));
+  return hit ? { word: hit[0], article: "" } : null;
+}
 const MODES = { ARTICLE:"article", PLURAL:"plural", BOTH:"both" };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1766,7 +1816,7 @@ function GermanNounGame() {
   }, [currentNoun, mode, gameMode]);
 
   useEffect(() => {
-    if (phase==="feedback") { const wrongDelay = (gameMode==="verb_forms"||gameMode==="verb_prepositions") ? 1200 : 650; feedbackTimerRef.current=setTimeout(()=>nextQuestion(),feedback?.correct?150:wrongDelay); return()=>clearTimeout(feedbackTimerRef.current); }
+    if (phase==="feedback") { const wrongDelay = (gameMode==="verb_forms"||gameMode==="verb_prepositions") ? 1200 : 650; const correctDelay = feedback?.synonym ? 1500 : 150; feedbackTimerRef.current=setTimeout(()=>nextQuestion(),feedback?.correct?correctDelay:wrongDelay); return()=>clearTimeout(feedbackTimerRef.current); }
   }, [phase, feedback]);
 
   const nextQuestion = useCallback(() => {
@@ -1797,7 +1847,7 @@ function GermanNounGame() {
   const checkAnswer = useCallback((chosenArt, chosenPlural, typedReverse) => {
     if(!currentNoun||phase!=="question") return;
     clearInterval(timerRef.current);
-    const [s,a,p,e]=currentNoun; let correct=true;
+    const [s,a,p,e]=currentNoun; let correct=true; let acceptedSynonym=null;
     const entryId = gameMode === "verb_prepositions" ? (s+"|"+currentNoun[3]) : getNounEntryId(currentNoun);
 
     if (gameMode === "verb_forms") {
@@ -1825,6 +1875,10 @@ function GermanNounGame() {
       const typed = (typedReverse||"").trim();
       correct = typed === s || normalize(typed) === normalize(s);
       if (a && chosenArt !== a) correct = false;
+      if (!correct) {
+        const syn = findReverseSynonym(typed, currentNoun, chosenArt);
+        if (syn) { correct = true; acceptedSynonym = syn; }
+      }
     } else {
       if(mode===MODES.ARTICLE||mode===MODES.BOTH) if(chosenArt!==a) correct=false;
       if(mode===MODES.PLURAL||mode===MODES.BOTH){const t=chosenPlural||"";if(!t||(t!==p&&normalize(t)!==normalize(p))) correct=false;}
@@ -1868,7 +1922,7 @@ function GermanNounGame() {
     } else if (gameMode === "verb_prepositions") {
       setFeedback({correct,noun:s,english:e,article:"",plural:"",vpVerb:s,vpPreposition:currentNoun[3],vpCase:currentNoun[4],vpExample:currentNoun[5]});
     } else {
-      setFeedback({correct,article:a,plural:p,noun:s,english:e});
+      setFeedback({correct,article:a,plural:p,noun:s,english:e,synonym:acceptedSynonym||undefined});
     }
     setPhase("feedback");
   }, [currentNoun, mode, phase, streak, difficulty, timeLeft, gameMode, playStyle, nextQuestion, endSession, verbFormInputs, verbPrepInputs]);
@@ -1897,7 +1951,10 @@ function GermanNounGame() {
     const plural = isSimple ? "" : item[2];
     const english = isSimple ? item[1] : item[3];
     const entryId = isSimple ? word : getNounEntryId(item);
-    const correct = wordId === meaningId;
+    // Cards with identical meaning text are indistinguishable on screen
+    // (e.g. two words both glossed "nonsense/rubbish") — accept the pair
+    // when the labels match even if the card ids don't.
+    const correct = wordId === meaningId || chosenMeaning.label === getMeaningLabel(english);
 
     setTotalAnswered(prev => prev + 1);
 
@@ -2155,7 +2212,7 @@ function GermanNounGame() {
           ):gameMode==="reverse"?(
             <div style={S.nounDisplay}>
               <span style={{fontSize:13,color:UI.faint,textTransform:"uppercase",letterSpacing:2}}>Translate to German</span>
-              <span style={{fontSize:28,fontWeight:900,color:UI.textStrong}}>{(currentNoun[3]||"").split("/")[0]}</span>
+              <span style={{fontSize:getMeaningLabel(currentNoun[3]||"").length>36?20:28,fontWeight:900,color:UI.textStrong,textAlign:"center",lineHeight:1.25,maxWidth:420}}>{getMeaningLabel(currentNoun[3]||"")}</span>
             </div>
           ):(
             <div style={S.nounDisplay}>
@@ -2210,6 +2267,7 @@ function GermanNounGame() {
           {phase==="feedback"&&feedback&&(
             <div style={S.feedbackFlash}>
               <span style={{fontSize:36,fontWeight:900,color:feedback.correct?"#10B981":"#EF4444"}}>{feedback.correct?"✓":feedback.secondChance?"🔄":"✗"}</span>
+              {feedback.correct&&feedback.synonym&&<span style={{...S.flashCorrection,fontSize:14}}>{feedback.synonym.article?`${feedback.synonym.article} `:""}{feedback.synonym.word} also works — we asked for: <b>{feedback.article?`${feedback.article} `:""}{feedback.noun}</b></span>}
               {feedback.secondChance&&<span style={{fontSize:13,color:"#F59E0B",fontWeight:700}}>Second chance! Try again...</span>}
               {!feedback.correct&&!feedback.secondChance&&gameMode==="reverse"&&<span style={S.flashCorrection}>{feedback.article ? `${feedback.article} ` : ""}{feedback.noun}</span>}
               {!feedback.correct&&!feedback.secondChance&&gameMode!=="reverse"&&gameMode!=="verb_forms"&&gameMode!=="verb_prepositions"&&<span style={S.flashCorrection}>{feedback.article} {feedback.noun} {"->"} {formatPluralAttempt(feedback.plural)}</span>}
