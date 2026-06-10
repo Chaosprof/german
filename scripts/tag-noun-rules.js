@@ -46,8 +46,13 @@ const SEMANTIC = {
   "das.colors": new Set(["Rot","Gelb","Blau","Grün","Weiß","Schwarz","Grau","Braun","Orange","Violett","Rosa","Türkis","Pink","Lila"]),
   "das.chemical_elements": new Set(["Wasserstoff","Helium","Lithium","Beryllium","Bor","Kohlenstoff","Stickstoff","Sauerstoff","Fluor","Neon","Natrium","Magnesium","Aluminium","Silicium","Silizium","Phosphor","Schwefel","Chlor","Argon","Kalium","Calcium","Kalzium","Scandium","Titan","Vanadium","Chrom","Mangan","Eisen","Kobalt","Nickel","Kupfer","Zink","Gallium","Germanium","Arsen","Selen","Brom","Krypton","Rubidium","Strontium","Yttrium","Zirconium","Niob","Molybdän","Technetium","Ruthenium","Rhodium","Palladium","Silber","Cadmium","Indium","Zinn","Antimon","Tellur","Iod","Jod","Xenon","Cäsium","Barium","Lanthan","Cer","Praseodym","Neodym","Samarium","Europium","Gadolinium","Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantal","Wolfram","Rhenium","Osmium","Iridium","Platin","Gold","Quecksilber","Thallium","Blei","Bismut","Wismut","Polonium","Astat","Radon","Francium","Radium","Actinium","Thorium","Protactinium","Uran","Neptunium","Plutonium","Americium","Curium","Berkelium","Californium"]),
   "das.metals": new Set(["Messing","Bronze","Stahl","Gusseisen","Roheisen","Weißblech","Lot","Amalgam"]),
-  "das.fractions": new Set(["Drittel","Viertel","Fünftel","Sechstel","Siebtel","Siebentel","Achtel","Neuntel","Zehntel","Zwanzigstel","Hundertstel","Tausendstel"])
+  "das.fractions": new Set(["Drittel","Viertel","Fünftel","Sechstel","Siebtel","Siebentel","Achtel","Neuntel","Zehntel","Zwanzigstel","Hundertstel","Tausendstel"]),
+  "das.country_articleless": new Set(["Deutschland","Österreich","Luxemburg","Europa","Griechenland","Finnland","Mexiko"]),
+  "die.country_with_article": new Set(["Schweiz","Türkei","Ukraine"]),
+  "das.greek_ion_neuter": new Set(["Stadion","Symposion","Anion","Ganglion"])
 };
+
+const NOUN_BY_WORD_ARTICLE = new Map(nounsDoc.nouns.map(n => [`${n.word}\u0000${n.article}`, n]));
 
 // Strong suffix rules, longest-first. Fourth field is an optional exclude regex —
 // when it matches, the rule does NOT apply (falls through to weaker rules).
@@ -61,7 +66,9 @@ const STRONG_SUFFIX_RULES = [
   ["chen",   "das.diminutives",   "das",   /(kuchen|knochen|drachen|rachen|rechen|rochen|groschen|machen|lachen)$/i],
   ["ling",   "der.suffix_ling",   "der"],
   ["ment",   "das.suffix_ment",   "das"],
-  ["tum",    "das.suffix_tum",    "das"],
+  // Latin -um stems ending in t (Datum, Faktum, Votum) fall through to the
+  // -um (Latin) rule below — they are not the Germanic -tum suffix.
+  ["tum",    "das.suffix_tum",    "das",   /(datum|faktum|votum|diktum|momentum|präteritum|quantum|ultimatum|arboretum|rektum)$/i],
   ["tät",    "die.suffix_taet",   "die"],
   ["ion",    "die.suffix_ion",    "die"],
   ["ade",    "die.suffix_ade",    "die"],
@@ -69,7 +76,9 @@ const STRONG_SUFFIX_RULES = [
   ["anz",    "die.suffix_anz",    "die"],
   ["enz",    "die.suffix_enz",    "die"],
   ["ial",    "das.suffix_ial",    "das"],
-  ["nis",    "das.suffix_nis",    "das"],
+  // das Tennis is an English loan, not the deverbal -nis suffix. (Anis/Penis
+  // remain reachable as curated exceptions via the explicit exception lookup.)
+  ["nis",    "das.suffix_nis",    "das",   /tennis$/i],
   ["ner",    "der.suffix_ner",    "der"],
   ["ant",    "der.suffix_ant",    "der"],
   ["ung",    "die.suffix_ung",    "die",   /(sprung|schwung|^dung$|nibelung)$/i],
@@ -77,7 +86,11 @@ const STRONG_SUFFIX_RULES = [
   ["ie",     "die.suffix_ie",     "die"],
   ["ik",     "die.suffix_ik",     "die"],
   ["eur",    "der.suffix_eur",    "der"],  // handled before -ur and -er
-  ["in",     "die.suffix_in",     "die",   /(ein|oin|ain|öin)$/i],
+  // Stressed loan -in endings (Termin, Magazin, Benzin, Disziplin, chemical
+  // -in) are not the female-person suffix; curated rule exceptions still tag
+  // via the explicit exception lookup. NB: keep "endorphin" specific —
+  // -sophin/-graphin words (die Philosophin) ARE the person suffix.
+  ["in",     "die.suffix_in",     "die",   /(izin|ein|oin|ain|öin|uin|termin|magazin|benzin|disziplin|offizin|toxin|endorphin)$/i],
   ["ur",     "die.suffix_ur",     "die"],
   ["or",     "der.suffix_or",     "der"],
   ["um",     "das.suffix_um_latin", "das", /(aum|oum)$/i],
@@ -88,7 +101,7 @@ const STRONG_SUFFIX_RULES = [
 // (so that Geschwindigkeit → -keit and Geschäftsführer → -er win, but
 // Gebäude/Gemüse/Gewebe go to Ge- prefix instead of the weak -e fallback).
 const PREFIX_RULES = [
-  ["Ge", "das.prefix_ge", "das", /^Geo[a-zäöü]/]  // Geometrie, Geographie etc. are Greek loans, not Ge- prefix
+  ["Ge", "das.prefix_ge", "das", /^(Geo[a-zäöü]|Gegen|Geburts)/]  // Geometrie/Geographie are Greek loans; Gegen-/Geburts- are not the Ge- prefix
 ];
 
 // Weak fallback suffixes — open-vowel endings that match almost anything;
@@ -125,6 +138,14 @@ function findRule(word, article) {
     }
   }
 
+  // Plural-only nouns are always die unless a lexicalized singular sense is stored.
+  if (article === "die") {
+    const noun = NOUN_BY_WORD_ARTICLE.get(`${word}\u0000${article}`);
+    if (noun && noun.pluraleTantum) {
+      return { ruleId: "die.plural_only", isException: false };
+    }
+  }
+
   // 3. Strong suffix rules
   const strong = applyMorphRules(word, article, STRONG_SUFFIX_RULES, "suffix");
   if (strong) return strong;
@@ -146,6 +167,14 @@ const byRule = new Map();
 const exceptionByRule = new Map();
 
 for (const noun of nounsDoc.nouns) {
+  // Adjectival nouns (der Deutsche, der Beamte) decline as adjectives — no
+  // suffix rule applies. Keep them untagged so the app shows their
+  // adjectival-declension note instead of a bogus -e/-er rule.
+  if ((noun.articleHelp || "").startsWith("Adjectival noun")) {
+    delete noun.ruleId;
+    delete noun.isException;
+    continue;
+  }
   const match = findRule(noun.word, noun.article);
   if (match) {
     noun.ruleId = match.ruleId;

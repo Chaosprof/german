@@ -2032,8 +2032,8 @@
     },
     "die.suffix_in": {
       "article": "die",
-      "name": "Suffix -in",
-      "description": "Most nouns ending in -in (especially feminine job/role suffixes) are feminine. Examples: die Ärztin, die Studentin, die Freundin.",
+      "name": "Suffix -in (female persons)",
+      "description": "The feminine person/animal suffix -in — always UNSTRESSED, usually -erin — is 100% reliable: die Lehrerin, die Ärztin, die Königin, die Hündin; plural -innen. The test is stress: a STRESSED final -in is a loan ending, not this suffix, and those words are mostly der or das — der Termin, das Benzin, das Vitamin, das Magazin, der Delfin; chemical substances in -in are das (Insulin, Nikotin). English loans (der Muffin, das Plugin, der Admin) are not the suffix either. A few stressed loans happen to be feminine anyway: die Disziplin, die Medizin.",
       "exceptions": [
         {
           "word": "Admin",
@@ -2235,7 +2235,7 @@
     "das.suffix_ial": {
       "article": "das",
       "name": "Suffix -ial",
-      "description": "Nouns ending in -ial are neuter. Examples: das Material, das Potenzial, das Sozial.",
+      "description": "Latin-origin nouns ending in -ial are neuter. Examples: das Material, das Potenzial, das Editorial, das Tutorial.",
       "exceptions": []
     },
     "das.suffix_ment": {
@@ -2260,7 +2260,7 @@
     "das.suffix_nis": {
       "article": "das",
       "name": "Suffix -nis",
-      "description": "Most nouns ending in -nis are neuter. Examples: das Ergebnis, das Tennis, das Zeugnis, das Ereignis.",
+      "description": "The Germanic suffix -nis forms abstract nouns from verbs and adjectives; most are neuter: das Ergebnis, das Zeugnis, das Ereignis, das Verständnis, das Geheimnis. A substantial minority are feminine and must be memorized: die Erlaubnis, die Erkenntnis, die Kenntnis, die Finsternis, die Wildnis. Words that merely end in -nis without the suffix (das Tennis, der Anis, der Penis) follow no pattern.",
       "exceptions": [
         {
           "word": "Anis",
@@ -2566,7 +2566,7 @@
     "das.suffix_tum": {
       "article": "das",
       "name": "Suffix -tum",
-      "description": "Most nouns ending in -tum are neuter. Examples: das Quantum, das Ultimatum, das Eigentum, das Wachstum.",
+      "description": "The Germanic suffix -tum forms abstract and collective nouns and is neuter: das Eigentum, das Wachstum, das Brauchtum, das Altertum, das Christentum. Only two -tum nouns are masculine: der Reichtum and der Irrtum (plural -tümer: Reichtümer, Irrtümer). Latin words that happen to end in -tum (das Datum → Daten, das Faktum → Fakten, das Votum → Voten) belong to the -um (Latin) rule instead.",
       "exceptions": [
         {
           "word": "Irrtum",
@@ -2581,7 +2581,7 @@
     "das.suffix_um_latin": {
       "article": "das",
       "name": "Suffix -um (Latin origin)",
-      "description": "Nouns of Latin origin ending in -um are neuter. Examples: das Publikum, das Museum, das Stadium, das Zentrum.",
+      "description": "Nouns of Latin origin ending in -um are neuter. Examples: das Publikum, das Museum, das Stadium, das Zentrum. Includes Latin stems in -tum: das Datum (Daten), das Faktum (Fakten), das Votum (Voten) — not to be confused with the Germanic -tum suffix (Eigentum, Reichtum).",
       "exceptions": [
         {
           "word": "Konsum",

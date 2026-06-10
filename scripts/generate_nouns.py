@@ -149,11 +149,15 @@ def is_weak_noun(noun_data):
     nom_sg = cases.get('nominative', {}).get('singular', '')
     if not nom_sg:
         return False
-    # Weak nouns take -(e)n in acc/dat/gen singular
-    for form in [acc_sg, dat_sg, gen_sg]:
-        if form and form != nom_sg and (form.endswith('en') or form.endswith('n')):
-            return True
-    return False
+    # A strong genitive (-s) rules out n-Deklination — except the mixed
+    # Name/Gedanke class whose genitive is nom + -ns (des Namens).
+    if gen_sg and gen_sg.endswith('s') and gen_sg not in (nom_sg + 'ns', nom_sg + 'ens'):
+        return False
+    # Weak obliques must be exactly nom + -(e)n. Merely "ends in -n" misfires
+    # when plural forms leak into the singular case slots (e.g. Mähroboter →
+    # dative plural Mährobotern).
+    weak_forms = {nom_sg + 'n', nom_sg + 'en'}
+    return any(form in weak_forms for form in (acc_sg, dat_sg, gen_sg))
 
 # ── Compound noun detection ────────────────────────────────────────────────
 
@@ -225,6 +229,18 @@ def generate_article_help(noun_data):
     lower = word.lower()
     syllables = syllable_count_approx(word)
 
+    articleless_countries = {'Deutschland', 'Österreich', 'Luxemburg', 'Europa', 'Griechenland', 'Finnland', 'Mexiko'}
+    article_countries_die = {'Schweiz', 'Türkei', 'Ukraine'}
+
+    if noun_data.get('pluralOnly', False):
+        return "Plural-only noun (Pluralia tantum). It has no singular form and always uses die."
+
+    if word in articleless_countries:
+        return "Country and region names like Deutschland, Finnland, Mexiko, and Europa are normally used without an article. When an article is required, they are neuter: das Deutschland der 1990er."
+
+    if word in article_countries_die:
+        return "Some country names are used with a fixed article. Feminine examples take die: die Türkei, die Schweiz, die Ukraine."
+
     # Check compound noun first
     compound_final = detect_compound_final(word, gender)
     if compound_final:
@@ -291,15 +307,25 @@ def generate_article_help(noun_data):
     elif lower.endswith('or') and syllables >= 2:
         if gender == 'm':
             hints.append("Suffix pattern: -or → usually der (Latin agent noun). E.g. Motor, Autor, Professor, Doktor. Plural shifts stress: Motóren, Autóren.")
-    elif lower.endswith('ist'):
+    elif lower.endswith('ist') and not lower.endswith(('geist', 'mist', 'zwist', 'twist')):
+        # Stem words (Geist, Mist, Zwist, Twist) are not the -ist suffix.
         if gender == 'm':
-            hints.append("Suffix pattern: -ist → usually der (denotes a person). E.g. Optimist, Journalist, Polizist. Also a weak noun (n-Deklination).")
+            hint = "Suffix pattern: -ist → usually der (denotes a person). E.g. Optimist, Journalist, Polizist."
+            if weak:
+                hint += " Also a weak noun (n-Deklination)."
+            hints.append(hint)
     elif lower.endswith('ent') and syllables >= 2:
         if gender == 'm':
-            hints.append("Suffix pattern: -ent → usually der (Latin). Often a weak noun. E.g. Student→Studenten, Präsident→Präsidenten, Patient→Patienten.")
+            if weak:
+                hints.append("Suffix pattern: -ent → usually der (Latin). Often a weak noun. E.g. Student→Studenten, Präsident→Präsidenten, Patient→Patienten.")
+            else:
+                hints.append("Suffix pattern: -ent → usually der (Latin). But unlike the -ent person nouns (Student, Präsident, Patient — which are weak nouns), this word declines strong (genitive -s).")
     elif lower.endswith('ant') and syllables >= 2:
         if gender == 'm':
-            hints.append("Suffix pattern: -ant → usually der (Latin). Often also a weak noun. E.g. Elefant→Elefanten, Kandidat→Kandidaten.")
+            if weak:
+                hints.append("Suffix pattern: -ant → usually der (Latin). Often also a weak noun. E.g. Elefant→Elefanten, Kandidat→Kandidaten.")
+            else:
+                hints.append("Suffix pattern: -ant → usually der (Latin). But unlike the -ant person/weak nouns (Elefant, Kandidat), this word declines strong (genitive -s).")
 
     # Loanword patterns
     elif lower.endswith('age') and syllables >= 2:
@@ -351,7 +377,7 @@ def generate_article_help(noun_data):
             hints.append("Rare exception: ~90% of -e nouns are die, but this is das. Very few -e nouns are neuter: das Ende, das Auge, das Erbe, das Interesse, das Gebäude. Memorize these individually.")
 
     # Feminine -in suffix (person nouns)
-    if lower.endswith('in') and gender == 'f' and not lower.endswith('tion') and not lower.endswith('sion') and syllables >= 2 and not hints:
+    if lower.endswith('in') and gender == 'f' and not lower.endswith(('tion', 'sion', 'izin')) and syllables >= 2 and not hints:
         if lower.endswith('erin') or lower.endswith('ärin'):
             hints.append("Suffix pattern: -erin → always die. Feminine form of masculine agent nouns (-er → -erin). E.g. Lehrerin, Fahrerin.")
         else:
@@ -491,7 +517,7 @@ for i, noun_data in enumerate(new_nouns):
     rank = 5001 + i
     word = noun_data['lemma']
     gender = noun_data.get('gender', '')
-    article = get_article(gender)
+    article = 'die' if noun_data.get('pluralOnly', False) and not gender else get_article(gender)
     plural = get_plural_form(noun_data)
     english = get_english(noun_data.get('translations', {}), word)
 

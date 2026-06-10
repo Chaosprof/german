@@ -5,6 +5,83 @@ Targeted fixes were applied in `7f5d9b4`; bulk translation work continues
 across `b7966b6`, `524f11c`, `c812e28`. What follows is the remaining work,
 roughly ordered by impact.
 
+## Done June 2026 — weak-noun tagging + plural-lemma artifacts
+
+`scripts/fix_weak_noun_tagging.py` (idempotent):
+- Removed suffix-driven false weak-noun claims (Mist, Geist + compounds,
+  Zwist, Twist, Käse, Autor, Mähroboter, Verarbeiter, Tempomat, Diakon;
+  "often weak" hints corrected on Moment, Cent, Kontinent, Akzent, Client,
+  Orient, Content, Advent, Wisent, Proviant, Consultant, Volant, Leutnant
+  compounds; "mostly weak" -e class text corrected on Kaffee, See, Tee,
+  Code, Cookie, Service, Single, Charme).
+- Added the missing `⚠ Weak noun` marker to ~105 genuinely weak nouns
+  (Patient, Experte, Junge, Graf, Jude, Favorit, Satellit, Kamerad, …).
+  Weak deck: 513 → 619 members.
+- Mixed -ns class (Name/Buchstabe/Gedanke/Glaube/Wille/Friede/Funke/Same/
+  Haufe + compounds) now states the -ns genitive (des Namens); Herr family
+  states sg -n vs pl -en; Autor pluralHelp no longer teaches *des Autoren*.
+- Cleared bogus der.suffix_er/-ner ruleIds from 240+ adjectival nouns
+  (der Deutsche, der Beamte, …) so the app shows their adjectival-declension
+  note instead of the wrong -er rule, and the -er rule deck is clean.
+
+`scripts/fix_plural_lemma_artifacts.py` (idempotent):
+- Deleted 9 plural-as-lemma artifacts (der Zelte, der Zelten, der Romane,
+  der Kanten, das Spatzen, das Utopien, der Live, der Terme, der Range) and
+  removed them from the die.suffix_e exceptions in article-rules.json.
+- Re-glossed die Zwecke (tack) and die Rabatte (flower bed) with notes
+  distinguishing them from the plurals of Zweck/Rabatt.
+- Fixed der → die Waise / Kriegswaise (Duden: die Waise).
+- Plural-form entries with a living singular (Zutaten, Senioren, Getränke,
+  Werte, Kenntnisse, …) no longer claim "Plurale tantum"; true pluralia
+  tantum (Eltern, Leute, Kosten + -kosten compounds, Daten, Medien, Ferien,
+  Schulden, …, 44 entries) are tagged `die.plural_only`, so that rule deck
+  now materializes in the app.
+
+Audit notes left in `audit/weak_noun_audit_dump.txt`. Spotted but NOT fixed
+(out of scope): `Individualist` glossed "cunning" (should be "individualist").
+
+## Done June 2026 — reverse-mode synonym collisions
+
+7,587 first-gloss collisions exist bank-wide (e.g. Besorgung/Erledigung both
+"errand"; Quatsch/Blödsinn/Unsinn all "nonsense"), so translation mode could
+mark a correct synonym wrong. Fixes:
+
+- index.html: reverse mode now shows the FULL gloss list as the prompt and
+  accepts any same-class word whose glosses overlap the asked word's
+  (`findReverseSynonym`), validating the chosen article against the typed
+  word. Accepted synonyms show "X also works — we asked for: Y" for 1.5s;
+  stats still credit the asked word. Matching mode accepts pairs whose
+  meaning labels are textually identical (indistinguishable cards).
+- `scripts/fix_synonym_glosses.py` (idempotent): disambiguated the named
+  pairs — Besorgung "errand (shopping)/purchase", Erledigung "task to deal
+  with/errand/completion", Blödsinn "nonsense/stupidity", Quatsch
+  "nonsense (colloquial)/rubbish". Parentheticals are stripped by the
+  matcher, so the words still accept each other.
+- DATA_VERSION bumped to 2026-06-09b-synonym-gloss-fixes.
+
+## Done June 2026 — rule description slips + rule tagging
+
+`scripts/fix_rule_examples.py` (idempotent):
+- article-rules.json descriptions rewritten: -ial no longer cites the
+  non-word "das Sozial"; -nis explains the deverbal suffix vs the feminine
+  minority (Erlaubnis, Erkenntnis) vs loan look-alikes (Tennis, Anis,
+  Penis); -tum is now purely Germanic (Eigentum/Wachstum, exceptions der
+  Reichtum/Irrtum) with Latin -tum stems pointed at the -um rule; -um
+  (Latin) mentions the Datum/Faktum/Votum class; -in reframed around the
+  real discriminator (unstressed person suffix vs stressed loan ending) and
+  renamed "Suffix -in (female persons)".
+- nouns.json retags: 21 Latin stems (Datum + 11 compounds, Faktum, Votum,
+  Misstrauensvotum, Diktum, Momentum, Präteritum, Quantum, Arboretum,
+  Rektum) moved das.suffix_tum → das.suffix_um_latin; Tennis/Tischtennis
+  untagged from -nis with a loan note; 46 junk -in followers untagged
+  (-medizin/-disziplin/-magazin/-termin compounds, Waschbenzin, Endorphin,
+  Offizin, Kinogutschein, Kindesbein) with corrected articleHelp; Hasilein
+  retagged das.diminutives; die Philosophin kept (genuine person suffix).
+- tag-noun-rules.js regression guards: -tum/-nis/-in exclusion regexes and
+  an adjectival-noun skip so re-running the tagger cannot reintroduce the
+  bad tags or overwrite the adjectival-declension fix.
+- DATA_VERSION bumped to 2026-06-10-rule-example-fixes.
+
 ## 1. Bulk translation gaps (in progress)
 
 Status as of `c812e28`:

@@ -230,7 +230,7 @@
       "leipzigRank": 20,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum. · Suffix pattern: -tum → usually das. E.g. Eigentum, Wachstum, Datum. Exceptions: der Reichtum, der Irrtum.",
       "pluralHelp": "-(e)n (die Daten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum",
+      "ruleId": "das.suffix_um_latin",
       "cefrLevel": "A1"
     },
     {
@@ -13862,7 +13862,7 @@
       "leipzigRank": 1202,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum. · Suffix pattern: -tum → usually das. E.g. Eigentum, Wachstum, Datum. Exceptions: der Reichtum, der Irrtum.",
       "pluralHelp": "-(e)n (die Fakten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Republik",
@@ -15485,9 +15485,9 @@
       "english": "discipline",
       "rank": 1343,
       "leipzigRank": 1344,
-      "articleHelp": "Suffix rule: -in (female person) → always die. Die Lehrerin, die Ärztin, die Schülerin, die Kollegin. This is one of the most reliable feminine markers — 100% consistent.",
+      "articleHelp": "Stressed loan -in (Latin disciplina) — NOT the female-person suffix. Coincidentally feminine anyway: die Disziplin, like die Medizin. Memorize it.",
       "pluralHelp": "-(e)n (die Disziplinen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "A2"
     },
     {
@@ -42250,7 +42250,7 @@
       "leipzigRank": 3743,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum. · Suffix pattern: -tum → usually das. E.g. Eigentum, Wachstum, Datum. Exceptions: der Reichtum, der Irrtum.",
       "pluralHelp": "-(e)n (die Geburtsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum",
+      "ruleId": "das.suffix_um_latin",
       "cefrLevel": "A1"
     },
     {
@@ -51356,9 +51356,9 @@
       "english": "tennis",
       "rank": 3526,
       "leipzigRank": 4572,
-      "articleHelp": "Suffix pattern: -nis → often das (Ergebnis, Verständnis, Gefängnis, Geheimnis). But ~20% are die (Erkenntnis, Erlaubnis, Finsternis) — check each one.",
+      "articleHelp": "English loanword — the ending is not the German abstract suffix -nis (Ergebnis-type). Games and sports as nouns are typically das: das Tennis, das Golf, das Schach.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "das.suffix_nis",
+      "ruleId": null,
       "cefrLevel": "A2"
     },
     {
@@ -57741,7 +57741,7 @@
       "leipzigRank": 5158,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "die Vota. Irregular or mixed plural pattern. Best memorized directly.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Webbrowser",
@@ -62951,7 +62951,7 @@
       "leipzigRank": 5637,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Unmut",
@@ -64240,7 +64240,7 @@
       "leipzigRank": 5756,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "C1"
     },
     {
@@ -64357,7 +64357,7 @@
       "leipzigRank": 5767,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Angeln",
@@ -67075,7 +67075,7 @@
       "leipzigRank": 6017,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Internetnutzung",
@@ -74258,7 +74258,7 @@
       "leipzigRank": 6679,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Illustrator",
@@ -75678,8 +75678,8 @@
       "leipzigRank": 6811,
       "articleHelp": "Compound noun — gender follows the last element: Magazin (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Fachmagazine). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Fachunterricht",
@@ -82058,7 +82058,7 @@
       "leipzigRank": 7402,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "B2"
     },
     {
@@ -92619,7 +92619,7 @@
       "leipzigRank": 8383,
       "articleHelp": "Compound noun — gender follows the last element: Haltbarkeitsdatum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Mindesthaltbarkeitsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Minze",
@@ -92707,8 +92707,8 @@
       "leipzigRank": 8391,
       "articleHelp": "Compound noun — gender follows the last element: Magazin (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Nachrichtenmagazine). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Nachtruhe",
@@ -93897,7 +93897,7 @@
       "leipzigRank": 8502,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Architektin",
@@ -97884,7 +97884,7 @@
       "leipzigRank": 8873,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Olive",
@@ -107827,7 +107827,7 @@
       "leipzigRank": 9795,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Quanten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Rabe",
@@ -111789,8 +111789,8 @@
       "leipzigRank": 10164,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Prüfungstermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Publikumsliebling",
@@ -112228,7 +112228,7 @@
       "leipzigRank": 10205,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Sprachbarriere",
@@ -115722,7 +115722,7 @@
       "leipzigRank": 10530,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Patentamt",
@@ -117110,8 +117110,8 @@
       "leipzigRank": 10660,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Wunschtermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Zahnfleisch",
@@ -135683,7 +135683,7 @@
       "leipzigRank": 12389,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Tochterfirma",
@@ -136561,7 +136561,7 @@
       "leipzigRank": 12471,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Ablaufdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Abszess",
@@ -142939,8 +142939,8 @@
       "leipzigRank": 13068,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Abfuhrtermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Abgeschiedenheit",
@@ -149275,7 +149275,7 @@
       "leipzigRank": 13661,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Verbrauchsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Verdauungstrakt",
@@ -149328,7 +149328,7 @@
       "leipzigRank": 13666,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Verfallsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Verformung",
@@ -149529,7 +149529,7 @@
       "leipzigRank": 13685,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Vlies",
@@ -149908,8 +149908,8 @@
       "leipzigRank": 13721,
       "articleHelp": "Compound noun — gender follows the last element: Magazin (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Wirtschaftsmagazine). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Wissenschaftsbereich",
@@ -150419,8 +150419,8 @@
       "leipzigRank": 13769,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Arzttermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true,
+      "ruleId": null,
+      "isException": false,
       "cefrLevel": "C1"
     },
     {
@@ -156100,7 +156100,7 @@
       "leipzigRank": 14298,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Schulpolitik",
@@ -157033,9 +157033,9 @@
       "english": "ping-pong/table tennis",
       "rank": 13856,
       "leipzigRank": 14386,
-      "articleHelp": "Compound noun — gender follows the last element: Tennis (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -nis → often das (Ergebnis, Verständnis, Gefängnis, Geheimnis). But ~20% are die (Erkenntnis, Erlaubnis, Finsternis) — check each one.",
+      "articleHelp": "Compound noun — gender follows the last element: Tennis (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "das.suffix_nis"
+      "ruleId": null
     },
     {
       "word": "Titelblatt",
@@ -163112,7 +163112,7 @@
       "leipzigRank": 14953,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Leistungsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Letter",
@@ -169685,7 +169685,7 @@
       "leipzigRank": 15569,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Erscheinungsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Erstauflage",
@@ -182742,7 +182742,7 @@
       "leipzigRank": 16789,
       "articleHelp": "Compound noun — gender follows the last element: Disziplin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-(e)n (die Königsdisziplinen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Konkurrentin",
@@ -184729,8 +184729,8 @@
       "leipzigRank": 16976,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Ortstermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Osmane",
@@ -185488,7 +185488,7 @@
       "leipzigRank": 17047,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Rechtsradikale",
@@ -185616,7 +185616,7 @@
       "leipzigRank": 17059,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Reisedaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Reiseplan",
@@ -193222,8 +193222,8 @@
       "leipzigRank": 17769,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Geburtstermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Gefahrenzone",
@@ -197244,7 +197244,7 @@
       "leipzigRank": 18145,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Montageanleitung",
@@ -197700,8 +197700,8 @@
       "leipzigRank": 18188,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Notartermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Notwehr",
@@ -201041,7 +201041,7 @@
       "leipzigRank": 18502,
       "articleHelp": "Compound noun — gender follows the last element: Disziplin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-(e)n (die Teildisziplinen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Tele",
@@ -203684,7 +203684,7 @@
       "leipzigRank": 18752,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Altglas",
@@ -209125,7 +209125,7 @@
       "leipzigRank": 19259,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Haltbarkeitsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum",
+      "ruleId": "das.suffix_um_latin",
       "cefrLevel": "C1"
     },
     {
@@ -211027,7 +211027,7 @@
       "leipzigRank": 19437,
       "articleHelp": "Compound noun — gender follows the last element: Medizin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Konfektion",
@@ -213612,8 +213612,8 @@
       "leipzigRank": 19680,
       "articleHelp": "Compound noun — gender follows the last element: Magazin (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Onlinemagazine). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Onlineumfrage",
@@ -214903,7 +214903,7 @@
       "leipzigRank": 19801,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Rechnungsdaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Rechtsfähigkeit",
@@ -216434,7 +216434,7 @@
       "leipzigRank": 19945,
       "articleHelp": "Compound noun — gender follows the last element: Disziplin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "This noun is singular only (Singularetantum) — it has no plural form. Common for abstract concepts, materials, and collective nouns.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Selbsterfahrung",
@@ -220391,8 +220391,8 @@
       "leipzigRank": 20316,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Abgabetermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Abgangszeugnis",
@@ -222447,8 +222447,8 @@
       "leipzigRank": 20509,
       "articleHelp": "Compound noun — gender follows the last element: Magazin (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Branchenmagazine). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Brandbombe",
@@ -223245,7 +223245,7 @@
       "leipzigRank": 20584,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "die Dikta. Irregular or mixed plural pattern. Best memorized directly.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Dill",
@@ -230049,8 +230049,8 @@
       "leipzigRank": 21218,
       "articleHelp": "Compound noun — gender follows the last element: Magazin (das). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Kulturmagazine). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße).",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Kulturministerin",
@@ -231414,7 +231414,7 @@
       "leipzigRank": 21346,
       "articleHelp": "Compound noun — gender follows the last element: Votum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Misstrauensvoten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Miteigentümer",
@@ -232417,9 +232417,9 @@
       "english": "pharmacy/printing house",
       "rank": 20909,
       "leipzigRank": 21441,
-      "articleHelp": "Suffix pattern: -in (feminine person noun) → always die. Marks the feminine form of a masculine noun. E.g. Ärztin, Freundin, Köchin, Studentin. Plural always -innen.",
+      "articleHelp": "Stressed loan -in (Latin officina) — not the female-person suffix, but die Offizin happens to be feminine anyway, like die Disziplin and die Medizin.",
       "pluralHelp": "-(e)n (die Offizinen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Ohm",
@@ -235768,8 +235768,8 @@
       "leipzigRank": 21756,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Sitzungstermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Sitzungszimmer",
@@ -238538,7 +238538,7 @@
       "leipzigRank": 22016,
       "articleHelp": "Compound noun — gender follows the last element: Datum (das). This is the #1 rule in German: always look at the final component. · Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Verfalldaten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Verführer",
@@ -241603,7 +241603,7 @@
       "leipzigRank": 22303,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "-(e)n (die Arboreten). Less common for neuter nouns, but occurs with Latin/Greek-origin words. E.g. Auge→Augen, Ohr→Ohren, Interesse→Interessen.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Architekturmodell",
@@ -255361,7 +255361,7 @@
       "leipzigRank": 23591,
       "articleHelp": "Compound noun — gender follows the last element: Disziplin (die). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-(e)n (die Nachbardisziplinen). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right.",
-      "ruleId": "die.suffix_in"
+      "ruleId": null
     },
     {
       "word": "Nachfolgestaat",
@@ -256922,8 +256922,8 @@
       "leipzigRank": 23738,
       "articleHelp": "Compound noun — gender follows the last element: Termin (der). This is the #1 rule in German: always look at the final component.",
       "pluralHelp": "-e (die Pflichttermine). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first.",
-      "ruleId": "die.suffix_in",
-      "isException": true
+      "ruleId": null,
+      "isException": false
     },
     {
       "word": "Pharmakologe",
@@ -256947,7 +256947,8 @@
       "articleHelp": "Suffix pattern: -in (feminine person noun) → always die. Marks the feminine form of a masculine noun. E.g. Ärztin, Freundin, Köchin, Studentin. Plural always -innen.",
       "pluralHelp": "+nen (die Philosophinnen). Rule: Feminine person nouns ending in -in double the n: Königin→Königinnen, Lehrerin→Lehrerinnen, Ärztin→Ärztinnen. 100% consistent.",
       "ruleId": "die.suffix_in",
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "isException": false
     },
     {
       "word": "Phoniatrie",
@@ -257313,7 +257314,7 @@
       "leipzigRank": 23774,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "die Präterita. Irregular or mixed plural pattern. Best memorized directly.",
-      "ruleId": "das.suffix_tum",
+      "ruleId": "das.suffix_um_latin",
       "cefrLevel": "A1"
     },
     {
@@ -258373,7 +258374,7 @@
       "leipzigRank": 23874,
       "articleHelp": "Suffix pattern: -um (Latin/Greek) → usually das. E.g. Museum, Studium, Datum, Zentrum, Publikum.",
       "pluralHelp": "die Rekta. Irregular or mixed plural pattern. Best memorized directly.",
-      "ruleId": "das.suffix_tum"
+      "ruleId": "das.suffix_um_latin"
     },
     {
       "word": "Rendering",
@@ -271129,9 +271130,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-b2",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Compound noun — gender follows the last element: Bein (das). The ending is -ein (Bein), not the -in suffix.",
       "pluralHelp": "+nen plural.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "B2"
     },
     {
@@ -271814,9 +271815,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-b2",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Compound noun — gender follows the last element: Termin (der). The stressed -in in Termin is not the female-person suffix.",
       "pluralHelp": "+nen plural.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "B2"
     },
     {
@@ -273884,9 +273885,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-b2",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Chemical substances in -in are neuter: das Endorphin, das Insulin, das Nikotin. The -in is a stressed loan ending, not the female-person suffix.",
       "pluralHelp": "+nen plural.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "B2"
     },
     {
@@ -276470,9 +276471,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-c1",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Compound noun — gender follows the last element: Magazin (das). Stressed loan -in, not the female-person suffix.",
       "pluralHelp": "+nen plural.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "C1"
     },
     {
@@ -279409,9 +279410,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-c1",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Compound noun — gender follows the last element: Gutschein (der). The ending is -ein (Schein), not the -in suffix.",
       "pluralHelp": "+nen plural.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "C1"
     },
     {
@@ -280293,9 +280294,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-c1",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Compound noun — gender follows the last element: Magazin (das). Stressed loan -in, not the female-person suffix.",
       "pluralHelp": "+nen plural.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "C1"
     },
     {
@@ -280438,9 +280439,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "aspekte-c1",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Compound noun — gender follows the last element: Benzin (das). Stressed loan -in, not the female-person suffix.",
       "pluralHelp": "Singular-only.",
-      "ruleId": "die.suffix_in",
+      "ruleId": null,
       "cefrLevel": "C1"
     },
     {
@@ -284234,9 +284235,9 @@
       "leipzigRank": null,
       "manuallyAdded": true,
       "source": "netzwerk-a2",
-      "articleHelp": "Suffix pattern: -in/-erin -> die for female persons.",
+      "articleHelp": "Diminutive -lein → always das, overriding the base word's gender: das Hasilein (from der Hase), like das Büchlein.",
       "pluralHelp": "Singular-only.",
-      "ruleId": "die.suffix_in",
+      "ruleId": "das.diminutives",
       "cefrLevel": "A2"
     },
     {
