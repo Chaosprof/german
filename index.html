@@ -1092,6 +1092,17 @@ const MATCHING_BATCH_SIZE = 10;
 const TIMED_CHALLENGE_DURATION = 60;
 const PERSISTED_BEST_SCORE_MODE_IDS = new Set([...GAME_MODES.map(({ id }) => id), "timed", "survival"]);
 const VALID_PERSISTED_MODE_STAT_IDS = new Set(["article", "plural", "reverse", "verb_forms", "verb_prep"]);
+
+// Per-deck skill mastery: which modeStats skill applies to which deck words.
+// Article/plural only count words that resolve to noun entries, so custom decks
+// holding verbs/adjectives don't dilute those two skills.
+const DECK_SKILLS = [
+  { id: "article", label: "A", name: "Articles", words: dk => (dk.nouns || []).filter(w => getDeckEntriesByName(w).length) },
+  { id: "plural", label: "P", name: "Plurals", words: dk => (dk.nouns || []).filter(w => getDeckEntriesByName(w).length) },
+  { id: "reverse", label: "T", name: "Translation", words: dk => [...(dk.nouns || []), ...(dk.adjectives || []), ...(dk.verbs || [])] },
+  { id: "verb_forms", label: "V", name: "Verb forms", words: dk => dk.verbForms || [] },
+  { id: "verb_prep", label: "V+P", name: "Verb + preposition", words: dk => dk.verbPrepositions || [] },
+];
 const VALID_CAMPAIGN_CHALLENGES = CAMPAIGN_STATES.reduce((acc, state) => {
   acc[state.id] = new Set(state.challenges.map(ch => ch.id));
   return acc;
@@ -2713,6 +2724,9 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const nounStats = userData.nounStats || {};
   const modeStats = userData.modeStats || {};
   const masteredSet = new Set(userData.masteredNouns || []);
+  const modeMasteredSets = useMemo(() => Object.fromEntries(
+    Object.entries(userData.modeMastered || {}).map(([m, words]) => [m, new Set(words)])
+  ), [userData.modeMastered]);
   const gameModeMeta = GAME_MODES.find(gm => gm.id === selectedGameMode) || GAME_MODES[0];
   const visibleGameModes = showCasualModes ? CASUAL_GAME_MODES : MAIN_GAME_MODES;
   const bestScoreKeyPrefix = selectedGameMode === "classic"
@@ -2884,6 +2898,54 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     if (pct >= 80)  return "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(217,119,6,0.18))";
     return UI.panel;
   };
+
+  // ── Per-deck skill mastery (the dot row on deck cards) ────────
+  // Durable: a word counts once it has ever hit a 5-streak in that mode
+  // (modeMastered) or currently holds one (modeStats), so the number only climbs.
+  const isSkillWordMastered = (modeId, word) => {
+    if (modeMasteredSets[modeId]?.has(word)) return true;
+    const s = modeStats[modeId + ":" + word];
+    return !!(s && (s.consecutiveCorrect || 0) >= 5);
+  };
+  // 100% only when literally every word is mastered; 99.5+ must not round up to ★.
+  const masteryPct = (mastered, total) => !total ? 0 : mastered >= total ? 100 : Math.min(99, Math.round((mastered / total) * 100));
+  const deckMastery = (dk) => {
+    const skills = [];
+    let mastered = 0, total = 0;
+    for (const sk of DECK_SKILLS) {
+      const words = sk.words(dk);
+      if (!words.length) continue;
+      let m = 0;
+      for (const w of words) if (isSkillWordMastered(sk.id, w)) m++;
+      mastered += m; total += words.length;
+      skills.push({ id: sk.id, label: sk.label, name: sk.name, mastered: m, total: words.length, pct: masteryPct(m, words.length) });
+    }
+    return { skills, mastered, total, pct: masteryPct(mastered, total) };
+  };
+  // Mastery medal tiers (bronze 50 / silver 75 / gold 90 / ★ 100) — deliberately
+  // softer than the best-score tiers, since full-deck mastery is a long game.
+  const masteryDotColor = (pct) => {
+    if (pct >= 90) return "#F59E0B";
+    if (pct >= 75) return "#64748B";
+    if (pct >= 50) return "#B45309";
+    if (pct > 0)   return UI.success;
+    return UI.lineStrong;
+  };
+  const renderMasteryDots = (dm) => dm.skills.length > 0 && (
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,position:"relative",marginTop:1}}>
+      {dm.skills.map(sk => (
+        <div key={sk.id} title={`${sk.name}: ${sk.mastered}/${sk.total} mastered`} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
+          {sk.pct >= 100
+            ? <span style={{fontSize:11,lineHeight:"10px",color:"#F59E0B"}}>★</span>
+            : <span style={{width:10,height:10,borderRadius:5,boxSizing:"border-box",border:`1.5px solid ${sk.pct > 0 ? masteryDotColor(sk.pct) : UI.lineStrong}`,background:sk.pct > 0 ? `linear-gradient(to top, ${masteryDotColor(sk.pct)} ${sk.pct}%, rgba(255,255,255,0.85) ${sk.pct}%)` : "rgba(255,255,255,0.6)"}}/>}
+          <span style={{fontSize:7,fontWeight:800,color:UI.faint,letterSpacing:0.4,lineHeight:"8px"}}>{sk.label}</span>
+        </div>
+      ))}
+      {dm.pct > 0 && (
+        <span title={`Deck mastery: ${dm.mastered}/${dm.total} word-skills`} style={{fontSize:9,fontWeight:900,color:masteryDotColor(dm.pct),marginLeft:2}}>{dm.pct}%</span>
+      )}
+    </div>
+  );
 
   const renderTierSelector = () => {
     const showRanges = source === "hundred-slices";
@@ -3239,6 +3301,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
       ? dk.description
       : `${deckCountLabel(dk)}${userDeck && dk.created ? ` - ${new Date(dk.created).toLocaleDateString()}` : ""}`;
     const title = dk.shortName || dk.name;
+    const dm = deckMastery(dk);
     return (
       <div key={dk.id} style={{display:"flex",gap:6,alignItems:"stretch",minWidth:0}}>
         <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.tierBtn,width:"100%",minHeight:118,borderColor,background:bg,position:"relative",overflow:"hidden",padding:"10px 6px",gap:4}}>
@@ -3249,6 +3312,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           </div>
           <span style={{fontSize:12,fontWeight:800,color:isPerfect?UI.gold:UI.textStrong,position:"relative",lineHeight:1.2,textAlign:"center",overflowWrap:"anywhere"}}>{title}</span>
           <span style={{fontSize:10,color:UI.muted,position:"relative",lineHeight:1.25,textAlign:"center",overflowWrap:"anywhere"}}>{subtitle}</span>
+          {renderMasteryDots(dm)}
         </button>
         {userDeck && (
           <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 8px"}}>Del</button>
