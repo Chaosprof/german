@@ -134,7 +134,12 @@
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<!-- Pin to Babel 7: its preset-react defaults to the classic JSX runtime
+     (React.createElement, using the React UMD global). Babel 8 switched the
+     default to the automatic runtime, which injects `import {jsx} from
+     "react/jsx-runtime"` — fatal in a classic `text/babel` script
+     ("Cannot use import statement outside a module"). Do not unpin. -->
+<script crossorigin src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
 </head>
 <body>
 <div id="root"></div>
