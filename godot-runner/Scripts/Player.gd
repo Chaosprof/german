@@ -1,521 +1,473 @@
-### Player.gd — Artikel Runner
+### Player.gd — Artikel Runner endless-runner controller.
+### Snappy lane tweens, buffered jumps, slide-roll, stumble + i-frames,
+### speed ramp, smooth chase camera with FOV/shake juice.
 
 extends CharacterBody3D
 
-# Animation / run state
-var is_jumping = false
-var game_starts = false
-var game_won = false
-var _results_sent = false
+# ── Tuning ───────────────────────────────────────────────────────────
+const START_SPEED := 7.0
+const MAX_SPEED := 13.5
+const SPEED_RAMP := 0.030          # m/s gained per second
+const LANE_TWEEN_TIME := 0.16
+const JUMP_VELOCITY := 9.6
+const GRAVITY := 26.0
+const FAST_FALL_MULT := 3.1
+const COYOTE_TIME := 0.10
+const JUMP_BUFFER := 0.12
+const SLIDE_TIME := 0.65
+const STUMBLE_TIME := 1.1
+const IFRAMES := 1.5
+const CAM_FOV_BASE := 71.0
+const CAM_FOV_SPAN := 9.0
 
-# Movement tuning
-var speed = 5.0
-var jump_velocity = 10.0
-const jump_speed = 3.0
-const gravity = 20.0
-
-# Lane-based horizontal movement (3 lanes)
-const LANE_POSITIONS := [-1.0, 0.0, 1.0]
-const LANE_SNAP_SPEED := 16.0
-var current_lane: int = 1
-var prev_lane: int = 1
-
-# Air-jump polish
-const COYOTE_TIME := 0.12
-const JUMP_BUFFER := 0.14
-const MAX_AIR_JUMPS := 1
-var _coyote_left := 0.0
-var _jump_buffered := 0.0
-var _air_jumps_left := MAX_AIR_JUMPS
-var _was_on_floor := true
-
-# Slide
-const SLIDE_DURATION := 0.65
-const SLIDE_SPEED_BOOST := 1.6
+# ── State ────────────────────────────────────────────────────────────
+var run_speed := START_SPEED
+var current_lane := 1
+var lane_x := 0.0                   # tweened toward LANE_X[current_lane]
 var is_sliding := false
-var _slide_timer := 0.0
-var _capsule_base_height := 0.0
-var _capsule_base_radius := 0.0
-var _collider_base_pos := Vector3.ZERO
-var _mesh_base_rot := Vector3.ZERO
-var _mesh_base_pos := Vector3.ZERO
+var _slide_left := 0.0
+var _coyote := 0.0
+var _jump_buffer := 0.0
+var _was_on_floor := true
+var _stumble_left := 0.0
+var _iframes := 0.0
+var _blink_t := 0.0
+var _lane_tween: Tween
+var _lean := 0.0                    # mesh lean target (z-rot)
+var _dead := false
 
-# Camera juice
-const CAM_BASE_FOV := 75.0
-const LANE_TILT_DEG := 6.0
-const LANE_TILT_SMOOTH := 10.0
-var _cam_shake_time := 0.0
-var _cam_shake_duration := 0.001
-var _cam_shake_amp := 0.0
-var _fov_target := CAM_BASE_FOV
-var _fov_current := CAM_BASE_FOV
-var _fov_hold_timer := 0.0
-var _cam_base_local_pos := Vector3.ZERO
+# Touch / swipe
+var _touch_start := Vector2.ZERO
+var _touch_id := -1
+const SWIPE_MIN := 46.0
 
-# Node refs
-@onready var game_timer = $GameTimer
-@onready var game_over_screen = $HUD/GameOverScreen
-@onready var game_results_label = $HUD/GameOverScreen/Container/Results/Label
-@onready var progress_button = $HUD/GameOverScreen/Container/Results/ProgressButton
-@onready var world = get_node("/root/Main/World")
-@onready var main = get_node("/root/Main/")
-@onready var start_screen = $HUD/StartScreen
-@onready var level_pass_music = $Sounds/LevelPassMusic
-@onready var level_fail_music = $Sounds/LevelFailMusic
-@onready var jump_sfx = $Sounds/JumpSFX
+# ── Nodes ────────────────────────────────────────────────────────────
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var mesh_root: Node3D = $"Root Scene"
-@onready var camera_pivot: Node3D = $Camera
-@onready var camera_3d: Camera3D = $Camera/SpringArm3D/Camera3D
-
-# FX nodes (created programmatically)
-var trail_particles: GPUParticles3D
-var dust_burst: GPUParticles3D
-var impact_burst: GPUParticles3D
-
-# Outfit visuals
-var _outfit_nodes: Array[Node] = []
+@onready var anim: AnimationPlayer = $"Root Scene/AnimationPlayer"
 @onready var skeleton: Skeleton3D = get_node_or_null("Root Scene/RootNode/Skeleton3D")
 
-# Game State
-enum game_state {CONTINUE, RETRY}
-var current_state
+var camera: Camera3D
+var _cam_shake_amp := 0.0
+var _cam_shake_t := 0.0
+var _cam_shake_dur := 0.001
+var _fov_punch := 0.0
 
-func _ready():
-	start_screen.visible = false
-	game_starts = true
-	Global.game_started = true
-	game_timer.start()
-	Global.score_requirement = 999
+var _capsule_h := 1.8
+var _capsule_pos := Vector3.ZERO
+var _mesh_rot := Vector3.ZERO
+var _mesh_pos := Vector3.ZERO
 
-	# Cache originals
-	if collision_shape and collision_shape.shape is CapsuleShape3D:
-		var cap := collision_shape.shape as CapsuleShape3D
-		# Duplicate so slide mutations don't leak across instances
-		cap = cap.duplicate() as CapsuleShape3D
+# FX
+var dust: GPUParticles3D
+var sparks: GPUParticles3D
+
+# SFX
+var _sfx: Dictionary = {}
+
+# Outfits
+var _outfit_nodes: Array = []
+
+func _ready() -> void:
+	add_to_group("Player")
+	if collision_shape.shape is CapsuleShape3D:
+		var cap: CapsuleShape3D = collision_shape.shape.duplicate()
 		collision_shape.shape = cap
-		_capsule_base_height = cap.height if cap.height > 0.0 else 2.0
-		_capsule_base_radius = cap.radius if cap.radius > 0.0 else 0.5
-		_collider_base_pos = collision_shape.position
-	if mesh_root:
-		_mesh_base_rot = mesh_root.rotation
-		_mesh_base_pos = mesh_root.position
-	if camera_3d:
-		_cam_base_local_pos = camera_3d.position
-		camera_3d.fov = CAM_BASE_FOV
-
+		_capsule_h = cap.height
+		_capsule_pos = collision_shape.position
+	_mesh_rot = mesh_root.rotation
+	_mesh_pos = mesh_root.position
+	_setup_camera()
 	_setup_particles()
+	_setup_sfx()
+	_start_run_anim()
 	_apply_outfit(Global.current_outfit)
-	Global.outfit_changed.connect(_on_outfit_changed)
+	Global.outfit_changed.connect(func(): _apply_outfit(Global.current_outfit))
+	Global.game_ended.connect(_on_game_ended)
+	lane_x = CityKit.LANE_X[current_lane]
 
-func _on_outfit_changed():
-	_apply_outfit(Global.current_outfit)
+func reset_run() -> void:
+	_dead = false
+	run_speed = START_SPEED
+	current_lane = 1
+	lane_x = CityKit.LANE_X[1]
+	global_position = Vector3(lane_x, 0.1, 0)
+	velocity = Vector3.ZERO
+	_stumble_left = 0.0
+	_iframes = 0.0
+	_end_slide()
+	mesh_root.visible = true
+	_start_run_anim()
+	_snap_camera()
 
-func _physics_process(delta):
-	handle_movement(delta)
-	_update_slide(delta)
-	_update_camera(delta)
-
-func handle_movement(delta):
-	if not game_starts or game_won:
+func _start_run_anim() -> void:
+	if anim == null:
 		return
+	for a in ["Idle", "Running"]:
+		if anim.has_animation(a):
+			anim.get_animation(a).loop_mode = Animation.LOOP_LINEAR
+	anim.play("Running")
 
-	# ── Input: lane switching (camera is rotated 180° around Y) ──
-	if Input.is_action_just_pressed("ui_right"):
-		_change_lane(max(0, current_lane - 1))
+# ══════════════════════════════════════════════════════════════════════
+#  INPUT
+# ══════════════════════════════════════════════════════════════════════
+func _unhandled_input(event: InputEvent) -> void:
+	# Swipe controls for touch screens
+	if event is InputEventScreenTouch:
+		if event.pressed and _touch_id == -1:
+			_touch_id = event.index
+			_touch_start = event.position
+		elif not event.pressed and event.index == _touch_id:
+			_touch_id = -1
+	elif event is InputEventScreenDrag and event.index == _touch_id:
+		var d: Vector2 = event.position - _touch_start
+		if d.length() >= SWIPE_MIN:
+			if absf(d.x) > absf(d.y):
+				# Swipe right (+x screen) → move toward -X lane (see _collect_keyboard_input)
+				_change_lane(-1 if d.x > 0 else 1)
+			elif d.y < 0:
+				_queue_jump()
+			else:
+				_do_slide_input()
+			_touch_start = event.position   # allow chained swipes
+
+func _collect_keyboard_input() -> void:
+	# The chase camera looks toward +Z, so world +X is on screen-LEFT and -X on
+	# screen-RIGHT. Lane index grows with +X, hence "left" steps the index up.
 	if Input.is_action_just_pressed("ui_left"):
-		_change_lane(min(LANE_POSITIONS.size() - 1, current_lane + 1))
-
-	# ── Input: slide ──
-	if Input.is_action_just_pressed("ui_slide"):
-		if is_on_floor():
-			_start_slide()
-		else:
-			# Fast-fall while airborne, slide queued via quick-drop impulse
-			velocity.y = min(velocity.y, -gravity * 0.6)
-
-	# Slide toward target lane
-	var target_x: float = LANE_POSITIONS[current_lane]
-	velocity.x = (target_x - position.x) * LANE_SNAP_SPEED
-
-	# ── Jump: coyote time, jump buffer, double-jump ──
+		_change_lane(1)
+	if Input.is_action_just_pressed("ui_right"):
+		_change_lane(-1)
 	if Input.is_action_just_pressed("ui_jump"):
-		_jump_buffered = JUMP_BUFFER
+		_queue_jump()
+	if Input.is_action_just_pressed("ui_slide"):
+		_do_slide_input()
 
+func _change_lane(dir: int) -> void:
+	if _dead:
+		return
+	var target: int = clampi(current_lane + dir, 0, 2)
+	if target == current_lane:
+		return
+	current_lane = target
+	_play_sfx("whoosh", -8.0)
+	_lean = -dir * 0.24
+	if _lane_tween and _lane_tween.is_valid():
+		_lane_tween.kill()
+	_lane_tween = create_tween()
+	_lane_tween.tween_property(self, "lane_x", CityKit.LANE_X[target], LANE_TWEEN_TIME) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_lane_tween.tween_callback(func(): _lean = 0.0)
+
+func _queue_jump() -> void:
+	if _dead:
+		return
+	_jump_buffer = JUMP_BUFFER
+
+func _do_slide_input() -> void:
+	if _dead:
+		return
 	if is_on_floor():
-		_coyote_left = COYOTE_TIME
-		_air_jumps_left = MAX_AIR_JUMPS
-		# Landing event (first frame back on floor)
+		_start_slide()
+	else:
+		velocity.y = minf(velocity.y, -GRAVITY * 0.55)   # fast fall
+
+# ══════════════════════════════════════════════════════════════════════
+#  PHYSICS
+# ══════════════════════════════════════════════════════════════════════
+func _physics_process(delta: float) -> void:
+	if _dead:
+		_update_camera(delta)
+		return
+	_collect_keyboard_input()
+
+	# Speed ramp + stumble recovery
+	run_speed = minf(run_speed + SPEED_RAMP * delta, MAX_SPEED)
+	var speed := run_speed
+	if _stumble_left > 0.0:
+		_stumble_left -= delta
+		speed *= lerpf(1.0, 0.5, clampf(_stumble_left / STUMBLE_TIME, 0, 1))
+	if is_sliding:
+		speed *= 1.12
+
+	# Lateral: tweened lane_x drives x velocity for proper collision sweep
+	velocity.x = (lane_x - global_position.x) / maxf(delta, 0.0001)
+	velocity.x = clampf(velocity.x, -30, 30)
+
+	# Vertical
+	if is_on_floor():
+		_coyote = COYOTE_TIME
 		if not _was_on_floor:
 			_on_landed()
-		is_jumping = false
 	else:
-		_coyote_left -= delta
-		velocity.y -= gravity * delta
+		_coyote -= delta
+		var g := GRAVITY
+		if velocity.y < 0:
+			g *= 1.35      # heavier fall = snappier arc
+		velocity.y -= g * delta
 
-	_jump_buffered -= delta
+	_jump_buffer -= delta
+	if _jump_buffer > 0.0 and _coyote > 0.0:
+		_do_jump()
 
-	if _jump_buffered > 0.0:
-		if _coyote_left > 0.0:
-			_do_jump(jump_velocity)
-			_jump_buffered = 0.0
-			_coyote_left = 0.0
-		elif _air_jumps_left > 0:
-			_do_jump(jump_velocity * 0.9)
-			_air_jumps_left -= 1
-			_jump_buffered = 0.0
-			_punch_fov(8.0, 0.15)
-
-	# Forward movement: faster while sliding, slight slow while jumping
-	var forward: float = speed
-	if is_sliding:
-		forward *= SLIDE_SPEED_BOOST
-	elif is_jumping:
-		forward = jump_speed
-	velocity.z = forward
-
+	velocity.z = speed
 	move_and_slide()
 	_was_on_floor = is_on_floor()
 
-	# Air platform collision check (only when stalled)
-	if velocity.z == 0:
-		check_for_platform_collisions()
+	Global.add_distance(speed * delta)
 
-func _change_lane(new_lane: int) -> void:
-	if new_lane == current_lane:
-		return
-	prev_lane = current_lane
-	current_lane = new_lane
+	_update_slide(delta)
+	_update_iframes(delta)
+	_update_mesh(delta)
+	_update_camera(delta)
 
-func _do_jump(v: float) -> void:
-	velocity.y = v
-	is_jumping = true
-	if jump_sfx:
-		jump_sfx.play()
-	# Cancel slide if jumping out of it
-	if is_sliding:
-		_end_slide()
+func _do_jump() -> void:
+	_jump_buffer = 0.0
+	_coyote = 0.0
+	velocity.y = JUMP_VELOCITY
+	_end_slide()
+	_play_sfx("jump", -6.0)
+	if anim and anim.has_animation("Jump"):
+		anim.play("Jump", 0.1, 1.25)
+	_fov_punch = 4.0
 
 func _on_landed() -> void:
-	# Landing juice: dust puff + small shake
-	_shake_camera(0.08, 0.08)
-	if dust_burst:
-		dust_burst.global_position = global_position + Vector3(0, 0.05, 0)
-		dust_burst.restart()
-		dust_burst.emitting = true
+	_shake(0.10, 0.05)
+	_play_sfx("land", -14.0)
+	dust.restart()
+	dust.emitting = true
+	if anim and not is_sliding:
+		anim.play("Running", 0.18)
 
 func _start_slide() -> void:
-	if is_sliding:
-		_slide_timer = SLIDE_DURATION
-		return
 	is_sliding = true
-	_slide_timer = SLIDE_DURATION
-	if collision_shape and collision_shape.shape is CapsuleShape3D:
-		var cap := collision_shape.shape as CapsuleShape3D
-		cap.height = max(0.6, _capsule_base_height * 0.45)
-		# Lower the collider so feet stay grounded
-		collision_shape.position = _collider_base_pos + Vector3(0, -(_capsule_base_height - cap.height) * 0.5, 0)
-	if mesh_root:
-		# Lean forward & slightly down
-		mesh_root.rotation = _mesh_base_rot + Vector3(deg_to_rad(-70.0), 0, 0)
-		mesh_root.position = _mesh_base_pos + Vector3(0, -0.4, 0)
+	_slide_left = SLIDE_TIME
+	_play_sfx("whoosh", -10.0, 0.8)
+	if collision_shape.shape is CapsuleShape3D:
+		var cap: CapsuleShape3D = collision_shape.shape
+		cap.height = 0.7
+		collision_shape.position = _capsule_pos + Vector3(0, -(_capsule_h - 0.7) * 0.5, 0)
+	# Forward roll
+	var tw := create_tween()
+	tw.tween_property(mesh_root, "rotation:x", _mesh_rot.x + TAU * 0.96, 0.45) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(mesh_root, "position:y", _mesh_pos.y + 0.25, 0.2)
+	tw.tween_property(mesh_root, "rotation:x", _mesh_rot.x, 0.001)
+	tw.tween_property(mesh_root, "position:y", _mesh_pos.y, 0.1)
 
 func _end_slide() -> void:
 	if not is_sliding:
 		return
 	is_sliding = false
-	_slide_timer = 0.0
-	if collision_shape and collision_shape.shape is CapsuleShape3D:
-		var cap := collision_shape.shape as CapsuleShape3D
-		cap.height = _capsule_base_height
-		cap.radius = _capsule_base_radius
-		collision_shape.position = _collider_base_pos
-	if mesh_root:
-		mesh_root.rotation = _mesh_base_rot
-		mesh_root.position = _mesh_base_pos
+	if collision_shape.shape is CapsuleShape3D:
+		var cap: CapsuleShape3D = collision_shape.shape
+		cap.height = _capsule_h
+		collision_shape.position = _capsule_pos
+	if anim and is_on_floor():
+		anim.play("Running", 0.15)
 
 func _update_slide(delta: float) -> void:
-	if not is_sliding:
+	if is_sliding:
+		_slide_left -= delta
+		if _slide_left <= 0.0:
+			_end_slide()
+
+func _update_iframes(delta: float) -> void:
+	if _iframes > 0.0:
+		_iframes -= delta
+		_blink_t += delta
+		mesh_root.visible = fmod(_blink_t, 0.16) < 0.09
+		if _iframes <= 0.0:
+			mesh_root.visible = true
+
+func _update_mesh(delta: float) -> void:
+	# Lean into lane changes
+	mesh_root.rotation.z = lerpf(mesh_root.rotation.z, _lean, minf(delta * 11.0, 1.0))
+	# Safety net: the non-looping "Jump" clip holds its last frame (a raised leg).
+	# If a landing event is ever missed, force the run cycle back while grounded so
+	# the character can never get stuck mid-stride.
+	if anim and is_on_floor() and not is_sliding \
+			and anim.current_animation != "Running":
+		anim.play("Running", 0.15)
+	# Run animation speed follows ground speed
+	if anim and anim.current_animation == "Running":
+		anim.speed_scale = run_speed / START_SPEED * 1.05
+
+# ══════════════════════════════════════════════════════════════════════
+#  HITS / PICKUPS
+# ══════════════════════════════════════════════════════════════════════
+func hit_obstacle(ob: Node3D) -> void:
+	if _dead or _iframes > 0.0:
 		return
-	_slide_timer -= delta
-	if _slide_timer <= 0.0:
-		_end_slide()
+	_iframes = IFRAMES
+	_blink_t = 0.0
+	_stumble_left = STUMBLE_TIME
+	_end_slide()
+	_play_sfx("crash", -2.0)
+	_shake(0.4, 0.22)
+	_fov_punch = -7.0
+	sparks.global_position = global_position + Vector3(0, 0.8, 0.3)
+	sparks.restart()
+	sparks.emitting = true
+	Global.register_crash()
 
-# ── Camera juice ──────────────────────────────────────────────
+func on_coin_collected(at: Vector3) -> void:
+	_play_sfx("coin", -8.0, randf_range(0.96, 1.06))
 
-func _shake_camera(duration: float, amp: float) -> void:
-	if duration > _cam_shake_time:
-		_cam_shake_time = duration
-		_cam_shake_duration = max(duration, 0.001)
-	_cam_shake_amp = max(_cam_shake_amp, amp)
+func on_gate_answered(correct: bool) -> void:
+	if correct:
+		_play_sfx("correct", -3.0)
+		_fov_punch = 5.0
+	else:
+		_play_sfx("wrong", -3.0)
+		_shake(0.35, 0.16)
+		_iframes = maxf(_iframes, 0.8)   # grace period after a wrong gate
+		_blink_t = 0.0
 
-func _punch_fov(amount: float, duration: float) -> void:
-	_fov_target = CAM_BASE_FOV + amount
-	_fov_hold_timer = duration
+func _on_game_ended(_won: bool) -> void:
+	_dead = true
+	velocity = Vector3.ZERO
+	if anim and anim.has_animation("Idle"):
+		anim.play("Idle", 0.3)
+
+# ══════════════════════════════════════════════════════════════════════
+#  CAMERA
+# ══════════════════════════════════════════════════════════════════════
+func _setup_camera() -> void:
+	camera = Camera3D.new()
+	camera.top_level = true
+	camera.fov = CAM_FOV_BASE
+	camera.near = 0.1
+	camera.far = 420.0
+	add_child(camera)
+	camera.current = true
+	_snap_camera()
+
+func _snap_camera() -> void:
+	var p := global_position
+	camera.global_position = Vector3(p.x * 0.5, 2.8, p.z - 4.9)
+	camera.look_at(Vector3(p.x * 0.55, 1.55, p.z + 9.0))
 
 func _update_camera(delta: float) -> void:
-	if not camera_3d or not camera_pivot:
+	if camera == null:
 		return
+	var p := global_position
+	var tx: float = p.x * 0.5
+	var ty: float = 2.8 + maxf(p.y - 1.2, 0.0) * 0.25
+	var tz: float = p.z - 4.9
+	var cp := camera.global_position
+	cp.x = lerpf(cp.x, tx, minf(delta * 7.5, 1.0))
+	cp.y = lerpf(cp.y, ty, minf(delta * 6.0, 1.0))
+	cp.z = tz
+	# Shake
+	if _cam_shake_t > 0.0:
+		_cam_shake_t -= delta
+		var k := _cam_shake_amp * clampf(_cam_shake_t / _cam_shake_dur, 0, 1)
+		cp.x += randf_range(-k, k)
+		cp.y += randf_range(-k, k)
+	camera.global_position = cp
+	camera.look_at(Vector3(p.x * 0.55, 1.55, p.z + 9.0))
+	# Subtle roll with lateral motion
+	camera.rotation.z = clampf(-velocity.x * 0.006, -0.05, 0.05)
+	# FOV: speed + punches
+	_fov_punch = lerpf(_fov_punch, 0.0, minf(delta * 5.0, 1.0))
+	var speed_t: float = (run_speed - START_SPEED) / (MAX_SPEED - START_SPEED)
+	camera.fov = CAM_FOV_BASE + speed_t * CAM_FOV_SPAN + _fov_punch
 
-	# FOV punch decay
-	if _fov_hold_timer > 0.0:
-		_fov_hold_timer -= delta
-	else:
-		_fov_target = CAM_BASE_FOV
-	_fov_current = lerp(_fov_current, _fov_target, clamp(delta * 6.0, 0.0, 1.0))
-	camera_3d.fov = _fov_current
+func _shake(dur: float, amp: float) -> void:
+	_cam_shake_t = maxf(_cam_shake_t, dur)
+	_cam_shake_dur = maxf(dur, 0.001)
+	_cam_shake_amp = maxf(_cam_shake_amp, amp)
 
-	# Lane tilt: roll camera opposite to lateral velocity
-	var tilt_target := clampf(-velocity.x * 0.12, -deg_to_rad(LANE_TILT_DEG), deg_to_rad(LANE_TILT_DEG))
-	camera_3d.rotation.z = lerp(camera_3d.rotation.z, tilt_target, clampf(delta * LANE_TILT_SMOOTH, 0.0, 1.0))
-
-	# Screen shake — amplitude decays over the shake's own duration
-	var shake_offset := Vector3.ZERO
-	if _cam_shake_time > 0.0:
-		_cam_shake_time -= delta
-		var t := clampf(_cam_shake_time / _cam_shake_duration, 0.0, 1.0)
-		var amp := _cam_shake_amp * t
-		shake_offset = Vector3(randf_range(-amp, amp), randf_range(-amp, amp), 0.0)
-		if _cam_shake_time <= 0.0:
-			_cam_shake_amp = 0.0
-	camera_3d.position = _cam_base_local_pos + shake_offset
-
-# ── Particles ────────────────────────────────────────────────
-
+# ══════════════════════════════════════════════════════════════════════
+#  PARTICLES & SFX
+# ══════════════════════════════════════════════════════════════════════
 func _setup_particles() -> void:
-	trail_particles = _make_trail_particles()
-	trail_particles.position = Vector3(0, -0.6, 0.1)
-	add_child(trail_particles)
+	dust = _make_particles(Color(0.93, 0.88, 0.78, 0.65), 14, 0.4, true)
+	dust.position = Vector3(0, -0.85, 0)
+	add_child(dust)
+	sparks = _make_particles(Color(1.0, 0.45, 0.15, 0.9), 24, 0.45, true)
+	sparks.top_level = true
+	add_child(sparks)
 
-	dust_burst = _make_dust_burst()
-	dust_burst.position = Vector3(0, -0.9, 0)
-	add_child(dust_burst)
-
-	impact_burst = _make_impact_burst()
-	impact_burst.position = Vector3(0, 0, 0)
-	# Parent to /root/Main so burst can detach visually from player on crash
-	add_child(impact_burst)
-
-func _make_billboard_quad(size: float, color: Color) -> QuadMesh:
+func _make_particles(color: Color, amount: int, life: float, burst: bool) -> GPUParticles3D:
+	var p := GPUParticles3D.new()
+	var m := ParticleProcessMaterial.new()
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	m.emission_sphere_radius = 0.18
+	m.direction = Vector3(0, 1, -0.6) if burst else Vector3(0, 0.25, -1)
+	m.spread = 70.0 if burst else 16.0
+	m.initial_velocity_min = 1.8 if burst else 0.6
+	m.initial_velocity_max = 3.8 if burst else 1.4
+	m.gravity = Vector3(0, -6 if burst else -1.2, 0)
+	m.scale_min = 0.25
+	m.scale_max = 0.5
+	var curve := Curve.new()
+	curve.add_point(Vector2(0, 1))
+	curve.add_point(Vector2(1, 0))
+	var ct := CurveTexture.new()
+	ct.curve = curve
+	m.scale_curve = ct
+	p.process_material = m
 	var quad := QuadMesh.new()
-	quad.size = Vector2(size, size)
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	m.albedo_color = color
-	m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
-	m.vertex_color_use_as_albedo = true
-	m.disable_receive_shadows = true
-	m.no_depth_test = false
-	quad.material = m
-	return quad
-
-func _make_trail_particles() -> GPUParticles3D:
-	var p := GPUParticles3D.new()
-	var mat := ParticleProcessMaterial.new()
-	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	mat.emission_sphere_radius = 0.15
-	mat.direction = Vector3(0, 0.3, -1)
-	mat.spread = 20.0
-	mat.initial_velocity_min = 0.5
-	mat.initial_velocity_max = 1.6
-	mat.gravity = Vector3(0, -1.5, 0)
-	mat.scale_min = 0.25
-	mat.scale_max = 0.55
-	mat.color = Color(1.0, 0.95, 0.8, 0.55)
-	var curve := Curve.new()
-	curve.add_point(Vector2(0.0, 1.0))
-	curve.add_point(Vector2(1.0, 0.0))
-	var scale_tex := CurveTexture.new()
-	scale_tex.curve = curve
-	mat.scale_curve = scale_tex
-	p.process_material = mat
-	p.draw_pass_1 = _make_billboard_quad(0.5, Color(1, 0.95, 0.8, 1))
-	p.amount = 40
-	p.lifetime = 0.7
-	p.preprocess = 0.2
-	p.emitting = true
-	return p
-
-func _make_dust_burst() -> GPUParticles3D:
-	var p := GPUParticles3D.new()
-	var mat := ParticleProcessMaterial.new()
-	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	mat.emission_sphere_radius = 0.25
-	mat.direction = Vector3(0, 1, 0)
-	mat.spread = 80.0
-	mat.initial_velocity_min = 1.5
-	mat.initial_velocity_max = 3.0
-	mat.gravity = Vector3(0, -3, 0)
-	mat.scale_min = 0.35
-	mat.scale_max = 0.8
-	mat.color = Color(0.95, 0.9, 0.75, 0.7)
-	var curve := Curve.new()
-	curve.add_point(Vector2(0.0, 1.0))
-	curve.add_point(Vector2(1.0, 0.0))
-	var scale_tex := CurveTexture.new()
-	scale_tex.curve = curve
-	mat.scale_curve = scale_tex
-	p.process_material = mat
-	p.draw_pass_1 = _make_billboard_quad(0.6, Color(0.95, 0.9, 0.75, 1))
-	p.amount = 20
-	p.lifetime = 0.5
-	p.one_shot = true
-	p.explosiveness = 1.0
+	quad.size = Vector2(0.2, 0.2)
+	var qm := StandardMaterial3D.new()
+	qm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	qm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	qm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	qm.albedo_color = color
+	qm.albedo_texture = CityKit.soft_dot()
+	qm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	quad.material = qm
+	p.draw_pass_1 = quad
+	p.amount = amount
+	p.lifetime = life
+	p.one_shot = burst
+	p.explosiveness = 1.0 if burst else 0.0
 	p.emitting = false
 	return p
 
-func _make_impact_burst() -> GPUParticles3D:
-	var p := GPUParticles3D.new()
-	var mat := ParticleProcessMaterial.new()
-	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	mat.emission_sphere_radius = 0.2
-	mat.direction = Vector3(0, 1, 0)
-	mat.spread = 180.0
-	mat.initial_velocity_min = 3.0
-	mat.initial_velocity_max = 7.0
-	mat.gravity = Vector3(0, -6, 0)
-	mat.scale_min = 0.3
-	mat.scale_max = 0.9
-	mat.color = Color(1.0, 0.5, 0.2, 0.9)
-	var curve := Curve.new()
-	curve.add_point(Vector2(0.0, 1.0))
-	curve.add_point(Vector2(1.0, 0.0))
-	var scale_tex := CurveTexture.new()
-	scale_tex.curve = curve
-	mat.scale_curve = scale_tex
-	p.process_material = mat
-	p.draw_pass_1 = _make_billboard_quad(0.7, Color(1.0, 0.5, 0.2, 1))
-	p.amount = 40
-	p.lifetime = 0.6
-	p.one_shot = true
-	p.explosiveness = 1.0
-	p.emitting = false
-	return p
+func _setup_sfx() -> void:
+	var sources := {
+		"jump": "res://Assets/SFX/jump.wav",
+		"land": "res://Assets/SFX/land.wav",
+		"coin": "res://Assets/SFX/coin.wav",
+		"correct": "res://Assets/SFX/correct.wav",
+		"wrong": "res://Assets/SFX/wrong.wav",
+		"whoosh": "res://Assets/SFX/whoosh.wav",
+		"crash": "res://Assets/SFX/crash.wav",
+	}
+	for key in sources:
+		if ResourceLoader.exists(sources[key]):
+			var pl := AudioStreamPlayer.new()
+			pl.stream = load(sources[key])
+			add_child(pl)
+			_sfx[key] = pl
 
-# External hook — called from Obstacles.gd on crash
-func play_impact_fx() -> void:
-	_shake_camera(0.35, 0.25)
-	_punch_fov(-6.0, 0.12)
-	if impact_burst:
-		impact_burst.global_position = global_position + Vector3(0, 0.4, 0.2)
-		impact_burst.restart()
-		impact_burst.emitting = true
+func _play_sfx(key: String, vol_db := 0.0, pitch := 1.0) -> void:
+	if _sfx.has(key):
+		var pl: AudioStreamPlayer = _sfx[key]
+		pl.volume_db = vol_db
+		pl.pitch_scale = pitch
+		pl.play()
 
-# ── Air Platform Collisions ──────────────────────────────────
-func check_for_platform_collisions():
-	for i in range(get_slide_collision_count()):
-		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		if collider and collider.is_in_group("Air_Platform"):
-			if collision.get_normal().dot(Vector3(0, 0, -1)) > 0.5:
-				if Global.lives > 0:
-					Global.lives -= 1
-					Global.lives_updated.emit()
-				break
-
-# ── Input routing for game-over ──────────────────────────────
-func _input(event):
-	if game_over_screen and game_over_screen.visible:
-		if event is InputEventKey and event.pressed:
-			_send_results_and_exit()
-		elif event is InputEventScreenTouch and event.pressed:
-			_send_results_and_exit()
-
-func _on_game_timer_timeout():
-	Global.level_time -= 1
-	Global.level_time_updated.emit()
-	if Global.level_time <= 0 or Global.lives == 0:
-		game_over()
-
-func apply_effect(effect_name):
-	match effect_name:
-		"increase_score":
-			Global.score += 1
-			Global.score_updated.emit()
-		"boost_jump":
-			Global.jump_boost_count += 1
-			Global.jump_boost_updated.emit()
-		"decrease_time":
-			if Global.level_time >= 10:
-				Global.level_time -= 10
-				Global.level_time_updated.emit()
-
-func game_over():
-	game_timer.stop()
-	game_starts = false
-	Global.game_started = false
-	if main.level_music:
-		main.level_music.stop()
-	game_over_screen.visible = true
-	if Global.lives <= 0:
-		game_won = false
-		game_results_label.text = "GAME OVER"
-		if progress_button: progress_button.text = "EXIT"
-		current_state = game_state.RETRY
-		if level_fail_music: level_fail_music.play()
-	else:
-		game_won = true
-		game_results_label.text = "TIME UP!"
-		if progress_button: progress_button.text = "EXIT"
-		current_state = game_state.CONTINUE
-		if level_pass_music: level_pass_music.play()
-	Global.update_results.emit()
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	_send_results()
-
-func _send_results():
-	if _results_sent:
-		return
-	_results_sent = true
-	Global.send_results_to_js()
-
-func _send_results_and_exit():
-	_send_results()
-
-func reset_game_state():
-	is_jumping = false
-	game_starts = false
-	Global.game_started = false
-	game_won = false
-	game_over_screen.visible = false
-	world.reset_world()
-	get_tree().paused = false
-	start_screen.visible = false
-	if main.level_music: main.level_music.play()
-
-func _on_progress_button_pressed():
-	_send_results_and_exit()
-
-# ── Outfit system ────────────────────────────────────────────
-
+# ══════════════════════════════════════════════════════════════════════
+#  OUTFITS (mastery rewards — procedural hats & backpack)
+# ══════════════════════════════════════════════════════════════════════
 func _apply_outfit(outfit_name: String) -> void:
-	_clear_outfit()
-	if not skeleton:
-		return
-	match outfit_name:
-		"default":
-			_attach_backpack()
-		"berlin":
-			_attach_backpack()
-			_attach_beanie()
-		"bayern":
-			_attach_backpack()
-			_attach_bavarian_hat()
-		"hamburg":
-			_attach_backpack()
-			_attach_rain_hat()
-
-func _clear_outfit() -> void:
 	for n in _outfit_nodes:
 		if is_instance_valid(n):
 			n.queue_free()
 	_outfit_nodes.clear()
-
-func _attach_to_bone(bone_name: String, mesh: Mesh, mat: Material, offset: Vector3 = Vector3.ZERO, scale_v: Vector3 = Vector3.ONE) -> void:
 	if not skeleton:
 		return
+	_attach_backpack()
+	match outfit_name:
+		"berlin": _attach_beanie()
+		"bayern": _attach_bavarian_hat()
+		"hamburg": _attach_rain_hat()
+
+func _attach_to_bone(bone_name: String, mesh: Mesh, mat: Material, offset := Vector3.ZERO, scale_v := Vector3.ONE) -> void:
 	var bone_idx := skeleton.find_bone(bone_name)
 	if bone_idx < 0:
 		return
@@ -531,7 +483,7 @@ func _attach_to_bone(bone_name: String, mesh: Mesh, mat: Material, offset: Vecto
 	att.add_child(mi)
 	_outfit_nodes.append(att)
 
-func _mat(color: Color, metallic_v: float = 0.0, roughness_v: float = 0.8) -> StandardMaterial3D:
+func _mat(color: Color, metallic_v := 0.0, roughness_v := 0.8) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = color
 	m.metallic = metallic_v
@@ -552,7 +504,6 @@ func _attach_beanie() -> void:
 	_attach_to_bone("mixamorig_Head", cyl, _mat(Color(0.15, 0.15, 0.15)), Vector3(0, 0.14, 0))
 
 func _attach_bavarian_hat() -> void:
-	# Bavarian blue-white hat (Rauten pattern suggested by two-tone)
 	var brim := CylinderMesh.new()
 	brim.top_radius = 0.18
 	brim.bottom_radius = 0.18
@@ -565,16 +516,8 @@ func _attach_bavarian_hat() -> void:
 	crown.height = 0.12
 	crown.radial_segments = 10
 	_attach_to_bone("mixamorig_Head", crown, _mat(Color(0.92, 0.92, 0.95)), Vector3(0, 0.18, 0))
-	# Gold band (Schwarz-Rot-Gold nod)
-	var band := CylinderMesh.new()
-	band.top_radius = 0.125
-	band.bottom_radius = 0.125
-	band.height = 0.025
-	band.radial_segments = 12
-	_attach_to_bone("mixamorig_Head", band, _mat(Color(0.85, 0.68, 0.0), 0.6, 0.3), Vector3(0, 0.135, 0))
 
 func _attach_rain_hat() -> void:
-	# Hamburg Südwester / rain hat — navy blue with red-gold band
 	var brim := CylinderMesh.new()
 	brim.top_radius = 0.20
 	brim.bottom_radius = 0.16
@@ -584,20 +527,4 @@ func _attach_rain_hat() -> void:
 	var dome := SphereMesh.new()
 	dome.radius = 0.12
 	dome.height = 0.14
-	dome.radial_segments = 10
-	dome.rings = 6
 	_attach_to_bone("mixamorig_Head", dome, _mat(Color(0.12, 0.15, 0.28)), Vector3(0, 0.18, 0))
-	# Red band
-	var band := CylinderMesh.new()
-	band.top_radius = 0.165
-	band.bottom_radius = 0.165
-	band.height = 0.02
-	band.radial_segments = 12
-	_attach_to_bone("mixamorig_Head", band, _mat(Color(0.85, 0.12, 0.08)), Vector3(0, 0.135, 0))
-	# Gold trim
-	var trim := CylinderMesh.new()
-	trim.top_radius = 0.168
-	trim.bottom_radius = 0.168
-	trim.height = 0.01
-	trim.radial_segments = 12
-	_attach_to_bone("mixamorig_Head", trim, _mat(Color(0.85, 0.68, 0.0), 0.6, 0.3), Vector3(0, 0.148, 0))

@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://xug1man41ie4"
 path.s3tc="res://.godot/imported/AJ-17bfd556bfaefcb10bf774864655b8f5_Boy01_FacialAnimMap_3.png-f0c05dc84aa9c4e7fdeb565194c5d8fd.s3tc.ctex"
+path.etc2="res://.godot/imported/AJ-17bfd556bfaefcb10bf774864655b8f5_Boy01_FacialAnimMap_3.png-f0c05dc84aa9c4e7fdeb565194c5d8fd.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={}
@@ -13,7 +14,7 @@ generator_parameters={}
 [deps]
 
 source_file="res://Assets/Player/AJ-17bfd556bfaefcb10bf774864655b8f5_Boy01_FacialAnimMap_3.png"
-dest_files=["res://.godot/imported/AJ-17bfd556bfaefcb10bf774864655b8f5_Boy01_FacialAnimMap_3.png-f0c05dc84aa9c4e7fdeb565194c5d8fd.s3tc.ctex"]
+dest_files=["res://.godot/imported/AJ-17bfd556bfaefcb10bf774864655b8f5_Boy01_FacialAnimMap_3.png-f0c05dc84aa9c4e7fdeb565194c5d8fd.s3tc.ctex", "res://.godot/imported/AJ-17bfd556bfaefcb10bf774864655b8f5_Boy01_FacialAnimMap_3.png-f0c05dc84aa9c4e7fdeb565194c5d8fd.etc2.ctex"]
 
 [params]
 
@@ -38,5 +39,5 @@ process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
-process/size_limit=0
+process/size_limit=512
 detect_3d/compress_to=0

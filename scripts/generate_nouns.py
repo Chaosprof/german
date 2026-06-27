@@ -429,7 +429,7 @@ def generate_plural_help(noun_data):
     # Determine the plural pattern
     if plural == word:
         # No change
-        return f"No change (die {plural}). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Fenster→Fenster). The article change to 'die' is your only plural signal."
+        return f"No change (die {plural}). Rule: Masculine and neuter nouns ending in -er, -el, -en usually keep the same plural form. Some add an umlaut (Vater→Väter), but many don't (Wagen→Wagen)."
 
     # Check suffix added
     lower_word = word.lower()
@@ -479,7 +479,7 @@ def generate_plural_help(noun_data):
                 return f"-e + umlaut (die {plural}). Unusual for neuter nouns — das Floß→Flöße is one of the rare examples. Most neuter -e plurals do NOT umlaut."
         else:
             if gender == 'm':
-                return f"-e (die {plural}). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde. Tip: if it's der and one syllable, try -e (±umlaut) first."
+                return f"-e (die {plural}). Rule: The default masculine plural. Monosyllabic der-nouns very often take -e, frequently with umlaut: Tag→Tage, Stuhl→Stühle, Kopf→Köpfe, Hund→Hunde."
             elif gender == 'n':
                 return f"-e (die {plural}). Rule: Some neuter nouns take -e, usually WITHOUT umlaut: Jahr→Jahre, Spiel→Spiele, Ziel→Ziele, Tier→Tiere. Neuter -e plurals rarely umlaut (exception: das Floß→Flöße)."
             else:
@@ -505,63 +505,64 @@ def generate_plural_help(noun_data):
     # Generic fallback
     return f"die {plural}. Irregular or mixed plural pattern. Best memorized directly."
 
-# ── Main generation ────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    # ── Main generation ────────────────────────────────────────────────────────
 
-# Take nouns ranked 5001-25000
-new_nouns = unique_nouns[5000:25000]
+    # Take nouns ranked 5001-25000
+    new_nouns = unique_nouns[5000:25000]
 
-print(f"Generating {len(new_nouns)} new noun entries (ranks 5001-25000)...")
+    print(f"Generating {len(new_nouns)} new noun entries (ranks 5001-25000)...")
 
-new_entries = []
-for i, noun_data in enumerate(new_nouns):
-    rank = 5001 + i
-    word = noun_data['lemma']
-    gender = noun_data.get('gender', '')
-    article = 'die' if noun_data.get('pluralOnly', False) and not gender else get_article(gender)
-    plural = get_plural_form(noun_data)
-    english = get_english(noun_data.get('translations', {}), word)
+    new_entries = []
+    for i, noun_data in enumerate(new_nouns):
+        rank = 5001 + i
+        word = noun_data['lemma']
+        gender = noun_data.get('gender', '')
+        article = 'die' if noun_data.get('pluralOnly', False) and not gender else get_article(gender)
+        plural = get_plural_form(noun_data)
+        english = get_english(noun_data.get('translations', {}), word)
 
-    if noun_data.get('singularOnly', False):
-        plural_str = None
-    elif noun_data.get('pluralOnly', False):
-        plural_str = plural or word
-    else:
-        plural_str = plural
+        if noun_data.get('singularOnly', False):
+            plural_str = None
+        elif noun_data.get('pluralOnly', False):
+            plural_str = plural or word
+        else:
+            plural_str = plural
 
-    entry = {
-        "word": word,
-        "article": article,
-        "plural": plural_str,
-        "english": english,
-        "rank": rank,
-        "articleHelp": generate_article_help(noun_data),
-        "pluralHelp": generate_plural_help(noun_data),
+        entry = {
+            "word": word,
+            "article": article,
+            "plural": plural_str,
+            "english": english,
+            "rank": rank,
+            "articleHelp": generate_article_help(noun_data),
+            "pluralHelp": generate_plural_help(noun_data),
+        }
+        new_entries.append(entry)
+
+    # Merge with existing (only the original 5000)
+    existing_5000 = [n for n in existing['nouns'] if n['rank'] <= 5000]
+    all_nouns = existing_5000 + new_entries
+
+    output = {
+        "meta": {
+            "version": 2,
+            "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
+            "count": len(all_nouns),
+            "generatedAt": datetime.now(timezone.utc).isoformat()
+        },
+        "nouns": all_nouns
     }
-    new_entries.append(entry)
 
-# Merge with existing (only the original 5000)
-existing_5000 = [n for n in existing['nouns'] if n['rank'] <= 5000]
-all_nouns = existing_5000 + new_entries
+    with open('data/nouns.json', 'w', encoding='utf-8') as f:
+        json.dump(output, f, ensure_ascii=False, indent=2)
 
-output = {
-    "meta": {
-        "version": 2,
-        "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-        "count": len(all_nouns),
-        "generatedAt": datetime.now(timezone.utc).isoformat()
-    },
-    "nouns": all_nouns
-}
-
-with open('data/nouns.json', 'w', encoding='utf-8') as f:
-    json.dump(output, f, ensure_ascii=False, indent=2)
-
-print(f"Done! Written {len(all_nouns)} nouns to data/nouns.json")
-print(f"  Existing: {len(existing['nouns'])}")
-print(f"  New: {len(new_entries)}")
-print(f"  Sample new entry:")
-print(json.dumps(new_entries[0], ensure_ascii=False, indent=2))
-print(f"  ...")
-print(json.dumps(new_entries[2499], ensure_ascii=False, indent=2))
-print(f"  ...")
-print(json.dumps(new_entries[-1], ensure_ascii=False, indent=2))
+    print(f"Done! Written {len(all_nouns)} nouns to data/nouns.json")
+    print(f"  Existing: {len(existing['nouns'])}")
+    print(f"  New: {len(new_entries)}")
+    print(f"  Sample new entry:")
+    print(json.dumps(new_entries[0], ensure_ascii=False, indent=2))
+    print(f"  ...")
+    print(json.dumps(new_entries[2499], ensure_ascii=False, indent=2))
+    print(f"  ...")
+    print(json.dumps(new_entries[-1], ensure_ascii=False, indent=2))

@@ -140,7 +140,7 @@ if (!RULES["der.suffix_eur"]) {
   RULES["der.suffix_eur"] = {
     article: "der",
     name: "Suffix -eur (French agent suffix)",
-    description: "Nouns of French origin ending in -eur are masculine agent nouns. Examples: der Ingenieur, der Regisseur, der Friseur, der Chauffeur, der Amateur. (Not in the Passion4teq article; added for accuracy because -eur would otherwise be mis-matched against the feminine -ur rule.)",
+    description: "Nouns of French origin ending in -eur are masculine agent nouns. Examples: der Ingenieur, der Regisseur, der Friseur, der Chauffeur, der Amateur.",
     exceptions: []
   };
 }

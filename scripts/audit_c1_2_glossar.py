@@ -1,0 +1,166 @@
+"""Audit Vielfalt C1.2 glossary against the local word banks.
+
+Reuses the B2.2 audit logic with the same PDF layout convention.
+"""
+import importlib.util
+import json
+import re
+from collections import Counter
+from pathlib import Path
+
+
+BASE_PATH = Path(__file__).with_name("audit_b2_2_glossar.py")
+spec = importlib.util.spec_from_file_location("audit_b2_base", BASE_PATH)
+base = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(base)
+
+base.RAW_PATH = Path("audit/c1_2_glossar_raw.txt")
+base.PARSED_PATH = Path("audit/c1_2_glossar_parsed.json")
+base.SUMMARY_PATH = Path("audit/c1_2_glossar_summary.md")
+base.MISSING_PATH = Path("audit/c1_2_glossar_missing.md")
+base.MISMATCH_PATH = Path("audit/c1_2_glossar_mismatch.md")
+base.CANDIDATES_PATH = Path("audit/c1_2_glossar_candidates.md")
+base.TRANSLATION_PATH = Path("audit/c1_2_translation_review.md")
+
+
+# Same valency-prefix accepting verb-rest regex as B2.1
+base._VERBY_REST_RE = re.compile(
+    r"^(?:"
+    r"|\(sich\).*"
+    r"|\([^)]*\)(?:\s*\([^)]*\))*"
+    r"|(?:auf|an|zu|in|bei|mit|von|über|um|für|nach|gegen|gegenüber|unter|zwischen|als|durch|vor)\s*\+\s*(Akk\.|Dat\.|Gen\.).*"
+    r"|\+\s*(Akk\.|Dat\.|Gen\.).*"
+    r"|sich\s.*"
+    r"|wie$"
+    r")$",
+    re.IGNORECASE,
+)
+
+
+def normalize_text(text):
+    text = text.replace("ﬂ", "fl").replace("ﬁ", "fi")
+    text = re.sub(r"Vielfalt C1\.2.*?Hueber Verlag\s+\d+\s+", "", text)
+    text = text.strip()
+    text = re.sub(r"^(?:jdn\. / sich|jdn\.|jdm\.|etw\.)\s+", "", text)
+    return text.strip()
+
+
+# C1.2 uses "Modul" (mixed case), not the uppercase "MODUL" the base parser
+# expects. Patch parse_raw so the start-of-content scan and the section regex
+# treat both the same.
+_orig_parse_raw = base.parse_raw
+
+def _parse_raw_mixed_case():
+    raw = base.RAW_PATH.read_text(encoding="utf-8")
+    lines = []
+    for ln in raw.splitlines():
+        s = ln.rstrip()
+        if not s.strip():
+            continue
+        if s.startswith("=== PAGE"):
+            continue
+        if s.startswith("Kurs- und Arbeitsbuch Vielfalt"):
+            continue
+        if s.startswith("Lernwortschatz"):
+            continue
+        if s.startswith("Vielfalt C1.2"):
+            continue
+        lines.append(s)
+
+    start = next((i for i, ln in enumerate(lines) if re.match(r"^[Mm][Oo][Dd][Uu][Ll]\s+\d+", ln)), 0)
+    lines = lines[start:]
+
+    entries = []
+    underscore_re = re.compile(r"_{4,}")
+    section_re = re.compile(r"^([Mm][Oo][Dd][Uu][Ll]\s+\d+|Lektion\s+\d+)\b")
+    current_module = None
+    current_lektion = None
+    current_title = None
+
+    i = 0
+    while i < len(lines):
+        ln = lines[i]
+        if re.match(r"^[Mm][Oo][Dd][Uu][Ll]\s+\d+", ln):
+            current_module = ln.strip()
+            i += 1
+            continue
+        if ln.startswith("Lektion "):
+            current_lektion = ln.strip()
+            if i + 1 < len(lines) and not section_re.match(lines[i + 1]):
+                current_title = lines[i + 1].strip()
+                i += 2
+            else:
+                current_title = None
+                i += 1
+            continue
+        if re.fullmatch(r"\d+", ln.strip()):
+            i += 1
+            continue
+
+        acc = []
+        has_underscore = False
+        while i < len(lines):
+            cur = lines[i]
+            if section_re.match(cur) or re.fullmatch(r"\d+", cur.strip()):
+                break
+            m = underscore_re.search(cur)
+            if m:
+                part = cur[: m.start()].rstrip()
+                if part:
+                    acc.append(part)
+                has_underscore = True
+                i += 1
+                break
+            acc.append(cur)
+            i += 1
+
+        if has_underscore:
+            text = " ".join(p.strip() for p in acc if p.strip())
+            text = re.sub(r"(\S)-\s+(\S)", r"\1\2", text)
+            text = re.sub(r"\s+", " ", text).strip()
+            if text:
+                entries.append({
+                    "module": current_module,
+                    "lektion": current_lektion,
+                    "lektion_title": current_title,
+                    "text": text,
+                })
+        else:
+            i += 1
+
+    return entries
+
+base.parse_raw = _parse_raw_mixed_case
+
+
+def main():
+    raw_path = base.RAW_PATH
+    cleaned_raw = raw_path.read_text(encoding="utf-8")
+    cleaned_raw = cleaned_raw.replace("ﬂ", "fl").replace("ﬁ", "fi")
+    cleaned_raw = re.sub(r"Vielfalt C1\.2.*?Hueber Verlag\s+\d+\s*", "", cleaned_raw)
+    cleaned_path = Path("audit/c1_2_glossar_raw_cleaned.txt")
+    cleaned_path.write_text(cleaned_raw, encoding="utf-8")
+    base.RAW_PATH = cleaned_path
+    raw_entries = base.parse_raw()
+    base.RAW_PATH = raw_path
+    for entry in raw_entries:
+        entry["text"] = normalize_text(entry["text"])
+    raw_entries = [e for e in raw_entries if not e["text"].strip().isdigit()]
+
+    parsed = [base.classify(entry) for entry in raw_entries]
+    base.PARSED_PATH.write_text(json.dumps(parsed, ensure_ascii=False, indent=2), encoding="utf-8")
+    found, missing, mismatch, vp_candidates, irregular_candidates, translation_flags = base.compare(parsed)
+    base.write_reports(parsed, found, missing, mismatch, vp_candidates, irregular_candidates, translation_flags)
+
+    for path in [base.SUMMARY_PATH, base.MISSING_PATH, base.MISMATCH_PATH, base.CANDIDATES_PATH, base.TRANSLATION_PATH]:
+        text = path.read_text(encoding="utf-8")
+        text = text.replace("Vielfalt B2.2", "Vielfalt C1.2")
+        text = text.replace("Vielfalt_B2-2_Glossar_blanko.pdf", "Vielfalt_C1-2_Glossar_blanko.pdf")
+        path.write_text(text, encoding="utf-8")
+
+    print(f"Parsed {len(parsed)} entries -> {base.PARSED_PATH}")
+    print("Kinds:", dict(Counter(e["kind"] for e in parsed)))
+
+
+if __name__ == "__main__":
+    main()

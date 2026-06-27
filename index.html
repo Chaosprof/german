@@ -713,6 +713,9 @@ const MODES = { ARTICLE:"article", PLURAL:"plural", BOTH:"both" };
 // GIST PERSISTENCE
 // ═══════════════════════════════════════════════════════════════
 const GIST_FILENAME = "artikel-blitz-data.json";
+const GIST_DESCRIPTION = "Artikel Blitz - saved progress";
+const CANONICAL_GIST_DESCRIPTION = `${GIST_DESCRIPTION} (canonical)`;
+const GIST_BACKUP_FILENAME_PREFIX = "artikel-blitz-unsynced-backup";
 const PAT_KEY = "artikel-blitz-pat";
 const GIST_ID_KEY = "artikel-blitz-gist-id";
 const DEFAULT_DATA = {
@@ -743,13 +746,143 @@ async function gistFetch(path, opts = {}) {
   return r.json();
 }
 
-async function loadGistData() {
-  const gistId = getGistId();
-  if (!gistId) return { ...DEFAULT_DATA };
-  const gist = await gistFetch(`/gists/${gistId}`);
-  const file = gist.files[GIST_FILENAME];
-  if (!file) return { ...DEFAULT_DATA };
+async function listProgressGists() {
+  const matches = [];
+  for (let page = 1; ; page += 1) {
+    const gists = await gistFetch(`/gists?per_page=100&page=${page}`);
+    matches.push(...gists.filter(gist => gist.files && gist.files[GIST_FILENAME]));
+    if (gists.length < 100) break;
+  }
+  return matches;
+}
+
+function selectCanonicalGist(gists) {
+  const canonical = gists.filter(gist => gist.description === CANONICAL_GIST_DESCRIPTION);
+  const candidates = canonical.length ? canonical : gists;
+  return [...candidates].sort((a, b) => {
+    const byCreated = String(a.created_at || "").localeCompare(String(b.created_at || ""));
+    return byCreated || String(a.id).localeCompare(String(b.id));
+  })[0] || null;
+}
+
+async function readProgressGist(gist) {
+  const detail = gist.files?.[GIST_FILENAME]?.content == null
+    ? await gistFetch(`/gists/${gist.id}`)
+    : gist;
+  const file = detail.files?.[GIST_FILENAME];
+  if (!file) throw new Error(`Progress Gist ${gist.id} has no ${GIST_FILENAME}`);
   return sanitizePersistedData(JSON.parse(file.content));
+}
+
+function mergeStatMaps(baseMap, addedMap) {
+  const merged = { ...(baseMap || {}) };
+  Object.entries(addedMap || {}).forEach(([key, value]) => {
+    const current = merged[key] || {};
+    merged[key] = {
+      ...current,
+      ...value,
+      attempts: (current.attempts || 0) + (value.attempts || 0),
+      correct: (current.correct || 0) + (value.correct || 0),
+      consecutiveCorrect: Math.max(current.consecutiveCorrect || 0, value.consecutiveCorrect || 0),
+    };
+  });
+  return merged;
+}
+
+function mergeProgressData(base, added) {
+  const merged = { ...DEFAULT_DATA, ...base };
+  const deckMap = new Map((merged.decks || []).map(deck => [deck.id, deck]));
+  (added.decks || []).forEach(deck => {
+    const key = deck.id || `${deck.name}:${deck.created || ""}`;
+    if (!deckMap.has(key)) deckMap.set(key, deck);
+  });
+
+  const bestScores = { ...(merged.bestScores || {}) };
+  Object.entries(added.bestScores || {}).forEach(([key, score]) => {
+    if (!bestScores[key] || (score.pct || 0) > (bestScores[key].pct || 0)) bestScores[key] = score;
+  });
+
+  const campaignProgress = { ...(merged.campaignProgress || {}) };
+  Object.entries(added.campaignProgress || {}).forEach(([stateId, progress]) => {
+    const state = { ...(campaignProgress[stateId] || {}) };
+    Object.entries(progress || {}).forEach(([challengeId, stars]) => {
+      state[challengeId] = Math.max(state[challengeId] || 0, stars || 0);
+    });
+    campaignProgress[stateId] = state;
+  });
+
+  const modeMastered = { ...(merged.modeMastered || {}) };
+  Object.entries(added.modeMastered || {}).forEach(([modeId, words]) => {
+    modeMastered[modeId] = [...new Set([...(modeMastered[modeId] || []), ...(words || [])])];
+  });
+
+  const baseStreak = merged.dailyStreak || DEFAULT_DATA.dailyStreak;
+  const addedStreak = added.dailyStreak || DEFAULT_DATA.dailyStreak;
+  const newestStreak = String(addedStreak.lastDate || "") > String(baseStreak.lastDate || "") ? addedStreak : baseStreak;
+
+  return sanitizePersistedData({
+    ...merged,
+    decks: [...deckMap.values()],
+    nounStats: mergeStatMaps(merged.nounStats, added.nounStats),
+    dailyStreak: { ...newestStreak, best: Math.max(baseStreak.best || 0, addedStreak.best || 0) },
+    unlockedTiers: [...new Set([...(merged.unlockedTiers || []), ...(added.unlockedTiers || [])])].sort((a, b) => a - b),
+    masteredNouns: [...new Set([...(merged.masteredNouns || []), ...(added.masteredNouns || [])])],
+    totalSessions: (merged.totalSessions || 0) + (added.totalSessions || 0),
+    campaignProgress,
+    bestScores,
+    modeStats: mergeStatMaps(merged.modeStats, added.modeStats),
+    modeMastered,
+  });
+}
+
+async function archiveMergedGist(gist, canonicalId) {
+  const backupName = `${GIST_BACKUP_FILENAME_PREFIX}-${gist.id.slice(0, 8)}.json`;
+  await gistFetch(`/gists/${gist.id}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      description: `Artikel Blitz - backup merged into ${canonicalId}`,
+      files: { [GIST_FILENAME]: { filename: backupName } },
+    }),
+  });
+}
+
+async function discoverProgressGist() {
+  const gists = await listProgressGists();
+  const canonical = selectCanonicalGist(gists);
+  if (!canonical) {
+    setGistId("");
+    return { gistId: "", data: { ...DEFAULT_DATA } };
+  }
+
+  let data = await readProgressGist(canonical);
+  const syncMeta = data._sync || {};
+  const alreadyMerged = new Set(syncMeta.mergedGistIds || []);
+  const duplicates = gists.filter(gist => gist.id !== canonical.id);
+  const unmerged = duplicates.filter(gist => !alreadyMerged.has(gist.id));
+
+  for (const gist of unmerged) {
+    data = mergeProgressData(data, await readProgressGist(gist));
+    alreadyMerged.add(gist.id);
+  }
+
+  data = { ...data, _sync: { ...syncMeta, canonicalGistId: canonical.id, mergedGistIds: [...alreadyMerged].sort() } };
+  await gistFetch(`/gists/${canonical.id}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      description: CANONICAL_GIST_DESCRIPTION,
+      files: { [GIST_FILENAME]: { content: JSON.stringify(data, null, 2) } },
+    }),
+  });
+  setGistId(canonical.id);
+
+  // Preserve old progress as backup files while excluding it from future merges.
+  await Promise.allSettled(duplicates.map(gist => archiveMergedGist(gist, canonical.id)));
+  return { gistId: canonical.id, data };
+}
+
+async function loadGistData() {
+  const discovered = await discoverProgressGist();
+  return discovered.data;
 }
 
 // ── Gist save queue: serialize writes, coalesce concurrent updates ──
@@ -4659,5 +4792,9 @@ loadWordData(p => renderLoading(p))
     );
   });
 </script>
+
+<!-- cc_ui_bridge: local-dev "Send to Claude" widget. Loads only when the
+     git-ignored cc_ui_bridge/ folder is present; 404-removes itself in prod. -->
+<script src="cc_ui_bridge/widget.js" defer onerror="this.remove()"></script>
 </body>
 </html>
