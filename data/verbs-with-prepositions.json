@@ -4,7 +4,10 @@
     "description": "German verbs with fixed prepositions (Verben mit festen Präpositionen). Includes the governed case and English meaning. Essential for B2–C2 learners and native-level fluency.",
     "version": 1,
     "count": 364,
-    "generatedAt": "2026-04-10T00:00:00.000000+00:00"
+    "generatedAt": "2026-04-10T00:00:00.000000+00:00",
+    "schemaVersion": 2,
+    "reviewedAt": "2026-08-01",
+    "learnerSafeCount": 363
   },
   "verbs": [
     {
@@ -13,7 +16,8 @@
       "case": "Dat",
       "english": "depend on",
       "example": "Das hängt von dir ab.",
-      "rank": 1
+      "rank": 1,
+      "id": "verb-prep-0001"
     },
     {
       "verb": "achten",
@@ -21,7 +25,8 @@
       "case": "Akk",
       "english": "pay attention to",
       "example": "Achte auf den Verkehr.",
-      "rank": 2
+      "rank": 2,
+      "id": "verb-prep-0002"
     },
     {
       "verb": "anfangen",
@@ -29,7 +34,8 @@
       "case": "Dat",
       "english": "begin with",
       "example": "Fang mit der Arbeit an.",
-      "rank": 3
+      "rank": 3,
+      "id": "verb-prep-0003"
     },
     {
       "verb": "sich ängstigen",
@@ -37,7 +43,8 @@
       "case": "Dat",
       "english": "be afraid of",
       "example": "Sie ängstigt sich vor Spinnen.",
-      "rank": 4
+      "rank": 4,
+      "id": "verb-prep-0004"
     },
     {
       "verb": "ankommen",
@@ -45,15 +52,45 @@
       "case": "Akk",
       "english": "depend on / matter",
       "example": "Es kommt auf die Qualität an.",
-      "rank": 5
+      "rank": 5,
+      "id": "verb-prep-0005"
     },
     {
-      "verb": "anpassen",
+      "verb": "sich anpassen",
       "preposition": "an",
       "case": "Akk",
       "english": "adapt to",
       "example": "Er passt sich an die Umgebung an.",
-      "rank": 6
+      "rank": 6,
+      "id": "verb-prep-0006",
+      "senses": [
+        {
+          "id": "verb-prep-0006-sense-1",
+          "default": true,
+          "reflexive": true,
+          "valency": {
+            "transitivity": "transitive_or_argument_bearing",
+            "case_markers": [
+              "Akk"
+            ]
+          },
+          "patterns": [
+            "sich anpassen an + Akk",
+            "Er passt den Plan an die Lage an."
+          ],
+          "editorialSource": "Store `sich anpassen an + Akk` for this gloss and example, or use a transitive model such as `Er passt den Plan an die Lage an.`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00006:anpassen an",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Store `sich anpassen an + Akk` for this gloss and example, or use a transitive model such as `Er passt den Plan an die Lage an.`"
+        }
+      ]
     },
     {
       "verb": "antworten",
@@ -61,7 +98,8 @@
       "case": "Akk",
       "english": "answer / reply to",
       "example": "Sie antwortet auf meine Frage.",
-      "rank": 7
+      "rank": 7,
+      "id": "verb-prep-0007"
     },
     {
       "verb": "arbeiten",
@@ -69,7 +107,8 @@
       "case": "Dat",
       "english": "work on",
       "example": "Wir arbeiten an einem Projekt.",
-      "rank": 8
+      "rank": 8,
+      "id": "verb-prep-0008"
     },
     {
       "verb": "sich ärgern",
@@ -77,7 +116,8 @@
       "case": "Akk",
       "english": "be annoyed about",
       "example": "Ich ärgere mich über den Lärm.",
-      "rank": 9
+      "rank": 9,
+      "id": "verb-prep-0009"
     },
     {
       "verb": "auffordern",
@@ -85,7 +125,8 @@
       "case": "Dat",
       "english": "call upon / urge to",
       "example": "Er fordert sie zum Tanz auf.",
-      "rank": 10
+      "rank": 10,
+      "id": "verb-prep-0010"
     },
     {
       "verb": "aufhören",
@@ -93,7 +134,8 @@
       "case": "Dat",
       "english": "stop (doing)",
       "example": "Hör mit dem Unsinn auf.",
-      "rank": 11
+      "rank": 11,
+      "id": "verb-prep-0011"
     },
     {
       "verb": "aufpassen",
@@ -101,7 +143,8 @@
       "case": "Akk",
       "english": "look after / watch out for",
       "example": "Pass auf die Kinder auf.",
-      "rank": 12
+      "rank": 12,
+      "id": "verb-prep-0012"
     },
     {
       "verb": "sich aufregen",
@@ -109,7 +152,8 @@
       "case": "Akk",
       "english": "get upset about",
       "example": "Reg dich nicht über Kleinigkeiten auf.",
-      "rank": 13
+      "rank": 13,
+      "id": "verb-prep-0013"
     },
     {
       "verb": "ausgeben",
@@ -117,7 +161,8 @@
       "case": "Akk",
       "english": "spend (money) on",
       "example": "Sie gibt viel Geld für Kleidung aus.",
-      "rank": 14
+      "rank": 14,
+      "id": "verb-prep-0014"
     },
     {
       "verb": "ausgehen",
@@ -125,7 +170,8 @@
       "case": "Dat",
       "english": "assume / proceed from",
       "example": "Ich gehe von einem Fehler aus.",
-      "rank": 15
+      "rank": 15,
+      "id": "verb-prep-0015"
     },
     {
       "verb": "sich auskennen",
@@ -133,7 +179,8 @@
       "case": "Dat",
       "english": "be knowledgeable about",
       "example": "Er kennt sich mit Computern aus.",
-      "rank": 16
+      "rank": 16,
+      "id": "verb-prep-0016"
     },
     {
       "verb": "sich bedanken",
@@ -141,7 +188,8 @@
       "case": "Dat",
       "english": "thank (someone)",
       "example": "Ich bedanke mich bei Ihnen.",
-      "rank": 17
+      "rank": 17,
+      "id": "verb-prep-0017"
     },
     {
       "verb": "sich bedanken",
@@ -149,7 +197,8 @@
       "case": "Akk",
       "english": "thank for (something)",
       "example": "Ich bedanke mich für die Hilfe.",
-      "rank": 18
+      "rank": 18,
+      "id": "verb-prep-0018"
     },
     {
       "verb": "sich befassen",
@@ -157,7 +206,8 @@
       "case": "Dat",
       "english": "deal with / occupy oneself with",
       "example": "Der Ausschuss befasst sich mit dem Thema.",
-      "rank": 19
+      "rank": 19,
+      "id": "verb-prep-0019"
     },
     {
       "verb": "befreien",
@@ -165,7 +215,8 @@
       "case": "Dat",
       "english": "free / liberate from",
       "example": "Sie befreiten ihn von seinen Fesseln.",
-      "rank": 20
+      "rank": 20,
+      "id": "verb-prep-0020"
     },
     {
       "verb": "sich begeistern",
@@ -173,7 +224,8 @@
       "case": "Akk",
       "english": "be enthusiastic about",
       "example": "Er begeistert sich für Musik.",
-      "rank": 21
+      "rank": 21,
+      "id": "verb-prep-0021"
     },
     {
       "verb": "beginnen",
@@ -181,7 +233,8 @@
       "case": "Dat",
       "english": "begin with",
       "example": "Beginnen wir mit dem ersten Punkt.",
-      "rank": 22
+      "rank": 22,
+      "id": "verb-prep-0022"
     },
     {
       "verb": "beitragen",
@@ -189,7 +242,8 @@
       "case": "Dat",
       "english": "contribute to",
       "example": "Das trägt zum Erfolg bei.",
-      "rank": 23
+      "rank": 23,
+      "id": "verb-prep-0023"
     },
     {
       "verb": "sich beklagen",
@@ -197,7 +251,8 @@
       "case": "Akk",
       "english": "complain about",
       "example": "Er beklagt sich über das Essen.",
-      "rank": 24
+      "rank": 24,
+      "id": "verb-prep-0024"
     },
     {
       "verb": "sich bemühen",
@@ -205,7 +260,30 @@
       "case": "Akk",
       "english": "strive for / try hard for",
       "example": "Sie bemüht sich um eine Stelle.",
-      "rank": 25
+      "rank": 25,
+      "id": "verb-prep-0025",
+      "senses": [
+        {
+          "id": "verb-prep-0025-sense-1",
+          "default": true,
+          "editorialSource": "`make an effort to obtain / seek"
+        },
+        {
+          "id": "verb-prep-0025-sense-2",
+          "default": false,
+          "editorialSource": "try hard to get`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00025:sich bemühen um",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "`make an effort to obtain / seek; try hard to get`"
+        }
+      ]
     },
     {
       "verb": "berichten",
@@ -213,7 +291,8 @@
       "case": "Akk",
       "english": "report on / cover a topic",
       "example": "Die Zeitung berichtet über den Unfall.",
-      "rank": 26
+      "rank": 26,
+      "id": "verb-prep-0026"
     },
     {
       "verb": "berichten",
@@ -221,7 +300,8 @@
       "case": "Dat",
       "english": "tell of / recount an experience",
       "example": "Er berichtet von seiner Reise.",
-      "rank": 27
+      "rank": 27,
+      "id": "verb-prep-0027"
     },
     {
       "verb": "beruhen",
@@ -229,7 +309,8 @@
       "case": "Dat",
       "english": "be based on / rest on",
       "example": "Das beruht auf einem Missverständnis.",
-      "rank": 28
+      "rank": 28,
+      "id": "verb-prep-0028"
     },
     {
       "verb": "sich beschäftigen",
@@ -237,7 +318,8 @@
       "case": "Dat",
       "english": "occupy oneself with / deal with",
       "example": "Sie beschäftigt sich mit Kunst.",
-      "rank": 29
+      "rank": 29,
+      "id": "verb-prep-0029"
     },
     {
       "verb": "sich beschweren",
@@ -245,7 +327,8 @@
       "case": "Akk",
       "english": "complain about",
       "example": "Die Gäste beschweren sich über den Service.",
-      "rank": 30
+      "rank": 30,
+      "id": "verb-prep-0030"
     },
     {
       "verb": "sich beschweren",
@@ -253,7 +336,8 @@
       "case": "Dat",
       "english": "complain to",
       "example": "Er beschwert sich beim Manager.",
-      "rank": 31
+      "rank": 31,
+      "id": "verb-prep-0031"
     },
     {
       "verb": "bestehen",
@@ -261,7 +345,8 @@
       "case": "Dat",
       "english": "insist on",
       "example": "Sie besteht auf ihrem Recht.",
-      "rank": 32
+      "rank": 32,
+      "id": "verb-prep-0032"
     },
     {
       "verb": "bestehen",
@@ -269,7 +354,8 @@
       "case": "Dat",
       "english": "consist of",
       "example": "Das Team besteht aus fünf Leuten.",
-      "rank": 33
+      "rank": 33,
+      "id": "verb-prep-0033"
     },
     {
       "verb": "bestehen",
@@ -277,7 +363,8 @@
       "case": "Dat",
       "english": "consist in / lie in",
       "example": "Das Problem besteht in der Finanzierung.",
-      "rank": 34
+      "rank": 34,
+      "id": "verb-prep-0034"
     },
     {
       "verb": "sich beteiligen",
@@ -285,7 +372,8 @@
       "case": "Dat",
       "english": "participate in",
       "example": "Alle beteiligen sich an der Diskussion.",
-      "rank": 35
+      "rank": 35,
+      "id": "verb-prep-0035"
     },
     {
       "verb": "beten",
@@ -293,7 +381,8 @@
       "case": "Akk",
       "english": "pray for",
       "example": "Sie betet für seine Genesung.",
-      "rank": 36
+      "rank": 36,
+      "id": "verb-prep-0036"
     },
     {
       "verb": "sich bewerben",
@@ -301,7 +390,8 @@
       "case": "Akk",
       "english": "apply for",
       "example": "Er bewirbt sich um die Stelle.",
-      "rank": 37
+      "rank": 37,
+      "id": "verb-prep-0037"
     },
     {
       "verb": "sich beziehen",
@@ -309,7 +399,8 @@
       "case": "Akk",
       "english": "refer to",
       "example": "Das bezieht sich auf Ihren Brief.",
-      "rank": 38
+      "rank": 38,
+      "id": "verb-prep-0038"
     },
     {
       "verb": "bitten",
@@ -317,7 +408,8 @@
       "case": "Akk",
       "english": "ask for / request",
       "example": "Ich bitte um Verständnis.",
-      "rank": 39
+      "rank": 39,
+      "id": "verb-prep-0039"
     },
     {
       "verb": "bürgen",
@@ -325,7 +417,8 @@
       "case": "Akk",
       "english": "vouch for / guarantee",
       "example": "Ich bürge für seine Ehrlichkeit.",
-      "rank": 40
+      "rank": 40,
+      "id": "verb-prep-0040"
     },
     {
       "verb": "danken",
@@ -333,7 +426,8 @@
       "case": "Akk",
       "english": "thank for",
       "example": "Ich danke Ihnen für Ihre Hilfe.",
-      "rank": 41
+      "rank": 41,
+      "id": "verb-prep-0041"
     },
     {
       "verb": "denken",
@@ -341,7 +435,8 @@
       "case": "Akk",
       "english": "think of / about",
       "example": "Ich denke oft an dich.",
-      "rank": 42
+      "rank": 42,
+      "id": "verb-prep-0042"
     },
     {
       "verb": "dienen",
@@ -349,7 +444,8 @@
       "case": "Dat",
       "english": "serve as / for",
       "example": "Das dient zur Sicherheit.",
-      "rank": 43
+      "rank": 43,
+      "id": "verb-prep-0043"
     },
     {
       "verb": "diskutieren",
@@ -357,7 +453,8 @@
       "case": "Akk",
       "english": "discuss",
       "example": "Wir diskutieren über das Thema.",
-      "rank": 44
+      "rank": 44,
+      "id": "verb-prep-0044"
     },
     {
       "verb": "drängen",
@@ -365,7 +462,8 @@
       "case": "Akk",
       "english": "push for / urge",
       "example": "Er drängt auf eine schnelle Lösung.",
-      "rank": 45
+      "rank": 45,
+      "id": "verb-prep-0045"
     },
     {
       "verb": "sich drehen",
@@ -373,7 +471,8 @@
       "case": "Akk",
       "english": "revolve around / be about",
       "example": "Es dreht sich alles um Geld.",
-      "rank": 46
+      "rank": 46,
+      "id": "verb-prep-0046"
     },
     {
       "verb": "duften",
@@ -381,7 +480,8 @@
       "case": "Dat",
       "english": "smell of (pleasant)",
       "example": "Die Küche duftet nach frischem Brot.",
-      "rank": 47
+      "rank": 47,
+      "id": "verb-prep-0047"
     },
     {
       "verb": "sich eignen",
@@ -389,7 +489,8 @@
       "case": "Akk",
       "english": "be suitable for",
       "example": "Das Buch eignet sich für Anfänger.",
-      "rank": 48
+      "rank": 48,
+      "id": "verb-prep-0048"
     },
     {
       "verb": "einladen",
@@ -397,7 +498,8 @@
       "case": "Dat",
       "english": "invite to",
       "example": "Sie lädt uns zum Essen ein.",
-      "rank": 49
+      "rank": 49,
+      "id": "verb-prep-0049"
     },
     {
       "verb": "sich einigen",
@@ -405,7 +507,8 @@
       "case": "Akk",
       "english": "agree on",
       "example": "Wir einigen uns auf einen Kompromiss.",
-      "rank": 50
+      "rank": 50,
+      "id": "verb-prep-0050"
     },
     {
       "verb": "sich einlassen",
@@ -413,7 +516,8 @@
       "case": "Akk",
       "english": "get involved in",
       "example": "Lass dich nicht auf dieses Risiko ein.",
-      "rank": 51
+      "rank": 51,
+      "id": "verb-prep-0051"
     },
     {
       "verb": "sich einsetzen",
@@ -421,7 +525,8 @@
       "case": "Akk",
       "english": "stand up for / advocate for",
       "example": "Sie setzt sich für den Umweltschutz ein.",
-      "rank": 52
+      "rank": 52,
+      "id": "verb-prep-0052"
     },
     {
       "verb": "sich ekeln",
@@ -429,7 +534,8 @@
       "case": "Dat",
       "english": "be disgusted by",
       "example": "Er ekelt sich vor Mäusen.",
-      "rank": 53
+      "rank": 53,
+      "id": "verb-prep-0053"
     },
     {
       "verb": "sich entscheiden",
@@ -437,7 +543,8 @@
       "case": "Akk",
       "english": "decide on / choose",
       "example": "Sie entscheidet sich für das rote Kleid.",
-      "rank": 54
+      "rank": 54,
+      "id": "verb-prep-0054"
     },
     {
       "verb": "sich entscheiden",
@@ -445,7 +552,8 @@
       "case": "Akk",
       "english": "decide against",
       "example": "Er entscheidet sich gegen den Umzug.",
-      "rank": 55
+      "rank": 55,
+      "id": "verb-prep-0055"
     },
     {
       "verb": "sich entschließen",
@@ -453,7 +561,8 @@
       "case": "Dat",
       "english": "resolve to / decide on",
       "example": "Er entschließt sich zur Abreise.",
-      "rank": 56
+      "rank": 56,
+      "id": "verb-prep-0056"
     },
     {
       "verb": "sich entschuldigen",
@@ -461,7 +570,8 @@
       "case": "Dat",
       "english": "apologize to",
       "example": "Entschuldige dich bei deiner Schwester.",
-      "rank": 57
+      "rank": 57,
+      "id": "verb-prep-0057"
     },
     {
       "verb": "sich entschuldigen",
@@ -469,7 +579,8 @@
       "case": "Akk",
       "english": "apologize for",
       "example": "Er entschuldigt sich für sein Verhalten.",
-      "rank": 58
+      "rank": 58,
+      "id": "verb-prep-0058"
     },
     {
       "verb": "erfahren",
@@ -477,7 +588,8 @@
       "case": "Dat",
       "english": "learn of / find out about",
       "example": "Ich habe von dem Unfall erfahren.",
-      "rank": 59
+      "rank": 59,
+      "id": "verb-prep-0059"
     },
     {
       "verb": "sich erholen",
@@ -485,7 +597,8 @@
       "case": "Dat",
       "english": "recover from",
       "example": "Sie erholt sich von der Krankheit.",
-      "rank": 60
+      "rank": 60,
+      "id": "verb-prep-0060"
     },
     {
       "verb": "sich erinnern",
@@ -493,7 +606,8 @@
       "case": "Akk",
       "english": "remember",
       "example": "Ich erinnere mich an den Tag.",
-      "rank": 61
+      "rank": 61,
+      "id": "verb-prep-0061"
     },
     {
       "verb": "sich erkundigen",
@@ -501,7 +615,8 @@
       "case": "Dat",
       "english": "inquire about",
       "example": "Er erkundigt sich nach dem Weg.",
-      "rank": 62
+      "rank": 62,
+      "id": "verb-prep-0062"
     },
     {
       "verb": "erschrecken",
@@ -509,7 +624,8 @@
       "case": "Dat",
       "english": "be frightened of",
       "example": "Das Kind erschrickt vor dem Hund.",
-      "rank": 63
+      "rank": 63,
+      "id": "verb-prep-0063"
     },
     {
       "verb": "erzählen",
@@ -517,15 +633,38 @@
       "case": "Dat",
       "english": "tell about",
       "example": "Sie erzählt von ihrer Reise.",
-      "rank": 64
+      "rank": 64,
+      "id": "verb-prep-0064"
     },
     {
       "verb": "erzählen",
       "preposition": "über",
       "case": "Akk",
       "english": "tell about",
-      "example": "Er erzählt über seine Erfahrungen.",
-      "rank": 65
+      "example": "Er erzählt etwas über seine Erfahrungen.",
+      "rank": 65,
+      "id": "verb-prep-0065",
+      "senses": [
+        {
+          "id": "verb-prep-0065-sense-1",
+          "default": true,
+          "patterns": [
+            "Er erzählt etwas über seine Erfahrungen.",
+            "Er erzählt von seinen Erfahrungen."
+          ],
+          "editorialSource": "`Er erzählt etwas über seine Erfahrungen.` (or, more idiomatically, `Er erzählt von seinen Erfahrungen.`)"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00065:erzählen über",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "`Er erzählt etwas über seine Erfahrungen.` (or, more idiomatically, `Er erzählt von seinen Erfahrungen.`)"
+        }
+      ]
     },
     {
       "verb": "fahren",
@@ -533,7 +672,38 @@
       "case": "Dat",
       "english": "go/travel by",
       "example": "Ich fahre mit dem Zug.",
-      "rank": 66
+      "rank": 66,
+      "id": "verb-prep-0066",
+      "senses": [
+        {
+          "id": "verb-prep-0066-sense-1",
+          "default": true,
+          "editorialSource": "Remove from the fixed verb–preposition bank"
+        },
+        {
+          "id": "verb-prep-0066-sense-2",
+          "default": false,
+          "valency": {
+            "case_markers": [
+              "Dat"
+            ]
+          },
+          "patterns": [
+            "mit + Dat"
+          ],
+          "editorialSource": "teach `mit + Dat` separately as transport/means (and accompaniment)."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00066:fahren mit",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "Remove from the fixed verb–preposition bank; teach `mit + Dat` separately as transport/means (and accompaniment)."
+        }
+      ]
     },
     {
       "verb": "fliehen",
@@ -541,7 +711,8 @@
       "case": "Dat",
       "english": "flee from",
       "example": "Sie fliehen vor dem Krieg.",
-      "rank": 67
+      "rank": 67,
+      "id": "verb-prep-0067"
     },
     {
       "verb": "fluchen",
@@ -549,7 +720,30 @@
       "case": "Akk",
       "english": "curse about",
       "example": "Er flucht über das schlechte Wetter.",
-      "rank": 68
+      "rank": 68,
+      "id": "verb-prep-0068",
+      "senses": [
+        {
+          "id": "verb-prep-0068-sense-1",
+          "default": true,
+          "editorialSource": "`swear about / rail at"
+        },
+        {
+          "id": "verb-prep-0068-sense-2",
+          "default": false,
+          "editorialSource": "complain angrily about`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00068:fluchen über",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "`swear about / rail at; complain angrily about`"
+        }
+      ]
     },
     {
       "verb": "forschen",
@@ -557,7 +751,8 @@
       "case": "Dat",
       "english": "research / search for",
       "example": "Sie forscht nach einer Lösung.",
-      "rank": 69
+      "rank": 69,
+      "id": "verb-prep-0069"
     },
     {
       "verb": "fragen",
@@ -565,7 +760,8 @@
       "case": "Dat",
       "english": "ask about",
       "example": "Er fragt nach dem Preis.",
-      "rank": 70
+      "rank": 70,
+      "id": "verb-prep-0070"
     },
     {
       "verb": "sich freuen",
@@ -573,7 +769,8 @@
       "case": "Akk",
       "english": "look forward to",
       "example": "Ich freue mich auf den Urlaub.",
-      "rank": 71
+      "rank": 71,
+      "id": "verb-prep-0071"
     },
     {
       "verb": "sich freuen",
@@ -581,7 +778,8 @@
       "case": "Akk",
       "english": "be happy about",
       "example": "Sie freut sich über das Geschenk.",
-      "rank": 72
+      "rank": 72,
+      "id": "verb-prep-0072"
     },
     {
       "verb": "führen",
@@ -589,7 +787,8 @@
       "case": "Dat",
       "english": "lead to",
       "example": "Das führt zu Problemen.",
-      "rank": 73
+      "rank": 73,
+      "id": "verb-prep-0073"
     },
     {
       "verb": "sich fürchten",
@@ -597,7 +796,8 @@
       "case": "Dat",
       "english": "be afraid of",
       "example": "Das Kind fürchtet sich vor der Dunkelheit.",
-      "rank": 74
+      "rank": 74,
+      "id": "verb-prep-0074"
     },
     {
       "verb": "garantieren",
@@ -605,7 +805,8 @@
       "case": "Akk",
       "english": "guarantee",
       "example": "Wir garantieren für die Qualität.",
-      "rank": 75
+      "rank": 75,
+      "id": "verb-prep-0075"
     },
     {
       "verb": "gehen",
@@ -613,7 +814,8 @@
       "case": "Akk",
       "english": "be about / concern",
       "example": "Es geht um viel Geld.",
-      "rank": 76
+      "rank": 76,
+      "id": "verb-prep-0076"
     },
     {
       "verb": "gehören",
@@ -621,7 +823,8 @@
       "case": "Dat",
       "english": "belong to / be part of",
       "example": "Das gehört zu meinen Aufgaben.",
-      "rank": 77
+      "rank": 77,
+      "id": "verb-prep-0077"
     },
     {
       "verb": "gelten",
@@ -629,7 +832,8 @@
       "case": "Nom",
       "english": "be considered / regarded as",
       "example": "Er gilt als Experte.",
-      "rank": 78
+      "rank": 78,
+      "id": "verb-prep-0078"
     },
     {
       "verb": "gelten",
@@ -637,7 +841,8 @@
       "case": "Akk",
       "english": "apply to / be valid for",
       "example": "Das gilt für alle.",
-      "rank": 79
+      "rank": 79,
+      "id": "verb-prep-0079"
     },
     {
       "verb": "geraten",
@@ -645,7 +850,8 @@
       "case": "Akk",
       "english": "get into (a state)",
       "example": "Er gerät in Panik.",
-      "rank": 80
+      "rank": 80,
+      "id": "verb-prep-0080"
     },
     {
       "verb": "sich gewöhnen",
@@ -653,7 +859,8 @@
       "case": "Akk",
       "english": "get used to",
       "example": "Ich gewöhne mich an das Klima.",
-      "rank": 81
+      "rank": 81,
+      "id": "verb-prep-0081"
     },
     {
       "verb": "glauben",
@@ -661,7 +868,8 @@
       "case": "Akk",
       "english": "believe in",
       "example": "Sie glaubt an die Zukunft.",
-      "rank": 82
+      "rank": 82,
+      "id": "verb-prep-0082"
     },
     {
       "verb": "gratulieren",
@@ -669,7 +877,8 @@
       "case": "Dat",
       "english": "congratulate on",
       "example": "Ich gratuliere dir zum Geburtstag.",
-      "rank": 83
+      "rank": 83,
+      "id": "verb-prep-0083"
     },
     {
       "verb": "greifen",
@@ -677,7 +886,8 @@
       "case": "Dat",
       "english": "reach for / grab",
       "example": "Er greift nach dem Glas.",
-      "rank": 84
+      "rank": 84,
+      "id": "verb-prep-0084"
     },
     {
       "verb": "greifen",
@@ -685,7 +895,8 @@
       "case": "Dat",
       "english": "resort to / turn to",
       "example": "Sie greift zu drastischen Maßnahmen.",
-      "rank": 85
+      "rank": 85,
+      "id": "verb-prep-0085"
     },
     {
       "verb": "grenzen",
@@ -693,15 +904,47 @@
       "case": "Akk",
       "english": "border on",
       "example": "Das grenzt an Wahnsinn.",
-      "rank": 86
+      "rank": 86,
+      "id": "verb-prep-0086"
     },
     {
       "verb": "gründen",
       "preposition": "auf",
       "case": "Akk",
       "english": "base on / found on",
-      "example": "Die Theorie gründet auf Fakten.",
-      "rank": 87
+      "example": "Die Theorie gründet auf einer falschen Annahme.",
+      "rank": 87,
+      "id": "verb-prep-0087",
+      "senses": [
+        {
+          "id": "verb-prep-0087-sense-1",
+          "default": true,
+          "valency": {
+            "transitivity": "intransitive",
+            "case_markers": [
+              "Dat",
+              "Akk"
+            ]
+          },
+          "patterns": [
+            "gründen auf + Dat",
+            "Die Theorie gründet auf einer falschen Annahme.",
+            "auf + Akk",
+            "etwas auf etwas gründen"
+          ],
+          "editorialSource": "For the intransitive illustrated sense use `gründen auf + Dat`, preferably with an unambiguous example such as `Die Theorie gründet auf einer falschen Annahme.` Reserve `auf + Akk` for transitive `etwas auf etwas gründen`."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00087:gründen auf",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "For the intransitive illustrated sense use `gründen auf + Dat`, preferably with an unambiguous example such as `Die Theorie gründet auf einer falschen Annahme.` Reserve `auf + Akk` for transitive `etwas auf etwas gründen`."
+        }
+      ]
     },
     {
       "verb": "halten",
@@ -709,7 +952,8 @@
       "case": "Akk",
       "english": "consider / regard as",
       "example": "Ich halte das für falsch.",
-      "rank": 88
+      "rank": 88,
+      "id": "verb-prep-0088"
     },
     {
       "verb": "halten",
@@ -717,7 +961,8 @@
       "case": "Dat",
       "english": "think of / have an opinion about",
       "example": "Was hältst du davon?",
-      "rank": 89
+      "rank": 89,
+      "id": "verb-prep-0089"
     },
     {
       "verb": "handeln",
@@ -725,7 +970,8 @@
       "case": "Dat",
       "english": "be about / deal with",
       "example": "Das Buch handelt von einem Abenteuer.",
-      "rank": 90
+      "rank": 90,
+      "id": "verb-prep-0090"
     },
     {
       "verb": "handeln",
@@ -733,7 +979,8 @@
       "case": "Dat",
       "english": "trade in / deal in",
       "example": "Er handelt mit Antiquitäten.",
-      "rank": 91
+      "rank": 91,
+      "id": "verb-prep-0091"
     },
     {
       "verb": "sich handeln",
@@ -741,7 +988,8 @@
       "case": "Akk",
       "english": "be a matter of / be about",
       "example": "Es handelt sich um einen Irrtum.",
-      "rank": 92
+      "rank": 92,
+      "id": "verb-prep-0092"
     },
     {
       "verb": "herrschen",
@@ -749,7 +997,8 @@
       "case": "Akk",
       "english": "rule over",
       "example": "Er herrscht über ein großes Reich.",
-      "rank": 93
+      "rank": 93,
+      "id": "verb-prep-0093"
     },
     {
       "verb": "hindern",
@@ -757,7 +1006,8 @@
       "case": "Dat",
       "english": "prevent from / hinder",
       "example": "Nichts hindert ihn an der Flucht.",
-      "rank": 94
+      "rank": 94,
+      "id": "verb-prep-0094"
     },
     {
       "verb": "hinweisen",
@@ -765,7 +1015,8 @@
       "case": "Akk",
       "english": "point out / refer to",
       "example": "Ich weise auf die Gefahr hin.",
-      "rank": 95
+      "rank": 95,
+      "id": "verb-prep-0095"
     },
     {
       "verb": "hoffen",
@@ -773,7 +1024,8 @@
       "case": "Akk",
       "english": "hope for",
       "example": "Wir hoffen auf besseres Wetter.",
-      "rank": 96
+      "rank": 96,
+      "id": "verb-prep-0096"
     },
     {
       "verb": "hören",
@@ -781,7 +1033,8 @@
       "case": "Dat",
       "english": "hear from / about",
       "example": "Ich habe lange nichts von ihm gehört.",
-      "rank": 97
+      "rank": 97,
+      "id": "verb-prep-0097"
     },
     {
       "verb": "sich informieren",
@@ -789,7 +1042,8 @@
       "case": "Akk",
       "english": "inform oneself about",
       "example": "Informiere dich über die Möglichkeiten.",
-      "rank": 98
+      "rank": 98,
+      "id": "verb-prep-0098"
     },
     {
       "verb": "sich interessieren",
@@ -797,7 +1051,8 @@
       "case": "Akk",
       "english": "be interested in",
       "example": "Sie interessiert sich für Musik.",
-      "rank": 99
+      "rank": 99,
+      "id": "verb-prep-0099"
     },
     {
       "verb": "sich irren",
@@ -805,7 +1060,8 @@
       "case": "Dat",
       "english": "be mistaken about",
       "example": "Du irrst dich in diesem Punkt.",
-      "rank": 100
+      "rank": 100,
+      "id": "verb-prep-0100"
     },
     {
       "verb": "kämpfen",
@@ -813,7 +1069,8 @@
       "case": "Akk",
       "english": "fight for",
       "example": "Sie kämpfen für ihre Rechte.",
-      "rank": 101
+      "rank": 101,
+      "id": "verb-prep-0101"
     },
     {
       "verb": "kämpfen",
@@ -821,7 +1078,8 @@
       "case": "Akk",
       "english": "fight against",
       "example": "Er kämpft gegen die Krankheit.",
-      "rank": 102
+      "rank": 102,
+      "id": "verb-prep-0102"
     },
     {
       "verb": "kämpfen",
@@ -829,7 +1087,8 @@
       "case": "Akk",
       "english": "fight for / struggle for",
       "example": "Sie kämpft um ihr Überleben.",
-      "rank": 103
+      "rank": 103,
+      "id": "verb-prep-0103"
     },
     {
       "verb": "klagen",
@@ -837,7 +1096,8 @@
       "case": "Akk",
       "english": "complain about",
       "example": "Er klagt über Kopfschmerzen.",
-      "rank": 104
+      "rank": 104,
+      "id": "verb-prep-0104"
     },
     {
       "verb": "kommen",
@@ -845,7 +1105,28 @@
       "case": "Dat",
       "english": "come to / arrive at",
       "example": "Wie komme ich zum Bahnhof?",
-      "rank": 105
+      "rank": 105,
+      "id": "verb-prep-0105",
+      "senses": [
+        {
+          "id": "verb-prep-0105-sense-1",
+          "default": true,
+          "patterns": [
+            "zu einem Ergebnis kommen"
+          ],
+          "editorialSource": "Remove this literal destination use from the fixed-government bank, or replace it with a genuinely lexical pattern such as `zu einem Ergebnis kommen` and a matching gloss/example."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00105:kommen zu",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Remove this literal destination use from the fixed-government bank, or replace it with a genuinely lexical pattern such as `zu einem Ergebnis kommen` and a matching gloss/example."
+        }
+      ]
     },
     {
       "verb": "sich konzentrieren",
@@ -853,7 +1134,8 @@
       "case": "Akk",
       "english": "concentrate on",
       "example": "Konzentrier dich auf die Prüfung.",
-      "rank": 106
+      "rank": 106,
+      "id": "verb-prep-0106"
     },
     {
       "verb": "sich kümmern",
@@ -861,7 +1143,8 @@
       "case": "Akk",
       "english": "take care of / look after",
       "example": "Sie kümmert sich um die Kinder.",
-      "rank": 107
+      "rank": 107,
+      "id": "verb-prep-0107"
     },
     {
       "verb": "lachen",
@@ -869,7 +1152,8 @@
       "case": "Akk",
       "english": "laugh about/at",
       "example": "Alle lachen über seinen Witz.",
-      "rank": 108
+      "rank": 108,
+      "id": "verb-prep-0108"
     },
     {
       "verb": "leiden",
@@ -877,7 +1161,8 @@
       "case": "Dat",
       "english": "suffer from (illness)",
       "example": "Er leidet an einer Allergie.",
-      "rank": 109
+      "rank": 109,
+      "id": "verb-prep-0109"
     },
     {
       "verb": "leiden",
@@ -885,7 +1170,8 @@
       "case": "Dat",
       "english": "suffer from (condition/situation)",
       "example": "Sie leidet unter dem Stress.",
-      "rank": 295
+      "rank": 295,
+      "id": "verb-prep-0295"
     },
     {
       "verb": "liegen",
@@ -893,7 +1179,8 @@
       "case": "Dat",
       "english": "be due to / be because of",
       "example": "Das liegt am Wetter.",
-      "rank": 111
+      "rank": 111,
+      "id": "verb-prep-0111"
     },
     {
       "verb": "mangeln",
@@ -901,7 +1188,8 @@
       "case": "Dat",
       "english": "lack / be short of",
       "example": "Es mangelt an Geld.",
-      "rank": 112
+      "rank": 112,
+      "id": "verb-prep-0112"
     },
     {
       "verb": "meinen",
@@ -909,7 +1197,8 @@
       "case": "Dat",
       "english": "mean by",
       "example": "Was meinst du damit?",
-      "rank": 113
+      "rank": 113,
+      "id": "verb-prep-0113"
     },
     {
       "verb": "nachdenken",
@@ -917,7 +1206,8 @@
       "case": "Akk",
       "english": "think about / reflect on",
       "example": "Ich denke über dein Angebot nach.",
-      "rank": 114
+      "rank": 114,
+      "id": "verb-prep-0114"
     },
     {
       "verb": "neigen",
@@ -925,7 +1215,8 @@
       "case": "Dat",
       "english": "tend to / be inclined to",
       "example": "Er neigt zu Übertreibungen.",
-      "rank": 115
+      "rank": 115,
+      "id": "verb-prep-0115"
     },
     {
       "verb": "passen",
@@ -933,7 +1224,8 @@
       "case": "Dat",
       "english": "suit / go with",
       "example": "Die Schuhe passen zum Kleid.",
-      "rank": 116
+      "rank": 116,
+      "id": "verb-prep-0116"
     },
     {
       "verb": "profitieren",
@@ -941,7 +1233,8 @@
       "case": "Dat",
       "english": "profit from / benefit from",
       "example": "Alle profitieren von der Änderung.",
-      "rank": 117
+      "rank": 117,
+      "id": "verb-prep-0117"
     },
     {
       "verb": "protestieren",
@@ -949,7 +1242,8 @@
       "case": "Akk",
       "english": "protest against",
       "example": "Sie protestieren gegen die Kürzungen.",
-      "rank": 118
+      "rank": 118,
+      "id": "verb-prep-0118"
     },
     {
       "verb": "sich rächen",
@@ -957,7 +1251,8 @@
       "case": "Dat",
       "english": "take revenge on",
       "example": "Er rächt sich an seinem Feind.",
-      "rank": 119
+      "rank": 119,
+      "id": "verb-prep-0119"
     },
     {
       "verb": "sich rächen",
@@ -965,7 +1260,8 @@
       "case": "Akk",
       "english": "take revenge for",
       "example": "Sie rächt sich für die Beleidigung.",
-      "rank": 120
+      "rank": 120,
+      "id": "verb-prep-0120"
     },
     {
       "verb": "raten",
@@ -973,7 +1269,8 @@
       "case": "Dat",
       "english": "advise / recommend",
       "example": "Ich rate dir zur Vorsicht.",
-      "rank": 121
+      "rank": 121,
+      "id": "verb-prep-0121"
     },
     {
       "verb": "rechnen",
@@ -981,7 +1278,8 @@
       "case": "Dat",
       "english": "count on / expect",
       "example": "Rechne mit Verspätungen.",
-      "rank": 122
+      "rank": 122,
+      "id": "verb-prep-0122"
     },
     {
       "verb": "reden",
@@ -989,7 +1287,8 @@
       "case": "Akk",
       "english": "talk about",
       "example": "Sie reden über Politik.",
-      "rank": 123
+      "rank": 123,
+      "id": "verb-prep-0123"
     },
     {
       "verb": "reden",
@@ -997,7 +1296,8 @@
       "case": "Dat",
       "english": "talk about / speak of",
       "example": "Er redet von seinen Plänen.",
-      "rank": 124
+      "rank": 124,
+      "id": "verb-prep-0124"
     },
     {
       "verb": "riechen",
@@ -1005,7 +1305,8 @@
       "case": "Dat",
       "english": "smell of",
       "example": "Es riecht nach Rauch.",
-      "rank": 125
+      "rank": 125,
+      "id": "verb-prep-0125"
     },
     {
       "verb": "rufen",
@@ -1013,7 +1314,8 @@
       "case": "Dat",
       "english": "call for",
       "example": "Das Kind ruft nach seiner Mutter.",
-      "rank": 126
+      "rank": 126,
+      "id": "verb-prep-0126"
     },
     {
       "verb": "schauen",
@@ -1021,7 +1323,8 @@
       "case": "Akk",
       "english": "look at",
       "example": "Er schaut auf die Uhr.",
-      "rank": 127
+      "rank": 127,
+      "id": "verb-prep-0127"
     },
     {
       "verb": "sich schämen",
@@ -1029,7 +1332,8 @@
       "case": "Akk",
       "english": "be ashamed of",
       "example": "Er schämt sich für sein Verhalten.",
-      "rank": 128
+      "rank": 128,
+      "id": "verb-prep-0128"
     },
     {
       "verb": "scheitern",
@@ -1037,7 +1341,8 @@
       "case": "Dat",
       "english": "fail because of",
       "example": "Das Projekt scheitert am Geld.",
-      "rank": 129
+      "rank": 129,
+      "id": "verb-prep-0129"
     },
     {
       "verb": "schicken",
@@ -1045,7 +1350,8 @@
       "case": "Akk",
       "english": "send to",
       "example": "Schick den Brief an die Firma.",
-      "rank": 130
+      "rank": 130,
+      "id": "verb-prep-0130"
     },
     {
       "verb": "schimpfen",
@@ -1053,7 +1359,8 @@
       "case": "Akk",
       "english": "grumble / curse about",
       "example": "Er schimpft über die Regierung.",
-      "rank": 131
+      "rank": 131,
+      "id": "verb-prep-0131"
     },
     {
       "verb": "schmecken",
@@ -1061,7 +1368,8 @@
       "case": "Dat",
       "english": "taste of",
       "example": "Die Suppe schmeckt nach Knoblauch.",
-      "rank": 132
+      "rank": 132,
+      "id": "verb-prep-0132"
     },
     {
       "verb": "sich sehnen",
@@ -1069,7 +1377,8 @@
       "case": "Dat",
       "english": "long for / yearn for",
       "example": "Sie sehnt sich nach Ruhe.",
-      "rank": 133
+      "rank": 133,
+      "id": "verb-prep-0133"
     },
     {
       "verb": "sorgen",
@@ -1077,7 +1386,8 @@
       "case": "Akk",
       "english": "take care of / ensure",
       "example": "Er sorgt für seine Familie.",
-      "rank": 134
+      "rank": 134,
+      "id": "verb-prep-0134"
     },
     {
       "verb": "sich sorgen",
@@ -1085,7 +1395,8 @@
       "case": "Akk",
       "english": "worry about",
       "example": "Sie sorgt sich um ihre Kinder.",
-      "rank": 135
+      "rank": 135,
+      "id": "verb-prep-0135"
     },
     {
       "verb": "sprechen",
@@ -1093,7 +1404,8 @@
       "case": "Dat",
       "english": "speak with",
       "example": "Ich spreche mit dem Chef.",
-      "rank": 136
+      "rank": 136,
+      "id": "verb-prep-0136"
     },
     {
       "verb": "sprechen",
@@ -1101,7 +1413,8 @@
       "case": "Akk",
       "english": "speak about",
       "example": "Wir sprechen über die Zukunft.",
-      "rank": 137
+      "rank": 137,
+      "id": "verb-prep-0137"
     },
     {
       "verb": "sprechen",
@@ -1109,7 +1422,8 @@
       "case": "Dat",
       "english": "speak of",
       "example": "Er spricht von seinen Erfahrungen.",
-      "rank": 138
+      "rank": 138,
+      "id": "verb-prep-0138"
     },
     {
       "verb": "stammen",
@@ -1117,7 +1431,8 @@
       "case": "Dat",
       "english": "come from / originate from",
       "example": "Das Wort stammt aus dem Lateinischen.",
-      "rank": 139
+      "rank": 139,
+      "id": "verb-prep-0139"
     },
     {
       "verb": "staunen",
@@ -1125,7 +1440,8 @@
       "case": "Akk",
       "english": "be amazed at",
       "example": "Ich staune über seine Leistung.",
-      "rank": 140
+      "rank": 140,
+      "id": "verb-prep-0140"
     },
     {
       "verb": "sterben",
@@ -1133,7 +1449,8 @@
       "case": "Dat",
       "english": "die of / from",
       "example": "Er starb an einer Krankheit.",
-      "rank": 141
+      "rank": 141,
+      "id": "verb-prep-0141"
     },
     {
       "verb": "stimmen",
@@ -1141,7 +1458,8 @@
       "case": "Akk",
       "english": "vote for",
       "example": "Die Mehrheit stimmt für den Antrag.",
-      "rank": 142
+      "rank": 142,
+      "id": "verb-prep-0142"
     },
     {
       "verb": "stimmen",
@@ -1149,7 +1467,8 @@
       "case": "Akk",
       "english": "vote against",
       "example": "Drei Mitglieder stimmten gegen den Vorschlag.",
-      "rank": 143
+      "rank": 143,
+      "id": "verb-prep-0143"
     },
     {
       "verb": "stoßen",
@@ -1157,7 +1476,8 @@
       "case": "Akk",
       "english": "come across / encounter",
       "example": "Ich bin auf ein Problem gestoßen.",
-      "rank": 144
+      "rank": 144,
+      "id": "verb-prep-0144"
     },
     {
       "verb": "streiken",
@@ -1165,7 +1485,8 @@
       "case": "Akk",
       "english": "strike for",
       "example": "Die Arbeiter streiken für höhere Löhne.",
-      "rank": 145
+      "rank": 145,
+      "id": "verb-prep-0145"
     },
     {
       "verb": "sich streiten",
@@ -1173,7 +1494,8 @@
       "case": "Akk",
       "english": "argue about",
       "example": "Sie streiten sich über das Erbe.",
-      "rank": 146
+      "rank": 146,
+      "id": "verb-prep-0146"
     },
     {
       "verb": "sich streiten",
@@ -1181,7 +1503,8 @@
       "case": "Akk",
       "english": "fight over",
       "example": "Die Kinder streiten sich um das Spielzeug.",
-      "rank": 147
+      "rank": 147,
+      "id": "verb-prep-0147"
     },
     {
       "verb": "streben",
@@ -1189,7 +1512,8 @@
       "case": "Dat",
       "english": "strive for / aspire to",
       "example": "Er strebt nach Perfektion.",
-      "rank": 148
+      "rank": 148,
+      "id": "verb-prep-0148"
     },
     {
       "verb": "suchen",
@@ -1197,7 +1521,8 @@
       "case": "Dat",
       "english": "search for / look for",
       "example": "Ich suche nach meinem Schlüssel.",
-      "rank": 149
+      "rank": 149,
+      "id": "verb-prep-0149"
     },
     {
       "verb": "teilnehmen",
@@ -1205,7 +1530,8 @@
       "case": "Dat",
       "english": "take part in / participate in",
       "example": "Sie nimmt am Wettbewerb teil.",
-      "rank": 150
+      "rank": 150,
+      "id": "verb-prep-0150"
     },
     {
       "verb": "telefonieren",
@@ -1213,7 +1539,8 @@
       "case": "Dat",
       "english": "talk on the phone with",
       "example": "Ich telefoniere mit meiner Mutter.",
-      "rank": 151
+      "rank": 151,
+      "id": "verb-prep-0151"
     },
     {
       "verb": "tendieren",
@@ -1221,7 +1548,8 @@
       "case": "Dat",
       "english": "tend toward",
       "example": "Ich tendiere zu der ersten Option.",
-      "rank": 152
+      "rank": 152,
+      "id": "verb-prep-0152"
     },
     {
       "verb": "träumen",
@@ -1229,7 +1557,8 @@
       "case": "Dat",
       "english": "dream of / about",
       "example": "Sie träumt von einer besseren Welt.",
-      "rank": 153
+      "rank": 153,
+      "id": "verb-prep-0153"
     },
     {
       "verb": "trauern",
@@ -1237,7 +1566,8 @@
       "case": "Akk",
       "english": "mourn for",
       "example": "Sie trauert um ihren Vater.",
-      "rank": 154
+      "rank": 154,
+      "id": "verb-prep-0154"
     },
     {
       "verb": "tun",
@@ -1245,7 +1575,25 @@
       "case": "Akk",
       "english": "do for",
       "example": "Was kann ich für Sie tun?",
-      "rank": 155
+      "rank": 155,
+      "id": "verb-prep-0155",
+      "senses": [
+        {
+          "id": "verb-prep-0155-sense-1",
+          "default": true,
+          "editorialSource": "Remove from the fixed verb–preposition bank."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00155:tun für",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Remove from the fixed verb–preposition bank."
+        }
+      ]
     },
     {
       "verb": "überreden",
@@ -1253,7 +1601,8 @@
       "case": "Dat",
       "english": "persuade to",
       "example": "Sie überredet ihn zum Bleiben.",
-      "rank": 156
+      "rank": 156,
+      "id": "verb-prep-0156"
     },
     {
       "verb": "überzeugen",
@@ -1261,7 +1610,8 @@
       "case": "Dat",
       "english": "convince of",
       "example": "Er überzeugt mich von seiner Idee.",
-      "rank": 157
+      "rank": 157,
+      "id": "verb-prep-0157"
     },
     {
       "verb": "sich unterhalten",
@@ -1269,7 +1619,8 @@
       "case": "Dat",
       "english": "converse with",
       "example": "Ich unterhalte mich mit Freunden.",
-      "rank": 158
+      "rank": 158,
+      "id": "verb-prep-0158"
     },
     {
       "verb": "sich unterhalten",
@@ -1277,7 +1628,8 @@
       "case": "Akk",
       "english": "converse about",
       "example": "Wir unterhalten uns über den Film.",
-      "rank": 159
+      "rank": 159,
+      "id": "verb-prep-0159"
     },
     {
       "verb": "sich unterscheiden",
@@ -1285,7 +1637,8 @@
       "case": "Dat",
       "english": "differ from",
       "example": "Dieses Modell unterscheidet sich vom alten.",
-      "rank": 160
+      "rank": 160,
+      "id": "verb-prep-0160"
     },
     {
       "verb": "sich verabreden",
@@ -1293,7 +1646,8 @@
       "case": "Dat",
       "english": "arrange to meet with",
       "example": "Sie verabredet sich mit einer Freundin.",
-      "rank": 161
+      "rank": 161,
+      "id": "verb-prep-0161"
     },
     {
       "verb": "sich verabschieden",
@@ -1301,7 +1655,8 @@
       "case": "Dat",
       "english": "say goodbye to",
       "example": "Er verabschiedet sich von seinen Kollegen.",
-      "rank": 162
+      "rank": 162,
+      "id": "verb-prep-0162"
     },
     {
       "verb": "verfügen",
@@ -1309,7 +1664,8 @@
       "case": "Akk",
       "english": "have at one's disposal / possess",
       "example": "Die Firma verfügt über große Ressourcen.",
-      "rank": 163
+      "rank": 163,
+      "id": "verb-prep-0163"
     },
     {
       "verb": "vergleichen",
@@ -1317,7 +1673,8 @@
       "case": "Dat",
       "english": "compare with",
       "example": "Vergleich das mit dem Original.",
-      "rank": 164
+      "rank": 164,
+      "id": "verb-prep-0164"
     },
     {
       "verb": "sich verlassen",
@@ -1325,7 +1682,8 @@
       "case": "Akk",
       "english": "rely on",
       "example": "Du kannst dich auf mich verlassen.",
-      "rank": 165
+      "rank": 165,
+      "id": "verb-prep-0165"
     },
     {
       "verb": "sich verlieben",
@@ -1333,7 +1691,8 @@
       "case": "Akk",
       "english": "fall in love with",
       "example": "Er verliebt sich in sie.",
-      "rank": 166
+      "rank": 166,
+      "id": "verb-prep-0166"
     },
     {
       "verb": "verstehen",
@@ -1341,7 +1700,8 @@
       "case": "Dat",
       "english": "know about / understand",
       "example": "Er versteht viel von Musik.",
-      "rank": 167
+      "rank": 167,
+      "id": "verb-prep-0167"
     },
     {
       "verb": "sich vertiefen",
@@ -1349,7 +1709,8 @@
       "case": "Akk",
       "english": "immerse oneself in",
       "example": "Sie vertieft sich in das Buch.",
-      "rank": 168
+      "rank": 168,
+      "id": "verb-prep-0168"
     },
     {
       "verb": "vertrauen",
@@ -1357,7 +1718,8 @@
       "case": "Akk",
       "english": "trust in",
       "example": "Ich vertraue auf dein Urteil.",
-      "rank": 169
+      "rank": 169,
+      "id": "verb-prep-0169"
     },
     {
       "verb": "verzichten",
@@ -1365,7 +1727,8 @@
       "case": "Akk",
       "english": "do without / forgo",
       "example": "Er verzichtet auf Zucker.",
-      "rank": 170
+      "rank": 170,
+      "id": "verb-prep-0170"
     },
     {
       "verb": "sich vorbereiten",
@@ -1373,7 +1736,8 @@
       "case": "Akk",
       "english": "prepare for",
       "example": "Wir bereiten uns auf die Prüfung vor.",
-      "rank": 171
+      "rank": 171,
+      "id": "verb-prep-0171"
     },
     {
       "verb": "warnen",
@@ -1381,7 +1745,8 @@
       "case": "Dat",
       "english": "warn about/against",
       "example": "Ich warne dich vor diesem Mann.",
-      "rank": 172
+      "rank": 172,
+      "id": "verb-prep-0172"
     },
     {
       "verb": "warten",
@@ -1389,7 +1754,8 @@
       "case": "Akk",
       "english": "wait for",
       "example": "Ich warte auf den Bus.",
-      "rank": 173
+      "rank": 173,
+      "id": "verb-prep-0173"
     },
     {
       "verb": "sich wehren",
@@ -1397,7 +1763,8 @@
       "case": "Akk",
       "english": "defend oneself against",
       "example": "Er wehrt sich gegen die Vorwürfe.",
-      "rank": 174
+      "rank": 174,
+      "id": "verb-prep-0174"
     },
     {
       "verb": "sich wenden",
@@ -1405,7 +1772,8 @@
       "case": "Akk",
       "english": "turn to / contact",
       "example": "Wenden Sie sich an den Kundendienst.",
-      "rank": 175
+      "rank": 175,
+      "id": "verb-prep-0175"
     },
     {
       "verb": "werden",
@@ -1413,7 +1781,8 @@
       "case": "Dat",
       "english": "become / turn into",
       "example": "Das Wasser wird zu Eis.",
-      "rank": 176
+      "rank": 176,
+      "id": "verb-prep-0176"
     },
     {
       "verb": "wirken",
@@ -1421,7 +1790,8 @@
       "case": "Akk",
       "english": "have an effect on",
       "example": "Die Musik wirkt beruhigend auf mich.",
-      "rank": 177
+      "rank": 177,
+      "id": "verb-prep-0177"
     },
     {
       "verb": "wissen",
@@ -1429,7 +1799,8 @@
       "case": "Dat",
       "english": "know about",
       "example": "Ich weiß nichts von dem Plan.",
-      "rank": 178
+      "rank": 178,
+      "id": "verb-prep-0178"
     },
     {
       "verb": "sich wundern",
@@ -1437,7 +1808,8 @@
       "case": "Akk",
       "english": "be surprised at",
       "example": "Ich wundere mich über seine Reaktion.",
-      "rank": 179
+      "rank": 179,
+      "id": "verb-prep-0179"
     },
     {
       "verb": "zählen",
@@ -1445,7 +1817,8 @@
       "case": "Dat",
       "english": "count among / be one of",
       "example": "Er zählt zu den Besten.",
-      "rank": 180
+      "rank": 180,
+      "id": "verb-prep-0180"
     },
     {
       "verb": "zweifeln",
@@ -1453,7 +1826,8 @@
       "case": "Dat",
       "english": "doubt",
       "example": "Ich zweifle an seiner Ehrlichkeit.",
-      "rank": 181
+      "rank": 181,
+      "id": "verb-prep-0181"
     },
     {
       "verb": "zwingen",
@@ -1461,7 +1835,8 @@
       "case": "Dat",
       "english": "force to",
       "example": "Niemand zwingt dich zu einer Entscheidung.",
-      "rank": 182
+      "rank": 182,
+      "id": "verb-prep-0182"
     },
     {
       "verb": "abstimmen",
@@ -1469,7 +1844,8 @@
       "case": "Akk",
       "english": "vote on",
       "example": "Wir stimmen über den Vorschlag ab.",
-      "rank": 183
+      "rank": 183,
+      "id": "verb-prep-0183"
     },
     {
       "verb": "sich abfinden",
@@ -1477,7 +1853,8 @@
       "case": "Dat",
       "english": "come to terms with / accept",
       "example": "Er findet sich mit der Situation ab.",
-      "rank": 184
+      "rank": 184,
+      "id": "verb-prep-0184"
     },
     {
       "verb": "sich abgrenzen",
@@ -1485,7 +1862,8 @@
       "case": "Dat",
       "english": "distance oneself from",
       "example": "Sie grenzt sich von der Gruppe ab.",
-      "rank": 185
+      "rank": 185,
+      "id": "verb-prep-0185"
     },
     {
       "verb": "sich absichern",
@@ -1493,7 +1871,8 @@
       "case": "Akk",
       "english": "protect oneself against",
       "example": "Er sichert sich gegen Verluste ab.",
-      "rank": 186
+      "rank": 186,
+      "id": "verb-prep-0186"
     },
     {
       "verb": "abzielen",
@@ -1501,7 +1880,8 @@
       "case": "Akk",
       "english": "aim at / target",
       "example": "Die Maßnahme zielt auf junge Leute ab.",
-      "rank": 187
+      "rank": 187,
+      "id": "verb-prep-0187"
     },
     {
       "verb": "appellieren",
@@ -1509,7 +1889,8 @@
       "case": "Akk",
       "english": "appeal to",
       "example": "Ich appelliere an Ihre Vernunft.",
-      "rank": 188
+      "rank": 188,
+      "id": "verb-prep-0188"
     },
     {
       "verb": "basieren",
@@ -1517,7 +1898,8 @@
       "case": "Dat",
       "english": "be based on",
       "example": "Der Film basiert auf einer wahren Geschichte.",
-      "rank": 189
+      "rank": 189,
+      "id": "verb-prep-0189"
     },
     {
       "verb": "sich bedienen",
@@ -1525,7 +1907,8 @@
       "case": "Dat",
       "english": "help oneself to",
       "example": "Bedien dich am Buffet.",
-      "rank": 190
+      "rank": 190,
+      "id": "verb-prep-0190"
     },
     {
       "verb": "sich belaufen",
@@ -1533,7 +1916,8 @@
       "case": "Akk",
       "english": "amount to",
       "example": "Die Kosten belaufen sich auf 1000 Euro.",
-      "rank": 191
+      "rank": 191,
+      "id": "verb-prep-0191"
     },
     {
       "verb": "sich beraten",
@@ -1541,7 +1925,8 @@
       "case": "Dat",
       "english": "consult with",
       "example": "Er berät sich mit seinem Anwalt.",
-      "rank": 193
+      "rank": 193,
+      "id": "verb-prep-0193"
     },
     {
       "verb": "sich berufen",
@@ -1549,7 +1934,8 @@
       "case": "Akk",
       "english": "appeal to / invoke",
       "example": "Er beruft sich auf die Verfassung.",
-      "rank": 194
+      "rank": 194,
+      "id": "verb-prep-0194"
     },
     {
       "verb": "sich beschränken",
@@ -1557,7 +1943,8 @@
       "case": "Akk",
       "english": "limit oneself to",
       "example": "Beschränken wir uns auf das Wesentliche.",
-      "rank": 195
+      "rank": 195,
+      "id": "verb-prep-0195"
     },
     {
       "verb": "bestimmen",
@@ -1565,7 +1952,8 @@
       "case": "Akk",
       "english": "decide about / have authority over",
       "example": "Jeder bestimmt über sein Leben.",
-      "rank": 196
+      "rank": 196,
+      "id": "verb-prep-0196"
     },
     {
       "verb": "blicken",
@@ -1573,7 +1961,43 @@
       "case": "Akk",
       "english": "look at / look back on",
       "example": "Er blickt auf eine lange Karriere zurück.",
-      "rank": 197
+      "rank": 197,
+      "id": "verb-prep-0197",
+      "senses": [
+        {
+          "id": "verb-prep-0197-sense-1",
+          "default": true,
+          "patterns": [
+            "blicken auf",
+            "look at",
+            "zurückblicken auf"
+          ],
+          "editorialSource": "Either use `blicken auf` only for literal `look at` with a matching example, or change the headword to `zurückblicken auf`"
+        },
+        {
+          "id": "verb-prep-0197-sense-2",
+          "default": false,
+          "editorialSource": "the latter already occurs later in this batch."
+        }
+      ],
+      "learnerSafe": false,
+      "reviewStatus": "reference_only",
+      "referenceOnlyReasons": [
+        {
+          "reason": "Sense-dependent morphology cannot be losslessly represented by one legacy paradigm",
+          "recommendation": "Either use `blicken auf` only for literal `look at` with a matching example, or change the headword to `zurückblicken auf`; the latter already occurs later in this batch."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00197:blicken auf",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_morphology_or_split_senses",
+          "disposition": "reference_only",
+          "recommendation": "Either use `blicken auf` only for literal `look at` with a matching example, or change the headword to `zurückblicken auf`; the latter already occurs later in this batch."
+        }
+      ]
     },
     {
       "verb": "brennen",
@@ -1581,7 +2005,8 @@
       "case": "Akk",
       "english": "be dying to / be eager for",
       "example": "Sie brennt auf eine Antwort.",
-      "rank": 198
+      "rank": 198,
+      "id": "verb-prep-0198"
     },
     {
       "verb": "büßen",
@@ -1589,7 +2014,8 @@
       "case": "Akk",
       "english": "atone for / pay for",
       "example": "Er büßt für seine Fehler.",
-      "rank": 199
+      "rank": 199,
+      "id": "verb-prep-0199"
     },
     {
       "verb": "deuten",
@@ -1597,7 +2023,8 @@
       "case": "Akk",
       "english": "point to / indicate",
       "example": "Alles deutet auf Regen.",
-      "rank": 200
+      "rank": 200,
+      "id": "verb-prep-0200"
     },
     {
       "verb": "dienen",
@@ -1605,15 +2032,46 @@
       "case": "Nom",
       "english": "serve as",
       "example": "Das Gebäude dient als Museum.",
-      "rank": 201
+      "rank": 201,
+      "id": "verb-prep-0201"
     },
     {
       "verb": "drängen",
       "preposition": "zu",
       "case": "Dat",
-      "english": "urge toward",
+      "english": "she urges them to leave/presses for departure",
       "example": "Sie drängt zum Aufbruch.",
-      "rank": 202
+      "rank": 202,
+      "id": "verb-prep-0202",
+      "senses": [
+        {
+          "id": "verb-prep-0202-sense-1",
+          "default": true,
+          "patterns": [
+            "Sie drängt zum Aufbruch",
+            "she urges them to leave/presses for departure"
+          ],
+          "editorialSource": "Severity remains medium. Keep the valid objectless example `Sie drängt zum Aufbruch`, but gloss it `she urges them to leave/presses for departure`"
+        },
+        {
+          "id": "verb-prep-0202-sense-2",
+          "default": false,
+          "patterns": [
+            "jemanden zu etwas drängen"
+          ],
+          "editorialSource": "also add the common transitive `jemanden zu etwas drängen`. Duden explicitly lists both objectless and transitive examples. [Duden.](https://www.duden.de/rechtschreibung/draengen)"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00202:drängen zu",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "Severity remains medium. Keep the valid objectless example `Sie drängt zum Aufbruch`, but gloss it `she urges them to leave/presses for departure`; also add the common transitive `jemanden zu etwas drängen`. Duden explicitly lists both objectless and transitive examples. [Duden.](https://www.duden.de/rechtschreibung/draengen)"
+        }
+      ]
     },
     {
       "verb": "sich drücken",
@@ -1621,7 +2079,8 @@
       "case": "Dat",
       "english": "shirk / avoid",
       "example": "Er drückt sich vor der Arbeit.",
-      "rank": 203
+      "rank": 203,
+      "id": "verb-prep-0203"
     },
     {
       "verb": "dürsten",
@@ -1629,7 +2088,8 @@
       "case": "Dat",
       "english": "thirst for",
       "example": "Er dürstet nach Gerechtigkeit.",
-      "rank": 204
+      "rank": 204,
+      "id": "verb-prep-0204"
     },
     {
       "verb": "sich einfühlen",
@@ -1637,7 +2097,8 @@
       "case": "Akk",
       "english": "empathize with",
       "example": "Sie fühlt sich in andere ein.",
-      "rank": 205
+      "rank": 205,
+      "id": "verb-prep-0205"
     },
     {
       "verb": "einwilligen",
@@ -1645,7 +2106,8 @@
       "case": "Akk",
       "english": "consent to / agree to",
       "example": "Er willigt in die Operation ein.",
-      "rank": 206
+      "rank": 206,
+      "id": "verb-prep-0206"
     },
     {
       "verb": "sich empören",
@@ -1653,7 +2115,8 @@
       "case": "Akk",
       "english": "be outraged at",
       "example": "Alle empören sich über die Tat.",
-      "rank": 207
+      "rank": 207,
+      "id": "verb-prep-0207"
     },
     {
       "verb": "sich erstrecken",
@@ -1661,7 +2124,8 @@
       "case": "Akk",
       "english": "extend over / span",
       "example": "Der Park erstreckt sich über 50 Hektar.",
-      "rank": 208
+      "rank": 208,
+      "id": "verb-prep-0208"
     },
     {
       "verb": "sich erweisen",
@@ -1669,7 +2133,8 @@
       "case": "Nom",
       "english": "prove to be / turn out as",
       "example": "Das erweist sich als schwierig.",
-      "rank": 209
+      "rank": 209,
+      "id": "verb-prep-0209"
     },
     {
       "verb": "fahnden",
@@ -1677,7 +2142,8 @@
       "case": "Dat",
       "english": "search for (police)",
       "example": "Die Polizei fahndet nach dem Täter.",
-      "rank": 210
+      "rank": 210,
+      "id": "verb-prep-0210"
     },
     {
       "verb": "fehlen",
@@ -1685,7 +2151,8 @@
       "case": "Dat",
       "english": "be lacking in",
       "example": "Es fehlt an Fachkräften.",
-      "rank": 211
+      "rank": 211,
+      "id": "verb-prep-0211"
     },
     {
       "verb": "festhalten",
@@ -1693,7 +2160,8 @@
       "case": "Dat",
       "english": "hold on to / stick to",
       "example": "Er hält an seinem Plan fest.",
-      "rank": 212
+      "rank": 212,
+      "id": "verb-prep-0212"
     },
     {
       "verb": "flehen",
@@ -1701,7 +2169,8 @@
       "case": "Akk",
       "english": "beg for / plead for",
       "example": "Sie fleht um Gnade.",
-      "rank": 213
+      "rank": 213,
+      "id": "verb-prep-0213"
     },
     {
       "verb": "sich freisprechen",
@@ -1709,7 +2178,35 @@
       "case": "Dat",
       "english": "acquit of",
       "example": "Das Gericht spricht ihn vom Vorwurf frei.",
-      "rank": 214
+      "rank": 214,
+      "id": "verb-prep-0214",
+      "senses": [
+        {
+          "id": "verb-prep-0214-sense-1",
+          "default": true,
+          "valency": {
+            "transitivity": "transitive_or_argument_bearing",
+            "case_markers": [
+              "Dat"
+            ]
+          },
+          "patterns": [
+            "jemanden von etwas freisprechen",
+            "freisprechen von + Dat"
+          ],
+          "editorialSource": "`jemanden von etwas freisprechen` / headword `freisprechen von + Dat`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00214:sich freisprechen von",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "`jemanden von etwas freisprechen` / headword `freisprechen von + Dat`"
+        }
+      ]
     },
     {
       "verb": "fungieren",
@@ -1717,7 +2214,8 @@
       "case": "Nom",
       "english": "function as / serve as",
       "example": "Er fungiert als Vermittler.",
-      "rank": 215
+      "rank": 215,
+      "id": "verb-prep-0215"
     },
     {
       "verb": "sich grämen",
@@ -1725,7 +2223,8 @@
       "case": "Akk",
       "english": "grieve about",
       "example": "Sie grämt sich über den Verlust.",
-      "rank": 216
+      "rank": 216,
+      "id": "verb-prep-0216"
     },
     {
       "verb": "grübeln",
@@ -1733,7 +2232,8 @@
       "case": "Akk",
       "english": "brood over / ponder",
       "example": "Er grübelt über das Problem.",
-      "rank": 217
+      "rank": 217,
+      "id": "verb-prep-0217"
     },
     {
       "verb": "sich hüten",
@@ -1741,7 +2241,8 @@
       "case": "Dat",
       "english": "beware of",
       "example": "Hüte dich vor falschen Freunden.",
-      "rank": 218
+      "rank": 218,
+      "id": "verb-prep-0218"
     },
     {
       "verb": "hadern",
@@ -1749,7 +2250,8 @@
       "case": "Dat",
       "english": "be at odds with / struggle with",
       "example": "Er hadert mit seinem Schicksal.",
-      "rank": 219
+      "rank": 219,
+      "id": "verb-prep-0219"
     },
     {
       "verb": "haften",
@@ -1757,7 +2259,8 @@
       "case": "Akk",
       "english": "be liable for",
       "example": "Eltern haften für ihre Kinder.",
-      "rank": 220
+      "rank": 220,
+      "id": "verb-prep-0220"
     },
     {
       "verb": "hängen",
@@ -1765,7 +2268,8 @@
       "case": "Dat",
       "english": "be attached to",
       "example": "Sie hängt an ihrer Familie.",
-      "rank": 221
+      "rank": 221,
+      "id": "verb-prep-0221"
     },
     {
       "verb": "hervorrufen",
@@ -1773,7 +2277,8 @@
       "case": "Dat",
       "english": "evoke in / cause in",
       "example": "Das ruft Erstaunen bei den Zuschauern hervor.",
-      "rank": 222
+      "rank": 222,
+      "id": "verb-prep-0222"
     },
     {
       "verb": "hungern",
@@ -1781,7 +2286,8 @@
       "case": "Dat",
       "english": "hunger for",
       "example": "Das Volk hungert nach Freiheit.",
-      "rank": 224
+      "rank": 224,
+      "id": "verb-prep-0224"
     },
     {
       "verb": "insistieren",
@@ -1789,7 +2295,8 @@
       "case": "Dat",
       "english": "insist on",
       "example": "Er insistiert auf einer Erklärung.",
-      "rank": 225
+      "rank": 225,
+      "id": "verb-prep-0225"
     },
     {
       "verb": "jubeln",
@@ -1797,7 +2304,30 @@
       "case": "Akk",
       "english": "cheer about",
       "example": "Die Fans jubeln über den Sieg.",
-      "rank": 226
+      "rank": 226,
+      "id": "verb-prep-0226",
+      "senses": [
+        {
+          "id": "verb-prep-0226-sense-1",
+          "default": true,
+          "editorialSource": "`rejoice at/over"
+        },
+        {
+          "id": "verb-prep-0226-sense-2",
+          "default": false,
+          "editorialSource": "celebrate`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00226:jubeln über",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "`rejoice at/over; celebrate`"
+        }
+      ]
     },
     {
       "verb": "klagen",
@@ -1805,7 +2335,8 @@
       "case": "Akk",
       "english": "sue / file suit against",
       "example": "Sie klagt gegen ihren Arbeitgeber.",
-      "rank": 227
+      "rank": 227,
+      "id": "verb-prep-0227"
     },
     {
       "verb": "knüpfen",
@@ -1813,7 +2344,8 @@
       "case": "Akk",
       "english": "attach to / link to",
       "example": "Sie knüpft Bedingungen an das Angebot.",
-      "rank": 228
+      "rank": 228,
+      "id": "verb-prep-0228"
     },
     {
       "verb": "sich lossagen",
@@ -1821,7 +2353,8 @@
       "case": "Dat",
       "english": "renounce / break away from",
       "example": "Er sagt sich von der Partei los.",
-      "rank": 229
+      "rank": 229,
+      "id": "verb-prep-0229"
     },
     {
       "verb": "münden",
@@ -1829,7 +2362,8 @@
       "case": "Akk",
       "english": "flow into / result in",
       "example": "Die Diskussion mündet in einen Streit.",
-      "rank": 230
+      "rank": 230,
+      "id": "verb-prep-0230"
     },
     {
       "verb": "sich orientieren",
@@ -1837,7 +2371,8 @@
       "case": "Dat",
       "english": "orientate oneself by / follow",
       "example": "Wir orientieren uns an den Vorgaben.",
-      "rank": 231
+      "rank": 231,
+      "id": "verb-prep-0231"
     },
     {
       "verb": "plädieren",
@@ -1845,7 +2380,8 @@
       "case": "Akk",
       "english": "plead for / advocate for",
       "example": "Er plädiert für mehr Transparenz.",
-      "rank": 232
+      "rank": 232,
+      "id": "verb-prep-0232"
     },
     {
       "verb": "pochen",
@@ -1853,7 +2389,8 @@
       "case": "Akk",
       "english": "insist on",
       "example": "Sie pocht auf ihr Recht.",
-      "rank": 233
+      "rank": 233,
+      "id": "verb-prep-0233"
     },
     {
       "verb": "sich ranken",
@@ -1861,7 +2398,8 @@
       "case": "Akk",
       "english": "grow around / revolve around (legends)",
       "example": "Viele Legenden ranken sich um das Schloss.",
-      "rank": 234
+      "rank": 234,
+      "id": "verb-prep-0234"
     },
     {
       "verb": "sich richten",
@@ -1869,7 +2407,8 @@
       "case": "Dat",
       "english": "go by / comply with",
       "example": "Richte dich nach den Regeln.",
-      "rank": 235
+      "rank": 235,
+      "id": "verb-prep-0235"
     },
     {
       "verb": "sich richten",
@@ -1877,7 +2416,8 @@
       "case": "Akk",
       "english": "be directed against",
       "example": "Die Kritik richtet sich gegen die Leitung.",
-      "rank": 236
+      "rank": 236,
+      "id": "verb-prep-0236"
     },
     {
       "verb": "sich richten",
@@ -1885,7 +2425,8 @@
       "case": "Akk",
       "english": "be aimed at / addressed to",
       "example": "Das Angebot richtet sich an Studenten.",
-      "rank": 237
+      "rank": 237,
+      "id": "verb-prep-0237"
     },
     {
       "verb": "ringen",
@@ -1893,7 +2434,8 @@
       "case": "Akk",
       "english": "struggle for / wrestle for",
       "example": "Er ringt um Fassung.",
-      "rank": 238
+      "rank": 238,
+      "id": "verb-prep-0238"
     },
     {
       "verb": "scheiden",
@@ -1901,7 +2443,8 @@
       "case": "Dat",
       "english": "leave / depart from",
       "example": "Er scheidet aus dem Amt.",
-      "rank": 239
+      "rank": 239,
+      "id": "verb-prep-0239"
     },
     {
       "verb": "schließen",
@@ -1909,7 +2452,8 @@
       "case": "Dat",
       "english": "conclude from",
       "example": "Daraus schließe ich, dass er recht hat.",
-      "rank": 240
+      "rank": 240,
+      "id": "verb-prep-0240"
     },
     {
       "verb": "schwärmen",
@@ -1917,7 +2461,8 @@
       "case": "Akk",
       "english": "be crazy about / rave about",
       "example": "Sie schwärmt für den Sänger.",
-      "rank": 241
+      "rank": 241,
+      "id": "verb-prep-0241"
     },
     {
       "verb": "schwärmen",
@@ -1925,7 +2470,8 @@
       "case": "Dat",
       "english": "rave about / enthuse about",
       "example": "Er schwärmt von dem Urlaub.",
-      "rank": 242
+      "rank": 242,
+      "id": "verb-prep-0242"
     },
     {
       "verb": "sinnen",
@@ -1933,7 +2479,8 @@
       "case": "Akk",
       "english": "plot / devise",
       "example": "Er sinnt auf Rache.",
-      "rank": 243
+      "rank": 243,
+      "id": "verb-prep-0243"
     },
     {
       "verb": "spekulieren",
@@ -1941,7 +2488,8 @@
       "case": "Akk",
       "english": "speculate on / hope for",
       "example": "Sie spekuliert auf einen Gewinn.",
-      "rank": 244
+      "rank": 244,
+      "id": "verb-prep-0244"
     },
     {
       "verb": "sich sträuben",
@@ -1949,7 +2497,8 @@
       "case": "Akk",
       "english": "resist / balk at",
       "example": "Er sträubt sich gegen die Änderung.",
-      "rank": 245
+      "rank": 245,
+      "id": "verb-prep-0245"
     },
     {
       "verb": "taugen",
@@ -1957,7 +2506,8 @@
       "case": "Dat",
       "english": "be suitable for / be good for",
       "example": "Das taugt zu nichts.",
-      "rank": 246
+      "rank": 246,
+      "id": "verb-prep-0246"
     },
     {
       "verb": "trachten",
@@ -1965,7 +2515,8 @@
       "case": "Dat",
       "english": "strive for / aspire to",
       "example": "Er trachtet nach Macht.",
-      "rank": 247
+      "rank": 247,
+      "id": "verb-prep-0247"
     },
     {
       "verb": "sich umsehen",
@@ -1973,15 +2524,46 @@
       "case": "Dat",
       "english": "look around for",
       "example": "Sie sieht sich nach einem Job um.",
-      "rank": 248
+      "rank": 248,
+      "id": "verb-prep-0248"
     },
     {
       "verb": "sich vergewissern",
       "preposition": "über",
       "case": "Akk",
       "english": "make sure about",
-      "example": "Vergewissern Sie sich über die Fakten.",
-      "rank": 249
+      "example": "sich vergewissern, dass/ob ...",
+      "rank": 249,
+      "id": "verb-prep-0249",
+      "senses": [
+        {
+          "id": "verb-prep-0249-sense-1",
+          "default": true,
+          "reflexive": true,
+          "valency": {
+            "case_markers": [
+              "Akk"
+            ]
+          },
+          "patterns": [
+            "sich vergewissern, dass/ob ...",
+            "sich einer Sache vergewissern",
+            "Vergewissern Sie sich, dass die Angaben stimmen.",
+            "über + Akk"
+          ],
+          "editorialSource": "Prefer the common patterns `sich vergewissern, dass/ob ...` or `sich einer Sache vergewissern`, for example `Vergewissern Sie sich, dass die Angaben stimmen.` If the rare `über + Akk` variant is retained, supply a more idiomatic attested context."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00249:sich vergewissern über",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Prefer the common patterns `sich vergewissern, dass/ob ...` or `sich einer Sache vergewissern`, for example `Vergewissern Sie sich, dass die Angaben stimmen.` If the rare `über + Akk` variant is retained, supply a more idiomatic attested context."
+        }
+      ]
     },
     {
       "verb": "sich vergehen",
@@ -1989,7 +2571,8 @@
       "case": "Dat",
       "english": "commit an offence against",
       "example": "Er vergeht sich an fremdem Eigentum.",
-      "rank": 250
+      "rank": 250,
+      "id": "verb-prep-0250"
     },
     {
       "verb": "verhelfen",
@@ -1997,7 +2580,8 @@
       "case": "Dat",
       "english": "help (someone) to achieve",
       "example": "Das verhilft ihr zum Erfolg.",
-      "rank": 251
+      "rank": 251,
+      "id": "verb-prep-0251"
     },
     {
       "verb": "sich verschwören",
@@ -2005,7 +2589,8 @@
       "case": "Akk",
       "english": "conspire against",
       "example": "Sie verschwören sich gegen den König.",
-      "rank": 252
+      "rank": 252,
+      "id": "verb-prep-0252"
     },
     {
       "verb": "sich verwandeln",
@@ -2013,7 +2598,8 @@
       "case": "Akk",
       "english": "transform into",
       "example": "Der Frosch verwandelt sich in einen Prinzen.",
-      "rank": 253
+      "rank": 253,
+      "id": "verb-prep-0253"
     },
     {
       "verb": "sich verwenden",
@@ -2021,7 +2607,8 @@
       "case": "Akk",
       "english": "intercede for / advocate for",
       "example": "Er verwendet sich für seinen Kollegen.",
-      "rank": 254
+      "rank": 254,
+      "id": "verb-prep-0254"
     },
     {
       "verb": "wetteifern",
@@ -2029,7 +2616,8 @@
       "case": "Dat",
       "english": "compete with / vie with",
       "example": "Die Firmen wetteifern miteinander.",
-      "rank": 255
+      "rank": 255,
+      "id": "verb-prep-0255"
     },
     {
       "verb": "sich winden",
@@ -2037,7 +2625,8 @@
       "case": "Akk",
       "english": "wind around",
       "example": "Der Efeu windet sich um den Stamm.",
-      "rank": 256
+      "rank": 256,
+      "id": "verb-prep-0256"
     },
     {
       "verb": "wirken",
@@ -2045,7 +2634,8 @@
       "case": "Nom",
       "english": "work as / act as",
       "example": "Sie wirkt als Vermittlerin.",
-      "rank": 257
+      "rank": 257,
+      "id": "verb-prep-0257"
     },
     {
       "verb": "zählen",
@@ -2053,7 +2643,8 @@
       "case": "Akk",
       "english": "count on / rely on",
       "example": "Ich zähle auf dich.",
-      "rank": 258
+      "rank": 258,
+      "id": "verb-prep-0258"
     },
     {
       "verb": "zurückführen",
@@ -2061,7 +2652,8 @@
       "case": "Akk",
       "english": "attribute to / trace back to",
       "example": "Das führe ich auf den Stress zurück.",
-      "rank": 259
+      "rank": 259,
+      "id": "verb-prep-0259"
     },
     {
       "verb": "zusammenhängen",
@@ -2069,7 +2661,8 @@
       "case": "Dat",
       "english": "be connected with",
       "example": "Das hängt mit dem Wetter zusammen.",
-      "rank": 260
+      "rank": 260,
+      "id": "verb-prep-0260"
     },
     {
       "verb": "absehen",
@@ -2077,15 +2670,45 @@
       "case": "Dat",
       "english": "disregard / apart from",
       "example": "Abgesehen von diesem Punkt stimme ich zu.",
-      "rank": 261
+      "rank": 261,
+      "id": "verb-prep-0261"
     },
     {
-      "verb": "anlehnen",
+      "verb": "sich anlehnen",
       "preposition": "an",
       "case": "Akk",
       "english": "lean against / be modelled on",
       "example": "Der Stil lehnt sich an die Klassik an.",
-      "rank": 262
+      "rank": 262,
+      "id": "verb-prep-0262",
+      "senses": [
+        {
+          "id": "verb-prep-0262-sense-1",
+          "default": true,
+          "reflexive": true,
+          "valency": {
+            "case_markers": [
+              "Akk"
+            ]
+          },
+          "patterns": [
+            "sich anlehnen an + Akk",
+            "be modelled on",
+            "Sie lehnt die Leiter an die Wand an."
+          ],
+          "editorialSource": "Store `sich anlehnen an + Akk` for `be modelled on`, or use a non-reflexive literal example such as `Sie lehnt die Leiter an die Wand an.`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00262:anlehnen an",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Store `sich anlehnen an + Akk` for `be modelled on`, or use a non-reflexive literal example such as `Sie lehnt die Leiter an die Wand an.`"
+        }
+      ]
     },
     {
       "verb": "anrechnen",
@@ -2093,7 +2716,8 @@
       "case": "Akk",
       "english": "count as / credit as",
       "example": "Das wird dir als Berufserfahrung angerechnet.",
-      "rank": 263
+      "rank": 263,
+      "id": "verb-prep-0263"
     },
     {
       "verb": "sich auseinandersetzen",
@@ -2101,7 +2725,8 @@
       "case": "Dat",
       "english": "engage with / come to grips with",
       "example": "Man muss sich mit dem Problem auseinandersetzen.",
-      "rank": 264
+      "rank": 264,
+      "id": "verb-prep-0264"
     },
     {
       "verb": "auslösen",
@@ -2109,7 +2734,8 @@
       "case": "Dat",
       "english": "trigger in",
       "example": "Das löst Unruhe bei den Mitarbeitern aus.",
-      "rank": 265
+      "rank": 265,
+      "id": "verb-prep-0265"
     },
     {
       "verb": "beneiden",
@@ -2117,7 +2743,8 @@
       "case": "Akk",
       "english": "envy for",
       "example": "Ich beneide dich um deinen Job.",
-      "rank": 266
+      "rank": 266,
+      "id": "verb-prep-0266"
     },
     {
       "verb": "sich bewähren",
@@ -2125,7 +2752,8 @@
       "case": "Dat",
       "english": "prove oneself in",
       "example": "Er bewährt sich in der Krise.",
-      "rank": 267
+      "rank": 267,
+      "id": "verb-prep-0267"
     },
     {
       "verb": "bieten",
@@ -2133,7 +2761,29 @@
       "case": "Akk",
       "english": "offer (to someone)",
       "example": "Er bietet die Ware an.",
-      "rank": 268
+      "rank": 268,
+      "id": "verb-prep-0268",
+      "senses": [
+        {
+          "id": "verb-prep-0268-sense-1",
+          "default": true,
+          "separability": "separable",
+          "patterns": [
+            "anbieten"
+          ],
+          "editorialSource": "Remove this row from the fixed-government bank and teach the separable verb `anbieten` in the ordinary verb bank."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00268:bieten an",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Remove this row from the fixed-government bank and teach the separable verb `anbieten` in the ordinary verb bank."
+        }
+      ]
     },
     {
       "verb": "eingreifen",
@@ -2141,7 +2791,8 @@
       "case": "Akk",
       "english": "intervene in",
       "example": "Die Polizei greift in den Konflikt ein.",
-      "rank": 269
+      "rank": 269,
+      "id": "verb-prep-0269"
     },
     {
       "verb": "eintreten",
@@ -2149,7 +2800,8 @@
       "case": "Akk",
       "english": "stand up for / advocate",
       "example": "Er tritt für Gleichberechtigung ein.",
-      "rank": 270
+      "rank": 270,
+      "id": "verb-prep-0270"
     },
     {
       "verb": "sich engagieren",
@@ -2157,7 +2809,8 @@
       "case": "Akk",
       "english": "be committed to / campaign for",
       "example": "Sie engagiert sich für den Tierschutz.",
-      "rank": 271
+      "rank": 271,
+      "id": "verb-prep-0271"
     },
     {
       "verb": "sich entpuppen",
@@ -2165,7 +2818,8 @@
       "case": "Nom",
       "english": "turn out to be",
       "example": "Das entpuppt sich als Fehler.",
-      "rank": 272
+      "rank": 272,
+      "id": "verb-prep-0272"
     },
     {
       "verb": "feilschen",
@@ -2173,7 +2827,8 @@
       "case": "Akk",
       "english": "haggle over",
       "example": "Sie feilschen um den Preis.",
-      "rank": 273
+      "rank": 273,
+      "id": "verb-prep-0273"
     },
     {
       "verb": "sich herausstellen",
@@ -2181,15 +2836,40 @@
       "case": "Nom",
       "english": "turn out to be",
       "example": "Es stellt sich als wahr heraus.",
-      "rank": 274
+      "rank": 274,
+      "id": "verb-prep-0274"
     },
     {
       "verb": "hervorgehen",
       "preposition": "aus",
       "case": "Dat",
       "english": "emerge from / result from",
-      "example": "Aus der Studie geht hervor, dass...",
-      "rank": 275
+      "example": "Aus der Studie geht hervor, dass regelmäßige Bewegung gesund ist.",
+      "rank": 275,
+      "id": "verb-prep-0275",
+      "senses": [
+        {
+          "id": "verb-prep-0275-sense-1",
+          "default": true,
+          "auxiliaries": [
+            "sein"
+          ],
+          "patterns": [
+            "Aus der Studie geht hervor, dass regelmäßige Bewegung gesund ist."
+          ],
+          "editorialSource": "Supply a complete sentence, for example `Aus der Studie geht hervor, dass regelmäßige Bewegung gesund ist.`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00275:hervorgehen aus",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Supply a complete sentence, for example `Aus der Studie geht hervor, dass regelmäßige Bewegung gesund ist.`"
+        }
+      ]
     },
     {
       "verb": "hinauslaufen",
@@ -2197,7 +2877,8 @@
       "case": "Akk",
       "english": "amount to / boil down to",
       "example": "Es läuft auf das Gleiche hinaus.",
-      "rank": 276
+      "rank": 276,
+      "id": "verb-prep-0276"
     },
     {
       "verb": "konfrontieren",
@@ -2205,7 +2886,8 @@
       "case": "Dat",
       "english": "confront with",
       "example": "Sie konfrontiert ihn mit den Beweisen.",
-      "rank": 277
+      "rank": 277,
+      "id": "verb-prep-0277"
     },
     {
       "verb": "sich messen",
@@ -2213,7 +2895,8 @@
       "case": "Dat",
       "english": "compete with / measure up to",
       "example": "Er misst sich mit den Besten.",
-      "rank": 278
+      "rank": 278,
+      "id": "verb-prep-0278"
     },
     {
       "verb": "resultieren",
@@ -2221,7 +2904,8 @@
       "case": "Dat",
       "english": "result from",
       "example": "Das resultiert aus Nachlässigkeit.",
-      "rank": 279
+      "rank": 279,
+      "id": "verb-prep-0279"
     },
     {
       "verb": "schwanken",
@@ -2229,7 +2913,8 @@
       "case": "Dat",
       "english": "waver between",
       "example": "Er schwankt zwischen zwei Optionen.",
-      "rank": 296
+      "rank": 296,
+      "id": "verb-prep-0296"
     },
     {
       "verb": "sich solidarisieren",
@@ -2237,7 +2922,8 @@
       "case": "Dat",
       "english": "show solidarity with",
       "example": "Die Bevölkerung solidarisiert sich mit den Opfern.",
-      "rank": 281
+      "rank": 281,
+      "id": "verb-prep-0281"
     },
     {
       "verb": "tüfteln",
@@ -2245,7 +2931,8 @@
       "case": "Dat",
       "english": "tinker with / puzzle over",
       "example": "Er tüftelt an einer Lösung.",
-      "rank": 282
+      "rank": 282,
+      "id": "verb-prep-0282"
     },
     {
       "verb": "sich verdingen",
@@ -2253,7 +2940,8 @@
       "case": "Nom",
       "english": "hire oneself out as",
       "example": "Er verdingt sich als Tagelöhner.",
-      "rank": 283
+      "rank": 283,
+      "id": "verb-prep-0283"
     },
     {
       "verb": "sich verbünden",
@@ -2261,7 +2949,8 @@
       "case": "Dat",
       "english": "ally oneself with",
       "example": "Die Parteien verbünden sich miteinander.",
-      "rank": 284
+      "rank": 284,
+      "id": "verb-prep-0284"
     },
     {
       "verb": "sich verständigen",
@@ -2269,7 +2958,8 @@
       "case": "Akk",
       "english": "reach an understanding about",
       "example": "Wir verständigen uns über die Bedingungen.",
-      "rank": 285
+      "rank": 285,
+      "id": "verb-prep-0285"
     },
     {
       "verb": "sich versündigen",
@@ -2277,7 +2967,8 @@
       "case": "Dat",
       "english": "sin against",
       "example": "Man versündigt sich an der Natur.",
-      "rank": 286
+      "rank": 286,
+      "id": "verb-prep-0286"
     },
     {
       "verb": "sich wappnen",
@@ -2285,7 +2976,8 @@
       "case": "Akk",
       "english": "arm oneself against / brace for",
       "example": "Wappne dich gegen Kritik.",
-      "rank": 287
+      "rank": 287,
+      "id": "verb-prep-0287"
     },
     {
       "verb": "wettern",
@@ -2293,7 +2985,8 @@
       "case": "Akk",
       "english": "rail against / inveigh against",
       "example": "Er wettert gegen die neuen Gesetze.",
-      "rank": 288
+      "rank": 288,
+      "id": "verb-prep-0288"
     },
     {
       "verb": "sich zurechtfinden",
@@ -2301,7 +2994,8 @@
       "case": "Dat",
       "english": "find one's way around in",
       "example": "Er findet sich in der neuen Stadt zurecht.",
-      "rank": 290
+      "rank": 290,
+      "id": "verb-prep-0290"
     },
     {
       "verb": "zurückgreifen",
@@ -2309,7 +3003,8 @@
       "case": "Akk",
       "english": "fall back on / resort to",
       "example": "Wir greifen auf bewährte Methoden zurück.",
-      "rank": 291
+      "rank": 291,
+      "id": "verb-prep-0291"
     },
     {
       "verb": "zusammenarbeiten",
@@ -2317,7 +3012,8 @@
       "case": "Dat",
       "english": "cooperate with / work together with",
       "example": "Die Firma arbeitet mit Partnern zusammen.",
-      "rank": 292
+      "rank": 292,
+      "id": "verb-prep-0292"
     },
     {
       "verb": "aufkommen",
@@ -2325,7 +3021,8 @@
       "case": "Akk",
       "english": "be liable for / pay for",
       "example": "Wer kommt für den Schaden auf?",
-      "rank": 293
+      "rank": 293,
+      "id": "verb-prep-0293"
     },
     {
       "verb": "beharren",
@@ -2333,7 +3030,8 @@
       "case": "Dat",
       "english": "persist in / insist on",
       "example": "Er beharrt auf seiner Meinung.",
-      "rank": 294
+      "rank": 294,
+      "id": "verb-prep-0294"
     },
     {
       "verb": "sich hervortun",
@@ -2341,7 +3039,30 @@
       "case": "Akk",
       "english": "distinguish oneself through",
       "example": "Er tut sich durch Fleiß hervor.",
-      "rank": 297
+      "rank": 297,
+      "id": "verb-prep-0297",
+      "senses": [
+        {
+          "id": "verb-prep-0297-sense-1",
+          "default": true,
+          "editorialSource": "`distinguish oneself by"
+        },
+        {
+          "id": "verb-prep-0297-sense-2",
+          "default": false,
+          "editorialSource": "stand out through/by virtue of`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00297:sich hervortun durch",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "`distinguish oneself by; stand out through/by virtue of`"
+        }
+      ]
     },
     {
       "verb": "helfen",
@@ -2350,7 +3071,8 @@
       "english": "help with",
       "example": "Ich helfe dir bei den Hausaufgaben.",
       "rank": 299,
-      "manuallyAdded": true
+      "manuallyAdded": true,
+      "id": "verb-prep-0299"
     },
     {
       "verb": "verweisen",
@@ -2359,16 +3081,38 @@
       "english": "refer to / point to",
       "example": "Der Text verweist auf weitere Quellen.",
       "rank": 300,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0300"
     },
     {
       "verb": "bewundern",
       "preposition": "an",
       "case": "Dat",
-      "english": "admire about",
+      "english": "admire something about someone",
       "example": "Ich bewundere an ihr ihre Gelassenheit.",
       "rank": 301,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0301",
+      "senses": [
+        {
+          "id": "verb-prep-0301-sense-1",
+          "default": true,
+          "english": "admire something about someone",
+          "patterns": [
+            "admire something about someone"
+          ]
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00301:bewundern an",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "`admire something about someone`, with the two arguments made explicit"
+        }
+      ]
     },
     {
       "verb": "übereinstimmen",
@@ -2377,7 +3121,8 @@
       "english": "agree on / match in",
       "example": "Die beiden Berichte stimmen in vielen Punkten überein.",
       "rank": 302,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0302"
     },
     {
       "verb": "verstehen",
@@ -2386,7 +3131,8 @@
       "english": "understand by",
       "example": "Was verstehst du unter diesem Begriff?",
       "rank": 303,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0303"
     },
     {
       "verb": "verknüpfen",
@@ -2395,7 +3141,8 @@
       "english": "link / connect with",
       "example": "Sie verknüpft die Theorie mit praktischen Beispielen.",
       "rank": 304,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0304"
     },
     {
       "verb": "sich einstellen",
@@ -2404,7 +3151,8 @@
       "english": "adjust / prepare for",
       "example": "Wir stellen uns auf neue Bedingungen ein.",
       "rank": 305,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0305"
     },
     {
       "verb": "einhergehen",
@@ -2413,7 +3161,8 @@
       "english": "go hand in hand with",
       "example": "Der Wandel geht mit großen Chancen einher.",
       "rank": 306,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0306"
     },
     {
       "verb": "hindeuten",
@@ -2422,7 +3171,8 @@
       "english": "point to / indicate",
       "example": "Die Zahlen deuten auf eine Verbesserung hin.",
       "rank": 307,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0307"
     },
     {
       "verb": "erfüllen",
@@ -2431,7 +3181,8 @@
       "english": "fill with",
       "example": "Die Nachricht erfüllte sie mit Freude.",
       "rank": 308,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0308"
     },
     {
       "verb": "sich einschreiben",
@@ -2440,7 +3191,8 @@
       "english": "enroll at",
       "example": "Sie schreibt sich an der Universität ein.",
       "rank": 309,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0309"
     },
     {
       "verb": "sich einschreiben",
@@ -2449,7 +3201,8 @@
       "english": "enroll / register for",
       "example": "Er schreibt sich für den Kurs ein.",
       "rank": 310,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0310"
     },
     {
       "verb": "sich entfremden",
@@ -2458,7 +3211,8 @@
       "english": "become alienated from",
       "example": "Er entfremdete sich von seiner Familie.",
       "rank": 311,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0311"
     },
     {
       "verb": "investieren",
@@ -2467,7 +3221,8 @@
       "english": "invest in",
       "example": "Das Unternehmen investiert in neue Technologien.",
       "rank": 312,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0312"
     },
     {
       "verb": "geradestehen",
@@ -2476,7 +3231,8 @@
       "english": "answer / be responsible for",
       "example": "Jeder muss für seine Fehler geradestehen.",
       "rank": 313,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0313"
     },
     {
       "verb": "zeugen",
@@ -2485,7 +3241,8 @@
       "english": "testify to / show evidence of",
       "example": "Sein Verhalten zeugt von großem Mut.",
       "rank": 314,
-      "source": "vielfalt-c1.1"
+      "source": "vielfalt-c1.1",
+      "id": "verb-prep-0314"
     },
     {
       "verb": "sich abheben",
@@ -2494,7 +3251,8 @@
       "english": "stand out from / differ from",
       "example": "Unser Modell hebt sich von der Konkurrenz ab.",
       "rank": 315,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0315"
     },
     {
       "verb": "unterscheiden",
@@ -2503,7 +3261,39 @@
       "english": "distinguish from / differ from",
       "example": "Dieses Merkmal unterscheidet das Produkt von anderen.",
       "rank": 316,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0316",
+      "senses": [
+        {
+          "id": "verb-prep-0316-sense-1",
+          "default": true,
+          "reflexive": false,
+          "patterns": [
+            "distinguish/tell X from Y"
+          ],
+          "editorialSource": "For this non-reflexive row use `distinguish/tell X from Y`."
+        },
+        {
+          "id": "verb-prep-0316-sense-2",
+          "default": false,
+          "reflexive": true,
+          "patterns": [
+            "differ from",
+            "sich von etwas unterscheiden"
+          ],
+          "editorialSource": "Reserve `differ from` for `sich von etwas unterscheiden`."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00316:unterscheiden von",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "For this non-reflexive row use `distinguish/tell X from Y`. Reserve `differ from` for `sich von etwas unterscheiden`."
+        }
+      ]
     },
     {
       "verb": "begeistern",
@@ -2512,7 +3302,8 @@
       "english": "inspire / excite someone about",
       "example": "Der Vortrag begeisterte viele für das Projekt.",
       "rank": 317,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0317"
     },
     {
       "verb": "sich entscheiden",
@@ -2521,7 +3312,8 @@
       "english": "choose between",
       "example": "Wir entscheiden uns zwischen zwei Möglichkeiten.",
       "rank": 318,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0318"
     },
     {
       "verb": "kämpfen",
@@ -2530,7 +3322,8 @@
       "english": "struggle with",
       "example": "Er kämpft mit großen Schwierigkeiten.",
       "rank": 319,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0319"
     },
     {
       "verb": "reden",
@@ -2539,7 +3332,8 @@
       "english": "talk with/to",
       "example": "Sie redet mit ihrer Freundin.",
       "rank": 320,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0320"
     },
     {
       "verb": "sich verständigen",
@@ -2548,7 +3342,8 @@
       "english": "communicate with",
       "example": "Sie verständigen sich mit den Nachbarn.",
       "rank": 321,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0321"
     },
     {
       "verb": "ansprechen",
@@ -2557,7 +3352,8 @@
       "english": "speak to someone about / raise with",
       "example": "Sie spricht ihn auf das Problem an.",
       "rank": 322,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0322"
     },
     {
       "verb": "urteilen",
@@ -2566,7 +3362,8 @@
       "english": "judge / form an opinion about",
       "example": "Man sollte nicht vorschnell über andere urteilen.",
       "rank": 323,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0323"
     },
     {
       "verb": "einwenden",
@@ -2575,7 +3372,8 @@
       "english": "object to / raise against",
       "example": "Was wendest du gegen diesen Vorschlag ein?",
       "rank": 324,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0324"
     },
     {
       "verb": "stehen",
@@ -2584,7 +3382,8 @@
       "english": "stand by / admit to",
       "example": "Sie steht zu ihrer Entscheidung.",
       "rank": 325,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0325"
     },
     {
       "verb": "aufrufen",
@@ -2593,7 +3392,8 @@
       "english": "call for / appeal for",
       "example": "Die Initiative ruft zu mehr Engagement auf.",
       "rank": 326,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0326"
     },
     {
       "verb": "gelangen",
@@ -2602,7 +3402,25 @@
       "english": "get into / reach",
       "example": "Die Daten gelangen in das System.",
       "rank": 327,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0327",
+      "senses": [
+        {
+          "id": "verb-prep-0327-sense-1",
+          "default": true,
+          "editorialSource": "Remove this literal destination use from the fixed-government bank, or restrict the row to a clearly lexical construction and label it accordingly."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00327:gelangen in",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Remove this literal destination use from the fixed-government bank, or restrict the row to a clearly lexical construction and label it accordingly."
+        }
+      ]
     },
     {
       "verb": "stehen",
@@ -2611,7 +3429,8 @@
       "english": "stand for / represent",
       "example": "Die Zwanzigerjahre stehen für Aufbruch und Lebensfreude.",
       "rank": 328,
-      "source": "vielfalt-b2.2"
+      "source": "vielfalt-b2.2",
+      "id": "verb-prep-0328"
     },
     {
       "verb": "zurückkehren",
@@ -2620,7 +3439,25 @@
       "english": "return to",
       "example": "Sie kehrt nach Wien zurück.",
       "rank": 329,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0329",
+      "senses": [
+        {
+          "id": "verb-prep-0329-sense-1",
+          "default": true,
+          "editorialSource": "Remove from the fixed-government bank and teach destination prepositions as a separate rule."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00329:zurückkehren nach",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Remove from the fixed-government bank and teach destination prepositions as a separate rule."
+        }
+      ]
     },
     {
       "verb": "liegen",
@@ -2629,7 +3466,8 @@
       "english": "lie/be rooted in",
       "example": "Der Grund liegt in der Geschichte.",
       "rank": 330,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0330"
     },
     {
       "verb": "entscheiden",
@@ -2638,7 +3476,8 @@
       "english": "decide on/about",
       "example": "Die Kommission entscheidet über den Antrag.",
       "rank": 331,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0331"
     },
     {
       "verb": "sich auswirken",
@@ -2647,7 +3486,8 @@
       "english": "affect/have an impact on",
       "example": "Der Schlafmangel wirkt sich auf die Konzentration aus.",
       "rank": 332,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0332"
     },
     {
       "verb": "reagieren",
@@ -2656,7 +3496,8 @@
       "english": "react to",
       "example": "Sie reagiert gelassen auf Kritik.",
       "rank": 333,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0333"
     },
     {
       "verb": "eingehen",
@@ -2665,7 +3506,8 @@
       "english": "address/respond to",
       "example": "Der Autor geht auf die Frage ein.",
       "rank": 334,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0334"
     },
     {
       "verb": "sich vernetzen",
@@ -2674,7 +3516,8 @@
       "english": "network/connect with",
       "example": "Sie vernetzt sich mit anderen Gründerinnen.",
       "rank": 335,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0335"
     },
     {
       "verb": "stoßen",
@@ -2683,7 +3526,8 @@
       "english": "bump/hit against",
       "example": "Er stößt an seine Grenzen.",
       "rank": 336,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0336"
     },
     {
       "verb": "trösten",
@@ -2692,7 +3536,8 @@
       "english": "comfort with",
       "example": "Sie tröstet ihn mit guten Worten.",
       "rank": 337,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0337"
     },
     {
       "verb": "abweichen",
@@ -2701,7 +3546,8 @@
       "english": "deviate from/differ from",
       "example": "Die Werte weichen vom Durchschnitt ab.",
       "rank": 338,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0338"
     },
     {
       "verb": "aufbauen",
@@ -2710,7 +3556,8 @@
       "english": "build on",
       "example": "Der Kurs baut auf Grundkenntnissen auf.",
       "rank": 339,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0339"
     },
     {
       "verb": "versetzen",
@@ -2719,7 +3566,8 @@
       "english": "put into/transport into a state",
       "example": "Die Musik versetzt sie in gute Stimmung.",
       "rank": 340,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0340"
     },
     {
       "verb": "sich trennen",
@@ -2728,7 +3576,8 @@
       "english": "separate from/break up with",
       "example": "Er trennt sich von alten Sachen.",
       "rank": 341,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0341"
     },
     {
       "verb": "sich streiten",
@@ -2737,7 +3586,8 @@
       "english": "argue with",
       "example": "Sie streitet sich mit ihrem Bruder.",
       "rank": 342,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0342"
     },
     {
       "verb": "angeben",
@@ -2746,7 +3596,8 @@
       "english": "show off/brag about",
       "example": "Er gibt mit seinem Erfolg an.",
       "rank": 343,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0343"
     },
     {
       "verb": "verbinden",
@@ -2755,7 +3606,8 @@
       "english": "connect/link with",
       "example": "Viele verbinden Wien mit Kaffeehäusern.",
       "rank": 344,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0344"
     },
     {
       "verb": "wahrnehmen",
@@ -2764,7 +3616,8 @@
       "english": "perceive as",
       "example": "Sie nimmt die Situation als Chance wahr.",
       "rank": 345,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0345"
     },
     {
       "verb": "kommunizieren",
@@ -2773,7 +3626,8 @@
       "english": "communicate with",
       "example": "Das Team kommuniziert mit den Kunden.",
       "rank": 346,
-      "source": "vielfalt-b2.1"
+      "source": "vielfalt-b2.1",
+      "id": "verb-prep-0346"
     },
     {
       "verb": "werben",
@@ -2782,7 +3636,8 @@
       "english": "advertise/promote",
       "example": "Sie wirbt für ein neues Produkt.",
       "rank": 347,
-      "source": "vielfalt-b1+"
+      "source": "vielfalt-b1+",
+      "id": "verb-prep-0347"
     },
     {
       "verb": "sich verstehen",
@@ -2791,7 +3646,8 @@
       "english": "get along with",
       "example": "Er versteht sich gut mit seinen Kollegen.",
       "rank": 348,
-      "source": "vielfalt-b1+"
+      "source": "vielfalt-b1+",
+      "id": "verb-prep-0348"
     },
     {
       "verb": "umgehen",
@@ -2800,7 +3656,8 @@
       "english": "deal/handle",
       "example": "Sie geht professionell mit Kritik um.",
       "rank": 349,
-      "source": "vielfalt-b1+"
+      "source": "vielfalt-b1+",
+      "id": "verb-prep-0349"
     },
     {
       "verb": "sich halten",
@@ -2809,16 +3666,38 @@
       "english": "stick to/abide by",
       "example": "Wir halten uns an die Regeln.",
       "rank": 350,
-      "source": "vielfalt-b1+"
+      "source": "vielfalt-b1+",
+      "id": "verb-prep-0350"
     },
     {
       "verb": "sich austauschen",
       "preposition": "mit",
       "case": "Dat",
       "english": "exchange ideas with",
-      "example": "Wir tauschen uns mit Kolleg:innen aus.",
+      "example": "Wir tauschen uns mit Kolleginnen und Kollegen aus.",
       "rank": 351,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0351",
+      "senses": [
+        {
+          "id": "verb-prep-0351-sense-1",
+          "default": true,
+          "patterns": [
+            "Wir tauschen uns mit Kolleginnen und Kollegen aus."
+          ],
+          "editorialSource": "Use a standard-orthography learner model such as `Wir tauschen uns mit Kolleginnen und Kollegen aus.`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00351:sich austauschen mit",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update_spelling_or_gloss",
+          "disposition": "corrected",
+          "recommendation": "Use a standard-orthography learner model such as `Wir tauschen uns mit Kolleginnen und Kollegen aus.`"
+        }
+      ]
     },
     {
       "verb": "sich einmischen",
@@ -2827,7 +3706,8 @@
       "english": "interfere in",
       "example": "Mische dich nicht in fremde Angelegenheiten ein.",
       "rank": 352,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0352"
     },
     {
       "verb": "anknüpfen",
@@ -2836,7 +3716,8 @@
       "english": "build on/connect with",
       "example": "Wir knüpfen an die Vorlesung an.",
       "rank": 353,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0353"
     },
     {
       "verb": "vorgehen",
@@ -2845,7 +3726,8 @@
       "english": "take action against",
       "example": "Die Polizei geht gegen die Demonstranten vor.",
       "rank": 354,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0354"
     },
     {
       "verb": "zurückblicken",
@@ -2854,7 +3736,8 @@
       "english": "look back on",
       "example": "Sie blickt auf ihr Berufsleben zurück.",
       "rank": 355,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0355"
     },
     {
       "verb": "sich ausrichten",
@@ -2863,7 +3746,8 @@
       "english": "align/orient oneself with",
       "example": "Das Konzept richtet sich an den Bedürfnissen der Lernenden aus.",
       "rank": 356,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0356"
     },
     {
       "verb": "sich einbringen",
@@ -2872,7 +3756,8 @@
       "english": "contribute to/get involved in",
       "example": "Er bringt sich aktiv in das Projekt ein.",
       "rank": 357,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0357"
     },
     {
       "verb": "sich verlieren",
@@ -2881,7 +3766,8 @@
       "english": "get lost in",
       "example": "Sie verliert sich in Details.",
       "rank": 358,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0358"
     },
     {
       "verb": "glänzen",
@@ -2890,7 +3776,8 @@
       "english": "shine with/show off",
       "example": "Er glänzt mit seinem Wissen.",
       "rank": 359,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0359"
     },
     {
       "verb": "heranführen",
@@ -2899,7 +3786,30 @@
       "english": "introduce/lead up to",
       "example": "Der Lehrer führt die Kinder an Mathematik heran.",
       "rank": 360,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0360",
+      "senses": [
+        {
+          "id": "verb-prep-0360-sense-1",
+          "default": true,
+          "editorialSource": "`introduce someone to"
+        },
+        {
+          "id": "verb-prep-0360-sense-2",
+          "default": false,
+          "editorialSource": "familiarise someone with`"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00360:heranführen an",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "`introduce someone to; familiarise someone with`"
+        }
+      ]
     },
     {
       "verb": "ansetzen",
@@ -2908,7 +3818,8 @@
       "english": "start to/move to",
       "example": "Sie setzt zu einer Antwort an.",
       "rank": 361,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0361"
     },
     {
       "verb": "sich wiederfinden",
@@ -2917,7 +3828,8 @@
       "english": "find oneself in/relate to",
       "example": "Viele finden sich in dieser Beschreibung wieder.",
       "rank": 362,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0362"
     },
     {
       "verb": "zutreffen",
@@ -2926,7 +3838,8 @@
       "english": "apply to/be true of",
       "example": "Diese Aussage trifft auf alle zu.",
       "rank": 363,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0363"
     },
     {
       "verb": "übergehen",
@@ -2935,16 +3848,38 @@
       "english": "move on to",
       "example": "Wir gehen jetzt zum nächsten Punkt über.",
       "rank": 364,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0364"
     },
     {
       "verb": "sich anfreunden",
       "preposition": "mit",
       "case": "Dat",
-      "english": "become friends with",
+      "english": "warm to; come around to; reconcile oneself to",
       "example": "Sie freundet sich mit der Idee an.",
       "rank": 365,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0365",
+      "senses": [
+        {
+          "id": "verb-prep-0365-sense-1",
+          "default": true,
+          "english": "warm to; come around to; reconcile oneself to",
+          "patterns": [
+            "warm to / come round to / reconcile oneself to"
+          ]
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00365:sich anfreunden mit",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update_fields",
+          "disposition": "corrected",
+          "recommendation": "Add the very common figurative sense `warm to / come round to / reconcile oneself to`, matching the example."
+        }
+      ]
     },
     {
       "verb": "sich auflehnen",
@@ -2953,7 +3888,8 @@
       "english": "rebel against",
       "example": "Die Jugend lehnt sich gegen die Tradition auf.",
       "rank": 366,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0366"
     },
     {
       "verb": "anregen",
@@ -2962,7 +3898,8 @@
       "english": "encourage/inspire to",
       "example": "Der Film regt zum Nachdenken an.",
       "rank": 367,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0367"
     },
     {
       "verb": "experimentieren",
@@ -2971,7 +3908,8 @@
       "english": "experiment with",
       "example": "Wir experimentieren mit Gewürzen.",
       "rank": 368,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0368"
     },
     {
       "verb": "belegen",
@@ -2980,7 +3918,30 @@
       "english": "cover/spread/document with",
       "example": "Belegen Sie das Brot mit Käse.",
       "rank": 369,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0369",
+      "senses": [
+        {
+          "id": "verb-prep-0369-sense-1",
+          "default": true,
+          "editorialSource": "`top/cover with"
+        },
+        {
+          "id": "verb-prep-0369-sense-2",
+          "default": false,
+          "editorialSource": "substantiate/support with`, separating the food and evidence senses"
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "verb_preps:verb_preps_001:00369:belegen mit",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "split_senses",
+          "disposition": "corrected",
+          "recommendation": "`top/cover with; substantiate/support with`, separating the food and evidence senses"
+        }
+      ]
     },
     {
       "verb": "hinwegsehen",
@@ -2989,7 +3950,8 @@
       "english": "overlook/disregard",
       "example": "Wir sehen über kleine Fehler hinweg.",
       "rank": 370,
-      "source": "vielfalt-c1.2"
+      "source": "vielfalt-c1.2",
+      "id": "verb-prep-0370"
     }
   ]
 }

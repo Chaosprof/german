@@ -4,7 +4,10 @@
     "description": "German nouns whose meaning changes with the article. These tricky words are a common source of errors even for advanced learners.",
     "version": 2,
     "count": 98,
-    "generatedAt": "2026-04-08T00:00:00.000000+00:00"
+    "generatedAt": "2026-04-08T00:00:00.000000+00:00",
+    "schemaVersion": 2,
+    "reviewedAt": "2026-08-01",
+    "learnerSafeCount": 98
   },
   "nouns": [
     {
@@ -15,18 +18,31 @@
           "english": "person/human/human being",
           "plural": "Menschen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0001-1"
         },
         {
           "article": "das",
-          "english": "wretch (archaic/dialectal, derogatory)",
+          "english": "woman/female person (regional and dated, usually derogatory)",
           "plural": "Menscher",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0001-2"
         }
       ],
       "rank": 3,
-      "leipzigRank": 3
+      "leipzigRank": 3,
+      "id": "dual-0001",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:1:Mensch",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`woman/female person (regional and dated, usually derogatory)`"
+        }
+      ]
     },
     {
       "word": "Tag",
@@ -36,18 +52,21 @@
           "english": "day",
           "plural": "Tage",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0002-1"
         },
         {
           "article": "das",
           "english": "tag (markup)",
           "plural": "Tags",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0002-2"
         }
       ],
       "rank": 6,
-      "leipzigRank": 6
+      "leipzigRank": 6,
+      "id": "dual-0002"
     },
     {
       "word": "Teil",
@@ -57,19 +76,32 @@
           "english": "part (abstract: ein Teil des Problems)",
           "plural": "Teile",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0003-1"
         },
         {
           "article": "das",
-          "english": "part/piece/part (concrete: ein Ersatzteil)",
+          "english": "piece/item or concrete component (e.g. ein Ersatzteil)",
           "plural": "Teile",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0003-2"
         }
       ],
       "rank": 26,
       "leipzigRank": 26,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0003",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:3:Teil",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`piece/item or concrete component (e.g. ein Ersatzteil)`"
+        }
+      ]
     },
     {
       "word": "Kunde",
@@ -79,18 +111,21 @@
           "english": "news/tidings (literary)",
           "plural": "Kunden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0004-1"
         },
         {
           "article": "der",
           "english": "customer/client",
           "plural": "Kunden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0004-2"
         }
       ],
       "rank": 28,
-      "leipzigRank": 28
+      "leipzigRank": 28,
+      "id": "dual-0004"
     },
     {
       "word": "Ort",
@@ -100,18 +135,31 @@
           "english": "place/location",
           "plural": "Orte",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0005-1"
         },
         {
           "article": "das",
-          "english": "pointed tool/awl (archaic)",
+          "english": "point/tip of a weapon or tool (archaic/technical)",
           "plural": "Örter",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0005-2"
         }
       ],
       "rank": 36,
-      "leipzigRank": 36
+      "leipzigRank": 36,
+      "id": "dual-0005",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:5:Ort",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`point/tip of a weapon or tool (archaic/technical)`"
+        }
+      ]
     },
     {
       "word": "Fall",
@@ -121,18 +169,21 @@
           "english": "case/fall",
           "plural": "Fälle",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0006-1"
         },
         {
           "article": "das",
           "english": "halyard (nautical)",
           "plural": "Fallen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0006-2"
         }
       ],
       "rank": 40,
-      "leipzigRank": 40
+      "leipzigRank": 40,
+      "id": "dual-0006"
     },
     {
       "word": "Alter",
@@ -142,18 +193,33 @@
           "english": "old man (colloquial)",
           "plural": "Alten",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0007-1",
+          "active": false,
+          "deactivationReason": "Invalid headword/article combination: model the nominalised adjective separately as der Alte."
         },
         {
           "article": "das",
           "english": "age",
-          "plural": "Alter",
-          "singularOnly": false,
-          "pluralOnly": false
+          "plural": "—",
+          "singularOnly": true,
+          "pluralOnly": false,
+          "id": "dual-0007-2"
         }
       ],
       "rank": 201,
-      "leipzigRank": 201
+      "leipzigRank": 201,
+      "id": "dual-0007",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:7:Alter",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "Remove the masculine sense from the spelling `Alter` (or model the nominalised adjective separately as headword `Alte`: `der Alte`, plural `Alten`); for `das Alter` store plural `—` and `singularOnly=true`"
+        }
+      ]
     },
     {
       "word": "Service",
@@ -163,18 +229,21 @@
           "english": "service",
           "plural": "Services",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0008-1"
         },
         {
           "article": "das",
           "english": "tea/dinner set",
           "plural": "Service",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0008-2"
         }
       ],
       "rank": 232,
-      "leipzigRank": 232
+      "leipzigRank": 232,
+      "id": "dual-0008"
     },
     {
       "word": "Bund",
@@ -184,19 +253,22 @@
           "english": "federation/federal government/alliance",
           "plural": "Bünde",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0009-1"
         },
         {
           "article": "das",
           "english": "bunch/bundle",
           "plural": "Bunde",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0009-2"
         }
       ],
       "rank": 311,
       "leipzigRank": 311,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0009"
     },
     {
       "word": "Band",
@@ -206,26 +278,30 @@
           "english": "band (music group)",
           "plural": "Bands",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0010-1"
         },
         {
           "article": "der",
           "english": "volume (book)",
           "plural": "Bände",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0010-2"
         },
         {
           "article": "das",
           "english": "ribbon/tape/band",
           "plural": "Bänder",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0010-3"
         }
       ],
       "rank": 375,
       "leipzigRank": 374,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0010"
     },
     {
       "word": "See",
@@ -235,41 +311,57 @@
           "english": "sea/ocean",
           "plural": "Seen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0011-1"
         },
         {
           "article": "der",
           "english": "lake",
           "plural": "Seen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0011-2"
         }
       ],
       "rank": 494,
       "leipzigRank": 493,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0011"
     },
     {
       "word": "Moment",
       "genders": [
         {
           "article": "der",
-          "english": "moment/moment (time)",
+          "english": "moment (point or short period of time)",
           "plural": "Momente",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0012-1"
         },
         {
           "article": "das",
           "english": "factor/element (physics: torque)",
           "plural": "Momente",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0012-2"
         }
       ],
       "rank": 531,
       "leipzigRank": 530,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0012",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:12:Moment",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`moment (point or short period of time)`"
+        }
+      ]
     },
     {
       "word": "Leiter",
@@ -279,19 +371,22 @@
           "english": "ladder",
           "plural": "Leitern",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0013-1"
         },
         {
           "article": "der",
           "english": "leader/director",
           "plural": "Leiter",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0013-2"
         }
       ],
       "rank": 565,
       "leipzigRank": 564,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0013"
     },
     {
       "word": "Maß",
@@ -301,19 +396,22 @@
           "english": "liter of beer (Bavarian)",
           "plural": "Maß",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0014-1"
         },
         {
           "article": "das",
           "english": "measure/degree",
           "plural": "Maße",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0014-2"
         }
       ],
       "rank": 571,
       "leipzigRank": 570,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0014"
     },
     {
       "word": "Tor",
@@ -323,18 +421,21 @@
           "english": "fool (archaic)",
           "plural": "Toren",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0015-1"
         },
         {
           "article": "das",
           "english": "goal/gate",
           "plural": "Tore",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0015-2"
         }
       ],
       "rank": 703,
-      "leipzigRank": 702
+      "leipzigRank": 702,
+      "id": "dual-0015"
     },
     {
       "word": "Kaffee",
@@ -344,18 +445,21 @@
           "english": "coffee",
           "plural": "Kaffees",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0016-1"
         },
         {
           "article": "das",
           "english": "cafe (regional/dialectal, standard: das Café)",
           "plural": "Kaffees",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0016-2"
         }
       ],
       "rank": 721,
-      "leipzigRank": 720
+      "leipzigRank": 720,
+      "id": "dual-0016"
     },
     {
       "word": "Steuer",
@@ -365,19 +469,22 @@
           "english": "tax",
           "plural": "Steuern",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0017-1"
         },
         {
           "article": "das",
           "english": "steering wheel/helm",
           "plural": "Steuer",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0017-2"
         }
       ],
       "rank": 750,
       "leipzigRank": 749,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0017"
     },
     {
       "word": "Post",
@@ -387,19 +494,22 @@
           "english": "mail/post office",
           "plural": "—",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0018-1"
         },
         {
           "article": "der",
           "english": "post (online)",
           "plural": "Posts",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0018-2"
         }
       ],
       "rank": 756,
       "leipzigRank": 755,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0018"
     },
     {
       "word": "Morgen",
@@ -409,18 +519,21 @@
           "english": "morning",
           "plural": "Morgen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0019-1"
         },
         {
           "article": "das",
           "english": "tomorrow/the future",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0019-2"
         }
       ],
       "rank": 882,
-      "leipzigRank": 882
+      "leipzigRank": 882,
+      "id": "dual-0019"
     },
     {
       "word": "Mangel",
@@ -430,19 +543,32 @@
           "english": "mangle (laundry press)",
           "plural": "Mangeln",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0020-1"
         },
         {
           "article": "der",
           "english": "lack/shortage/deficiency",
           "plural": "Mängel",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0020-2"
         }
       ],
       "rank": 975,
       "leipzigRank": 975,
-      "bothInDrills": true
+      "bothInDrills": false,
+      "id": "dual-0020",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:20:Mangel",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`false`"
+        }
+      ]
     },
     {
       "word": "Gang",
@@ -452,19 +578,22 @@
           "english": "gang",
           "plural": "Gangs",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0021-1"
         },
         {
           "article": "der",
           "english": "corridor/aisle/gear",
           "plural": "Gänge",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0021-2"
         }
       ],
       "rank": 1120,
       "leipzigRank": 1120,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0021"
     },
     {
       "word": "Gehalt",
@@ -474,19 +603,22 @@
           "english": "content/substance",
           "plural": "Gehalte",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0022-1"
         },
         {
           "article": "das",
           "english": "salary/wage",
           "plural": "Gehälter",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0022-2"
         }
       ],
       "rank": 1147,
       "leipzigRank": 1147,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0022"
     },
     {
       "word": "Erbe",
@@ -496,19 +628,22 @@
           "english": "heir",
           "plural": "Erben",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0023-1"
         },
         {
           "article": "das",
           "english": "inheritance/heritage",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0023-2"
         }
       ],
       "rank": 1257,
       "leipzigRank": 1257,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0023"
     },
     {
       "word": "Mode",
@@ -518,19 +653,32 @@
           "english": "fashion",
           "plural": "Moden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0024-1"
         },
         {
           "article": "der",
-          "english": "mode (technical)",
+          "english": "wave mode/oscillation mode (electrical engineering/physics)",
           "plural": "Moden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0024-2"
         }
       ],
       "rank": 1353,
       "leipzigRank": 1353,
-      "bothInDrills": true
+      "bothInDrills": false,
+      "id": "dual-0024",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:24:Mode",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`der Mode` = `wave mode/oscillation mode (electrical engineering/physics)`; `bothInDrills=false`"
+        }
+      ]
     },
     {
       "word": "Bauer",
@@ -540,18 +688,21 @@
           "english": "farmer/peasant",
           "plural": "Bauern",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0025-1"
         },
         {
           "article": "das",
           "english": "birdcage",
           "plural": "Bauer",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0025-2"
         }
       ],
       "rank": 1425,
-      "leipzigRank": 1425
+      "leipzigRank": 1425,
+      "id": "dual-0025"
     },
     {
       "word": "Tee",
@@ -561,18 +712,21 @@
           "english": "tea",
           "plural": "Tees",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0026-1"
         },
         {
           "article": "das",
           "english": "tee (golf)",
           "plural": "Tees",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0026-2"
         }
       ],
       "rank": 1518,
-      "leipzigRank": 1519
+      "leipzigRank": 1519,
+      "id": "dual-0026"
     },
     {
       "word": "Chor",
@@ -582,18 +736,21 @@
           "english": "choir/chorus",
           "plural": "Chöre",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0027-1"
         },
         {
           "article": "das",
           "english": "chancel (church architecture)",
           "plural": "Chöre",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0027-2"
         }
       ],
       "rank": 1555,
-      "leipzigRank": 1556
+      "leipzigRank": 1556,
+      "id": "dual-0027"
     },
     {
       "word": "Mund",
@@ -603,18 +760,21 @@
           "english": "guardianship (legal, archaic)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0028-1"
         },
         {
           "article": "der",
           "english": "mouth",
           "plural": "Münder",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0028-2"
         }
       ],
       "rank": 1793,
-      "leipzigRank": 1794
+      "leipzigRank": 1794,
+      "id": "dual-0028"
     },
     {
       "word": "Schild",
@@ -624,19 +784,22 @@
           "english": "shield",
           "plural": "Schilde",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0029-1"
         },
         {
           "article": "das",
           "english": "sign/nameplate",
           "plural": "Schilder",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0029-2"
         }
       ],
       "rank": 1918,
       "leipzigRank": 1938,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0029"
     },
     {
       "word": "Wende",
@@ -646,18 +809,21 @@
           "english": "flip turn/front vault/tumble turn/turn/change (die Wende = reunification)",
           "plural": "Wenden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0030-1"
         },
         {
           "article": "der",
           "english": "Wend/Sorb (Slavic people)",
           "plural": "Wenden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0030-2"
         }
       ],
       "rank": 1964,
-      "leipzigRank": 1984
+      "leipzigRank": 1984,
+      "id": "dual-0030"
     },
     {
       "word": "Model",
@@ -667,19 +833,32 @@
           "english": "mold/form",
           "plural": "Model",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0031-1"
         },
         {
           "article": "das",
-          "english": "model/model (fashion)",
+          "english": "fashion model",
           "plural": "Models",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0031-2"
         }
       ],
       "rank": 1973,
       "leipzigRank": 1993,
-      "bothInDrills": true
+      "bothInDrills": false,
+      "id": "dual-0031",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:31:Model",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`das Model` = `fashion model`; `bothInDrills=false`"
+        }
+      ]
     },
     {
       "word": "Plastik",
@@ -689,19 +868,22 @@
           "english": "sculpture",
           "plural": "Plastiken",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0032-1"
         },
         {
           "article": "das",
           "english": "plastic",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0032-2"
         }
       ],
       "rank": 2015,
       "leipzigRank": 2035,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0032"
     },
     {
       "word": "Mark",
@@ -711,19 +893,22 @@
           "english": "mark (currency)",
           "plural": "Mark",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0033-1"
         },
         {
           "article": "das",
           "english": "marrow/pith",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0033-2"
         }
       ],
       "rank": 2168,
       "leipzigRank": 2188,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0033"
     },
     {
       "word": "Verdienst",
@@ -733,19 +918,22 @@
           "english": "earnings/income/wages",
           "plural": "Verdienste",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0034-1"
         },
         {
           "article": "das",
           "english": "merit/credit",
           "plural": "Verdienste",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0034-2"
         }
       ],
       "rank": 2252,
       "leipzigRank": 2272,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0034"
     },
     {
       "word": "Lob",
@@ -755,18 +943,21 @@
           "english": "lob (sports)",
           "plural": "Lobs",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0035-1"
         },
         {
           "article": "das",
           "english": "accolade/praise",
           "plural": "Lobe",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0035-2"
         }
       ],
       "rank": 2276,
-      "leipzigRank": 2296
+      "leipzigRank": 2296,
+      "id": "dual-0035"
     },
     {
       "word": "Flur",
@@ -776,19 +967,22 @@
           "english": "open field/farmland",
           "plural": "Fluren",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0036-1"
         },
         {
           "article": "der",
           "english": "corridor/hall/hallway",
           "plural": "Flure",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0036-2"
         }
       ],
       "rank": 2374,
       "leipzigRank": 2394,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0036"
     },
     {
       "word": "Stift",
@@ -798,19 +992,22 @@
           "english": "pen/pencil",
           "plural": "Stifte",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0037-1"
         },
         {
           "article": "das",
           "english": "collegiate church/monastery",
           "plural": "Stifte",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0037-2"
         }
       ],
       "rank": 2381,
       "leipzigRank": 2401,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0037"
     },
     {
       "word": "Messer",
@@ -820,19 +1017,32 @@
           "english": "measurer/gauge",
           "plural": "Messer",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0038-1"
         },
         {
           "article": "das",
           "english": "knife",
           "plural": "Messer",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0038-2"
         }
       ],
       "rank": 2404,
       "leipzigRank": 2424,
-      "bothInDrills": true
+      "bothInDrills": false,
+      "id": "dual-0038",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:38:Messer",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`false`"
+        }
+      ]
     },
     {
       "word": "Golf",
@@ -842,40 +1052,56 @@
           "english": "Golf/gulf",
           "plural": "Golfe",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0039-1"
         },
         {
           "article": "das",
           "english": "golf (sport)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0039-2"
         }
       ],
       "rank": 2618,
       "leipzigRank": 2638,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0039"
     },
     {
       "word": "Militär",
       "genders": [
         {
           "article": "der",
-          "english": "military officer",
+          "english": "member of the military/military professional",
           "plural": "Militärs",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0040-1"
         },
         {
           "article": "das",
           "english": "army/military",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0040-2"
         }
       ],
       "rank": 2830,
-      "leipzigRank": 2850
+      "leipzigRank": 2850,
+      "id": "dual-0040",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:40:Militär",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`member of the military/military professional`"
+        }
+      ]
     },
     {
       "word": "Reis",
@@ -885,18 +1111,21 @@
           "english": "rice",
           "plural": "—",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0041-1"
         },
         {
           "article": "das",
           "english": "twig/shoot",
           "plural": "Reiser",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0041-2"
         }
       ],
       "rank": 3019,
-      "leipzigRank": 3039
+      "leipzigRank": 3039,
+      "id": "dual-0041"
     },
     {
       "word": "Schock",
@@ -904,20 +1133,33 @@
         {
           "article": "der",
           "english": "shock",
-          "plural": "Schocke",
+          "plural": "Schocks",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0042-1"
         },
         {
           "article": "das",
           "english": "sixty (archaic unit)",
           "plural": "Schocke",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0042-2"
         }
       ],
       "rank": 3293,
-      "leipzigRank": 3313
+      "leipzigRank": 3313,
+      "id": "dual-0042",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:42:Schock",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`Schocks` (modern standard learner form; `Schocke` is an old variant)"
+        }
+      ]
     },
     {
       "word": "Objektiv",
@@ -927,18 +1169,21 @@
           "english": "objective case (grammar)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0043-1"
         },
         {
           "article": "das",
           "english": "lens/objective/objective (camera)",
           "plural": "Objektive",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0043-2"
         }
       ],
       "rank": 3558,
-      "leipzigRank": 3578
+      "leipzigRank": 3578,
+      "id": "dual-0043"
     },
     {
       "word": "Vorsatz",
@@ -948,46 +1193,63 @@
           "english": "intention/prefix/resolution",
           "plural": "Vorsätze",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0044-1"
         },
         {
           "article": "das",
           "english": "endpaper (bookbinding)",
           "plural": "Vorsätze",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0044-2"
         }
       ],
       "rank": 3790,
-      "leipzigRank": 3889
+      "leipzigRank": 3889,
+      "id": "dual-0044"
     },
     {
       "word": "Gift",
       "genders": [
         {
           "article": "die",
-          "english": "gift (archaic/false friend)",
+          "english": "gift/present (archaic)",
           "plural": "Giften",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0045-1"
         },
         {
           "article": "der",
-          "english": "anger/wrath (archaic)",
+          "english": "anger/grudge (regional, especially Bavarian/Austrian)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0045-2"
         },
         {
           "article": "das",
           "english": "poison/toxin",
           "plural": "Gifte",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0045-3"
         }
       ],
       "rank": 3868,
-      "leipzigRank": 4023
+      "leipzigRank": 4023,
+      "id": "dual-0045",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:45:Gift",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`die Gift` = `gift/present (archaic)`; `der Gift` = `anger/grudge (regional, especially Bavarian/Austrian)`"
+        }
+      ]
     },
     {
       "word": "Gefallen",
@@ -997,19 +1259,22 @@
           "english": "favour",
           "plural": "Gefallen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0046-1"
         },
         {
           "article": "das",
           "english": "pleasure/liking",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0046-2"
         }
       ],
       "rank": 4558,
       "leipzigRank": 5336,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0046"
     },
     {
       "word": "Heide",
@@ -1019,40 +1284,56 @@
           "english": "heath/moor",
           "plural": "Heiden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0047-1"
         },
         {
           "article": "der",
           "english": "heathen/pagan",
           "plural": "Heiden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0047-2"
         }
       ],
       "rank": 4815,
       "leipzigRank": 5658,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0047"
     },
     {
       "word": "Hummel",
       "genders": [
         {
           "article": "die",
-          "english": "bumblebee/dumbledore/hommel",
+          "english": "bumblebee",
           "plural": "Hummeln",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0048-1"
         },
         {
           "article": "der",
           "english": "breeding bull (dialectal)",
           "plural": "Hummel",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0048-2"
         }
       ],
       "rank": 5043,
-      "leipzigRank": 5756
+      "leipzigRank": 5756,
+      "id": "dual-0048",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:48:Hummel",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`bumblebee`"
+        }
+      ]
     },
     {
       "word": "Spektakel",
@@ -1062,39 +1343,55 @@
           "english": "racket/commotion",
           "plural": "Spektakel",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0049-1"
         },
         {
           "article": "das",
           "english": "spectacle/show",
           "plural": "Spektakel",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0049-2"
         }
       ],
       "rank": 5082,
-      "leipzigRank": 5795
+      "leipzigRank": 5795,
+      "id": "dual-0049"
     },
     {
       "word": "Quark",
       "genders": [
         {
           "article": "der",
-          "english": "cottage cheese/curd cheese/fromage frais/quark (curd cheese)",
+          "english": "quark (soft fresh curd cheese)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0050-1"
         },
         {
           "article": "das",
           "english": "quark (physics)",
           "plural": "Quarks",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0050-2"
         }
       ],
       "rank": 5179,
-      "leipzigRank": 5892
+      "leipzigRank": 5892,
+      "id": "dual-0050",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:50:Quark",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`quark (soft fresh curd cheese)`"
+        }
+      ]
     },
     {
       "word": "Kiefer",
@@ -1104,19 +1401,22 @@
           "english": "pine/pine tree/pinewood",
           "plural": "Kiefern",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0051-1"
         },
         {
           "article": "der",
           "english": "jaw",
           "plural": "Kiefer",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0051-2"
         }
       ],
       "rank": 5265,
       "leipzigRank": 5978,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0051"
     },
     {
       "word": "Mast",
@@ -1126,19 +1426,22 @@
           "english": "fattening (of animals)",
           "plural": "Masten",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0052-1"
         },
         {
           "article": "der",
           "english": "mast/pylon/pole",
           "plural": "Maste",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0052-2"
         }
       ],
       "rank": 5271,
       "leipzigRank": 5984,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0052"
     },
     {
       "word": "Korn",
@@ -1148,19 +1451,22 @@
           "english": "grain schnapps",
           "plural": "Korn",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0053-1"
         },
         {
           "article": "das",
           "english": "grain/corn/kernel",
           "plural": "Körner",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0053-2"
         }
       ],
       "rank": 5536,
       "leipzigRank": 6249,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0053"
     },
     {
       "word": "Treff",
@@ -1170,18 +1476,21 @@
           "english": "meeting point",
           "plural": "Treffs",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0054-1"
         },
         {
           "article": "das",
           "english": "clubs",
           "plural": "Treffs",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0054-2"
         }
       ],
       "rank": 5797,
-      "leipzigRank": 6510
+      "leipzigRank": 6510,
+      "id": "dual-0054"
     },
     {
       "word": "Marsch",
@@ -1191,19 +1500,22 @@
           "english": "marsh/wetland",
           "plural": "Marschen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0055-1"
         },
         {
           "article": "der",
           "english": "march",
           "plural": "Märsche",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0055-2"
         }
       ],
       "rank": 5875,
       "leipzigRank": 6588,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0055"
     },
     {
       "word": "Pony",
@@ -1213,19 +1525,22 @@
           "english": "fringe/bangs (hair)",
           "plural": "Ponys",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0056-1"
         },
         {
           "article": "das",
           "english": "pony/pony (small horse)",
           "plural": "Ponys",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0056-2"
         }
       ],
       "rank": 5883,
       "leipzigRank": 6596,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0056"
     },
     {
       "word": "Pole",
@@ -1235,18 +1550,21 @@
           "english": "pole position",
           "plural": "Poles",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0057-1"
         },
         {
           "article": "der",
           "english": "Pole/Pole (Polish person)",
           "plural": "Polen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0057-2"
         }
       ],
       "rank": 6132,
-      "leipzigRank": 6845
+      "leipzigRank": 6845,
+      "id": "dual-0057"
     },
     {
       "word": "Bulle",
@@ -1256,19 +1574,32 @@
           "english": "papal bull",
           "plural": "Bullen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0058-1"
         },
         {
           "article": "der",
-          "english": "bull/cop/copper/cop (slang)",
+          "english": "bull; police officer (slang, usually derogatory)",
           "plural": "Bullen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0058-2"
         }
       ],
       "rank": 6477,
       "leipzigRank": 7190,
-      "bothInDrills": true
+      "bothInDrills": false,
+      "id": "dual-0058",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:58:Bulle",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`bull; police officer (slang, usually derogatory)`; `bothInDrills=false`"
+        }
+      ]
     },
     {
       "word": "Zink",
@@ -1278,18 +1609,21 @@
           "english": "cornett (Renaissance instrument)",
           "plural": "Zinken",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0059-1"
         },
         {
           "article": "das",
           "english": "zinc/zinc (metal)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0059-2"
         }
       ],
       "rank": 6772,
-      "leipzigRank": 7485
+      "leipzigRank": 7485,
+      "id": "dual-0059"
     },
     {
       "word": "Ex",
@@ -1299,39 +1633,78 @@
           "english": "pop quiz (Bavarian)",
           "plural": "Exen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0060-1"
         },
         {
           "article": "der",
           "english": "ex/ex (former partner)",
           "plural": "Ex",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0060-2"
         }
       ],
       "rank": 7147,
-      "leipzigRank": 7860
+      "leipzigRank": 7860,
+      "id": "dual-0060",
+      "senses": [
+        {
+          "operation": "add_gender_sense",
+          "value": {
+            "article": "die",
+            "english": "ex/former partner (female)",
+            "plural": "Ex",
+            "singularOnly": false,
+            "pluralOnly": false
+          },
+          "note": "Keep Bavarian pop-quiz die Ex/Exen as a separately labelled sense."
+        }
+      ],
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:60:Ex",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "Also represent the common feminine partner sense: `die Ex` = `ex/former partner (female)`, plural `Ex` (with `Exen` retained for the separate Bavarian pop-quiz sense)"
+        }
+      ]
     },
     {
       "word": "Hefe",
       "genders": [
         {
           "article": "die",
-          "english": "barm/dregs/driving force/yeast",
+          "english": "yeast; sediment/dregs; driving force (figurative)",
           "plural": "Hefen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0061-1"
         },
         {
           "article": "das",
           "english": "wheat beer (colloquial)",
           "plural": "Hefe",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0061-2"
         }
       ],
       "rank": 7355,
-      "leipzigRank": 8068
+      "leipzigRank": 8068,
+      "id": "dual-0061",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:61:Hefe",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`yeast` (optional secondary senses after it: `sediment/dregs; driving force (figurative)`)"
+        }
+      ]
     },
     {
       "word": "Tram",
@@ -1341,40 +1714,66 @@
           "english": "tram/tramway",
           "plural": "Trams",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0062-1"
         },
         {
           "article": "der",
-          "english": "beam",
+          "english": "beam (southern German/Austrian/Swiss regional usage)",
           "plural": "Trame",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0062-2"
         }
       ],
       "rank": 7616,
-      "leipzigRank": 8329
+      "leipzigRank": 8329,
+      "id": "dual-0062",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:62:Tram",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`beam (southern German/Austrian/Swiss regional usage)`"
+        }
+      ]
     },
     {
       "word": "Orange",
       "genders": [
         {
           "article": "die",
-          "english": "China orange/bitter orange/orange/orange (fruit)",
+          "english": "orange (fruit)",
           "plural": "Orangen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0063-1"
         },
         {
           "article": "das",
-          "english": "orange (color)",
-          "plural": "Orange",
-          "singularOnly": false,
-          "pluralOnly": false
+          "english": "orange (colour)",
+          "plural": "—",
+          "singularOnly": true,
+          "pluralOnly": false,
+          "id": "dual-0063-2"
         }
       ],
       "rank": 8393,
       "leipzigRank": 9196,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0063",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:63:Orange",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "fruit = `orange (fruit)`, plural `Orangen`; colour = `orange (colour)`, plural `—`, `singularOnly=true`"
+        }
+      ]
     },
     {
       "word": "Finne",
@@ -1384,18 +1783,21 @@
           "english": "fin/blade",
           "plural": "Finnen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0064-1"
         },
         {
           "article": "der",
           "english": "Finn",
           "plural": "Finnen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0064-2"
         }
       ],
       "rank": 886,
-      "leipzigRank": 9607
+      "leipzigRank": 9607,
+      "id": "dual-0064"
     },
     {
       "word": "Titan",
@@ -1405,46 +1807,63 @@
           "english": "Titan (mythology)",
           "plural": "Titanen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0065-1"
         },
         {
           "article": "das",
           "english": "titanium/titanium (element)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0065-2"
         }
       ],
       "rank": 8762,
-      "leipzigRank": 9770
+      "leipzigRank": 9770,
+      "id": "dual-0065"
     },
     {
       "word": "Korpus",
       "genders": [
         {
           "article": "die",
-          "english": "corpus",
+          "english": "10-point type size (printing, historical/technical)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0066-1"
         },
         {
           "article": "der",
           "english": "base/body",
           "plural": "Korpusse",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0066-2"
         },
         {
           "article": "das",
           "english": "corpus",
           "plural": "Korpora",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0066-3"
         }
       ],
       "rank": 8924,
-      "leipzigRank": 9955
+      "leipzigRank": 9955,
+      "id": "dual-0066",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:66:Korpus",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`10-point type size (printing, historical/technical)`"
+        }
+      ]
     },
     {
       "word": "Lama",
@@ -1454,19 +1873,22 @@
           "english": "lama (Buddhist monk)",
           "plural": "Lamas",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0067-1"
         },
         {
           "article": "das",
           "english": "llama/llama (animal)",
           "plural": "Lamas",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0067-2"
         }
       ],
       "rank": 9228,
       "leipzigRank": 10299,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0067"
     },
     {
       "word": "Laster",
@@ -1476,19 +1898,22 @@
           "english": "lorry/truck",
           "plural": "Laster",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0068-1"
         },
         {
           "article": "das",
           "english": "vice/bad habit",
           "plural": "Laster",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0068-2"
         }
       ],
       "rank": 9231,
       "leipzigRank": 10302,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0068"
     },
     {
       "word": "Python",
@@ -1498,18 +1923,21 @@
           "english": "python/python (snake)",
           "plural": "Pythons",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0069-1"
         },
         {
           "article": "das",
           "english": "Python (programming)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0069-2"
         }
       ],
       "rank": 9274,
-      "leipzigRank": 10351
+      "leipzigRank": 10351,
+      "id": "dual-0069"
     },
     {
       "word": "Rentier",
@@ -1519,19 +1947,32 @@
           "english": "person of independent means",
           "plural": "Rentiers",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0070-1"
         },
         {
           "article": "das",
           "english": "reindeer",
           "plural": "Rentiere",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0070-2"
         }
       ],
       "rank": 9287,
       "leipzigRank": 10365,
-      "bothInDrills": true
+      "bothInDrills": false,
+      "id": "dual-0070",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:70:Rentier",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`false`"
+        }
+      ]
     },
     {
       "word": "Mahd",
@@ -1541,18 +1982,31 @@
           "english": "mowing/swath/swathe",
           "plural": "Mahden",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0071-1"
         },
         {
           "article": "das",
-          "english": "alpine meadow",
+          "english": "alpine meadow/hay meadow (Austrian and regional)",
           "plural": "Mähder",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0071-2"
         }
       ],
       "rank": 9592,
-      "leipzigRank": 10679
+      "leipzigRank": 10679,
+      "id": "dual-0071",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:71:Mahd",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`alpine meadow/hay meadow (Austrian and regional)`"
+        }
+      ]
     },
     {
       "word": "Elf",
@@ -1562,18 +2016,21 @@
           "english": "eleven/football team",
           "plural": "Elfen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0072-1"
         },
         {
           "article": "der",
           "english": "elf",
           "plural": "Elfen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0072-2"
         }
       ],
       "rank": 9835,
-      "leipzigRank": 10922
+      "leipzigRank": 10922,
+      "id": "dual-0072"
     },
     {
       "word": "Graph",
@@ -1583,60 +2040,99 @@
           "english": "graph",
           "plural": "Graphen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0073-1"
         },
         {
           "article": "das",
-          "english": "grapheme",
+          "english": "graph/concrete written character (linguistics)",
           "plural": "Graphe",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0073-2"
         }
       ],
       "rank": 10283,
-      "leipzigRank": 11370
+      "leipzigRank": 11370,
+      "id": "dual-0073",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:73:Graph",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`graph/concrete written character (linguistics)`"
+        }
+      ]
     },
     {
       "word": "Franchise",
       "genders": [
         {
           "article": "die",
-          "english": "deductible/excess (insurance)",
+          "english": "insurance excess/deductible (Swiss usage)",
           "plural": "Franchisen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0074-1"
         },
         {
           "article": "das",
           "english": "franchise",
           "plural": "Franchises",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0074-2"
         }
       ],
       "rank": 10655,
-      "leipzigRank": 11742
+      "leipzigRank": 11742,
+      "id": "dual-0074",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:74:Franchise",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`insurance excess/deductible (Swiss usage)`"
+        }
+      ]
     },
     {
       "word": "Page",
       "genders": [
         {
           "article": "die",
-          "english": "page (web/book)",
+          "english": "web page (computing)",
           "plural": "Pages",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0075-1"
         },
         {
           "article": "der",
           "english": "bellboy/bellhop/bellman/page (attendant)",
           "plural": "Pagen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0075-2"
         }
       ],
       "rank": 11746,
-      "leipzigRank": 12833
+      "leipzigRank": 12833,
+      "id": "dual-0075",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:75:Page",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`web page (computing)`"
+        }
+      ]
     },
     {
       "word": "Heroin",
@@ -1646,18 +2142,21 @@
           "english": "heroine",
           "plural": "Heroinnen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0076-1"
         },
         {
           "article": "das",
           "english": "heroin/heroin (drug)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0076-2"
         }
       ],
       "rank": 15177,
-      "leipzigRank": 16264
+      "leipzigRank": 16264,
+      "id": "dual-0076"
     },
     {
       "word": "Type",
@@ -1667,39 +2166,65 @@
           "english": "letter/type",
           "plural": "Typen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0077-1"
         },
         {
           "article": "der",
-          "english": "type",
+          "english": "type (linguistics: abstract unit opposed to a token)",
           "plural": "Types",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0077-2"
         }
       ],
       "rank": 15650,
-      "leipzigRank": 16737
+      "leipzigRank": 16737,
+      "id": "dual-0077",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:77:Type",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`type (linguistics: abstract unit opposed to a token)`"
+        }
+      ]
     },
     {
       "word": "Mandarin",
       "genders": [
         {
           "article": "der",
-          "english": "mandarin",
+          "english": "mandarin/high official in imperial China",
           "plural": "Mandarine",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0078-1"
         },
         {
           "article": "das",
           "english": "standard Mandarin",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0078-2"
         }
       ],
       "rank": 16342,
-      "leipzigRank": 17429
+      "leipzigRank": 17429,
+      "id": "dual-0078",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:78:Mandarin",
+          "reviewedAt": "2026-08-01",
+          "severity": "low",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`mandarin/high official in imperial China`"
+        }
+      ]
     },
     {
       "word": "Laube",
@@ -1709,18 +2234,21 @@
           "english": "arbor/arbour/arcade/bower",
           "plural": "Lauben",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0079-1"
         },
         {
           "article": "der",
           "english": "bleak (fish)",
           "plural": "Lauben",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0079-2"
         }
       ],
       "rank": 17524,
-      "leipzigRank": 18611
+      "leipzigRank": 18611,
+      "id": "dual-0079"
     },
     {
       "word": "Tau",
@@ -1730,19 +2258,22 @@
           "english": "dew",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0080-1"
         },
         {
           "article": "das",
           "english": "rope/hawser",
           "plural": "Taue",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0080-2"
         }
       ],
       "rank": 17967,
       "leipzigRank": 19054,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0080"
     },
     {
       "word": "Ekel",
@@ -1752,40 +2283,56 @@
           "english": "disgust/revulsion",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0081-1"
         },
         {
           "article": "das",
           "english": "disgusting person",
           "plural": "Ekel",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0081-2"
         }
       ],
       "rank": 18507,
       "leipzigRank": 19595,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0081"
     },
     {
       "word": "Gemahl",
       "genders": [
         {
           "article": "der",
-          "english": "husband/spouse/husband (formal)",
+          "english": "husband/consort (formal, dated; especially of a high-status person)",
           "plural": "Gemahle",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0082-1"
         },
         {
           "article": "das",
-          "english": "spouse (archaic)",
+          "english": "wife (archaic/poetic)",
           "plural": "Gemahle",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0082-2"
         }
       ],
       "rank": 18664,
-      "leipzigRank": 19752
+      "leipzigRank": 19752,
+      "id": "dual-0082",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:82:Gemahl",
+          "reviewedAt": "2026-08-01",
+          "severity": "medium",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "masculine = `husband/consort (formal, dated; especially of a high-status person)`; neuter = `wife (archaic/poetic)`"
+        }
+      ]
     },
     {
       "word": "Schote",
@@ -1795,39 +2342,55 @@
           "english": "pod/silique/pod (botany)",
           "plural": "Schoten",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0083-1"
         },
         {
           "article": "der",
           "english": "fool (Northern German)",
           "plural": "Schoten",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0083-2"
         }
       ],
       "rank": 19375,
-      "leipzigRank": 20464
+      "leipzigRank": 20464,
+      "id": "dual-0083"
     },
     {
       "word": "As",
       "genders": [
         {
           "article": "der",
-          "english": "as/ace",
+          "english": "as (ancient Roman coin/unit)",
           "plural": "Asse",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0084-1"
         },
         {
           "article": "das",
           "english": "A-flat (music)",
           "plural": "As",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0084-2"
         }
       ],
       "rank": 19850,
-      "leipzigRank": 20939
+      "leipzigRank": 20939,
+      "id": "dual-0084",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:84:As",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`as (ancient Roman coin/unit)`"
+        }
+      ]
     },
     {
       "word": "Ohm",
@@ -1837,18 +2400,21 @@
           "english": "uncle (dialectal)",
           "plural": "Ohme",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0085-1"
         },
         {
           "article": "das",
           "english": "ohm/ohm (unit)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0085-2"
         }
       ],
       "rank": 20910,
-      "leipzigRank": 21999
+      "leipzigRank": 21999,
+      "id": "dual-0085"
     },
     {
       "word": "Otter",
@@ -1858,19 +2424,22 @@
           "english": "adder/viper",
           "plural": "Ottern",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0086-1"
         },
         {
           "article": "der",
           "english": "otter",
           "plural": "Otter",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0086-2"
         }
       ],
       "rank": 20934,
       "leipzigRank": 22023,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0086"
     },
     {
       "word": "Pik",
@@ -1880,18 +2449,21 @@
           "english": "grudge/pique",
           "plural": "Piks",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0087-1"
         },
         {
           "article": "das",
           "english": "spade/spades (card suit)",
           "plural": "?",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0087-2"
         }
       ],
       "rank": 23216,
-      "leipzigRank": 24305
+      "leipzigRank": 24305,
+      "id": "dual-0087"
     },
     {
       "word": "Hut",
@@ -1901,19 +2473,22 @@
           "english": "cap/hat",
           "plural": "Hüte",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0088-1"
         },
         {
           "article": "die",
           "english": "guard/protection (auf der Hut sein = to be on guard)",
           "plural": "—",
           "singularOnly": true,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0088-2"
         }
       ],
       "rank": 2152,
       "leipzigRank": 999,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0088"
     },
     {
       "word": "Junge",
@@ -1923,19 +2498,22 @@
           "english": "boy",
           "plural": "Jungen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0089-1"
         },
         {
           "article": "das",
           "english": "young animal/cub",
           "plural": "Jungen",
           "singularOnly": false,
-          "pluralOnly": false
+          "pluralOnly": false,
+          "id": "dual-0089-2"
         }
       ],
       "rank": 340,
       "leipzigRank": 998,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0089"
     },
     {
       "word": "Weise",
@@ -1945,19 +2523,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "wise man/sage",
-          "plural": "Weisen"
+          "plural": "Weisen",
+          "id": "dual-0090-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "die",
           "english": "way/manner",
-          "plural": "Weisen"
+          "plural": "Weisen",
+          "id": "dual-0090-2"
         }
       ],
       "rank": 165,
       "leipzigRank": 165,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0090"
     },
     {
       "word": "Einheimische",
@@ -1967,19 +2548,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "local/native resident (male)",
-          "plural": "Einheimischen"
+          "plural": "Einheimischen",
+          "id": "dual-0091-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "die",
           "english": "local/native resident (female)",
-          "plural": "Einheimischen"
+          "plural": "Einheimischen",
+          "id": "dual-0091-2"
         }
       ],
       "rank": 24015,
       "leipzigRank": 24543,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0091"
     },
     {
       "word": "Event",
@@ -1989,19 +2573,22 @@
           "pluralOnly": false,
           "article": "das",
           "english": "event",
-          "plural": "Events"
+          "plural": "Events",
+          "id": "dual-0092-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "der",
           "english": "event (regional/Austrian/Swiss usage)",
-          "plural": "Events"
+          "plural": "Events",
+          "id": "dual-0092-2"
         }
       ],
       "rank": 760,
       "leipzigRank": 760,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0092"
     },
     {
       "word": "Kajak",
@@ -2011,19 +2598,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "kayak",
-          "plural": "Kajaks"
+          "plural": "Kajaks",
+          "id": "dual-0093-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "das",
           "english": "kayak",
-          "plural": "Kajaks"
+          "plural": "Kajaks",
+          "id": "dual-0093-2"
         }
       ],
       "rank": 3470,
       "leipzigRank": 30000,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0093"
     },
     {
       "word": "Download",
@@ -2033,19 +2623,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "download",
-          "plural": "Downloads"
+          "plural": "Downloads",
+          "id": "dual-0094-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "das",
           "english": "download",
-          "plural": "Downloads"
+          "plural": "Downloads",
+          "id": "dual-0094-2"
         }
       ],
       "rank": 617,
       "leipzigRank": 30001,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0094"
     },
     {
       "word": "Like",
@@ -2055,19 +2648,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "like (e.g. social media)",
-          "plural": "Likes"
+          "plural": "Likes",
+          "id": "dual-0095-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "das",
           "english": "like (e.g. social media)",
-          "plural": "Likes"
+          "plural": "Likes",
+          "id": "dual-0095-2"
         }
       ],
       "rank": 3529,
       "leipzigRank": 30100,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0095"
     },
     {
       "word": "Level",
@@ -2077,19 +2673,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "level/stage",
-          "plural": "Level"
+          "plural": "Level",
+          "id": "dual-0096-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "das",
           "english": "level/stage",
-          "plural": "Level"
+          "plural": "Level",
+          "id": "dual-0096-2"
         }
       ],
       "rank": 2098,
       "leipzigRank": 30101,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0096"
     },
     {
       "word": "Flakon",
@@ -2099,19 +2698,22 @@
           "pluralOnly": false,
           "article": "der",
           "english": "(perfume) bottle/flacon",
-          "plural": "Flakons"
+          "plural": "Flakons",
+          "id": "dual-0097-1"
         },
         {
           "singularOnly": false,
           "pluralOnly": false,
           "article": "das",
           "english": "(perfume) bottle/flacon",
-          "plural": "Flakons"
+          "plural": "Flakons",
+          "id": "dual-0097-2"
         }
       ],
       "rank": 4666,
       "leipzigRank": 30102,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0097"
     },
     {
       "word": "Kurkuma",
@@ -2120,20 +2722,33 @@
           "singularOnly": false,
           "pluralOnly": false,
           "article": "die",
-          "english": "turmeric",
-          "plural": "—"
+          "english": "turmeric plant/spice",
+          "plural": "Kurkumen",
+          "id": "dual-0098-1"
         },
         {
-          "singularOnly": false,
+          "singularOnly": true,
           "pluralOnly": false,
           "article": "das",
-          "english": "turmeric",
-          "plural": "—"
+          "english": "turmeric (spice)",
+          "plural": "—",
+          "id": "dual-0098-2"
         }
       ],
       "rank": 4638,
       "leipzigRank": 30103,
-      "bothInDrills": true
+      "bothInDrills": true,
+      "id": "dual-0098",
+      "reviewHistory": [
+        {
+          "findingId": "dual_gender:98:Kurkuma",
+          "reviewedAt": "2026-08-01",
+          "severity": "high",
+          "action": "update",
+          "disposition": "corrected",
+          "recommendation": "`die Kurkuma` = `turmeric plant/spice`, plural `Kurkumen`, `singularOnly=false`; `das Kurkuma` = `turmeric (spice)`, plural `—`, `singularOnly=true`"
+        }
+      ]
     }
   ]
 }

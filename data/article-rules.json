@@ -2,7 +2,10 @@
   "meta": {
     "source": "https://www.passion4teq.com/articles/der-die-das-gender-article-rules/",
     "sections": "1-3",
-    "note": "Rule set for predicting der/die/das by suffix or semantic category. Exceptions listed here mirror the article; the app filters the exception list shown on cards to those present in the local word bank."
+    "note": "Rule set for predicting der/die/das by suffix or semantic category. Exceptions listed here mirror the article; the app filters the exception list shown on cards to those present in the local word bank.",
+    "version": 2,
+    "reviewedAt": "2026-08-01",
+    "description": "Curated German noun-gender patterns with confidence labels and validated exceptions."
   },
   "rules": {
     "der.suffix_er": {
@@ -103,10 +106,6 @@
           "article": "die"
         },
         {
-          "word": "Emscher",
-          "article": "das"
-        },
-        {
           "word": "Erdnussbutter",
           "article": "die"
         },
@@ -151,19 +150,7 @@
           "article": "das"
         },
         {
-          "word": "Furnier",
-          "article": "die"
-        },
-        {
           "word": "Futter",
-          "article": "das"
-        },
-        {
-          "word": "Garnier",
-          "article": "das"
-        },
-        {
-          "word": "Gebrüder",
           "article": "das"
         },
         {
@@ -192,10 +179,6 @@
         },
         {
           "word": "Gender",
-          "article": "das"
-        },
-        {
-          "word": "Geschwister",
           "article": "das"
         },
         {
@@ -335,10 +318,6 @@
           "article": "die"
         },
         {
-          "word": "Neunziger",
-          "article": "das"
-        },
-        {
           "word": "Nummer",
           "article": "die"
         },
@@ -435,10 +414,6 @@
           "article": "das"
         },
         {
-          "word": "Stadtväter",
-          "article": "das"
-        },
-        {
           "word": "Steuer",
           "article": "die"
         },
@@ -464,10 +439,6 @@
         },
         {
           "word": "Trimester",
-          "article": "das"
-        },
-        {
-          "word": "Trümmer",
           "article": "das"
         },
         {
@@ -542,13 +513,17 @@
           "word": "Butter",
           "article": "die"
         }
-      ]
+      ],
+      "confidence": "heuristic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.suffix_ismus": {
       "article": "der",
       "name": "Suffix -ismus",
-      "description": "Nouns ending in -ismus are always masculine. Examples: der Kapitalismus, der Journalismus, der Tourismus.",
-      "exceptions": []
+      "description": "Nouns ending in -ismus are masculine in this productive pattern. Examples: der Kapitalismus, der Journalismus, der Tourismus.",
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.suffix_ant": {
       "article": "der",
@@ -567,7 +542,9 @@
           "word": "Restaurant",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.suffix_ling": {
       "article": "der",
@@ -580,10 +557,6 @@
         },
         {
           "word": "Controlling",
-          "article": "das"
-        },
-        {
-          "word": "Dribbling",
           "article": "das"
         },
         {
@@ -613,12 +586,10 @@
         {
           "word": "Styling",
           "article": "das"
-        },
-        {
-          "word": "Upcycling",
-          "article": "das"
         }
-      ]
+      ],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.suffix_ner": {
       "article": "der",
@@ -628,12 +599,10 @@
         {
           "word": "Banner",
           "article": "das"
-        },
-        {
-          "word": "Wiener",
-          "article": "die"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.suffix_or": {
       "article": "der",
@@ -664,13 +633,17 @@
           "word": "Tor",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.masculine_persons": {
       "article": "der",
       "name": "Masculine persons, roles, professions",
       "description": "Nouns denoting male persons, family roles, or male professions take der. Examples: der Vater, der Pilot, der Arzt, der Bruder, der König.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.seasons": {
       "article": "der",
@@ -681,49 +654,65 @@
           "word": "Frühjahr",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.months": {
       "article": "der",
       "name": "Months",
       "description": "All months are masculine: der Januar, der Februar, der März, … der Dezember.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.days": {
       "article": "der",
       "name": "Days of the week",
       "description": "All weekdays are masculine: der Montag, der Dienstag, …, der Sonntag.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.compass": {
       "article": "der",
       "name": "Compass directions",
       "description": "Cardinal and intercardinal directions are masculine: der Norden, der Süden, der Osten, der Westen, der Nordwesten, etc.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.precipitations": {
       "article": "der",
       "name": "Precipitations",
-      "description": "Forms of precipitation are masculine: der Regen, der Schnee, der Hagel, der Nebel, der Tau.",
-      "exceptions": []
+      "description": "Several common weather phenomena are masculine, including der Regen, der Schnee, der Hagel, der Nebel, and der Tau. Fog and dew are included as weather phenomena, not classified as precipitation. Treat this as a semantic memory group, not a productive rule.",
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.car_brands": {
       "article": "der",
       "name": "Car brands",
       "description": "Car brand names are masculine: der Audi, der BMW, der Mercedes, der VW.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.trains": {
       "article": "der",
       "name": "Trains",
       "description": "Train (type) names are masculine: der IC, der ICE, der RE.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.verb_derived_no_suffix": {
       "article": "der",
       "name": "Verb-derived nouns (no suffix)",
       "description": "Nouns formed from a verb stem without an added suffix are usually masculine. Examples: der Gang (gehen), der Fang (fangen), der Wurf (werfen), der Schlaf (schlafen).",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.alcoholic_beverages": {
       "article": "der",
@@ -734,26 +723,17 @@
           "word": "Bier",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.rivers_outside_europe": {
       "article": "der",
       "name": "Rivers outside Europe",
       "description": "Most non-European rivers are masculine: der Amazonas, der Mississippi, der Kongo, der Nil.",
-      "exceptions": [
-        {
-          "word": "Angara",
-          "article": "die"
-        },
-        {
-          "word": "Kolyma",
-          "article": "die"
-        },
-        {
-          "word": "Lena",
-          "article": "die"
-        }
-      ]
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.mountains": {
       "article": "der",
@@ -764,43 +744,57 @@
           "word": "Zugspitze",
           "article": "die"
         }
-      ]
+      ],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_falt": {
       "article": "die",
       "name": "Suffix -falt",
       "description": "Nouns ending in -falt are feminine. Examples: die Vielfalt, die Einfalt.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_heit": {
       "article": "die",
       "name": "Suffix -heit",
       "description": "All nouns ending in -heit are feminine. Examples: die Freiheit, die Sicherheit, die Krankheit.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_keit": {
       "article": "die",
       "name": "Suffix -keit",
       "description": "All nouns ending in -keit are feminine. Examples: die Möglichkeit, die Schnelligkeit, die Einsamkeit.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_schaft": {
       "article": "die",
       "name": "Suffix -schaft",
       "description": "All nouns ending in -schaft are feminine. Examples: die Freundschaft, die Mannschaft, die Wirtschaft.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_t_verb": {
       "article": "die",
       "name": "Suffix -t (from verbs)",
       "description": "Nouns ending in -t that are derived from a verb are feminine. Examples: die Fahrt (fahren), die Tat (tun), die Sicht (sehen), die Flucht (fliehen).",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ung": {
       "article": "die",
       "name": "Suffix -ung",
-      "description": "All nouns ending in -ung are feminine. Examples: die Leitung, die Zeitung, die Wohnung, die Bedeutung.",
-      "exceptions": []
+      "description": "Nouns genuinely formed with the productive suffix -ung are feminine. Examples: die Leitung, die Zeitung, die Wohnung, die Bedeutung.",
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ade": {
       "article": "die",
@@ -815,7 +809,9 @@
           "word": "Upgrade",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_age": {
       "article": "die",
@@ -834,7 +830,9 @@
           "word": "Vintage",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_anz": {
       "article": "die",
@@ -857,7 +855,9 @@
           "word": "Tanz",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_enz": {
       "article": "die",
@@ -868,7 +868,9 @@
           "word": "Lenz",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ik": {
       "article": "die",
@@ -880,10 +882,6 @@
           "article": "der"
         },
         {
-          "word": "Mikroplastik",
-          "article": "der"
-        },
-        {
           "word": "Pik",
           "article": "das"
         },
@@ -891,7 +889,9 @@
           "word": "Streik",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ion": {
       "article": "die",
@@ -910,13 +910,17 @@
           "word": "Spion",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_taet": {
       "article": "die",
       "name": "Suffix -tät",
       "description": "Nouns ending in -tät (from Latin -tas/-tatis, the abstract-quality suffix) are feminine. These are all loanwords — German has no native -tät: die Identität, die Qualität, die Universität, die Aktivität, die Realität.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ur": {
       "article": "die",
@@ -944,10 +948,6 @@
           "article": "der"
         },
         {
-          "word": "Kontur",
-          "article": "der"
-        },
-        {
           "word": "Lemur",
           "article": "der"
         },
@@ -959,7 +959,9 @@
           "word": "Schwur",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_e": {
       "article": "die",
@@ -1113,10 +1115,6 @@
         {
           "word": "Cape",
           "article": "das"
-        },
-        {
-          "word": "Challenge",
-          "article": "der"
         },
         {
           "word": "Charme",
@@ -1287,10 +1285,6 @@
           "article": "der"
         },
         {
-          "word": "Großtrappe",
-          "article": "der"
-        },
-        {
           "word": "Guide",
           "article": "der"
         },
@@ -1396,10 +1390,6 @@
         },
         {
           "word": "Katalane",
-          "article": "der"
-        },
-        {
-          "word": "Kerle",
           "article": "der"
         },
         {
@@ -1795,15 +1785,7 @@
           "article": "der"
         },
         {
-          "word": "Spätzle",
-          "article": "das"
-        },
-        {
           "word": "Stratege",
-          "article": "der"
-        },
-        {
-          "word": "Tape",
           "article": "der"
         },
         {
@@ -1855,10 +1837,6 @@
           "article": "der"
         },
         {
-          "word": "Weichteile",
-          "article": "der"
-        },
-        {
           "word": "Welpe",
           "article": "der"
         },
@@ -1882,7 +1860,9 @@
           "word": "Zuhause",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "heuristic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ei": {
       "article": "die",
@@ -1937,7 +1917,9 @@
           "word": "Überraschungsei",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_ie": {
       "article": "die",
@@ -2021,14 +2003,12 @@
           "article": "der"
         },
         {
-          "word": "Wie",
-          "article": "das"
-        },
-        {
           "word": "Zombie",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.suffix_in": {
       "article": "die",
@@ -2098,10 +2078,6 @@
         {
           "word": "Glycerin",
           "article": "das"
-        },
-        {
-          "word": "Harlekin",
-          "article": "der"
         },
         {
           "word": "Insulin",
@@ -2191,52 +2167,49 @@
           "word": "Vanillin",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.feminine_persons": {
       "article": "die",
       "name": "Feminine persons, roles, professions",
       "description": "Nouns denoting female persons, family roles, or female professions take die. Examples: die Mutter, die Schwester, die Ärztin, die Königin.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.motorcycle_brands": {
       "article": "die",
       "name": "Motorcycle brands",
       "description": "Motorcycle brand names are feminine: die Harley Davidson, die Yamaha, die BMW (as motorcycle), die Kawasaki.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.planes_ships": {
       "article": "die",
       "name": "Planes and ships",
       "description": "Names of planes and ships are feminine: die Boeing 747, die Titanic, die Queen Mary.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.cardinal_numbers": {
       "article": "die",
       "name": "Cardinal numbers (as nouns)",
       "description": "Cardinal numbers used as nouns are feminine: die Eins, die Zwei, die Drei, die Hundert, die Million.",
-      "exceptions": []
-    },
-    "die.plants_trees": {
-      "article": "die",
-      "name": "Plants and trees",
-      "description": "Most plants and trees are feminine: die Birke, die Chrysantheme, die Rose, die Tulpe, die Eiche.",
-      "exceptions": [
-        {
-          "word": "Ahorn",
-          "article": "der"
-        },
-        {
-          "word": "Veilchen",
-          "article": "das"
-        }
-      ]
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.suffix_ial": {
       "article": "das",
       "name": "Suffix -ial",
       "description": "Latin-origin nouns ending in -ial are neuter. Examples: das Material, das Potenzial, das Editorial, das Tutorial.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.suffix_ment": {
       "article": "das",
@@ -2255,7 +2228,9 @@
           "word": "Zement",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.suffix_nis": {
       "article": "das",
@@ -2303,14 +2278,12 @@
           "article": "der"
         },
         {
-          "word": "Versäumnis",
-          "article": "die"
-        },
-        {
           "word": "Wildnis",
           "article": "die"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.suffix_o": {
       "article": "das",
@@ -2374,19 +2347,7 @@
           "article": "der"
         },
         {
-          "word": "Ghetto",
-          "article": "der"
-        },
-        {
-          "word": "Graffito",
-          "article": "der"
-        },
-        {
           "word": "GroKo",
-          "article": "die"
-        },
-        {
-          "word": "Gruppenfoto",
           "article": "die"
         },
         {
@@ -2406,16 +2367,8 @@
           "article": "der"
         },
         {
-          "word": "Kilo",
-          "article": "der"
-        },
-        {
           "word": "Kimono",
           "article": "der"
-        },
-        {
-          "word": "Klassenfoto",
-          "article": "die"
         },
         {
           "word": "Kripo",
@@ -2438,10 +2391,6 @@
           "article": "die"
         },
         {
-          "word": "Logo",
-          "article": "der"
-        },
-        {
           "word": "Macho",
           "article": "der"
         },
@@ -2459,10 +2408,6 @@
         },
         {
           "word": "Öko",
-          "article": "der"
-        },
-        {
-          "word": "Pesto",
           "article": "der"
         },
         {
@@ -2494,23 +2439,11 @@
           "article": "der"
         },
         {
-          "word": "Radio",
-          "article": "der"
-        },
-        {
           "word": "Ratio",
           "article": "die"
         },
         {
           "word": "Risotto",
-          "article": "der"
-        },
-        {
-          "word": "Rollo",
-          "article": "die"
-        },
-        {
-          "word": "Sakko",
           "article": "der"
         },
         {
@@ -2542,10 +2475,6 @@
           "article": "der"
         },
         {
-          "word": "Tattoo",
-          "article": "der"
-        },
-        {
           "word": "Techno",
           "article": "der"
         },
@@ -2554,14 +2483,12 @@
           "article": "der"
         },
         {
-          "word": "Urlaubsfoto",
-          "article": "die"
-        },
-        {
           "word": "Zoo",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "heuristic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.suffix_tum": {
       "article": "das",
@@ -2576,7 +2503,9 @@
           "word": "Reichtum",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.suffix_um_latin": {
       "article": "das",
@@ -2591,7 +2520,9 @@
           "word": "Slum",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.prefix_ge": {
       "article": "das",
@@ -2659,10 +2590,6 @@
           "article": "die"
         },
         {
-          "word": "Gehalt",
-          "article": "der"
-        },
-        {
           "word": "Gehilfe",
           "article": "der"
         },
@@ -2673,10 +2600,6 @@
         {
           "word": "Geige",
           "article": "die"
-        },
-        {
-          "word": "Geisel",
-          "article": "der"
         },
         {
           "word": "Geiselnahme",
@@ -2700,10 +2623,6 @@
         },
         {
           "word": "Gemeinde",
-          "article": "die"
-        },
-        {
-          "word": "Gemeine",
           "article": "die"
         },
         {
@@ -2741,10 +2660,6 @@
         {
           "word": "Gentleman",
           "article": "der"
-        },
-        {
-          "word": "Genua",
-          "article": "die"
         },
         {
           "word": "Genüge",
@@ -2826,36 +2741,46 @@
           "word": "Gewinn",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "heuristic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.diminutives": {
       "article": "das",
       "name": "Diminutives (-chen, -lein)",
       "description": "All diminutives formed with -chen or -lein are neuter, even when the base word is masculine or feminine. Examples: das Mädchen, das Kaninchen, das Fräulein, das Büchlein.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.nominalized_infinitive": {
       "article": "das",
       "name": "Nominalized infinitives",
-      "description": "Any German verb infinitive can be used as a noun (capitalized), and it is always neuter. Examples: das Essen (to eat → food), das Schreiben, das Leben, das Laufen.",
-      "exceptions": []
+      "description": "Any German verb infinitive can be used as a noun (capitalized), and it is neuter in this productive pattern. Examples: das Essen (to eat → food), das Schreiben, das Leben, das Laufen.",
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.nominalized_adjective": {
       "article": "das",
       "name": "Nominalized adjectives (abstract sense)",
       "description": "Adjectives turned into abstract nouns (the quality itself) are neuter. Examples: das Gute, das Böse, das Schöne, das Neue.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.colors": {
       "article": "das",
       "name": "Colours",
       "description": "Colours as nouns are neuter: das Rot, das Gelb, das Blau, das Grün, das Schwarz. The colour das Orange is neuter and follows the rule; die Orange is the unrelated word for the fruit and falls under the -e suffix rule.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.chemical_elements": {
       "article": "das",
       "name": "Chemical elements",
-      "description": "Nearly all of the ~112 chemical elements are neuter. Examples: das Aluminium, das Kupfer, das Uran, das Helium, das Eisen.",
+      "description": "Nearly all of the 118 chemical elements are neuter. Examples: das Aluminium, das Kupfer, das Uran, das Helium, das Eisen.",
       "exceptions": [
         {
           "word": "Kohlenstoff",
@@ -2881,7 +2806,9 @@
           "word": "Wasserstoff",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.metals": {
       "article": "das",
@@ -2896,7 +2823,9 @@
           "word": "Stahl",
           "article": "der"
         }
-      ]
+      ],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.fractions": {
       "article": "das",
@@ -2907,7 +2836,9 @@
           "word": "Hälfte",
           "article": "die"
         }
-      ]
+      ],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "der.suffix_eur": {
       "article": "der",
@@ -2918,31 +2849,41 @@
           "word": "Interieur",
           "article": "das"
         }
-      ]
+      ],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.country_articleless": {
       "article": "das",
       "name": "Articleless country and region names",
       "description": "Most country and region names are used without an article in ordinary German: Deutschland, Österreich, Finnland, Mexiko, Europa. Grammatically they are neuter when an article is needed for a modifier or historical/style contrast: das Deutschland der 1990er.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.country_with_article": {
       "article": "die",
       "name": "Country names with fixed article",
-      "description": "A small group of country names is used with a fixed article. Feminine country names take die: die Türkei, die Schweiz, die Ukraine. They are singular-only in ordinary use.",
-      "exceptions": []
+      "description": "Feminine singular country names with a fixed article take die, for example die Schweiz, die Türkei, and die Ukraine. Other fixed-article country names form separate groups: masculine der Iran/der Irak (usage varies) and plural die Niederlande/die USA.",
+      "exceptions": [],
+      "confidence": "semantic",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "die.plural_only": {
       "article": "die",
       "name": "Plural-only nouns",
       "description": "Plural-only nouns (Pluralia tantum) have no singular form and always use die: die Eltern, die Leute, die Kosten, die Großeltern, die Pommes.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "categorical",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     },
     "das.greek_ion_neuter": {
       "article": "das",
       "name": "Greek neuter -ion nouns",
       "description": "Some Greek-origin nouns ending in -ion are neuter and do not follow the Latin -tion/-sion feminine pattern: das Stadion, das Symposion, das Anion, das Ganglion.",
-      "exceptions": []
+      "exceptions": [],
+      "confidence": "strong",
+      "source": "Curated learner rule; manually reviewed 2026-08-01"
     }
   }
 }

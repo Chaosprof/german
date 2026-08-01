@@ -151,7 +151,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-06-14-split-noun-help";
+const DATA_VERSION = "2026-08-01-reviewed-sense-schema-v3";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 // articleHelp/pluralHelp are split into a separate file so the core noun data
@@ -160,7 +160,7 @@ const NOUN_HELP_PATH = "./data/noun-help.json" + v;
 // Approx uncompressed size of nouns.json, used only to estimate the load
 // progress bar when the server gzips the response (Content-Length is then the
 // compressed size). Update if the core file grows a lot.
-const NOUNS_CORE_APPROX_BYTES = 5729639;
+const NOUNS_CORE_APPROX_BYTES = 7594495;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
 const VERBS_DATA_PATH = "./data/verbs.json" + v;
 const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json" + v;
@@ -187,10 +187,13 @@ const FOLDER_BUILTIN = "Built-in";
 const FOLDER_CUSTOM = "My Decks";
 let NOUNS = [];
 let NOUN_INDEX = new Map();
+let NOUN_ID_INDEX = new Map();
+let NOUN_SENSES = new Map();
 let EXPLANATIONS = new Map();
 let NOUN_HELP_LOADED = false;   // set once noun-help.json has merged into EXPLANATIONS
 let ARTICLE_RULES = {};
 let VERB_FORM_RULES = [];
+let VERB_FORM_RULE_INDEX = new Map();
 let PREPOSITION_HINTS = {};
 let WORDS_META = {};
 let BUILTIN_DECKS = [];
@@ -216,18 +219,47 @@ function getNounEntryId(noun) {
   return noun?.[5] || noun?.[0] || "";
 }
 
+function getExplanation(nounOrId) {
+  if (Array.isArray(nounOrId)) return EXPLANATIONS.get(getNounEntryId(nounOrId)) || EXPLANATIONS.get(nounOrId[0]);
+  if (!nounOrId) return null;
+  if (EXPLANATIONS.has(nounOrId)) return EXPLANATIONS.get(nounOrId);
+  const noun = NOUN_ID_INDEX.get(nounOrId) || NOUN_INDEX.get(nounOrId);
+  return noun ? EXPLANATIONS.get(getNounEntryId(noun)) || null : null;
+}
+
 function getMistakeEntryId(mistake) {
   return mistake?.entryId || mistake?.noun || "";
 }
 
+function isCoreLearnerEntry(entry) {
+  const safety = entry?.learnerSafety || {};
+  return entry?.active !== false
+    && entry?.learnerSafe !== false
+    && safety.excludeFromCoreDrills !== true
+    && safety.excludeFromCoreLemmaDrills !== true
+    && safety.excludeFromAdjectiveDrills !== true;
+}
+
 function hydrateWordData(payload) {
-  const nounEntries = Array.isArray(payload?.nouns) ? payload.nouns : [];
-  NOUNS = nounEntries.map(({ word, article, plural, english, rank }) => [word, article, plural, english, rank]);
-  NOUN_INDEX = new Map(NOUNS.map(noun => [noun[0], noun]));
+  const nounEntries = Array.isArray(payload?.nouns) ? payload.nouns.filter(isCoreLearnerEntry) : [];
+  NOUNS = nounEntries.map(({ word, article, plural, english, rank, id }) => [word, article, plural, english, rank, id || word]);
+  NOUN_ID_INDEX = new Map(NOUNS.map(noun => [getNounEntryId(noun), noun]));
+  NOUN_SENSES = new Map();
+  for (const noun of NOUNS) {
+    if (!NOUN_SENSES.has(noun[0])) NOUN_SENSES.set(noun[0], []);
+    NOUN_SENSES.get(noun[0]).push(noun);
+  }
+  NOUN_INDEX = new Map();
+  for (const [word, senses] of NOUN_SENSES) {
+    const sourceRows = nounEntries.filter(entry => entry.word === word);
+    const sorted = senses.map((noun, index) => ({ noun, source: sourceRows[index] || {} }))
+      .sort((a, b) => ((a.source.sensePriority ?? 100) - (b.source.sensePriority ?? 100)) || (a.noun[4] - b.noun[4]));
+    NOUN_INDEX.set(word, sorted[0].noun);
+  }
   // articleHelp/pluralHelp now live in noun-help.json (loaded lazily). Seed
   // EXPLANATIONS with the load-time fields (ruleId/isException/weak); the help
   // text is merged in later by loadNounHelp().
-  EXPLANATIONS = new Map(nounEntries.map(({ word, ruleId, isException, weak }) => [word, { article: "", plural: "", ruleId: ruleId || null, isException: !!isException, weak: !!weak }]));
+  EXPLANATIONS = new Map(nounEntries.map(({ id, word, ruleId, isException, weak, ruleConfidence }) => [id || word, { article: "", plural: "", ruleId: ruleId || null, isException: !!isException, weak: !!weak, confidence: ruleConfidence || null }]));
   WORDS_META = payload?.meta || {};
 }
 
@@ -274,10 +306,17 @@ async function loadNounHelp() {
     if (!resp.ok) return;
     const data = await resp.json();
     const help = data?.help || {};
-    for (const [word, pair] of Object.entries(help)) {
-      const expl = EXPLANATIONS.get(word);
-      if (expl) { expl.article = pair[0] || ""; expl.plural = pair[1] || ""; }
-      else EXPLANATIONS.set(word, { article: pair[0] || "", plural: pair[1] || "", ruleId: null, isException: false, weak: false });
+    for (const [entryKey, pair] of Object.entries(help)) {
+      const exact = NOUN_ID_INDEX.get(entryKey);
+      const targets = exact ? [exact] : (NOUN_SENSES.get(entryKey) || []);
+      if (!targets.length) continue;
+      for (const noun of targets) {
+        const id = getNounEntryId(noun);
+        const expl = EXPLANATIONS.get(id) || { article: "", plural: "", ruleId: null, isException: false, weak: false, confidence: null };
+        expl.article = pair[0] || "";
+        expl.plural = pair[1] || "";
+        EXPLANATIONS.set(id, expl);
+      }
     }
     NOUN_HELP_LOADED = true;
     window.dispatchEvent(new Event("nounhelploaded"));
@@ -293,7 +332,7 @@ async function loadWordData(onProgress) {
     const adjResp = await fetch(ADJECTIVES_DATA_PATH);
     if (adjResp.ok) {
       const adjData = await adjResp.json();
-      ADJECTIVES = (adjData.adjectives || []).map(({ word, english, rank }) => [word, english, rank]);
+      ADJECTIVES = (adjData.adjectives || []).filter(isCoreLearnerEntry).map(({ word, english, rank }) => [word, english, rank]);
     }
   } catch(e) { console.warn("Could not load adjectives:", e); }
   // Load verbs
@@ -301,8 +340,10 @@ async function loadWordData(onProgress) {
     const verbResp = await fetch(VERBS_DATA_PATH);
     if (verbResp.ok) {
       const verbData = await verbResp.json();
-      VERBS = (verbData.verbs || []).map(({ word, english, rank }) => [word, english, rank]);
-      IRREGULAR_VERBS = (verbData.verbs || []).filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt, withSein }) => {
+      const learnerVerbs = (verbData.verbs || []).filter(isCoreLearnerEntry);
+      VERBS = learnerVerbs.map(({ word, english, rank }) => [word, english, rank]);
+      VERB_FORM_RULE_INDEX = new Map(learnerVerbs.map(({ word, formRuleIds = [] }) => [word, formRuleIds]));
+      IRREGULAR_VERBS = learnerVerbs.filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt, withSein }) => {
         const auxiliary = withSein === true ? "ist " : withSein === false ? "hat " : "";
         return [word, english, rank, prateritum, auxiliary + perfekt];
       });
@@ -314,7 +355,7 @@ async function loadWordData(onProgress) {
     if (dgResp.ok) {
       const dgData = await dgResp.json();
       if (dgData.nouns?.length) {
-        const dualSensePairs = dgData.nouns.map(({ word, rank, genders = [] }) => [word, genders.map(genderEntry => buildDualGenderEntry(word, rank, genderEntry))]);
+        const dualSensePairs = dgData.nouns.filter(isCoreLearnerEntry).map(({ word, rank, genders = [] }) => [word, genders.filter(isCoreLearnerEntry).map(genderEntry => buildDualGenderEntry(word, rank, genderEntry))]).filter(([, entries]) => entries.length);
         const dualEntries = dualSensePairs.flatMap(([, entries]) => entries);
         DUAL_GENDER_WORDS = new Set(dualSensePairs.map(([word]) => word));
         DUAL_GENDER_SENSES = new Map(dualSensePairs);
@@ -338,6 +379,7 @@ async function loadWordData(onProgress) {
     if (vpResp.ok) {
       const vpData = await vpResp.json();
       VERB_PREPOSITIONS = (vpData.verbs || [])
+        .filter(isCoreLearnerEntry)
         .filter(({ preposition }) => SELECTABLE_VERB_PREPOSITIONS.has(preposition))
         .map(({ verb, english, rank, preposition, case: cas, example }) => [verb, english, rank, preposition, cas, example]);
     }
@@ -425,14 +467,14 @@ function buildWeakNounsDeck() {
     if (BUILTIN_DECKS[i].id === DECK_ID) BUILTIN_DECKS.splice(i, 1);
   }
   const weak = NOUNS
-    .filter(n => EXPLANATIONS.get(n[0])?.weak)
+    .filter(n => getExplanation(n)?.weak)
     .sort((a, b) => (a[4] || 1e9) - (b[4] || 1e9));
   if (weak.length < 5) return;
   BUILTIN_DECKS.push({
     id: DECK_ID,
     name: "Weak Nouns (n-Deklination)",
     description: `Masculine nouns that take -(e)n in every case except nominative singular. ${weak.length} nouns.`,
-    nouns: weak.map(n => n[0]),
+    nouns: weak.map(n => getNounEntryId(n)),
     builtin: true,
     folder: FOLDER_BUILTIN
   });
@@ -449,7 +491,7 @@ function buildRuleDecks() {
   }
   const byRule = new Map();
   for (const noun of NOUNS) {
-    const rid = EXPLANATIONS.get(noun[0])?.ruleId;
+    const rid = getExplanation(noun)?.ruleId;
     if (!rid) continue;
     if (!byRule.has(rid)) byRule.set(rid, []);
     byRule.get(rid).push(noun);
@@ -464,15 +506,15 @@ function buildRuleDecks() {
     const extraExceptions = [];
     for (const exc of (rule.exceptions || [])) {
       if (seen.has(exc.word)) continue;
-      const noun = NOUN_INDEX.get(exc.word);
-      if (!noun || noun[1] !== exc.article) continue;
+      const noun = (NOUN_SENSES.get(exc.word) || []).find(entry => entry[1] === exc.article);
+      if (!noun) continue;
       extraExceptions.push(noun);
       seen.add(exc.word);
     }
     if (matched.length + extraExceptions.length < MIN_PER_DECK) continue;
-    const taggedExceptions = matched.filter(n => EXPLANATIONS.get(n[0])?.isException);
+    const taggedExceptions = matched.filter(n => getExplanation(n)?.isException);
     const exceptions = [...taggedExceptions, ...extraExceptions].sort(byRank);
-    const followers = matched.filter(n => !EXPLANATIONS.get(n[0])?.isException).sort(byRank);
+    const followers = matched.filter(n => !getExplanation(n)?.isException).sort(byRank);
     // All exceptions are kept (they're the high-value content); followers capped at FOLLOWER_BUDGET by rank.
     const selected = [...exceptions, ...followers.slice(0, FOLLOWER_BUDGET)].sort(byRank);
     const excCount = exceptions.length;
@@ -483,7 +525,7 @@ function buildRuleDecks() {
       id: `${RULE_DECK_PREFIX}${ruleKey}__`,
       name: `${rule.article} · ${rule.name}`,
       description: desc,
-      nouns: selected.map(n => n[0]),
+      nouns: selected.map(n => getNounEntryId(n)),
       builtin: true,
       folder: FOLDER_BUILTIN
     });
@@ -491,13 +533,16 @@ function buildRuleDecks() {
 }
 
 function getNounByName(name) {
-  return DUAL_GENDER_INDEX.get(name) || NOUN_INDEX.get(name) || null;
+  return DUAL_GENDER_INDEX.get(name) || NOUN_ID_INDEX.get(name) || NOUN_INDEX.get(name) || null;
 }
 
 function getDeckEntriesByName(name) {
   if (DUAL_GENDER_INDEX.has(name)) return [DUAL_GENDER_INDEX.get(name)];
+  if (NOUN_ID_INDEX.has(name)) return [NOUN_ID_INDEX.get(name)];
   const dualEntries = DUAL_GENDER_SENSES.get(name);
   if (dualEntries?.length) return dualEntries;
+  const senses = NOUN_SENSES.get(name);
+  if (senses?.length) return senses;
   const noun = getNounByName(name);
   return noun ? [noun] : [];
 }
@@ -624,8 +669,7 @@ function getNounsForTier(tier, minRank) {
 function getRuleExceptionsInBank(rule) {
   if (!rule || !Array.isArray(rule.exceptions)) return [];
   return rule.exceptions.filter(exc => {
-    const noun = NOUN_INDEX.get(exc.word);
-    return noun && noun[1] === exc.article;
+    return (NOUN_SENSES.get(exc.word) || []).some(noun => noun[1] === exc.article);
   });
 }
 // UTILITIES
@@ -2626,8 +2670,8 @@ function GermanNounGame() {
 // MENU
 // ═══════════════════════════════════════════════════════════════
 function DeckBuilderHelp({ word }) {
-  const expl = EXPLANATIONS.get(word);
   const entries = getDeckEntriesByName(word);
+  const expl = entries.length ? getExplanation(entries[0]) : getExplanation(word);
   const rule = expl?.ruleId ? ARTICLE_RULES[expl.ruleId] : null;
   const exceptionsInBank = getRuleExceptionsInBank(rule);
   const labelStyle = {fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:UI.muted};
@@ -2657,12 +2701,14 @@ function DeckBuilderHelp({ word }) {
           ) : (
             <span style={{fontSize:12,fontWeight:700,color:UI.text}}>Rule: {rule.name} → <span style={{color:ARTICLE_COLORS[rule.article]}}>{rule.article}</span></span>
           )}
+          {rule.confidence && <span style={{fontSize:10,color:UI.faint,textTransform:"uppercase",letterSpacing:1}}>{rule.confidence === "categorical" ? "productive morphological pattern" : rule.confidence === "strong" ? "strong tendency" : rule.confidence === "semantic" ? "semantic convention" : "learner heuristic"}</span>}
           <span style={bodyStyle}>{rule.description}</span>
-          {exceptionsInBank.length > 0 && <ExceptionsList exceptions={exceptionsInBank} currentWord={word} />}
+          {exceptionsInBank.length > 0 && <ExceptionsList exceptions={exceptionsInBank} currentWord={entries[0]?.[0] || word} />}
         </div>
-      ) : expl?.article ? (
+      ) : null}
+      {expl?.article ? (
         <div style={{display:"flex",flexDirection:"column",gap:3}}>
-          <span style={labelStyle}>Article note</span>
+          <span style={labelStyle}>{rule ? "Word-specific note" : "Article note"}</span>
           <span style={bodyStyle}>{expl.article}</span>
         </div>
       ) : null}
@@ -4037,13 +4083,13 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
       {reviewWrongAnswers.length>0&&(
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
           <h3 style={{fontSize:16,fontWeight:800,color:"#f87171",margin:0}}>Review: {reviewWrongAnswers.length} mistake{reviewWrongAnswers.length>1?"s":""}</h3>
-          {!isMatching&&!isVerbForms&&<p style={{fontSize:12,color:UI.faint,margin:"0 0 4px"}}>Tap any card for the grammar rule explanation</p>}
+          {!isMatching&&<p style={{fontSize:12,color:UI.faint,margin:"0 0 4px"}}>Tap any card for the relevant learner guidance</p>}
           <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:500,overflowY:"auto",paddingRight:4}}>
             {reviewWrongAnswers.map((w,i)=>{
-              const expl=EXPLANATIONS.get(w.noun);
+              const expl=getExplanation(getMistakeEntryId(w));
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>{ if (!isMatching&&!isVerbForms) setExpandedIdx(isOpen?null:i); }} style={{background:UI.panel,border:`1px solid ${isOpen&&!isMatching&&!isVerbForms?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"12px 14px",cursor:isMatching||isVerbForms?"default":"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching) setExpandedIdx(isOpen?null:i); }} style={{background:UI.panel,border:`1px solid ${isOpen&&!isMatching?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"12px 14px",cursor:isMatching?"default":"pointer",transition:"border-color 0.2s"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
                     {isVerbForms?(
                       <span style={{fontWeight:800,fontSize:17,color:UI.textStrong}}>{getMeaningLabel(w.english)}</span>
@@ -4131,6 +4177,18 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                     </div>
                     );
                   })()}
+                  {isVerbForms&&isOpen&&(() => {
+                    const ids = VERB_FORM_RULE_INDEX.get(w.verbInfinitive) || [];
+                    const rules = ids.map(id => VERB_FORM_RULES.find(rule => rule.id === id)).filter(Boolean);
+                    if (!rules.length) return null;
+                    return <div style={{marginTop:10,padding:"10px 12px",background:"rgba(94,139,133,0.06)",border:"1px solid rgba(94,139,133,0.2)",borderRadius:8,display:"flex",flexDirection:"column",gap:8}}>
+                      <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:UI.teal}}>Formation guidance</span>
+                      {rules.map(rule => <div key={rule.id} style={{display:"flex",flexDirection:"column",gap:2}}>
+                        <span style={{fontSize:12,fontWeight:800,color:UI.textStrong}}>{rule.name}</span>
+                        <span style={{fontSize:12,color:UI.text,lineHeight:1.5}}>{rule.description}</span>
+                      </div>)}
+                    </div>;
+                  })()}
                   {!isMatching&&!isVerbForms&&!isVerbPrep&&isOpen&&expl&&(() => {
                     const rule = expl.ruleId ? ARTICLE_RULES[expl.ruleId] : null;
                     const exceptionsInBank = getRuleExceptionsInBank(rule);
@@ -4145,15 +4203,17 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                             ) : (
                               <span style={{fontSize:12,fontWeight:700,color:"#a7f3d0"}}>Rule: {rule.name} → {rule.article}</span>
                             )}
+                            {rule.confidence && <span style={{fontSize:10,color:UI.faint,textTransform:"uppercase",letterSpacing:1}}>{rule.confidence === "categorical" ? "productive morphological pattern" : rule.confidence === "strong" ? "strong tendency" : rule.confidence === "semantic" ? "semantic convention" : "learner heuristic"}</span>}
                             {expl.isException && <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}>{w.noun} is one of the known exceptions — it takes <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800}}>{w.article}</span> instead of <span style={{color:ARTICLE_COLORS[rule.article],fontWeight:800}}>{rule.article}</span>.</span>}
                             <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}>{rule.description}</span>
                             {exceptionsInBank.length > 0 && (
                               <ExceptionsList exceptions={exceptionsInBank} currentWord={w.noun} />
                             )}
                           </>
-                        ) : (
+                        ) : expl.article ? (
                           <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}>{expl.article}</span>
-                        )}
+                        ) : null}
+                        {rule && expl.article && <span style={{fontSize:13,color:UI.textStrong,lineHeight:1.55}}>{expl.article}</span>}
                       </div>
                       <div style={{display:"flex",flexDirection:"column",gap:3}}>
                         <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:"#fbbf24"}}>Plural pattern</span>
@@ -4162,7 +4222,7 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                     </div>
                     );
                   })()}
-                  {!isMatching&&!isVerbForms&&<div style={{fontSize:10,color:UI.muted,textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":isVerbPrep?"▼ tap for preposition rule":"▼ tap for explanation"}</div>}
+                  {!isMatching&&<div style={{fontSize:10,color:UI.muted,textAlign:"center",marginTop:6}}>{isOpen?"▲ collapse":isVerbPrep?"▼ tap for preposition rule":isVerbForms?"▼ tap for formation guidance":"▼ tap for explanation"}</div>}
                 </div>
               );
             })}
@@ -4616,7 +4676,7 @@ function ArticleRulesPanel({ expandedRule, setExpandedRule }) {
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
-      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>Patterns for predicting der/die/das. Tap any rule for the description and known exceptions.</p>
+      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>Evidence-based patterns for predicting der/die/das. Confidence labels distinguish productive morphology from tendencies and conventions; the noun's stored article always remains authoritative.</p>
       {(["der","die","das"]).map(art => {
         const list = rulesByArticle[art] || [];
         if (!list.length) return null;
@@ -4629,13 +4689,15 @@ function ArticleRulesPanel({ expandedRule, setExpandedRule }) {
             <div style={{display:"flex",flexDirection:"column",gap:6}}>
               {list.map(rule => {
                 const isOpen = expandedRule === rule.id;
-                const exCount = (rule.exceptions || []).length;
+                const validatedExceptions = getRuleExceptionsInBank(rule);
+                const exCount = validatedExceptions.length;
+                const confidenceLabel = rule.confidence === "categorical" ? "productive pattern" : rule.confidence === "strong" ? "strong tendency" : rule.confidence === "semantic" ? "semantic convention" : "learner heuristic";
                 return (
                   <div key={rule.id} onClick={()=>setExpandedRule(isOpen?null:rule.id)}
                     style={{background:UI.panel,border:`1px solid ${isOpen?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"10px 12px",cursor:"pointer",transition:"border-color 0.15s"}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
                       <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{rule.name}</span>
-                      <span style={{fontSize:10,color:UI.faint,whiteSpace:"nowrap"}}>{exCount > 0 ? `${exCount} exception${exCount===1?"":"s"}` : "no exceptions"}</span>
+                      <span style={{fontSize:10,color:UI.faint,whiteSpace:"nowrap"}}>{confidenceLabel}{exCount > 0 ? ` · ${exCount} known exception${exCount===1?"":"s"}` : ""}</span>
                     </div>
                     {isOpen && (
                       <div style={{marginTop:8,display:"flex",flexDirection:"column",gap:8}}>
@@ -4644,8 +4706,8 @@ function ArticleRulesPanel({ expandedRule, setExpandedRule }) {
                           <div style={{display:"flex",flexDirection:"column",gap:3,padding:"8px 10px",background:UI.panelSoft,borderRadius:8}}>
                             <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:UI.faint}}>Exceptions ({exCount})</span>
                             <span style={{fontSize:12,color:UI.muted,lineHeight:1.6}}>
-                              {rule.exceptions.slice(0, 30).map((ex,i)=>(
-                                <span key={ex.word}>
+                              {validatedExceptions.slice(0, 30).map((ex,i)=>(
+                                <span key={`${ex.word}|${ex.article}`}>
                                   {i>0&&", "}
                                   <span style={{color:ARTICLE_COLORS[ex.article],fontWeight:700}}>{ex.article}</span>{" "}{ex.word}
                                 </span>
@@ -4654,6 +4716,7 @@ function ArticleRulesPanel({ expandedRule, setExpandedRule }) {
                             </span>
                           </div>
                         )}
+                        {rule.source && <span style={{fontSize:10,color:UI.faint}}>Source: {rule.source}</span>}
                       </div>
                     )}
                   </div>
@@ -4712,13 +4775,13 @@ function VerbPrepRulesPanel() {
   const groupMeta = {
     "fixed-akk":  { label: "Always Accusative",      color: "#f472b6", note: "These prepositions always govern the Accusative case, independent of verb." },
     "fixed-dat":  { label: "Always Dative",          color: "#60a5fa", note: "These prepositions always govern the Dative case, independent of verb." },
-    "two-way":    { label: "Wechselpräpositionen",   color: "#a78bfa", note: "Two-way: Akk for direction/movement, Dat for static location. With fixed-preposition verbs, the verb sets the case." },
+    "two-way":    { label: "Wechselpräpositionen",   color: "#a78bfa", note: "In spatial uses: Akk marks a destination/change of location (wohin?), while Dat marks location (wo?) — even when movement occurs there. Lexical verb combinations must be learned with their case." },
     "special":    { label: "Special",                color: "#fbbf24", note: "Comparison particles and edge cases." },
   };
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
-      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>How prepositions govern case. Some are fixed (always Akk or always Dat); two-way prepositions depend on context. Verb+preposition combos lock the case to whatever the verb requires.</p>
+      <p style={{fontSize:12,color:UI.faint,margin:0,lineHeight:1.5}}>How prepositions and lexical combinations determine case. Some prepositions govern a fixed case; spatial two-way uses contrast destination with location, while verb+preposition combinations must be learned as complete constructions.</p>
       {(["fixed-akk","fixed-dat","two-way","special"]).map(cat => {
         const list = groups[cat];
         if (!list.length) return null;

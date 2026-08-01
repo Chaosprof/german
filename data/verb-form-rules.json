@@ -2,14 +2,15 @@
   "meta": {
     "name": "Verb Form Patterns",
     "description": "Curated rules for forming Präteritum, Perfekt, present-tense stem changes, imperatives, passive, and Konjunktiv II in German.",
-    "version": 1
+    "version": 2,
+    "reviewedAt": "2026-08-01"
   },
   "rules": [
     {
       "id": "weak",
       "name": "Weak (regular) verbs",
-      "summary": "Stem + -te in Präteritum, ge-…-t in Perfekt",
-      "description": "The default pattern. Take the stem (drop -en), add -te for Präteritum, and wrap with ge-…-t for the Partizip II. Auxiliary in Perfekt is haben for transitives. Examples: machen → machte → gemacht; spielen → spielte → gespielt; lernen → lernte → gelernt.",
+      "summary": "Stem + -(e)te in Präteritum; Partizip II normally ge-…-(e)t",
+      "description": "The default pattern. Remove the infinitive ending -en or -n to find the stem, then add -(e)te in the Präteritum. The Partizip II normally uses ge- + stem + -(e)t: machen → machte → gemacht; wandern → wanderte → gewandert; handeln → handelte → gehandelt. Verbs in unstressed -ieren never take ge- (studieren → studierte → studiert), and inseparable prefixes also block ge-. The auxiliary is usually haben; auxiliary choice must still be learned for intransitive motion/change-of-state verbs.",
       "examples": [
         "sagen → sagte → gesagt",
         "kaufen → kaufte → gekauft",
@@ -20,7 +21,7 @@
       "id": "strong",
       "name": "Strong (irregular) verbs",
       "summary": "Vowel change in stem; Partizip ends in -en",
-      "description": "Strong verbs change their stem vowel (Ablaut) and form the Partizip II with ge-…-en (not -t). Common Ablaut classes: i-a-u (singen → sang → gesungen), ei-ie-ie (schreiben → schrieb → geschrieben), ie-o-o (fliegen → flog → geflogen), e-a-o (sprechen → sprach → gesprochen), a-u-a (fahren → fuhr → gefahren). The base list of ~200 strong verbs has to be memorized.",
+      "description": "Strong verbs change their stem vowel (Ablaut) and normally form the Partizip II with -en. Simple verbs usually add ge- (singen → sang → gesungen); inseparable prefixes block ge- (verstehen → verstand → verstanden), while separable prefixes place it between prefix and stem (aufstehen → stand auf → aufgestanden). Common patterns include schreiben → schrieb → geschrieben, fliegen → flog → geflogen, sprechen → sprach → gesprochen, and fahren → fuhr → gefahren. Learn each verb's principal parts and auxiliary.",
       "examples": [
         "sehen → sah → gesehen",
         "geben → gab → gegeben",
@@ -32,7 +33,7 @@
       "id": "mixed",
       "name": "Mixed verbs",
       "summary": "Vowel change like strong verbs, but -te / ge-…-t endings",
-      "description": "A small but high-frequency set behaves like a hybrid: the stem vowel changes (like strong verbs), but the endings are weak (-te in Präteritum, ge-…-t in Perfekt). Memorize the list — it's closed: brennen, bringen, denken, kennen, nennen, rennen, senden, wenden, wissen.",
+      "description": "A small, high-frequency group combines a stem change with weak endings: brennen → brannte → gebrannt, bringen → brachte → gebracht, denken → dachte → gedacht, kennen → kannte → gekannt, nennen → nannte → genannt, rennen → rannte → gerannt, and wissen → wusste → gewusst. Senden and wenden have both regular and irregular variants, with meaning and register differences (sendete/sandte; wendete/wandte), so learn them in context rather than as a closed mechanical list.",
       "examples": [
         "denken → dachte → gedacht",
         "bringen → brachte → gebracht",
@@ -44,7 +45,7 @@
       "id": "modals",
       "name": "Modal verbs",
       "summary": "Their own paradigm — irregular present and Präteritum",
-      "description": "The six modals (dürfen, können, mögen, müssen, sollen, wollen) plus wissen share a special pattern: in the present singular they drop the umlaut and take no ending in ich/er forms (ich kann, er kann). Präteritum is weak with the umlaut dropped (konnte, durfte, musste). When used with another infinitive, the Perfekt uses the double-infinitive construction (Ich habe es nicht machen können — not gekonnt).",
+      "description": "The six modals (dürfen, können, mögen, müssen, sollen, wollen) and wissen belong to the preterite-present group: their present singular has special stems and ich/er forms without the usual ending (ich kann, er kann; ich weiß, er weiß). Several lose an umlaut in the Präteritum (konnte, durfte, musste), while sollen and wollen have no infinitive umlaut to lose. When a modal governs another infinitive, the Perfekt normally uses an Ersatzinfinitiv: Ich habe es nicht machen können, not *gemacht gekonnt*.",
       "examples": [
         "können → konnte → gekonnt / hat … können",
         "müssen → musste → gemusst / hat … müssen",
@@ -55,7 +56,7 @@
       "id": "auxiliary",
       "name": "Perfekt auxiliary: haben vs sein",
       "summary": "sein for motion / change-of-state intransitives, haben otherwise",
-      "description": "Most verbs take haben in the Perfekt. Use sein when (a) the verb expresses directed motion to a destination (gehen, fahren, fliegen, kommen, laufen, reisen, schwimmen when going somewhere), (b) the verb expresses a change of state (aufwachen, einschlafen, sterben, wachsen, werden), or (c) it is one of the lexical items sein, bleiben, werden, geschehen, passieren, gelingen. Reflexive and transitive verbs always take haben.",
+      "description": "Most verbs take haben. Sein is typical for intransitive directed motion or a change of state (gehen, ankommen, einschlafen, sterben) and is lexical with sein, bleiben, werden, geschehen, passieren, and gelingen. Transitive and reflexive uses normally take haben, but this is a learner heuristic rather than an exceptionless law. Some verbs change auxiliary with meaning or construction (fahren, ziehen, schweben, verbrennen), so learn the auxiliary with each sense.",
       "examples": [
         "Ich bin nach Berlin gefahren. (motion to)",
         "Er ist eingeschlafen. (change of state)",
@@ -110,8 +111,8 @@
     {
       "id": "imperative",
       "name": "Imperativ",
-      "summary": "du-form drops -st; ihr-form = present plural; Sie-form inverted",
-      "description": "du-form: take the present du form, drop -st, optionally drop the trailing -e (komm! geh! mach!). e→i strong verbs keep the change (gib! sieh! nimm!) but a→ä verbs do NOT (fahr! schlaf!). ihr-form is identical to the present plural (kommt! macht!). Sie-form inverts subject and verb (Kommen Sie! Machen Sie!). wir-form is the same inversion (Gehen wir! 'Let's go!').",
+      "summary": "Build the du imperative from the verb stem; ihr uses its present form",
+      "description": "Build the informal singular imperative from the stem, not by mechanically deleting -st from the written du-form: tanzen → tanz!, heißen → heiß!, kommen → komm! An -e is required or preferred in some stems and may be optional elsewhere. Strong e→i/e→ie verbs keep the change (gib!, sieh!, nimm!), but a→ä verbs do not (fahr!, schlaf!). The ihr-form is the present ihr-form without the pronoun (kommt!, macht!). The polite Sie-form and hortative wir-form use inversion (Kommen Sie!; Gehen wir!).",
       "examples": [
         "du-form: Komm! Sieh mal! Gib mir das! (no umlaut: Fahr!)",
         "ihr-form: Kommt! Macht das!",
@@ -122,7 +123,7 @@
       "id": "konjunktiv2",
       "name": "Konjunktiv II (subjunctive)",
       "summary": "Hypotheticals, polite requests, contrary-to-fact statements",
-      "description": "Used for unreal situations, polite requests, and indirect speech. For most verbs in spoken German, the periphrastic 'würde + infinitive' is preferred (ich würde gehen). Three verbs use synthetic forms even in speech: sein (wäre), haben (hätte), and the modals (könnte, müsste, sollte, wollte, dürfte, möchte). For strong verbs the synthetic form is built by adding an umlaut (where possible) plus -e/-est/-e/-en/-et/-en to the Präteritum stem (käme, ginge, träfe — bookish in modern German).",
+      "description": "Used for hypothetical or contrary-to-fact situations, wishes, and polite requests. Würde + infinitive is common, but synthetic forms are normal for sein (wäre), haben (hätte), modals (könnte, müsste, sollte, dürfte, möchte) and many frequent strong verbs (fände, ginge, käme, gäbe, nähme). Synthetic strong forms use the Präteritum stem, often with an umlaut where possible, plus subjunctive endings. Indirect speech normally starts with Konjunktiv I; Konjunktiv II is used when Konjunktiv I is ambiguous or when distance/unreality is intended.",
       "examples": [
         "Ich würde gerne kommen. (polite)",
         "Wenn ich Zeit hätte, würde ich kommen. (hypothetical)",

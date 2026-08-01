@@ -2,11 +2,12 @@
   "meta": {
     "name": "Preposition Case Rules",
     "description": "Rules for German prepositions: which case each governs, with notes for two-way (Wechsel) prepositions and special cases. Used by the Grammar Rules browser and the verb+preposition review hints.",
-    "version": 1,
+    "version": 2,
+    "reviewedAt": "2026-08-01",
     "categories": {
       "fixed-akk": "Always governs Accusative",
       "fixed-dat": "Always governs Dative",
-      "two-way": "Wechselpräposition — Akk for direction, Dat for static location; with fixed-preposition verbs the verb sets the case",
+      "two-way": "Wechselpräposition — spatial destination/change of location uses Akk; spatial location uses Dat; lexical combinations are learned with their case",
       "special": "Comparison particles or edge cases"
     }
   },
@@ -22,15 +23,15 @@
     "von":       { "category": "fixed-dat", "rule": "von always governs Dative." },
     "zu":        { "category": "fixed-dat", "rule": "zu always governs Dative." },
     "gegenüber": { "category": "fixed-dat", "rule": "gegenüber always governs Dative." },
-    "an":        { "category": "two-way", "rule": "an is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
-    "auf":       { "category": "two-way", "rule": "auf is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb." },
-    "in":        { "category": "two-way", "rule": "in is a two-way preposition. Locally it takes Akk for direction (into), Dat for static location (in) — but with fixed-preposition verbs the case is set by the verb." },
-    "über":      { "category": "two-way", "rule": "über is a two-way preposition. Locally it takes Akk for direction (over), Dat for static location — but with fixed-preposition verbs it almost always takes Akk (e.g. sprechen / nachdenken / sich freuen über + Akk)." },
-    "unter":     { "category": "two-way", "rule": "unter is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs the case is set by the verb (often Dat: leiden unter + Dat)." },
-    "vor":       { "category": "two-way", "rule": "vor is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it almost always takes Dat (Angst / sich fürchten / warnen vor + Dat)." },
-    "zwischen":  { "category": "two-way", "rule": "zwischen is a two-way preposition. Locally it takes Akk for direction, Dat for static location — but with fixed-preposition verbs it usually takes Dat (unterscheiden zwischen + Dat)." },
-    "hinter":    { "category": "two-way", "rule": "hinter is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
-    "neben":     { "category": "two-way", "rule": "neben is a two-way preposition. Akk for direction, Dat for static location — with fixed-preposition verbs, the verb sets the case." },
-    "als":       { "category": "special", "rule": "als is a comparison particle, not a true preposition. After verbs like halten / ansehen / bezeichnen + Akk + als, the noun after 'als' agrees with the object's case (Akk)." }
+    "an":        { "category": "two-way", "rule": "In spatial uses, an takes Accusative for a destination/change of location (wohin?) and Dative for location (wo?) — movement can occur with either. Lexical combinations must be learned with their case." },
+    "auf":       { "category": "two-way", "rule": "In spatial uses, auf takes Accusative for a destination/change of location (wohin?) and Dative for location (wo?) — movement can occur with either. Lexical combinations must be learned with their case." },
+    "in":        { "category": "two-way", "rule": "In spatial uses, in takes Accusative for entry into a destination (wohin?) and Dative for location within it (wo?) — movement can occur with either. Lexical combinations must be learned with their case." },
+    "über":      { "category": "two-way", "rule": "In spatial uses, über contrasts destination/change of location (Accusative) with location (Dative). In lexical combinations, learn the stored case with the whole phrase; many common combinations use Accusative (sprechen/nachdenken/sich freuen über)." },
+    "unter":     { "category": "two-way", "rule": "In spatial uses, unter contrasts destination/change of location (Accusative) with location (Dative). Lexical combinations have their own case, for example leiden unter + Dative." },
+    "vor":       { "category": "two-way", "rule": "In spatial uses, vor contrasts destination/change of location (Accusative) with location (Dative). Common lexical combinations such as Angst haben, sich fürchten, and warnen vor use Dative." },
+    "zwischen":  { "category": "two-way", "rule": "In spatial uses, zwischen contrasts destination/change of location (Accusative) with location (Dative). Lexical combinations must be learned with their case; unterscheiden zwischen uses Dative." },
+    "hinter":    { "category": "two-way", "rule": "In spatial uses, hinter takes Accusative for a destination/change of location (wohin?) and Dative for location (wo?). Lexical combinations must be learned with their case." },
+    "neben":     { "category": "two-way", "rule": "In spatial uses, neben takes Accusative for a destination/change of location (wohin?) and Dative for location (wo?). Lexical combinations must be learned with their case." },
+    "als":       { "category": "special", "rule": "als is a comparison/predicative particle, not a case-governing preposition. With subject-related predicates (gelten/dienen/fungieren als), the complement is nominative. With object-related constructions (jemanden als etwas wahrnehmen; etwas als Leistung anrechnen), it follows the object's case. Learn the complete construction shown on the card." }
   }
 }

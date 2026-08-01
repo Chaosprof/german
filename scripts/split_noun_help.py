@@ -8,7 +8,7 @@ shrinks the blocking download from ~17 MB to ~5 MB.
 
 Outputs:
   data/nouns.json      — core (help fields removed, `weak` flag added)
-  data/noun-help.json  — { meta, help: { word: [articleHelp, pluralHelp] } } (minified)
+  data/noun-help.json  — { meta, help: { senseId: [articleHelp, pluralHelp] } } (minified)
 """
 import json
 
@@ -26,7 +26,12 @@ def main():
     for n in nouns:
         ah = n.get("articleHelp", "") or ""
         ph = n.get("pluralHelp", "") or ""
-        help_map[n["word"]] = [ah, ph]
+        sense_id = n.get("id")
+        if not sense_id:
+            raise ValueError(f"Missing stable noun ID for {n.get('word')!r}; run migrate_learner_schema.py first")
+        if sense_id in help_map:
+            raise ValueError(f"Duplicate stable noun ID: {sense_id}")
+        help_map[sense_id] = [ah, ph]
         entry = {k: v for k, v in n.items() if k not in DROP}
         if WEAK_MARKER in ah:
             entry["weak"] = True
@@ -44,8 +49,10 @@ def main():
         "meta": {
             "source": doc["meta"].get("source", ""),
             "count": len(help_map),
-            "note": "Per-noun articleHelp/pluralHelp, split out of nouns.json "
-                    "for lazy loading. Keyed by word.",
+            "schemaVersion": 2,
+            "keyedBy": "noun sense ID",
+            "note": "Per-sense articleHelp/pluralHelp, split out of nouns.json "
+                    "for lazy loading. Keyed by stable noun ID.",
         },
         "help": help_map,
     }
