@@ -2,8 +2,8 @@
   "meta": {
     "version": 2,
     "source": "Leipzig Web-public Germany 2019 1M Corpus via German-Words repo",
-    "count": 5583,
-    "irregularCount": 1150,
+    "count": 5442,
+    "irregularCount": 1226,
     "generatedAt": "2026-04-08T00:00:00.000000+00:00"
   },
   "verbs": [
@@ -288,7 +288,7 @@
     },
     {
       "word": "bestehen",
-      "english": "exist/consist of/insist on",
+      "english": "pass (an exam)/consist of/exist",
       "rank": 31,
       "irregular": true,
       "prateritum": "bestand",
@@ -459,7 +459,7 @@
     },
     {
       "word": "befinden",
-      "english": "be located",
+      "english": "sich befinden — be located/be situated",
       "rank": 52,
       "irregular": true,
       "prateritum": "befand",
@@ -502,9 +502,9 @@
       "word": "schaffen",
       "english": "create (irregular: schuf/geschaffen)/manage (regular: schaffte/geschafft)",
       "rank": 57,
-      "irregular": true,
-      "prateritum": "schuf",
-      "perfekt": "geschaffen",
+      "irregular": false,
+      "prateritum": "schaffte",
+      "perfekt": "geschafft",
       "withSein": false,
       "cefrLevel": "A1"
     },
@@ -695,7 +695,7 @@
     },
     {
       "word": "bilden",
-      "english": "educate/form",
+      "english": "form/constitute/educate",
       "rank": 80,
       "irregular": false,
       "cefrLevel": "A1"
@@ -835,7 +835,7 @@
     },
     {
       "word": "verfügen",
-      "english": "have/possess",
+      "english": "verfügen über — have at one's disposal; (formal) decree, order",
       "rank": 96,
       "irregular": false,
       "cefrLevel": "B2"
@@ -852,7 +852,7 @@
     },
     {
       "word": "verbessern",
-      "english": "correct/improve",
+      "english": "improve/correct",
       "rank": 98,
       "irregular": false,
       "cefrLevel": "A2"
@@ -904,7 +904,7 @@
     },
     {
       "word": "erscheinen",
-      "english": "appear/publish",
+      "english": "appear/be published/come out",
       "rank": 105,
       "irregular": true,
       "prateritum": "erschien",
@@ -1134,7 +1134,7 @@
     },
     {
       "word": "fordern",
-      "english": "challenge/demand",
+      "english": "demand/call for/challenge",
       "rank": 134,
       "irregular": false,
       "cefrLevel": "B1"
@@ -1267,7 +1267,7 @@
     },
     {
       "word": "eignen",
-      "english": "be suitable",
+      "english": "sich eignen (für) — be suitable",
       "rank": 151,
       "irregular": false
     },
@@ -1470,7 +1470,7 @@
     },
     {
       "word": "behandeln",
-      "english": "cover/treat",
+      "english": "treat/deal with/cover",
       "rank": 177,
       "irregular": false,
       "cefrLevel": "B1"
@@ -1645,7 +1645,7 @@
     },
     {
       "word": "lohnen",
-      "english": "be worth it",
+      "english": "sich lohnen — be worth it (es lohnt sich)",
       "rank": 199,
       "irregular": false,
       "cefrLevel": "B1"
@@ -1703,9 +1703,9 @@
       "word": "wenden",
       "english": "turn/apply to",
       "rank": 207,
-      "irregular": true,
-      "prateritum": "wandte",
-      "perfekt": "gewandt",
+      "irregular": false,
+      "prateritum": "wendete",
+      "perfekt": "gewendet",
       "withSein": false,
       "cefrLevel": "B1"
     },
@@ -1950,7 +1950,7 @@
     },
     {
       "word": "bewerben",
-      "english": "apply",
+      "english": "sich bewerben (um/bei) — apply (for a job)",
       "rank": 238,
       "irregular": true,
       "prateritum": "bewarb",
@@ -2035,7 +2035,7 @@
     },
     {
       "word": "engagieren",
-      "english": "engage/hire",
+      "english": "sich engagieren — be actively involved/committed",
       "rank": 248,
       "irregular": false,
       "cefrLevel": "B2"
@@ -2087,7 +2087,7 @@
     },
     {
       "word": "kümmern",
-      "english": "take care of",
+      "english": "sich kümmern um — take care of/see to",
       "rank": 255,
       "irregular": false,
       "cefrLevel": "A2"
@@ -2389,7 +2389,7 @@
     },
     {
       "word": "hoffen",
-      "english": "hope/trust",
+      "english": "hope (auf — hope for)",
       "rank": 294,
       "irregular": false,
       "cefrLevel": "A2"
@@ -2406,7 +2406,7 @@
     },
     {
       "word": "umgehen",
-      "english": "deal with/handle",
+      "english": "handle/deal with; go around",
       "rank": 296,
       "irregular": true,
       "prateritum": "ging um",
@@ -2755,7 +2755,7 @@
     },
     {
       "word": "aufweisen",
-      "english": "feature",
+      "english": "exhibit/show/have (a feature)",
       "rank": 340,
       "irregular": true,
       "prateritum": "wies auf",
@@ -3095,9 +3095,9 @@
       "word": "senden",
       "english": "send/broadcast",
       "rank": 383,
-      "irregular": true,
-      "prateritum": "sandte",
-      "perfekt": "gesandt",
+      "irregular": false,
+      "prateritum": "sendete",
+      "perfekt": "gesendet",
       "withSein": false,
       "cefrLevel": "A2"
     },
@@ -3124,7 +3124,7 @@
     },
     {
       "word": "befassen",
-      "english": "deal with",
+      "english": "sich befassen mit — deal with/be concerned with",
       "rank": 387,
       "irregular": false,
       "cefrLevel": "B2"
@@ -3371,7 +3371,7 @@
       "irregular": true,
       "prateritum": "ging an",
       "perfekt": "angegangen",
-      "withSein": true,
+      "withSein": false,
       "cefrLevel": "B2"
     },
     {
@@ -3612,7 +3612,7 @@
     },
     {
       "word": "auseinandersetzen",
-      "english": "deal with/examine",
+      "english": "sich auseinandersetzen mit — engage with/examine critically",
       "rank": 445,
       "irregular": false,
       "cefrLevel": "B2"
@@ -3626,7 +3626,7 @@
     },
     {
       "word": "auswirken",
-      "english": "have an effect",
+      "english": "sich auswirken (auf) — have an effect on",
       "rank": 447,
       "irregular": false,
       "cefrLevel": "B2"
@@ -4482,7 +4482,7 @@
       "irregular": true,
       "prateritum": "begab",
       "perfekt": "begeben",
-      "withSein": true,
+      "withSein": false,
       "cefrLevel": "B2"
     },
     {
@@ -4535,7 +4535,7 @@
     },
     {
       "word": "verhalten",
-      "english": "behave",
+      "english": "sich verhalten — behave/act",
       "rank": 562,
       "irregular": true,
       "prateritum": "verhielt",
@@ -4584,7 +4584,7 @@
     },
     {
       "word": "erstrecken",
-      "english": "extend/stretch",
+      "english": "sich erstrecken — extend/stretch (over)",
       "rank": 568,
       "irregular": false
     },
@@ -4661,7 +4661,8 @@
       "english": "appear/emerge",
       "rank": 577,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "hinterlassen",
@@ -5296,7 +5297,7 @@
     },
     {
       "word": "bemühen",
-      "english": "make an effort/try",
+      "english": "sich bemühen (um) — make an effort/try",
       "rank": 661,
       "irregular": false,
       "cefrLevel": "B1"
@@ -5454,7 +5455,7 @@
     },
     {
       "word": "vorbeugen",
-      "english": "lean forward/prevent",
+      "english": "prevent (+dat)/sich vorbeugen — lean forward",
       "rank": 681,
       "irregular": false,
       "cefrLevel": "C1"
@@ -5605,7 +5606,7 @@
     },
     {
       "word": "anziehen",
-      "english": "attract/dress",
+      "english": "put on (clothes), get dressed / attract",
       "rank": 701,
       "irregular": true,
       "prateritum": "zog an",
@@ -6063,7 +6064,7 @@
     },
     {
       "word": "nachfragen",
-      "english": "inquire/follow up",
+      "english": "enquire/ask (again)",
       "rank": 759,
       "irregular": false,
       "cefrLevel": "A1"
@@ -6362,7 +6363,8 @@
       "english": "fall/overthrow",
       "rank": 798,
       "irregular": false,
-      "cefrLevel": "B1"
+      "cefrLevel": "B1",
+      "withSein": true
     },
     {
       "word": "überarbeiten",
@@ -6523,7 +6525,7 @@
       "english": "bake",
       "rank": 818,
       "irregular": true,
-      "prateritum": "buk",
+      "prateritum": "backte",
       "perfekt": "gebacken",
       "withSein": false,
       "cefrLevel": "A2"
@@ -6651,7 +6653,8 @@
       "english": "dive in/immerse",
       "rank": 834,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "entgehen",
@@ -6830,7 +6833,7 @@
       "english": "change/stroll",
       "rank": 857,
       "irregular": false,
-      "withSein": true,
+      "withSein": false,
       "cefrLevel": "C1"
     },
     {
@@ -7387,12 +7390,6 @@
       "rank": 928,
       "irregular": false,
       "cefrLevel": "B1"
-    },
-    {
-      "word": "schienen",
-      "english": "seem/seemed",
-      "rank": 929,
-      "irregular": false
     },
     {
       "word": "verschenken",
@@ -7971,7 +7968,8 @@
       "word": "anreisen",
       "english": "arrive/travel (to)",
       "rank": 1002,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erwischen",
@@ -8164,7 +8162,7 @@
     },
     {
       "word": "vernichten",
-      "english": "annihilate",
+      "english": "destroy/wipe out",
       "rank": 1030,
       "irregular": false,
       "cefrLevel": "B2"
@@ -8509,7 +8507,8 @@
       "english": "slip/hatch",
       "rank": 1076,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "verbuchen",
@@ -8666,7 +8665,8 @@
       "word": "rollen",
       "english": "roll",
       "rank": 1098,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aussagen",
@@ -9035,7 +9035,8 @@
       "word": "flüchten",
       "english": "escape/flee",
       "rank": 1148,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "listen",
@@ -9425,7 +9426,7 @@
     },
     {
       "word": "zurückzahlen",
-      "english": "reimburse",
+      "english": "repay/pay back",
       "rank": 1203,
       "irregular": false,
       "cefrLevel": "C1"
@@ -9508,7 +9509,7 @@
     },
     {
       "word": "schärfen",
-      "english": "focus/sharpen/spice up",
+      "english": "sharpen (a blade)/heighten (awareness)",
       "rank": 1214,
       "irregular": false
     },
@@ -9585,7 +9586,8 @@
       "english": "stroll/walk",
       "rank": 1224,
       "irregular": false,
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "withSein": true
     },
     {
       "word": "vermindern",
@@ -9608,7 +9610,7 @@
     },
     {
       "word": "aufarbeiten",
-      "english": "refurbish",
+      "english": "come to terms with, process (the past, a backlog)",
       "rank": 1228,
       "irregular": false
     },
@@ -9640,7 +9642,7 @@
     },
     {
       "word": "anfahren",
-      "english": "begin driving/collide/driving",
+      "english": "set off (in a vehicle) [sein] / run into, knock down (sb) [haben] / snap at (sb) [haben]",
       "rank": 1232,
       "irregular": true,
       "prateritum": "fuhr an",
@@ -9703,7 +9705,7 @@
     },
     {
       "word": "bremsen",
-      "english": "brake/retard/slow down",
+      "english": "brake/slow down",
       "rank": 1241,
       "irregular": false,
       "cefrLevel": "A2"
@@ -9716,7 +9718,7 @@
     },
     {
       "word": "prämieren",
-      "english": "award a prize/give an award/grant an award",
+      "english": "award a prize to",
       "rank": 1243,
       "irregular": false
     },
@@ -9811,7 +9813,7 @@
     },
     {
       "word": "aufziehen",
-      "english": "delude/open/raise",
+      "english": "raise (a child)/wind up (a clock)/tease",
       "rank": 1257,
       "irregular": true,
       "prateritum": "zog auf",
@@ -9837,7 +9839,8 @@
       "english": "shrink",
       "rank": 1260,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "siegen",
@@ -9886,14 +9889,14 @@
     },
     {
       "word": "reizen",
-      "english": "appeal/arouse/chafe",
+      "english": "irritate (skin, sb)/provoke/appeal to",
       "rank": 1267,
       "irregular": false,
       "cefrLevel": "B2"
     },
     {
       "word": "verkehren",
-      "english": "circulate/deal/interact",
+      "english": "run (of buses/trains)/associate with sb",
       "rank": 1268,
       "irregular": false
     },
@@ -10014,7 +10017,7 @@
     },
     {
       "word": "ausblenden",
-      "english": "blend out/fade out/hide",
+      "english": "fade out/hide, block out",
       "rank": 1283,
       "irregular": false,
       "cefrLevel": "B2"
@@ -10055,7 +10058,7 @@
     },
     {
       "word": "scheuen",
-      "english": "fight shy/shrink/shun",
+      "english": "shy away from, avoid (keine Mühe scheuen)",
       "rank": 1288,
       "irregular": false,
       "cefrLevel": "B2"
@@ -10105,7 +10108,7 @@
     },
     {
       "word": "versagen",
-      "english": "abstain/deny/fail",
+      "english": "fail/refuse (sb sth)",
       "rank": 1295,
       "irregular": false,
       "cefrLevel": "C1"
@@ -10132,7 +10135,7 @@
     },
     {
       "word": "begleichen",
-      "english": "acquit/balance/pay",
+      "english": "settle, pay (a bill)",
       "rank": 1299,
       "irregular": true,
       "prateritum": "beglich",
@@ -10141,7 +10144,7 @@
     },
     {
       "word": "stemmen",
-      "english": "lift/mortice/mortise",
+      "english": "brace (oneself) against / lift (weights) / cope with",
       "rank": 1300,
       "irregular": false
     },
@@ -10251,7 +10254,7 @@
     },
     {
       "word": "zurechtfinden",
-      "english": "get along",
+      "english": "find one's way around (sich zurechtfinden)",
       "rank": 1314,
       "irregular": true,
       "prateritum": "fand zurecht",
@@ -10331,7 +10334,8 @@
       "word": "durchstarten",
       "english": "take off/launch",
       "rank": 1325,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "innehaben",
@@ -10344,7 +10348,8 @@
       "english": "burst/burst with anger/burst with laughter",
       "rank": 1327,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "referieren",
@@ -10556,7 +10561,7 @@
     },
     {
       "word": "abführen",
-      "english": "evacuate/pay/walk off",
+      "english": "lead away (a suspect)/pay over (money)/act as a laxative",
       "rank": 1355,
       "irregular": false
     },
@@ -10668,7 +10673,7 @@
       "irregular": true,
       "prateritum": "erlosch",
       "perfekt": "erloschen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erwachsen",
@@ -10796,7 +10801,8 @@
       "word": "strömen",
       "english": "stream/surge",
       "rank": 1387,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "urteilen",
@@ -10837,7 +10843,7 @@
       "irregular": true,
       "prateritum": "befiel",
       "perfekt": "befallen",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "biegen",
@@ -10866,7 +10872,8 @@
       "english": "attain/reach",
       "rank": 1396,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "komplettieren",
@@ -10982,7 +10989,7 @@
     },
     {
       "word": "beziffern",
-      "english": "amount to/come to/estimate",
+      "english": "put a figure on/quantify; sich beziffern auf = amount to",
       "rank": 1412,
       "irregular": false
     },
@@ -11058,16 +11065,9 @@
     },
     {
       "word": "stillen",
-      "english": "allay/breastfeed/calm",
+      "english": "breastfeed; quench (thirst)/satisfy",
       "rank": 1423,
       "irregular": false
-    },
-    {
-      "word": "verborgen",
-      "english": "hidden",
-      "rank": 1424,
-      "irregular": false,
-      "cefrLevel": "C1"
     },
     {
       "word": "vergüten",
@@ -11112,7 +11112,7 @@
     },
     {
       "word": "anstecken",
-      "english": "attach/become infected/broach",
+      "english": "infect; sich anstecken = catch (an illness); pin on",
       "rank": 1430,
       "irregular": false,
       "cefrLevel": "C1"
@@ -11148,7 +11148,7 @@
     },
     {
       "word": "täuschen",
-      "english": "be mistaken/deceive/delude",
+      "english": "deceive/mislead; sich täuschen = be mistaken",
       "rank": 1435,
       "irregular": false
     },
@@ -11183,7 +11183,7 @@
     },
     {
       "word": "antun",
-      "english": "cause/do/dress",
+      "english": "do (sth to sb); sich etwas antun = harm oneself",
       "rank": 1440,
       "irregular": true,
       "prateritum": "tat an",
@@ -11220,14 +11220,14 @@
     },
     {
       "word": "klarmachen",
-      "english": "to get ready (a ship)/to make clear",
+      "english": "make clear/explain; (nautical) make ready",
       "rank": 1445,
       "irregular": false,
       "cefrLevel": "B2"
     },
     {
       "word": "mahnen",
-      "english": "admonish/dun/exhort",
+      "english": "send a payment reminder; urge/warn",
       "rank": 1446,
       "irregular": false
     },
@@ -11254,7 +11254,7 @@
     },
     {
       "word": "dringen",
-      "english": "insist/penetrate",
+      "english": "penetrate/get through (auf etw dringen = insist, with haben)",
       "rank": 1450,
       "irregular": true,
       "prateritum": "drang",
@@ -11278,7 +11278,8 @@
       "word": "erstrahlen",
       "english": "glitter/shine/sparkle",
       "rank": 1453,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "grenzen",
@@ -11313,7 +11314,7 @@
     },
     {
       "word": "umsehen",
-      "english": "browse/look around",
+      "english": "sich umsehen — look around/have a look round",
       "rank": 1459,
       "irregular": true,
       "prateritum": "sah um",
@@ -11365,9 +11366,9 @@
       "word": "abwenden",
       "english": "avert/turn away/turn away from",
       "rank": 1465,
-      "irregular": true,
-      "prateritum": "wandte ab",
-      "perfekt": "abgewandt",
+      "irregular": false,
+      "prateritum": "wendete ab",
+      "perfekt": "abgewendet",
       "withSein": false
     },
     {
@@ -11408,7 +11409,8 @@
       "word": "radeln",
       "english": "bike/cycle/ride a bicycle",
       "rank": 1471,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "spinnen",
@@ -11519,7 +11521,7 @@
     },
     {
       "word": "winken",
-      "english": "beckon/expect/wave",
+      "english": "wave/beckon",
       "rank": 1487,
       "irregular": false,
       "cefrLevel": "B1"
@@ -11627,7 +11629,7 @@
     },
     {
       "word": "synchronisieren",
-      "english": "synchronise",
+      "english": "dub (a film)",
       "rank": 1502,
       "irregular": false
     },
@@ -11963,7 +11965,7 @@
     },
     {
       "word": "erklimmen",
-      "english": "achieve/clamber/reach",
+      "english": "climb (up)/scale",
       "rank": 1551,
       "irregular": true,
       "prateritum": "erklomm",
@@ -12050,7 +12052,7 @@
     },
     {
       "word": "zusichern",
-      "english": "pledge/reassure",
+      "english": "assure sb of sth/guarantee",
       "rank": 1563,
       "irregular": false
     },
@@ -12142,7 +12144,8 @@
       "word": "erwachen",
       "english": "awake/wake up",
       "rank": 1575,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hergeben",
@@ -12189,7 +12192,7 @@
     },
     {
       "word": "spülen",
-      "english": "rinse",
+      "english": "rinse; wash up (dishes); flush",
       "rank": 1582,
       "irregular": false,
       "cefrLevel": "A2"
@@ -12256,7 +12259,7 @@
     },
     {
       "word": "einkehren",
-      "english": "come/set in/stop off",
+      "english": "stop off (at an inn); (of peace/quiet) descend",
       "rank": 1592,
       "irregular": false,
       "withSein": true,
@@ -12276,7 +12279,8 @@
       "english": "be descended from/come from",
       "rank": 1594,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "heraussuchen",
@@ -12430,14 +12434,14 @@
     },
     {
       "word": "lächeln",
-      "english": "grin/smile",
+      "english": "smile",
       "rank": 1618,
       "irregular": false,
       "cefrLevel": "A2"
     },
     {
       "word": "mitfahren",
-      "english": "drive/go/ride",
+      "english": "come along (as a passenger)/get a lift/ride with sb",
       "rank": 1619,
       "irregular": true,
       "prateritum": "fuhr mit",
@@ -12631,7 +12635,7 @@
     },
     {
       "word": "auslagern",
-      "english": "relocate",
+      "english": "outsource; move to storage",
       "rank": 1645,
       "irregular": false
     },
@@ -12687,7 +12691,7 @@
     },
     {
       "word": "quälen",
-      "english": "harry/put about/torture",
+      "english": "torment/torture; sich quälen = struggle",
       "rank": 1653,
       "irregular": false
     },
@@ -12712,11 +12716,12 @@
       "english": "mooch/stroll",
       "rank": 1656,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "spendieren",
-      "english": "pay for/spend",
+      "english": "treat sb to/stand sb (a drink)",
       "rank": 1657,
       "irregular": false
     },
@@ -12735,7 +12740,7 @@
     },
     {
       "word": "umbringen",
-      "english": "commit suicide/kill/kill oneself",
+      "english": "kill/murder; sich umbringen = kill oneself",
       "rank": 1660,
       "irregular": true,
       "prateritum": "brachte um",
@@ -12771,11 +12776,11 @@
       "irregular": true,
       "prateritum": "durchdrang",
       "perfekt": "durchdrungen",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "einstimmen",
-      "english": "tune",
+      "english": "join in (singing); put sb in the mood for",
       "rank": 1665,
       "irregular": false
     },
@@ -12854,7 +12859,7 @@
     },
     {
       "word": "verorten",
-      "english": "file/locate",
+      "english": "locate/situate/place",
       "rank": 1676,
       "irregular": false
     },
@@ -13174,7 +13179,7 @@
     },
     {
       "word": "entgegensetzen",
-      "english": "counter/oppose/reply",
+      "english": "counter/set against/oppose",
       "rank": 1722,
       "irregular": false,
       "cefrLevel": "C1"
@@ -13255,7 +13260,7 @@
     },
     {
       "word": "beschneiden",
-      "english": "circumcise/cut/trim",
+      "english": "trim/prune/curtail (circumcise as a later sense)",
       "rank": 1733,
       "irregular": true,
       "prateritum": "beschnitt",
@@ -13283,7 +13288,7 @@
       "irregular": true,
       "prateritum": "entsprang",
       "perfekt": "entsprungen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erzwingen",
@@ -13516,7 +13521,8 @@
       "word": "abrutschen",
       "english": "slip off",
       "rank": 1769,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abtreten",
@@ -13529,7 +13535,7 @@
     },
     {
       "word": "anfreunden",
-      "english": "accept/befriend/get used to",
+      "english": "sich anfreunden (mit) — make friends with; sich mit etw anfreunden = warm to sth",
       "rank": 1771,
       "irregular": false,
       "cefrLevel": "C1"
@@ -13586,7 +13592,10 @@
       "word": "entsenden",
       "english": "dispatch",
       "rank": 1778,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "entsandte",
+      "perfekt": "entsandt",
+      "withSein": false
     },
     {
       "word": "erwägen",
@@ -13614,7 +13623,7 @@
     },
     {
       "word": "verrechnen",
-      "english": "enter/miscalculate/offset",
+      "english": "offset/set off against; sich verrechnen = miscalculate",
       "rank": 1782,
       "irregular": false
     },
@@ -13645,7 +13654,7 @@
     },
     {
       "word": "absterben",
-      "english": "necrotise",
+      "english": "die off/wither; (of limbs) go numb",
       "rank": 1786,
       "irregular": true,
       "prateritum": "starb ab",
@@ -13686,7 +13695,8 @@
       "word": "eskalieren",
       "english": "escalate",
       "rank": 1792,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "grüßen",
@@ -13697,7 +13707,7 @@
     },
     {
       "word": "gutmachen",
-      "english": "correct",
+      "english": "make up for/make good",
       "rank": 1794,
       "irregular": false,
       "cefrLevel": "C1"
@@ -13738,15 +13748,6 @@
       "perfekt": "wiedererkannt",
       "withSein": false,
       "cefrLevel": "B2"
-    },
-    {
-      "word": "andenken",
-      "english": "think of/commemorate",
-      "rank": 1800,
-      "irregular": true,
-      "prateritum": "dachte an",
-      "perfekt": "angedacht",
-      "withSein": false
     },
     {
       "word": "aufwenden",
@@ -13792,8 +13793,11 @@
       "word": "dabeihaben",
       "english": "have there/have with",
       "rank": 1806,
-      "irregular": false,
-      "cefrLevel": "A2"
+      "irregular": true,
+      "cefrLevel": "A2",
+      "prateritum": "hatte dabei",
+      "perfekt": "dabeigehabt",
+      "withSein": false
     },
     {
       "word": "eingliedern",
@@ -13884,7 +13888,7 @@
     },
     {
       "word": "vermessen",
-      "english": "cross the line/map/survey",
+      "english": "survey/measure; sich vermessen = presume",
       "rank": 1820,
       "irregular": true,
       "prateritum": "vermaß",
@@ -14014,7 +14018,7 @@
       "irregular": true,
       "prateritum": "schwand",
       "perfekt": "geschwunden",
-      "withSein": false,
+      "withSein": true,
       "cefrLevel": "C1"
     },
     {
@@ -14048,7 +14052,7 @@
     },
     {
       "word": "weihen",
-      "english": "be bound/be destined/consecrate",
+      "english": "consecrate/dedicate/ordain",
       "rank": 1841,
       "irregular": false
     },
@@ -14079,7 +14083,7 @@
     },
     {
       "word": "anklagen",
-      "english": "accuse/attach/charge",
+      "english": "accuse/charge/indict",
       "rank": 1845,
       "irregular": false,
       "cefrLevel": "C1"
@@ -14131,11 +14135,12 @@
       "word": "marschieren",
       "english": "march",
       "rank": 1852,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "missachten",
-      "english": "despise/disregard/flout",
+      "english": "disregard/ignore/flout",
       "rank": 1853,
       "irregular": false,
       "cefrLevel": "C1"
@@ -14161,7 +14166,7 @@
     },
     {
       "word": "umschreiben",
-      "english": "circumscribe/paraphrase",
+      "english": "also note separable úmschreiben (schrieb um, umgeschrieben) = rewrite/transfer",
       "rank": 1857,
       "irregular": true,
       "prateritum": "umschrieb",
@@ -14207,7 +14212,8 @@
       "english": "advance/be promoted",
       "rank": 1863,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "bejahen",
@@ -14617,7 +14623,7 @@
     },
     {
       "word": "lügen",
-      "english": "lie",
+      "english": "lie/tell a lie",
       "rank": 1921,
       "irregular": true,
       "prateritum": "log",
@@ -14638,7 +14644,10 @@
       "word": "mithaben",
       "english": "have something with one",
       "rank": 1923,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "hatte mit",
+      "perfekt": "mitgehabt",
+      "withSein": false
     },
     {
       "word": "mitreißen",
@@ -14758,7 +14767,8 @@
       "english": "ring out/sound",
       "rank": 1939,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "fegen",
@@ -14869,7 +14879,7 @@
     },
     {
       "word": "trotzen",
-      "english": "affront/brave/defy",
+      "english": "defy/brave/stand up to",
       "rank": 1955,
       "irregular": false
     },
@@ -14951,13 +14961,6 @@
       "irregular": false
     },
     {
-      "word": "einen",
-      "english": "unite",
-      "rank": 1967,
-      "irregular": false,
-      "cefrLevel": "A2"
-    },
-    {
       "word": "einwerfen",
       "english": "interject/smash",
       "rank": 1968,
@@ -14994,7 +14997,7 @@
       "irregular": true,
       "prateritum": "erlag",
       "perfekt": "erlegen",
-      "withSein": false,
+      "withSein": true,
       "cefrLevel": "C1"
     },
     {
@@ -15020,7 +15023,8 @@
       "english": "hop/jump",
       "rank": 1975,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "immatrikulieren",
@@ -15098,7 +15102,7 @@
     },
     {
       "word": "befeuern",
-      "english": "be lighted/fire upon/fuel",
+      "english": "fuel/fire (a boiler); figuratively: spur on",
       "rank": 1987,
       "irregular": false
     },
@@ -15209,12 +15213,12 @@
       "irregular": true,
       "prateritum": "überfiel",
       "perfekt": "überfallen",
-      "withSein": true,
+      "withSein": false,
       "cefrLevel": "C1"
     },
     {
       "word": "überschlagen",
-      "english": "calculate/calculate roughly/crack",
+      "english": "estimate roughly; sich überschlagen = somersault/turn over",
       "rank": 2004,
       "irregular": true,
       "prateritum": "überschlug",
@@ -15268,7 +15272,8 @@
       "english": "recoil",
       "rank": 2011,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "zusammentreten",
@@ -15339,7 +15344,7 @@
     },
     {
       "word": "bahnen",
-      "english": "pave (a road)",
+      "english": "sich einen Weg bahnen — clear/force a path",
       "rank": 2021,
       "irregular": false
     },
@@ -15359,7 +15364,7 @@
     },
     {
       "word": "dehnen",
-      "english": "dilate/expand/extend",
+      "english": "stretch (also: lengthen a vowel)",
       "rank": 2024,
       "irregular": false,
       "cefrLevel": "C1"
@@ -15461,7 +15466,7 @@
     },
     {
       "word": "schmeißen",
-      "english": "chuck/deal/drop",
+      "english": "throw/chuck (colloquial)",
       "rank": 2039,
       "irregular": true,
       "prateritum": "schmiss",
@@ -15471,7 +15476,7 @@
     },
     {
       "word": "spicken",
-      "english": "bribe/cheat/lard",
+      "english": "lard/stuff; (figurative) pepper with",
       "rank": 2040,
       "irregular": false
     },
@@ -15542,13 +15547,14 @@
       "irregular": true,
       "prateritum": "klang ab",
       "perfekt": "abgeklungen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abtauchen",
       "english": "descend/disappear/duck",
       "rank": 2051,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "attestieren",
@@ -15610,7 +15616,7 @@
       "irregular": true,
       "prateritum": "entwich",
       "perfekt": "entwichen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erraten",
@@ -15731,7 +15737,7 @@
       "irregular": true,
       "prateritum": "zog vorbei",
       "perfekt": "vorbeigezogen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "werkeln",
@@ -15876,7 +15882,7 @@
     },
     {
       "word": "nachsagen",
-      "english": "repeat",
+      "english": "jdm etw nachsagen — say sth of sb/attribute sth to sb; also repeat after sb",
       "rank": 2098,
       "irregular": false
     },
@@ -15911,13 +15917,13 @@
     },
     {
       "word": "pumpen",
-      "english": "lend/pump/weightlift",
+      "english": "pump/(colloq.) lend, borrow",
       "rank": 2103,
       "irregular": false
     },
     {
       "word": "schlängeln",
-      "english": "snake",
+      "english": "sich schlängeln — wind, meander, snake (its way)",
       "rank": 2104,
       "irregular": false
     },
@@ -15941,7 +15947,7 @@
     },
     {
       "word": "verlesen",
-      "english": "misread/prune/read out",
+      "english": "read out (aloud)/sort, pick over; sich verlesen = misread",
       "rank": 2108,
       "irregular": true,
       "prateritum": "verlas",
@@ -15971,11 +15977,11 @@
       "irregular": true,
       "prateritum": "verstrich",
       "perfekt": "verstrichen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "versüßen",
-      "english": "make more attractive/make more pleasant/sugar over",
+      "english": "sweeten; sweeten/brighten (fig.)",
       "rank": 2112,
       "irregular": false,
       "cefrLevel": "C1"
@@ -15994,7 +16000,7 @@
     },
     {
       "word": "zünden",
-      "english": "detonate/fire/lit",
+      "english": "ignite, light/detonate, fire",
       "rank": 2115,
       "irregular": false
     },
@@ -16053,7 +16059,7 @@
     },
     {
       "word": "besinnen",
-      "english": "bethink/consider/contemplate",
+      "english": "sich besinnen — reflect, think it over; remember",
       "rank": 2124,
       "irregular": true,
       "prateritum": "besann",
@@ -16091,7 +16097,7 @@
     },
     {
       "word": "großziehen",
-      "english": "bring somebody up/educate/nurse",
+      "english": "raise, bring up (a child)",
       "rank": 2129,
       "irregular": true,
       "prateritum": "zog groß",
@@ -16124,7 +16130,8 @@
       "english": "be mistaken/err/roam",
       "rank": 2133,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": false
     },
     {
       "word": "klemmen",
@@ -16153,7 +16160,7 @@
     },
     {
       "word": "rösten",
-      "english": "bake/broil/calcine",
+      "english": "roast; toast (bread)",
       "rank": 2138,
       "irregular": false,
       "cefrLevel": "C1"
@@ -16200,7 +16207,7 @@
     },
     {
       "word": "abfinden",
-      "english": "come to terms with/compensate",
+      "english": "sich abfinden mit = come to terms with; jdn. abfinden = compensate, pay off",
       "rank": 2145,
       "irregular": true,
       "prateritum": "fand ab",
@@ -16264,7 +16271,7 @@
     },
     {
       "word": "einleben",
-      "english": "immerse oneself/project oneself/settle down",
+      "english": "sich einleben — settle in, get used to a new place",
       "rank": 2154,
       "irregular": false,
       "cefrLevel": "B2"
@@ -16325,7 +16332,8 @@
       "word": "nahen",
       "english": "approach/be approaching/be imminent",
       "rank": 2163,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "pürieren",
@@ -16342,7 +16350,7 @@
     },
     {
       "word": "schlemmen",
-      "english": "gormandise/gourmandise",
+      "english": "feast, eat lavishly, indulge",
       "rank": 2166,
       "irregular": false
     },
@@ -16417,7 +16425,8 @@
       "english": "loiter",
       "rank": 2177,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "dirigieren",
@@ -16533,7 +16542,8 @@
       "word": "tappen",
       "english": "grope",
       "rank": 2194,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "überdecken",
@@ -16589,7 +16599,8 @@
       "word": "abzweigen",
       "english": "branch off/put aside/set aside",
       "rank": 2202,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "adoptieren",
@@ -16604,7 +16615,7 @@
       "irregular": true,
       "prateritum": "brach an",
       "perfekt": "angebrochen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "ausspülen",
@@ -16624,7 +16635,7 @@
     },
     {
       "word": "beisetzen",
-      "english": "add/bury/entomb",
+      "english": "inter, lay to rest, bury",
       "rank": 2207,
       "irregular": false
     },
@@ -16676,7 +16687,7 @@
     },
     {
       "word": "herausziehen",
-      "english": "cull/move away/pull out",
+      "english": "pull out, extract",
       "rank": 2214,
       "irregular": true,
       "prateritum": "zog heraus",
@@ -16756,7 +16767,7 @@
     },
     {
       "word": "wackeln",
-      "english": "bounce/judder/shake",
+      "english": "wobble, be wobbly/shake",
       "rank": 2226,
       "irregular": false,
       "cefrLevel": "B2"
@@ -16816,7 +16827,7 @@
     },
     {
       "word": "beglückwünschen",
-      "english": "congratulate (someone on something)/felicitate (someone has been felicitated by somebody)",
+      "english": "congratulate (sb. on sth.)",
       "rank": 2235,
       "irregular": false
     },
@@ -16842,7 +16853,7 @@
       "irregular": true,
       "prateritum": "durchfuhr",
       "perfekt": "durchfahren",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "durchspielen",
@@ -16894,7 +16905,8 @@
       "word": "glücken",
       "english": "succeed",
       "rank": 2246,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hungern",
@@ -16963,7 +16975,8 @@
       "word": "schweifen",
       "english": "bend/curve/rove",
       "rank": 2256,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "stattgeben",
@@ -17006,7 +17019,7 @@
     },
     {
       "word": "verschmutzen",
-      "english": "besmirch/make dirty/soil",
+      "english": "pollute (the environment); make dirty, soil — sein when intransitive",
       "rank": 2262,
       "irregular": false,
       "cefrLevel": "B1"
@@ -17046,7 +17059,7 @@
     },
     {
       "word": "zusammensitzen",
-      "english": "side by side/sit/together",
+      "english": "sit together",
       "rank": 2267,
       "irregular": true,
       "prateritum": "saß zusammen",
@@ -17063,7 +17076,8 @@
       "word": "abwandern",
       "english": "emigrate",
       "rank": 2269,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "anprangern",
@@ -17098,7 +17112,7 @@
     },
     {
       "word": "brummen",
-      "english": "boom/flourish/growl",
+      "english": "hum, drone, buzz; growl; (business) be booming",
       "rank": 2274,
       "irregular": false
     },
@@ -17269,13 +17283,13 @@
     },
     {
       "word": "verschleiern",
-      "english": "become blurred/become hazy/cover up",
+      "english": "veil; disguise, obscure, cover up",
       "rank": 2299,
       "irregular": false
     },
     {
       "word": "vorschieben",
-      "english": "pretext/push forward",
+      "english": "push forward; use as a pretext",
       "rank": 2300,
       "irregular": true,
       "prateritum": "schob vor",
@@ -17297,7 +17311,7 @@
     },
     {
       "word": "zurückhaben",
-      "english": "back/got/have",
+      "english": "ich will mein Geld zurückhaben",
       "rank": 2303,
       "irregular": false
     },
@@ -17336,7 +17350,7 @@
     },
     {
       "word": "auffliegen",
-      "english": "be busted",
+      "english": "fly up; fly open; (of a plot) be blown, be busted",
       "rank": 2309,
       "irregular": true,
       "prateritum": "flog auf",
@@ -17354,7 +17368,8 @@
       "word": "ausreifen",
       "english": "be perfected/mature/ripen",
       "rank": 2311,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausreizen",
@@ -17376,7 +17391,7 @@
     },
     {
       "word": "benehmen",
-      "english": "behave",
+      "english": "sich benehmen — behave (oneself)",
       "rank": 2315,
       "irregular": true,
       "prateritum": "benahm",
@@ -17420,7 +17435,8 @@
       "word": "pilgern",
       "english": "go on a pilgrimage",
       "rank": 2321,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "polieren",
@@ -17504,7 +17520,8 @@
       "word": "verdampfen",
       "english": "vaporise",
       "rank": 2334,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vereidigen",
@@ -17530,7 +17547,7 @@
     },
     {
       "word": "verunglücken",
-      "english": "fail/go wrong/have an accident",
+      "english": "have an accident, be killed/injured in an accident",
       "rank": 2338,
       "irregular": false,
       "withSein": true,
@@ -17654,7 +17671,8 @@
       "english": "stroll",
       "rank": 2355,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "frequentieren",
@@ -17762,7 +17780,7 @@
     },
     {
       "word": "überbieten",
-      "english": "one-up",
+      "english": "outbid; surpass, beat, top",
       "rank": 2372,
       "irregular": true,
       "prateritum": "überbot",
@@ -17851,7 +17869,7 @@
     },
     {
       "word": "zurückverfolgen",
-      "english": "dereference/retrace/trace back",
+      "english": "trace back, retrace",
       "rank": 2385,
       "irregular": false
     },
@@ -17862,7 +17880,7 @@
       "irregular": true,
       "prateritum": "brannte ab",
       "perfekt": "abgebrannt",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abdrehen",
@@ -17889,7 +17907,8 @@
       "word": "abrücken",
       "english": "dissociate/march off/move away",
       "rank": 2390,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abstoßen",
@@ -17908,7 +17927,7 @@
     },
     {
       "word": "aufforsten",
-      "english": "afforest",
+      "english": "reforest, plant with trees",
       "rank": 2393,
       "irregular": false
     },
@@ -18100,7 +18119,7 @@
     },
     {
       "word": "rotieren",
-      "english": "go like crazy/gyrate/revolve",
+      "english": "rotate, revolve, spin",
       "rank": 2420,
       "irregular": false
     },
@@ -18114,7 +18133,8 @@
       "word": "sausen",
       "english": "speed/whistle",
       "rank": 2422,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "scheren",
@@ -18243,7 +18263,7 @@
     },
     {
       "word": "abstrahlen",
-      "english": "emit/influence/radiate",
+      "english": "radiate, emit; blast-clean",
       "rank": 2440,
       "irregular": false
     },
@@ -18349,7 +18369,7 @@
     },
     {
       "word": "durchstreifen",
-      "english": "prowl/through/wander",
+      "english": "roam, wander through, range over",
       "rank": 2456,
       "irregular": false
     },
@@ -18361,7 +18381,7 @@
     },
     {
       "word": "einlaufen",
-      "english": "enter port/mould/shrink",
+      "english": "shrink (of clothes); come in, enter (port, station); (of goods) arrive",
       "rank": 2458,
       "irregular": true,
       "prateritum": "lief ein",
@@ -18406,7 +18426,8 @@
       "english": "stiffen/freeze",
       "rank": 2463,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "eruieren",
@@ -18502,7 +18523,8 @@
       "word": "verhungern",
       "english": "famish/starve",
       "rank": 2477,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verströmen",
@@ -18512,7 +18534,7 @@
     },
     {
       "word": "vertun",
-      "english": "be mistaken/busy/make a mistake",
+      "english": "sich vertun — make a mistake, slip up",
       "rank": 2479,
       "irregular": true,
       "prateritum": "vertat",
@@ -18533,7 +18555,8 @@
       "word": "wiederkehren",
       "english": "go back",
       "rank": 2481,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zerreißen",
@@ -18569,7 +18592,8 @@
       "word": "zusteuern",
       "english": "head for",
       "rank": 2486,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abbezahlen",
@@ -18579,7 +18603,7 @@
     },
     {
       "word": "abfassen",
-      "english": "bust/catch in the act/compose",
+      "english": "draft, draw up, compose (a text)",
       "rank": 2488,
       "irregular": false
     },
@@ -18603,7 +18627,7 @@
     },
     {
       "word": "abstauben",
-      "english": "dust/dust off/scold",
+      "english": "dust, dust off; (colloq.) swipe, nab",
       "rank": 2492,
       "irregular": false
     },
@@ -18627,7 +18651,7 @@
     },
     {
       "word": "anprobieren",
-      "english": "try",
+      "english": "try on (clothes)",
       "rank": 2495,
       "irregular": false,
       "cefrLevel": "A1"
@@ -18655,7 +18679,7 @@
     },
     {
       "word": "ausharren",
-      "english": "abide/hold out/patiently",
+      "english": "hold out, persevere, wait patiently",
       "rank": 2499,
       "irregular": false
     },
@@ -18741,7 +18765,7 @@
     },
     {
       "word": "flirten",
-      "english": "coquet/flirt",
+      "english": "flirt",
       "rank": 2512,
       "irregular": false
     },
@@ -18850,7 +18874,8 @@
       "word": "umsiedeln",
       "english": "resettle",
       "rank": 2529,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verblüffen",
@@ -18861,7 +18886,7 @@
     },
     {
       "word": "versöhnen",
-      "english": "reconcile/resign",
+      "english": "reconcile; sich versöhnen = make up (with sb.)",
       "rank": 2531,
       "irregular": false
     },
@@ -18885,7 +18910,7 @@
     },
     {
       "word": "verziehen",
-      "english": "disappear/distort/warp",
+      "english": "spoil (a child); warp/distort",
       "rank": 2535,
       "irregular": true,
       "prateritum": "verzog",
@@ -18914,7 +18939,7 @@
     },
     {
       "word": "wegschmeißen",
-      "english": "be in stitches/crack up/discard",
+      "english": "throw away, chuck out; sich wegschmeißen (vor Lachen) = be in stitches",
       "rank": 2539,
       "irregular": true,
       "prateritum": "schmiss weg",
@@ -18923,7 +18948,7 @@
     },
     {
       "word": "wiederhaben",
-      "english": "back/got/have",
+      "english": "have/get back",
       "rank": 2540,
       "irregular": false
     },
@@ -18938,7 +18963,7 @@
       "english": "circulate",
       "rank": 2542,
       "irregular": false,
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "zurückdrängen",
@@ -18962,7 +18987,8 @@
       "word": "abreisen",
       "english": "depart/leave",
       "rank": 2546,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abspringen",
@@ -19062,7 +19088,7 @@
     },
     {
       "word": "einpreisen",
-      "english": "determine the price structure/set the prices",
+      "english": "price in, factor into the price",
       "rank": 2562,
       "irregular": false
     },
@@ -19101,7 +19127,8 @@
       "english": "jog",
       "rank": 2568,
       "irregular": false,
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "withSein": true
     },
     {
       "word": "katapultieren",
@@ -19196,7 +19223,7 @@
     },
     {
       "word": "starren",
-      "english": "be covered/stare",
+      "english": "stare, gaze fixedly",
       "rank": 2582,
       "irregular": false
     },
@@ -19248,7 +19275,7 @@
     },
     {
       "word": "vergnügen",
-      "english": "please",
+      "english": "sich vergnügen — enjoy oneself, have a good time",
       "rank": 2589,
       "irregular": false
     },
@@ -19264,7 +19291,8 @@
       "english": "despair",
       "rank": 2591,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "wälzen",
@@ -19319,7 +19347,7 @@
     },
     {
       "word": "abstammen",
-      "english": "descend",
+      "english": "be descended from, originate from",
       "rank": 2599,
       "irregular": false
     },
@@ -19351,7 +19379,7 @@
       "irregular": true,
       "prateritum": "auferstand",
       "perfekt": "auferstanden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "autorisieren",
@@ -19411,7 +19439,7 @@
     },
     {
       "word": "durchlassen",
-      "english": "leak/let get away someone/let off somebody",
+      "english": "let through, let pass; leak (of a roof)",
       "rank": 2612,
       "irregular": true,
       "prateritum": "ließ durch",
@@ -19470,7 +19498,7 @@
     },
     {
       "word": "freisprechen",
-      "english": "exculpate",
+      "english": "acquit (in court); absolve",
       "rank": 2620,
       "irregular": true,
       "prateritum": "sprach frei",
@@ -19516,7 +19544,7 @@
     },
     {
       "word": "heulen",
-      "english": "bawl/blubber/hoot",
+      "english": "howl (wind, wolf, siren); cry, weep",
       "rank": 2626,
       "irregular": false,
       "cefrLevel": "C1"
@@ -19548,7 +19576,7 @@
     },
     {
       "word": "konzertieren",
-      "english": "concert/give a concert",
+      "english": "give a concert, perform",
       "rank": 2631,
       "irregular": false
     },
@@ -19556,7 +19584,8 @@
       "word": "krabbeln",
       "english": "crawl",
       "rank": 2632,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "manövrieren",
@@ -19575,7 +19604,8 @@
       "word": "mutieren",
       "english": "crack/mutate",
       "rank": 2635,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "nachspüren",
@@ -19607,7 +19637,8 @@
       "english": "row",
       "rank": 2640,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "schockieren",
@@ -19620,7 +19651,8 @@
       "word": "stranden",
       "english": "founder/run aground/strand",
       "rank": 2642,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "tasten",
@@ -19727,7 +19759,7 @@
     },
     {
       "word": "abschießen",
-      "english": "fire/get drunk/oust",
+      "english": "shoot down (a plane), shoot (an animal); fire, launch",
       "rank": 2658,
       "irregular": true,
       "prateritum": "schoss ab",
@@ -19796,7 +19828,7 @@
     },
     {
       "word": "einwickeln",
-      "english": "envelop/fool/hoodwink",
+      "english": "wrap (up); (colloq.) take in, hoodwink",
       "rank": 2668,
       "irregular": false
     },
@@ -19851,7 +19883,7 @@
     },
     {
       "word": "flüstern",
-      "english": "susurrate/whisper",
+      "english": "whisper",
       "rank": 2676,
       "irregular": false,
       "cefrLevel": "A2"
@@ -20000,7 +20032,8 @@
       "word": "verenden",
       "english": "die/perish",
       "rank": 2698,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verfangen",
@@ -20021,7 +20054,8 @@
       "word": "verstauben",
       "english": "gather dust/get dusty",
       "rank": 2701,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "wägen",
@@ -20062,7 +20096,7 @@
     },
     {
       "word": "zutragen",
-      "english": "befall",
+      "english": "carry to, report, tell (tales); sich zutragen = happen, occur",
       "rank": 2707,
       "irregular": true,
       "prateritum": "trug zu",
@@ -20104,7 +20138,7 @@
     },
     {
       "word": "anfressen",
-      "english": "build up/erode/nibble at",
+      "english": "nibble at, gnaw at; corrode, eat away",
       "rank": 2713,
       "irregular": true,
       "prateritum": "fraß an",
@@ -20284,7 +20318,7 @@
     },
     {
       "word": "lizenzieren",
-      "english": "licence",
+      "english": "license (verb); the noun is licence",
       "rank": 2738,
       "irregular": false
     },
@@ -20378,7 +20412,7 @@
     },
     {
       "word": "übergießen",
-      "english": "dash/douse/spill",
+      "english": "pour over/douse; spill over",
       "rank": 2753,
       "irregular": true,
       "prateritum": "goss über",
@@ -20414,7 +20448,8 @@
       "word": "untertauchen",
       "english": "submerge",
       "rank": 2757,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "uraufführen",
@@ -20505,7 +20540,7 @@
       "irregular": true,
       "prateritum": "brannte an",
       "perfekt": "angebrannt",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "anhaften",
@@ -20521,7 +20556,7 @@
     },
     {
       "word": "auflassen",
-      "english": "close down/convey away/keep open",
+      "english": "leave open, keep on (a hat); close down (a mine)",
       "rank": 2773,
       "irregular": true,
       "prateritum": "ließ auf",
@@ -20566,7 +20601,7 @@
     },
     {
       "word": "ausreißen",
-      "english": "tear out",
+      "english": "tear out, pull out; (intransitive, with sein) run away, bolt",
       "rank": 2779,
       "irregular": true,
       "prateritum": "riss aus",
@@ -20673,7 +20708,7 @@
       "irregular": true,
       "prateritum": "blieb fern",
       "perfekt": "ferngeblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "feststecken",
@@ -20734,7 +20769,7 @@
     },
     {
       "word": "lästern",
-      "english": "backbite/blaspheme/malign",
+      "english": "badmouth/gossip maliciously (über jdn); blaspheme",
       "rank": 2803,
       "irregular": false
     },
@@ -20754,7 +20789,8 @@
       "word": "purzeln",
       "english": "drop/fall/tumble",
       "rank": 2806,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "säugen",
@@ -20813,7 +20849,8 @@
       "word": "übersiedeln",
       "english": "move",
       "rank": 2815,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "überspielen",
@@ -20868,7 +20905,8 @@
       "word": "verkümmern",
       "english": "atrophy/die/waste away",
       "rank": 2823,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vervierfachen",
@@ -20930,11 +20968,14 @@
       "word": "zurückwollen",
       "english": "get back/go back/return",
       "rank": 2832,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "wollte zurück",
+      "perfekt": "zurückgewollt",
+      "withSein": false
     },
     {
       "word": "zuvorkommen",
-      "english": "anticipate",
+      "english": "beat sb to it / forestall / pre-empt (jdm zuvorkommen)",
       "rank": 2833,
       "irregular": true,
       "prateritum": "kam zuvor",
@@ -20964,7 +21005,7 @@
     },
     {
       "word": "absegnen",
-      "english": "bless/grant",
+      "english": "rubber-stamp/give one's blessing to (approve)",
       "rank": 2837,
       "irregular": false
     },
@@ -21030,13 +21071,15 @@
       "word": "auftauen",
       "english": "thaw",
       "rank": 2846,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufweichen",
       "english": "become soft/soak/soften",
       "rank": 2847,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausgliedern",
@@ -21048,7 +21091,8 @@
       "word": "aushärten",
       "english": "age/cure/harden",
       "rank": 2849,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausholen",
@@ -21058,7 +21102,7 @@
     },
     {
       "word": "aussteuern",
-      "english": "disqualify/endow/modulate",
+      "english": "adjust the gain/level (audio); control/phase out",
       "rank": 2851,
       "irregular": false
     },
@@ -21178,7 +21222,7 @@
       "english": "harden",
       "rank": 2868,
       "irregular": false,
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "florieren",
@@ -21196,13 +21240,17 @@
       "word": "guthaben",
       "english": "have credit/have something in hand",
       "rank": 2871,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "hatte gut",
+      "perfekt": "gutgehabt",
+      "withSein": false
     },
     {
       "word": "heranrücken",
       "english": "approach/come closer/draw near",
       "rank": 2872,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hinken",
@@ -21267,7 +21315,7 @@
     },
     {
       "word": "naschen",
-      "english": "graze/snack",
+      "english": "nibble sweets/have a sneaky nibble",
       "rank": 2883,
       "irregular": false
     },
@@ -21340,7 +21388,8 @@
       "english": "sprint",
       "rank": 2894,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "transplantieren",
@@ -21405,7 +21454,7 @@
     },
     {
       "word": "verputzen",
-      "english": "parget/plaster/scarf",
+      "english": "plaster/render (a wall); polish off (food)",
       "rank": 2904,
       "irregular": false
     },
@@ -21419,7 +21468,8 @@
       "word": "verstummen",
       "english": "die away/fall silent/hush",
       "rank": 2906,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verzehnfachen",
@@ -21505,7 +21555,7 @@
     },
     {
       "word": "abstreiten",
-      "english": "deny/gainsay",
+      "english": "deny/dispute",
       "rank": 2918,
       "irregular": true,
       "prateritum": "stritt ab",
@@ -21520,7 +21570,7 @@
     },
     {
       "word": "anheften",
-      "english": "attach/baste/decorate",
+      "english": "pin on/tack on; tack (sewing)",
       "rank": 2920,
       "irregular": false
     },
@@ -21626,7 +21676,7 @@
     },
     {
       "word": "beteuern",
-      "english": "asseverate/assure",
+      "english": "insist/protest/assure",
       "rank": 2936,
       "irregular": false,
       "cefrLevel": "C1"
@@ -21651,7 +21701,7 @@
     },
     {
       "word": "brüllen",
-      "english": "bellow/bray/holler",
+      "english": "roar/yell/shout (also: bawl, of a child)",
       "rank": 2940,
       "irregular": false
     },
@@ -21702,7 +21752,8 @@
       "word": "düsen",
       "english": "dash/rush",
       "rank": 2947,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "eingemeinden",
@@ -21798,7 +21849,7 @@
       "irregular": true,
       "prateritum": "blieb hier",
       "perfekt": "hiergeblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hinreißen",
@@ -21829,7 +21880,7 @@
     },
     {
       "word": "kaputtmachen",
-      "english": "break/kill oneself/smash",
+      "english": "break/wreck; wear oneself out (sich kaputtmachen)",
       "rank": 2965,
       "irregular": false,
       "cefrLevel": "B1"
@@ -21848,7 +21899,7 @@
     },
     {
       "word": "krankmachen",
-      "english": "make sick/sicken",
+      "english": "call in sick / throw a sickie (feign illness)",
       "rank": 2968,
       "irregular": false
     },
@@ -21859,7 +21910,7 @@
       "irregular": true,
       "prateritum": "zog los",
       "perfekt": "losgezogen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "nummerieren",
@@ -21885,7 +21936,8 @@
       "english": "race/rage/rush",
       "rank": 2973,
       "irregular": false,
-      "cefrLevel": "A2"
+      "cefrLevel": "A2",
+      "withSein": true
     },
     {
       "word": "sabotieren",
@@ -21970,7 +22022,7 @@
     },
     {
       "word": "verloben",
-      "english": "affiance/become engaged/betroth",
+      "english": "get engaged (sich verloben)",
       "rank": 2986,
       "irregular": false
     },
@@ -22014,13 +22066,15 @@
       "word": "vorpreschen",
       "english": "rush ahead",
       "rank": 2992,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vorrücken",
       "english": "advance/go forward/move forward",
       "rank": 2993,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "weglaufen",
@@ -22075,7 +22129,8 @@
       "word": "abbrausen",
       "english": "shower off; rush off",
       "rank": 3000,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abfeuern",
@@ -22087,7 +22142,8 @@
       "word": "absacken",
       "english": "sag/drop/slump",
       "rank": 3002,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abscheiden",
@@ -22102,7 +22158,8 @@
       "word": "abstumpfen",
       "english": "blunt",
       "rank": 3004,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "anberaumen",
@@ -22210,7 +22267,8 @@
       "word": "durchdrehen",
       "english": "crack up/freak out/go crazy",
       "rank": 3021,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "durchwandern",
@@ -22235,7 +22293,8 @@
       "word": "einmarschieren",
       "english": "invade",
       "rank": 3025,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "einstechen",
@@ -22483,7 +22542,7 @@
     },
     {
       "word": "spucken",
-      "english": "puke/spit/throw up",
+      "english": "spit (also colloquially: be sick)",
       "rank": 3063,
       "irregular": false,
       "cefrLevel": "C1"
@@ -22513,7 +22572,7 @@
       "irregular": true,
       "prateritum": "überkam",
       "perfekt": "überkommen",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "überlappen",
@@ -22540,7 +22599,8 @@
       "word": "verarmen",
       "english": "become impoverished",
       "rank": 3071,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verkündigen",
@@ -22658,7 +22718,7 @@
     },
     {
       "word": "absahnen",
-      "english": "skim",
+      "english": "cream off / rake it in",
       "rank": 3089,
       "irregular": false
     },
@@ -22771,7 +22831,7 @@
     },
     {
       "word": "destillieren",
-      "english": "distil/distillate",
+      "english": "distil",
       "rank": 3107,
       "irregular": false
     },
@@ -22791,7 +22851,8 @@
       "word": "driften",
       "english": "drift",
       "rank": 3110,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "durcheinanderbringen",
@@ -22806,7 +22867,8 @@
       "word": "durchsickern",
       "english": "filter/leak",
       "rank": 3112,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "einlernen",
@@ -22836,7 +22898,8 @@
       "word": "flitzen",
       "english": "flit/whiz",
       "rank": 3117,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "föhnen",
@@ -22846,7 +22909,7 @@
     },
     {
       "word": "frisieren",
-      "english": "do the hair/fudge/hairdress",
+      "english": "style/do sb's hair; doctor (accounts), tune up (an engine)",
       "rank": 3119,
       "irregular": false
     },
@@ -23057,7 +23120,7 @@
     },
     {
       "word": "schlürfen",
-      "english": "sip",
+      "english": "slurp (drink noisily)",
       "rank": 3150,
       "irregular": false
     },
@@ -23078,7 +23141,7 @@
     },
     {
       "word": "stauchen",
-      "english": "compress/upset",
+      "english": "compress/squash (also: tell sb off)",
       "rank": 3153,
       "irregular": false
     },
@@ -23103,7 +23166,7 @@
     },
     {
       "word": "tönen",
-      "english": "boast/resound/sound",
+      "english": "tint/colour (hair); sound/resound",
       "rank": 3157,
       "irregular": false
     },
@@ -23112,7 +23175,7 @@
       "english": "bake au gratin/top with cheese and bake",
       "rank": 3158,
       "irregular": true,
-      "prateritum": "überbuk",
+      "prateritum": "überbackte",
       "perfekt": "überbacken",
       "withSein": false
     },
@@ -23200,11 +23263,12 @@
       "word": "zerschellen",
       "english": "shatter/smash",
       "rank": 3171,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zusammenfalten",
-      "english": "chide/fold",
+      "english": "fold up",
       "rank": 3172,
       "irregular": false
     },
@@ -23215,7 +23279,7 @@
       "irregular": true,
       "prateritum": "stieß zu",
       "perfekt": "zugestoßen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "abbinden",
@@ -23234,7 +23298,7 @@
     },
     {
       "word": "abhandenkommen",
-      "english": "get lost/go missing/lose",
+      "english": "lose",
       "rank": 3176,
       "irregular": true,
       "prateritum": "kam abhanden",
@@ -23336,7 +23400,8 @@
       "word": "aufrücken",
       "english": "be promoted/move along/move up",
       "rank": 3191,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufscheinen",
@@ -23345,7 +23410,7 @@
       "irregular": true,
       "prateritum": "schien auf",
       "perfekt": "aufgeschienen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "aufwirbeln",
@@ -23357,11 +23422,12 @@
       "word": "ausarten",
       "english": "degenerate",
       "rank": 3194,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "auslachen",
-      "english": "jeer at/laugh at/stop laughing",
+      "english": "laugh at sb / make fun of sb",
       "rank": 3195,
       "irregular": false,
       "cefrLevel": "C1"
@@ -23385,7 +23451,8 @@
       "english": "slip",
       "rank": 3198,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "ausschlachten",
@@ -23568,11 +23635,12 @@
       "word": "erblinden",
       "english": "go blind",
       "rank": 3224,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erbrechen",
-      "english": "break/vomit",
+      "english": "vomit/be sick",
       "rank": 3225,
       "irregular": true,
       "prateritum": "erbrach",
@@ -23625,7 +23693,7 @@
     },
     {
       "word": "herbeirufen",
-      "english": "call/cite/summon",
+      "english": "call over/summon",
       "rank": 3233,
       "irregular": true,
       "prateritum": "rief herbei",
@@ -23669,7 +23737,8 @@
       "word": "hoppeln",
       "english": "hop",
       "rank": 3238,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "imprägnieren",
@@ -23784,13 +23853,13 @@
     },
     {
       "word": "reanimieren",
-      "english": "reanimate",
+      "english": "resuscitate",
       "rank": 3256,
       "irregular": false
     },
     {
       "word": "resignieren",
-      "english": "resign",
+      "english": "give up/lose heart, become resigned",
       "rank": 3257,
       "irregular": false
     },
@@ -23913,7 +23982,8 @@
       "word": "verrotten",
       "english": "decompose/deteriorate/rot",
       "rank": 3276,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "versauen",
@@ -23967,7 +24037,10 @@
       "word": "wegwollen",
       "english": "go away/leave/want to go",
       "rank": 3285,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "wollte weg",
+      "perfekt": "weggewollt",
+      "withSein": false
     },
     {
       "word": "weiden",
@@ -24150,7 +24223,8 @@
       "word": "ausheilen",
       "english": "be cured/cure completely/heal",
       "rank": 3310,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "auslaugen",
@@ -24275,7 +24349,7 @@
     },
     {
       "word": "einfetten",
-      "english": "grease/lotion",
+      "english": "grease/oil; rub cream into",
       "rank": 3330,
       "irregular": false
     },
@@ -24344,7 +24418,8 @@
       "word": "hasten",
       "english": "hurry/rush",
       "rank": 3341,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "herausputzen",
@@ -24359,7 +24434,7 @@
       "irregular": true,
       "prateritum": "brach herunter",
       "perfekt": "heruntergebrochen",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "herunterkommen",
@@ -24499,7 +24574,7 @@
       "irregular": true,
       "prateritum": "rann",
       "perfekt": "geronnen",
-      "withSein": false,
+      "withSein": true,
       "cefrLevel": "B2"
     },
     {
@@ -24542,7 +24617,8 @@
       "word": "sickern",
       "english": "leak/ooze",
       "rank": 3371,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "süßen",
@@ -24642,8 +24718,8 @@
       "english": "embezzle/suppress",
       "rank": 3387,
       "irregular": true,
-      "prateritum": "schlug unter",
-      "perfekt": "untergeschlagen",
+      "prateritum": "unterschlug",
+      "perfekt": "unterschlagen",
       "withSein": false
     },
     {
@@ -24681,7 +24757,8 @@
       "word": "verhallen",
       "english": "die away",
       "rank": 3392,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verheizen",
@@ -24730,7 +24807,8 @@
       "word": "verwaisen",
       "english": "be abandoned/be orphaned",
       "rank": 3400,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vollstopfen",
@@ -24823,7 +24901,7 @@
       "irregular": true,
       "prateritum": "geriet aneinander",
       "perfekt": "aneinandergeraten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "anleinen",
@@ -24950,7 +25028,7 @@
     },
     {
       "word": "bewalden",
-      "english": "forest",
+      "english": "afforest/plant with trees",
       "rank": 3436,
       "irregular": false
     },
@@ -24977,7 +25055,7 @@
       "irregular": true,
       "prateritum": "schmolz dahin",
       "perfekt": "dahingeschmolzen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "dahinterstehen",
@@ -25019,7 +25097,7 @@
     },
     {
       "word": "denunzieren",
-      "english": "denounce/denunciate",
+      "english": "denounce/inform on sb",
       "rank": 3445,
       "irregular": false
     },
@@ -25057,7 +25135,7 @@
       "irregular": true,
       "prateritum": "geriet durcheinander",
       "perfekt": "durcheinandergeraten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "eingießen",
@@ -25078,7 +25156,8 @@
       "word": "einknicken",
       "english": "buckle",
       "rank": 3453,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "einrennen",
@@ -25322,7 +25401,7 @@
     },
     {
       "word": "mästen",
-      "english": "batten/cram/fatten",
+      "english": "fatten (up)",
       "rank": 3490,
       "irregular": false
     },
@@ -25404,7 +25483,7 @@
     },
     {
       "word": "pimpen",
-      "english": "pimp",
+      "english": "pimp up/soup up/upgrade",
       "rank": 3502,
       "irregular": false
     },
@@ -25452,7 +25531,7 @@
     },
     {
       "word": "remisieren",
-      "english": "draw",
+      "english": "draw (a game)/end in a draw",
       "rank": 3509,
       "irregular": false
     },
@@ -25589,7 +25668,8 @@
       "word": "umherstreifen",
       "english": "roam",
       "rank": 3531,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "umklammern",
@@ -25637,7 +25717,8 @@
       "word": "vereisen",
       "english": "freeze/freeze over/freeze up",
       "rank": 3539,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verlocken",
@@ -25678,7 +25759,7 @@
     },
     {
       "word": "verwarnen",
-      "english": "book/caution/warn",
+      "english": "caution/warn officially; (sport) book",
       "rank": 3546,
       "irregular": false
     },
@@ -25704,7 +25785,7 @@
       "irregular": true,
       "prateritum": "brach weg",
       "perfekt": "weggebrochen",
-      "withSein": false,
+      "withSein": true,
       "cefrLevel": "C1"
     },
     {
@@ -25825,7 +25906,8 @@
       "word": "abdriften",
       "english": "drift",
       "rank": 3566,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abdunkeln",
@@ -25845,7 +25927,7 @@
     },
     {
       "word": "abhandeln",
-      "english": "beat down the price/deal with",
+      "english": "deal with/treat (a topic)",
       "rank": 3569,
       "irregular": false
     },
@@ -25863,7 +25945,7 @@
     },
     {
       "word": "abnicken",
-      "english": "agree",
+      "english": "wave through/rubber-stamp (approve without discussion)",
       "rank": 3572,
       "irregular": false
     },
@@ -25875,7 +25957,7 @@
     },
     {
       "word": "abrichten",
-      "english": "train",
+      "english": "train (an animal)",
       "rank": 3574,
       "irregular": false
     },
@@ -26007,7 +26089,7 @@
       "irregular": true,
       "prateritum": "saß auf",
       "perfekt": "aufgesessen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "aufsparen",
@@ -26103,7 +26185,7 @@
       "irregular": true,
       "prateritum": "beschlug",
       "perfekt": "beschlagen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "besticken",
@@ -26113,7 +26195,7 @@
     },
     {
       "word": "bevormunden",
-      "english": "act as guardian/domineer/patronise",
+      "english": "patronise/treat like a child",
       "rank": 3609,
       "irregular": false
     },
@@ -26175,7 +26257,8 @@
       "word": "cruisen",
       "english": "cruise",
       "rank": 3619,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "dalassen",
@@ -26209,8 +26292,8 @@
       "english": "shine through",
       "rank": 3623,
       "irregular": true,
-      "prateritum": "durchschien",
-      "perfekt": "durchschienen",
+      "prateritum": "schien durch",
+      "perfekt": "durchgeschienen",
       "withSein": false
     },
     {
@@ -26268,7 +26351,8 @@
       "word": "entarten",
       "english": "degrade",
       "rank": 3632,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entern",
@@ -26286,7 +26370,8 @@
       "word": "entgleisen",
       "english": "derail",
       "rank": 3635,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entlehnen",
@@ -26301,7 +26386,7 @@
       "irregular": true,
       "prateritum": "entschwand",
       "perfekt": "entschwunden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "ergaunern",
@@ -26317,7 +26402,7 @@
     },
     {
       "word": "ermüden",
-      "english": "tyre",
+      "english": "tire (become tired)",
       "rank": 3640,
       "irregular": false
     },
@@ -26329,7 +26414,7 @@
     },
     {
       "word": "exmatrikulieren",
-      "english": "take one's name off the university register/take someone's name off the university register",
+      "english": "deregister from university",
       "rank": 3642,
       "irregular": false
     },
@@ -26461,7 +26546,8 @@
       "word": "huschen",
       "english": "flit/scamper/scurry",
       "rank": 3660,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "imponieren",
@@ -26532,7 +26618,10 @@
       "word": "melken",
       "english": "milk",
       "rank": 3670,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "molk",
+      "perfekt": "gemolken",
+      "withSein": false
     },
     {
       "word": "missfallen",
@@ -26574,7 +26663,7 @@
     },
     {
       "word": "observieren",
-      "english": "observe",
+      "english": "keep under surveillance/tail",
       "rank": 3676,
       "irregular": false
     },
@@ -26619,7 +26708,8 @@
       "word": "preschen",
       "english": "dash/run/rush",
       "rank": 3683,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "reimen",
@@ -26661,7 +26751,8 @@
       "word": "schimmeln",
       "english": "mildew/mould",
       "rank": 3690,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "schnorcheln",
@@ -26717,7 +26808,8 @@
       "english": "plod/tramp/trudge",
       "rank": 3699,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "strampeln",
@@ -26763,7 +26855,8 @@
       "word": "türmen",
       "english": "pile up; run away (colloquial)",
       "rank": 3706,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "überlesen",
@@ -26814,7 +26907,8 @@
       "word": "verfaulen",
       "english": "rot",
       "rank": 3713,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vergolden",
@@ -26849,7 +26943,7 @@
     },
     {
       "word": "verknallen",
-      "english": "fall in love",
+      "english": "sich in jdn verknallen — fall for sb (reflexive only, colloquial)",
       "rank": 3719,
       "irregular": false
     },
@@ -26873,7 +26967,7 @@
     },
     {
       "word": "versalzen",
-      "english": "spoil",
+      "english": "put too much salt in/oversalt; (fig.) spoil sb's fun",
       "rank": 3723,
       "irregular": false
     },
@@ -26887,7 +26981,10 @@
       "word": "verschleißen",
       "english": "sell/wear out",
       "rank": 3725,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "verschliss",
+      "perfekt": "verschlissen",
+      "withSein": false
     },
     {
       "word": "verschnaufen",
@@ -26935,7 +27032,8 @@
       "word": "vorauseilen",
       "english": "hurry ahead",
       "rank": 3733,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vorbeireden",
@@ -26989,7 +27087,8 @@
       "word": "zersplittern",
       "english": "dissipate/fragment/shatter",
       "rank": 3741,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zündeln",
@@ -27179,7 +27278,7 @@
       "irregular": true,
       "prateritum": "blieb auf",
       "perfekt": "aufgeblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "aufhetzen",
@@ -27195,7 +27294,7 @@
     },
     {
       "word": "aufreiben",
-      "english": "beat/chafe/exhaust",
+      "english": "wear down/exhaust",
       "rank": 3773,
       "irregular": true,
       "prateritum": "rieb auf",
@@ -27271,7 +27370,7 @@
     },
     {
       "word": "blödeln",
-      "english": "daff/fool around/talk nonsense",
+      "english": "fool around/mess about/talk nonsense",
       "rank": 3785,
       "irregular": false
     },
@@ -27301,7 +27400,7 @@
     },
     {
       "word": "campen",
-      "english": "camp/hang",
+      "english": "camp/go camping",
       "rank": 3790,
       "irregular": false,
       "cefrLevel": "B1"
@@ -27365,7 +27464,8 @@
       "word": "durchreisen",
       "english": "travel through",
       "rank": 3800,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "durchschalten",
@@ -27392,7 +27492,8 @@
       "word": "einströmen",
       "english": "flood in/pour in/stream in",
       "rank": 3804,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entblößen",
@@ -27450,11 +27551,12 @@
       "word": "erstarken",
       "english": "grow stronger",
       "rank": 3812,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erweichen",
-      "english": "give in/melt/move",
+      "english": "soften; (jdn erweichen) move/win sb over",
       "rank": 3813,
       "irregular": false
     },
@@ -27487,7 +27589,7 @@
       "irregular": true,
       "prateritum": "fuhr fest",
       "perfekt": "festgefahren",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "festziehen",
@@ -27506,7 +27608,7 @@
     },
     {
       "word": "fixen",
-      "english": "fix",
+      "english": "shoot up (inject drugs); (finance) fix",
       "rank": 3820,
       "irregular": false
     },
@@ -27614,7 +27716,7 @@
     },
     {
       "word": "hinterziehen",
-      "english": "evade",
+      "english": "evade (tax)",
       "rank": 3836,
       "irregular": true,
       "prateritum": "hinterzog",
@@ -27625,7 +27727,8 @@
       "word": "hochklettern",
       "english": "climb up",
       "rank": 3837,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hochkrempeln",
@@ -27666,7 +27769,8 @@
       "english": "capsize/overbalance/overturn",
       "rank": 3843,
       "irregular": false,
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "withSein": true
     },
     {
       "word": "klimpern",
@@ -27872,7 +27976,7 @@
     },
     {
       "word": "redigieren",
-      "english": "edit/redact",
+      "english": "edit/copy-edit",
       "rank": 3877,
       "irregular": false
     },
@@ -27945,7 +28049,7 @@
     },
     {
       "word": "schnupfen",
-      "english": "sniff/snuff; have a cold",
+      "english": "take snuff/snort",
       "rank": 3889,
       "irregular": false
     },
@@ -27999,7 +28103,8 @@
       "word": "splittern",
       "english": "shatter/splinter",
       "rank": 3897,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "spornen",
@@ -28019,13 +28124,15 @@
       "english": "fall/stumble",
       "rank": 3900,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "streunen",
       "english": "stray",
       "rank": 3901,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "suhlen",
@@ -28065,7 +28172,8 @@
       "word": "trudeln",
       "english": "coast/spin/windmill",
       "rank": 3907,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "überdosieren",
@@ -28152,7 +28260,7 @@
       "irregular": true,
       "prateritum": "verklang",
       "perfekt": "verklungen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "verlachen",
@@ -28196,7 +28304,7 @@
     },
     {
       "word": "versachlichen",
-      "english": "objectify/objectivise",
+      "english": "de-emotionalise/put on a factual footing (a debate)",
       "rank": 3927,
       "irregular": false
     },
@@ -28223,7 +28331,7 @@
     },
     {
       "word": "verschwitzen",
-      "english": "soak with sweat",
+      "english": "(colloquial) forget, clean forget",
       "rank": 3931,
       "irregular": false
     },
@@ -28252,7 +28360,7 @@
       "irregular": true,
       "prateritum": "schoss vor",
       "perfekt": "vorgeschossen",
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "vorstrecken",
@@ -28309,7 +28417,8 @@
       "word": "welken",
       "english": "dry/fade/wilt",
       "rank": 3943,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "wellen",
@@ -28391,11 +28500,12 @@
       "word": "zurollen",
       "english": "roll toward/roll up to",
       "rank": 3956,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zurückdatieren",
-      "english": "predate",
+      "english": "backdate",
       "rank": 3957,
       "irregular": false
     },
@@ -28425,13 +28535,13 @@
     },
     {
       "word": "abblitzen",
-      "english": "rebuff",
+      "english": "be rebuffed/get nowhere (bei jdm abblitzen)",
       "rank": 3961,
       "irregular": false
     },
     {
       "word": "abdämpfen",
-      "english": "dampen/mitigate/reduce the steam",
+      "english": "dampen/deaden/cushion",
       "rank": 3962,
       "irregular": false
     },
@@ -28468,7 +28578,7 @@
     },
     {
       "word": "abspritzen",
-      "english": "spray off/ejaculate",
+      "english": "(vulgar)",
       "rank": 3968,
       "irregular": false
     },
@@ -28539,7 +28649,8 @@
       "word": "anrollen",
       "english": "roll up",
       "rank": 3979,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "anschmiegen",
@@ -28586,7 +28697,7 @@
     },
     {
       "word": "aufplustern",
-      "english": "blow up/exaggerate/puff oneself",
+      "english": "(sich) puff up (feathers); swagger, throw one's weight about",
       "rank": 3987,
       "irregular": false
     },
@@ -28646,7 +28757,7 @@
     },
     {
       "word": "austarieren",
-      "english": "balance/balance out/determine",
+      "english": "balance out/tare",
       "rank": 3996,
       "irregular": false
     },
@@ -28654,7 +28765,8 @@
       "word": "ausufern",
       "english": "escalate/get out of control/overflow",
       "rank": 3997,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "baggern",
@@ -28868,8 +28980,8 @@
       "english": "stick through",
       "rank": 4030,
       "irregular": true,
-      "prateritum": "durchstach",
-      "perfekt": "durchstochen",
+      "prateritum": "stach durch",
+      "perfekt": "durchgestochen",
       "withSein": false
     },
     {
@@ -28915,7 +29027,8 @@
       "word": "einnicken",
       "english": "nod/nod off",
       "rank": 4037,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "einschläfern",
@@ -28984,7 +29097,8 @@
       "word": "entwischen",
       "english": "escape/slip away",
       "rank": 4048,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entzücken",
@@ -29020,7 +29134,8 @@
       "word": "erkalten",
       "english": "cool down",
       "rank": 4054,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erschallen",
@@ -29029,7 +29144,7 @@
       "irregular": true,
       "prateritum": "erscholl",
       "perfekt": "erschollen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "erstaunen",
@@ -29103,7 +29218,7 @@
     },
     {
       "word": "flöten",
-      "english": "whistle",
+      "english": "play the flute; (of birds) warble/whistle",
       "rank": 4067,
       "irregular": false
     },
@@ -29132,7 +29247,8 @@
       "english": "gallop",
       "rank": 4071,
       "irregular": false,
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "withSein": true
     },
     {
       "word": "gegenüberliegen",
@@ -29171,7 +29287,10 @@
       "word": "glimmen",
       "english": "glow/smolder",
       "rank": 4077,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "glomm",
+      "perfekt": "geglommen",
+      "withSein": false
     },
     {
       "word": "grämen",
@@ -29216,7 +29335,8 @@
       "word": "hereinspazieren",
       "english": "breeze in",
       "rank": 4084,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "herumschleppen",
@@ -29370,7 +29490,8 @@
       "word": "kraxeln",
       "english": "clamber",
       "rank": 4109,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "kritzeln",
@@ -29429,7 +29550,7 @@
       "irregular": true,
       "prateritum": "brach los",
       "perfekt": "losgebrochen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "loten",
@@ -29458,7 +29579,7 @@
     },
     {
       "word": "marmorieren",
-      "english": "marbelise/marble/marbleise",
+      "english": "marble/give a marbled finish",
       "rank": 4123,
       "irregular": false
     },
@@ -29536,7 +29657,7 @@
     },
     {
       "word": "objektivieren",
-      "english": "objektivise",
+      "english": "make objective/objectivise",
       "rank": 4136,
       "irregular": false
     },
@@ -29722,7 +29843,8 @@
       "word": "schlittern",
       "english": "slide",
       "rank": 4166,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "schnaufen",
@@ -29775,7 +29897,7 @@
     },
     {
       "word": "seufzen",
-      "english": "groan/sigh",
+      "english": "sigh",
       "rank": 4175,
       "irregular": false,
       "cefrLevel": "C1"
@@ -29815,7 +29937,7 @@
       "irregular": true,
       "prateritum": "blieb stecken",
       "perfekt": "steckengeblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "sticken",
@@ -29833,7 +29955,8 @@
       "word": "stolzieren",
       "english": "strut",
       "rank": 4183,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "stummschalten",
@@ -29849,7 +29972,7 @@
     },
     {
       "word": "sündigen",
-      "english": "indulge/sin",
+      "english": "sin; (fig.) indulge",
       "rank": 4186,
       "irregular": false
     },
@@ -29881,7 +30004,8 @@
       "word": "torkeln",
       "english": "reel/stagger",
       "rank": 4191,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "transponieren",
@@ -29891,7 +30015,7 @@
     },
     {
       "word": "tunneln",
-      "english": "nutmeg",
+      "english": "tunnel/dig a tunnel; (football) nutmeg",
       "rank": 4193,
       "irregular": false
     },
@@ -29915,7 +30039,7 @@
     },
     {
       "word": "umblättern",
-      "english": "flip/page",
+      "english": "turn the page",
       "rank": 4197,
       "irregular": false
     },
@@ -29923,7 +30047,8 @@
       "word": "umherreisen",
       "english": "travel around",
       "rank": 4198,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "umprogrammieren",
@@ -29990,7 +30115,7 @@
     },
     {
       "word": "verklären",
-      "english": "brighten up/glorify/liven up",
+      "english": "transfigure/idealise/romanticise",
       "rank": 4209,
       "irregular": false
     },
@@ -29998,7 +30123,8 @@
       "word": "verlanden",
       "english": "silt up",
       "rank": 4210,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verleimen",
@@ -30022,13 +30148,15 @@
       "word": "versiegen",
       "english": "run dry",
       "rank": 4214,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verwehen",
       "english": "blow away",
       "rank": 4215,
-      "irregular": false
+      "irregular": false,
+      "withSein": false
     },
     {
       "word": "verwirken",
@@ -30059,7 +30187,7 @@
     },
     {
       "word": "walken",
-      "english": "knead/full (textiles)",
+      "english": "power-walk / do Nordic walking",
       "rank": 4220,
       "irregular": false
     },
@@ -30080,7 +30208,7 @@
     },
     {
       "word": "weismachen",
-      "english": "make believe/persuade",
+      "english": "jdm etw weismachen = fool/kid someone into believing sth",
       "rank": 4223,
       "irregular": false,
       "cefrLevel": "C1"
@@ -30136,7 +30264,7 @@
     },
     {
       "word": "zerschießen",
-      "english": "brick/hose/shoot",
+      "english": "shoot to pieces/riddle with bullets",
       "rank": 4231,
       "irregular": true,
       "prateritum": "zerschoss",
@@ -30207,7 +30335,7 @@
     },
     {
       "word": "abatmen",
-      "english": "exhale",
+      "english": "eliminate by breathing/breathe off (technical)",
       "rank": 4240,
       "irregular": false
     },
@@ -30230,7 +30358,8 @@
       "word": "abblättern",
       "english": "flake off/peel/peel off",
       "rank": 4243,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abblenden",
@@ -30242,7 +30371,8 @@
       "word": "abbröckeln",
       "english": "crumble away/ease off",
       "rank": 4245,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abdreschen",
@@ -30282,7 +30412,7 @@
     },
     {
       "word": "abisolieren",
-      "english": "skin/strip",
+      "english": "strip (a wire/cable)",
       "rank": 4251,
       "irregular": false
     },
@@ -30290,7 +30420,8 @@
       "word": "abkacken",
       "english": "crash/die/pass out",
       "rank": 4252,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "abklappern",
@@ -30318,7 +30449,7 @@
     },
     {
       "word": "abrasieren",
-      "english": "raze/shave off",
+      "english": "shave off (raze)",
       "rank": 4257,
       "irregular": false
     },
@@ -30360,7 +30491,7 @@
     },
     {
       "word": "adjustieren",
-      "english": "adjust/issue",
+      "english": "adjust; (AT) kit out/equip",
       "rank": 4264,
       "irregular": false
     },
@@ -30428,7 +30559,7 @@
       "irregular": true,
       "prateritum": "schlich an",
       "perfekt": "angeschlichen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "anschwärzen",
@@ -30500,7 +30631,8 @@
       "word": "aufplatzen",
       "english": "burst",
       "rank": 4286,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufprägen",
@@ -30512,7 +30644,8 @@
       "word": "aufprallen",
       "english": "crash into/collide with/bounce off",
       "rank": 4288,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aufschwimmen",
@@ -30521,7 +30654,7 @@
       "irregular": true,
       "prateritum": "schwamm auf",
       "perfekt": "aufgeschwommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "aufstöhnen",
@@ -30542,11 +30675,11 @@
       "irregular": true,
       "prateritum": "traf auf",
       "perfekt": "aufgetroffen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "aufzehren",
-      "english": "burn oneself/eat up/exhaust",
+      "english": "consume/use up/deplete",
       "rank": 4293,
       "irregular": false
     },
@@ -30560,7 +30693,8 @@
       "word": "ausflippen",
       "english": "flip out/freak out",
       "rank": 4295,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "ausfransen",
@@ -30595,7 +30729,7 @@
     },
     {
       "word": "auspeitschen",
-      "english": "flagellate/flay/flog",
+      "english": "flog/whip",
       "rank": 4301,
       "irregular": false
     },
@@ -30608,7 +30742,7 @@
     },
     {
       "word": "ausspeichern",
-      "english": "save/export from storage",
+      "english": "read out/retrieve from storage; page out",
       "rank": 4303,
       "irregular": false
     },
@@ -30693,7 +30827,7 @@
       "irregular": true,
       "prateritum": "barst",
       "perfekt": "geborsten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "bescheißen",
@@ -30748,13 +30882,13 @@
     },
     {
       "word": "crawlen",
-      "english": "crawl",
+      "english": "swim (the) front crawl",
       "rank": 4323,
       "irregular": false
     },
     {
       "word": "darben",
-      "english": "pinch/starve/suffer want",
+      "english": "go without/live in want",
       "rank": 4324,
       "irregular": false
     },
@@ -30774,7 +30908,7 @@
       "irregular": true,
       "prateritum": "zog davon",
       "perfekt": "davongezogen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "dedizieren",
@@ -30840,7 +30974,8 @@
       "word": "durchknallen",
       "english": "snap/go berserk",
       "rank": 4337,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "egalisieren",
@@ -30856,7 +30991,7 @@
     },
     {
       "word": "einflößen",
-      "english": "infuse/instill",
+      "english": "administer (a liquid) to sb; inspire (fear/respect) in sb",
       "rank": 4340,
       "irregular": false
     },
@@ -30876,7 +31011,8 @@
       "word": "einprasseln",
       "english": "pelt down/come pouring in",
       "rank": 4343,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "einsagen",
@@ -30919,7 +31055,7 @@
     },
     {
       "word": "entgelten",
-      "english": "reward",
+      "english": "repay/compensate/pay for",
       "rank": 4350,
       "irregular": true,
       "prateritum": "entgalt",
@@ -30934,7 +31070,7 @@
     },
     {
       "word": "entrinden",
-      "english": "decorticate",
+      "english": "strip the bark from/bark (a tree)",
       "rank": 4352,
       "irregular": false
     },
@@ -30945,7 +31081,7 @@
       "irregular": true,
       "prateritum": "entrann",
       "perfekt": "entronnen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "entschlafen",
@@ -30954,7 +31090,7 @@
       "irregular": true,
       "prateritum": "entschlief",
       "perfekt": "entschlafen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "entsprießen",
@@ -30975,7 +31111,8 @@
       "word": "erblassen",
       "english": "turn pale",
       "rank": 4357,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erküren",
@@ -31005,17 +31142,19 @@
       "word": "erodieren",
       "english": "erode",
       "rank": 4361,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erschaudern",
       "english": "shudder",
       "rank": 4362,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erschnüffeln",
-      "english": "sniff",
+      "english": "sniff out/ferret out",
       "rank": 4363,
       "irregular": false
     },
@@ -31069,7 +31208,7 @@
     },
     {
       "word": "fertigmachen",
-      "english": "beat up/blame oneself/bring somebody down",
+      "english": "finish/get ready (sich fertigmachen); also colloq. beat up/wear out",
       "rank": 4372,
       "irregular": false
     },
@@ -31081,13 +31220,13 @@
     },
     {
       "word": "firmen",
-      "english": "confirm",
+      "english": "confirm (administer the sacrament of confirmation)",
       "rank": 4374,
       "irregular": false
     },
     {
       "word": "flanken",
-      "english": "cross",
+      "english": "cross (football); flank",
       "rank": 4375,
       "irregular": false
     },
@@ -31135,7 +31274,7 @@
     },
     {
       "word": "geifern",
-      "english": "dribble/revile/slaver",
+      "english": "foam at the mouth; rant/rail against",
       "rank": 4382,
       "irregular": false
     },
@@ -31189,7 +31328,7 @@
     },
     {
       "word": "herausschmecken",
-      "english": "taste",
+      "english": "taste/detect (a flavour) in sth",
       "rank": 4391,
       "irregular": false
     },
@@ -31242,7 +31381,7 @@
       "irregular": true,
       "prateritum": "brach hervor",
       "perfekt": "hervorgebrochen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "heuern",
@@ -31293,7 +31432,8 @@
       "word": "humpeln",
       "english": "hobble",
       "rank": 4405,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hypnotisieren",
@@ -31346,7 +31486,7 @@
     },
     {
       "word": "ironisieren",
-      "english": "ironise",
+      "english": "treat ironically/satirise",
       "rank": 4414,
       "irregular": false,
       "cefrLevel": "C1"
@@ -31426,7 +31566,7 @@
     },
     {
       "word": "kriseln",
-      "english": "(there is a crisis) loom(ing)/be in a crisis/come to a head",
+      "english": "es kriselt = there is trouble brewing",
       "rank": 4427,
       "irregular": false
     },
@@ -31468,7 +31608,7 @@
     },
     {
       "word": "lasieren",
-      "english": "varnish",
+      "english": "glaze/apply a wash to",
       "rank": 4433,
       "irregular": false
     },
@@ -31497,7 +31637,7 @@
       "irregular": true,
       "prateritum": "flog los",
       "perfekt": "losgeflogen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "lupfen",
@@ -31613,7 +31753,8 @@
       "word": "niederknien",
       "english": "kneel down",
       "rank": 4454,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "notlanden",
@@ -31693,7 +31834,8 @@
       "word": "plumpsen",
       "english": "flop/plump",
       "rank": 4467,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "pochieren",
@@ -31728,7 +31870,7 @@
     },
     {
       "word": "puzzeln",
-      "english": "puzzle",
+      "english": "do a jigsaw (puzzle)",
       "rank": 4473,
       "irregular": false
     },
@@ -31748,7 +31890,8 @@
       "word": "rausrutschen",
       "english": "slip out",
       "rank": 4476,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "reinnehmen",
@@ -31761,7 +31904,7 @@
     },
     {
       "word": "rekurrieren",
-      "english": "recur/refer back/appeal",
+      "english": "refer back to (auf etw rekurrieren)",
       "rank": 4478,
       "irregular": false
     },
@@ -31769,7 +31912,8 @@
       "word": "robben",
       "english": "crawl/creep",
       "rank": 4479,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "röntgen",
@@ -31847,7 +31991,7 @@
     },
     {
       "word": "schillern",
-      "english": "glisten/iridesce/shimmer",
+      "english": "shimmer/be iridescent",
       "rank": 4491,
       "irregular": false,
       "cefrLevel": "C1"
@@ -31877,11 +32021,12 @@
       "word": "schlurfen",
       "english": "shuffle",
       "rank": 4495,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "schmähen",
-      "english": "abuse/berate/blaspheme",
+      "english": "revile/disparage/abuse",
       "rank": 4496,
       "irregular": false
     },
@@ -31899,7 +32044,7 @@
     },
     {
       "word": "schraffieren",
-      "english": "hatch",
+      "english": "hatch/shade (in a drawing)",
       "rank": 4499,
       "irregular": false
     },
@@ -31954,7 +32099,8 @@
       "word": "stelzen",
       "english": "stalk/strut",
       "rank": 4507,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "strangulieren",
@@ -32039,13 +32185,15 @@
       "word": "trampen",
       "english": "hitchhike",
       "rank": 4521,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "trotten",
       "english": "plod/trot/trudge",
       "rank": 4522,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "überbleiben",
@@ -32054,7 +32202,7 @@
       "irregular": true,
       "prateritum": "blieb über",
       "perfekt": "übergeblieben",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "überblenden",
@@ -32113,7 +32261,7 @@
     },
     {
       "word": "umentscheiden",
-      "english": "change one's mind",
+      "english": "sich umentscheiden — change one's mind",
       "rank": 4532,
       "irregular": true,
       "prateritum": "entschied um",
@@ -32130,11 +32278,12 @@
       "word": "umherirren",
       "english": "stray",
       "rank": 4534,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "umladen",
-      "english": "reload",
+      "english": "transfer/tranship (load onto another vehicle)",
       "rank": 4535,
       "irregular": true,
       "prateritum": "lud um",
@@ -32206,13 +32355,15 @@
       "word": "verdursten",
       "english": "be dying of thirst/die from thirst/die of thirst",
       "rank": 4546,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verebben",
       "english": "ebb away",
       "rank": 4547,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verfeuern",
@@ -32246,7 +32397,7 @@
     },
     {
       "word": "verleumden",
-      "english": "asperse/backbite/calumniate",
+      "english": "slander/defame/libel",
       "rank": 4553,
       "irregular": false
     },
@@ -32300,7 +32451,7 @@
     },
     {
       "word": "verschwören",
-      "english": "conspire/plot",
+      "english": "sich verschwören — conspire/plot",
       "rank": 4561,
       "irregular": true,
       "prateritum": "verschwor",
@@ -32341,7 +32492,8 @@
       "word": "versteinern",
       "english": "be petrified/turn into stone",
       "rank": 4567,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "vertelefonieren",
@@ -32353,7 +32505,8 @@
       "word": "verunfallen",
       "english": "have an accident",
       "rank": 4569,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "verwelken",
@@ -32377,7 +32530,7 @@
     },
     {
       "word": "vorausahnen",
-      "english": "adumbrate/anticipate",
+      "english": "foresee/have a premonition of",
       "rank": 4573,
       "irregular": false
     },
@@ -32386,7 +32539,7 @@
       "english": "pre-bake",
       "rank": 4574,
       "irregular": true,
-      "prateritum": "buk vor",
+      "prateritum": "backte vor",
       "perfekt": "vorgebacken",
       "withSein": false
     },
@@ -32421,7 +32574,8 @@
       "word": "watscheln",
       "english": "waddle",
       "rank": 4579,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "wegbleiben",
@@ -32430,7 +32584,7 @@
       "irregular": true,
       "prateritum": "blieb weg",
       "perfekt": "weggeblieben",
-      "withSein": false,
+      "withSein": true,
       "cefrLevel": "B2"
     },
     {
@@ -32470,7 +32624,7 @@
       "irregular": true,
       "prateritum": "erstand wieder auf",
       "perfekt": "wiederauferstanden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "wiederwollen",
@@ -32486,7 +32640,7 @@
     },
     {
       "word": "zähnen",
-      "english": "teethe; tooth/serrate",
+      "english": "serrate/perforate (stamps); cut teeth into",
       "rank": 4589,
       "irregular": false
     },
@@ -32512,7 +32666,8 @@
       "word": "zerplatzen",
       "english": "blow up/burst/explode",
       "rank": 4593,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zerreden",
@@ -32637,7 +32792,8 @@
       "word": "zusammenzucken",
       "english": "cringe/flinch/jump",
       "rank": 4611,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "zuschließen",
@@ -32662,7 +32818,7 @@
     },
     {
       "word": "abblasen",
-      "english": "blow away/blow the end/call off",
+      "english": "call off/cancel; blow off (dust)",
       "rank": 4615,
       "irregular": true,
       "prateritum": "blies ab",
@@ -32689,7 +32845,7 @@
     },
     {
       "word": "abkratzen",
-      "english": "kick the bucket/scrape",
+      "english": "scrape off (haben); colloq. kick the bucket (sein)",
       "rank": 4619,
       "irregular": false
     },
@@ -32719,13 +32875,13 @@
     },
     {
       "word": "abqualifizieren",
-      "english": "dismiss",
+      "english": "dismiss as worthless/write off/disparage",
       "rank": 4624,
       "irregular": false
     },
     {
       "word": "abreagieren",
-      "english": "abreact/let off steam/work off",
+      "english": "work off/let off steam (sich abreagieren)",
       "rank": 4625,
       "irregular": false
     },
@@ -32743,7 +32899,7 @@
     },
     {
       "word": "abschmieren",
-      "english": "grease/lubricate; crash; bribe",
+      "english": "grease; crash (plane/software); copy/crib",
       "rank": 4628,
       "irregular": false
     },
@@ -32891,7 +33047,7 @@
     },
     {
       "word": "approbieren",
-      "english": "licence/qualify",
+      "english": "license (to practise medicine)",
       "rank": 4652,
       "irregular": false
     },
@@ -32906,7 +33062,7 @@
       "english": "evaporate/vapour-deposit",
       "rank": 4654,
       "irregular": false,
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "aufdröseln",
@@ -32934,7 +33090,7 @@
     },
     {
       "word": "aufknöpfen",
-      "english": "button on/button to/unbutton",
+      "english": "unbutton/undo",
       "rank": 4659,
       "irregular": false
     },
@@ -32985,7 +33141,7 @@
       "english": "spray on",
       "rank": 4667,
       "irregular": false,
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "ausbooten",
@@ -33013,7 +33169,7 @@
       "irregular": true,
       "prateritum": "brach auseinander",
       "perfekt": "auseinandergebrochen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "auseinanderbreiten",
@@ -33101,7 +33257,7 @@
     },
     {
       "word": "ausposaunen",
-      "english": "blazon abroad",
+      "english": "broadcast/blab/tell the whole world",
       "rank": 4685,
       "irregular": false
     },
@@ -33148,7 +33304,8 @@
       "word": "ausschlüpfen",
       "english": "hatch",
       "rank": 4692,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "aussöhnen",
@@ -33164,7 +33321,7 @@
     },
     {
       "word": "ausweiden",
-      "english": "disembowel",
+      "english": "gut/dress (game, fish)",
       "rank": 4695,
       "irregular": false
     },
@@ -33176,7 +33333,7 @@
     },
     {
       "word": "auszischen",
-      "english": "hiss",
+      "english": "hiss off (the stage)/boo off",
       "rank": 4697,
       "irregular": false
     },
@@ -33236,7 +33393,7 @@
     },
     {
       "word": "bemuttern",
-      "english": "chaperon/cluck/mother",
+      "english": "mother/fuss over",
       "rank": 4707,
       "irregular": false
     },
@@ -33248,7 +33405,7 @@
     },
     {
       "word": "berühmen",
-      "english": "boast/cite/invoke",
+      "english": "sich berühmen (+ Gen.) — boast of, lay claim to (dated)",
       "rank": 4709,
       "irregular": false
     },
@@ -33287,7 +33444,7 @@
     },
     {
       "word": "beweinen",
-      "english": "bewail/beweep/mourn",
+      "english": "mourn/weep for",
       "rank": 4715,
       "irregular": false
     },
@@ -33314,7 +33471,7 @@
     },
     {
       "word": "blechen",
-      "english": "cough up/fork up",
+      "english": "cough up/fork out",
       "rank": 4719,
       "irregular": false
     },
@@ -33394,7 +33551,8 @@
       "word": "crashen",
       "english": "crash",
       "rank": 4732,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "dahinraffen",
@@ -33409,13 +33567,14 @@
       "irregular": true,
       "prateritum": "schwand dahin",
       "perfekt": "dahingeschwunden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "davonbrausen",
       "english": "speed off",
       "rank": 4735,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "davonrennen",
@@ -33581,8 +33740,8 @@
       "english": "meseems/methinks/seem",
       "rank": 4761,
       "irregular": true,
-      "prateritum": "deuchte",
-      "perfekt": "gedeucht",
+      "prateritum": "dünkte",
+      "perfekt": "gedünkt",
       "withSein": false
     },
     {
@@ -33656,7 +33815,7 @@
     },
     {
       "word": "einkriegen",
-      "english": "calm down",
+      "english": "sich (nicht) einkriegen — (not) be able to calm down",
       "rank": 4772,
       "irregular": false
     },
@@ -33680,7 +33839,7 @@
     },
     {
       "word": "einschiffen",
-      "english": "embark",
+      "english": "sich einschiffen — embark",
       "rank": 4776,
       "irregular": false
     },
@@ -33691,7 +33850,7 @@
       "irregular": true,
       "prateritum": "schwamm ein",
       "perfekt": "eingeschwommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "einseifen",
@@ -33703,7 +33862,8 @@
       "word": "einsickern",
       "english": "seep",
       "rank": 4779,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "eislaufen",
@@ -33712,7 +33872,7 @@
       "irregular": true,
       "prateritum": "lief eis",
       "perfekt": "eisgelaufen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "emporschießen",
@@ -33721,11 +33881,11 @@
       "irregular": true,
       "prateritum": "schoss empor",
       "perfekt": "emporgeschossen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "entblöden",
-      "english": "to have the effrontery to do something",
+      "english": "sich nicht entblöden — not be ashamed to, have the nerve to",
       "rank": 4782,
       "irregular": false
     },
@@ -33740,7 +33900,7 @@
       "english": "detangle/disentangle/split",
       "rank": 4784,
       "irregular": true,
-      "prateritum": "entflechtete",
+      "prateritum": "entflocht",
       "perfekt": "entflochten",
       "withSein": false
     },
@@ -33752,7 +33912,7 @@
     },
     {
       "word": "entgegenwerfen",
-      "english": "fling oneself into something/throw at/throw oneself in somebodys way",
+      "english": "throw back/retort",
       "rank": 4786,
       "irregular": true,
       "prateritum": "warf entgegen",
@@ -33781,11 +33941,12 @@
       "word": "entschweben",
       "english": "float away",
       "rank": 4790,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "entsetzen",
-      "english": "horrify/horror-stricken/relieve",
+      "english": "horrify/appal; (military) relieve",
       "rank": 4791,
       "irregular": false
     },
@@ -33811,11 +33972,12 @@
       "word": "erbeben",
       "english": "quake/shudder",
       "rank": 4795,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erbittern",
-      "english": "enrage",
+      "english": "embitter/enrage",
       "rank": 4796,
       "irregular": false
     },
@@ -33847,7 +34009,8 @@
       "word": "erzittern",
       "english": "quake/tremble",
       "rank": 4801,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "erzürnen",
@@ -33912,7 +34075,7 @@
     },
     {
       "word": "festnageln",
-      "english": "nail down/pill down",
+      "english": "nail down/pin down",
       "rank": 4812,
       "irregular": false
     },
@@ -33998,7 +34161,8 @@
       "word": "forteilen",
       "english": "hasten away/hurry away/hurry off",
       "rank": 4826,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "fortspülen",
@@ -34008,7 +34172,7 @@
     },
     {
       "word": "fortwollen",
-      "english": "go/go away/leave",
+      "english": "want to get away/want to leave",
       "rank": 4828,
       "irregular": false
     },
@@ -34080,7 +34244,7 @@
     },
     {
       "word": "gerieren",
-      "english": "act/behave",
+      "english": "sich gerieren (als) — pose as, behave (formal)",
       "rank": 4840,
       "irregular": false
     },
@@ -34128,7 +34292,7 @@
     },
     {
       "word": "gratinieren",
-      "english": "gratinate/gratiné",
+      "english": "brown/cook au gratin",
       "rank": 4848,
       "irregular": false
     },
@@ -34223,7 +34387,8 @@
       "word": "herbeieilen",
       "english": "rush over",
       "rank": 4862,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hereinbitten",
@@ -34247,7 +34412,8 @@
       "word": "hereinschneien",
       "english": "drop in unexpectedly; snow in",
       "rank": 4865,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "heroisieren",
@@ -34317,19 +34483,21 @@
       "irregular": true,
       "prateritum": "rannte hinein",
       "perfekt": "hineingerannt",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "hineinströmen",
       "english": "pour in",
       "rank": 4876,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hinunterklettern",
       "english": "climb down",
       "rank": 4877,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hinunterschlucken",
@@ -34341,7 +34509,8 @@
       "word": "hinunterstürzen",
       "english": "plunge/fall down; gulp down",
       "rank": 4879,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hochstemmen",
@@ -34359,7 +34528,8 @@
       "word": "holpern",
       "english": "bump/jolt/lurch",
       "rank": 4882,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "hopfen",
@@ -34396,7 +34566,8 @@
       "word": "immigrieren",
       "english": "immigrate",
       "rank": 4888,
-      "irregular": false
+      "irregular": false,
+      "withSein": true
     },
     {
       "word": "innovieren",
@@ -34406,7 +34577,7 @@
     },
     {
       "word": "intrigieren",
-      "english": "cabal/intrigue",
+      "english": "scheme/plot (against sb)",
       "rank": 4890,
       "irregular": false
     },
@@ -34429,11 +34600,11 @@
       "irregular": true,
       "prateritum": "wurde irre",
       "perfekt": "irregeworden",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "islamisieren",
-      "english": "IslamicIse/Islamise",
+      "english": "Islamise",
       "rank": 4894,
       "irregular": false
     },
@@ -34484,7 +34655,7 @@
     },
     {
       "word": "kegeln",
-      "english": "bowl",
+      "english": "play skittles/play ninepins",
       "rank": 4902,
       "irregular": false
     },
@@ -34496,13 +34667,13 @@
     },
     {
       "word": "kerben",
-      "english": "carve",
+      "english": "notch/score",
       "rank": 4904,
       "irregular": false
     },
     {
       "word": "kiebitzen",
-      "english": "kibitz",
+      "english": "look on/watch over someone's shoulder (esp. at cards)",
       "rank": 4905,
       "irregular": false
     },
@@ -34568,7 +34739,7 @@
     },
     {
       "word": "knutschen",
-      "english": "canoodle/mack/smooch",
+      "english": "snog/canoodle",
       "rank": 4915,
       "irregular": false
     },
@@ -34598,7 +34769,7 @@
     },
     {
       "word": "kondolieren",
-      "english": "condole",
+      "english": "offer one's condolences",
       "rank": 4920,
       "irregular": false
     },
@@ -34677,7 +34848,7 @@
     },
     {
       "word": "lärmen",
-      "english": "be noisy/brawl/fuss",
+      "english": "make a noise/be noisy",
       "rank": 4933,
       "irregular": false
     },
@@ -34695,7 +34866,7 @@
     },
     {
       "word": "leerräumen",
-      "english": "clean out",
+      "english": "clear out/empty",
       "rank": 4936,
       "irregular": false
     },
@@ -34722,7 +34893,7 @@
     },
     {
       "word": "lohen",
-      "english": "tan (leather)",
+      "english": "blaze/flare up",
       "rank": 4940,
       "irregular": false
     },
@@ -34764,13 +34935,13 @@
     },
     {
       "word": "mampfen",
-      "english": "munch/nosh/scrump",
+      "english": "munch/scoff",
       "rank": 4947,
       "irregular": false
     },
     {
       "word": "marodieren",
-      "english": "maraud/rage",
+      "english": "maraud/pillage",
       "rank": 4948,
       "irregular": false
     },
@@ -34788,7 +34959,7 @@
     },
     {
       "word": "mauscheln",
-      "english": "Yiddish/cheat/fiddle",
+      "english": "wheel and deal/do shady deals/fiddle",
       "rank": 4951,
       "irregular": false
     },
@@ -34800,7 +34971,7 @@
     },
     {
       "word": "mikroskopieren",
-      "english": "examine/microscope",
+      "english": "examine under a microscope",
       "rank": 4953,
       "irregular": false
     },
@@ -34809,7 +34980,7 @@
       "english": "mineralise",
       "rank": 4954,
       "irregular": false,
-      "withSein": true
+      "withSein": false
     },
     {
       "word": "mitsegeln",
@@ -34910,7 +35081,7 @@
     },
     {
       "word": "nörgeln",
-      "english": "beef/carp/cavil",
+      "english": "grumble/moan/nag",
       "rank": 4969,
       "irregular": false
     },
@@ -34994,7 +35165,7 @@
     },
     {
       "word": "pfuschen",
-      "english": "botch/scamp",
+      "english": "botch/do a shoddy job",
       "rank": 4983,
       "irregular": false
     },
@@ -35048,13 +35219,13 @@
     },
     {
       "word": "plauschen",
-      "english": "chat/chat away/exaggerate",
+      "english": "chat/have a natter",
       "rank": 4992,
       "irregular": false
     },
     {
       "word": "polemisieren",
-      "english": "polemise",
+      "english": "engage in polemics/attack polemically",
       "rank": 4993,
       "irregular": false
     },
@@ -35102,7 +35273,7 @@
     },
     {
       "word": "prozessieren",
-      "english": "litigate/process/sue",
+      "english": "litigate/go to law/sue",
       "rank": 5001,
       "irregular": false
     },
@@ -35382,7 +35553,7 @@
     },
     {
       "word": "schwelen",
-      "english": "smother/smoulder",
+      "english": "smoulder",
       "rank": 5045,
       "irregular": false
     },
@@ -35390,7 +35561,10 @@
       "word": "schwellen",
       "english": "swell",
       "rank": 5046,
-      "irregular": false
+      "irregular": true,
+      "prateritum": "schwoll",
+      "perfekt": "geschwollen",
+      "withSein": true
     },
     {
       "word": "scouten",
@@ -35418,7 +35592,7 @@
     },
     {
       "word": "spoilern",
-      "english": "spoil",
+      "english": "give away spoilers/spoil (a plot)",
       "rank": 5051,
       "irregular": false
     },
@@ -35442,7 +35616,7 @@
     },
     {
       "word": "stammeln",
-      "english": "maffle/stammer",
+      "english": "stammer/stutter out",
       "rank": 5055,
       "irregular": false
     },
@@ -35552,7 +35726,7 @@
     },
     {
       "word": "trollen",
-      "english": "troll",
+      "english": "(sich trollen) push off/clear off",
       "rank": 5073,
       "irregular": false
     },
@@ -35920,7 +36094,7 @@
     },
     {
       "word": "vermöbeln",
-      "english": "batter sb./beat up sb.",
+      "english": "beat sb. up/thrash",
       "rank": 5130,
       "irregular": false
     },
@@ -36025,7 +36199,7 @@
     },
     {
       "word": "verselbstständigen",
-      "english": "hive off",
+      "english": "(sich verselbstständigen) become independent / take on a life of its own",
       "rank": 5146,
       "irregular": false
     },
@@ -36118,7 +36292,7 @@
       "irregular": true,
       "prateritum": "flog voraus",
       "perfekt": "vorausgeflogen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "vorbeischwimmen",
@@ -36127,7 +36301,7 @@
       "irregular": true,
       "prateritum": "schwamm vorbei",
       "perfekt": "vorbeigeschwommen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "vorglühen",
@@ -36268,7 +36442,7 @@
       "irregular": true,
       "prateritum": "zerbarst",
       "perfekt": "zerborsten",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zerfetzen",
@@ -36338,7 +36512,7 @@
       "irregular": true,
       "prateritum": "zerrann",
       "perfekt": "zerronnen",
-      "withSein": false
+      "withSein": true
     },
     {
       "word": "zerstieben",
@@ -36454,7 +36628,7 @@
     },
     {
       "word": "zutreten",
-      "english": "step (towards)",
+      "english": "kick (out at sb.)",
       "rank": 5209,
       "irregular": true,
       "prateritum": "trat zu",
@@ -36503,7 +36677,7 @@
     },
     {
       "word": "gebärden",
-      "english": "use sign language/gesticulate",
+      "english": "(sich gebärden) behave/carry on (in a certain way)",
       "rank": 5215,
       "irregular": false,
       "source": "vielfalt-c1.1",
@@ -36511,7 +36685,7 @@
     },
     {
       "word": "rüberkommen",
-      "english": "come across (as)",
+      "english": "come over (here)",
       "rank": 5216,
       "irregular": true,
       "source": "vielfalt-c1.1",
@@ -36568,7 +36742,7 @@
     },
     {
       "word": "anfallen",
-      "english": "arise/accrue (of work, costs)",
+      "english": "attack/set upon sb",
       "rank": 5222,
       "irregular": true,
       "source": "vielfalt-c1.1",
@@ -36706,7 +36880,7 @@
     },
     {
       "word": "unterlaufen",
-      "english": "slip past/occur (jdm. unterläuft ein Fehler)",
+      "english": "undermine/circumvent (Vorschriften unterlaufen)",
       "rank": 5237,
       "irregular": true,
       "source": "vielfalt-c1.1",
@@ -36776,9 +36950,12 @@
       "word": "beschreiten",
       "english": "take/follow (a path)",
       "rank": 5244,
-      "irregular": false,
+      "irregular": true,
       "source": "vielfalt-b2.2",
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "prateritum": "beschritt",
+      "perfekt": "beschritten",
+      "withSein": false
     },
     {
       "word": "aufpoppen",
@@ -37127,7 +37304,7 @@
       "source": "vielfalt-c1.2",
       "prateritum": "schoss hinaus",
       "perfekt": "hinausgeschossen",
-      "withSein": false,
+      "withSein": true,
       "cefrLevel": "C1"
     },
     {
@@ -37382,22 +37559,6 @@
       "cefrLevel": "B1"
     },
     {
-      "word": "missverstanden",
-      "english": "misunderstand",
-      "rank": 5310,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "eingegangen",
-      "english": "be received/go in/arrive",
-      "rank": 5311,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "fernliegen",
       "english": "be remote/be far-fetched",
       "rank": 5312,
@@ -37409,76 +37570,15 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "gekommen",
-      "english": "come",
-      "rank": 5313,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "inmitten",
-      "english": "amid/in the middle of",
-      "rank": 5314,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "weitergegangen",
-      "english": "continue/carry on",
-      "rank": 5315,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "zerrissen",
-      "english": "tear apart",
-      "rank": 5316,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "zusammengebunden",
-      "english": "tie together",
-      "rank": 5317,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "wahrgenommen",
-      "english": "perceive/notice",
-      "rank": 5318,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "herumschlagen",
       "english": "struggle around",
       "rank": 5319,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "schwergefallen",
-      "english": "be difficult for someone",
-      "rank": 5320,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "umgegangen",
-      "english": "handle/deal with/go around",
-      "rank": 5321,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "prateritum": "schlug herum",
+      "perfekt": "herumgeschlagen",
+      "withSein": false
     },
     {
       "word": "draufhauen",
@@ -37513,14 +37613,6 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "dahergekommen",
-      "english": "come along",
-      "rank": 5326,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "phrasieren",
       "english": "phrase",
       "rank": 5327,
@@ -37545,33 +37637,9 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "ausgegangen",
-      "english": "go out",
-      "rank": 5330,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "besagen",
       "english": "say",
       "rank": 5331,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "eingestanden",
-      "english": "admit",
-      "rank": 5332,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "nahegelegen",
-      "english": "be nearby/be close",
-      "rank": 5333,
       "irregular": false,
       "source": "aspekte-b2",
       "cefrLevel": "B2"
@@ -37591,30 +37659,6 @@
       "word": "vorleben",
       "english": "set an example",
       "rank": 5335,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "weitergegeben",
-      "english": "pass on",
-      "rank": 5336,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "dermaßen",
-      "english": "so/to such an extent",
-      "rank": 5337,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "ausgeschlafen",
-      "english": "sleep in/get enough sleep",
-      "rank": 5338,
       "irregular": false,
       "source": "aspekte-b2",
       "cefrLevel": "B2"
@@ -37652,30 +37696,6 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "dran",
-      "english": "on it/one's turn",
-      "rank": 5343,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "entgegengesehen",
-      "english": "look forward to",
-      "rank": 5344,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "ungeschlagen",
-      "english": "unbeaten",
-      "rank": 5345,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "runterfallen",
       "english": "fall off",
       "rank": 5346,
@@ -37703,25 +37723,9 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "vorausgegangen",
-      "english": "precede/go before",
-      "rank": 5349,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "aufdrücken",
       "english": "press on",
       "rank": 5350,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "aufgeschwungen",
-      "english": "swing open",
-      "rank": 5351,
       "irregular": false,
       "source": "aspekte-b2",
       "cefrLevel": "B2"
@@ -37732,8 +37736,8 @@
       "rank": 5352,
       "irregular": true,
       "source": "aspekte-b2",
-      "prateritum": "besah sich",
-      "perfekt": "sich",
+      "prateritum": "besah",
+      "perfekt": "besehen",
       "withSein": false,
       "cefrLevel": "B2"
     },
@@ -37763,41 +37767,12 @@
       "word": "aufliegen",
       "english": "lie on",
       "rank": 5355,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "aufgelegen",
-      "english": "lie on/rest on",
-      "rank": 5356,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "hinausgetragen",
-      "english": "carry out/carry outside",
-      "rank": 5357,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "vorangegangen",
-      "english": "precede/go ahead",
-      "rank": 5358,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "zurückgegangen",
-      "english": "decrease/go back",
-      "rank": 5359,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
+      "cefrLevel": "B2",
+      "prateritum": "lag auf",
+      "perfekt": "aufgelegen",
+      "withSein": false
     },
     {
       "word": "zuschlagen",
@@ -37811,22 +37786,6 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "verwiesen",
-      "english": "refer to/expel",
-      "rank": 5361,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "zurückgegeben",
-      "english": "return/give back",
-      "rank": 5362,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "ereignen",
       "english": "occur",
       "rank": 5363,
@@ -37835,57 +37794,9 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "auseinandergerissen",
-      "english": "tear apart",
-      "rank": 5364,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "ausreisen",
       "english": "depart",
       "rank": 5365,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "beigetragen",
-      "english": "contribute",
-      "rank": 5366,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "zusammengetragen",
-      "english": "compile/gather together",
-      "rank": 5367,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "rotschämen",
-      "english": "blush with shame",
-      "rank": 5368,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "abgeschrieben",
-      "english": "copy/write off",
-      "rank": 5369,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "geschmissen",
-      "english": "throw",
-      "rank": 5370,
       "irregular": false,
       "source": "aspekte-b2",
       "cefrLevel": "B2"
@@ -37937,30 +37848,6 @@
       "cefrLevel": "B2"
     },
     {
-      "word": "zugekommen",
-      "english": "come to/reach",
-      "rank": 5376,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "vorgesprochen",
-      "english": "audition/present oneself",
-      "rank": 5377,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
-      "word": "wiedergetroffen",
-      "english": "meet again",
-      "rank": 5378,
-      "irregular": false,
-      "source": "aspekte-b2",
-      "cefrLevel": "B2"
-    },
-    {
       "word": "zurufen",
       "english": "shout",
       "rank": 5379,
@@ -37969,14 +37856,6 @@
       "prateritum": "rief zu",
       "perfekt": "zugerufen",
       "withSein": false,
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "davongelaufen",
-      "english": "run away",
-      "rank": 5380,
-      "irregular": false,
-      "source": "aspekte-c1",
       "cefrLevel": "C1"
     },
     {
@@ -37996,25 +37875,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "vorgekommen",
-      "english": "occur/come up",
-      "rank": 5383,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "praktizieren",
       "english": "practise",
       "rank": 5384,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "umschrieben",
-      "english": "paraphrase/describe indirectly",
-      "rank": 5385,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38028,57 +37891,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "unterschieden",
-      "english": "distinguish/differentiate",
-      "rank": 5387,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "weggebrochen",
-      "english": "break away",
-      "rank": 5388,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "umgangen",
-      "english": "bypass/avoid",
-      "rank": 5389,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "eingehalten",
-      "english": "comply with/observe",
-      "rank": 5390,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "gesellen",
       "english": "join",
       "rank": 5391,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "angesprochen",
-      "english": "address/mention",
-      "rank": 5392,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "eingesehen",
-      "english": "realise/inspect",
-      "rank": 5393,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38100,22 +37915,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "nachgekommen",
-      "english": "comply with/follow up on",
-      "rank": 5396,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgegossen",
-      "english": "infuse/pour on",
-      "rank": 5397,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "aufkochen",
       "english": "boil up/bring to the boil",
       "rank": 5398,
@@ -38132,57 +37931,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "nachgelassen",
-      "english": "ease/let up",
-      "rank": 5400,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "zurückgerufen",
-      "english": "call back/recall",
-      "rank": 5401,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "ausgefallen",
-      "english": "fail/be cancelled",
-      "rank": 5402,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "angegriffen",
-      "english": "attack",
-      "rank": 5403,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "wehren",
       "english": "defend",
       "rank": 5404,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgegriffen",
-      "english": "take up/pick up",
-      "rank": 5405,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "dagestanden",
-      "english": "stand there",
-      "rank": 5406,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38196,84 +37947,15 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "angeklungen",
-      "english": "sound/resonate",
-      "rank": 5408,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "erschienen",
-      "english": "appear/be published",
-      "rank": 5409,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "fortan",
-      "english": "henceforth/from then on",
-      "rank": 5410,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "hervorgehoben",
-      "english": "emphasise/highlight",
-      "rank": 5411,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgestiegen",
-      "english": "ascend/rise",
-      "rank": 5412,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgewachsen",
-      "english": "grow up",
-      "rank": 5413,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgenommen",
-      "english": "record/take up/admit",
-      "rank": 5414,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "herausfließen",
       "english": "flow out",
       "rank": 5415,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "mitgerissen",
-      "english": "carry away/sweep along",
-      "rank": 5416,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "konservatorien",
-      "english": "conservatories",
-      "rank": 5417,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "floss heraus",
+      "perfekt": "herausgeflossen",
+      "withSein": true
     },
     {
       "word": "weiterentwickeln",
@@ -38284,97 +37966,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "abgeraten",
-      "english": "advise against",
-      "rank": 5419,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "geboten",
-      "english": "offer/provide",
-      "rank": 5420,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "gewonnen",
-      "english": "win/gain",
-      "rank": 5421,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "verargumentieren",
-      "english": "argue",
-      "rank": 5422,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "vollzogen",
-      "english": "complete/carry out",
-      "rank": 5423,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "gegangen",
-      "english": "go",
-      "rank": 5424,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "offengestanden",
-      "english": "frankly",
-      "rank": 5425,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "überwogen",
-      "english": "outweigh/predominate",
-      "rank": 5426,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "vorgezogen",
-      "english": "bring forward/prefer",
-      "rank": 5427,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "ausbügeln",
       "english": "iron out",
       "rank": 5428,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "gewachsen",
-      "english": "grow/be equal to",
-      "rank": 5429,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "dageboten",
-      "english": "offer/present",
-      "rank": 5430,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38396,33 +37990,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "vorgegeben",
-      "english": "specify/set/give",
-      "rank": 5433,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "beinhalten",
       "english": "include",
       "rank": 5434,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "durchgefallen",
-      "english": "fail",
-      "rank": 5435,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "eingenommen",
-      "english": "take in/take up",
-      "rank": 5436,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38444,41 +38014,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "erklommen",
-      "english": "climb",
-      "rank": 5439,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "angestiegen",
-      "english": "increase/rise",
-      "rank": 5440,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "ausgestanden",
-      "english": "get through/be over",
-      "rank": 5441,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "anfordern",
       "english": "request/demand",
       "rank": 5442,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "enhalten",
-      "english": "contain/include",
-      "rank": 5443,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38492,14 +38030,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "erwiesen",
-      "english": "prove/turn out to be",
-      "rank": 5445,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "hinauswollen",
       "english": "want to go out",
       "rank": 5446,
@@ -38508,25 +38038,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "losgeworden",
-      "english": "get rid of",
-      "rank": 5447,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "mäkeln",
       "english": "criticise",
       "rank": 5448,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "zugestanden",
-      "english": "concede/grant",
-      "rank": 5449,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38548,14 +38062,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "gutgeheißen",
-      "english": "approve",
-      "rank": 5452,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "vorfinanzieren",
       "english": "pre-finance",
       "rank": 5453,
@@ -38564,33 +38070,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "zweckgebunden",
-      "english": "earmarked/restricted to a purpose",
-      "rank": 5454,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "herangegangen",
-      "english": "approach",
-      "rank": 5455,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "zusammenkriegen",
       "english": "get together",
       "rank": 5456,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "verblieben",
-      "english": "remain",
-      "rank": 5457,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38612,22 +38094,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "vorangetrieben",
-      "english": "drive forward/advance",
-      "rank": 5460,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "firmeneigen",
-      "english": "company-owned/in-house",
-      "rank": 5461,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "verzweigen",
       "english": "branch out",
       "rank": 5462,
@@ -38636,57 +38102,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "abgenommen",
-      "english": "remove/decrease/take off",
-      "rank": 5463,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgegeben",
-      "english": "abandon/give up/assign",
-      "rank": 5464,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgehoben",
-      "english": "cancel/lift/pick up/save",
-      "rank": 5465,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "aufraffen",
       "english": "pull oneself together",
       "rank": 5466,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgeschoben",
-      "english": "postpone",
-      "rank": 5467,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "geschwunden",
-      "english": "dwindle",
-      "rank": 5468,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "gestoßen",
-      "english": "bump/push/come across",
-      "rank": 5469,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38724,54 +38142,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "hinaufgetragen",
-      "english": "carry up",
-      "rank": 5474,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "nachgewiesen",
-      "english": "prove/demonstrate",
-      "rank": 5475,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgeworfen",
-      "english": "raise/throw up",
-      "rank": 5476,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "eingewiesen",
-      "english": "brief/instruct/admit",
-      "rank": 5477,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "entsprochen",
-      "english": "correspond to/meet",
-      "rank": 5478,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "heran",
-      "english": "close/near/approaching",
-      "rank": 5479,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "hineinschaufeln",
       "english": "shovel in",
       "rank": 5480,
@@ -38780,41 +38150,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "vorbeigefahren",
-      "english": "drive past/pass by",
-      "rank": 5481,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "zulasten",
-      "english": "at the expense of",
-      "rank": 5482,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgezogen",
-      "english": "raise/wind up/open",
-      "rank": 5483,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "wärmen",
       "english": "warm",
       "rank": 5484,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "zugebissen",
-      "english": "bite",
-      "rank": 5485,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38831,14 +38169,6 @@
       "word": "abknabbern",
       "english": "nibble off",
       "rank": 5487,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "ansonsten",
-      "english": "otherwise",
-      "rank": 5488,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38868,14 +38198,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "geschworen",
-      "english": "swear",
-      "rank": 5492,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "vorliegen",
       "english": "available",
       "rank": 5493,
@@ -38883,23 +38205,7 @@
       "source": "aspekte-c1",
       "prateritum": "lag vor",
       "perfekt": "vorgelegen",
-      "withSein": true,
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "festgehalten",
-      "english": "hold onto/record",
-      "rank": 5494,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "mitgegeben",
-      "english": "give to take along/pass on",
-      "rank": 5495,
-      "irregular": false,
-      "source": "aspekte-c1",
+      "withSein": false,
       "cefrLevel": "C1"
     },
     {
@@ -38922,14 +38228,6 @@
       "word": "bekritzeln",
       "english": "scribble on",
       "rank": 5498,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "bezwungen",
-      "english": "conquer/overcome",
-      "rank": 5499,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -38959,14 +38257,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "zugewiesen",
-      "english": "assign",
-      "rank": 5503,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "kostümieren",
       "english": "dress up/costume",
       "rank": 5504,
@@ -38975,49 +38265,20 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "mitgehalten",
-      "english": "keep up",
-      "rank": 5505,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgedunsen",
-      "english": "bloated",
-      "rank": 5506,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "aufspringen",
       "english": "jump up/spring open",
       "rank": 5507,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "sprang auf",
+      "perfekt": "aufgesprungen",
+      "withSein": true
     },
     {
       "word": "erschauern",
       "english": "shiver",
       "rank": 5508,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "überallhin",
-      "english": "everywhere/to everywhere",
-      "rank": 5509,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "verschlungen",
-      "english": "devour/entwine",
-      "rank": 5510,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -39031,33 +38292,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "ausgebrochen",
-      "english": "break out",
-      "rank": 5512,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "mitgegessen",
-      "english": "eat along/also eat",
-      "rank": 5513,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "mitlächeln",
       "english": "smile along",
       "rank": 5514,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "nachgegangen",
-      "english": "follow up/pursue",
-      "rank": 5515,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -39098,25 +38335,23 @@
       "word": "durchbeißen",
       "english": "bite through",
       "rank": 5520,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "biss durch",
+      "perfekt": "durchgebissen",
+      "withSein": false
     },
     {
       "word": "freinehmen",
       "english": "take time off",
       "rank": 5521,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "durchgehalten",
-      "english": "hold out/persevere",
-      "rank": 5522,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "nahm frei",
+      "perfekt": "freigenommen",
+      "withSein": false
     },
     {
       "word": "individualisieren",
@@ -39151,57 +38386,20 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "weggelassen",
-      "english": "omit/leave out",
-      "rank": 5527,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "ausgerissen",
-      "english": "tear out/run away",
-      "rank": 5528,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "hinauswachsen",
       "english": "outgrow",
       "rank": 5529,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "ausgehalten",
-      "english": "endure/withstand",
-      "rank": 5530,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "wuchs hinaus",
+      "perfekt": "hinausgewachsen",
+      "withSein": true
     },
     {
       "word": "ausfeilen",
       "english": "file smooth/refine",
       "rank": 5531,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "ausgelesen",
-      "english": "read out/select",
-      "rank": 5532,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "dagesessen",
-      "english": "sit there",
-      "rank": 5533,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -39218,17 +38416,12 @@
       "word": "verhelfen",
       "english": "help",
       "rank": 5535,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "verholfen",
-      "english": "help someone achieve/obtain",
-      "rank": 5536,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "verhalf",
+      "perfekt": "verholfen",
+      "withSein": false
     },
     {
       "word": "wegsperren",
@@ -39250,20 +38443,15 @@
       "cefrLevel": "A2"
     },
     {
-      "word": "belesen",
-      "english": "well-read",
-      "rank": 5539,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "näherkommen",
       "english": "get closer",
       "rank": 5540,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "kam näher",
+      "perfekt": "nähergekommen",
+      "withSein": true
     },
     {
       "word": "überbewerten",
@@ -39277,17 +38465,12 @@
       "word": "einsenden",
       "english": "send in",
       "rank": 5542,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "eingetroffen",
-      "english": "arrive",
-      "rank": 5543,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "sandte ein",
+      "perfekt": "eingesandt",
+      "withSein": false
     },
     {
       "word": "flottmachen",
@@ -39306,20 +38489,15 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "weitergefahren",
-      "english": "drive on/continue driving",
-      "rank": 5546,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "zurückdenken",
       "english": "think back",
       "rank": 5547,
-      "irregular": false,
+      "irregular": true,
       "source": "aspekte-c1",
-      "cefrLevel": "C1"
+      "cefrLevel": "C1",
+      "prateritum": "dachte zurück",
+      "perfekt": "zurückgedacht",
+      "withSein": false
     },
     {
       "word": "rätseln",
@@ -39394,25 +38572,9 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "erschlossen",
-      "english": "open up/develop; infer",
-      "rank": 5557,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "zusammenfegen",
       "english": "sweep together",
       "rank": 5558,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "aufgesprungen",
-      "english": "jump up/spring open",
-      "rank": 5559,
       "irregular": false,
       "source": "aspekte-c1",
       "cefrLevel": "C1"
@@ -39442,22 +38604,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "wasserfarben",
-      "english": "watercolours",
-      "rank": 5563,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "weggegangen",
-      "english": "leave/go away",
-      "rank": 5564,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "zunicken",
       "english": "nod",
       "rank": 5565,
@@ -39474,30 +38620,6 @@
       "cefrLevel": "C1"
     },
     {
-      "word": "überhandgenommen",
-      "english": "get out of hand/become rampant",
-      "rank": 5567,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "weggezogen",
-      "english": "move away",
-      "rank": 5568,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
-      "word": "anheimgefallen",
-      "english": "fall prey to",
-      "rank": 5569,
-      "irregular": false,
-      "source": "aspekte-c1",
-      "cefrLevel": "C1"
-    },
-    {
       "word": "hineinleben",
       "english": "settle into/get used to",
       "rank": 5570,
@@ -39509,25 +38631,34 @@
       "word": "mitsprechen",
       "english": "speak along; have a say",
       "rank": 5571,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "sprach mit",
+      "perfekt": "mitgesprochen",
+      "withSein": false
     },
     {
       "word": "mitlesen",
       "english": "to read along",
       "rank": 5572,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "las mit",
+      "perfekt": "mitgelesen",
+      "withSein": false
     },
     {
       "word": "nachsprechen",
       "english": "to repeat",
       "rank": 5573,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "sprach nach",
+      "perfekt": "nachgesprochen",
+      "withSein": false
     },
     {
       "word": "freihaben",
@@ -39549,17 +38680,12 @@
       "word": "drankommen",
       "english": "to have one's turn",
       "rank": 5576,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
-    },
-    {
-      "word": "möchten",
-      "english": "to want",
-      "rank": 5577,
-      "irregular": false,
-      "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "kam dran",
+      "perfekt": "drangekommen",
+      "withSein": true
     },
     {
       "word": "einsammeln",
@@ -39573,9 +38699,12 @@
       "word": "rausgehen",
       "english": "to go outside",
       "rank": 5579,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "ging raus",
+      "perfekt": "rausgegangen",
+      "withSein": true
     },
     {
       "word": "weiterhören",
@@ -39597,17 +38726,23 @@
       "word": "zurückfahren",
       "english": "to drive back",
       "rank": 5582,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "fuhr zurück",
+      "perfekt": "zurückgefahren",
+      "withSein": true
     },
     {
       "word": "zurückfinden",
       "english": "find one's way back",
       "rank": 5583,
-      "irregular": false,
+      "irregular": true,
       "source": "netzwerk-a1",
-      "cefrLevel": "A1"
+      "cefrLevel": "A1",
+      "prateritum": "fand zurück",
+      "perfekt": "zurückgefunden",
+      "withSein": false
     }
   ]
 }

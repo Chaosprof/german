@@ -302,7 +302,10 @@ async function loadWordData(onProgress) {
     if (verbResp.ok) {
       const verbData = await verbResp.json();
       VERBS = (verbData.verbs || []).map(({ word, english, rank }) => [word, english, rank]);
-      IRREGULAR_VERBS = (verbData.verbs || []).filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt, withSein }) => [word, english, rank, prateritum, (withSein ? "ist " : "hat ") + perfekt]);
+      IRREGULAR_VERBS = (verbData.verbs || []).filter(v => v.irregular).map(({ word, english, rank, prateritum, perfekt, withSein }) => {
+        const auxiliary = withSein === true ? "ist " : withSein === false ? "hat " : "";
+        return [word, english, rank, prateritum, auxiliary + perfekt];
+      });
     }
   } catch(e) { console.warn("Could not load verbs:", e); }
   // Load built-in decks
@@ -1467,6 +1470,7 @@ function familyClosenessBonus(candidateFamily, correctFamily) {
 }
 
 function getPluralOptions(word, article, correctPlural) {
+  correctPlural = typeof correctPlural === "string" && correctPlural.trim() ? correctPlural : "—";
   const candidates = buildPluralCandidates(word, article);
   if (!candidates.some(candidate => candidate.form === correctPlural)) {
     candidates.push({ form: correctPlural, family: null, score: 1.5 });

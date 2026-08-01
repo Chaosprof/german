@@ -455,7 +455,7 @@ def generate_plural_help(noun_data):
     # -(e)n plural
     if plural.endswith('en') and not word.endswith('en'):
         if gender == 'f':
-            return f"-(e)n (die {plural}). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. When you know it's die, guess -(e)n for the plural and you'll usually be right."
+            return f"-(e)n (die {plural}). Rule: The most common feminine plural. Nearly all die-nouns that don't end in -e take -(e)n: Frau→Frauen, Tür→Türen, Uhr→Uhren, Zahl→Zahlen. Exceptions to the usual -e → -n pattern are mainly recent loanwords, which often take -s: die Homepage→Homepages, die Website→Websites, die Performance→Performances, die Challenge→Challenges, die Lounge→Lounges."
         elif gender == 'm':
             return f"-(e)n (die {plural}). Some masculine nouns take -(e)n plural, especially weak nouns (n-Deklination). E.g. Mensch→Menschen, Staat→Staaten, Typ→Typen."
         else:
