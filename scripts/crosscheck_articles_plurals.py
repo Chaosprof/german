@@ -1,7 +1,7 @@
 import json, os, glob
 
 app = {n['word']: n for n in json.load(open('data/nouns.json', encoding='utf-8'))['nouns']}
-src_list = json.load(open('German-Words/data/all.json', encoding='utf-8'))
+src_list = json.load(open('sources/German-Words/data/all.json', encoding='utf-8'))
 # upstream may have multiple genders per lemma; collect all
 from collections import defaultdict
 src_gender = defaultdict(set)

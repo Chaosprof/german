@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artikel Blitz — Berlin (Vertical Slice)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,0,700;9..144,0,800;9..144,1,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700;800&display=swap');
+  :root{
+    --paper:#f1ebe0; --ink:#1a1410; --ink-soft:#5b5043;
+    --sienna:#b06239; --gold:#f59e0b;
+    --der:#3b6fe0; --die:#e0457f; --das:#1ba86a;
+    --der-glow:rgba(64,128,255,.55); --die-glow:rgba(255,64,128,.55); --das-glow:rgba(64,255,140,.5);
+    --card:#fbf7ee; --line:rgba(74,52,34,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    font-family:'IBM Plex Sans',system-ui,sans-serif;overflow-x:hidden;min-height:100vh;
+    background:
+      radial-gradient(ellipse 80% 60% at 12% 0%, rgba(196,121,73,.10) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 92% 8%, rgba(150,120,80,.08) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 60% at 50% 110%, rgba(120,90,60,.09) 0%, transparent 55%),
+      linear-gradient(180deg,#f5efe3 0%,#f1ebdf 45%,#ece5d6 100%);
+  }
+  #app{max-width:760px;margin:0 auto;padding:0 16px 64px;position:relative;z-index:1}
+  h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  button:disabled{cursor:default}
+
+  /* ── Top bar ─────────────────────────────────────────── */
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:14px 4px 12px;background:linear-gradient(180deg,var(--paper) 70%,transparent);margin-bottom:4px}
+  .brand{font-family:'Fraunces';font-weight:700;font-size:20px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--sienna);box-shadow:0 0 0 3px rgba(176,98,57,.18)}
+  .spacer{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);
+    border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;box-shadow:0 1px 0 rgba(74,52,34,.04)}
+  .pill b{font-family:'IBM Plex Mono';font-weight:700}
+  .iconbtn{width:38px;height:38px;border-radius:11px;background:var(--card);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .12s,box-shadow .12s}
+  .iconbtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(74,52,34,.10)}
+
+  /* progress bars */
+  .bars{display:flex;gap:10px;flex-wrap:wrap;margin:2px 4px 14px}
+  .barbox{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 13px}
+  .barbox .lab{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;letter-spacing:.02em;
+    text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
+  .track{height:9px;border-radius:99px;background:rgba(74,52,34,.10);overflow:hidden}
+  .fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .fill.xp{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+  .fill.real{background:linear-gradient(90deg,var(--das),#34d399)}
+  .fill.komp{background:linear-gradient(90deg,var(--die),#f472b6)}
+
+  /* region chips */
+  .regions{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;-webkit-overflow-scrolling:touch}
+  .chip{flex:none;border-radius:11px;padding:7px 13px;font-size:13px;font-weight:600;border:1px solid var(--line);
+    background:var(--card);color:var(--ink-soft);display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .chip.active{background:linear-gradient(135deg,#fff3e0,#ffe9cf);border-color:rgba(176,98,57,.4);color:var(--ink);
+    box-shadow:0 2px 10px rgba(176,98,57,.16)}
+  .chip.locked{opacity:.55;filter:grayscale(.3)}
+
+  /* ── Map ─────────────────────────────────────────── */
+  .mapwrap{position:relative;margin:6px 0 8px;border-radius:22px;overflow:hidden;border:1px solid var(--line);
+    background:
+      radial-gradient(120% 90% at 80% 10%, rgba(59,111,224,.08), transparent 60%),
+      radial-gradient(120% 90% at 10% 90%, rgba(27,168,106,.08), transparent 55%),
+      linear-gradient(170deg,#fcf9f1,#f2ead9);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 10px 30px rgba(74,52,34,.08)}
+  .mapinner{position:relative;width:100%;height:560px}
+  .mapsvg{position:absolute;inset:0;width:100%;height:100%}
+  .skyline{position:absolute;left:0;right:0;bottom:0;height:120px;opacity:.5;pointer-events:none}
+  .maptitle{position:absolute;left:18px;top:14px;font-family:'Fraunces';font-weight:700;font-size:15px;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);display:flex;align-items:center;gap:7px}
+  .node{position:absolute;transform:translate(-50%,-50%);width:96px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .node .disc{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:33px;background:radial-gradient(circle at 32% 28%,#fff,#f6eddc);border:2px solid rgba(176,98,57,.32);
+    box-shadow:0 8px 20px rgba(74,52,34,.16),inset 0 2px 4px rgba(255,255,255,.8);transition:transform .15s}
+  .node.open .disc{cursor:pointer}
+  .node.open .disc:hover{transform:scale(1.07) translateY(-2px)}
+  .node.boss .disc{width:88px;height:88px;font-size:40px;border-color:rgba(224,69,127,.55);
+    background:radial-gradient(circle at 32% 28%,#fff,#ffe1ec);box-shadow:0 10px 26px rgba(224,69,127,.28)}
+  .node.current .disc{animation:bob 1.5s ease-in-out infinite}
+  .node.current .disc::after{content:'';position:absolute;width:90px;height:90px;border-radius:50%;
+    border:2px solid var(--sienna);opacity:.55;animation:ring 1.8s ease-out infinite}
+  .node.boss.current .disc::after{width:104px;height:104px;border-color:var(--die)}
+  .node.locked .disc{filter:grayscale(.7) brightness(.96);opacity:.6;border-color:var(--line)}
+  .node .name{font-size:12.5px;font-weight:700;text-align:center;line-height:1.15;
+    background:rgba(251,247,238,.92);padding:3px 9px;border-radius:8px;border:1px solid var(--line);box-shadow:0 2px 6px rgba(74,52,34,.07)}
+  .node .sub{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sienna)}
+  .node.boss .sub{color:var(--die)}
+  .stars{display:flex;gap:1px;height:18px;font-size:15px;filter:drop-shadow(0 1px 1px rgba(176,98,57,.35))}
+  .star-on{color:var(--gold)} .star-off{color:rgba(74,52,34,.18)}
+  .marker{position:absolute;transform:translate(-50%,-130%);font-size:30px;
+    filter:drop-shadow(0 4px 5px rgba(74,52,34,.3));animation:bob 1.5s ease-in-out infinite;pointer-events:none;z-index:5}
+
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes ring{0%{transform:scale(.8);opacity:.6}100%{transform:scale(1.25);opacity:0}}
+
+  /* ── NPC / quest ─────────────────────────────────────── */
+  .quest{display:flex;gap:14px;align-items:flex-start;margin:14px 0 4px;background:var(--card);
+    border:1px solid var(--line);border-radius:18px;padding:15px 16px;box-shadow:0 4px 16px rgba(74,52,34,.07)}
+  .npc{flex:none;width:62px;height:62px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:34px;background:radial-gradient(circle at 35% 30%,#fff6e6,#ffe2b8);border:1px solid rgba(176,98,57,.3)}
+  .quest .body{flex:1}
+  .speech{font-family:'Fraunces';font-style:italic;font-size:15.5px;line-height:1.4;margin-bottom:9px}
+  .quest h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sienna);margin-bottom:6px;font-weight:800}
+  .steps{display:flex;flex-direction:column;gap:5px}
+  .step{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500}
+  .step .box{width:20px;height:20px;border-radius:6px;border:2px solid rgba(74,52,34,.25);display:flex;
+    align-items:center;justify-content:center;font-size:13px;flex:none;transition:.2s}
+  .step.done .box{background:var(--das);border-color:var(--das);color:#fff}
+  .step.done span{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:rgba(74,52,34,.3)}
+  .claim{margin-top:11px;width:100%;background:linear-gradient(135deg,var(--gold),#fbbf24);color:#3a2400;
+    font-weight:800;font-size:14.5px;padding:11px;border-radius:12px;box-shadow:0 4px 14px rgba(245,158,11,.4);
+    animation:goldpulse 1.8s ease-in-out infinite}
+  @keyframes goldpulse{0%,100%{box-shadow:0 4px 14px rgba(245,158,11,.35)}50%{box-shadow:0 4px 22px rgba(245,158,11,.6)}}
+
+  .hint{text-align:center;color:var(--ink-soft);font-size:13px;margin:18px 0 4px}
+
+  /* ── Level screen ─────────────────────────────────────── */
+  .level{padding-top:4px}
+  .lvlhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .backbtn{font-size:14px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:6px;padding:6px 4px}
+  .dots{display:flex;gap:6px;flex:1;justify-content:center}
+  .qdot{width:9px;height:9px;border-radius:50%;background:rgba(74,52,34,.16);transition:.3s}
+  .qdot.cur{background:var(--sienna);transform:scale(1.35)}
+  .qdot.ok{background:var(--das)} .qdot.bad{background:var(--die)}
+
+  .combo{position:fixed;right:18px;top:120px;z-index:40;text-align:right;pointer-events:none;opacity:0;transition:opacity .25s}
+  .combo.show{opacity:1}
+  .combo .n{font-family:'Fraunces';font-weight:800;font-size:44px;line-height:.9;transition:.12s}
+  .combo .x{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+
+  .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:22px;
+    padding:30px 24px 26px;text-align:center;box-shadow:0 12px 34px rgba(74,52,34,.10);overflow:hidden}
+  .card .emoji{font-size:62px;line-height:1;margin-bottom:10px;display:inline-block}
+  .card .word{font-family:'Fraunces';font-weight:700;font-size:42px;letter-spacing:-.015em}
+  .card .word .blank{color:rgba(74,52,34,.28)}
+  .card .en{font-size:16px;color:var(--ink-soft);margin-top:4px;font-weight:500}
+  .card .ask{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sienna);margin-top:14px}
+  .speakbtn{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:10px;background:#fff;
+    border:1px solid var(--line);font-size:16px;display:flex;align-items:center;justify-content:center}
+  .speakbtn:hover{background:#fffaf0}
+
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:18px}
+  .opts.plural{grid-template-columns:repeat(2,1fr)}
+  .opt{padding:18px 10px;border-radius:16px;font-family:'Fraunces';font-weight:700;font-size:26px;color:#fff;
+    border:none;box-shadow:0 6px 0 rgba(0,0,0,.13),0 8px 18px rgba(74,52,34,.14);transition:transform .1s,box-shadow .1s;position:relative}
+  .opt:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.13)}
+  .opt .k{position:absolute;left:8px;top:6px;font-family:'IBM Plex Mono';font-size:11px;opacity:.7;font-weight:700}
+  .opt.der{background:linear-gradient(160deg,#5d86ec,var(--der))}
+  .opt.die{background:linear-gradient(160deg,#ec6298,var(--die))}
+  .opt.das{background:linear-gradient(160deg,#3cc489,var(--das))}
+  .opt.plu{background:linear-gradient(160deg,#8a7355,#6b5740);font-size:21px}
+  .opt.correct{outline:4px solid #15803d;animation:pop .35s}
+  .opt.wrong{outline:4px solid #b91c1c;opacity:.85}
+  .opt:disabled{cursor:default}
+
+  .feedback{min-height:52px;margin-top:14px;text-align:center;font-size:14px;line-height:1.45;
+    color:var(--ink-soft);opacity:0;transition:opacity .2s}
+  .feedback.show{opacity:1}
+  .feedback .rule{display:inline-block;background:#fff;border:1px solid var(--line);border-left:3px solid var(--sienna);
+    border-radius:8px;padding:7px 11px;margin-top:3px;text-align:left;max-width:520px}
+
+  /* boss */
+  .boss{display:flex;flex-direction:column;align-items:center;margin-bottom:8px}
+  .bossart{font-size:66px;line-height:1;filter:drop-shadow(0 8px 12px rgba(224,69,127,.3))}
+  .hpwrap{width:100%;max-width:420px;margin:10px auto 2px}
+  .hpwrap .lab{display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--die);margin-bottom:5px}
+  .hptrack{height:16px;border-radius:99px;background:rgba(224,69,127,.16);border:1px solid rgba(224,69,127,.3);overflow:hidden}
+  .hpfill{height:100%;background:linear-gradient(90deg,#e0457f,#ff7eb0);transition:width .4s cubic-bezier(.2,.8,.2,1)}
+  .hearts{font-size:20px;letter-spacing:3px;margin-top:8px}
+
+  /* ── Result ─────────────────────────────────────────── */
+  .result{text-align:center;padding:24px 16px}
+  .resultstars{font-size:58px;letter-spacing:6px;margin:6px 0 4px;height:70px}
+  .resultstars .s{display:inline-block;opacity:0;transform:scale(.3)}
+  .resultstars .s.in{animation:starpop .5s cubic-bezier(.2,1.4,.4,1) forwards}
+  @keyframes starpop{to{opacity:1;transform:scale(1)}}
+  .rausch{font-family:'Fraunces';font-weight:800;font-size:38px;letter-spacing:-.01em;
+    background:linear-gradient(90deg,#f59e0b,#e0457f,#3b6fe0,#1ba86a,#f59e0b);background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 2.2s linear infinite}
+  @keyframes shimmer{to{background-position:300% 0}}
+  .rsub{font-size:16px;color:var(--ink-soft);margin:8px 0 18px}
+  .reveal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0}
+  .kcard{width:104px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 8px;
+    text-align:center;box-shadow:0 4px 12px rgba(74,52,34,.08);animation:flipin .5s both}
+  @keyframes flipin{0%{transform:rotateY(90deg) scale(.8);opacity:0}100%{transform:rotateY(0) scale(1);opacity:1}}
+  .kcard .ke{font-size:30px}
+  .kcard .kw{font-family:'Fraunces';font-weight:700;font-size:16px;margin-top:3px}
+  .kcard .ka{font-size:12px;font-weight:800;margin-top:1px}
+  .kcard.der .ka{color:var(--der)} .kcard.die .ka{color:var(--die)} .kcard.das .ka{color:var(--das)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:16px;
+    padding:14px 26px;border-radius:14px;transition:transform .12s,box-shadow .12s}
+  .btn.primary{background:linear-gradient(135deg,var(--sienna),#c47949);color:#fff;box-shadow:0 6px 18px rgba(176,98,57,.34)}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(176,98,57,.42)}
+  .btn.ghost{background:var(--card);border:1px solid var(--line)}
+
+  /* ── Kompendium ─────────────────────────────────────── */
+  .komphead{display:flex;align-items:center;gap:12px;margin:6px 0 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .entry{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;position:relative;
+    box-shadow:0 3px 10px rgba(74,52,34,.06);transition:transform .14s,box-shadow .14s}
+  .entry:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(74,52,34,.12)}
+  .entry.locked{filter:grayscale(1);opacity:.5}
+  .entry.locked .e,.entry.locked .ex,.entry.locked .rl{filter:blur(4px)}
+  .entry.mastered{border-color:rgba(245,158,11,.5);box-shadow:0 0 0 1px rgba(245,158,11,.25),0 6px 16px rgba(245,158,11,.14)}
+  .entry .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .entry .e{font-size:32px}
+  .entry .badge{font-size:15px}
+  .entry .art{font-family:'Fraunces';font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .entry.der .art{color:var(--der)} .entry.die .art{color:var(--die)} .entry.das .art{color:var(--das)}
+  .entry .w{font-family:'Fraunces';font-weight:700;font-size:20px;margin-top:2px}
+  .entry .pl{font-size:12.5px;color:var(--ink-soft);font-family:'IBM Plex Mono'}
+  .entry .en{font-size:13.5px;margin-top:5px;font-weight:500}
+  .entry .rl{font-size:11.5px;color:var(--ink-soft);margin-top:7px;line-height:1.35;border-top:1px dashed var(--line);padding-top:7px}
+  .entry .ex{font-size:12px;font-style:italic;color:var(--ink-soft);margin-top:5px;line-height:1.35}
+
+  /* fx */
+  #fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:0}
+  .flash.good{background:radial-gradient(circle at center,rgba(27,168,106,.22),transparent 60%);animation:flash .4s}
+  .flash.bad{background:radial-gradient(circle at center,rgba(224,69,127,.22),transparent 60%);animation:flash .4s}
+  @keyframes flash{0%{opacity:1}100%{opacity:0}}
+  .shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+  .float{position:fixed;z-index:55;font-family:'Fraunces';font-weight:800;font-size:26px;pointer-events:none;
+    animation:floatup .9s ease-out forwards}
+  @keyframes floatup{0%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-60px)}}
+  .fade{animation:fade .35s both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @media (max-width:520px){
+    .mapinner{height:500px}.node{width:84px}.card .word{font-size:34px}.opt{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="app"></div>
+<script>
+/* ===================================================================
+   Artikel Blitz — Berlin vertical slice
+   Self-contained. No build step, no dependencies.
+   =================================================================== */
+
+/* ---------- Word data (Berlin-flavoured, British glosses) ---------- */
+const WORDS = [
+  {w:"Bär",a:"der",pl:"Bären",en:"bear",e:"🐻",rule:"Male animal names are masculine — and the bear is Berlin's heraldic animal.",ex:"Der Bär ist das Wappentier von Berlin.",exEn:"The bear is Berlin's heraldic animal."},
+  {w:"Tor",a:"das",pl:"Tore",en:"gate",e:"🏛️",rule:"Short neuter noun — no suffix rule; learn it in context (das Brandenburger Tor).",ex:"Das Brandenburger Tor steht im Herzen der Stadt.",exEn:"The Brandenburg Gate stands in the heart of the city."},
+  {w:"Turm",a:"der",pl:"Türme",en:"tower",e:"🗼",rule:"Many short masculine nouns; the plural takes an umlaut (Turm → Türme).",ex:"Der Fernsehturm ist 368 Meter hoch.",exEn:"The TV tower is 368 metres high."},
+  {w:"Mauer",a:"die",pl:"Mauern",en:"wall",e:"🧱",rule:"An -er noun that is not an agent noun — feminine (die Mauer).",ex:"Die Berliner Mauer fiel im Jahr 1989.",exEn:"The Berlin Wall fell in 1989."},
+  {w:"Museum",a:"das",pl:"Museen",en:"museum",e:"🏛️",rule:"Nouns ending in -um are neuter; the plural becomes -een (Museum → Museen).",ex:"Das Pergamonmuseum liegt auf der Museumsinsel.",exEn:"The Pergamon Museum sits on Museum Island."},
+  {w:"Schloss",a:"das",pl:"Schlösser",en:"palace",e:"🏰",rule:"Short neuter noun; plural adds umlaut + -er (Schloss → Schlösser).",ex:"Das Schloss Charlottenburg ist prächtig.",exEn:"Charlottenburg Palace is magnificent."},
+  {w:"Platz",a:"der",pl:"Plätze",en:"square",e:"📍",rule:"Many -tz nouns are masculine; the plural takes an umlaut.",ex:"Der Alexanderplatz ist immer voller Menschen.",exEn:"Alexanderplatz is always full of people."},
+  {w:"Brücke",a:"die",pl:"Brücken",en:"bridge",e:"🌉",rule:"Nouns ending in -e are very often feminine (die Brücke).",ex:"Die Oberbaumbrücke verbindet zwei Bezirke.",exEn:"The Oberbaum Bridge links two districts."},
+
+  {w:"Currywurst",a:"die",pl:"Currywürste",en:"currywurst",e:"🌭",rule:"die Wurst → every -wurst compound is feminine.",ex:"Die Currywurst wurde in Berlin erfunden.",exEn:"Currywurst was invented in Berlin."},
+  {w:"Döner",a:"der",pl:"Döner",en:"döner kebab",e:"🥙",rule:"An -er noun, masculine; the plural is unchanged (der Döner → die Döner).",ex:"Der Döner ist hier an jeder Ecke zu finden.",exEn:"You can find a döner kebab on every corner here."},
+  {w:"Kneipe",a:"die",pl:"Kneipen",en:"pub",e:"🍺",rule:"Ends in -e — feminine (die Kneipe).",ex:"Die Kneipe an der Ecke ist sehr gemütlich.",exEn:"The pub on the corner is very cosy."},
+  {w:"Club",a:"der",pl:"Clubs",en:"club",e:"🎧",rule:"A borrowed masculine noun; English-style -s plural.",ex:"Der Club öffnet erst um Mitternacht.",exEn:"The club only opens at midnight."},
+  {w:"Café",a:"das",pl:"Cafés",en:"café",e:"☕",rule:"Borrowed from French — neuter; -s plural (das Café).",ex:"Das Café am Kanal hat den besten Kuchen.",exEn:"The café by the canal has the best cake."},
+  {w:"Markt",a:"der",pl:"Märkte",en:"market",e:"🧺",rule:"Short masculine noun; the plural takes an umlaut (Markt → Märkte).",ex:"Der Markt am Maybachufer ist sehr bunt.",exEn:"The market by the Maybachufer is very colourful."},
+  {w:"Park",a:"der",pl:"Parks",en:"park",e:"🌳",rule:"Borrowed masculine noun; English-style -s plural.",ex:"Der Tiergarten ist ein riesiger Park.",exEn:"The Tiergarten is an enormous park."},
+  {w:"Kiez",a:"der",pl:"Kieze",en:"neighbourhood",e:"🏘️",rule:"Classic Berlin slang for one's local patch — masculine (der Kiez).",ex:"Jeder Berliner liebt seinen eigenen Kiez.",exEn:"Every Berliner loves their own neighbourhood."},
+
+  {w:"U-Bahn",a:"die",pl:"U-Bahnen",en:"underground",e:"🚇",rule:"die Bahn → every -bahn compound is feminine.",ex:"Die U-Bahn fährt durch die ganze Stadt.",exEn:"The underground runs through the whole city."},
+  {w:"Bahnhof",a:"der",pl:"Bahnhöfe",en:"station",e:"🚉",rule:"der Hof → every -hof compound is masculine.",ex:"Der Hauptbahnhof ist einer der größten Europas.",exEn:"The main station is one of the largest in Europe."},
+  {w:"Fahrrad",a:"das",pl:"Fahrräder",en:"bicycle",e:"🚲",rule:"das Rad → -rad compounds are neuter; plural adds umlaut + -er.",ex:"Das Fahrrad ist hier das schnellste Verkehrsmittel.",exEn:"The bicycle is the fastest way to get around here."},
+  {w:"Straße",a:"die",pl:"Straßen",en:"street",e:"🛣️",rule:"Ends in -e — feminine (die Straße).",ex:"Die Karl-Marx-Straße ist sehr lang.",exEn:"Karl-Marx-Straße is very long."},
+  {w:"Ampel",a:"die",pl:"Ampeln",en:"traffic light",e:"🚦",rule:"Ends in -el — feminine; home of the famous Ampelmännchen.",ex:"Die Ampel zeigt das berühmte Ampelmännchen.",exEn:"The traffic light shows the famous little traffic-light man."},
+  {w:"Insel",a:"die",pl:"Inseln",en:"island",e:"🏝️",rule:"Ends in -el — feminine (die Insel).",ex:"Die Museumsinsel liegt mitten in der Spree.",exEn:"Museum Island lies in the middle of the Spree."},
+  {w:"Fluss",a:"der",pl:"Flüsse",en:"river",e:"🏞️",rule:"Short -uss noun, masculine; plural adds umlaut + -e.",ex:"Die Spree ist der Fluss, der Berlin durchquert.",exEn:"The Spree is the river that runs through Berlin."},
+  {w:"Wohnung",a:"die",pl:"Wohnungen",en:"flat",e:"🏢",rule:"Nouns ending in -ung are always feminine (die Wohnung).",ex:"Eine Wohnung in Berlin zu finden ist nicht leicht.",exEn:"Finding a flat in Berlin is not easy."},
+];
+const BY = {};WORDS.forEach((x,i)=>BY[x.w]=i);
+
+/* ---------- Map nodes (the winding path) ---------- */
+const NODES = [
+  {id:"alex",name:"Alexanderplatz",sub:"Wahrzeichen",e:"🏙️",type:"article",pos:[24,86],
+    words:["Bär","Tor","Turm","Mauer","Museum","Schloss","Platz","Brücke"]},
+  {id:"spree",name:"Spree-Ufer",sub:"Stadtleben",e:"🍺",type:"article",pos:[71,64],
+    words:["Currywurst","Döner","Kneipe","Club","Café","Markt","Park","Kiez"]},
+  {id:"markt",name:"Hackescher Markt",sub:"Plural-Drill",e:"🧺",type:"plural",pos:[27,40],
+    words:["U-Bahn","Bahnhof","Fahrrad","Straße","Ampel","Insel","Fluss","Wohnung"]},
+  {id:"turm",name:"Fernsehturm",sub:"Boss",e:"🗼",type:"boss",pos:[72,15],
+    words:WORDS.map(x=>x.w)},
+];
+
+/* ---------- Persistent state ---------- */
+const SKEY="berlin-slice-v1";
+const DEFAULT={nodeStars:{},cleared:{},mastered:{},seen:{},quest:{s1:false,s2:false,s3:false,claimed:false},xp:0,muted:false};
+let S=load();
+function load(){try{return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem(SKEY)||"{}"))}catch(e){return Object.assign({},DEFAULT)}}
+function save(){localStorage.setItem(SKEY,JSON.stringify(S))}
+
+/* ---------- Sound engine (WebAudio, zero assets) ---------- */
+const Sound=(()=>{
+  let ctx=null;
+  const on=()=>!S.muted;
+  function ac(){if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx}
+  function tone(freq,t0,dur,type,gain){
+    const c=ac(),o=c.createOscillator(),g=c.createGain();
+    o.type=type||"sine";o.frequency.value=freq;
+    g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(gain||.18,t0+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    o.connect(g);g.connect(c.destination);o.start(t0);o.stop(t0+dur+.02);
+  }
+  const PENT=[523.25,587.33,659.25,783.99,880,1046.5,1174.66,1318.51,1567.98];
+  return {
+    unlock(){try{ac()}catch(e){}},
+    click(){if(!on())return;tone(420,ac().currentTime,.06,"triangle",.07)},
+    correct(combo){if(!on())return;const t=ac().currentTime;const f=PENT[Math.min(combo,PENT.length-1)];
+      tone(f,t,.18,"triangle",.16);tone(f*1.5,t+.04,.16,"sine",.07)},
+    wrong(){if(!on())return;const t=ac().currentTime;tone(196,t,.22,"sawtooth",.12);tone(155,t+.07,.26,"sawtooth",.10)},
+    star(i){if(!on())return;const t=ac().currentTime;tone([659,830,1046][i]||1046,t,.28,"triangle",.16)},
+    levelUp(){if(!on())return;const t=ac().currentTime;[523,659,783,1046].forEach((f,i)=>tone(f,t+i*.09,.3,"triangle",.15))},
+    fanfare(){if(!on())return;const t=ac().currentTime;[523,659,783,1046,1318].forEach((f,i)=>tone(f,t+i*.08,.5,"triangle",.16));
+      [392,523].forEach((f,i)=>tone(f,t+.4+i*.12,.6,"sine",.10))},
+    bossHit(){if(!on())return;const t=ac().currentTime;tone(880,t,.1,"square",.12);tone(440,t+.02,.14,"triangle",.10)},
+    bossDefeat(){if(!on())return;const t=ac().currentTime;[110,165,220,330,440].forEach((f,i)=>tone(f,t+i*.07,.5,"sawtooth",.14));
+      [659,880,1318].forEach((f,i)=>tone(f,t+.4+i*.1,.6,"triangle",.16))},
+    speak(w){if(!("speechSynthesis"in window))return;try{speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(w);u.lang="de-DE";u.rate=.92;
+      const v=speechSynthesis.getVoices().find(x=>/de(-|_)/i.test(x.lang));if(v)u.voice=v;
+      speechSynthesis.speak(u)}catch(e){}},
+  };
+})();
+if("speechSynthesis"in window)speechSynthesis.getVoices();
+
+/* ---------- Confetti ---------- */
+const Confetti=(()=>{
+  const cv=document.getElementById("fx"),cx=cv.getContext("2d");
+  let parts=[],raf=null;
+  function fit(){cv.width=innerWidth;cv.height=innerHeight}
+  addEventListener("resize",fit);fit();
+  const COL=["#f59e0b","#e0457f","#3b6fe0","#1ba86a","#b06239","#fbbf24"];
+  function burst(n,cx0,cy0,power){
+    cx0=cx0??innerWidth/2;cy0=cy0??innerHeight*0.35;power=power||1;
+    for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,sp=(2+Math.random()*7)*power;
+      parts.push({x:cx0,y:cy0,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3*power,
+        s:4+Math.random()*6,c:COL[i%COL.length],rot:Math.random()*6,vr:(Math.random()-.5)*.4,life:1})}
+    if(!raf)loop();
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    parts=parts.filter(p=>p.life>0);
+    parts.forEach(p=>{p.vy+=.16;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.rot+=p.vr;p.life-=.012;
+      cx.save();cx.globalAlpha=Math.max(0,p.life);cx.translate(p.x,p.y);cx.rotate(p.rot);
+      cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore()});
+    if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height)}
+  }
+  return {burst};
+})();
+
+/* ---------- tiny helpers ---------- */
+const app=document.getElementById("app");
+const $=s=>app.querySelector(s);
+function h(html){const t=document.createElement("template");t.innerHTML=html.trim();return t.content.firstChild}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function flashScreen(kind){const f=h(`<div class="flash ${kind}"></div>`);document.body.appendChild(f);setTimeout(()=>f.remove(),420)}
+function floatText(txt,x,y,col){const f=h(`<div class="float" style="left:${x}px;top:${y}px;color:${col}">${txt}</div>`);
+  document.body.appendChild(f);setTimeout(()=>f.remove(),900)}
+function addXP(n){S.xp+=n}
+function masteredCount(){return Object.keys(S.mastered).length}
+function totalStars(){return Object.values(S.nodeStars).reduce((a,b)=>a+b,0)}
+function nodeOpen(i){return i===0||!!S.cleared[NODES[i-1].id]}
+function currentNodeIdx(){for(let i=0;i<NODES.length;i++){if(nodeOpen(i)&&!S.cleared[NODES[i].id])return i}return NODES.length-1}
+
+/* plausible plural distractors built from the singular */
+function umlaut(s){if(/au/.test(s))return s.replace(/au/,"äu");return s.replace(/[aou]/,m=>({a:"ä",o:"ö",u:"ü"}[m]))}
+function pluralOptions(word){
+  const W=WORDS[BY[word]],base=W.w,correct=W.pl;
+  const cand=new Set([base+"e",base+"en",base+"n",base+"er",base+"s",umlaut(base)+"e",umlaut(base)+"er",base]);
+  cand.delete(correct);
+  const distract=shuffle([...cand]).slice(0,3);
+  return shuffle([correct,...distract]);
+}
+
+/* =====================================================================
+   SCREEN: MAP
+   ===================================================================== */
+function renderMap(){
+  const mc=masteredCount(),total=WORDS.length;
+  const lvl=Math.floor(S.xp/100)+1,xpPct=S.xp%100;
+  const kompPct=Math.round(mc/total*100);
+  const cur=currentNodeIdx();
+
+  const regionChips=`
+    <div class="regions">
+      <div class="chip active">🐻 Berlin <b style="font-family:'IBM Plex Mono';color:var(--sienna)">aktiv</b></div>
+      <div class="chip locked">🌲 Brandenburg 🔒</div>
+      <div class="chip locked">⚓ Hamburg 🔒</div>
+      <div class="chip locked">🍺 Bayern 🔒</div>
+      <div class="chip locked">🏭 NRW 🔒</div>
+    </div>`;
+
+  // build nodes
+  const nodesHtml=NODES.map((n,i)=>{
+    const open=nodeOpen(i),cleared=S.cleared[n.id],stars=S.nodeStars[n.id]||0;
+    const cls=["node",n.type==="boss"?"boss":"",open?(cleared?"open":"current open"):"locked"].join(" ");
+    const isCurrent=(i===cur);
+    const starRow=`<div class="stars">${[0,1,2].map(k=>`<span class="${k<stars?'star-on':'star-off'}">★</span>`).join("")}</div>`;
+    return `<div class="${cls} ${isCurrent&&!cleared?'current':''}" style="left:${n.pos[0]}%;top:${n.pos[1]}%" data-node="${open&&!0?'':''}${open?n.id:''}">
+        ${cleared||stars?starRow:`<div class="stars"></div>`}
+        <div class="disc" ${open?`data-open="${n.id}"`:""}>${open?n.e:"🔒"}</div>
+        <div class="name">${n.name}</div>
+        <div class="sub">${n.type==="boss"?"⚔ Boss-Tor":n.sub}</div>
+      </div>`;
+  }).join("");
+
+  // player marker on current node
+  const cn=NODES[cur];
+  const marker=`<div class="marker" style="left:${cn.pos[0]}%;top:${cn.pos[1]}%">🐻</div>`;
+
+  // quest
+  const q=S.quest;
+  const allDone=q.s1&&q.s2&&q.s3;
+  const questHtml=`
+    <div class="quest fade">
+      <div class="npc">🐻</div>
+      <div class="body">
+        <div class="speech">„Willkommen in meinem Kiez! Hilf mir, Berlin zu meistern — und ich zeig dir die Stadt."</div>
+        <h4>Bärli's Auftrag</h4>
+        <div class="steps">
+          <div class="step ${q.s1?'done':''}"><div class="box">${q.s1?'✓':'1'}</div><span>Erobere den Alexanderplatz</span></div>
+          <div class="step ${q.s2?'done':''}"><div class="box">${q.s2?'✓':'2'}</div><span>Bestehe den Plural-Markt</span></div>
+          <div class="step ${q.s3?'done':''}"><div class="box">${q.s3?'✓':'3'}</div><span>Bezwinge den Fernsehturm</span></div>
+        </div>
+        ${allDone&&!q.claimed?`<button class="claim" data-claim>🏅 Belohnung abholen: Goldener Bär</button>`:""}
+        ${q.claimed?`<div style="margin-top:10px;font-weight:700;color:var(--gold)">🏅 Goldener Bär freigeschaltet — Berlin-Meister!</div>`:""}
+      </div>
+    </div>`;
+
+  app.innerHTML=`
+    <div class="topbar fade">
+      <div class="brand"><span class="dot"></span>Artikel&nbsp;Blitz</div>
+      <div class="spacer"></div>
+      <div class="pill">⭐ <b>${totalStars()}</b>/${NODES.length*3}</div>
+      <div class="pill">🃏 <b>${mc}</b>/${total}</div>
+      <button class="iconbtn" data-komp title="Kompendium">📖</button>
+      <button class="iconbtn" data-mute title="Ton">${S.muted?"🔇":"🔊"}</button>
+    </div>
+
+    <div class="bars fade">
+      <div class="barbox">
+        <div class="lab"><span>Level ${lvl}</span><span>${xpPct}/100 XP</span></div>
+        <div class="track"><div class="fill xp" style="width:${xpPct}%"></div></div>
+      </div>
+      <div class="barbox">
+        <div class="lab"><span>Berlin gemeistert</span><span>${mc}/${total} Wörter</span></div>
+        <div class="track"><div class="fill real" style="width:${Math.round(mc/total*100)}%"></div></div>
+      </div>
+      <div class="barbox">
+        <div class="lab"><span>Kompendium</span><span>${kompPct}%</span></div>
+        <div class="track"><div class="fill komp" style="width:${kompPct}%"></div></div>
+      </div>
+    </div>
+
+    ${regionChips}
+
+    <div class="mapwrap fade">
+      <div class="maptitle">📍 Berlin · Bezirk-Karte</div>
+      <div class="mapinner">
+        <svg class="mapsvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M24,86 C44,82 60,74 71,64 C85,52 13,54 27,40 C41,28 58,24 72,15"
+            fill="none" stroke="rgba(176,98,57,.45)" stroke-width="1.1" stroke-dasharray="2.4 2.4" stroke-linecap="round"/>
+        </svg>
+        <svg class="skyline" viewBox="0 0 760 120" preserveAspectRatio="xMidYMax meet">
+          <g fill="rgba(74,52,34,.35)">
+            <rect x="40" y="70" width="34" height="50"/><rect x="90" y="50" width="26" height="70"/>
+            <rect x="130" y="80" width="40" height="40"/><polygon points="300,120 320,30 340,120"/>
+            <circle cx="320" cy="44" r="14"/><rect x="316" y="20" width="8" height="30"/>
+            <rect x="420" y="60" width="30" height="60"/><rect x="470" y="78" width="46" height="42"/>
+            <rect x="560" y="55" width="28" height="65"/><rect x="610" y="72" width="38" height="48"/>
+            <rect x="680" y="64" width="30" height="56"/>
+          </g>
+        </svg>
+        ${nodesHtml}
+        ${marker}
+      </div>
+    </div>
+
+    ${questHtml}
+    <div class="hint">Wähle eine Station auf der Karte ↑ &nbsp;·&nbsp; Tipp: Tasten 1 / 2 / 3 für der / die / das</div>
+  `;
+
+  app.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{Sound.unlock();Sound.click();startLevel(b.getAttribute("data-open"))});
+  $("[data-komp]").onclick=()=>{Sound.click();renderKompendium()};
+  $("[data-mute]").onclick=()=>{S.muted=!S.muted;save();if(!S.muted)Sound.unlock();renderMap()};
+  const claim=$("[data-claim]");
+  if(claim)claim.onclick=()=>{S.quest.claimed=true;addXP(100);save();Sound.fanfare();
+    Confetti.burst(160,innerWidth/2,innerHeight*0.4,1.4);renderMap()};
+}
+
+/* =====================================================================
+   SCREEN: LEVEL (article / plural / boss)
+   ===================================================================== */
+let G=null;
+function startLevel(nodeId){
+  const node=NODES.find(n=>n.id===nodeId);
+  const pool=shuffle(node.words);
+  const queue=node.type==="boss"?shuffle(node.words).slice(0,10):pool;
+  G={node,queue,i:0,combo:0,maxCombo:0,mistakes:0,correct:0,answered:false,
+     bossHP:10,bossMax:10,hearts:3,gained:[]};
+  renderLevelFrame();
+  nextQuestion();
+}
+
+function renderLevelFrame(){
+  const isBoss=G.node.type==="boss";
+  app.innerHTML=`
+    <div class="level fade">
+      <div class="lvlhead">
+        <button class="backbtn" data-back>← Karte</button>
+        <div class="dots" id="dots"></div>
+        <button class="iconbtn" data-mute style="width:34px;height:34px">${S.muted?"🔇":"🔊"}</button>
+      </div>
+      ${isBoss?`
+        <div class="boss" id="bossbox">
+          <div class="bossart" id="bossart">🗼</div>
+          <div class="hpwrap">
+            <div class="lab"><span>Fernsehturm</span><span id="hptext">${G.bossHP}/${G.bossMax}</span></div>
+            <div class="hptrack"><div class="hpfill" id="hpfill" style="width:100%"></div></div>
+            <div class="hearts" id="hearts">❤️❤️❤️</div>
+          </div>
+        </div>`:""}
+      <div id="qarea"></div>
+    </div>
+    <div class="combo" id="combo"><div class="n" id="combon">0</div><div class="x">Combo</div></div>
+  `;
+  $("[data-back]").onclick=()=>{Sound.click();renderMap()};
+  $("[data-mute]").onclick=()=>{S.muted=!S.muted;save();if(!S.muted)Sound.unlock();$("[data-mute]").textContent=S.muted?"🔇":"🔊"};
+  renderDots();
+}
+
+function renderDots(){
+  const dots=$("#dots");if(!dots)return;
+  if(G.node.type==="boss"){dots.innerHTML="";return}
+  dots.innerHTML=G.queue.map((_,k)=>{
+    let c="qdot";if(k<G.i)c+=" ok";if(k===G.i)c+=" cur";return `<span class="${c}"></span>`}).join("");
+}
+
+function tierColor(c){return c>=8?"#a21caf":c>=5?"#dc2626":c>=3?"#ea580c":c>=2?"#f59e0b":"var(--ink)"}
+
+function updateCombo(){
+  const box=$("#combo"),n=$("#combon");if(!box)return;
+  if(G.combo>=2){box.classList.add("show");n.textContent=G.combo;n.style.color=tierColor(G.combo);
+    n.style.animation="none";void n.offsetWidth;n.style.animation="pop .35s"}
+  else box.classList.remove("show");
+}
+
+function nextQuestion(){
+  renderDots();
+  const isBoss=G.node.type==="boss";
+  const done=isBoss?(G.bossHP<=0||G.hearts<=0):(G.i>=G.queue.length);
+  if(done){endLevel();return}
+  G.answered=false;
+  const word=G.queue[G.i],W=WORDS[BY[word]];
+  S.seen[word]=true;
+  const qarea=$("#qarea");
+
+  if(G.node.type==="plural"){
+    const opts=pluralOptions(word);
+    qarea.innerHTML=`
+      <div class="card fade">
+        <button class="speakbtn" data-speak>🔊</button>
+        <div class="emoji">${W.e}</div>
+        <div class="word"><span style="color:var(--${W.a})">${W.a}</span> ${W.w}</div>
+        <div class="en">${W.en}</div>
+        <div class="ask">Wie lautet der Plural?</div>
+        <div class="opts plural" id="opts">
+          ${opts.map((o,k)=>`<button class="opt plu" data-plu="${o}"><span class="k">${k+1}</span>${o}</button>`).join("")}
+        </div>
+        <div class="feedback" id="fb"></div>
+      </div>`;
+    qarea.querySelectorAll("[data-plu]").forEach(b=>b.onclick=()=>answer(b.getAttribute("data-plu")===W.pl,b,W,"plural"));
+  } else {
+    qarea.innerHTML=`
+      <div class="card fade">
+        <button class="speakbtn" data-speak>🔊</button>
+        <div class="emoji">${W.e}</div>
+        <div class="word"><span class="blank">___</span> ${W.w}</div>
+        <div class="en">${W.en}</div>
+        <div class="ask">Welcher Artikel?</div>
+        <div class="opts" id="opts">
+          <button class="opt der" data-art="der"><span class="k">1</span>der</button>
+          <button class="opt die" data-art="die"><span class="k">2</span>die</button>
+          <button class="opt das" data-art="das"><span class="k">3</span>das</button>
+        </div>
+        <div class="feedback" id="fb"></div>
+      </div>`;
+    qarea.querySelectorAll("[data-art]").forEach(b=>b.onclick=()=>answer(b.getAttribute("data-art")===W.a,b,W,"article"));
+  }
+  const sp=$("[data-speak]");if(sp)sp.onclick=()=>Sound.speak(W.w);
+}
+
+function answer(correct,btn,W,kind){
+  if(G.answered)return;G.answered=true;
+  const opts=$("#opts"),fb=$("#fb");
+  opts.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+  const r=btn.getBoundingClientRect();
+
+  if(correct){
+    btn.classList.add("correct");
+    G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);G.correct++;
+    if(!S.mastered[W.w]){S.mastered[W.w]=true;G.gained.push(W.w)}
+    addXP(10+Math.min(G.combo,10));
+    Sound.correct(G.combo);updateCombo();flashScreen("good");
+    floatText("+"+(10+Math.min(G.combo,10)),r.left+r.width/2,r.top,"#15803d");
+    if(G.combo>=3)Confetti.burst(10+G.combo*2,r.left+r.width/2,r.top,.7);
+    if(G.combo>0&&G.combo%5===0){Sound.levelUp();floatText("🔥 "+G.combo+"er Combo!",innerWidth/2,innerHeight*0.32,tierColor(G.combo))}
+    Sound.speak(W.w);
+
+    if(G.node.type==="boss"){
+      const dmg=G.combo>=3?2:1;G.bossHP=Math.max(0,G.bossHP-dmg);
+      bossUpdate(true);floatText("-"+dmg,innerWidth/2,innerHeight*0.22,"#e0457f");
+    }
+    setTimeout(()=>{const dot=document.querySelectorAll(".qdot")[G.i];if(dot){dot.classList.add("ok")}G.i++;nextQuestion()},560);
+  } else {
+    btn.classList.add("wrong");
+    G.combo=0;G.mistakes++;updateCombo();
+    Sound.wrong();flashScreen("bad");
+    const card=opts.closest(".card");card.classList.add("shake");setTimeout(()=>card.classList.remove("shake"),420);
+    // reveal correct
+    if(kind==="article")opts.querySelector(`[data-art="${W.a}"]`).classList.add("correct");
+    else opts.querySelector(`[data-plu="${W.pl}"]`)?.classList.add("correct");
+    fb.innerHTML=`<b style="color:var(--${W.a})">${W.a} ${W.w}</b> · ${W.pl}<br><span class="rule">💡 ${W.rule}</span>`;
+    fb.classList.add("show");
+    if(G.node.type==="boss"){G.hearts--;bossUpdate(false);}
+    setTimeout(()=>{G.i++;nextQuestion()},G.node.type==="boss"?1300:1700);
+  }
+  save();
+}
+
+function bossUpdate(hit){
+  const fill=$("#hpfill"),txt=$("#hptext"),hearts=$("#hearts"),art=$("#bossart");
+  if(fill)fill.style.width=(G.bossHP/G.bossMax*100)+"%";
+  if(txt)txt.textContent=G.bossHP+"/"+G.bossMax;
+  if(hearts)hearts.textContent="❤️".repeat(Math.max(0,G.hearts))+"🖤".repeat(Math.max(0,3-G.hearts));
+  if(art){if(hit){Sound.bossHit();art.style.animation="none";void art.offsetWidth;art.style.animation="shake .4s"}
+    else{art.style.transform="scale(1.12)";setTimeout(()=>art.style.transform="",200)}}
+}
+
+/* =====================================================================
+   SCREEN: RESULT
+   ===================================================================== */
+function endLevel(){
+  const node=G.node;
+  const isBoss=node.type==="boss";
+  const bossWin=isBoss&&G.bossHP<=0;
+  const bossFail=isBoss&&G.hearts<=0&&G.bossHP>0;
+
+  let stars;
+  if(isBoss)stars=bossFail?0:G.hearts; // 3 hearts left = 3 stars
+  else stars=G.mistakes===0?3:(G.mistakes<=1?2:1);
+
+  const perfect=(!isBoss&&G.mistakes===0)||(isBoss&&bossWin&&G.hearts===3);
+
+  if(!bossFail){
+    // record best
+    S.nodeStars[node.id]=Math.max(S.nodeStars[node.id]||0,stars);
+    if(!S.cleared[node.id]){S.cleared[node.id]=true;addXP(50)}
+    addXP(stars*15);
+    // quest steps
+    if(node.id==="alex")S.quest.s1=true;
+    if(node.id==="markt")S.quest.s2=true;
+    if(node.id==="turm"&&bossWin)S.quest.s3=true;
+    save();
+  }
+
+  // sounds + confetti
+  setTimeout(()=>{
+    if(bossFail){Sound.wrong();}
+    else if(bossWin){Sound.bossDefeat();Confetti.burst(180,innerWidth/2,innerHeight*0.4,1.5);}
+    else if(perfect){Sound.fanfare();Confetti.burst(150,innerWidth/2,innerHeight*0.4,1.3);}
+    else{Sound.levelUp();Confetti.burst(70,innerWidth/2,innerHeight*0.4,1);}
+    for(let k=0;k<stars;k++)setTimeout(()=>Sound.star(k),350+k*220);
+  },150);
+
+  const newCards=G.gained.map((w,idx)=>{const W=WORDS[BY[w]];
+    return `<div class="kcard ${W.a}" style="animation-delay:${idx*.08}s">
+      <div class="ke">${W.e}</div><div class="kw">${W.w}</div>
+      <div class="ka">${W.a} · ${W.pl}</div></div>`}).join("");
+
+  let banner,sub;
+  if(bossFail){banner=`<div class="rausch" style="-webkit-text-fill-color:var(--die);background:none;color:var(--die)">Knapp daneben!</div>`;
+    sub="Der Fernsehturm hält noch stand. Sammle Combos und versuch's nochmal!";}
+  else if(bossWin){banner=`<div class="rausch">FERNSEHTURM BEZWUNGEN!</div>`;sub="Du hast das Boss-Tor geknackt. Berlin gehört dir!";}
+  else if(perfect){banner=`<div class="rausch">WORTRAUSCH!</div>`;sub="Perfekter Lauf — kein einziger Fehler. 🔥";}
+  else if(G.mistakes===1){banner=`<div class="rausch" style="-webkit-text-fill-color:var(--sienna);background:none;color:var(--sienna)">So knapp!</div>`;
+    sub="Nur 1 Fehler vom perfekten Lauf entfernt. Noch mal für 3 Sterne?";}
+  else{banner=`<div class="rausch" style="-webkit-text-fill-color:var(--sienna);background:none;color:var(--sienna)">Station geschafft!</div>`;sub="Weiter so — die Karte wartet.";}
+
+  app.innerHTML=`
+    <div class="result fade">
+      <div class="resultstars" id="rstars">${[0,1,2].map(k=>`<span class="s" data-s="${k}">${k<stars?"⭐":"☆"}</span>`).join("")}</div>
+      ${banner}
+      <div class="rsub">${sub}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px">
+        <div class="pill">🎯 ${G.correct}/${isBoss?G.correct+G.mistakes:G.queue.length} richtig</div>
+        <div class="pill">🔥 max ${G.maxCombo}er Combo</div>
+        <div class="pill">＋${G.gained.length} neue Karten</div>
+      </div>
+      ${newCards?`<div class="reveal">${newCards}</div>`:""}
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap">
+        ${bossFail?`<button class="btn primary" data-retry>↻ Nochmal</button>`:
+          `<button class="btn primary" data-map>Weiter zur Karte →</button>`}
+        ${G.gained.length?`<button class="btn ghost" data-komp>📖 Kompendium</button>`:""}
+      </div>
+    </div>`;
+
+  // animate stars in
+  const ss=app.querySelectorAll(".s");
+  ss.forEach((s,k)=>{if(k<stars)setTimeout(()=>s.classList.add("in"),350+k*220)});
+
+  const mapb=$("[data-map]");if(mapb)mapb.onclick=()=>{Sound.click();renderMap()};
+  const rb=$("[data-retry]");if(rb)rb.onclick=()=>{Sound.click();startLevel(node.id)};
+  const kb=$("[data-komp]");if(kb)kb.onclick=()=>{Sound.click();renderKompendium()};
+}
+
+/* =====================================================================
+   SCREEN: KOMPENDIUM
+   ===================================================================== */
+function renderKompendium(){
+  const mc=masteredCount();
+  const cards=WORDS.map(W=>{
+    const seen=S.seen[W.w],mastered=S.mastered[W.w];
+    const cls=["entry",W.a,mastered?"mastered":(seen?"":"locked")].join(" ");
+    const badge=mastered?"🌟":seen?"👁️":"🔒";
+    return `<div class="${cls}">
+      <div class="top"><div class="e">${seen?W.e:"❔"}</div><div class="badge">${badge}</div></div>
+      <div class="art">${W.a}</div>
+      <div class="w">${seen?W.w:"???"}</div>
+      <div class="pl">Plural: ${mastered?W.pl:"—"}</div>
+      <div class="en">${seen?W.en:"???"}</div>
+      ${mastered?`<div class="rl">💡 ${W.rule}</div><div class="ex">„${W.ex}"</div>`:`<div class="rl">Meistere dieses Wort, um die Regel & das Beispiel freizuschalten.</div>`}
+    </div>`;
+  }).join("");
+
+  app.innerHTML=`
+    <div class="fade">
+      <div class="komphead">
+        <button class="backbtn" data-back>← Karte</button>
+        <h2 style="font-size:24px">📖 Wörter-Kompendium</h2>
+        <div class="spacer"></div>
+        <div class="pill">🌟 ${mc}/${WORDS.length}</div>
+      </div>
+      <p style="color:var(--ink-soft);font-size:14px;margin:-6px 4px 14px">
+        Jedes gemeisterte Wort wird hier mit Regel, Plural und Beispielsatz für immer eingetragen — dein Berlin-Bestiarium.</p>
+      <div class="grid">${cards}</div>
+    </div>`;
+  $("[data-back]").onclick=()=>{Sound.click();renderMap()};
+  app.querySelectorAll(".entry.mastered,.entry:not(.locked)").forEach(c=>{
+    const w=c.querySelector(".w").textContent;if(BY[w]!=null)c.onclick=()=>Sound.speak(w)});
+}
+
+/* ---------- keyboard ---------- */
+addEventListener("keydown",e=>{
+  if(!G||!$("#opts"))return;
+  const opts=$("#opts");if(!opts)return;
+  const btns=[...opts.querySelectorAll(".opt")];
+  const k=parseInt(e.key);if(k>=1&&k<=btns.length&&!btns[k-1].disabled){Sound.unlock();btns[k-1].click()}
+});
+
+/* ---------- boot (with deep-link hash router) ---------- */
+function boot(){
+  const hash=location.hash.slice(1);
+  if(hash==="komp")renderKompendium();
+  else if(NODES.find(n=>n.id===hash))startLevel(hash);
+  else renderMap();
+}
+boot();
+</script>
+</body>
+</html>

@@ -1,2 +1,25 @@
+# Local upstream word sources. Keep these on developer machines; the curated
+# website source of truth is data/. The legacy rule prevents an accidental
+# second German-Words checkout at the repository root.
+sources/
 German-Words/
+
+# Local browser and agent tooling.
+.chrome-test/
+.agents/
+.claude/
+.codex/
 cc_ui_bridge/
+
+# Python bytecode and interpreter caches.
+__pycache__/
+*.py[cod]
+
+# Retired Godot prototype and its generated exports/import cache.
+godot-runner/
+
+# Regenerable visual/OCR artifacts; textual audit reports remain tracked.
+audit/game-shots/
+audit/game-video/
+audit/nwn_b1_ocr_pages/
+audit/nwn_b1_page1*.png

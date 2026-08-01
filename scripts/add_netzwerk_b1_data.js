@@ -13,7 +13,7 @@ const writeJson = (p, d) => fs.writeFileSync(path.join(root, p), JSON.stringify(
 
 const SOURCE = "netzwerk-b1";
 const missing = readJson("audit/nwn_b1_missing.json");
-const germanWords = readJson("German-Words/data/all.json");
+const germanWords = readJson("sources/German-Words/data/all.json");
 const nounsData = readJson("data/nouns.json");
 const verbsData = readJson("data/verbs.json");
 const adjsData = readJson("data/adjectives.json");

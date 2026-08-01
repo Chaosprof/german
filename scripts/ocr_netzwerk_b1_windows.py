@@ -16,7 +16,7 @@ import fitz  # type: ignore[import-untyped]
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PDF = ROOT / "NWn_B1_Glossar_Englisch.pdf"
+PDF = ROOT / "sources" / "NWn_B1_Glossar_Englisch.pdf"
 OUT = ROOT / "audit" / "nwn_b1_ocr_lines.txt"
 IMAGE_DIR = ROOT / "audit" / "nwn_b1_ocr_pages"
 SCALE = 3

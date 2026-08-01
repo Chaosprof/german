@@ -13,7 +13,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 # ── Load data ──────────────────────────────────────────────────────────────
 
-with open('German-Words/data/all.json', encoding='utf-8') as f:
+with open('sources/German-Words/data/all.json', encoding='utf-8') as f:
     all_words = json.load(f)
 
 with open('data/nouns.json', encoding='utf-8') as f:
