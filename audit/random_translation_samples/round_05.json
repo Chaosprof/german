@@ -1,0 +1,2408 @@
+{
+  "nouns": [
+    {
+      "rank": 13702,
+      "article": "der",
+      "word": "Wasserkreislauf",
+      "english": "water cycle/hydrological cycle",
+      "deepl": "water cycle",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 13768,
+      "article": "die",
+      "word": "Asylbewerberin",
+      "english": "asylum seeker (female)",
+      "deepl": "asylum seeker",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 13845,
+      "article": "die",
+      "word": "Chancenverwertung",
+      "english": "conversion of chances/opportunities",
+      "deepl": "realisation of opportunities",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 14142,
+      "article": "das",
+      "word": "Lot",
+      "english": "lead line/plumb line/plummet",
+      "deepl": "plumb bob",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 14176,
+      "article": "die",
+      "word": "Migrationspolitik",
+      "english": "migration policy",
+      "deepl": "migration policy",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 14198,
+      "article": "das",
+      "word": "Neubauprojekt",
+      "english": "new building project",
+      "deepl": "new building project",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 14385,
+      "article": "das",
+      "word": "Titelblatt",
+      "english": "front page/cover",
+      "deepl": "title page",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 14396,
+      "article": "der",
+      "word": "Umzugskarton",
+      "english": "moving box",
+      "deepl": "moving box",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 14763,
+      "article": "das",
+      "word": "Gebein",
+      "english": "bones/remains",
+      "deepl": "bone",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 15499,
+      "article": "der",
+      "word": "Buchtipp",
+      "english": "book recommendation/book tip",
+      "deepl": "book tip",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 15545,
+      "article": "der",
+      "word": "Einbürgerungstest",
+      "english": "citizenship test",
+      "deepl": "naturalisation test",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 15742,
+      "article": "das",
+      "word": "Jagdrecht",
+      "english": "hunting law",
+      "deepl": "hunting law",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 16024,
+      "article": "der",
+      "word": "Rockstar",
+      "english": "rock star",
+      "deepl": "rockstar",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 16044,
+      "article": "die",
+      "word": "Schauspielkunst",
+      "english": "acting",
+      "deepl": "acting",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 16301,
+      "article": "das",
+      "word": "Abstimmungsergebnis",
+      "english": "voting result",
+      "deepl": "voting result",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 16661,
+      "article": "der",
+      "word": "Grundstoff",
+      "english": "basic material/raw material",
+      "deepl": "base material",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 16798,
+      "article": "der",
+      "word": "Krampfanfall",
+      "english": "seizure",
+      "deepl": "seizure",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 16832,
+      "article": "der",
+      "word": "Leidensdruck",
+      "english": "level of suffering",
+      "deepl": "suffering pressure",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 16917,
+      "article": "das",
+      "word": "Mundstück",
+      "english": "mouthpiece",
+      "deepl": "mouthpiece",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 17045,
+      "article": "die",
+      "word": "Rechtsmedizin",
+      "english": "forensic medicine",
+      "deepl": "forensic medicine",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 17107,
+      "article": "der",
+      "word": "Schneeleopard",
+      "english": "snow leopard",
+      "deepl": "snow leopard",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 17193,
+      "article": "der",
+      "word": "Tabellenführer",
+      "english": "league leader/table leader",
+      "deepl": "table leader",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 17227,
+      "article": "der",
+      "word": "Tiefstand",
+      "english": "low point/nadir",
+      "deepl": "low",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 17270,
+      "article": "der",
+      "word": "Vanillezucker",
+      "english": "vanilla sugar",
+      "deepl": "vanilla sugar",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 17299,
+      "article": "der",
+      "word": "Vorhalt",
+      "english": "reproach/allegation",
+      "deepl": "retention",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 17477,
+      "article": "der",
+      "word": "Bankautomat",
+      "english": "ABM/ATM/automated teller",
+      "deepl": "ATM",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 17483,
+      "article": "das",
+      "word": "Bauministerium",
+      "english": "ministry of construction",
+      "deepl": "ministry of construction",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 17614,
+      "article": "die",
+      "word": "Ehrenurkunde",
+      "english": "certificate of honor",
+      "deepl": "certificate of honour",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 17647,
+      "article": "der",
+      "word": "Erfindergeist",
+      "english": "inventiveness/ingenuity",
+      "deepl": "inventiveness",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 17709,
+      "article": "der",
+      "word": "Finanzexperte",
+      "english": "financial expert",
+      "deepl": "financial expert",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18049,
+      "article": "die",
+      "word": "Lateinschule",
+      "english": "Latin school",
+      "deepl": "latin school",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18268,
+      "article": "der",
+      "word": "Promovend",
+      "english": "doctoral candidate",
+      "deepl": "doctoral candidate",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18269,
+      "article": "die",
+      "word": "Prüfsumme",
+      "english": "checksum",
+      "deepl": "checksum",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18282,
+      "article": "die",
+      "word": "Trocknung",
+      "english": "drying",
+      "deepl": "drying",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18553,
+      "article": "der",
+      "word": "Umgebungslärm",
+      "english": "ambient noise",
+      "deepl": "ambient noise",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18587,
+      "article": "die",
+      "word": "Verstrickung",
+      "english": "entanglement",
+      "deepl": "entanglement",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18732,
+      "article": "die",
+      "word": "Affenart",
+      "english": "monkey species",
+      "deepl": "monkey species",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18810,
+      "article": "die",
+      "word": "Ausschaltung",
+      "english": "elimination/switching off",
+      "deepl": "switch off",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 18941,
+      "article": "das",
+      "word": "Backpulver",
+      "english": "baking powder",
+      "deepl": "baking powder",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 18995,
+      "article": "der",
+      "word": "Doppelsieg",
+      "english": "doubles victory",
+      "deepl": "double victory",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 19213,
+      "article": "der",
+      "word": "Bürgersteig",
+      "english": "footpath/pavement/sidewalk",
+      "deepl": "pavement",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 19240,
+      "article": "der",
+      "word": "Grundbegriff",
+      "english": "basic concept",
+      "deepl": "basic concept",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 19686,
+      "article": "der",
+      "word": "Ostteil",
+      "english": "eastern part",
+      "deepl": "eastern part",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 19812,
+      "article": "der",
+      "word": "Reiher",
+      "english": "egret/heron",
+      "deepl": "heron",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 19905,
+      "article": "der",
+      "word": "Schreiberling",
+      "english": "hack/hack poet/scribbler",
+      "deepl": "scribbler",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 20039,
+      "article": "das",
+      "word": "Tasteninstrument",
+      "english": "keyboard instrument",
+      "deepl": "keyboard instrument",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 20065,
+      "article": "das",
+      "word": "Tischbein",
+      "english": "table leg",
+      "deepl": "table leg",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 20190,
+      "article": "der",
+      "word": "Vormieter",
+      "english": "previous tenant",
+      "deepl": "previous tenant",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 20260,
+      "article": "die",
+      "word": "Zacke",
+      "english": "peak/point/tine",
+      "deepl": "prong",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 20285,
+      "article": "die",
+      "word": "Zisterne",
+      "english": "cistern/cisterna",
+      "deepl": "cistern",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 20433,
+      "article": "die",
+      "word": "Bauabnahme",
+      "english": "building acceptance/final inspection",
+      "deepl": "building acceptance",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 20499,
+      "article": "das",
+      "word": "Bodendenkmal",
+      "english": "archaeological monument/ground monument",
+      "deepl": "ground monument",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 20693,
+      "article": "der",
+      "word": "Familienfilm",
+      "english": "family film/family movie",
+      "deepl": "family film",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 20846,
+      "article": "die",
+      "word": "Gerberei",
+      "english": "tannery",
+      "deepl": "tannery",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 20853,
+      "article": "der",
+      "word": "Gesangverein",
+      "english": "choral society/singing club",
+      "deepl": "choral society",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 21084,
+      "article": "das",
+      "word": "Kaltgetränk",
+      "english": "cold beverage",
+      "deepl": "cold drink",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 21145,
+      "article": "die",
+      "word": "Knieverletzung",
+      "english": "knee injury",
+      "deepl": "knee injury",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 21178,
+      "article": "die",
+      "word": "Koreanerin",
+      "english": "Korean",
+      "deepl": "korean",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 21368,
+      "article": "der",
+      "word": "Muskelfaserriss",
+      "english": "torn muscle fiber",
+      "deepl": "torn muscle fibre",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 21451,
+      "article": "die",
+      "word": "Orchestrierung",
+      "english": "orchestration",
+      "deepl": "orchestration",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 21637,
+      "article": "der",
+      "word": "Sägespan",
+      "english": "sawdust/wood shaving",
+      "deepl": "sawdust",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 21870,
+      "article": "der",
+      "word": "Sympathisant",
+      "english": "sympathizer",
+      "deepl": "sympathiser",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 21880,
+      "article": "die",
+      "word": "Talgdrüse",
+      "english": "sebaceous gland",
+      "deepl": "sebaceous gland",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 21967,
+      "article": "die",
+      "word": "Umlaufbahn",
+      "english": "orbit",
+      "deepl": "orbit",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 22057,
+      "article": "die",
+      "word": "Vorbedingung",
+      "english": "condition/precondition/prerequisite",
+      "deepl": "precondition",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 22087,
+      "article": "die",
+      "word": "Waschstraße",
+      "english": "car wash",
+      "deepl": "car wash",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 22499,
+      "article": "das",
+      "word": "Brikett",
+      "english": "briquette",
+      "deepl": "briquette",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 22593,
+      "article": "die",
+      "word": "Dienststellenleiterin",
+      "english": "head of department/office head",
+      "deepl": "head of department",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 22813,
+      "article": "der",
+      "word": "Firmeninhaber",
+      "english": "owner",
+      "deepl": "company owner",
+      "category": "DEEPL_SUPERSET"
+    },
+    {
+      "rank": 22923,
+      "article": "die",
+      "word": "Pianistin",
+      "english": "pianist",
+      "deepl": "pianist",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 22948,
+      "article": "der",
+      "word": "Gepäckraum",
+      "english": "luggage compartment",
+      "deepl": "luggage compartment",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 23239,
+      "article": "der",
+      "word": "Kinobetreiber",
+      "english": "cinema operator",
+      "deepl": "cinema operator",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 23253,
+      "article": "das",
+      "word": "Klatschen",
+      "english": "clapping",
+      "deepl": "clapping",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 23583,
+      "article": "der",
+      "word": "Musterprozess",
+      "english": "test case/model lawsuit",
+      "deepl": "sample process",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 23589,
+      "article": "der",
+      "word": "Nachgeschmack",
+      "english": "aftertaste",
+      "deepl": "aftertaste",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 23740,
+      "article": "das",
+      "word": "Physikstudium",
+      "english": "physics studies",
+      "deepl": "physics degree programme",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 24006,
+      "article": "der",
+      "word": "Schwerhörige",
+      "english": "hard-of-hearing person",
+      "deepl": "hearing impaired",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 24122,
+      "article": "die",
+      "word": "Staatsgewalt",
+      "english": "state power/state authority",
+      "deepl": "state power",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 24140,
+      "article": "die",
+      "word": "Stechuhr",
+      "english": "time clock",
+      "deepl": "time clock",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 24142,
+      "article": "die",
+      "word": "Steckrübe",
+      "english": "swede/rutabaga",
+      "deepl": "swede",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 24221,
+      "article": "der",
+      "word": "Tarifkonflikt",
+      "english": "pay dispute/wage dispute",
+      "deepl": "wage dispute",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 24446,
+      "article": "die",
+      "word": "Bahnlinie",
+      "english": "railroad line/railway line",
+      "deepl": "railway line",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 24493,
+      "article": "die",
+      "word": "Eröffnungsrede",
+      "english": "opening address",
+      "deepl": "opening speech",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 24509,
+      "article": "der",
+      "word": "Funken",
+      "english": "spark",
+      "deepl": "sparks",
+      "category": "DEEPL_SUPERSET"
+    },
+    {
+      "rank": 24702,
+      "article": "der",
+      "word": "Spieltag",
+      "english": "matchday",
+      "deepl": "matchday",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 25051,
+      "article": "der",
+      "word": "Wassersportler",
+      "english": "water sports enthusiast/water sportsman",
+      "deepl": "water sports enthusiasts",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 25093,
+      "article": "der",
+      "word": "Bilderrahmen",
+      "english": "picture frame",
+      "deepl": "picture frame",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 25111,
+      "article": "die",
+      "word": "Einlagensicherung",
+      "english": "deposit guarantee/deposit protection",
+      "deepl": "deposit protection",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 25181,
+      "article": "das",
+      "word": "Konservatorium",
+      "english": "conservatory (music)",
+      "deepl": "conservatory",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 25376,
+      "article": "der",
+      "word": "Malteser",
+      "english": "Maltese",
+      "deepl": "maltese",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 25410,
+      "article": "der",
+      "word": "Globus",
+      "english": "globe",
+      "deepl": "globe",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 25441,
+      "article": "die",
+      "word": "Wirtschaftsinformatik",
+      "english": "business informatics",
+      "deepl": "business informatics",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 25553,
+      "article": "das",
+      "word": "Wappen",
+      "english": "armorial bearings/arms/coat of arms",
+      "deepl": "coat of arms",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 25664,
+      "article": "die",
+      "word": "Berufsunfähigkeitsversicherung",
+      "english": "disability insurance",
+      "deepl": "occupational disability insurance",
+      "category": "DEEPL_SUPERSET"
+    },
+    {
+      "rank": 25741,
+      "article": "die",
+      "word": "Verschmutzung",
+      "english": "pollution",
+      "deepl": "pollution",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 26001,
+      "article": "die",
+      "word": "Datenübertragung",
+      "english": "data communication/data transmission",
+      "deepl": "data transmission",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 26029,
+      "article": "die",
+      "word": "Genossenschaft",
+      "english": "cooperative",
+      "deepl": "co-operative",
+      "category": "PUNCT_DIFF"
+    },
+    {
+      "rank": 26218,
+      "article": "der",
+      "word": "Trab",
+      "english": "jog/trot",
+      "deepl": "trot",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 26323,
+      "article": "die",
+      "word": "Haptik",
+      "english": "haptics",
+      "deepl": "haptics",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 26493,
+      "article": "der",
+      "word": "Urlaubstyp",
+      "english": "type of vacationer/holiday type",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    }
+  ],
+  "verbs": [
+    {
+      "rank": 2839,
+      "article": "",
+      "word": "abstreifen",
+      "english": "free oneself from/get rid of/slip off",
+      "deepl": "strip",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 2855,
+      "article": "",
+      "word": "besingen",
+      "english": "celebrate/extol",
+      "deepl": "sing about",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 2860,
+      "article": "",
+      "word": "dimmen",
+      "english": "dim",
+      "deepl": "dim",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 2866,
+      "article": "",
+      "word": "entleihen",
+      "english": "borrow",
+      "deepl": "borrow",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 2877,
+      "article": "",
+      "word": "lancieren",
+      "english": "launch",
+      "deepl": "launch",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 2878,
+      "article": "",
+      "word": "lecken",
+      "english": "leak/lick",
+      "deepl": "lick",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 2896,
+      "article": "",
+      "word": "überlisten",
+      "english": "outsmart/outwit/trick",
+      "deepl": "outwit",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 2904,
+      "article": "",
+      "word": "verputzen",
+      "english": "parget/plaster/scarf",
+      "deepl": "plaster",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 2918,
+      "article": "",
+      "word": "abstreiten",
+      "english": "deny/gainsay",
+      "deepl": "deny",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 2933,
+      "article": "",
+      "word": "ausklappen",
+      "english": "fold out/open out",
+      "deepl": "fold out",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 2938,
+      "article": "",
+      "word": "boxen",
+      "english": "box",
+      "deepl": "boxing",
+      "category": "DEEPL_SUPERSET"
+    },
+    {
+      "rank": 3019,
+      "article": "",
+      "word": "demütigen",
+      "english": "humiliate",
+      "deepl": "humble",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 3061,
+      "article": "",
+      "word": "separieren",
+      "english": "separate",
+      "deepl": "separate",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3100,
+      "article": "",
+      "word": "ausladen",
+      "english": "uninvite/unload",
+      "deepl": "unload",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3188,
+      "article": "",
+      "word": "anspannen",
+      "english": "become tense/harness/strain",
+      "deepl": "tense",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3205,
+      "article": "",
+      "word": "betrinken",
+      "english": "get drunk",
+      "deepl": "get drunk",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3221,
+      "article": "",
+      "word": "einzäunen",
+      "english": "fence in",
+      "deepl": "fence in",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3229,
+      "article": "",
+      "word": "freikaufen",
+      "english": "bail out/buy sb's way out of sth./pay for sb.'s release",
+      "deepl": "ransom",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3292,
+      "article": "",
+      "word": "zumessen",
+      "english": "attribute/assign/measure out",
+      "deepl": "to measure",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3307,
+      "article": "",
+      "word": "auseinanderhalten",
+      "english": "to distinguish/to tell apart",
+      "deepl": "keep apart",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3326,
+      "article": "",
+      "word": "durchbrennen",
+      "english": "bolt/elope/escape",
+      "deepl": "burn out",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3339,
+      "article": "",
+      "word": "grundieren",
+      "english": "prime",
+      "deepl": "prime",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3390,
+      "article": "",
+      "word": "vergesellschaften",
+      "english": "communise/convert into a company",
+      "deepl": "socialise",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3446,
+      "article": "",
+      "word": "dezimieren",
+      "english": "decimate",
+      "deepl": "decimate",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3453,
+      "article": "",
+      "word": "einknicken",
+      "english": "buckle",
+      "deepl": "buckle",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3459,
+      "article": "",
+      "word": "erden",
+      "english": "earth/ground",
+      "deepl": "earth",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3518,
+      "article": "",
+      "word": "spitzen",
+      "english": "sharpen; prick up",
+      "deepl": "top",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 3534,
+      "article": "",
+      "word": "untervermieten",
+      "english": "sublease/sublet",
+      "deepl": "sublet",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3603,
+      "article": "",
+      "word": "austrinken",
+      "english": "drink up",
+      "deepl": "drink up",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3604,
+      "article": "",
+      "word": "auswischen",
+      "english": "clean out/wipe out",
+      "deepl": "wipe out",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3605,
+      "article": "",
+      "word": "begrünen",
+      "english": "plant",
+      "deepl": "green",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 3647,
+      "article": "",
+      "word": "gravieren",
+      "english": "engrave",
+      "deepl": "engrave",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3672,
+      "article": "",
+      "word": "mitfühlen",
+      "english": "sympathise",
+      "deepl": "empathise",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 3735,
+      "article": "",
+      "word": "vorknöpfen",
+      "english": "take to task/button up",
+      "deepl": "button up",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3749,
+      "article": "",
+      "word": "abfärben",
+      "english": "rub off/run/stain",
+      "deepl": "rub off",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3796,
+      "article": "",
+      "word": "drapieren",
+      "english": "drape",
+      "deepl": "drape",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3832,
+      "article": "",
+      "word": "hereinlassen",
+      "english": "let in",
+      "deepl": "let in",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3838,
+      "article": "",
+      "word": "hochkrempeln",
+      "english": "roll up",
+      "deepl": "roll up",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3847,
+      "article": "",
+      "word": "kontaminieren",
+      "english": "contaminate/infect",
+      "deepl": "contaminate",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3852,
+      "article": "",
+      "word": "liberalisieren",
+      "english": "deregulate/free/liberalise",
+      "deepl": "liberalise",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3864,
+      "article": "",
+      "word": "necken",
+      "english": "tease",
+      "deepl": "tease",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3868,
+      "article": "",
+      "word": "perforieren",
+      "english": "perforate",
+      "deepl": "perforate",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 3878,
+      "article": "",
+      "word": "reinlegen",
+      "english": "prank/trick",
+      "deepl": "put in",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3907,
+      "article": "",
+      "word": "trudeln",
+      "english": "coast/spin/windmill",
+      "deepl": "trundle",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 3964,
+      "article": "",
+      "word": "abfeilen",
+      "english": "file off",
+      "deepl": "file down",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 3977,
+      "article": "",
+      "word": "ankern",
+      "english": "anchor/cast anchor/drop anchor",
+      "deepl": "anchor",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 3998,
+      "article": "",
+      "word": "baggern",
+      "english": "dig/excavate",
+      "deepl": "dredge",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4019,
+      "article": "",
+      "word": "dekarbonisieren",
+      "english": "decarbonise/decoke",
+      "deepl": "decarbonise",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4027,
+      "article": "",
+      "word": "durchleiden",
+      "english": "endure/suffer",
+      "deepl": "suffer through",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4083,
+      "article": "",
+      "word": "herauswachsen",
+      "english": "grow out/outgrow",
+      "deepl": "grow out",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4094,
+      "article": "",
+      "word": "intendieren",
+      "english": "intend",
+      "deepl": "intend",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4166,
+      "article": "",
+      "word": "schlittern",
+      "english": "slide",
+      "deepl": "slip",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4226,
+      "article": "",
+      "word": "würgen",
+      "english": "choke/gag/retch",
+      "deepl": "choke",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4237,
+      "article": "",
+      "word": "zusammenrufen",
+      "english": "call together/convene/summon",
+      "deepl": "call together",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4303,
+      "article": "",
+      "word": "ausspeichern",
+      "english": "save/export from storage",
+      "deepl": "save",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4330,
+      "article": "",
+      "word": "dekompilieren",
+      "english": "decompile",
+      "deepl": "decompile",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4341,
+      "article": "",
+      "word": "einheften",
+      "english": "file/staple in",
+      "deepl": "staple in",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4393,
+      "article": "",
+      "word": "herbeiholen",
+      "english": "call for/fetch/summon",
+      "deepl": "summon",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4422,
+      "article": "",
+      "word": "kommerzialisieren",
+      "english": "commercialise",
+      "deepl": "commercialise",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4485,
+      "article": "",
+      "word": "rumpeln",
+      "english": "rumble",
+      "deepl": "rumble",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4500,
+      "article": "",
+      "word": "schwindeln",
+      "english": "cheat/feel dizzy/lie",
+      "deepl": "fib",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4505,
+      "article": "",
+      "word": "spaßen",
+      "english": "joke",
+      "deepl": "joke",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4536,
+      "article": "",
+      "word": "umpolen",
+      "english": "change/change the polarity/reverse",
+      "deepl": "reverse polarity",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4546,
+      "article": "",
+      "word": "verdursten",
+      "english": "be dying of thirst/die from thirst/die of thirst",
+      "deepl": "die of thirst",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4551,
+      "article": "",
+      "word": "verkomplizieren",
+      "english": "complicate",
+      "deepl": "complicate",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4570,
+      "article": "",
+      "word": "verwelken",
+      "english": "wilt",
+      "deepl": "wither",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4577,
+      "article": "",
+      "word": "vorschützen",
+      "english": "pretend/use as a pretext",
+      "deepl": "protect",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4588,
+      "article": "",
+      "word": "winseln",
+      "english": "whimper/whine",
+      "deepl": "whine",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4593,
+      "article": "",
+      "word": "zerplatzen",
+      "english": "blow up/burst/explode",
+      "deepl": "burst",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4602,
+      "article": "",
+      "word": "zumauern",
+      "english": "wall up",
+      "deepl": "brick up",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4620,
+      "article": "",
+      "word": "abkündigen",
+      "english": "announce",
+      "deepl": "cancel",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4626,
+      "article": "",
+      "word": "abrüsten",
+      "english": "disarm/take the scaffolding down",
+      "deepl": "disarm",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4694,
+      "article": "",
+      "word": "auswalzen",
+      "english": "laminate/roll/roll out",
+      "deepl": "roll out",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4720,
+      "article": "",
+      "word": "bluffen",
+      "english": "bluff",
+      "deepl": "bluff",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4725,
+      "article": "",
+      "word": "buttern",
+      "english": "butter/churn",
+      "deepl": "butter",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4732,
+      "article": "",
+      "word": "crashen",
+      "english": "crash",
+      "deepl": "crash",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4772,
+      "article": "",
+      "word": "einkriegen",
+      "english": "calm down",
+      "deepl": "creep in",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4775,
+      "article": "",
+      "word": "einsauen",
+      "english": "make dirty",
+      "deepl": "soak",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4815,
+      "article": "",
+      "word": "fiepen",
+      "english": "beep/squeak",
+      "deepl": "beep",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 4821,
+      "article": "",
+      "word": "flektieren",
+      "english": "inflect",
+      "deepl": "inflect",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 4880,
+      "article": "",
+      "word": "hochstemmen",
+      "english": "heave up/lift up/push oneself up",
+      "deepl": "lift",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4959,
+      "article": "",
+      "word": "nachgrübeln",
+      "english": "brood/think",
+      "deepl": "ponder",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 4997,
+      "article": "",
+      "word": "prolongieren",
+      "english": "extend/prolong",
+      "deepl": "prolong",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 5082,
+      "article": "",
+      "word": "übersäen",
+      "english": "strew/cover with",
+      "deepl": "overseed",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 5124,
+      "article": "",
+      "word": "verklappen",
+      "english": "dump at sea",
+      "deepl": "dump",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 5126,
+      "article": "",
+      "word": "verkokeln",
+      "english": "char/scorch",
+      "deepl": "coke",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 5175,
+      "article": "",
+      "word": "widerklingen",
+      "english": "resound",
+      "deepl": "resound",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5214,
+      "article": "",
+      "word": "verdeutlichen",
+      "english": "clarify/make clear",
+      "deepl": "clarify",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 5234,
+      "article": "",
+      "word": "anbelangen",
+      "english": "concern (was X anbelangt — as far as X is concerned)",
+      "deepl": "concern",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 5260,
+      "article": "",
+      "word": "wegklicken",
+      "english": "click away/close by clicking",
+      "deepl": "click away",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 5300,
+      "article": "",
+      "word": "schwernehmen",
+      "english": "take to heart/take hard",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5308,
+      "article": "",
+      "word": "hageln",
+      "english": "hail (weather)",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5358,
+      "article": "",
+      "word": "vorangegangen",
+      "english": "preceded/previous",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5424,
+      "article": "",
+      "word": "gegangen",
+      "english": "gone",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5425,
+      "article": "",
+      "word": "offengestanden",
+      "english": "frankly",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5431,
+      "article": "",
+      "word": "einstürmen",
+      "english": "storm in",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5524,
+      "article": "",
+      "word": "einüben",
+      "english": "practise",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5536,
+      "article": "",
+      "word": "verholfen",
+      "english": "helped",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5544,
+      "article": "",
+      "word": "flottmachen",
+      "english": "get ready/repair/refloat",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 5581,
+      "article": "",
+      "word": "zuhaben",
+      "english": "to be closed",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    }
+  ],
+  "adjectives": [
+    {
+      "rank": 4938,
+      "article": "",
+      "word": "brandgefährlich",
+      "english": "extremely dangerous",
+      "deepl": "highly dangerous",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 4945,
+      "article": "",
+      "word": "deaktiviert",
+      "english": "deactivated",
+      "deepl": "deactivated",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5119,
+      "article": "",
+      "word": "reaktionär",
+      "english": "reactionary",
+      "deepl": "reactionary",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5177,
+      "article": "",
+      "word": "türkischstämmig",
+      "english": "of Turkish origin",
+      "deepl": "of Turkish origin",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5229,
+      "article": "",
+      "word": "vulgär",
+      "english": "vulgar",
+      "deepl": "vulgar",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5266,
+      "article": "",
+      "word": "althochdeutsch",
+      "english": "Old High German",
+      "deepl": "old High German",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5319,
+      "article": "",
+      "word": "despotisch",
+      "english": "despotic",
+      "deepl": "despotic",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5339,
+      "article": "",
+      "word": "ebenmäßig",
+      "english": "even/regular",
+      "deepl": "even",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 5342,
+      "article": "",
+      "word": "eigeninitiativ",
+      "english": "self-initiated",
+      "deepl": "self-initiated",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5402,
+      "article": "",
+      "word": "gottlos",
+      "english": "godless",
+      "deepl": "godless",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5413,
+      "article": "",
+      "word": "handgearbeitet",
+      "english": "handcrafted",
+      "deepl": "handmade",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 5419,
+      "article": "",
+      "word": "herzlos",
+      "english": "heartless",
+      "deepl": "heartless",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5439,
+      "article": "",
+      "word": "jämmerlich",
+      "english": "abysmal/lamentable/pitiful",
+      "deepl": "miserable",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 5484,
+      "article": "",
+      "word": "logopädisch",
+      "english": "speech-therapy-related",
+      "deepl": "logopaedic",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 5561,
+      "article": "",
+      "word": "rural",
+      "english": "rural",
+      "deepl": "rural",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5564,
+      "article": "",
+      "word": "schaumig",
+      "english": "foamy",
+      "deepl": "foamy",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5657,
+      "article": "",
+      "word": "unrentabel",
+      "english": "unprofitable",
+      "deepl": "unprofitable",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5681,
+      "article": "",
+      "word": "vibrierend",
+      "english": "vibrating",
+      "deepl": "vibrating",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5741,
+      "article": "",
+      "word": "anarchisch",
+      "english": "anarchic/anarchical",
+      "deepl": "anarchic",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 5793,
+      "article": "",
+      "word": "beschlussfähig",
+      "english": "quorate",
+      "deepl": "quorate",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5823,
+      "article": "",
+      "word": "dienstunfähig",
+      "english": "unfit for duty",
+      "deepl": "unfit for duty",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 5839,
+      "article": "",
+      "word": "dunkelblond",
+      "english": "dark blond",
+      "deepl": "dark blonde",
+      "category": "DEEPL_SUPERSET"
+    },
+    {
+      "rank": 5852,
+      "article": "",
+      "word": "einsturzgefährdet",
+      "english": "in danger of collapse",
+      "deepl": "at risk of collapse",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 5865,
+      "article": "",
+      "word": "ergeben",
+      "english": "devoted/loyal/obedient",
+      "deepl": "yield",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 5866,
+      "article": "",
+      "word": "ernstgemeint",
+      "english": "seriously meant",
+      "deepl": "serious",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 5981,
+      "article": "",
+      "word": "hysterisch",
+      "english": "hysteric/hysterical",
+      "deepl": "hysterical",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 5997,
+      "article": "",
+      "word": "interpersonell",
+      "english": "interpersonal",
+      "deepl": "interpersonal",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6124,
+      "article": "",
+      "word": "pedantisch",
+      "english": "pedantic",
+      "deepl": "pedantic",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6126,
+      "article": "",
+      "word": "personalrechtlich",
+      "english": "personnel-law-related",
+      "deepl": "personnel law",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 6200,
+      "article": "",
+      "word": "schrullig",
+      "english": "quirky/eccentric",
+      "deepl": "quirky",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 6213,
+      "article": "",
+      "word": "sinnfällig",
+      "english": "obvious/manifest",
+      "deepl": "obvious",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 6293,
+      "article": "",
+      "word": "unkündbar",
+      "english": "non-cancellable/not subject to dismissal",
+      "deepl": "non-cancellable",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 6312,
+      "article": "",
+      "word": "unwidersprochen",
+      "english": "uncontradicted",
+      "deepl": "unchallenged",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 6429,
+      "article": "",
+      "word": "antidepressiv",
+      "english": "antidepressant",
+      "deepl": "antidepressant",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6465,
+      "article": "",
+      "word": "barfüßig",
+      "english": "barefoot",
+      "deepl": "barefoot",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6502,
+      "article": "",
+      "word": "bombastisch",
+      "english": "bombastic",
+      "deepl": "bombastic",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6557,
+      "article": "",
+      "word": "dysplastisch",
+      "english": "dysplastic",
+      "deepl": "dysplastic",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6674,
+      "article": "",
+      "word": "gelt",
+      "english": "isn't it (Bavarian/Swabian tag)",
+      "deepl": "gelt",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 6695,
+      "article": "",
+      "word": "gewaltorientiert",
+      "english": "violence-oriented",
+      "deepl": "violence-orientated",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 6708,
+      "article": "",
+      "word": "großdeutsch",
+      "english": "Greater German",
+      "deepl": "greater German",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6818,
+      "article": "",
+      "word": "konnatal",
+      "english": "connatal",
+      "deepl": "connatal",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6908,
+      "article": "",
+      "word": "murin",
+      "english": "murine",
+      "deepl": "murine",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 6910,
+      "article": "",
+      "word": "muskelbepackt",
+      "english": "muscular/buff",
+      "deepl": "muscle-bound",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 6984,
+      "article": "",
+      "word": "postmenopausal",
+      "english": "postmenopausal",
+      "deepl": "postmenopausal",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7028,
+      "article": "",
+      "word": "rückhaltlos",
+      "english": "unreserved/unreservedly",
+      "deepl": "unreservedly",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 7042,
+      "article": "",
+      "word": "scheibenförmig",
+      "english": "disc-shaped",
+      "deepl": "disc-shaped",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7106,
+      "article": "",
+      "word": "stoßartig",
+      "english": "abrupt/jerky",
+      "deepl": "intermittent",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 7178,
+      "article": "",
+      "word": "undurchdringlich",
+      "english": "impenetrable",
+      "deepl": "impenetrable",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7214,
+      "article": "",
+      "word": "unumschränkt",
+      "english": "unlimited/absolute",
+      "deepl": "unrestricted",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 7215,
+      "article": "",
+      "word": "unveränderlich",
+      "english": "immutable/unalterable/unchangeable",
+      "deepl": "unchangeable",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 7267,
+      "article": "",
+      "word": "vorurteilsbehaftet",
+      "english": "prejudiced",
+      "deepl": "prejudiced",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7401,
+      "article": "",
+      "word": "altnordisch",
+      "english": "Norse",
+      "deepl": "old Norse",
+      "category": "DEEPL_SUPERSET"
+    },
+    {
+      "rank": 7446,
+      "article": "",
+      "word": "arbeitsam",
+      "english": "industrious",
+      "deepl": "hardworking",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 7487,
+      "article": "",
+      "word": "baumarm",
+      "english": "with few trees/low in trees",
+      "deepl": "tree poor",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 7507,
+      "article": "",
+      "word": "benennbar",
+      "english": "nameable",
+      "deepl": "nameable",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7512,
+      "article": "",
+      "word": "beschaffbar",
+      "english": "procurable",
+      "deepl": "procurable",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7520,
+      "article": "",
+      "word": "bestreitbar",
+      "english": "disputable",
+      "deepl": "disputable",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7538,
+      "article": "",
+      "word": "bitterlich",
+      "english": "bitterly",
+      "deepl": "bitter",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 7598,
+      "article": "",
+      "word": "dendrochronologisch",
+      "english": "dendrochronological",
+      "deepl": "dendrochronological",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7632,
+      "article": "",
+      "word": "dreispurig",
+      "english": "three-lane",
+      "deepl": "three-lane",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7667,
+      "article": "",
+      "word": "einprozentig",
+      "english": "one per cent",
+      "deepl": "one per cent",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7700,
+      "article": "",
+      "word": "erdbebengefährdet",
+      "english": "earthquake-prone",
+      "deepl": "earthquake-prone",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7703,
+      "article": "",
+      "word": "ergänzungsbedürftig",
+      "english": "in need of supplementation",
+      "deepl": "in need of supplementation",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7800,
+      "article": "",
+      "word": "fußballverrückt",
+      "english": "football-crazy",
+      "deepl": "football mad",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 7818,
+      "article": "",
+      "word": "gegenrevolutionär",
+      "english": "counter-revolutionary",
+      "deepl": "counter-revolutionary",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7901,
+      "article": "",
+      "word": "habituell",
+      "english": "habitual",
+      "deepl": "habitual",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 7984,
+      "article": "",
+      "word": "inbrünstig",
+      "english": "ardent/fervent",
+      "deepl": "fervently",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 8003,
+      "article": "",
+      "word": "interlingual",
+      "english": "interlingual",
+      "deepl": "interlingual",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8091,
+      "article": "",
+      "word": "konfessionsfrei",
+      "english": "non-denominational",
+      "deepl": "non-denominational",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8094,
+      "article": "",
+      "word": "kongenital",
+      "english": "congenital",
+      "deepl": "congenital",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8132,
+      "article": "",
+      "word": "kursorisch",
+      "english": "cursory/hasty/superficial",
+      "deepl": "cursory",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 8164,
+      "article": "",
+      "word": "liniert",
+      "english": "lined/ruled",
+      "deepl": "lined",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 8192,
+      "article": "",
+      "word": "manövrierunfähig",
+      "english": "unable to manoeuvre",
+      "deepl": "unmanoeuvrable",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8259,
+      "article": "",
+      "word": "nachgeboren",
+      "english": "born after",
+      "deepl": "afterborn",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8278,
+      "article": "",
+      "word": "neonatologisch",
+      "english": "neonatological",
+      "deepl": "neonatological",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8323,
+      "article": "",
+      "word": "oscarnominiert",
+      "english": "Oscar-nominated",
+      "deepl": "oscar nominated",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8348,
+      "article": "",
+      "word": "penil",
+      "english": "penile",
+      "deepl": "penile",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8393,
+      "article": "",
+      "word": "preispolitisch",
+      "english": "pricing-policy-related",
+      "deepl": "price policy",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8486,
+      "article": "",
+      "word": "salzresistent",
+      "english": "salt-resistant",
+      "deepl": "salt resistant",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8503,
+      "article": "",
+      "word": "schauderhaft",
+      "english": "awful/dreadful/ghastly",
+      "deepl": "gruesome",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 8647,
+      "article": "",
+      "word": "subgingival",
+      "english": "subgingival",
+      "deepl": "subgingival",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8684,
+      "article": "",
+      "word": "thrakisch",
+      "english": "Thracian",
+      "deepl": "thracian",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8700,
+      "article": "",
+      "word": "transphob",
+      "english": "transphobic",
+      "deepl": "transphobic",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8782,
+      "article": "",
+      "word": "ungestraft",
+      "english": "unpunished",
+      "deepl": "unpunished",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8804,
+      "article": "",
+      "word": "unpaarig",
+      "english": "unpaired/odd",
+      "deepl": "unpaired",
+      "category": "CURRENT_SUPERSET"
+    },
+    {
+      "rank": 8902,
+      "article": "",
+      "word": "vorgabenwirksam",
+      "english": "target-relevant",
+      "deepl": "effective against handicap",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8973,
+      "article": "",
+      "word": "wortgetreu",
+      "english": "literal",
+      "deepl": "verbatim",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 8975,
+      "article": "",
+      "word": "wurzellos",
+      "english": "rootless",
+      "deepl": "rootless",
+      "category": "EXACT_MATCH"
+    },
+    {
+      "rank": 8991,
+      "article": "",
+      "word": "zehnmonatig",
+      "english": "ten-month",
+      "deepl": "ten months",
+      "category": "DIVERGENT_SINGLE"
+    },
+    {
+      "rank": 9122,
+      "article": "",
+      "word": "hingegen",
+      "english": "however/by contrast",
+      "deepl": "on the other hand",
+      "category": "DIVERGENT_MULTI"
+    },
+    {
+      "rank": 9159,
+      "article": "",
+      "word": "miteinander",
+      "english": "with one another/together",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9160,
+      "article": "",
+      "word": "mittlerweile",
+      "english": "by now/in the meantime",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9297,
+      "article": "",
+      "word": "siebzig",
+      "english": "seventy",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9349,
+      "article": "",
+      "word": "längerfristig",
+      "english": "longer term",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9364,
+      "article": "",
+      "word": "wiedererkannt",
+      "english": "recognised",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9366,
+      "article": "",
+      "word": "hat",
+      "english": "has",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9433,
+      "article": "",
+      "word": "mithilfe",
+      "english": "with the help of",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9451,
+      "article": "",
+      "word": "phrasenhaft",
+      "english": "clichéd/formulaic",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9698,
+      "article": "",
+      "word": "hi",
+      "english": "hi",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    },
+    {
+      "rank": 9728,
+      "article": "",
+      "word": "top",
+      "english": "top/excellent",
+      "deepl": "",
+      "category": "NO_DEEPL"
+    }
+  ]
+}

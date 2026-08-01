@@ -1,0 +1,752 @@
+# Goethe A2 missing entries
+
+## noun missing (35)
+
+- **Blatt** — `das Blatt, ¨-er Haben Sie ein Blatt Papier für mich? Die Bäume haben schon gelbe Blätter. 12 WORTLISTE A2_Wortliste_04_050526`
+- **Café** — `das Café, -s Kommst du mit ins Café? Ich möchte gern einen Kaffee trinken.`
+- **Club** — `der Club, -s / Gibt es hier einen Tennis-Club/Klub? Klub, -s Ich möchte gern tanzen gehen. Wo gibt es hier`
+- **Einkaufs-** — `das Einkaufs- Kommst du morgen mit ins Einkaufszentrum?`
+- **Entschuldi-** — `die Entschuldi- Oh, Entschuldigung! – Macht nichts. Kein Problem.`
+- **E-Book** — `das E-Book, -s Liest du lieber E-Books oder Bücher aus Papier? Entschuldigung, kann man hier E-Books kaufen?`
+- **Familien-** — `der Familien- Mein Familienname ist González.`
+- **Fernseher** — `der Fernseher, - Der Fernseher ist kaputt.`
+- **Führer-** — `der Führer- Hast du den Führerschein?`
+- **Fundsachen** — `die Fundsachen Haben Sie meinen Schirm gefunden? - Sie können (Pl.) dort bei den Fundsachen schauen.`
+- **Glück-** — `der Glück- Herzlichen Glückwunsch zum Geburtstag!`
+- **Kenntnisse** — `die Kenntnisse (Pl.) Deine Deutschkenntnisse sind sehr gut! Ich möchte meine Computerkenntnisse verbessern.`
+- **Jugend-** — `die Jugend- Wir übernachten in einer Jugendherberge.`
+- **Kranken-** — `das Kranken- Meine Tante ist im Krankenhaus.`
+- **Kranken-** — `die Kranken- Bei welcher Krankenkasse sind Sie?`
+- **Kühl-** — `der Kühl-`
+- **Lebens-** — `die Lebens- Lebensmittel bekommen Sie im Supermarkt.`
+- **Mineral-** — `das Mineral- Ein Glas Mineralwasser, bitte.`
+- **Mobil-** — `das Mobil- Wie kann ich Sie erreichen? Haben Sie ein`
+- **Paar** — `das Paar, -e Romeo und Julia sind ein Paar. Ich brauche ein Paar Schuhe.`
+- **Papiere** — `die Papiere (Pl.) Haben Sie Ihre Papiere dabei?`
+- **Partnerin** — `die Partnerin, -nen`
+- **Postleit-** — `die Postleit- Wie ist Ihre Postleitzahl?`
+- **Schwimm-** — `das Schwimm- Kommst du mit ins Schwimmbad?`
+- **Sehens-** — `die Sehens- Welche Sehenswürdigkeiten gibt es in Frankfurt?`
+- **Sprech-** — `die Sprech- Frau Doktor Weiß hat von 9:00 bis 12:30 Uhr`
+- **Stipen-** — `das Stipen- Wenn ich ein gutes Zeugnis habe, bekomme ich`
+- **Straßen-** — `die Straßen- Fahren wir mit der Straßenbahn oder mit der`
+- **Spazier-** — `der Spazier- Abends mache ich immer einen Spaziergang.`
+- **Süßigkeiten** — `die Süßigkeiten Welche Süßigkeiten isst du am liebsten? (Pl.) - Schokolade und Eis.`
+- **Veranstal-** — `die Veranstal- Am Samstag ist unser Restaurant geschlossen. Wir`
+- **T-Shirt** — `das T-Shirt, -s Haben Sie dieses T-Shirt auch in M?`
+- **Über-** — `die Über- Ich brauche eine Übersetzung von meinem Zeugnis.`
+- **Verkehrs-** — `das Verkehrs- Welche Verkehrsmittel benutzen Sie oft?`
+- **Wiederhören** — `das Wiederhören, - Wir müssen jetzt Schluss machen. Also auf Wiederhören!`
+
+## verb missing (28)
+
+- **gelesen** — `gelesen.`
+- **keinen** — `keinen Fall Film sehen. - Wirklich? Ich finde James-Bond-Filme`
+- **beeilen** — `beeilen (sich), Kannst du dich bitte beeilen? Der Bus fährt`
+- **bisschen** — `bisschen Können Sie bitte ein bisschen lauter sprechen? Ich spreche ein bisschen Französisch. Möchten Sie noch ein bisschen Salat?`
+- **draußen** — `draußen Das Wetter ist so schön. Wollen wir draußen sitzen? Hunde müssen draußen bleiben.`
+- **drinnen** — `drinnen Wollen Sie drinnen oder draußen sitzen? Hier drinnen ist es sehr warm.`
+- **drüben** — `drüben Da drüben ist die Haltestelle.`
+- **daneben** — `daneben Du weißt doch, wo die Post ist. Daneben ist die Bank.`
+- **gaben** — `gaben und arbeiten nicht.`
+- **gegen** — `gegen Fahr nicht gegen den Baum! Ich bin gegen diesen Vorschlag. Wer spielt gegen wen? - Bayern gegen Dortmund. Haben Sie etwas gegen Grippe?`
+- **gern** — `gern, lieber, Ich helfe Ihnen gern.`
+- **gestern** — `gestern Gestern wollte ich dich anrufen.`
+- **hinten** — `hinten Die Tür zum Aussteigen ist hinten. Bitte hinten aussteigen!`
+- **wichtigen** — `wichtigen Informationen über die Stadt. Kennst du eine Homepage mit Deutschübungen?`
+- **gehangen** — `gehangen.`
+- **schnellsten** — `schnellsten. Kann ich jetzt nach Hause gehen? Sie können mit dem Bus an den Bahnhof fahren.`
+- **morgen** — `morgen Morgen beginnt die Schule erst um zehn Uhr.`
+- **neben** — `neben Neben mir ist noch ein Platz frei. Die Apotheke ist neben der Post.`
+- **möchten** — `möchten, möchte, Was möchten Sie trinken?`
+- **oben** — `oben Ich wohne oben im 4. Stock.`
+- **regnen** — `regnen, regnet, Wenn es regnet, bleiben wir zu Hause.`
+- **dritten** — `dritten Reihe. Wer ist jetzt an der Reihe?`
+- **unten** — `unten Er wohnt ganz unten im Haus.`
+- **übermorgen** — `übermorgen Morgen habe ich frei. Ich komme übermorgen`
+- **vorgestern** — `vorgestern Er hat mich vorgestern angerufen.`
+- **wegen** — `wegen Wegen seiner Arbeit kann er leider nicht kommen. Ich rufe wegen meiner Tochter an.`
+- **zusammen** — `zusammen Wollen wir zusammen essen gehen? Zahlen, bitte. – Zusammen oder getrennt? Das macht zusammen 10 Euro 80.`
+- **zwischen** — `zwischen Heidelberg liegt zwischen Frankfurt und Stuttgart. Zwischen acht und zehn Uhr bin ich zu Hause.`
+
+## adj missing (667)
+
+- **ab** — `ab Ab morgen muss ich wieder arbeiten.`
+- **aber** — `aber Heute kann ich nicht kommen, aber morgen habe`
+- **ich** — `ich Zeit. Wir haben nur eine kleine Wohnung, sind aber`
+- **damit** — `damit zufrieden. Es war sehr schön. Jetzt muss ich aber gehen. Das ist aber nett von dir.`
+- **gibt** — `gibt ab, abgeben.`
+- **hat** — `hat abgegeben`
+- **hat** — `hat abgeholt Wir müssen noch meinen Bruder abholen.`
+- **schließt** — `schließt ab, Ich schließe dieses Jahr mein Studium/`
+- **hat** — `hat abgeschlossen meine Ausbildung ab. Achtung (Sg.) Achtung an Gleis drei: Die Türen schließen. Der Zug`
+- **fährt** — `fährt jetzt ab. Achtung! Pass auf! Der Verkehr ist hier gefährlich.`
+- **hast** — `hast. Wie spät ist es? - Ich habe keine Ahnung.`
+- **alles** — `alles. Sind alle da? - Nein, Rita fehlt noch. Alle Freunde kommen.`
+- **allein** — `allein Kommt seine Freundin mit? - Nein, er kommt allein. Soll ich Ihnen/dir helfen? - Nein danke, ich schaffe`
+- **das** — `das schon allein.`
+- **als** — `als Hector ist jünger als seine Schwester. Sie arbeitet als Krankenschwester.`
+- **also** — `also Also, die Sache ist so: … Er hat Zeit, also kann er uns helfen.`
+- **an** — `an Fahren Sie an der nächsten Kreuzung nach rechts. Wir treffen uns am Bahnhof/am Kino/am Stand. Am nächsten Montag geht es leider nicht. Das Licht war die ganze Nacht an.`
+- **bietet** — `bietet an, ALPHABETISCHER WORTSCHATZ WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **aus** — `aus Michele kommt aus Brasilien. Frau Müller geht immer um acht Uhr aus dem Haus. Der Tisch ist aus Glas. Ich sehe nichts. Das Licht ist aus.`
+- **an** — `an die Ostsee.`
+- **füllt** — `füllt aus,`
+- **hat** — `hat ausgefüllt`
+- **gibt** — `gibt aus, Ich möchte nicht so viel Geld ausgeben.`
+- **hat** — `hat ausgegeben`
+- **geht** — `geht aus, Plötzlich ist das Licht ausgegangen.`
+- **ist** — `ist ausgegangen`
+- **macht** — `macht aus,`
+- **hat** — `hat ausgemacht`
+- **packt** — `packt aus,`
+- **hat** — `hat ausgepackt`
+- **ruht** — `ruht aus, Er ruht sich nach der Arbeit immer aus.`
+- **hat** — `hat ausgeruht`
+- **sieht** — `sieht aus, Sie sieht wie ihre Mutter aus.`
+- **hat** — `hat ausgesehen Das Kleid sieht hübsch aus.`
+- **außer** — `außer Außer Lisa möchte niemand den Film sehen. Wir haben täglich außer Samstag geöffnet.`
+- **außerdem** — `außerdem Vier Brötchen, möchten Sie außerdem noch etwas?`
+- **außerhalb** — `außerhalb Die Wohnung ist nicht in der Stadt, sie liegt etwas`
+- **außerhalb** — `außerhalb.`
+- **spricht** — `spricht aus,`
+- **hat** — `hat ausgesprochen`
+- **steigt** — `steigt aus, Haltestelle.`
+- **ist** — `ist ausgestiegen`
+- **trägt** — `trägt aus,`
+- **hat** — `hat ausgetragen`
+- **mein** — `mein Ausweis.`
+- **hat** — `hat gearbeitet Ich arbeite als Krankenschwester in einem Krankenhaus.`
+- **ärgert** — `ärgert, Wetter schlecht ist.`
+- **hat** — `hat geärgert`
+- **auch** — `auch Ich bin auch Spanier. Maria muss auch am Wochenende arbeiten.`
+- **auf** — `auf Das Wörterbuch liegt auf dem Tisch. Die Kinder spielen auf der Straße. Am Samstag gehen wir auf eine Party. Meine Eltern wohnen auf dem Land. Auf dem Foto ist auch meine Schwester. Die Tür ist auf, kommen Sie rein! Hat das Geschäft noch auf? Auf Wiedersehen. Wie heißt das auf Deutsch?`
+- **auf** — `auf jeden/ Ich möchte auf jeden Fall den neuen James-Bond-`
+- **hört** — `hört auf, Kannst du bitte damit aufhören? Ich muss jetzt`
+- **hat** — `hat aufgehört arbeiten.`
+- **macht** — `macht auf,`
+- **hat** — `hat aufgemacht`
+- **passt** — `passt auf, Der Babysitter passt heute Abend auf die Kinder`
+- **auf** — `auf.`
+- **hat** — `hat aufgepasst Er passt im Unterricht nicht auf.`
+- **räumt** — `räumt auf,`
+- **hat** — `hat aufgeräumt`
+- **steht** — `steht auf,`
+- **ist** — `ist aufgestanden`
+- **hat** — `hat beendet`
+- **beginnt** — `beginnt,`
+- **hat** — `hat begonnen`
+- **hat** — `hat begründet`
+- **bei** — `bei Offenbach liegt bei Frankfurt. Ich wohne bei meinen Eltern. Bei uns ist das anders als hier. Er arbeitet bei Siemens. Ich möchte euch nicht beim Essen stören.`
+- **beide** — `beide Wir kommen beide. Welche Bluse möchten Sie, die rote oder die grüne? - Ich nehme beide.`
+- **der** — `der/die Ein Bekannter von mir heißt Klaus. Bekannte, -n`
+- **bekommt** — `bekommt, Aspirin bekommen Sie in der Apotheke.`
+- **hat** — `hat bekommen`
+- **hat** — `hat benutzt`
+- **hat** — `hat beraten Fragen haben.`
+- **berichtet** — `berichtet,`
+- **hat** — `hat berichtet`
+- **beschreibt** — `beschreibt,`
+- **hat** — `hat beschrieben`
+- **beschwert** — `beschwert, Mein Nachbar beschwert sich immer über unsere`
+- **hat** — `hat beschwert Kinder, wenn sie im Garten spielen.`
+- **bäckt** — `bäckt/backt,`
+- **hat** — `hat gebacken`
+- **hat** — `hat gebadet In diesem See darf man nicht baden.`
+- **bald** — `bald Ich komme bald. Auf Wiedersehen! Bis bald!`
+- **hat** — `hat gebastelt`
+- **hat** — `hat gebaut`
+- **hat** — `hat beantwortet`
+- **bedankt** — `bedankt, Hilfe bedanken.`
+- **hat** — `hat bedankt`
+- **bedeutet** — `bedeutet,`
+- **hat** — `hat bedeutet`
+- **beeilt** — `beeilt, gleich ab!`
+- **hat** — `hat beeilt WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **bleibt** — `bleibt, Bitte bleiben Sie stehen!`
+- **ist** — `ist geblieben Oh nein, meine Uhr ist stehen geblieben. Wie spät`
+- **ist** — `ist es? Ich bleibe heute zu Hause.`
+- **der** — `der/das Blog, -s Ich schreibe einen Blog über Mode.`
+- **mir** — `mir nicht böse.`
+- **brät** — `brät, Der Fisch brät in der Pfanne.`
+- **hat** — `hat gebraten`
+- **braucht** — `braucht, Brauchst du die Zeitung noch oder kann ich sie`
+- **hat** — `hat gebraucht haben? Meine Großmutter ist krank. Sie braucht viel Ruhe.`
+- **bringt** — `bringt, Wir müssen Max ins Krankenhaus bringen.`
+- **hat** — `hat gebracht`
+- **nach** — `nach links.`
+- **bucht** — `bucht,`
+- **hat** — `hat gebucht`
+- **buchstabiert** — `buchstabiert,`
+- **hat** — `hat buchstabiert`
+- **besichtigt** — `besichtigt, Sie können die Wohnung am Mittwochabend`
+- **hat** — `hat besichtigt besichtigen.`
+- **besonders** — `besonders Dieses Angebot ist besonders günstig. Hier ist die Pizza besonders gut. Wie geht's? - Nicht besonders.`
+- **bestätigt** — `bestätigt,`
+- **hat** — `hat bestätigt`
+- **besteht** — `besteht, Die Prüfung besteht aus vier Teilen: Hören, Lesen,`
+- **hat** — `hat bestanden Schreiben und Sprechen.`
+- **bestellt** — `bestellt, Dieses Buch haben wir nicht da. Sollen wir es für`
+- **hat** — `hat bestellt Sie bestellen?`
+- **hat** — `hat besucht`
+- **bewirbt** — `bewirbt, Kannst du mir bei meiner Bewerbung helfen?`
+- **hat** — `hat beworben`
+- **bezahlt** — `bezahlt,`
+- **hat** — `hat bezahlt`
+- **bis** — `bis Ich fahre nur bis Stuttgart. Ich warte bis Freitag. Tschüss, bis gleich!`
+- **bitte** — `bitte Eine Tasse Kaffee bitte! - Bitte schön! Wie bitte? Sprechen Sie bitte ein bisschen lauter!`
+- **bittet** — `bittet,`
+- **hat** — `hat gebeten`
+- **hat** — `hat gedauert`
+- **hat** — `hat gedacht`
+- **denn** — `denn`
+- **deshalb** — `deshalb`
+- **diskutiert** — `diskutiert,`
+- **hat** — `hat diskutiert`
+- **doch** — `doch`
+- **dort** — `dort, -her, -hin Wir treffen uns vor dem Kino. - Gut, ich bin in fünf Minuten dort. Dort ist unser Haus. Deine Tasche kannst du dorthin stellen. Kommst du mit in die Stadt? - Nein, ich komme`
+- **hat** — `hat gedrückt dann geht sie auf. Drücken Sie „Bestätigen“! Meine Schuhe drücken.`
+- **chattet** — `chattet,`
+- **hat** — `hat gechattet`
+- **der** — `der/das Comic, -s Mein Sohn liest immer nur Comics.`
+- **da** — `da Welche Bluse nehmen Sie? - Die da. Ist Herr Klein schon da? Wir sprechen gerade über Paul. Da kommt er ja. Da drüben ist der Bahnhof.`
+- **da** — `da(r) (Bsp. darauf, Darauf fällt mir keine Antwort ein.`
+- **darüber** — `darüber) Darüber spreche ich nicht gern.`
+- **dabei** — `dabei (sein), Hast du einen Stift dabei?`
+- **ist** — `ist dabei, Schön, dass du da bist. Ist deine Familie auch`
+- **war** — `war dabei, dabei?`
+- **ist** — `ist dabei gewesen`
+- **ist** — `ist dafür/dagegen,`
+- **war** — `war dafür/dagegen,`
+- **ist** — `ist dafür/`
+- **damals** — `damals Als Student hatte ich viel Zeit und wollte reisen. Aber damals hatte ich kein Geld.`
+- **danke** — `danke Soll ich Ihnen helfen? - Sehr freundlich, ja danke! Guten Appetit! - Danke gleichfalls.`
+- **hat** — `hat gedankt`
+- **dann** — `dann Ich muss noch schnell zur Post, dann komme ich. Wenn es nicht regnet, dann kommen wir.`
+- **dass** — `dass Rico hat gesagt, dass er auch zur Party kommt. Ich finde es super, dass du mich besuchst.`
+- **das** — `das nicht lesen. Ich bin zu dick. Ich muss weniger essen. Gib mir bitte mal das Ding da drüben! Was macht man mit diesem Ding? - Damit kann`
+- **man** — `man Flaschen öffnen. Wir wohnen direkt über dem Café. Gibt es keinen direkten Zug nach Hamburg? - Nein, Sie müssen immer umsteigen. Ich möchte nicht direkt nach der Schule studieren. Ich möchte erst reisen. Wir liefern Ihnen das Sofa direkt ins Haus. Wir gehen heute Abend in die Disco/Disko. Ich möchte das mit meinen Kollegen diskutieren. Hast du keinen Hunger? - Doch, ich bin sehr`
+- **zentrum** — `zentrum, -en`
+- **lädt** — `lädt ein,`
+- **hat** — `hat eingeladen`
+- **einmal** — `einmal Rufen Sie/Ruf mich bitte morgen noch einmal an. Diese Prüfung mache ich nicht noch einmal. Warst du schon einmal in Paris?`
+- **packt** — `packt ein, Soll ich Ihnen das als Geschenk einpacken?`
+- **hat** — `hat eingepackt`
+- **steigt** — `steigt ein, Bitte ab 20 Uhr vorn im Bus einsteigen.`
+- **ist** — `ist eingestiegen`
+- **trägt** — `trägt ein, Sie müssen Ihren Namen und Ihre Adresse`
+- **hat** — `hat eingetragen eintragen.`
+- **ist** — `ist einverstanden, Bist du einverstanden, wenn wir bald nach Hause`
+- **war** — `war einverstanden, gehen?`
+- **ist** — `ist einverstanden`
+- **zieht** — `zieht ein, Wann können wir in die Wohnung einziehen?`
+- **ist** — `ist eingezogen`
+- **die** — `die (E-)Mail, -s Ich schreibe Ihnen/dir eine E-Mail.`
+- **empfiehlt** — `empfiehlt,`
+- **hat** — `hat empfohlen`
+- **hat** — `hat geendet Der Kurs endet in einer Woche.`
+- **entschuldigt** — `entschuldigt,`
+- **hat** — `hat entschuldigt`
+- **gung** — `gung, -en`
+- **hat** — `hat gedruckt`
+- **durch** — `durch Am besten gehen Sie durch die Tengstraße. Wir fahren mit dem Fahrrad durch den Wald.`
+- **durfte** — `durfte, Dürfen wir heute länger fernsehen?`
+- **hat** — `hat gedurft Darf ich Sie zu einem Kaffee einladen?`
+- **duscht** — `duscht, Möchten Sie sich duschen? Das Badezimmer ist dort`
+- **hat** — `hat geduscht hinten links.`
+- **sind** — `sind wir doch zu Hause geblieben. Kennst du eigentlich Susanne?`
+- **kauft** — `kauft ein,`
+- **hat** — `hat eingekauft 14 WORTLISTE A2_Wortliste_04_050526`
+- **name** — `name, -n`
+- **fast** — `fast Der Film ist fast zu Ende. Ich habe fast alles verstanden.`
+- **hat** — `hat gefehlt Tagen. Was fehlt Ihnen?`
+- **hat** — `hat gefeiert Die Feier war sehr schön.`
+- **sieht** — `sieht fern,`
+- **hat** — `hat ferngesehen`
+- **ist** — `ist fertig, Wir müssen gleich gehen. Bist du fertig?`
+- **war** — `war fertig,`
+- **ist** — `ist fertig gewesen`
+- **hat** — `hat Geburtstag.`
+- **hat** — `hat gefunden Ich finde es nicht gut, dass du so viel arbeitest. Ich finde ihn sehr nett.`
+- **war** — `war fit, studio.`
+- **ist** — `ist fit gewesen`
+- **erinnert** — `erinnert, nicht an ihn, tut mir leid.`
+- **hat** — `hat erinnert Kannst du mich morgen bitte an meinen Arzttermin`
+- **erkältet** — `erkältet sein, Lisa ist erkältet. Sie kann heute nicht zur Schule`
+- **ist** — `ist erkältet, gehen.`
+- **war** — `war erkältet,`
+- **ist** — `ist erkältet`
+- **hat** — `hat erklärt`
+- **hat** — `hat erlaubt ihnen erlaubt.`
+- **erlaubt** — `erlaubt sein, Parken ist hier nicht erlaubt.`
+- **ist** — `ist erlaubt,`
+- **war** — `war erlaubt,`
+- **ist** — `ist erlaubt gewesen`
+- **erreicht** — `erreicht, um acht Uhr.`
+- **hat** — `hat erreicht Bis 18 Uhr können Sie mich im Büro erreichen.`
+- **hat** — `hat erzählt Erzählst du mir eine Geschichte?`
+- **hat** — `hat gegessen`
+- **etwas** — `etwas Ich muss dir etwas erzählen! Haben Sie etwas zum Schreiben? Ich habe leider nur Tee. Etwas anderes kann ich dir`
+- **leider** — `leider nicht anbieten.`
+- **fährt** — `fährt (ab), Achtung an Gleis 17! Der Zug München - Paris fährt`
+- **ist** — `ist (ab)gefahren jetzt ab.`
+- **das** — `das (Fahr)Rad, ¨-er Wenn es nicht regnet, fahre ich mit dem Fahrrad.`
+- **ist** — `ist gefallen WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **früher** — `früher Früher habe ich in Berlin gewohnt. Wir nehmen den früheren Zug.`
+- **frühstückt** — `frühstückt,`
+- **hat** — `hat gefrühstückt`
+- **fühlt** — `fühlt, hat gefühlt Ich fühle mich heute nicht gut.`
+- **schein** — `schein, -e Sie hat die Führerscheinprüfung bestanden.`
+- **für** — `für Das Paket ist für Sie. Das ist der Schlüssel für die Haustür. Gibt es hier einen Sportverein für Jugendliche?`
+- **zur** — `zur Arbeit gehen!`
+- **hat** — `hat gegeben Es gibt keine Karten mehr für das Konzert.`
+- **ist** — `ist gefährlich.`
+- **hat** — `hat gefallen Wie gefällt es Ihnen in Berlin?`
+- **fliegt** — `fliegt (ab), Ich fliege in den Ferien nach Spanien.`
+- **ist** — `ist (ab)geflogen Wann fliegst du ab?`
+- **um** — `um 21:00 Uhr.`
+- **fotografiert** — `fotografiert,`
+- **hat** — `hat fotografiert`
+- **hat** — `hat gefragt Ich möchte Sie etwas fragen.`
+- **freut** — `freut, Die Kinder freuen sich schon auf die Ferien.`
+- **hat** — `hat gefreut Ich freue mich, weil ich heute mit meinen Freunden Fußball spiele. Es/Das freut mich!`
+- **gekauft** — `gekauft.`
+- **gewinnt** — `gewinnt, Mein Sohn will bei diesem Spiel immer gewinnen.`
+- **hat** — `hat gewonnen`
+- **hat** — `hat geglaubt Ich glaube, er kommt gleich.`
+- **wunsch** — `wunsch, ¨-e`
+- **gratuliert** — `gratuliert,`
+- **hat** — `hat gratuliert`
+- **hat** — `hat gegrillt`
+- **ist** — `ist gültig,`
+- **war** — `war gültig,`
+- **ist** — `ist gültig gewesen`
+- **am** — `am besten Ich komme um 17 Uhr. – Gut! Guten Morgen! Ein gutes neues Jahr! Guten Appetit! Welches Bild gefällt dir besser? Dieses Kleid finde ich am besten.`
+- **hatte** — `hatte, hat gehabt Hast du kurz Zeit?`
+- **gegenüber** — `gegenüber Die Post ist gegenüber vom Bahnhof. Die Hausnummer 84 ist gleich gegenüber.`
+- **ist** — `ist gegangen Wie geht‘s? - Es geht. Ich muss jetzt leider gehen. Ich muss zum Arzt gehen. Das geht (doch) nicht! Nimmst du die Straßenbahn? - Nein, ich gehe lieber`
+- **zu** — `zu Fuß.`
+- **hat** — `hat gehört`
+- **genug** — `genug Es ist noch genug Pizza da. Möchtest du noch`
+- **geradeaus** — `geradeaus Gehen Sie immer geradeaus!`
+- **am** — `am liebsten Kaffee oder Tee? - Ich trinke lieber einen Tee. Am liebsten trinke ich Kaffee.`
+- **fünf** — `fünf Aufgaben. Das Gespräch mit Frau Kunz ist um 14 Uhr.`
+- **herein** — `herein/rein Herein! Die Tür ist offen. Möchtest du nicht reinkommen? Ich kann uns`
+- **stellt** — `stellt her,`
+- **hat** — `hat hergestellt`
+- **lädt** — `lädt herunter,`
+- **hat** — `hat heruntergeladen`
+- **heute** — `heute Heute ist ein schöner Tag. Heute muss ich nur bis 16 Uhr arbeiten.`
+- **hier** — `hier Elektro Bauer, guten Tag. Hier ist Pamela Linke. Was kann ich für Sie tun? Hier wohne ich. Unterschreiben Sie bitte hier!`
+- **es** — `es gibt keine Wolken.`
+- **hin** — `hin/hin-/-hin Wo gehst du hin?/Wohin gehst du? Wohin ist Paul gegangen? – Ich glaube dorthin. Er geht in den Garten hinaus. Wir gehen ins Haus hinein.`
+- **hinter** — `hinter Hinter dem Haus haben wir einen Garten.`
+- **hat** — `hat gehofft`
+- **hoffentlich** — `hoffentlich Hoffentlich hat unser Zug keine Verspätung.`
+- **hat** — `hat geholt`
+- **hat** — `hat gehört Ich habe das Lied schon mal gehört.`
+- **hat** — `hat gehustet`
+- **hallo** — `hallo Hallo Inge! Wie geht’s?`
+- **hat** — `hat gehalten Kannst du mal kurz meine Jacke halten?`
+- **hat** — `hat gehangen/ Warum hast du das Bild noch nicht an die Wand`
+- **gehängt** — `gehängt gehängt? Das Bild von meiner Tochter hat im Wohnzimmer`
+- **und** — `und ich machen den Haushalt zusammen: Ich wasche die Wäsche und sie putzt und räumt auf.`
+- **hat** — `hat geheiratet`
+- **hat** — `hat geheißen Wie heißt das auf Deutsch?`
+- **hat** — `hat geholfen`
+- **her** — `her/her-/-her Komm bitte mal her! Herein! Die Tür ist offen. Woher kommen Sie?`
+- **heraus** — `heraus/raus Möchtet ihr nicht rauskommen? Das Wetter ist`
+- **so** — `so schön. Kannst du bitte den Müll rausbringen? 18 WORTLISTE A2_Wortliste_04_050526`
+- **und** — `und 15 Mädchen.`
+- **schaue** — `schaue in meinem Kalender. Ich schreibe alle Termine in meinen Kalender.`
+- **dem** — `dem Urlaub. Wollen wir Karten spielen? Du musst noch die Karten für das Konzert abholen,`
+- **vergiss** — `vergiss das bitte nicht! Die Karte, bitte! Ich möchte etwas bestellen. Kann ich auch mit Karte (be-)zahlen?`
+- **hat** — `hat gekauft`
+- **kein** — `kein, e Hast du keinen Hunger? Ich habe heute leider keine Zeit. Ich spreche leider kein Chinesisch. Ich habe keine Kinder.`
+- **hat** — `hat gekannt Kennen Sie Berlin? – Ja, eine tolle Stadt.`
+- **lernt** — `lernt kennen, in München kennengelernt.`
+- **hat** — `hat kennengelernt`
+- **immer** — `immer Frau Bast kommt immer zu spät.`
+- **in** — `in Ich wohne in Wiesbaden. Der Zug kommt in fünf Minuten. Frau Rausch arbeitet im Reisebüro. Komm, wir gehen ins Kino.`
+- **für** — `für Sie. Wenn Sie Fragen haben, gehen Sie zur Information.`
+- **hat** — `hat informiert`
+- **hat** — `hat interessiert interessant.`
+- **aus** — `aus Italien, Conchi aus Spanien, Yin aus China …`
+- **deinem** — `deinem Lieblingssänger.`
+- **ja** — `ja Sind Sie Herr Watanabe? – Ja. Du bist hier in Berlin? Das ist ja toll!`
+- **jeder** — `jeder, e, s Das Restaurant hat jeden Tag geöffnet. Jedes Kind bekommt einen Ball.`
+- **jemand** — `jemand Hat jemand meinen Stift? Hallo, ist jemand da?`
+- **jetzt** — `jetzt Jetzt machen wir eine Pause.`
+- **ist** — `ist/hat gejoggt`
+- **herberge** — `herberge, -n`
+- **der** — `der/die Viele Jugendliche hören den ganzen Tag Musik. Jugendliche, -n Der Eintritt für Kinder und Jugendliche bis 16 Jahre`
+- **ist** — `ist frei. WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **haus** — `haus, ¨-er Er hat sich verletzt und muss ins Krankenhaus.`
+- **kasse** — `kasse, -n`
+- **hat** — `hat gekriegt`
+- **schrank** — `schrank, ¨-e`
+- **kümmert** — `kümmert,`
+- **hat** — `hat gekümmert`
+- **hat** — `hat gekündigt gekündigt.`
+- **hat** — `hat gelacht Lachen ist gesund.`
+- **hat** — `hat geklappt klappt. Wie war die Reise? - Gut, es hat alles super`
+- **geklappt** — `geklappt.`
+- **und** — `und Röcke im zweiten Stock.`
+- **hat** — `hat gekocht Das Wasser kocht.`
+- **ist** — `ist gekommen Er wird bald kommen.`
+- **konnte** — `konnte, ich nicht.`
+- **hat** — `hat gekonnt Können Sie mir helfen? Du kannst durch den Park laufen, das ist am`
+- **hat** — `hat kontrolliert Bitte öffnen Sie Ihren Koffer, wir müssen Ihr Gepäck kontrollieren.`
+- **hat** — `hat gekostet Wie viel kostet das Buch? – 20 Euro. Ich kriege 15 Euro pro Stunde für meinen Job. Auch wenn du schnell läufst: Ich kriege dich. Was kriegen Sie? – Ein Käsebrötchen, bitte. Miriam liest gern spannende Krimis. Schauen wir am Sonntag zusammen den Tatort? – Nein, ich mag keine Krimis. Ich suche eine neue Wohnung mit drei Zimmern, Küche und Bad. Er isst sonntags ein Stück Kuchen. Schokoladenkuchen schmeckt mir am besten. Es ist kühl draußen. Zieh dir eine Jacke an. Haben wir noch Milch? – Ja, im Kühlschrank. Ich finde fremde Länder und Kulturen sehr`
+- **links** — `links Gehen Sie die nächste Straße links.`
+- **hat** — `hat gelogen Glaub ihm nicht, er lügt.`
+- **keine** — `keine Lust. Ich habe Lust auf Schokolade.`
+- **hat** — `hat gemacht Ich muss jetzt das Essen machen. Das macht 5 Euro 95. Entschuldigung! - Das macht doch nichts.`
+- **mal** — `mal / das Mal Sag mal, wie gefällt dir mein neues Kleid? Das erste Mal war ich vor fünf Jahren in England. Tschüss, bis zum nächsten Mal!`
+- **hat** — `hat gemalt`
+- **man** — `man Wie schreibt man das? Hier darf man nicht rauchen.`
+- **manchmal** — `manchmal Manchmal essen wir im Restaurant. Rauchen Sie? - Manchmal.`
+- **mehr** — `mehr Dieses Auto kostet 1.000 Euro mehr als das andere. Mehr kann ich nicht essen! Ich möchte mehr Taschengeld.`
+- **hat** — `hat gemeint Der Film ist gut. Was meinst du?`
+- **kenne** — `kenne ich noch nicht.`
+- **lange** — `lange Wie lange fährt der Zug von Hamburg nach Berlin?`
+- **der** — `der/das Laptop, -s Ich brauche einen neuen Laptop.`
+- **hat** — `hat gelassen Kann ich mein Auto hier stehen lassen? Ich kann meine kleine Tochter noch nicht allein`
+- **ist** — `ist gelaufen Unsere Tochter ist erst ein Jahr alt, aber sie kann`
+- **schon** — `schon laufen. Wann läuft der Film?`
+- **hat** — `hat gelebt Ihre Großeltern leben nicht mehr.`
+- **hat** — `hat gelegt`
+- **leider** — `leider Leider kann ich nicht kommen. Ich muss zum Arzt.`
+- **tut** — `tut leid,`
+- **hat** — `hat leidgetan`
+- **hat** — `hat geliehen`
+- **hat** — `hat gelernt`
+- **hat** — `hat gelesen`
+- **hat** — `hat geliebt Lieblings- Meine Lieblingsfarbe ist Blau.`
+- **hat** — `hat geliefert`
+- **hat** — `hat/ist gelegen Judith liegt noch im Bett. Frankfurt liegt am Main. WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **musste** — `musste`
+- **nach** — `nach Ich gehe jetzt nach Hause. Ich fliege nach München. Es ist schon fünf nach zwölf. Wir treffen uns nach der Arbeit.`
+- **nächste** — `nächste, -er, -es Sehen wir uns nächste Woche? Ihr nächster Termin ist in einem Monat. Bis nächstes Mal!`
+- **name** — `name.`
+- **nebenan** — `nebenan Das ist José. Er wohnt nebenan.`
+- **meistens** — `meistens Meistens trinke ich zum Frühstück nur einen Kaffee.`
+- **im** — `im Süden.`
+- **hat** — `hat gemerkt sofort. Merkst du, dass es wärmer wird?`
+- **eine** — `eine Gabel bringen?`
+- **hat** — `hat gemietet`
+- **mindestens** — `mindestens Bitte kommen Sie mindestens zwei Stunden vor Ihrem Flug zum Flughafen. Schreiben Sie mindestens sieben Sätze! Ich warte schon mindestens 20 Minuten. Wann`
+- **kommst** — `kommst du denn endlich?`
+- **wasser** — `wasser (Sg.)`
+- **mit** — `mit (+ mitbringen/ Trinken Sie den Kaffee mit oder ohne Zucker? -kommen/-machen/Fahren wir mit dem Auto oder mit dem Zug nach -nehmen/-spielen) Hamburg? Ich komme mit meinem Freund. Ich gehe einkaufen. Soll ich dir was mitbringen? Ich gehe ins Kino. Kommst du mit? Wir organisieren ein Fest. Möchtest du auch`
+- **mein** — `mein Zelt mitnehmen. Warum spielt ihr nicht mit?`
+- **telefon** — `telefon, -e Mobiltelefon?`
+- **mochte** — `mochte,`
+- **hat** — `hat gemocht`
+- **mochte** — `mochte, Süßigkeiten.`
+- **hat** — `hat gemocht`
+- **leider** — `leider nicht möglich. 22 WORTLISTE A2_Wortliste_04_050526`
+- **hat** — `hat geöffnet Der Laden ist samstags bis 16.00 Uhr geöffnet.`
+- **oft** — `oft Ich gehe nicht oft ins Kino.`
+- **ohne** — `ohne Bitte einen Kaffee ohne Milch und Zucker. Schaffst du das auch ohne mich oder soll ich dir`
+- **online** — `online Wann bist du wieder online? Ich habe hier kein Internet. Ich bin erst heute Abend wieder online. Sie können das Geld auch online überweisen.`
+- **in** — `in Ordnung. Ich mache gleich Ordnung in meinem Zimmer.`
+- **hat** — `hat organisiert`
+- **hat** — `hat gepackt`
+- **hat** — `hat geparkt Hier ist Parken verboten.`
+- **hat** — `hat gepasst Welches Wort passt? Wählen Sie.`
+- **passiert** — `passiert, Was ist passiert?`
+- **ist** — `ist passiert`
+- **hat** — `hat genommen Was möchten Sie? – Ich nehme einen Salat. Ich nehme den Bus.`
+- **nein** — `nein Möchten Sie ein Stück Kuchen? – Nein, danke. Fährst du auch nach München? – Nein, ich habe`
+- **keine** — `keine Zeit.`
+- **hat** — `hat genannt ihn Alex.`
+- **nicht** — `nicht Das stimmt nicht. Ich kann morgen leider nicht kommen. Lisa wohnt nicht in Hamburg, sie wohnt in Bremen.`
+- **nichts** — `nichts Das macht nichts. Hier kaufe ich nichts. Der Laden gefällt mir nicht.`
+- **nie** — `nie Er kommt nie pünktlich.`
+- **niemand** — `niemand Hier ist niemand. Hier ist der Anrufbeantworter von Familie Klein. Leider ist im Moment niemand zu Hause.`
+- **nirgends** — `nirgends Hier kann man nirgends parken. Wo ist Stefan? Ich kann ihn nirgends sehen.`
+- **noch** — `noch Vielleicht kommt er noch. Es dauert noch ein paar Minuten. Ich habe noch 20 Euro.`
+- **hat** — `hat notiert`
+- **nicht** — `nicht notwendig.`
+- **nur** — `nur Ich möchte nur ein Glas Wasser. Das T-Shirt kostet nur fünf Euro.`
+- **ich** — `ich Äpfel und Orangen.`
+- **oder** — `oder Wann können Sie kommen – heute oder morgen? Entweder fahren wir mit dem Bus oder wir gehen`
+- **zu** — `zu Fuß. WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **unserer** — `unserer Stadt.`
+- **hat** — `hat geprüft`
+- **hat** — `hat geputzt`
+- **hat** — `hat geraten raten Sie mir? Rate mal, wen ich heute gesehen habe! Deinen Lehrer.`
+- **hat** — `hat geraucht Rauchen ist hier verboten!`
+- **hat** — `hat gerechnet`
+- **hat** — `hat recht,`
+- **hatte** — `hatte recht,`
+- **hat** — `hat recht gehabt`
+- **rechts** — `rechts Der Bahnhof ist hier rechts.`
+- **hat** — `hat geredet Rede nicht so viel!`
+- **hat** — `hat geregnet`
+- **darf** — `darf sie nicht in der Waschmaschine waschen.`
+- **hat** — `hat geplant Morgen schwimmen ... ist ein guter Plan.`
+- **zahl** — `zahl, -en`
+- **private** — `private Handynummer. Dieser Strand ist privat. Wir dürfen hier nicht`
+- **pro** — `pro Das Zimmer kostet 100 Euro pro Nacht.`
+- **probiert** — `probiert, Die Tür geht schwer auf. Probier mal!`
+- **hat** — `hat probiert`
+- **hier** — `hier? 24 WORTLISTE A2_Wortliste_04_050526`
+- **hat** — `hat gesagt Wie sagt man „sorry“ auf Deutsch? Sag mal, wie geht es dir denn?`
+- **sammelt** — `sammelt, Im Herbst sammeln wir im Wald bunte Blätter.`
+- **hat** — `hat gesammelt`
+- **ende** — `ende zu Hause bleiben und darf nicht mit meinen Freunden ins Kino gehen.`
+- **schade** — `schade Schade, dass du nicht kommen kannst.`
+- **hat** — `hat geschafft alleine. Geschafft! Das Projekt ist endlich fertig.`
+- **hat** — `hat geschienen`
+- **schenkt** — `schenkt,`
+- **hat** — `hat geschenkt`
+- **andere** — `andere?`
+- **hat** — `hat geschickt Ich schicke dir den Brief nach Hause.`
+- **schimpft** — `schimpft, mich über mein Auto.`
+- **hat** — `hat geschimpft Alle schimpfen über/auf das Wetter.`
+- **hat** — `hat geschlafen Haben Sie gut geschlafen? Gute Nacht! Schlaf gut und träum süß!`
+- **ist** — `ist gereist`
+- **ist** — `ist geritten`
+- **renoviert** — `renoviert,`
+- **hat** — `hat renoviert Mein Onkel arbeitet nicht mehr. Er ist Rentner.`
+- **repariert** — `repariert,`
+- **hat** — `hat repariert`
+- **reservierte** — `reservierte, reservieren.`
+- **hat** — `hat reserviert`
+- **hat** — `hat gerochen Hier riecht es nach Fisch.`
+- **hat** — `hat gerufen Wir müssen einen Arzt rufen.`
+- **bad** — `bad, ¨-er`
+- **schwimmt** — `schwimmt,`
+- **ist** — `ist geschwommen`
+- **hat** — `hat gesehen Möchtest du einen Film sehen? Ich habe Lisa lange nicht gesehen. Ist sie im Urlaub? Darf ich mal Ihren Ausweis sehen?`
+- **würdigkeit** — `würdigkeit, -en`
+- **sehr** — `sehr Danke sehr! Das Wetter ist heute sehr schön.`
+- **ist** — `ist gewesen Ich bin Mechaniker. Die Cola ist kalt. Mir ist kalt. Ich bin dreiundzwanzig. Um halb elf ist Pause. Frau Berger ist im Urlaub.`
+- **an** — `an sein / aus sein Das Licht ist noch an/schon aus.`
+- **auf** — `auf sein Das Fenster ist noch auf.`
+- **weg** — `weg sein Herr Meier ist schon weg.`
+- **zu** — `zu sein Die Tür ist zu.`
+- **seit** — `seit Ich wohne seit drei Jahren in Köln.`
+- **selbst** — `selbst Du musst mir nicht helfen, ich mache das selbst.`
+- **setzt** — `setzt, hat gesetzt`
+- **schließt** — `schließt, Wir müssen uns beeilen, die Bank schließt um`
+- **hat** — `hat geschlossen 18 Uhr.`
+- **schmeckt** — `schmeckt, Hat es Ihnen geschmeckt?`
+- **hat** — `hat geschmeckt Schmeckt's?`
+- **schneidet** — `schneidet, Wer schneidet dir die Haare?`
+- **hat** — `hat geschnitten Aua! Ich habe mich geschnitten!`
+- **schneit** — `schneit,`
+- **hat** — `hat geschneit`
+- **schon** — `schon`
+- **schreibt** — `schreibt,`
+- **hat** — `hat geschrieben`
+- **aus** — `aus! Ich finde den Film schrecklich. Er macht mir Angst. Ich schreibe dir eine E-Mail. Sie müssen sich schriftlich anmelden. Die schriftliche Prüfung dauert 70 Minuten. Zieh die Schuhe aus! Die neuen Schuhe sind mir zu eng. Sie drücken. Meine Tochter geht schon in die Schule. Die Schule ist gleich hier um die Ecke. 26 WORTLISTE A2_Wortliste_04_050526`
+- **spielt** — `spielt, Spielen Sie Karten?`
+- **hat** — `hat gespielt Jakob spielt Klavier.`
+- **spricht** — `spricht,`
+- **hat** — `hat gesprochen`
+- **stunde** — `stunde, -n Sprechstunde.`
+- **findet** — `findet statt,`
+- **hat** — `hat stattgefunden`
+- **hat** — `hat/ist gestanden Ich bin Verkäuferin. In meinem Beruf muss ich`
+- **viel** — `viel stehen. Was steht heute in der Zeitung?`
+- **hat** — `hat gestellt`
+- **ist** — `ist gestorben gestern gestorben.`
+- **brauchst** — `brauchst du? Einen Farbstift oder einen Bleistift`
+- **oder** — `oder einen Kugelschreiber?`
+- **dium** — `dium, -en ein Stipendium.`
+- **hat** — `hat gestört Darf ich Sie kurz stören? Mach die Musik leiser! Sie stört mich.`
+- **bahn** — `bahn, -en U-Bahn?`
+- **streitet** — `streitet,`
+- **hat** — `hat gestritten`
+- **hat** — `hat gesungen`
+- **nicht** — `nicht, was ich tun soll. Lesen Sie die Anzeigen und die Aufgaben 11-15. Welche Anzeige passt zu welcher Situation?`
+- **hat** — `hat/ist gesessen`
+- **so** — `so Sie müssen das so machen! Fahren Sie bitte nicht so schnell! Meine Frau ist so groß wie ich. So, das war‘s/wär‘s!`
+- **sofort** — `sofort Bitte antworten Sie sofort. Sie können sich ab sofort für den Kurs anmelden.`
+- **sogar** — `sogar Heute ist es sehr kalt. In den Bergen schneit es`
+- **sogar** — `sogar. Zu meiner Hochzeit kommen viele Gäste. Sogar`
+- **meine** — `meine Tante aus Kanada kommt.`
+- **sollte** — `sollte Und, was hat der Arzt gesagt? – Ich soll drei Tage`
+- **im** — `im Bett bleiben und viel Tee trinken.`
+- **sonst** — `sonst Haben Sie sonst noch einen Wunsch? – Nein danke,`
+- **das** — `das ist alles. Beeil dich, sonst kommen wir zu spät!`
+- **hat** — `hat gespart`
+- **geht** — `geht spazieren,`
+- **ist** — `ist spazieren gegangen`
+- **gang** — `gang, ¨-e`
+- **speichert** — `speichert,`
+- **hat** — `hat gespeichert`
+- **hat** — `hat geteilt Mein Mann und ich teilen uns die Arbeit.`
+- **nimmt** — `nimmt teil,`
+- **hat** — `hat teilgenommen`
+- **telefoniert** — `telefoniert,`
+- **hat** — `hat telefoniert`
+- **eine** — `eine schöne Tour in den Bergen.`
+- **hat** — `hat getragen Er trägt heute einen blauen Anzug.`
+- **hat** — `hat trainiert`
+- **träumt** — `träumt, Ich träume von einem großen Haus mit Garten.`
+- **hat** — `hat geträumt`
+- **studiert** — `studiert,`
+- **hat** — `hat studiert`
+- **hat** — `hat gesucht Ich suche meine Brille. Wir suchen eine größere Wohnung.`
+- **super** — `super Der Film ist super. Er kann super tanzen.`
+- **hat** — `hat/ist gesurft Surfst du oft im Internet?`
+- **und** — `und ein Handy.`
+- **hat** — `hat getanzt`
+- **tauscht** — `tauscht (aus), Können wir unsere Adressen austauschen?`
+- **hat** — `hat (aus)getauscht`
+- **und** — `und Ich habe heute und morgen frei. Ich kaufe ein und mein Mann kocht.`
+- **unter** — `unter Unter uns wohnt eine Familie mit drei Kindern.`
+- **unterhält** — `unterhält, Wir haben uns über das Fußballspiel unterhalten.`
+- **hat** — `hat unterhalten`
+- **unternimmt** — `unternimmt,`
+- **hat** — `hat unternommen`
+- **unterschreibt** — `unterschreibt,`
+- **hat** — `hat unterschrieben`
+- **hat** — `hat untersucht`
+- **unterwegs** — `unterwegs sein, Warte bitte auf mich. Ich bin unterwegs und`
+- **ist** — `ist unterwegs, komme gleich.`
+- **war** — `war unterwegs,`
+- **ist** — `ist unterwegs gewesen`
+- **verabredet** — `verabredet sein, Ich bin mit meiner Freundin verabredet.`
+- **ist** — `ist verabredet,`
+- **war** — `war verabredet,`
+- **ist** — `ist verabredet gewesen`
+- **tung** — `tung, -en haben eine Veranstaltung.`
+- **verdient** — `verdient,`
+- **hat** — `hat verdient`
+- **vereinbart** — `vereinbart,`
+- **hat** — `hat vereinbart`
+- **vergisst** — `vergisst, Vergiss deinen Arzttermin nicht!`
+- **hat** — `hat vergessen`
+- **trifft** — `trifft, Wir treffen uns immer freitags.`
+- **hat** — `hat getroffen`
+- **dann** — `dann links.`
+- **hat** — `hat getrunken`
+- **tschüs** — `tschüs Tschüs, bis morgen!`
+- **hat** — `hat getan Es tut mir leid, ich kann leider nicht kommen. Was kann ich für Sie tun?`
+- **hat** — `hat geübt zwei Stunden.`
+- **über** — `über Gehen Sie lieber hier über die Straße. Über uns wohnt Familie Schneider. Sind Sie über 18?`
+- **überall** — `überall Ich habe überall gesucht, aber ich kann meine Brille`
+- **nicht** — `nicht finden.`
+- **wieder** — `wieder ins Büro.`
+- **übernachtet** — `übernachtet,`
+- **hat** — `hat übernachtet`
+- **hat** — `hat übersetzt`
+- **setzung** — `setzung, -en`
+- **überweist** — `überweist, Ich überweise dir das Geld.`
+- **hat** — `hat überwiesen`
+- **um** — `um Er kommt um sieben Uhr. Die Apotheke ist gleich um die Ecke.`
+- **steigt** — `steigt um,`
+- **ist** — `ist umgestiegen`
+- **zieht** — `zieht um,`
+- **ist** — `ist umgezogen`
+- **sich** — `sich umziehen, Warte bitte, ich muss mich noch umziehen.`
+- **zieht** — `zieht sich um,`
+- **zog** — `zog sich um,`
+- **hat** — `hat sich umgezogen`
+- **von** — `von Das Auto von Felix ist kaputt. Er kommt gerade von Köln/von zu Hause. Die Brötchen sind leider von gestern.`
+- **vor** — `vor Er ist vor einer Stunde gegangen. Das Auto steht vor der Tür.`
+- **vorbei** — `vorbei Die Linie 8 fährt am Krankenhaus vorbei. Kommst du morgen bei mir vorbei?`
+- **bereitet** — `bereitet vor, dafür vorbereiten.`
+- **hat** — `hat vorbereitet Ich muss mich auf meine Prüfung vorbereiten.`
+- **vorher** — `vorher Ich komme mit ins Café. Vorher muss ich aber noch`
+- **zur** — `zur Bank.`
+- **vorn** — `vorn(e) Bitte vorn(e) einsteigen!`
+- **stellt** — `stellt vor, bitte vorstellen?`
+- **hat** — `hat vorgestellt Darf ich Ihnen meine Frau vorstellen?`
+- **vorwärts** — `vorwärts Fahren Sie bitte noch ein Stück vorwärts.`
+- **hat** — `hat gewählt Wählen Sie bitte ein Getränk.`
+- **wandert** — `wandert,`
+- **ist** — `ist gewandert`
+- **wann** — `wann Wann bist du fertig? Wann kann ich Sie anrufen?`
+- **wartet** — `wartet, Auf wen warten Sie?`
+- **hat** — `hat gewartet`
+- **warum** — `warum Warum kommt er nicht?`
+- **vergleicht** — `vergleicht, Können wir die Antworten vergleichen?`
+- **hat** — `hat verglichen`
+- **hat** — `hat verkauft`
+- **hat** — `hat verletzt`
+- **hat** — `hat verliebt`
+- **verliert** — `verliert, Michael hat seine Arbeit verloren.`
+- **hat** — `hat verloren Wir haben das Fußballspiel verloren.`
+- **vermietet** — `vermietet,`
+- **hat** — `hat vermietet`
+- **verpasst** — `verpasst,`
+- **hat** — `hat verpasst`
+- **verreist** — `verreist, Frau Doktor Müller ist zur Zeit verreist. Sie kommt`
+- **ist** — `ist verreist erst nächste Woche zurück.`
+- **verschiebt** — `verschiebt,`
+- **hat** — `hat verschoben`
+- **versteht** — `versteht, Ich verstehe diese Aufgabe nicht.`
+- **hat** — `hat verstanden`
+- **versucht** — `versucht, Haben Sie es schon einmal mit diesem Mittel`
+- **hat** — `hat versucht versucht?`
+- **viel** — `viel, e Ich habe leider nicht viel Zeit. Viel Spaß! Im Winter sind viele Leute erkältet.`
+- **vielleicht** — `vielleicht Vielleicht bekomme ich diesen Job. Er besucht uns vielleicht am Wochenende. Kannst du mir vielleicht ein bisschen Geld leihen?`
+- **wenn** — `wenn Wenn ich nicht arbeiten muss, komme ich.`
+- **wer** — `wer (wen, wem) Wer ist das?`
+- **ist** — `ist geworden Das Wetter am Wochenende wird gut. Das haben`
+- **sie** — `sie im Radio gesagt.`
+- **wie** — `wie Wie heißt du? Wie bitte? Können Sie das bitte wiederholen? Er schreibt wie ein Kind. Meine Frau ist so groß wie ich. Wie groß ist die Wohnung? Wie soll ich das machen? Wie lange bist du schon hier?`
+- **wie** — `wie viel, -e Wie viel kostet diese Hose? Wie viele Kinder haben Sie?`
+- **wieder** — `wieder Stefan kann wieder zum Fußballtraining kommen. Geht es dir wieder besser? Du kommst schon wieder zu spät. Wann kommst du wieder?`
+- **wiederholt** — `wiederholt,`
+- **hat** — `hat wiederholt`
+- **hat** — `hat gewusst Woher wissen Sie das?`
+- **wo** — `wo Wo waren Sie im Urlaub? - In Frankreich. Wo ist meine Uhr? Wo sind Sie geboren?`
+- **woher** — `woher Woher kommen Sie? Woher wissen Sie das?`
+- **wohin** — `wohin Wohin fährt dieser Bus? - Nach Dresden. Wohin wollen Sie am Wochenende gehen?`
+- **hat** — `hat gewohnt`
+- **was** — `was Was ist das? Was möchten Sie?`
+- **wäscht** — `wäscht,`
+- **hat** — `hat gewaschen`
+- **wechselt** — `wechselt, Können Sie mir zehn Dollar wechseln?`
+- **hat** — `hat gewechselt`
+- **weckt** — `weckt,`
+- **hat** — `hat geweckt`
+- **weg** — `weg/weg- Meine Brille ist weg. Ich finde sie nicht mehr. (wegbringen/ Bringst du bitte den Müll weg? -fahren/-gehen/ Können Sie Ihr Auto bitte wegfahren? -laufen/-machen/ Ich gehe jetzt weg. -nehmen/-werfen) Unser Hund ist weggelaufen. Kannst du das bitte wegmachen? Warum hast du dem Kind den Ball weggenommen? Sie können diese Papiere wegwerfen.`
+- **tut** — `tut weh, Ich will dir nicht wehtun.`
+- **hat** — `hat wehgetan`
+- **weil** — `weil Ich kann nicht kommen, weil ich arbeiten muss.`
+- **hat** — `hat geweint Weine bitte nicht!`
+- **welcher** — `welcher, -e, -s Welcher Tag ist heute? Welchen Kurs möchtest du machen? Welche Bluse nehmen Sie? Welches Buch suchst du?`
+- **wenig** — `wenig, -e Ich habe leider nur wenig verstanden. Er verdient wenig.`
+- **wenigstens** — `wenigstens Ich habe keinen Hunger. - Ach, essen Sie`
+- **wenigstens** — `wenigstens ein Stück Kuchen. Haben Sie schon eine neue Wohnung gefunden? Meine Wohnung ist sehr hell. WORTLISTE WORTLISTE A2_Wortliste_04_050526`
+- **zu** — `zu Der Bus fährt zum Bahnhof. Ich gehe zu Fuß. Ich bin zu Hause. Das Kleid ist mir zu teuer. Ich trinke zum Essen ein Bier.`
+- **zuerst** — `zuerst Zuerst müsst ihr die Hausaufgaben machen, dann`
+- **könnt** — `könnt ihr spielen. Zuerst hat mir die Arbeit gar nicht gefallen. Jetzt`
+- **geht** — `geht es besser.`
+- **hat** — `hat zugehört`
+- **zuletzt** — `zuletzt Wir haben uns vor drei Jahren zuletzt gesehen. Diese Aufgabe machen wir zuletzt.`
+- **zum** — `zum Beispiel Mein Freund hat viele Hobbys, zum Beispiel Kochen, Lesen und Tanzen.`
+- **macht** — `macht zu,`
+- **hat** — `hat zugemacht`
+- **zurück** — `zurück Eine Fahrkarte nach Frankfurt und zurück, bitte.`
+- **nach** — `nach Hause zurück.`
+- **wollte** — `wollte,`
+- **hat** — `hat gewollt (hat wollen als Modalverb)`
+- **meiner** — `meiner Firma.`
+- **bitte** — `bitte. Haben Sie noch einen Wunsch? Was ist dein größter Wunsch?`
+- **hat** — `hat gezahlt`
+- **zeichnet** — `zeichnet,`
+- **hat** — `hat gezeichnet`
+- **hat** — `hat gezeigt`
+- **zieht** — `zieht (an/aus), Er hat sein T-Shirt ausgezogen und ein Hemd`
+- **hat** — `hat/ist angezogen. (an/aus)gezogen Die Nachbarn sind am Wochenende ausgezogen.`
+
+## adj_stem missing (4)
+
+- **all** — `all- Ich wünsche dir alles Gute! Hast du alles? Möchten Sie noch etwas? - Nein, danke. Das ist`
+- **einzel** — `einzel- Nicht alle zusammen. Könnt ihr bitte einzeln`
+- **manch** — `manch- Manche Nachbarn sind unfreundlich.`
+- **zurück** — `zurück- Fahrt ihr nach der Party zurück nach Hause? (fahren, geben, Wann muss ich das Buch zurückgeben?`
+
+## expression missing (0)
+
+_None._
+

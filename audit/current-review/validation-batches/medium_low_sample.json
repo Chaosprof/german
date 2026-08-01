@@ -1,0 +1,2530 @@
+[
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19190
+    ],
+    "word": "Grenzerfahrung",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "borderline experience/liminal experience",
+    "correct": "extreme experience/experience of reaching one’s limits",
+    "why": "The word normally denotes an experience at the limits of physical or psychological endurance, not a “borderline” or anthropologically liminal experience."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25367
+    ],
+    "word": "Erfolgszahl",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "success number",
+    "correct": "success figure; number/figure indicating successes (context-dependent)",
+    "why": "“Success number” is not idiomatic English and does not explain what the figure counts or indicates."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      23910
+    ],
+    "word": "Schlagerstar",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"pop star\"",
+    "correct": "\"Schlager star; star of German-language popular music\"",
+    "why": "Schlager is a specific musical genre, not a general synonym for pop; the current gloss erases an important cultural distinction."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8970
+    ],
+    "word": "Attentäter",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"assassin\"",
+    "correct": "\"attacker/assailant; assassin or terrorist (depending on the attack)\"",
+    "why": "An *Attentäter* perpetrates an *Attentat*, which may be a bombing or other attack and need not be a successful or person-directed assassination."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18677
+    ],
+    "word": "Abgeltungsteuer",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "withholding tax/flat-rate capital-gains tax",
+    "correct": "final withholding tax on investment income (Germany)",
+    "why": "It is neither generic withholding tax nor limited to capital gains; it also covers interest and dividends."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      23932
+    ],
+    "word": "Schnellimbiss",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"fast food/snack bar\"",
+    "correct": "\"fast-food outlet; snack bar\"",
+    "why": "the count noun der Schnellimbiss normally denotes the outlet, whereas bare \"fast food\" denotes the food and is not countable in the same way."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5199
+    ],
+    "word": "Klamotte",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "clothes",
+    "correct": "Klamotten (plural, informal) = clothes; singular Klamotte = old/worthless object or a farce",
+    "why": "The clothing sense is plural-only, while the presented singular headword does not mean “clothes.”"
+  },
+  {
+    "batch": "nouns_006",
+    "bank": "nouns",
+    "source_rows": [
+      4191
+    ],
+    "word": "Physiotherapeut",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "A1",
+    "correct": "A2 or B1",
+    "why": "This relatively specialised occupational/healthcare word is implausibly early for A1."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25485
+    ],
+    "word": "E-Mail-Account",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "A2/B1 (approximately)",
+    "why": "This transparent and routine digital-life term is grossly over-levelled at C1."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7197
+    ],
+    "word": "Polizeidienststelle",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"police department\"",
+    "correct": "\"police station/police office or unit\"",
+    "why": "A *Dienststelle* is an office, station or organisational unit, not the police department as a whole; the current wording is also US-centred for a British-English learner."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8913
+    ],
+    "word": "Straßenzug",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"row of buildings/street block\"",
+    "correct": "\"stretch/line of a street; continuous row of buildings along a street\"",
+    "why": "A *Straßenzug* is not a city block; it is a continuous street stretch or the buildings lining it."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      6021
+    ],
+    "word": "Lektorat",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "proofreading/editorial office",
+    "correct": "editing/copy-editing; editorial department/office",
+    "why": "Proofreading is more specifically `Korrektorat`; conflating it with `Lektorat` hides a useful publishing distinction."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12251
+    ],
+    "word": "Paper",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "paper",
+    "correct": "academic/research/conference paper",
+    "why": "The German borrowing denotes a scholarly or conference paper, not ordinary paper as a material or sheet."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2515
+    ],
+    "word": "Jurist",
+    "field": "english/cefrLevel",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "jurist/lawyer; A1",
+    "correct": "legal professional/law graduate/jurist; lawyer only as a broad contextual rendering; reassess as approximately B2.",
+    "why": "A Jurist is not necessarily a practising lawyer, and this formal profession/qualification term is a gross A1 mismatch."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20699
+    ],
+    "word": "Flößerei",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"log driving\"",
+    "correct": "\"timber rafting; rafting trade\"",
+    "why": "Flößerei centrally denotes transporting timber in rafts and the associated trade; log driving more specifically suggests floating loose logs."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25487
+    ],
+    "word": "Skimaske",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "A2/B1 (approximately)",
+    "why": "This simple, transparent concrete compound is not advanced C1 vocabulary."
+  },
+  {
+    "batch": "nouns_006",
+    "bank": "nouns",
+    "source_rows": [
+      3674
+    ],
+    "word": "Schulkind",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "A1 or A2",
+    "why": "This is a basic and transparent word for a school-age child, not advanced vocabulary."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5399
+    ],
+    "word": "Förster",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1",
+    "why": "This ordinary occupation word is substantially below C1."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19452
+    ],
+    "word": "Laubholz",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "deciduous wood/broadleaf timber",
+    "correct": "wood from a broad-leaved/deciduous tree; also a broad-leaved woody plant/tree",
+    "why": "The current gloss covers only the material sense, although the countable sense—especially behind the plural Laubhölzer—denotes the trees or woody plants themselves."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25374
+    ],
+    "word": "Medienpädagoge",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "pedagogue",
+    "correct": "media educator/media-education specialist",
+    "why": "The gloss drops the defining Medien- component and makes the occupation look like a generic educator."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      14870
+    ],
+    "word": "Klingeln",
+    "field": "whole row",
+    "severity": "medium",
+    "category": "junk",
+    "current": "`das Klingeln | — | ringing/buzzing`",
+    "correct": "remove from the lexical noun bank or teach it only as a transparent nominalisation under the verb `klingeln`",
+    "why": "this is a productively formed nominalised infinitive, not an independently useful noun headword."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5709
+    ],
+    "word": "Remis",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "draw/stalemate/tie",
+    "correct": "draw; tie",
+    "why": "A stalemate is specifically `Patt`; it is one possible cause of a chess draw, not a synonym for `Remis`."
+  },
+  {
+    "batch": "nouns_031",
+    "bank": "nouns",
+    "source_rows": [
+      21623
+    ],
+    "word": "Schießscharte",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "arrow slit/balistraria",
+    "correct": "firing slit/loophole/embrasure",
+    "why": "The German term is generic for a defensive opening used to fire at an enemy; restricting it to arrows is too narrow, and `balistraria` is needlessly obscure."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18650
+    ],
+    "word": "Zentner",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "hundredweight",
+    "correct": "metric hundredweight, normally 50 kg in Germany (100 kg in some Swiss contexts)",
+    "why": "An unqualified British hundredweight is 112 lb/about 50.8 kg, so the current gloss hides a material regional difference in the unit."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      25098
+    ],
+    "word": "Schmerzempfinden",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"sensation of pain\"",
+    "correct": "\"pain perception; sensitivity to pain\"",
+    "why": "The current phrase is awkward and can describe an individual painful sensation rather than the faculty or degree of perceiving pain."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9806
+    ],
+    "word": "Silbe",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately A2–B1",
+    "why": "\"syllable\" is routine language-learning vocabulary encountered far below C1."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19270
+    ],
+    "word": "Holzbrücke",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "A2 or B1",
+    "why": "This fully transparent compound of two basic nouns is grossly mislevelled at C1."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      12639
+    ],
+    "word": "Halm",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "stalk / blade (of grass) first",
+    "correct": "stalk; blade (of grass)",
+    "why": "“first” is a stray editorial/ranking token, not part of the gloss."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      9078
+    ],
+    "word": "Klimaschutzmaßnahme",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"climate protection measure\"",
+    "correct": "\"climate-action/climate-mitigation measure\"",
+    "why": "\"Climate protection measure\" is a German-influenced calque; the recommended wording is more idiomatic English."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      9007
+    ],
+    "word": "Eifer",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "\"alacrity/ardor/eagerness\"",
+    "correct": "\"zeal/eagerness/ardour\"",
+    "why": "The bank targets British English, which spells this noun *ardour*; *zeal* is also the clearer primary equivalent."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6324
+    ],
+    "word": "Animationsfilm",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "animation film",
+    "correct": "animated film",
+    "why": "“Animated film” is the normal idiomatic English term; the current wording sounds translated."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2787
+    ],
+    "word": "Bonus",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "Reassess as approximately B1/B2.",
+    "why": "This transparent, widely used loanword is not plausibly restricted to C1. uncertain: yes"
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11498
+    ],
+    "word": "Altersgenosse",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "peer",
+    "correct": "person of the same age/age peer/contemporary",
+    "why": "Generic “peer” can mean someone of similar status rather than specifically the same age, which is the defining content of `Altersgenosse`."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8706
+    ],
+    "word": "Zuwanderungsgeschichte",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"history of immigration\"",
+    "correct": "\"immigration history; personal/family history of immigration\"",
+    "why": "The word often describes an individual's or family's migration background, not only the history of immigration as a social phenomenon."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19044
+    ],
+    "word": "Fahrtstrecke",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "route/distance traveled",
+    "correct": "route/distance travelled",
+    "why": "For the specified British-English audience, “travelled” takes double l."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8722
+    ],
+    "word": "Atemluft",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"breathing air/respiratory air\"",
+    "correct": "\"air breathed in; breathable/respirable air\"",
+    "why": "Both current phrases are awkward literal translations and do not give a learner an idiomatic English equivalent."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      25197
+    ],
+    "word": "Markenzeichen",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately B1/B2",
+    "why": "The common business and figurative word for a trademark or hallmark is substantially below C1. uncertain: yes"
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23626
+    ],
+    "word": "Opernsänger",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1 (at most B2)",
+    "why": "This transparent and culturally common profession noun is substantially overlevelled at C1."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      1910
+    ],
+    "word": "Sportverein",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "Reassess as approximately A2/B1.",
+    "why": "This transparent, everyday compound for a sports club is far below C1. uncertain: yes"
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      14887
+    ],
+    "word": "Koriander",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately A2–B1",
+    "why": "a common food and herb name is grossly overgraded at C1."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23639
+    ],
+    "word": "Ossi",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "East German",
+    "correct": "East German (colloquial, sometimes disparaging)",
+    "why": "The missing register warning can lead learners to use an informal and contextually sensitive label as a neutral default."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19552
+    ],
+    "word": "Mittelmeer",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "mediterranean sea",
+    "correct": "Mediterranean Sea/the Mediterranean",
+    "why": "The proper geographical name requires capitals in English."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13801
+    ],
+    "word": "Briefpost",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "letter mail",
+    "correct": "letter post/mail sent as letters",
+    "why": "`Letter mail` is not the natural British postal term."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      2034
+    ],
+    "word": "Spezialität",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "specialty",
+    "correct": "speciality",
+    "why": "“Speciality” is the standard general British-English spelling."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7282
+    ],
+    "word": "Einbruchschutz",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"burglary protection\"",
+    "correct": "\"burglary prevention/security against burglary\"",
+    "why": "\"Burglary protection\" is not idiomatic British English and gives learners a literal rather than a usable equivalent."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      2972
+    ],
+    "word": "Sekretariat",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "office",
+    "correct": "secretariat/administrative office/secretary's office",
+    "why": "Bare “office” is too broad and does not teach what kind of office Sekretariat denotes."
+  },
+  {
+    "batch": "nouns_025",
+    "bank": "nouns",
+    "source_rows": [
+      17104
+    ],
+    "word": "Softwaretest",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "software testing",
+    "correct": "software test",
+    "why": "The German count noun denotes an individual test, whereas “software testing” denotes the activity or discipline."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9531
+    ],
+    "word": "Webportal",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately B1–B2",
+    "why": "This transparent and routine digital term is graded substantially too late."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      207
+    ],
+    "word": "wenden",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "turn/apply to",
+    "correct": "etwas wenden — turn something; sich an jemanden/eine Stelle wenden — apply/appeal to/contact",
+    "why": "“Apply to” is not a plain transitive sense of wenden; it requires sich an plus accusative."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2846
+    ],
+    "word": "ausholen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"draw back/go far back/sound out\"",
+    "correct": "\"draw back (to strike); go into lengthy detail/start a long way back\"",
+    "why": "\"sound someone out\" is normally `jemanden ausloten/aushorchen`, not a standard sense of `ausholen`."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3489
+    ],
+    "word": "munkeln",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"whisper/be rumored\"",
+    "correct": "\"whisper/rumour; it is rumoured (es wird gemunkelt)\"",
+    "why": "\"Be rumoured\" requires the impersonal passive construction in German, and `rumoured` is the British spelling."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2972
+    ],
+    "word": "schwächeln",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"weaken slightly\"",
+    "correct": "\"show signs of weakness/falter/underperform\"",
+    "why": "`schwächeln` is normally intransitive and describes performing weakly, not slightly weakening an object."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3279
+    ],
+    "word": "vorgaukeln",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"pretend\"",
+    "correct": "\"make someone believe/pretend something to someone (jdm etwas vorgaukeln)\"",
+    "why": "`vorgaukeln` is ditransitive deception, not simply intransitive \"pretend\"."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2673
+    ],
+    "word": "fortpflanzen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "“procreate”",
+    "correct": "“sich fortpflanzen = reproduce/procreate; etw. fortpflanzen = propagate/transmit”",
+    "why": "Living beings procreating is expressed reflexively in German."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1108
+    ],
+    "word": "abmelden",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "give notice of/log out",
+    "correct": "Distinguish transitive `etwas/jemanden abmelden = deregister/cancel` from `sich abmelden = give notice/sign or log out`.",
+    "why": "The learner-facing personal and computer senses normally require the reflexive pronoun."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4586
+    ],
+    "word": "zanken",
+    "field": "word/english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "zanken; fight/quarrel",
+    "correct": "`sich (mit jemandem) zanken = quarrel/squabble (with someone)`",
+    "why": "The supplied everyday sense is reflexive."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3602
+    ],
+    "word": "bereden",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "converse/discuss/persuade",
+    "correct": "discuss; jemanden bereden — talk someone into something",
+    "why": "Ordinary \"converse\" is `sich unterhalten/miteinander reden`; the current gloss also hides the special transitive construction behind \"persuade\"."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      597
+    ],
+    "word": "anhören",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "listen to/sound",
+    "correct": "sich etwas anhören — listen to something; sich anhören — sound",
+    "why": "Both listed everyday senses require reflexive pronouns (dative for “listen to”, accusative for “sound”)."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1646
+    ],
+    "word": "ausruhen",
+    "field": "word/english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "ausruhen; rest",
+    "correct": "sich ausruhen — rest",
+    "why": "The normal learner sense is obligatorily reflexive."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2818
+    ],
+    "word": "verhören",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"interrogate/mishear\"",
+    "correct": "\"interrogate; mishear (sich verhören)\"",
+    "why": "`jemanden verhören` means interrogate someone, but mishearing is `sich verhören`."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3640
+    ],
+    "word": "frittieren",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1 (at most B2)",
+    "why": "This concrete, everyday cooking verb is grossly over-levelled at C1."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2151
+    ],
+    "word": "einprägen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "“impress/imprint/memorise”",
+    "correct": "“impress/imprint; sich etw. einprägen = memorise/commit something to memory”",
+    "why": "The everyday “memorise” sense is reflexive and takes the thing memorised in the accusative."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      4040
+    ],
+    "word": "entkleiden",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "undress",
+    "correct": "jemanden entkleiden — undress/remove the clothes from someone; sich entkleiden — get undressed",
+    "why": "English \"undress\" can be intransitive, but the German intransitive construction requires `sich`."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      4171
+    ],
+    "word": "seufzen",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "A2/B1",
+    "why": "The common concrete verb \"sigh\" is grossly over-levelled at C1."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1043
+    ],
+    "word": "wundern",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "surprise/wonder",
+    "correct": "`jemanden wundern = surprise someone`; `sich über etwas wundern = wonder/be surprised about something`",
+    "why": "English “wonder” corresponds to the reflexive construction, not bare `wundern`."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4689
+    ],
+    "word": "aussöhnen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "reconcile",
+    "correct": "`sich mit jemandem aussöhnen = become reconciled/reconcile with someone`; `jemanden mit jemandem aussöhnen = reconcile people`",
+    "why": "The ordinary intransitive English sense is reflexive in German."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      457
+    ],
+    "word": "verschaffen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "provide/obtain",
+    "correct": "jemandem etwas verschaffen — provide/get something for someone; sich etwas verschaffen — obtain something",
+    "why": "“Obtain” normally uses the dative reflexive construction."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1362
+    ],
+    "word": "abarbeiten",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "process/slave/slave away",
+    "correct": "`etwas abarbeiten = work through/process something`; `sich an etwas abarbeiten = wear oneself out/toil away at something`",
+    "why": "“Slave/slave away” belongs to the reflexive construction and is not a free-standing translation of transitive `abarbeiten`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2255
+    ],
+    "word": "verheißen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "“promise”",
+    "correct": "“promise/foretell; bode/portend (often `nichts Gutes verheißen`)”",
+    "why": "The bare gloss invites confusion with everyday interpersonal `versprechen` and omits the verb’s characteristic use."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1931
+    ],
+    "word": "ausschauen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "appear/look/look out",
+    "correct": "look/appear (regional, especially southern German/Austrian/Swiss); look out of",
+    "why": "The appearance sense is regionally marked and should not be presented as unqualified standard German."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5315
+    ],
+    "word": "besagen",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "say",
+    "correct": "state/mean/indicate (of a text, rule, result, or evidence)",
+    "why": "`Besagen` is not the ordinary speech verb “say”; the broad gloss creates a high-frequency false equivalence with `sagen`."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1803
+    ],
+    "word": "dabeihaben",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "have there/have with",
+    "correct": "have something with one/have something on one",
+    "why": "The present English is unnatural and does not clearly model the meaning of etwas dabeihaben."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4497
+    ],
+    "word": "seilspringen",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "jump rope/skip rope",
+    "correct": "skip/skip with a rope",
+    "why": "The app targets British English, whereas “jump rope” and especially “skip rope” are North American formulations."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3727
+    ],
+    "word": "verzinken",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "galvanize/zinc-coat",
+    "correct": "galvanise/zinc-coat",
+    "why": "The bank targets British English, for which `galvanise` is the expected house spelling."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      465
+    ],
+    "word": "ausbilden",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1 (at most B2)",
+    "why": "The everyday vocational meaning “train” is well below C1, making this a gross overlevel."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3426
+    ],
+    "word": "beäugen",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "\"scrutinize/eye suspiciously\"",
+    "correct": "\"scrutinise/eye suspiciously\"",
+    "why": "`scrutinise` is the standard British spelling."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1912
+    ],
+    "word": "einatmen",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "breath in/inhale",
+    "correct": "breathe in/inhale",
+    "why": "“Breath” is a noun; the verb is “breathe”."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3191
+    ],
+    "word": "auslachen",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately A2/B1",
+    "why": "This common transparent verb meaning \"laugh at\" belongs well below C1. uncertain: yes"
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5045
+    ],
+    "word": "snowboarden",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "to snowboard",
+    "correct": "snowboard",
+    "why": "Drop the English infinitive marker for consistency with the bank's bare-verb gloss style."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5338
+    ],
+    "word": "zurufen",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "shout",
+    "correct": "jemandem etwas zurufen — call/shout something to someone",
+    "why": "The bare gloss loses the required direction toward a dative recipient and makes the word look synonymous with `schreien`."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3237
+    ],
+    "word": "kanalisieren",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "\"channel/canalize\"",
+    "correct": "\"channel/canalise\"",
+    "why": "`canalise` is the British spelling expected by the bank."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5428
+    ],
+    "word": "zunicken",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "nod",
+    "correct": "jemandem zunicken — nod to/at someone",
+    "why": "The dative-directed meaning distinguishes this verb from bare `nicken`; the current gloss loses that valency."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      4197
+    ],
+    "word": "uniformieren",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "dress in uniform; standardize",
+    "correct": "dress in uniform; standardise",
+    "why": "The bank consistently targets British English, so the common `-ise` house spelling is preferable."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4852
+    ],
+    "word": "hartsieden",
+    "field": "word/english",
+    "severity": "low",
+    "category": "junk",
+    "current": "hartsieden; hard-boil",
+    "correct": "Prefer `hart kochen`/`hartgekocht`; retain `hartsieden` only with an obsolete/very rare label.",
+    "why": "The finite compound is not useful modern learner vocabulary; chiefly the lexicalised adjective `hartgesotten` survives."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2625
+    ],
+    "word": "keimen",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "“germinate/pullulate/sprout”",
+    "correct": "“germinate/sprout”",
+    "why": "“Pullulate” is extremely rare English and is unsuitable learner-facing vocabulary here."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      4990
+    ],
+    "word": "popeln",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "pick the nose",
+    "correct": "pick one's nose",
+    "why": "The current English is unnatural and obscures that the possessor normally matches the subject."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1929
+    ],
+    "word": "zerfallen",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "decay/dilapidate/disintegrate",
+    "correct": "decay/fall apart/disintegrate",
+    "why": "“Dilapidate” is not idiomatic modern learner English for this intransitive sense."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3290
+    ],
+    "word": "zuwinken",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"beckon/wave to\"",
+    "correct": "\"wave to/at\"",
+    "why": "`zuwinken` is waving to someone; beckoning someone to approach is normally `heranwinken`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5441
+    ],
+    "word": "zurückfahren",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "to drive back",
+    "correct": "drive/go/travel back",
+    "why": "Drop the English infinitive marker; also avoid limiting the intransitive motion verb to driving when the means of transport can be unspecified."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1459
+    ],
+    "word": "wehen",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "A2–B1",
+    "why": "The basic weather verb “blow” is ordinary early learner vocabulary, not C1."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3437
+    ],
+    "word": "davonlaufen",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately A2/B1",
+    "why": "This transparent everyday separable verb is comparable to A2 `weglaufen` and is not advanced C1 vocabulary. uncertain: yes"
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2716
+    ],
+    "word": "aufwecken",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "“awake/wake up”",
+    "correct": "“wake/awaken someone; wake someone up”",
+    "why": "The German verb is transitive, while the current gloss can be read as intransitive “wake up”."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5015
+    ],
+    "word": "rubrizieren",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "categorize/classify",
+    "correct": "categorise/classify",
+    "why": "`Categorise` is the British spelling required by the bank's house style."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      687
+    ],
+    "word": "beeindrucken",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1 (at most B2)",
+    "why": "“Impress” is common general vocabulary and is materially overlevelled at C1."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2667
+    ],
+    "word": "entkernen",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "“pit”",
+    "correct": "“core/stone/remove the seeds or stones from”",
+    "why": "“Pit” is chiefly American; the bank is intended for British-English learners and the verb also covers cores and seeds."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1991
+    ],
+    "word": "jubeln",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1",
+    "why": "“Cheer/rejoice” is common general vocabulary well before C1."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4270
+    ],
+    "word": "zeithistorisch",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "contemporary-historical",
+    "correct": "relating to contemporary history",
+    "why": "The calque is opaque and can be read as \"historical but contemporary\", rather than naming the field Zeitgeschichte."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1811
+    ],
+    "word": "freiheitlich",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "liberal/free",
+    "correct": "liberal-democratic/committed to freedom/liberty-based",
+    "why": "Bare “free” is not a general equivalent; the German adjective normally characterises a political or constitutional commitment to liberty."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6463
+    ],
+    "word": "bissfest",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "al dente",
+    "correct": "firm to the bite; bite-resistant; al dente (of food)",
+    "why": "`bissfest` is not confined to the culinary Italian sense and can also describe material or objects resistant to biting."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1989
+    ],
+    "word": "würzig",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "B1–B2 (or leave unset pending the project's CEFR authority)",
+    "why": "This ordinary food adjective is substantially over-levelled at C1."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2330
+    ],
+    "word": "schmerzfrei",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"free of ache\"",
+    "correct": "\"pain-free/free from pain\"",
+    "why": "\"Free of ache\" is unidiomatic and too narrow; `Schmerz` means pain generally, not only an ache."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4616
+    ],
+    "word": "fraktionslos",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "without/free of faction",
+    "correct": "not belonging to a parliamentary group / non-affiliated (of an MP)",
+    "why": "\"Faction\" is a misleading literal rendering of Fraktion in its normal parliamentary sense."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9229
+    ],
+    "word": "skrupulös",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "scrupulous",
+    "correct": "over-scrupulous/punctilious; plagued by scruples",
+    "why": "German `skrupulös` normally carries the negative sense of excessive, anxious conscientiousness; bare English “scrupulous” is often approving and masks that nuance."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2686
+    ],
+    "word": "actionreich",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"rich in action\"",
+    "correct": "\"action-packed/eventful\"",
+    "why": "\"Rich in action\" is a German calque rather than idiomatic English."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9215
+    ],
+    "word": "sozialkritisch",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "socially critical",
+    "correct": "critical of society/social conditions; relating to social criticism",
+    "why": "“Socially critical” is an unnatural and ambiguous calque that does not express criticism directed at society."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1254
+    ],
+    "word": "landschaftlich",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "regional/scenic",
+    "correct": "landscape-related/scenic",
+    "why": "`landschaftlich` concerns a landscape or scenery and does not generally mean “regional”."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1090
+    ],
+    "word": "vertrauensvoll",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "optimistic/trustful/trusting",
+    "correct": "trusting/trustful/confiding",
+    "why": "`vertrauensvoll` concerns trust, not optimism; the first alternative teaches a false meaning."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4451
+    ],
+    "word": "schadstoffarm",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "poor in/low in harmful substance",
+    "correct": "low-emission / low-pollutant / containing few pollutants",
+    "why": "The generated singular calque is unidiomatic and misses the usual emissions/product sense."
+  },
+  {
+    "batch": "adjectives_001",
+    "bank": "adjectives",
+    "source_rows": [
+      515
+    ],
+    "word": "scheinbar",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"apparently/seemingly\"",
+    "correct": "\"seeming/apparent but not real; seemingly\"",
+    "why": "neutral English \"apparently\" often corresponds to `anscheinend`; `scheinbar` normally asserts a deceptive appearance, and the current slash gloss hides this important learner distinction."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3359
+    ],
+    "word": "rezeptpflichtig",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"prescription\"",
+    "correct": "\"prescription-only; requiring a prescription\"",
+    "why": "A bare noun does not state the defining fact that the medicine may be supplied only on prescription."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7680
+    ],
+    "word": "fahnenflüchtig",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"deserting (military)\"",
+    "correct": "\"having deserted/absent without leave (military)\"",
+    "why": "The adjective characterises a service member who has deserted or is unlawfully absent, not merely someone in the process of departing."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4890
+    ],
+    "word": "ausbaufähig",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "capable of extension",
+    "correct": "capable of being developed/expanded; with room for improvement",
+    "why": "The current literal gloss misses the common evaluative sense that something can still be improved."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4427
+    ],
+    "word": "obligat",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "inevitable/obligatory",
+    "correct": "obligatory / mandatory; obligate (biology)",
+    "why": "\"Inevitable\" is not a general equivalent and conceals the important technical \"obligate\" sense."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4297
+    ],
+    "word": "betont",
+    "field": "cefrLevel",
+    "severity": "medium",
+    "category": "cefr",
+    "current": "A1",
+    "correct": "B2 or higher",
+    "why": "The adjective senses \"emphasised/accentuated\" and the relevant participial use are grossly too advanced for an A1 deck."
+  },
+  {
+    "batch": "adjectives_001",
+    "bank": "adjectives",
+    "source_rows": [
+      73
+    ],
+    "word": "gesetzlich",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"legal/statutory\"",
+    "correct": "\"statutory; prescribed/required by law\"",
+    "why": "unqualified \"legal\" can mean lawful or pertaining to law, normally `rechtmäßig` or `rechtlich`; `gesetzlich` specifically relates to or is laid down by legislation."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5169
+    ],
+    "word": "unternehmungslustig",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"enterprising\"",
+    "correct": "\"adventurous/keen to go out and do things\"",
+    "why": "`unternehmungslustig` denotes eagerness for activities and outings; \"enterprising\" instead suggests initiative and resourcefulness (`unternehmend`)."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2445
+    ],
+    "word": "vordergründig",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"obvious/superficial\"",
+    "correct": "\"superficial/apparent/ostensible\"",
+    "why": "`vordergründig` contrasts surface appearance with deeper reality; \"obvious\" lacks that contrast and can teach a false equivalence with `offensichtlich`."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1941
+    ],
+    "word": "bischöflich",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "episcopal/episcopalian",
+    "correct": "episcopal/relating to a bishop",
+    "why": "“Episcopalian” normally denotes the Episcopal denomination or one of its members, not simply something relating to a bishop."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9260
+    ],
+    "word": "topaktuell",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "cutting-edge",
+    "correct": "completely up to date/absolutely current/latest",
+    "why": "`topaktuell` concerns recency and currentness, whereas “cutting-edge” primarily means highly innovative or technologically advanced."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3447
+    ],
+    "word": "innerstaatlich",
+    "field": "english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "\"national\"",
+    "correct": "\"domestic/internal; within a state\"",
+    "why": "\"National\" is too broad and can describe anything connected with a nation; `innerstaatlich` specifically contrasts internal state affairs with international or interstate matters."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      2999
+    ],
+    "word": "gleichgültig",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately B1–B2",
+    "why": "This is common intermediate vocabulary for indifference and for `es ist mir gleichgültig`; C1 materially overstates its difficulty."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4410
+    ],
+    "word": "literaturwissenschaftlich",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "literary studies",
+    "correct": "relating to literary studies / literary-scholarly",
+    "why": "The current English is the name of a field, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8752
+    ],
+    "word": "untertariflich",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "below scale (wages)",
+    "correct": "below the collectively agreed rate (of pay)",
+    "why": "“Below scale” is chiefly North American and does not make the collective-agreement sense clear to a British-English learner."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2595
+    ],
+    "word": "händisch",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"by hand/manually\"",
+    "correct": "\"manual/done by hand; by hand/manually\"",
+    "why": "The current value gives only adverbial renderings despite regular attributive uses such as `händische Bearbeitung`."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6776
+    ],
+    "word": "konfliktlos",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "conflictless",
+    "correct": "conflict-free/without conflict",
+    "why": "“Conflictless” is rare and unnatural compared with ordinary British English “conflict-free”."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6387
+    ],
+    "word": "altfranzösisch",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "Old French/ancient French",
+    "correct": "Old French",
+    "why": "Old French is a specific historical stage of the language; vague “ancient French” is not the standard linguistic term."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4796
+    ],
+    "word": "überaltert",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "over-aged",
+    "correct": "ageing / with an excessively high average age / overage",
+    "why": "\"Over-aged\" is unnatural and fails to express the common demographic sense."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7937
+    ],
+    "word": "inkompetent",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately B1–B2",
+    "why": "This transparent, everyday adjective for an incapable person or institution is ordinary intermediate vocabulary and is materially overgraded at C1."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5619
+    ],
+    "word": "unkundig",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "unknowledgeable",
+    "correct": "ignorant; unfamiliar/unacquainted (with something)",
+    "why": "“Unknowledgeable” is rare and gives no guidance on the usual construction or sense."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2324
+    ],
+    "word": "mittelmäßig",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately B1–B2",
+    "why": "This ordinary evaluative adjective is substantially more basic and common than a C1 placement suggests."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2272
+    ],
+    "word": "gesundheitspolitisch",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"health policy\"",
+    "correct": "\"health-policy/relating to health policy\"",
+    "why": "The current English is a noun phrase and does not model the German adjective."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6927
+    ],
+    "word": "pausbäckig",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "chubby cheeked",
+    "correct": "chubby-cheeked",
+    "why": "The compound adjective requires a hyphen before the noun."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5394
+    ],
+    "word": "hocheffektiv",
+    "field": "cefrLevel",
+    "severity": "low",
+    "category": "cefr",
+    "current": "C1",
+    "correct": "approximately B2",
+    "why": "The transparent combination of common `hoch` and international `effektiv` is normal intermediate vocabulary, not specifically C1."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8835
+    ],
+    "word": "vollbärtig",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "full-bearded",
+    "correct": "with a full beard / fully bearded",
+    "why": "“Full-bearded” is not the normal English expression."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      6099
+    ],
+    "word": "porenfrei",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "free of pore",
+    "correct": "pore-free/non-porous",
+    "why": "The current English is unidiomatic."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      4982
+    ],
+    "word": "gruppendynamisch",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"group-dynamic\"",
+    "correct": "\"relating to group dynamics/group-dynamics-related\"",
+    "why": "\"Group-dynamic\" is not a normal standalone British-English equivalent and gives the learner an unnatural model."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5735
+    ],
+    "word": "aufreibend",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "grueling",
+    "correct": "gruelling",
+    "why": "The stored spelling is American; British English normally doubles the l."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6951
+    ],
+    "word": "provenzalisch",
+    "field": "english",
+    "severity": "low",
+    "category": "spelling",
+    "current": "provençal",
+    "correct": "Provençal",
+    "why": "English capitalises this adjective derived from the proper place name Provence."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6939
+    ],
+    "word": "porentief",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "deep-pore",
+    "correct": "deep into the pores/pore-deep; deep-cleansing in the common cosmetic context",
+    "why": "Bare “deep-pore” is an incomplete English modifier and does not clearly express penetration or cleaning deep into the pores."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7829
+    ],
+    "word": "grimmsch",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "Grimms' (as in Grimms' fairy tales)",
+    "correct": "Grimmian/relating to Grimm or the Brothers Grimm (e.g. the Grimms' fairy tales)",
+    "why": "The existing possessive is malformed as a standalone translation and does not explain that the adjective means relating to one or both Grimms."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2700
+    ],
+    "word": "gefahrlos",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"dangerless/safe\"",
+    "correct": "\"safe/without danger\"",
+    "why": "\"Dangerless\" is rare and unnatural learner English."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      952
+    ],
+    "word": "abstrakt",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "abstract/conceptional",
+    "correct": "abstract",
+    "why": "“Conceptional” is not a normal synonym of “abstract” and is unsuitable active learner vocabulary."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3434
+    ],
+    "word": "genüsslich",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"with relish\"",
+    "correct": "\"savouring/enjoying; pleasurable/indulgent; with relish\"",
+    "why": "The current value supplies only an adverbial equivalent even though the word is being taught in an adjective bank."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3449
+    ],
+    "word": "jahrhundertelang",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "\"for centuries\"",
+    "correct": "\"centuries-long/lasting for centuries; for centuries\"",
+    "why": "The current value gives only the adverbial use and omits the attributive adjective pattern, such as `ein jahrhundertelanger Konflikt`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "anpassen an",
+    "field": "verb / english / example",
+    "severity": "medium",
+    "category": "verbform",
+    "current": "`anpassen an + Akk` — `adapt to` — `Er passt sich an die Umgebung an.`",
+    "correct": "Store `sich anpassen an + Akk` for this gloss and example, or use a transitive model such as `Er passt den Plan an die Lage an.`",
+    "why": "Non-reflexive `etwas an etwas anpassen` is valid, but the intransitive sense shown here requires `sich`; the headword and example currently teach different valency frames."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "anlehnen an",
+    "field": "verb / english / example",
+    "severity": "medium",
+    "category": "verbform",
+    "current": "`anlehnen an + Akk` — `lean against / be modelled on` — `Der Stil lehnt sich an die Klassik an.`",
+    "correct": "Store `sich anlehnen an + Akk` for `be modelled on`, or use a non-reflexive literal example such as `Sie lehnt die Leiter an die Wand an.`",
+    "why": "The metaphorical intransitive sense in the example is reflexive; non-reflexive `anlehnen` has a different, transitive frame."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich austauschen mit",
+    "field": "example",
+    "severity": "medium",
+    "category": "spelling",
+    "current": "`Wir tauschen uns mit Kolleg:innen aus.`",
+    "correct": "Use a standard-orthography learner model such as `Wir tauschen uns mit Kolleginnen und Kollegen aus.`",
+    "why": "The gender colon is not part of the official core orthography and adds a socially/register-marked notation that a general learner example should not silently present as standard spelling."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "unterscheiden von",
+    "field": "english / valency",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`distinguish from / differ from` — `Dieses Merkmal unterscheidet das Produkt von anderen.`",
+    "correct": "For this non-reflexive row use `distinguish/tell X from Y`. Reserve `differ from` for `sich von etwas unterscheiden`.",
+    "why": "The example correctly shows transitive `etwas von etwas unterscheiden`, but the English `differ from` wrongly suggests the reflexive/intransitive construction already listed elsewhere."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "hervorgehen aus",
+    "field": "example",
+    "severity": "medium",
+    "category": "example",
+    "current": "`Aus der Studie geht hervor, dass...`",
+    "correct": "Supply a complete sentence, for example `Aus der Studie geht hervor, dass regelmäßige Bewegung gesund ist.`",
+    "why": "The ellipsis leaves the subordinate clause unfinished, so this is not a complete grammatical model sentence."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "drängen zu",
+    "field": "english / valency / example",
+    "severity": "medium",
+    "category": "example",
+    "current": "`urge toward` — `Sie drängt zum Aufbruch.`",
+    "correct": "Teach the usual frame `jemanden zu etwas drängen`, glossed `press/urge someone to do something`, for example `Sie drängt ihn zum Aufbruch.`",
+    "why": "The current English is unidiomatic and the objectless example does not model the central transitive valency that the gloss implies."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich anfreunden mit",
+    "field": "english / example",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`become friends with` — `Sie freundet sich mit der Idee an.`",
+    "correct": "Add the very common figurative sense `warm to / come round to / reconcile oneself to`, matching the example.",
+    "why": "One cannot literally `become friends with an idea`; the current gloss omits the sense actually being taught by the German sentence."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "bewundern an",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`admire about`",
+    "correct": "`admire something about someone`, with the two arguments made explicit",
+    "why": "Bare `admire about` is ungrammatical English and obscures the German frame `etwas an jemandem bewundern`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "heranführen an",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`introduce/lead up to`",
+    "correct": "`introduce someone to; familiarise someone with`",
+    "why": "English `lead up to` describes events preceding something and is not the valency illustrated by `die Kinder an Mathematik heranführen`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich hervortun durch",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`distinguish oneself through`",
+    "correct": "`distinguish oneself by; stand out through/by virtue of`",
+    "why": "English normally uses `distinguish oneself by`, not `through`, in this sense."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "jubeln über",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`cheer about`",
+    "correct": "`rejoice at/over; celebrate`",
+    "why": "`Cheer about a victory` is not a natural English rendering of `über einen Sieg jubeln`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "belegen mit",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`cover/spread/document with`",
+    "correct": "`top/cover with; substantiate/support with`, separating the food and evidence senses",
+    "why": "`Spread with` is not the normal translation of `ein Brot mit Käse belegen`, and `document with` is too vague to teach the distinct evidence sense safely."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "erzählen über",
+    "field": "example",
+    "severity": "low",
+    "category": "example",
+    "current": "`Er erzählt über seine Erfahrungen.`",
+    "correct": "`Er erzählt etwas über seine Erfahrungen.` (or, more idiomatically, `Er erzählt von seinen Erfahrungen.`)",
+    "why": "Bare `erzählen über` occurs, but this model is noticeably less neutral than `etwas über ... erzählen` or `von ... erzählen` and is a poor default for learners. uncertain: yes"
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich vergewissern über",
+    "field": "example / learner usefulness",
+    "severity": "low",
+    "category": "example",
+    "current": "`Vergewissern Sie sich über die Fakten.`",
+    "correct": "Prefer the common patterns `sich vergewissern, dass/ob ...` or `sich einer Sache vergewissern`, for example `Vergewissern Sie sich, dass die Angaben stimmen.` If the rare `über + Akk` variant is retained, supply a more idiomatic attested context.",
+    "why": "`Über + Akk` is possible but rare, and `sich über die Fakten vergewissern` is an unnatural default model for learners."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich bemühen um",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`strive for / try hard for`",
+    "correct": "`make an effort to obtain / seek; try hard to get`",
+    "why": "`Try hard for a job` is not idiomatic English and does not clearly convey `sich um eine Stelle bemühen`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich grämen über",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`grieve about`",
+    "correct": "`grieve over / be distressed about`",
+    "why": "`Grieve about` is markedly less idiomatic English than `grieve over` for this construction."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "fluchen über",
+    "field": "english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`curse about`",
+    "correct": "`swear about / rail at; complain angrily about`",
+    "why": "`Curse about` is not idiomatic British English for the sense illustrated."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      50
+    ],
+    "word": "Quark",
+    "field": "genders[0].english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`cottage cheese/curd cheese/fromage frais/quark (curd cheese)`",
+    "correct": "`quark (soft fresh curd cheese)`",
+    "why": "Cottage cheese and fromage frais are not exact equivalents of German *Quark*. The correction matches the clearer primary noun-bank sense; article `der`, no-plural flag, and the physics homograph are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      40
+    ],
+    "word": "Militär",
+    "field": "genders[0].english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`military officer`",
+    "correct": "`member of the military/military professional`",
+    "why": "*Ein Militär* is not necessarily a commissioned officer. The current gloss is too narrow; article `der`, plural `Militärs`, and exclusion from drills are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      60
+    ],
+    "word": "Ex",
+    "field": "genders",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "Feminine `die Ex` is represented only as `pop quiz (Bavarian)`, plural `Exen`; masculine `der Ex` is `former partner`",
+    "correct": "Also represent the common feminine partner sense: `die Ex` = `ex/former partner (female)`, plural `Ex` (with `Exen` retained for the separate Bavarian pop-quiz sense)",
+    "why": "Standard colloquial German distinguishes *der Ex* and *die Ex* by the former partner’s sex. Omitting the everyday feminine sense while retaining only a regional school term materially misleads learners."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      82
+    ],
+    "word": "Gemahl",
+    "field": "genders[0].english, genders[1].english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "masculine = `husband/spouse/husband (formal)`; neuter = `spouse (archaic)`",
+    "correct": "masculine = `husband/consort (formal, dated; especially of a high-status person)`; neuter = `wife (archaic/poetic)`",
+    "why": "The masculine gloss is duplicated, while neuter *Gemahl* specifically denotes a wife, not an arbitrary spouse. Articles and plurals `Gemahle` are correct; the primary noun-bank masculine gloss is already clearer."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      24
+    ],
+    "word": "Mode",
+    "field": "genders[1].english, bothInDrills",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`der Mode` = `mode (technical)`; `bothInDrills=true`",
+    "correct": "`der Mode` = `wave mode/oscillation mode (electrical engineering/physics)`; `bothInDrills=false`",
+    "why": "Masculine *Mode* is not a generic technical “mode” but a specialist electromagnetic-wave term (plural `Moden`; feminine is also possible in that specialist sense). It should not compete in ordinary article drills with common *die Mode* “fashion”."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      77
+    ],
+    "word": "Type",
+    "field": "genders[1].english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`type`",
+    "correct": "`type (linguistics: abstract unit opposed to a token)`",
+    "why": "Masculine English-pronounced *Type* is a specialist type–token term, not the everyday German word for a kind/type (*Typ*). Article `der`, plural `Types`, and exclusion from drills are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      45
+    ],
+    "word": "Gift",
+    "field": "genders[0].english, genders[1].english",
+    "severity": "medium",
+    "category": "gloss",
+    "current": "`die Gift` = `gift (archaic/false friend)`; `der Gift` = `anger/wrath (archaic)`",
+    "correct": "`die Gift` = `gift/present (archaic)`; `der Gift` = `anger/grudge (regional, especially Bavarian/Austrian)`",
+    "why": "“False friend” is not a meaning, and masculine *Gift* is regional rather than simply archaic. The articles, feminine plural `Giften`, masculine no-plural treatment, and exclusion from drills are sound."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      58
+    ],
+    "word": "Bulle",
+    "field": "genders[1].english, bothInDrills",
+    "severity": "low",
+    "category": "classification",
+    "current": "`bull/cop/copper/cop (slang)`; `bothInDrills=true`",
+    "correct": "`bull; police officer (slang, usually derogatory)`; `bothInDrills=false`",
+    "why": "The police gloss is duplicated and needs its pragmatic warning. Feminine *Bulle* “papal bull” is valid but specialist and should not be promoted as an equal routine drill answer."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      38
+    ],
+    "word": "Messer",
+    "field": "bothInDrills",
+    "severity": "low",
+    "category": "classification",
+    "current": "`true`",
+    "correct": "`false`",
+    "why": "Masculine *Messer* “measurer/measuring instrument” is a rare technical or agent noun; routine drills should target the overwhelmingly common neuter “knife”. Articles and invariant plurals are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      71
+    ],
+    "word": "Mahd",
+    "field": "genders[1].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`alpine meadow`",
+    "correct": "`alpine meadow/hay meadow (Austrian and regional)`",
+    "why": "Neuter *Mahd* in this sense is regional, information a learner needs before trying to use it. Article `das`, plural `Mähder`, and exclusion from drills are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      61
+    ],
+    "word": "Hefe",
+    "field": "genders[0].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`barm/dregs/driving force/yeast`",
+    "correct": "`yeast` (optional secondary senses after it: `sediment/dregs; driving force (figurative)`)",
+    "why": "The everyday meaning is buried after obscure senses and an archaic English word. The primary noun bank already has the learner-appropriate gloss `yeast`."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      20
+    ],
+    "word": "Mangel",
+    "field": "bothInDrills",
+    "severity": "low",
+    "category": "classification",
+    "current": "`true`",
+    "correct": "`false`",
+    "why": "Feminine *Mangel* is a now-uncommon laundry mangle, whereas the high-frequency learner sense is masculine “lack/defect”. The rare appliance homograph is valid but should not make both articles routine drill answers."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      42
+    ],
+    "word": "Schock",
+    "field": "genders[0].plural",
+    "severity": "low",
+    "category": "plural",
+    "current": "`Schocke`",
+    "correct": "`Schocks` (modern standard learner form; `Schocke` is an old variant)",
+    "why": "For masculine “shock”, *Schocks* is the normal modern plural. *Schocke* remains appropriate for the separately labelled archaic neuter counting unit."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      48
+    ],
+    "word": "Hummel",
+    "field": "genders[0].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`bumblebee/dumbledore/hommel`",
+    "correct": "`bumblebee`",
+    "why": "“Dumbledore” is archaic English and “hommel” is obscure; both impede a British learner. This dual entry also contradicts the already-clean primary noun-bank gloss `bumblebee`."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      62
+    ],
+    "word": "Tram",
+    "field": "genders[1].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`beam`",
+    "correct": "`beam (southern German/Austrian/Swiss regional usage)`",
+    "why": "Masculine *Tram* for a structural beam is regional, unlike the unqualified gloss. The spelling, article, plural `Trame`, and decision not to drill both are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      52
+    ],
+    "word": "Mast",
+    "field": "genders[1].plural",
+    "severity": "low",
+    "category": "plural",
+    "current": "`Maste`",
+    "correct": "`Masten` (also valid but less common: `Maste`)",
+    "why": "Both plurals are standard, but *Masten* is the usual contemporary learner citation form for poles, pylons, and ship masts."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      70
+    ],
+    "word": "Rentier",
+    "field": "bothInDrills",
+    "severity": "low",
+    "category": "classification",
+    "current": "`true`",
+    "correct": "`false`",
+    "why": "Masculine *Rentier* “person of independent means” is dated and rare; the ordinary learner sense is neuter “reindeer”. The distinct articles and plurals are linguistically correct but should not receive equal drill weight."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      12
+    ],
+    "word": "Moment",
+    "field": "genders[0].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`moment/moment (time)`",
+    "correct": "`moment (point or short period of time)`",
+    "why": "The duplicate wording is unhelpful. Both genders, plurals, and the distinction from neuter *Moment* “factor/element; moment (physics)” are correct and drill-worthy."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      31
+    ],
+    "word": "Model",
+    "field": "genders[1].english, bothInDrills",
+    "severity": "low",
+    "category": "classification",
+    "current": "`das Model` = `model/model (fashion)`; `bothInDrills=true`",
+    "correct": "`das Model` = `fashion model`; `bothInDrills=false`",
+    "why": "The gloss is duplicated, and masculine *Model* “mould/form” is a specialist craft term. The valid rare homograph can remain in reference data, but drilling both alongside the primary fashion-model sense gives it disproportionate weight."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      3
+    ],
+    "word": "Teil",
+    "field": "genders[1].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`part/piece/part (concrete: ein Ersatzteil)`",
+    "correct": "`piece/item or concrete component (e.g. ein Ersatzteil)`",
+    "why": "The duplicated “part” gives the learner no clear contrast with masculine abstract/constituent *der Teil*. Both articles and plurals are correct, and both common senses are suitable for drills."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      74
+    ],
+    "word": "Franchise",
+    "field": "genders[0].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`deductible/excess (insurance)`",
+    "correct": "`insurance excess/deductible (Swiss usage)`",
+    "why": "Feminine *Franchise* is the Swiss insurance term; standard British English should lead with “excess”. Article `die`, plural `Franchisen`, and exclusion from drills are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      78
+    ],
+    "word": "Mandarin",
+    "field": "genders[0].english",
+    "severity": "low",
+    "category": "gloss",
+    "current": "`mandarin`",
+    "correct": "`mandarin/high official in imperial China`",
+    "why": "The bare gloss is ambiguous for learners and can be confused with the language or with *Mandarine* “mandarin orange”. The primary noun-bank gloss already supplies the necessary “Chinese official” clarification."
+  }
+]

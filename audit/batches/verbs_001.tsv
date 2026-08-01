@@ -1,0 +1,701 @@
+rank	word	type	praeteritum	perfekt	auxiliary	english	cefr
+1	sein	irregular	war	gewesen	sein	be	A1
+2	werden	irregular	wurde	geworden	sein	become/get	A1
+3	haben	irregular	hatte	gehabt	haben	have	A1
+4	können	irregular	konnte	gekonnt	haben	can/be able to	A1
+5	sollen	irregular	sollte	gesollt	haben	should/shall	A1
+6	geben	irregular	gab	gegeben	haben	give	A1
+7	müssen	irregular	musste	gemusst	haben	must/have to	A1
+8	finden	irregular	fand	gefunden	haben	find	A1
+9	machen	regular	-	-	UNSET	make/do	A1
+10	kommen	irregular	kam	gekommen	sein	come	A1
+11	stehen	irregular	stand	gestanden	haben	stand	A1
+12	lassen	irregular	ließ	gelassen	haben	let/leave	A2
+13	gehen	irregular	ging	gegangen	sein	go/walk	A1
+14	wollen	irregular	wollte	gewollt	haben	want	A1
+15	bieten	irregular	bot	geboten	haben	offer	A2
+16	liegen	irregular	lag	gelegen	haben	lie/be located	A1
+17	erhalten	irregular	erhielt	erhalten	haben	receive/get	A2
+18	zeigen	regular	-	-	UNSET	show	A1
+19	sehen	irregular	sah	gesehen	haben	see	A1
+20	stellen	regular	-	-	UNSET	put/place	A1
+21	nutzen	regular	-	-	UNSET	use	A2
+22	gelten	irregular	galt	gegolten	haben	apply/be valid	A2
+23	führen	regular	-	-	UNSET	lead	A1
+24	sagen	regular	-	-	UNSET	say/tell	A1
+25	dürfen	irregular	durfte	gedurft	haben	may/be allowed to	A1
+26	bleiben	irregular	blieb	geblieben	sein	stay/remain	A1
+27	unterstützen	regular	-	-	UNSET	support	B1
+28	nehmen	irregular	nahm	genommen	haben	take	A1
+29	bringen	irregular	brachte	gebracht	haben	bring/take	A1
+30	anbieten	irregular	bot an	angeboten	haben	offer	A1
+31	bestehen	irregular	bestand	bestanden	haben	exist/consist of/insist on	A2
+32	arbeiten	regular	-	-	UNSET	work	A1
+33	entwickeln	regular	-	-	UNSET	develop	A2
+34	bekommen	irregular	bekam	bekommen	haben	get/receive	A1
+35	halten	irregular	hielt	gehalten	haben	hold/keep/stop	A1
+36	wissen	irregular	wusste	gewusst	haben	know	A1
+37	erreichen	regular	-	-	UNSET	reach/achieve	A2
+38	stattfinden	irregular	fand statt	stattgefunden	haben	take place	A1
+39	helfen	irregular	half	geholfen	haben	help	A1
+40	setzen	regular	-	-	UNSET	put/place/set	A2
+41	suchen	regular	-	-	UNSET	search/look for	A1
+42	verwenden	regular	-	-	UNSET	use	A1
+43	hören	regular	-	-	UNSET	hear/listen	A1
+44	spielen	regular	-	-	UNSET	play	A1
+45	entstehen	irregular	entstand	entstanden	sein	arise/develop	B1
+46	beginnen	irregular	begann	begonnen	haben	begin/start	A1
+47	lernen	regular	-	-	UNSET	learn/study	A1
+48	brauchen	regular	-	-	UNSET	need	A1
+49	ermöglichen	regular	-	-	UNSET	enable/make possible	B2
+50	sorgen	regular	-	-	UNSET	ensure/worry/care	A2
+51	informieren	regular	-	-	UNSET	inform/let know	A2
+52	befinden	irregular	befand	befunden	haben	be located	B1
+53	fördern	regular	-	-	UNSET	promote/support	B1
+54	einsetzen	regular	-	-	UNSET	use/deploy	B1
+55	treffen	irregular	traf	getroffen	haben	meet/hit	A1
+56	erklären	regular	-	-	UNSET	explain	A1
+57	schaffen	irregular	schuf	geschaffen	haben	create (irregular: schuf/geschaffen)/manage (regular: schaffte/geschafft)	A1
+58	entscheiden	irregular	entschied	entschieden	haben	decide/rule	A2
+59	vorstellen	regular	-	-	UNSET	introduce/imagine	A1
+60	durchführen	regular	-	-	UNSET	carry out/conduct	B2
+61	leben	regular	-	-	UNSET	live	A1
+62	sprechen	irregular	sprach	gesprochen	haben	speak/talk	A1
+63	übernehmen	irregular	übernahm	übernommen	haben	take over/assume	B1
+64	kennen	irregular	kannte	gekannt	haben	know	A1
+65	handeln	regular	-	-	UNSET	act/trade	B1
+66	heißen	irregular	hieß	geheißen	haben	be called/mean	A1
+67	darstellen	regular	-	-	UNSET	represent	B1
+68	gehören	regular	-	-	UNSET	belong	A1
+69	benötigen	regular	-	-	UNSET	need/require	B1
+70	tragen	irregular	trug	getragen	haben	carry/wear	A1
+71	gestalten	regular	-	-	UNSET	design/shape	A2
+72	erfahren	irregular	erfuhr	erfahren	haben	experience/find out/learn	A2
+73	gewinnen	irregular	gewann	gewonnen	haben	win/gain	A1
+74	verbinden	irregular	verband	verbunden	haben	connect/combine	A1
+75	bedeuten	regular	-	-	UNSET	mean	A1
+76	starten	regular	-	-	sein	start	A2
+77	enthalten	irregular	enthielt	enthalten	haben	contain	B1
+78	präsentieren	regular	-	-	UNSET	present	A1
+79	wählen	regular	-	-	UNSET	choose/vote/elect	A1
+80	bilden	regular	-	-	UNSET	educate/form	A1
+81	folgen	regular	-	-	sein	follow	A2
+82	erleben	regular	-	-	UNSET	experience	A2
+83	erwarten	regular	-	-	UNSET	expect	A2
+84	fahren	irregular	fuhr	gefahren	sein	drive/go/ride	A1
+85	zählen	regular	-	-	UNSET	count/rank	B1
+86	laufen	irregular	lief	gelaufen	sein	run/walk	A1
+87	ziehen	irregular	zog	gezogen	haben	pull/move	A1
+88	dienen	regular	-	-	UNSET	serve	B1
+89	verstehen	irregular	verstand	verstanden	haben	understand	A1
+90	legen	regular	-	-	UNSET	put/lay	A1
+91	erkennen	irregular	erkannte	erkannt	haben	recognise	B1
+92	gelingen	irregular	gelang	gelungen	sein	succeed/work	B1
+93	schreiben	irregular	schrieb	geschrieben	haben	write	A1
+94	einladen	irregular	lud ein	eingeladen	haben	invite	A1
+95	nennen	irregular	nannte	genannt	haben	call/name	A1
+96	verfügen	regular	-	-	UNSET	have/possess	B2
+97	empfehlen	irregular	empfahl	empfohlen	haben	recommend	A1
+98	verbessern	regular	-	-	UNSET	correct/improve	A2
+99	planen	regular	-	-	UNSET	plan	A1
+100	aufnehmen	irregular	nahm auf	aufgenommen	haben	record/accept/absorb	A2
+101	besuchen	regular	-	-	UNSET	attend/visit	A1
+102	kaufen	regular	-	-	UNSET	buy	A1
+103	umsetzen	regular	-	-	UNSET	implement	B2
+104	versuchen	regular	-	-	UNSET	try	A1
+105	erscheinen	irregular	erschien	erschienen	sein	appear/publish	B2
+106	berichten	regular	-	-	UNSET	report	A1
+107	erstellen	regular	-	-	UNSET	create	B1
+108	entdecken	regular	-	-	UNSET	discover	B1
+109	ändern	regular	-	-	UNSET	change	A2
+110	fragen	regular	-	-	UNSET	ask	A1
+111	beschäftigen	regular	-	-	UNSET	employ/occupy	B1
+112	funktionieren	regular	-	-	UNSET	work/function	A2
+113	beachten	regular	-	-	UNSET	pay attention to/observe	A2
+114	vermitteln	regular	-	-	UNSET	convey/mediate	B2
+115	schützen	regular	-	-	UNSET	protect	B1
+116	leisten	regular	-	-	UNSET	accomplish/afford	B1
+117	lesen	irregular	las	gelesen	haben	read	A1
+118	teilnehmen	irregular	nahm teil	teilgenommen	haben	participate	A2
+119	begleiten	regular	-	-	UNSET	accompany	A2
+120	steigen	irregular	stieg	gestiegen	sein	climb/rise	B1
+121	aussehen	irregular	sah aus	ausgesehen	haben	look/appear	A1
+122	veröffentlichen	regular	-	-	UNSET	publish	B1
+123	denken	irregular	dachte	gedacht	haben	think	A1
+124	öffnen	regular	-	-	UNSET	open	A1
+125	liefern	regular	-	-	UNSET	deliver/supply	A2
+126	verlieren	irregular	verlor	verloren	haben	lose	A2
+127	betreffen	irregular	betraf	betroffen	haben	affect/concern	B1
+128	richten	regular	-	-	UNSET	direct/aim	B2
+129	erfüllen	regular	-	-	UNSET	fulfil	B1
+130	feiern	regular	-	-	UNSET	celebrate	A1
+131	fehlen	regular	-	-	UNSET	be missing/lack	A1
+132	ergeben	irregular	ergab	ergeben	haben	result/yield	B2
+133	prüfen	regular	-	-	UNSET	check/examine	A2
+134	fordern	regular	-	-	UNSET	challenge/demand	B1
+135	überzeugen	regular	-	-	UNSET	convince	B1
+136	genießen	irregular	genoss	genossen	haben	enjoy	A1
+137	betragen	irregular	betrug	betragen	haben	amount to	-
+138	beteiligen	regular	-	-	UNSET	participate/involve	B1
+139	erhöhen	regular	-	-	UNSET	increase/raise	B1
+140	sichern	regular	-	-	UNSET	secure/protect	B1
+141	berücksichtigen	regular	-	-	UNSET	consider/take into account	B2
+142	wünschen	regular	-	-	UNSET	wish/want	A1
+143	erzählen	regular	-	-	UNSET	tell/narrate	A1
+144	verändern	regular	-	-	UNSET	change	A2
+145	bestimmen	regular	-	-	UNSET	determine/rule	B2
+146	achten	regular	-	-	UNSET	pay attention to/respect	A1
+147	beitragen	irregular	trug bei	beigetragen	haben	contribute	B2
+148	scheinen	irregular	schien	geschienen	haben	seem/shine	A1
+149	wirken	regular	-	-	UNSET	have an effect/seem	B1
+150	schließen	irregular	schloss	geschlossen	haben	close/conclude	A1
+151	eignen	regular	-	-	UNSET	be suitable	-
+152	umfassen	regular	-	-	UNSET	include/comprise	B2
+153	aufbauen	regular	-	-	UNSET	build/build up	B2
+154	fühlen	regular	-	-	UNSET	feel	A2
+155	beraten	irregular	beriet	beraten	haben	advise/consult	A2
+156	bauen	regular	-	-	UNSET	build/construct	A2
+157	zahlen	regular	-	-	UNSET	pay	A1
+158	beschreiben	irregular	beschrieb	beschrieben	haben	describe	A1
+159	abschließen	irregular	schloss ab	abgeschlossen	haben	complete/lock	A2
+160	ankommen	irregular	kam an	angekommen	sein	arrive/depend on	A1
+161	eröffnen	regular	-	-	UNSET	open	A2
+162	profitieren	regular	-	-	UNSET	profit	B2
+163	diskutieren	regular	-	-	UNSET	discuss	A1
+164	feststellen	regular	-	-	UNSET	determine/notice	B1
+165	sammeln	regular	-	-	UNSET	collect/gather	A1
+166	reichen	regular	-	-	UNSET	be enough/suffice	B1
+167	vorbereiten	regular	-	-	UNSET	prepare	A1
+168	auszeichnen	regular	-	-	UNSET	distinguish/award	B2
+169	gründen	regular	-	-	UNSET	found/establish	A2
+170	sparen	regular	-	-	UNSET	save	A2
+171	anpassen	regular	-	-	UNSET	adapt/adjust	B2
+172	treten	irregular	trat	getreten	sein	step/kick	B1
+173	besitzen	irregular	besaß	besessen	haben	own/possess	A2
+174	verkaufen	regular	-	-	UNSET	sell	A1
+175	passieren	regular	-	-	sein	happen	A1
+176	entsprechen	irregular	entsprach	entsprochen	haben	correspond to	C1
+177	behandeln	regular	-	-	UNSET	cover/treat	B1
+178	erweitern	regular	-	-	UNSET	expand/extend	B2
+179	ergänzen	regular	-	-	UNSET	add/supplement	A1
+180	stärken	regular	-	-	UNSET	strengthen	B2
+181	warten	regular	-	-	UNSET	wait/maintain	A1
+182	vertreten	irregular	vertrat	vertreten	haben	represent	B1
+183	organisieren	regular	-	-	UNSET	organise	A2
+184	untersuchen	regular	-	-	UNSET	examine/investigate	A1
+185	beziehen	irregular	bezog	bezogen	haben	refer to/obtain	C1
+186	wachsen	irregular	wuchs	gewachsen	sein	grow	B1
+187	angeben	irregular	gab an	angegeben	haben	state/indicate	B1
+188	anzeigen	regular	-	-	UNSET	display/report	B1
+189	passen	regular	-	-	UNSET	fit/suit	A1
+190	bewegen	regular	-	-	UNSET	move	A1
+191	dauern	regular	-	-	UNSET	last/take (time)	A1
+192	kosten	regular	-	-	UNSET	cost/taste	A1
+193	bezeichnen	regular	-	-	UNSET	describe/denote	C1
+194	verhindern	regular	-	-	UNSET	prevent	B1
+195	betreiben	irregular	betrieb	betrieben	haben	operate/run	B2
+196	anmelden	regular	-	-	UNSET	register/sign up	A1
+197	verlassen	irregular	verließ	verlassen	haben	leave	B1
+198	vermeiden	irregular	vermied	vermieden	haben	avoid	B1
+199	lohnen	regular	-	-	UNSET	be worth it	B1
+200	bestellen	regular	-	-	UNSET	order	A1
+201	gewährleisten	regular	-	-	UNSET	guarantee/ensure	C1
+202	glauben	regular	-	-	UNSET	believe	A1
+203	herstellen	regular	-	-	UNSET	produce/manufacture	A2
+204	auswählen	regular	-	-	UNSET	choose/select	A2
+205	lösen	regular	-	-	UNSET	solve/release	A2
+206	erlauben	regular	-	-	UNSET	allow/permit	A1
+207	wenden	irregular	wandte	gewandt	haben	turn/apply to	B1
+208	unterscheiden	irregular	unterschied	unterschieden	haben	distinguish/differ	B1
+209	vorsehen	irregular	sah vor	vorgesehen	haben	plan/provide for	C1
+210	bestätigen	regular	-	-	UNSET	confirm	A2
+211	ausgehen	irregular	ging aus	ausgegangen	sein	go out/assume	A1
+212	einstellen	regular	-	-	UNSET	set/hire/stop	B1
+213	verpflichten	regular	-	-	UNSET	oblige/commit	-
+214	bezahlen	regular	-	-	UNSET	pay	A1
+215	speichern	regular	-	-	UNSET	save/store	A1
+216	sitzen	irregular	saß	gesessen	haben	sit	A1
+217	erinnern	regular	-	-	UNSET	remember/remind	A2
+218	meinen	regular	-	-	UNSET	mean/think	A1
+219	mögen	irregular	mochte	gemocht	haben	like/may	A1
+220	bitten	irregular	bat	gebeten	haben	ask/request	A1
+221	erwerben	irregular	erwarb	erworben	haben	acquire/obtain	B2
+222	integrieren	regular	-	-	UNSET	integrate	B1
+223	auftreten	irregular	trat auf	aufgetreten	sein	appear/occur	B1
+224	belegen	regular	-	-	UNSET	prove/occupy	B2
+225	reduzieren	regular	-	-	UNSET	reduce	A2
+226	festlegen	regular	-	-	UNSET	determine/define	B1
+227	gefallen	irregular	gefiel	gefallen	haben	please/like	A1
+228	prägen	regular	-	-	UNSET	shape/characterise	B2
+229	laden	irregular	lud	geladen	haben	load/charge/invite	B1
+230	melden	regular	-	-	UNSET	report	A1
+231	betonen	regular	-	-	UNSET	emphasise/stress	A2
+232	betreuen	regular	-	-	UNSET	take care of/look after	A1
+233	einrichten	regular	-	-	UNSET	set up/furnish	A2
+234	rechnen	regular	-	-	UNSET	calculate/expect	A2
+235	mitteilen	regular	-	-	UNSET	communicate/inform	A2
+236	studieren	regular	-	-	UNSET	study	A1
+237	teilen	regular	-	-	UNSET	share/divide	A2
+238	bewerben	irregular	bewarb	beworben	haben	apply	A2
+239	vornehmen	irregular	nahm vor	vorgenommen	haben	carry out/intend	B2
+240	beantworten	regular	-	-	UNSET	answer	A1
+241	reagieren	regular	-	-	UNSET	react	A1
+242	annehmen	irregular	nahm an	angenommen	haben	accept/assume	B1
+243	schauen	regular	-	-	UNSET	look/watch	A1
+244	eingehen	irregular	ging ein	eingegangen	sein	go into/accept	B2
+245	beschließen	irregular	beschloss	beschlossen	haben	decide	B1
+246	erzielen	regular	-	-	UNSET	achieve	B2
+247	stammen	regular	-	-	UNSET	come from/originate	B1
+248	engagieren	regular	-	-	UNSET	engage/hire	B2
+249	leiten	regular	-	-	UNSET	lead/manage	B1
+250	bewerten	regular	-	-	UNSET	evaluate/rate	B2
+251	ersetzen	regular	-	-	UNSET	replace	B1
+252	überprüfen	regular	-	-	UNSET	check/review	B1
+253	erläutern	regular	-	-	UNSET	explain	C1
+254	hinweisen	irregular	wies hin	hingewiesen	haben	point out/indicate	B1
+255	kümmern	regular	-	-	UNSET	take care of	A2
+256	testen	regular	-	-	UNSET	test	B1
+257	ausstatten	regular	-	-	UNSET	equip/provide	C1
+258	beobachten	regular	-	-	UNSET	observe/watch	B1
+259	ermitteln	regular	-	-	UNSET	determine/investigate	C1
+260	begrüßen	regular	-	-	UNSET	greet/welcome	B1
+261	verzichten	regular	-	-	UNSET	do without/forgo	A2
+262	stecken	regular	-	-	UNSET	put/be stuck	B1
+263	verfolgen	regular	-	-	UNSET	pursue/follow	B1
+264	sicherstellen	regular	-	-	UNSET	ensure/guarantee	B2
+265	ansprechen	irregular	sprach an	angesprochen	haben	address/appeal to	A2
+266	erheben	irregular	erhob	erhoben	haben	raise/charge	C1
+267	abgeben	irregular	gab ab	abgegeben	haben	hand in/give	A1
+268	verteilen	regular	-	-	UNSET	distribute	B1
+269	übertragen	irregular	übertrug	übertragen	haben	transfer/broadcast	-
+270	wechseln	regular	-	-	UNSET	change/exchange	A1
+271	produzieren	regular	-	-	UNSET	produce	A2
+272	investieren	regular	-	-	UNSET	invest	B2
+273	erfassen	regular	-	-	UNSET	record/capture	B2
+274	enden	regular	-	-	UNSET	end	A1
+275	fallen	irregular	fiel	gefallen	sein	fall	A2
+276	erleichtern	regular	-	-	UNSET	make easier/facilitate	B1
+277	benutzen	regular	-	-	UNSET	use	A1
+278	betrachten	regular	-	-	UNSET	consider/look at	C1
+279	holen	regular	-	-	UNSET	fetch/get	A1
+280	ansehen	irregular	sah an	angesehen	haben	look at/watch	A1
+281	wahrnehmen	irregular	nahm wahr	wahrgenommen	haben	perceive/notice	B2
+282	erarbeiten	regular	-	-	UNSET	develop/work out	B2
+283	regeln	regular	-	-	UNSET	regulate/arrange	B1
+284	anlegen	regular	-	-	UNSET	create/invest	B2
+285	buchen	regular	-	-	UNSET	book	A2
+286	beantragen	regular	-	-	UNSET	apply for	A2
+287	bearbeiten	regular	-	-	UNSET	edit/process	A2
+288	verbringen	irregular	verbrachte	verbracht	haben	spend (time)	A2
+289	austauschen	regular	-	-	UNSET	exchange/swap	A2
+290	ausbauen	regular	-	-	UNSET	expand/develop	B2
+291	klicken	regular	-	-	UNSET	click	B1
+292	ausschließen	irregular	schloss aus	ausgeschlossen	haben	exclude/rule out	B1
+293	verleihen	irregular	verlieh	verliehen	haben	lend/award	B2
+294	hoffen	regular	-	-	UNSET	hope/trust	A2
+295	schlagen	irregular	schlug	geschlagen	haben	beat/hit	B1
+296	umgehen	irregular	ging um	umgegangen	sein	deal with/handle	B1
+297	absolvieren	regular	-	-	UNSET	complete	B2
+298	einführen	regular	-	-	UNSET	introduce/import	B1
+299	verarbeiten	regular	-	-	UNSET	process	B2
+300	fällen	regular	-	-	UNSET	fell/make (a decision)	B2
+301	versorgen	regular	-	-	UNSET	supply/take care of	B1
+302	kennenlernen	regular	-	-	UNSET	get to know	A1
+303	vergeben	irregular	vergab	vergeben	haben	forgive/award	C1
+304	verlangen	regular	-	-	UNSET	demand/require	B1
+305	vergessen	irregular	vergaß	vergessen	haben	forget	A1
+306	rufen	irregular	rief	gerufen	haben	call/shout	A2
+307	steigern	regular	-	-	UNSET	increase/improve	B2
+308	widmen	regular	-	-	UNSET	dedicate	B2
+309	vereinbaren	regular	-	-	UNSET	agree/arrange	A1
+310	anfangen	irregular	fing an	angefangen	haben	begin/start	A1
+311	wohnen	regular	-	-	UNSET	live	A1
+312	drehen	regular	-	-	UNSET	turn/spin/shoot (film)	B1
+313	klären	regular	-	-	UNSET	clarify	B1
+314	löschen	regular	-	-	UNSET	delete/extinguish	A2
+315	erzeugen	regular	-	-	UNSET	produce/generate	B2
+316	einbringen	irregular	brachte ein	eingebracht	haben	introduce	B2
+317	schicken	regular	-	-	UNSET	send	A1
+318	essen	irregular	aß	gegessen	haben	eat	A1
+319	aufzeigen	regular	-	-	UNSET	show/demonstrate	C1
+320	installieren	regular	-	-	UNSET	install	B1
+321	vergleichen	irregular	verglich	verglichen	haben	compare	A1
+322	lieben	regular	-	-	UNSET	love	A1
+323	beenden	regular	-	-	UNSET	end/finish	A2
+324	verdienen	regular	-	-	UNSET	earn/deserve	A1
+325	vorlegen	regular	-	-	UNSET	present/submit	C1
+326	sterben	irregular	starb	gestorben	sein	die	A2
+327	bereitstellen	regular	-	-	UNSET	provide/make available	-
+328	leiden	irregular	litt	gelitten	haben	suffer	B1
+329	garantieren	regular	-	-	UNSET	guarantee	B1
+330	aufstellen	regular	-	-	UNSET	set up/establish	A1
+331	finanzieren	regular	-	-	UNSET	finance	B1
+332	mitbringen	irregular	brachte mit	mitgebracht	haben	bring along	A1
+333	analysieren	regular	-	-	UNSET	analyse	B1
+334	greifen	irregular	griff	gegriffen	haben	grab/reach	B1
+335	ausfallen	irregular	fiel aus	ausgefallen	sein	fail/be cancelled	A2
+336	entfernen	regular	-	-	UNSET	remove	B1
+337	erfordern	regular	-	-	UNSET	require	B1
+338	interessieren	regular	-	-	UNSET	interest	A1
+339	nachweisen	irregular	wies nach	nachgewiesen	haben	prove/demonstrate	B2
+340	aufweisen	irregular	wies auf	aufgewiesen	haben	feature	-
+341	beeinflussen	regular	-	-	UNSET	influence	B1
+342	einreichen	regular	-	-	UNSET	submit	-
+343	gebären	irregular	gebar	geboren	haben	give birth	-
+344	zulassen	irregular	ließ zu	zugelassen	haben	allow/permit	B2
+345	anschließen	irregular	schloss an	angeschlossen	haben	connect/join	B1
+346	schätzen	regular	-	-	UNSET	estimate/appreciate	B1
+347	veranstalten	regular	-	-	UNSET	organise/host	B2
+348	abhängen	irregular	hing ab	abgehangen	haben	depend on	B1
+349	orientieren	regular	-	-	UNSET	orient/guide	A1
+350	versprechen	irregular	versprach	versprochen	haben	promise	A2
+351	werfen	irregular	warf	geworfen	haben	throw	B1
+352	realisieren	regular	-	-	UNSET	realise/implement	B1
+353	zusammenarbeiten	regular	-	-	UNSET	cooperate/work together	A2
+354	kombinieren	regular	-	-	UNSET	combine	B2
+355	aktivieren	regular	-	-	UNSET	activate	C1
+356	anschauen	regular	-	-	UNSET	look at/watch	-
+357	begeistern	regular	-	-	UNSET	inspire/excite	B1
+358	einnehmen	irregular	nahm ein	eingenommen	haben	take/occupy	B1
+359	ausprobieren	regular	-	-	UNSET	try out	A2
+360	kämpfen	regular	-	-	UNSET	fight/struggle	B1
+361	raten	irregular	riet	geraten	haben	advise/guess	A1
+362	erkunden	regular	-	-	UNSET	explore	B1
+363	vorkommen	irregular	kam vor	vorgekommen	sein	occur/happen	B1
+364	aufrufen	irregular	rief auf	aufgerufen	haben	call/call up	B2
+365	erteilen	regular	-	-	UNSET	give/issue	-
+366	optimieren	regular	-	-	UNSET	optimise	B2
+367	bedienen	regular	-	-	UNSET	serve/operate	A2
+368	landen	regular	-	-	sein	land	A2
+369	lauten	regular	-	-	UNSET	be worded/read	B2
+370	pflegen	regular	-	-	UNSET	care for/maintain	A2
+371	klingen	irregular	klang	geklungen	haben	sound	A1
+372	ausführen	regular	-	-	UNSET	carry out/execute	B2
+373	bedürfen	irregular	bedurfte	bedurft	haben	need/require	C1
+374	stimmen	regular	-	-	UNSET	be correct/vote	A1
+375	berechnen	regular	-	-	UNSET	calculate/charge	B1
+376	verletzen	regular	-	-	UNSET	injure/violate	A2
+377	anwenden	irregular	wandte an	angewandt	haben	apply/use	B1
+378	ausreichen	regular	-	-	UNSET	suffice/be enough	B1
+379	ausrichten	regular	-	-	UNSET	align/host	A2
+380	zusammenstellen	regular	-	-	UNSET	compile/put together	C1
+381	definieren	regular	-	-	UNSET	define	B2
+382	abstimmen	regular	-	-	UNSET	vote/coordinate	-
+383	senden	irregular	sandte	gesandt	haben	send/broadcast	A2
+384	verursachen	regular	-	-	UNSET	cause	B1
+385	durchsetzen	regular	-	-	UNSET	enforce/prevail	B2
+386	trennen	regular	-	-	UNSET	separate	B1
+387	befassen	regular	-	-	UNSET	deal with	B2
+388	errichten	regular	-	-	UNSET	build/establish	B2
+389	eintragen	irregular	trug ein	eingetragen	haben	enter/register	A2
+390	erledigen	regular	-	-	UNSET	take care of/finish	A2
+391	messen	irregular	maß	gemessen	haben	measure	B1
+392	ankündigen	regular	-	-	UNSET	announce	B1
+393	existieren	regular	-	-	UNSET	exist	A2
+394	behalten	irregular	behielt	behalten	haben	keep/remember	A2
+395	sinken	irregular	sank	gesunken	sein	sink/decline	B1
+396	anerkennen	irregular	erkannte an	anerkannt	haben	acknowledge/recognise	B1
+397	auslösen	regular	-	-	UNSET	trigger/cause	B1
+398	herunterladen	irregular	lud herunter	heruntergeladen	haben	download	A2
+399	ausmachen	regular	-	-	UNSET	make up/turn off/matter	A1
+400	tun	irregular	tat	getan	haben	do	A1
+401	gedenken	irregular	gedachte	gedacht	haben	commemorate	-
+402	verbreiten	regular	-	-	UNSET	spread	B2
+403	ablehnen	regular	-	-	UNSET	refuse/reject	A2
+404	verraten	irregular	verriet	verraten	haben	betray/reveal	B1
+405	konzentrieren	regular	-	-	UNSET	concentrate/focus	A2
+406	reden	regular	-	-	UNSET	talk/speak	A1
+407	steuern	regular	-	-	UNSET	control/steer	B2
+408	basieren	regular	-	-	UNSET	be based on	B2
+409	eingeben	irregular	gab ein	eingegeben	haben	enter/input	A1
+410	senken	regular	-	-	UNSET	lower/reduce	B2
+411	verweisen	irregular	verwies	verwiesen	haben	refer/point	B2
+412	drohen	regular	-	-	UNSET	threaten	C1
+413	begegnen	regular	-	-	sein	encounter/meet	B1
+414	herausfinden	irregular	fand heraus	herausgefunden	haben	find out/discover	B1
+415	zukommen	irregular	kam zu	zugekommen	sein	approach/be due to	B2
+416	angehen	irregular	ging an	angegangen	sein	concern/tackle	B2
+417	etablieren	regular	-	-	UNSET	establish	C1
+418	entnehmen	irregular	entnahm	entnommen	haben	take from/gather	-
+419	hinzufügen	regular	-	-	UNSET	add	B2
+420	kontrollieren	regular	-	-	UNSET	check/control	A1
+421	fortsetzen	regular	-	-	UNSET	continue	B1
+422	identifizieren	regular	-	-	UNSET	identify	C1
+423	stoßen	irregular	stieß	gestoßen	haben	push/bump into	B1
+424	einhalten	irregular	hielt ein	eingehalten	haben	comply with/observe	A2
+425	zunehmen	irregular	nahm zu	zugenommen	haben	increase/gain weight	A2
+426	verlaufen	irregular	verlief	verlaufen	sein	proceed/go	B1
+427	retten	regular	-	-	UNSET	rescue/save	B1
+428	verschwinden	irregular	verschwand	verschwunden	sein	disappear	B1
+429	verabschieden	regular	-	-	UNSET	say goodbye/pass (a law)	A1
+430	binden	irregular	band	gebunden	haben	bind/tie	C1
+431	fließen	irregular	floss	geflossen	sein	flow	B1
+432	danken	regular	-	-	UNSET	thank	A1
+433	merken	regular	-	-	UNSET	notice/remember	A1
+434	herrschen	regular	-	-	UNSET	rule/prevail	B2
+435	einbeziehen	irregular	bezog ein	einbezogen	haben	include	C1
+436	ausgeben	irregular	gab aus	ausgegeben	haben	spend/issue	A2
+437	äußern	regular	-	-	UNSET	express	A2
+438	antreten	irregular	trat an	angetreten	sein	begin/start	B2
+439	registrieren	regular	-	-	UNSET	register/notice	A2
+440	hängen	irregular	hing	gehangen	haben	hang	A2
+441	beweisen	irregular	bewies	bewiesen	haben	prove	B1
+442	unterliegen	irregular	unterlag	unterlegen	haben	be subject to	-
+443	abdecken	regular	-	-	UNSET	cover	C1
+444	füllen	regular	-	-	UNSET	fill	A2
+445	auseinandersetzen	regular	-	-	UNSET	deal with/examine	B2
+446	auffordern	regular	-	-	UNSET	request/urge	B1
+447	auswirken	regular	-	-	UNSET	have an effect	B2
+448	reisen	regular	-	-	sein	travel	A1
+449	weitergeben	irregular	gab weiter	weitergegeben	haben	pass on	A2
+450	unternehmen	irregular	unternahm	unternommen	haben	undertake	A2
+451	beauftragen	regular	-	-	UNSET	commission/hire	B2
+452	besetzen	regular	-	-	UNSET	occupy/fill (a position)	B1
+453	warnen	regular	-	-	UNSET	warn	B1
+454	begründen	regular	-	-	UNSET	justify/establish	A2
+455	besprechen	irregular	besprach	besprochen	haben	discuss	B1
+456	fassen	regular	-	-	UNSET	grasp/hold	B1
+457	verschaffen	regular	-	-	UNSET	provide/obtain	B2
+458	deaktivieren	regular	-	-	UNSET	deactivate/disable	-
+459	mitnehmen	irregular	nahm mit	mitgenommen	haben	take along	A1
+460	motivieren	regular	-	-	UNSET	motivate	B2
+461	verlängern	regular	-	-	UNSET	extend/prolong	A2
+462	festhalten	irregular	hielt fest	festgehalten	haben	hold on to/record	B1
+463	verbieten	irregular	verbot	verboten	haben	forbid/prohibit	A2
+464	währen	regular	-	-	UNSET	last	C1
+465	ausbilden	regular	-	-	UNSET	train/educate	C1
+466	aussprechen	irregular	sprach aus	ausgesprochen	haben	pronounce/express	A2
+467	drücken	regular	-	-	UNSET	press/push	A1
+468	erbringen	irregular	erbrachte	erbracht	haben	provide/produce	C1
+469	einschränken	regular	-	-	UNSET	restrict/limit	B2
+470	entfallen	irregular	entfiel	entfallen	sein	be dropped/be omitted	C1
+471	begrenzen	regular	-	-	UNSET	limit	-
+472	benennen	irregular	benannte	benannt	haben	name/designate	B2
+473	übergeben	irregular	übergab	übergeben	haben	hand over	B2
+474	akzeptieren	regular	-	-	UNSET	accept	B1
+475	verringern	regular	-	-	UNSET	reduce/decrease	C1
+476	zuordnen	regular	-	-	UNSET	assign/classify	A1
+477	empfangen	irregular	empfing	empfangen	haben	receive/welcome	A2
+478	auffallen	irregular	fiel auf	aufgefallen	sein	stand out/attract attention	A2
+479	erwähnen	regular	-	-	UNSET	mention	B2
+480	schmecken	regular	-	-	UNSET	taste	A1
+481	voraussetzen	regular	-	-	UNSET	presuppose/require	B2
+482	beschränken	regular	-	-	UNSET	limit/restrict	B1
+483	spüren	regular	-	-	UNSET	feel/sense	B1
+484	anregen	regular	-	-	UNSET	stimulate/suggest	C1
+485	ausstellen	regular	-	-	UNSET	exhibit/issue	B1
+486	verstärken	regular	-	-	UNSET	strengthen/reinforce	A2
+487	zurückkehren	regular	-	-	sein	return	B2
+488	überraschen	regular	-	-	UNSET	surprise	B1
+489	fliegen	irregular	flog	geflogen	sein	fly	A1
+490	zeichnen	regular	-	-	UNSET	draw	A1
+491	auswerten	regular	-	-	UNSET	analyse/evaluate	B2
+492	gebieten	irregular	gebot	geboten	haben	command/demand	-
+493	zustimmen	regular	-	-	UNSET	agree	A2
+494	unterrichten	regular	-	-	UNSET	teach	A2
+495	schenken	regular	-	-	UNSET	give (as a gift)	A1
+496	gefährden	regular	-	-	UNSET	endanger	C1
+497	kennzeichnen	regular	-	-	UNSET	characterise/mark	B2
+498	kündigen	regular	-	-	UNSET	cancel/quit/fire	A2
+499	versehen	irregular	versah	versehen	haben	equip/provide	-
+500	aufheben	irregular	hob auf	aufgehoben	haben	pick up/keep/abolish	B1
+501	aussetzen	regular	-	-	UNSET	expose/suspend	C1
+502	ausüben	regular	-	-	UNSET	exercise/practice	B2
+503	zurückgehen	irregular	ging zurück	zurückgegangen	sein	go back/decline	B2
+504	aufgeben	irregular	gab auf	aufgegeben	haben	give up/assign	B1
+505	trainieren	regular	-	-	UNSET	train	A1
+506	abnehmen	irregular	nahm ab	abgenommen	haben	lose weight/decrease/take off	B1
+507	rücken	regular	-	-	UNSET	move	-
+508	überschreiten	irregular	überschritt	überschritten	haben	exceed	C1
+509	treiben	irregular	trieb	getrieben	haben	drive/do (sports)	B1
+510	abrufen	irregular	rief ab	abgerufen	haben	retrieve/call up	C1
+511	ansteigen	irregular	stieg an	angestiegen	sein	increase/rise	C1
+512	üben	regular	-	-	UNSET	practice	A2
+513	zerstören	regular	-	-	UNSET	destroy	B1
+514	sperren	regular	-	-	UNSET	block/lock	A2
+515	aktualisieren	regular	-	-	UNSET	update	-
+516	genügen	regular	-	-	UNSET	suffice/be enough	B1
+517	formulieren	regular	-	-	UNSET	formulate	A1
+518	aufgreifen	irregular	griff auf	aufgegriffen	haben	pick up/take up	C1
+519	ausfüllen	regular	-	-	UNSET	fill in/fill out	A1
+520	bereiten	regular	-	-	UNSET	prepare/cause	B1
+521	absehen	irregular	sah ab	abgesehen	haben	foresee/refrain from	C1
+522	trinken	irregular	trank	getrunken	haben	drink	A1
+523	verpassen	regular	-	-	UNSET	miss	A1
+524	stören	regular	-	-	UNSET	disturb	A2
+525	singen	irregular	sang	gesungen	haben	sing	A1
+526	verzeichnen	regular	-	-	UNSET	record/register	-
+527	verwalten	regular	-	-	UNSET	manage/administer	B2
+528	vorschlagen	irregular	schlug vor	vorgeschlagen	haben	suggest/propose	A2
+529	beurteilen	regular	-	-	UNSET	judge/assess	-
+530	wecken	regular	-	-	UNSET	wake/arouse	A1
+531	beleuchten	regular	-	-	UNSET	illuminate/shed light on	B2
+532	klappen	regular	-	-	UNSET	work (out)/fold	A2
+533	mitmachen	regular	-	-	UNSET	join in/participate	A1
+534	belasten	regular	-	-	UNSET	burden/charge	B2
+535	werben	irregular	warb	geworben	haben	advertise/recruit	B1
+536	besichtigen	regular	-	-	UNSET	visit/view	A1
+537	kommunizieren	regular	-	-	UNSET	communicate	A2
+538	unterhalten	irregular	unterhielt	unterhalten	haben	entertain/maintain/chat	A2
+539	vereinen	regular	-	-	UNSET	unite	B2
+540	erweisen	irregular	erwies	erwiesen	haben	prove/show	C1
+541	transportieren	regular	-	-	UNSET	transport	A2
+542	eintreten	irregular	trat ein	eingetreten	sein	enter/occur	B1
+543	zugreifen	irregular	griff zu	zugegriffen	haben	access/grab	B2
+544	erforschen	regular	-	-	UNSET	research/explore	B2
+545	ablaufen	irregular	lief ab	abgelaufen	sein	expire/proceed	B2
+546	locken	regular	-	-	UNSET	lure/attract	B2
+547	vorgehen	irregular	ging vor	vorgegangen	sein	proceed	B2
+548	abbauen	regular	-	-	UNSET	dismantle/reduce	B2
+549	ablegen	regular	-	-	UNSET	put down/take (an exam)	B2
+550	behaupten	regular	-	-	UNSET	claim	B1
+551	kritisieren	regular	-	-	UNSET	criticise	B1
+552	gebrauchen	regular	-	-	UNSET	use	B1
+553	vernetzen	regular	-	-	UNSET	network/connect	B2
+554	begeben	irregular	begab	begeben	sein	go/proceed	B2
+555	erlernen	regular	-	-	UNSET	learn	C1
+556	verknüpfen	regular	-	-	UNSET	link/connect	C1
+557	aufführen	regular	-	-	UNSET	list/perform	B1
+558	einlösen	regular	-	-	UNSET	redeem/cash	-
+559	konzipieren	regular	-	-	UNSET	conceive/design	B2
+560	weiterleiten	regular	-	-	UNSET	forward/pass on	A2
+561	abholen	regular	-	-	UNSET	pick up/collect	A1
+562	verhalten	irregular	verhielt	verhalten	haben	behave	-
+563	scheitern	regular	-	-	sein	fail	B2
+564	zurückgreifen	irregular	griff zurück	zurückgegriffen	haben	fall back on/resort to	-
+565	abbilden	regular	-	-	UNSET	depict/map	-
+566	anrufen	irregular	rief an	angerufen	haben	call (on the phone)	A1
+567	decken	regular	-	-	UNSET	cover	B1
+568	erstrecken	regular	-	-	UNSET	extend/stretch	-
+569	wiederholen	regular	-	-	UNSET	repeat	A1
+570	einsehen	irregular	sah ein	eingesehen	haben	understand/realise	B2
+571	unterbringen	irregular	brachte unter	untergebracht	haben	accommodate/house	C1
+572	nachdenken	irregular	dachte nach	nachgedacht	haben	think/reflect	B1
+573	bewahren	regular	-	-	UNSET	preserve/keep	B2
+574	überwachen	regular	-	-	UNSET	monitor/supervise	B2
+575	vorantreiben	irregular	trieb voran	vorangetrieben	haben	advance/push forward	C1
+576	einbauen	regular	-	-	UNSET	install/build in	C1
+577	auftauchen	regular	-	-	UNSET	appear/emerge	C1
+578	hinterlassen	irregular	hinterließ	hinterlassen	haben	leave behind	A2
+579	kochen	regular	-	-	UNSET	cook/boil	A1
+580	absichern	regular	-	-	UNSET	safeguard/secure	C1
+581	nachgehen	irregular	ging nach	nachgegangen	sein	pursue/investigate	B2
+582	versichern	regular	-	-	UNSET	assure/insure	B1
+583	bewältigen	regular	-	-	UNSET	cope with/manage	B2
+584	verstecken	regular	-	-	UNSET	hide	B1
+585	würdigen	regular	-	-	UNSET	appreciate/acknowledge	B2
+586	feststehen	irregular	stand fest	festgestanden	haben	be certain	B1
+587	generieren	regular	-	-	UNSET	generate	-
+588	qualifizieren	regular	-	-	UNSET	qualify	B2
+589	koordinieren	regular	-	-	UNSET	coordinate	-
+590	spezialisieren	regular	-	-	UNSET	specialise	C1
+591	mieten	regular	-	-	UNSET	rent	A1
+592	wandern	regular	-	-	sein	hike/wander	A1
+593	blicken	regular	-	-	UNSET	look/glance	A2
+594	fertigen	regular	-	-	UNSET	manufacture/produce	-
+595	verwandeln	regular	-	-	UNSET	transform/convert	B2
+596	schneiden	irregular	schnitt	geschnitten	haben	cut	A1
+597	anhören	regular	-	-	UNSET	listen to/sound	A2
+598	ansetzen	regular	-	-	UNSET	schedule/set	C1
+599	befragen	regular	-	-	UNSET	question/interview	C1
+600	reinigen	regular	-	-	UNSET	clean	B1
+601	weisen	irregular	wies	gewiesen	haben	point/show	B2
+602	anstreben	regular	-	-	UNSET	strive for/aim at	C1
+603	befreien	regular	-	-	UNSET	free/liberate	C1
+604	überwinden	irregular	überwand	überwunden	haben	overcome	B2
+605	aufhalten	irregular	hielt auf	aufgehalten	haben	stop/delay	B1
+606	erlangen	regular	-	-	UNSET	achieve/attain	-
+607	bedrohen	regular	-	-	UNSET	threaten	B2
+608	ausweisen	irregular	wies aus	ausgewiesen	haben	identify/deport	C1
+609	beeinträchtigen	regular	-	-	UNSET	impair/affect	C1
+610	vermuten	regular	-	-	UNSET	suspect/assume	A1
+611	thematisieren	regular	-	-	UNSET	address/discuss	B2
+612	bereitstehen	irregular	stand bereit	bereitgestanden	haben	stand by	C1
+613	hervorheben	irregular	hob hervor	hervorgehoben	haben	emphasise/highlight	C1
+614	ausgleichen	irregular	glich aus	ausgeglichen	haben	balance/compensate	C1
+615	empfinden	irregular	empfand	empfunden	haben	feel/perceive	B2
+616	verlegen	regular	-	-	UNSET	lay/relocate/misplace	C1
+617	forschen	regular	-	-	UNSET	research	B2
+618	auslegen	regular	-	-	UNSET	interpret/lay out	C1
+619	einschätzen	regular	-	-	UNSET	assess/evaluate	B2
+620	zwingen	irregular	zwang	gezwungen	haben	force/compel	B1
+621	einleiten	regular	-	-	UNSET	initiate/introduce	-
+622	versenden	regular	-	-	UNSET	send/ship	-
+623	aussuchen	regular	-	-	UNSET	choose/select	-
+624	probieren	regular	-	-	UNSET	try/taste	A1
+625	beseitigen	regular	-	-	UNSET	remove/eliminate	C1
+626	geraten	irregular	geriet	geraten	sein	get into/turn out	B2
+627	verbrauchen	regular	-	-	UNSET	consume/use up	B1
+628	ansiedeln	regular	-	-	UNSET	settle	B2
+629	inspirieren	regular	-	-	UNSET	inspire	C1
+630	platzieren	regular	-	-	UNSET	place	-
+631	verschieben	irregular	verschob	verschoben	haben	postpone/move	A2
+632	auflösen	regular	-	-	UNSET	dissolve/resolve	B1
+633	ableiten	regular	-	-	UNSET	derive	B2
+634	springen	irregular	sprang	gesprungen	sein	jump	B1
+635	spenden	regular	-	-	UNSET	donate	B1
+636	variieren	regular	-	-	UNSET	vary	A1
+637	verankern	regular	-	-	UNSET	anchor	B2
+638	einkaufen	regular	-	-	UNSET	shop/buy	A1
+639	abrunden	regular	-	-	UNSET	round off	C1
+640	agieren	regular	-	-	UNSET	act/operate	-
+641	ausdrücken	regular	-	-	UNSET	express	A1
+642	unterstreichen	irregular	unterstrich	unterstrichen	haben	underline/emphasise	A1
+643	mitwirken	regular	-	-	UNSET	participate/collaborate	C1
+644	bergen	irregular	barg	geborgen	haben	rescue/contain	-
+645	anstehen	irregular	stand an	angestanden	haben	be pending/queue	B2
+646	wagen	regular	-	-	UNSET	dare/venture	B2
+647	erstatten	regular	-	-	UNSET	reimburse/report	B2
+648	knüpfen	regular	-	-	UNSET	tie/make (contacts)	B2
+649	stoppen	regular	-	-	UNSET	stop	B1
+650	angehören	regular	-	-	UNSET	belong to	C1
+651	meistern	regular	-	-	UNSET	master/overcome	C1
+652	erneuern	regular	-	-	UNSET	renew	C1
+653	auszahlen	regular	-	-	UNSET	pay out/be worth it	B2
+654	zubereiten	regular	-	-	UNSET	prepare (food)	A1
+655	überreichen	regular	-	-	UNSET	hand over/present	-
+656	bewirken	regular	-	-	UNSET	cause/bring about	B2
+657	vorgeben	irregular	gab vor	vorgegeben	haben	pretend/specify	B2
+658	entfalten	regular	-	-	UNSET	unfold/develop	B2
+659	kontaktieren	regular	-	-	UNSET	contact	C1
+660	kopieren	regular	-	-	UNSET	copy	A2
+661	bemühen	regular	-	-	UNSET	make an effort/try	B1
+662	versetzen	regular	-	-	UNSET	transfer/relocate	B2
+663	entwerfen	irregular	entwarf	entworfen	haben	design/draft	B2
+664	begehen	irregular	beging	begangen	haben	commit/celebrate	B2
+665	erproben	regular	-	-	UNSET	test/try out	-
+666	herausstellen	regular	-	-	UNSET	turn out/emphasise	C1
+667	hervorgehen	irregular	ging hervor	hervorgegangen	sein	result/emerge	-
+668	markieren	regular	-	-	UNSET	mark/highlight	A1
+669	berechtigen	regular	-	-	UNSET	authorise/entitle	-
+670	verwirklichen	regular	-	-	UNSET	realise/achieve	B2
+671	aufwachsen	irregular	wuchs auf	aufgewachsen	sein	grow up	B2
+672	bündeln	regular	-	-	UNSET	bundle/combine	B2
+673	ergreifen	irregular	ergriff	ergriffen	haben	seize/take	B2
+674	heben	irregular	hob	gehoben	haben	lift/raise	B1
+675	überlassen	irregular	überließ	überlassen	haben	leave to/hand over	B2
+676	verschicken	regular	-	-	UNSET	send	-
+677	aufklären	regular	-	-	UNSET	enlighten/explain	-
+678	übersetzen	regular	-	-	UNSET	translate	A2
+679	zusammenkommen	irregular	kam zusammen	zusammengekommen	sein	come together/gather	-
+680	einholen	regular	-	-	UNSET	catch up/obtain	B2
+681	vorbeugen	regular	-	-	UNSET	lean forward/prevent	C1
+682	bemerken	regular	-	-	UNSET	notice/remark	B1
+683	einfügen	regular	-	-	UNSET	insert	B1
+684	antworten	regular	-	-	UNSET	answer	A1
+685	loben	regular	-	-	UNSET	praise	B1
+686	weiterhelfen	irregular	half weiter	weitergeholfen	haben	help someone along	A2
+687	beeindrucken	regular	-	-	UNSET	impress	C1
+688	verfassen	regular	-	-	UNSET	write/compose	-
+689	zusammensetzen	regular	-	-	UNSET	assemble/be composed of	B2
+690	beherrschen	regular	-	-	UNSET	master/dominate	B2
+691	aufbereiten	regular	-	-	UNSET	process/prepare	B2
+692	streichen	irregular	strich	gestrichen	haben	cancel/paint/delete	B1
+693	kommentieren	regular	-	-	UNSET	annotate/comment	A2
+694	entlasten	regular	-	-	UNSET	ease/relieve	-
+695	reflektieren	regular	-	-	UNSET	reflect	-
+696	einziehen	irregular	zog ein	eingezogen	sein	move in/collect	A2
+697	erfreuen	regular	-	-	UNSET	please/delight	C1
+698	vorbehalten	irregular	behielt vor	vorbehalten	haben	reserve	-
+699	einräumen	regular	-	-	UNSET	admit/grant	B1
+700	unterschreiben	irregular	unterschrieb	unterschrieben	haben	sign	A1

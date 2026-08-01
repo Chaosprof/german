@@ -1,0 +1,616 @@
+{
+  "batch_size": 700,
+  "total": 41015,
+  "batches": [
+    {
+      "batch": "nouns_001",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 1,
+      "source_row_end": 700,
+      "first_word": "Jahr",
+      "last_word": "Kommentar",
+      "path": "audit/current-review/batches/nouns_001.tsv"
+    },
+    {
+      "batch": "nouns_002",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 701,
+      "source_row_end": 1400,
+      "first_word": "Info",
+      "last_word": "Sieger",
+      "path": "audit/current-review/batches/nouns_002.tsv"
+    },
+    {
+      "batch": "nouns_003",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 1401,
+      "source_row_end": 2100,
+      "first_word": "Kongress",
+      "last_word": "Brett",
+      "path": "audit/current-review/batches/nouns_003.tsv"
+    },
+    {
+      "batch": "nouns_004",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 2101,
+      "source_row_end": 2800,
+      "first_word": "Brille",
+      "last_word": "Automobilindustrie",
+      "path": "audit/current-review/batches/nouns_004.tsv"
+    },
+    {
+      "batch": "nouns_005",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 2801,
+      "source_row_end": 3500,
+      "first_word": "Freigabe",
+      "last_word": "Lebensversicherung",
+      "path": "audit/current-review/batches/nouns_005.tsv"
+    },
+    {
+      "batch": "nouns_006",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 3501,
+      "source_row_end": 4200,
+      "first_word": "Mausklick",
+      "last_word": "Volkswirtschaft",
+      "path": "audit/current-review/batches/nouns_006.tsv"
+    },
+    {
+      "batch": "nouns_007",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 4201,
+      "source_row_end": 4900,
+      "first_word": "Vollversammlung",
+      "last_word": "Gamer",
+      "path": "audit/current-review/batches/nouns_007.tsv"
+    },
+    {
+      "batch": "nouns_008",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 4901,
+      "source_row_end": 5600,
+      "first_word": "Gans",
+      "last_word": "Lebenszyklus",
+      "path": "audit/current-review/batches/nouns_008.tsv"
+    },
+    {
+      "batch": "nouns_009",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 5601,
+      "source_row_end": 6300,
+      "first_word": "Lichtverhältnis",
+      "last_word": "Supervision",
+      "path": "audit/current-review/batches/nouns_009.tsv"
+    },
+    {
+      "batch": "nouns_010",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 6301,
+      "source_row_end": 7000,
+      "first_word": "Textur",
+      "last_word": "Maul",
+      "path": "audit/current-review/batches/nouns_010.tsv"
+    },
+    {
+      "batch": "nouns_011",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 7001,
+      "source_row_end": 7700,
+      "first_word": "Mechatroniker",
+      "last_word": "Passform",
+      "path": "audit/current-review/batches/nouns_011.tsv"
+    },
+    {
+      "batch": "nouns_012",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 7701,
+      "source_row_end": 8400,
+      "first_word": "Paste",
+      "last_word": "Rechenschaft",
+      "path": "audit/current-review/batches/nouns_012.tsv"
+    },
+    {
+      "batch": "nouns_013",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 8401,
+      "source_row_end": 9100,
+      "first_word": "Rechteck",
+      "last_word": "Leiterplatte",
+      "path": "audit/current-review/batches/nouns_013.tsv"
+    },
+    {
+      "batch": "nouns_014",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 9101,
+      "source_row_end": 9800,
+      "first_word": "Lernfortschritt",
+      "last_word": "Schreibwerkstatt",
+      "path": "audit/current-review/batches/nouns_014.tsv"
+    },
+    {
+      "batch": "nouns_015",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 9801,
+      "source_row_end": 10500,
+      "first_word": "Schuldenbremse",
+      "last_word": "Nutztierhaltung",
+      "path": "audit/current-review/batches/nouns_015.tsv"
+    },
+    {
+      "batch": "nouns_016",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 10501,
+      "source_row_end": 11200,
+      "first_word": "Odyssee",
+      "last_word": "Hauptbühne",
+      "path": "audit/current-review/batches/nouns_016.tsv"
+    },
+    {
+      "batch": "nouns_017",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 11201,
+      "source_row_end": 11900,
+      "first_word": "Hauptmann",
+      "last_word": "Verteidigungsminister",
+      "path": "audit/current-review/batches/nouns_017.tsv"
+    },
+    {
+      "batch": "nouns_018",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 11901,
+      "source_row_end": 12600,
+      "first_word": "Vertragsrecht",
+      "last_word": "Fressfeind",
+      "path": "audit/current-review/batches/nouns_018.tsv"
+    },
+    {
+      "batch": "nouns_019",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 12601,
+      "source_row_end": 13300,
+      "first_word": "Friedensvertrag",
+      "last_word": "Irrglaube",
+      "path": "audit/current-review/batches/nouns_019.tsv"
+    },
+    {
+      "batch": "nouns_020",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 13301,
+      "source_row_end": 14000,
+      "first_word": "Irrsinn",
+      "last_word": "Himmelskörper",
+      "path": "audit/current-review/batches/nouns_020.tsv"
+    },
+    {
+      "batch": "nouns_021",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 14001,
+      "source_row_end": 14700,
+      "first_word": "Hindernislauf",
+      "last_word": "Forschergeist",
+      "path": "audit/current-review/batches/nouns_021.tsv"
+    },
+    {
+      "batch": "nouns_022",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 14701,
+      "source_row_end": 15400,
+      "first_word": "Forschungsschiff",
+      "last_word": "Bahnverbindung",
+      "path": "audit/current-review/batches/nouns_022.tsv"
+    },
+    {
+      "batch": "nouns_023",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 15401,
+      "source_row_end": 16100,
+      "first_word": "Balanceakt",
+      "last_word": "Stromstärke",
+      "path": "audit/current-review/batches/nouns_023.tsv"
+    },
+    {
+      "batch": "nouns_024",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 16101,
+      "source_row_end": 16800,
+      "first_word": "Styropor",
+      "last_word": "Leverkusener",
+      "path": "audit/current-review/batches/nouns_024.tsv"
+    },
+    {
+      "batch": "nouns_025",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 16801,
+      "source_row_end": 17500,
+      "first_word": "Liberalisierung",
+      "last_word": "Bowlingbahn",
+      "path": "audit/current-review/batches/nouns_025.tsv"
+    },
+    {
+      "batch": "nouns_026",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 17501,
+      "source_row_end": 18200,
+      "first_word": "Brasserie",
+      "last_word": "Plattenfirma",
+      "path": "audit/current-review/batches/nouns_026.tsv"
+    },
+    {
+      "batch": "nouns_027",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 18201,
+      "source_row_end": 18900,
+      "first_word": "Plattenvertrag",
+      "last_word": "Burggraben",
+      "path": "audit/current-review/batches/nouns_027.tsv"
+    },
+    {
+      "batch": "nouns_028",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 18901,
+      "source_row_end": 19600,
+      "first_word": "Büschel",
+      "last_word": "Neubearbeitung",
+      "path": "audit/current-review/batches/nouns_028.tsv"
+    },
+    {
+      "batch": "nouns_029",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 19601,
+      "source_row_end": 20300,
+      "first_word": "Neuberechnung",
+      "last_word": "Allmacht",
+      "path": "audit/current-review/batches/nouns_029.tsv"
+    },
+    {
+      "batch": "nouns_030",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 20301,
+      "source_row_end": 21000,
+      "first_word": "Alltagsrassismus",
+      "last_word": "Integralrechnung",
+      "path": "audit/current-review/batches/nouns_030.tsv"
+    },
+    {
+      "batch": "nouns_031",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 21001,
+      "source_row_end": 21700,
+      "first_word": "Intercity",
+      "last_word": "Sichel",
+      "path": "audit/current-review/batches/nouns_031.tsv"
+    },
+    {
+      "batch": "nouns_032",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 21701,
+      "source_row_end": 22400,
+      "first_word": "Sicherungsverwahrung",
+      "last_word": "Bibliothekskatalog",
+      "path": "audit/current-review/batches/nouns_032.tsv"
+    },
+    {
+      "batch": "nouns_033",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 22401,
+      "source_row_end": 23100,
+      "first_word": "Bibliotheksraum",
+      "last_word": "Industriebau",
+      "path": "audit/current-review/batches/nouns_033.tsv"
+    },
+    {
+      "batch": "nouns_034",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 23101,
+      "source_row_end": 23800,
+      "first_word": "Inflationsausgleich",
+      "last_word": "Reet",
+      "path": "audit/current-review/batches/nouns_034.tsv"
+    },
+    {
+      "batch": "nouns_035",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 23801,
+      "source_row_end": 24500,
+      "first_word": "Referee",
+      "last_word": "Einkaufsviertel",
+      "path": "audit/current-review/batches/nouns_035.tsv"
+    },
+    {
+      "batch": "nouns_036",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 24501,
+      "source_row_end": 25200,
+      "first_word": "Pulsieren",
+      "last_word": "Sud",
+      "path": "audit/current-review/batches/nouns_036.tsv"
+    },
+    {
+      "batch": "nouns_037",
+      "bank": "nouns",
+      "entries": 700,
+      "source_row_start": 25201,
+      "source_row_end": 25900,
+      "first_word": "Weidenrinde",
+      "last_word": "Ticketwahl",
+      "path": "audit/current-review/batches/nouns_037.tsv"
+    },
+    {
+      "batch": "nouns_038",
+      "bank": "nouns",
+      "entries": 47,
+      "source_row_start": 25901,
+      "source_row_end": 25947,
+      "first_word": "Versandart",
+      "last_word": "Kaufmannsfamilie",
+      "path": "audit/current-review/batches/nouns_038.tsv"
+    },
+    {
+      "batch": "verbs_001",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 1,
+      "source_row_end": 700,
+      "first_word": "sein",
+      "last_word": "unterschreiben",
+      "path": "audit/current-review/batches/verbs_001.tsv"
+    },
+    {
+      "batch": "verbs_002",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 701,
+      "source_row_end": 1400,
+      "first_word": "anziehen",
+      "last_word": "herkommen",
+      "path": "audit/current-review/batches/verbs_002.tsv"
+    },
+    {
+      "batch": "verbs_003",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 1401,
+      "source_row_end": 2100,
+      "first_word": "hingehen",
+      "last_word": "schlängeln",
+      "path": "audit/current-review/batches/verbs_003.tsv"
+    },
+    {
+      "batch": "verbs_004",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 2101,
+      "source_row_end": 2800,
+      "first_word": "tüfteln",
+      "last_word": "lichten",
+      "path": "audit/current-review/batches/verbs_004.tsv"
+    },
+    {
+      "batch": "verbs_005",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 2801,
+      "source_row_end": 3500,
+      "first_word": "maskieren",
+      "last_word": "punktieren",
+      "path": "audit/current-review/batches/verbs_005.tsv"
+    },
+    {
+      "batch": "verbs_006",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 3501,
+      "source_row_end": 4200,
+      "first_word": "randomisieren",
+      "last_word": "verbraten",
+      "path": "audit/current-review/batches/verbs_006.tsv"
+    },
+    {
+      "batch": "verbs_007",
+      "bank": "verbs",
+      "entries": 700,
+      "source_row_start": 4201,
+      "source_row_end": 4900,
+      "first_word": "verchromen",
+      "last_word": "kerben",
+      "path": "audit/current-review/batches/verbs_007.tsv"
+    },
+    {
+      "batch": "verbs_008",
+      "bank": "verbs",
+      "entries": 542,
+      "source_row_start": 4901,
+      "source_row_end": 5442,
+      "first_word": "kiebitzen",
+      "last_word": "zurückfinden",
+      "path": "audit/current-review/batches/verbs_008.tsv"
+    },
+    {
+      "batch": "adjectives_001",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 1,
+      "source_row_end": 700,
+      "first_word": "neu",
+      "last_word": "eingeschränkt",
+      "path": "audit/current-review/batches/adjectives_001.tsv"
+    },
+    {
+      "batch": "adjectives_002",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 701,
+      "source_row_end": 1400,
+      "first_word": "empfindlich",
+      "last_word": "bescheiden",
+      "path": "audit/current-review/batches/adjectives_002.tsv"
+    },
+    {
+      "batch": "adjectives_003",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 1401,
+      "source_row_end": 2100,
+      "first_word": "dekorativ",
+      "last_word": "dreißigjährig",
+      "path": "audit/current-review/batches/adjectives_003.tsv"
+    },
+    {
+      "batch": "adjectives_004",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 2101,
+      "source_row_end": 2800,
+      "first_word": "einflussreich",
+      "last_word": "weh",
+      "path": "audit/current-review/batches/adjectives_004.tsv"
+    },
+    {
+      "batch": "adjectives_005",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 2801,
+      "source_row_end": 3500,
+      "first_word": "wettbewerbsrechtlich",
+      "last_word": "substantiell",
+      "path": "audit/current-review/batches/adjectives_005.tsv"
+    },
+    {
+      "batch": "adjectives_006",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 3501,
+      "source_row_end": 4200,
+      "first_word": "süffig",
+      "last_word": "schokoladig",
+      "path": "audit/current-review/batches/adjectives_006.tsv"
+    },
+    {
+      "batch": "adjectives_007",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 4201,
+      "source_row_end": 4900,
+      "first_word": "schulfrei",
+      "last_word": "bescheuert",
+      "path": "audit/current-review/batches/adjectives_007.tsv"
+    },
+    {
+      "batch": "adjectives_008",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 4901,
+      "source_row_end": 5600,
+      "first_word": "beschissen",
+      "last_word": "ultramodern",
+      "path": "audit/current-review/batches/adjectives_008.tsv"
+    },
+    {
+      "batch": "adjectives_009",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 5601,
+      "source_row_end": 6300,
+      "first_word": "unansehnlich",
+      "last_word": "verschmust",
+      "path": "audit/current-review/batches/adjectives_009.tsv"
+    },
+    {
+      "batch": "adjectives_010",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 6301,
+      "source_row_end": 7000,
+      "first_word": "verschnupft",
+      "last_word": "scheibenförmig",
+      "path": "audit/current-review/batches/adjectives_010.tsv"
+    },
+    {
+      "batch": "adjectives_011",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 7001,
+      "source_row_end": 7700,
+      "first_word": "scheinheilig",
+      "last_word": "finanzkräftig",
+      "path": "audit/current-review/batches/adjectives_011.tsv"
+    },
+    {
+      "batch": "adjectives_012",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 7701,
+      "source_row_end": 8400,
+      "first_word": "fingerlang",
+      "last_word": "resistiv",
+      "path": "audit/current-review/batches/adjectives_012.tsv"
+    },
+    {
+      "batch": "adjectives_013",
+      "bank": "adjectives",
+      "entries": 700,
+      "source_row_start": 8401,
+      "source_row_end": 9100,
+      "first_word": "resonant",
+      "last_word": "zehnte",
+      "path": "audit/current-review/batches/adjectives_013.tsv"
+    },
+    {
+      "batch": "adjectives_014",
+      "bank": "adjectives",
+      "entries": 162,
+      "source_row_start": 9101,
+      "source_row_end": 9262,
+      "first_word": "elfte",
+      "last_word": "bestens",
+      "path": "audit/current-review/batches/adjectives_014.tsv"
+    },
+    {
+      "batch": "verb_preps_001",
+      "bank": "verb_preps",
+      "entries": 364,
+      "source_row_start": 1,
+      "source_row_end": 364,
+      "first_word": "abhängen",
+      "last_word": "hinwegsehen",
+      "path": "audit/current-review/batches/verb_preps_001.tsv"
+    }
+  ]
+}

@@ -1,0 +1,712 @@
+{
+  "reports": 62,
+  "entries_reviewed": 41113,
+  "affected_entries": 3307,
+  "clean_entries": 37806,
+  "severity": {
+    "medium": 1365,
+    "low": 1160,
+    "high": 782
+  },
+  "category": {
+    "gloss": 2122,
+    "cefr": 421,
+    "plural": 160,
+    "article": 42,
+    "junk": 43,
+    "spelling": 115,
+    "duplicate": 19,
+    "classification": 27,
+    "aux": 118,
+    "verbform": 21,
+    "notadj": 208,
+    "example": 4,
+    "preposition": 6,
+    "case": 1
+  },
+  "missing_reports": [],
+  "validation_errors": [],
+  "batches": [
+    {
+      "batch": "nouns_001",
+      "entries": 700,
+      "affected": 24,
+      "clean": 676,
+      "severity": {
+        "medium": 5,
+        "low": 12,
+        "high": 7
+      }
+    },
+    {
+      "batch": "nouns_002",
+      "entries": 700,
+      "affected": 25,
+      "clean": 675,
+      "severity": {
+        "low": 13,
+        "medium": 8,
+        "high": 4
+      }
+    },
+    {
+      "batch": "nouns_003",
+      "entries": 700,
+      "affected": 36,
+      "clean": 664,
+      "severity": {
+        "high": 6,
+        "low": 21,
+        "medium": 9
+      }
+    },
+    {
+      "batch": "nouns_004",
+      "entries": 700,
+      "affected": 46,
+      "clean": 654,
+      "severity": {
+        "low": 24,
+        "high": 7,
+        "medium": 15
+      }
+    },
+    {
+      "batch": "nouns_005",
+      "entries": 700,
+      "affected": 48,
+      "clean": 652,
+      "severity": {
+        "low": 13,
+        "high": 7,
+        "medium": 28
+      }
+    },
+    {
+      "batch": "nouns_006",
+      "entries": 700,
+      "affected": 66,
+      "clean": 634,
+      "severity": {
+        "high": 4,
+        "low": 23,
+        "medium": 39
+      }
+    },
+    {
+      "batch": "nouns_007",
+      "entries": 700,
+      "affected": 71,
+      "clean": 629,
+      "severity": {
+        "medium": 46,
+        "high": 14,
+        "low": 11
+      }
+    },
+    {
+      "batch": "nouns_008",
+      "entries": 700,
+      "affected": 49,
+      "clean": 651,
+      "severity": {
+        "low": 11,
+        "high": 9,
+        "medium": 29
+      }
+    },
+    {
+      "batch": "nouns_009",
+      "entries": 700,
+      "affected": 66,
+      "clean": 634,
+      "severity": {
+        "medium": 35,
+        "high": 20,
+        "low": 11
+      }
+    },
+    {
+      "batch": "nouns_010",
+      "entries": 700,
+      "affected": 40,
+      "clean": 660,
+      "severity": {
+        "low": 16,
+        "high": 12,
+        "medium": 12
+      }
+    },
+    {
+      "batch": "nouns_011",
+      "entries": 700,
+      "affected": 46,
+      "clean": 654,
+      "severity": {
+        "low": 24,
+        "medium": 15,
+        "high": 7
+      }
+    },
+    {
+      "batch": "nouns_012",
+      "entries": 700,
+      "affected": 56,
+      "clean": 644,
+      "severity": {
+        "low": 37,
+        "medium": 17,
+        "high": 2
+      }
+    },
+    {
+      "batch": "nouns_013",
+      "entries": 700,
+      "affected": 75,
+      "clean": 625,
+      "severity": {
+        "high": 7,
+        "medium": 31,
+        "low": 37
+      }
+    },
+    {
+      "batch": "nouns_014",
+      "entries": 700,
+      "affected": 71,
+      "clean": 629,
+      "severity": {
+        "low": 36,
+        "high": 12,
+        "medium": 23
+      }
+    },
+    {
+      "batch": "nouns_015",
+      "entries": 700,
+      "affected": 70,
+      "clean": 630,
+      "severity": {
+        "low": 26,
+        "high": 18,
+        "medium": 26
+      }
+    },
+    {
+      "batch": "nouns_016",
+      "entries": 700,
+      "affected": 24,
+      "clean": 676,
+      "severity": {
+        "medium": 12,
+        "low": 7,
+        "high": 5
+      }
+    },
+    {
+      "batch": "nouns_017",
+      "entries": 700,
+      "affected": 32,
+      "clean": 668,
+      "severity": {
+        "medium": 12,
+        "high": 9,
+        "low": 11
+      }
+    },
+    {
+      "batch": "nouns_018",
+      "entries": 700,
+      "affected": 73,
+      "clean": 627,
+      "severity": {
+        "high": 10,
+        "medium": 39,
+        "low": 24
+      }
+    },
+    {
+      "batch": "nouns_019",
+      "entries": 700,
+      "affected": 58,
+      "clean": 642,
+      "severity": {
+        "low": 34,
+        "medium": 17,
+        "high": 7
+      }
+    },
+    {
+      "batch": "nouns_020",
+      "entries": 700,
+      "affected": 55,
+      "clean": 645,
+      "severity": {
+        "low": 23,
+        "high": 11,
+        "medium": 21
+      }
+    },
+    {
+      "batch": "nouns_021",
+      "entries": 700,
+      "affected": 22,
+      "clean": 678,
+      "severity": {
+        "high": 8,
+        "low": 9,
+        "medium": 5
+      }
+    },
+    {
+      "batch": "nouns_022",
+      "entries": 700,
+      "affected": 74,
+      "clean": 626,
+      "severity": {
+        "low": 24,
+        "high": 13,
+        "medium": 37
+      }
+    },
+    {
+      "batch": "nouns_023",
+      "entries": 700,
+      "affected": 41,
+      "clean": 659,
+      "severity": {
+        "medium": 16,
+        "low": 23,
+        "high": 2
+      }
+    },
+    {
+      "batch": "nouns_024",
+      "entries": 700,
+      "affected": 42,
+      "clean": 658,
+      "severity": {
+        "medium": 15,
+        "low": 23,
+        "high": 4
+      }
+    },
+    {
+      "batch": "nouns_025",
+      "entries": 700,
+      "affected": 27,
+      "clean": 673,
+      "severity": {
+        "low": 10,
+        "high": 4,
+        "medium": 13
+      }
+    },
+    {
+      "batch": "nouns_026",
+      "entries": 700,
+      "affected": 49,
+      "clean": 651,
+      "severity": {
+        "medium": 19,
+        "high": 13,
+        "low": 17
+      }
+    },
+    {
+      "batch": "nouns_027",
+      "entries": 700,
+      "affected": 56,
+      "clean": 644,
+      "severity": {
+        "medium": 18,
+        "high": 10,
+        "low": 28
+      }
+    },
+    {
+      "batch": "nouns_028",
+      "entries": 700,
+      "affected": 44,
+      "clean": 656,
+      "severity": {
+        "low": 19,
+        "medium": 17,
+        "high": 8
+      }
+    },
+    {
+      "batch": "nouns_029",
+      "entries": 700,
+      "affected": 42,
+      "clean": 658,
+      "severity": {
+        "medium": 16,
+        "low": 13,
+        "high": 13
+      }
+    },
+    {
+      "batch": "nouns_030",
+      "entries": 700,
+      "affected": 35,
+      "clean": 665,
+      "severity": {
+        "high": 11,
+        "medium": 11,
+        "low": 13
+      }
+    },
+    {
+      "batch": "nouns_031",
+      "entries": 700,
+      "affected": 44,
+      "clean": 656,
+      "severity": {
+        "low": 25,
+        "medium": 16,
+        "high": 3
+      }
+    },
+    {
+      "batch": "nouns_032",
+      "entries": 700,
+      "affected": 58,
+      "clean": 642,
+      "severity": {
+        "low": 25,
+        "medium": 30,
+        "high": 3
+      }
+    },
+    {
+      "batch": "nouns_033",
+      "entries": 700,
+      "affected": 28,
+      "clean": 672,
+      "severity": {
+        "low": 13,
+        "medium": 10,
+        "high": 5
+      }
+    },
+    {
+      "batch": "nouns_034",
+      "entries": 700,
+      "affected": 50,
+      "clean": 650,
+      "severity": {
+        "medium": 17,
+        "low": 22,
+        "high": 11
+      }
+    },
+    {
+      "batch": "nouns_035",
+      "entries": 700,
+      "affected": 57,
+      "clean": 643,
+      "severity": {
+        "low": 31,
+        "medium": 17,
+        "high": 9
+      }
+    },
+    {
+      "batch": "nouns_036",
+      "entries": 700,
+      "affected": 72,
+      "clean": 628,
+      "severity": {
+        "high": 28,
+        "medium": 15,
+        "low": 29
+      }
+    },
+    {
+      "batch": "nouns_037",
+      "entries": 700,
+      "affected": 67,
+      "clean": 633,
+      "severity": {
+        "medium": 38,
+        "high": 22,
+        "low": 7
+      }
+    },
+    {
+      "batch": "nouns_038",
+      "entries": 47,
+      "affected": 4,
+      "clean": 43,
+      "severity": {
+        "medium": 1,
+        "high": 3
+      }
+    },
+    {
+      "batch": "verbs_001",
+      "entries": 700,
+      "affected": 43,
+      "clean": 657,
+      "severity": {
+        "medium": 28,
+        "high": 6,
+        "low": 9
+      }
+    },
+    {
+      "batch": "verbs_002",
+      "entries": 700,
+      "affected": 76,
+      "clean": 624,
+      "severity": {
+        "medium": 40,
+        "low": 2,
+        "high": 34
+      }
+    },
+    {
+      "batch": "verbs_003",
+      "entries": 700,
+      "affected": 92,
+      "clean": 608,
+      "severity": {
+        "high": 26,
+        "medium": 48,
+        "low": 18
+      }
+    },
+    {
+      "batch": "verbs_004",
+      "entries": 700,
+      "affected": 84,
+      "clean": 616,
+      "severity": {
+        "high": 22,
+        "medium": 58,
+        "low": 4
+      }
+    },
+    {
+      "batch": "verbs_005",
+      "entries": 700,
+      "affected": 98,
+      "clean": 602,
+      "severity": {
+        "medium": 70,
+        "high": 14,
+        "low": 14
+      }
+    },
+    {
+      "batch": "verbs_006",
+      "entries": 700,
+      "affected": 65,
+      "clean": 635,
+      "severity": {
+        "medium": 48,
+        "high": 10,
+        "low": 7
+      }
+    },
+    {
+      "batch": "verbs_007",
+      "entries": 700,
+      "affected": 65,
+      "clean": 635,
+      "severity": {
+        "high": 20,
+        "medium": 40,
+        "low": 5
+      }
+    },
+    {
+      "batch": "verbs_008",
+      "entries": 542,
+      "affected": 118,
+      "clean": 424,
+      "severity": {
+        "medium": 51,
+        "high": 49,
+        "low": 18
+      }
+    },
+    {
+      "batch": "adjectives_001",
+      "entries": 700,
+      "affected": 23,
+      "clean": 677,
+      "severity": {
+        "high": 4,
+        "low": 14,
+        "medium": 5
+      }
+    },
+    {
+      "batch": "adjectives_002",
+      "entries": 700,
+      "affected": 71,
+      "clean": 629,
+      "severity": {
+        "medium": 26,
+        "low": 24,
+        "high": 21
+      }
+    },
+    {
+      "batch": "adjectives_003",
+      "entries": 700,
+      "affected": 31,
+      "clean": 669,
+      "severity": {
+        "high": 15,
+        "medium": 12,
+        "low": 4
+      }
+    },
+    {
+      "batch": "adjectives_004",
+      "entries": 700,
+      "affected": 95,
+      "clean": 605,
+      "severity": {
+        "medium": 24,
+        "low": 58,
+        "high": 13
+      }
+    },
+    {
+      "batch": "adjectives_005",
+      "entries": 700,
+      "affected": 33,
+      "clean": 667,
+      "severity": {
+        "medium": 8,
+        "low": 18,
+        "high": 7
+      }
+    },
+    {
+      "batch": "adjectives_006",
+      "entries": 700,
+      "affected": 30,
+      "clean": 670,
+      "severity": {
+        "high": 9,
+        "low": 4,
+        "medium": 17
+      }
+    },
+    {
+      "batch": "adjectives_007",
+      "entries": 700,
+      "affected": 106,
+      "clean": 594,
+      "severity": {
+        "low": 55,
+        "medium": 42,
+        "high": 9
+      }
+    },
+    {
+      "batch": "adjectives_008",
+      "entries": 700,
+      "affected": 51,
+      "clean": 649,
+      "severity": {
+        "high": 8,
+        "low": 32,
+        "medium": 11
+      }
+    },
+    {
+      "batch": "adjectives_009",
+      "entries": 700,
+      "affected": 38,
+      "clean": 662,
+      "severity": {
+        "low": 16,
+        "medium": 14,
+        "high": 8
+      }
+    },
+    {
+      "batch": "adjectives_010",
+      "entries": 700,
+      "affected": 60,
+      "clean": 640,
+      "severity": {
+        "low": 24,
+        "medium": 17,
+        "high": 19
+      }
+    },
+    {
+      "batch": "adjectives_011",
+      "entries": 700,
+      "affected": 46,
+      "clean": 654,
+      "severity": {
+        "high": 26,
+        "medium": 12,
+        "low": 8
+      }
+    },
+    {
+      "batch": "adjectives_012",
+      "entries": 700,
+      "affected": 48,
+      "clean": 652,
+      "severity": {
+        "low": 23,
+        "medium": 10,
+        "high": 15
+      }
+    },
+    {
+      "batch": "adjectives_013",
+      "entries": 700,
+      "affected": 79,
+      "clean": 621,
+      "severity": {
+        "low": 30,
+        "medium": 10,
+        "high": 39
+      }
+    },
+    {
+      "batch": "adjectives_014",
+      "entries": 162,
+      "affected": 55,
+      "clean": 107,
+      "severity": {
+        "high": 42,
+        "medium": 10,
+        "low": 3
+      }
+    },
+    {
+      "batch": "verb_preps_001",
+      "entries": 364,
+      "affected": 26,
+      "clean": 338,
+      "severity": {
+        "medium": 7,
+        "low": 10,
+        "high": 9
+      }
+    },
+    {
+      "batch": "dual_gender_001",
+      "entries": 98,
+      "affected": 31,
+      "clean": 67,
+      "severity": {
+        "high": 9,
+        "low": 15,
+        "medium": 7
+      }
+    }
+  ]
+}

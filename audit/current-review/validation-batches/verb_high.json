@@ -1,0 +1,2644 @@
+[
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      57
+    ],
+    "word": "schaffen",
+    "field": "irregular/prateritum/perfekt/english",
+    "severity": "high",
+    "category": "classification",
+    "current": "False; schaffte; geschafft; create (irregular: schuf/geschaffen)/manage (regular: schaffte/geschafft)",
+    "correct": "Split the two paradigms, or restrict this entry to “manage/accomplish” with schaffte/geschafft; “create” requires schuf/geschaffen.",
+    "why": "The entry is classified as regular and therefore teaches/tests only the weak paradigm while retaining a gloss whose ordinary paradigm is strong."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      87
+    ],
+    "word": "ziehen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "False; pull/move",
+    "correct": "haben for transitive “pull”; sein for intransitive movement/relocation (“move to Berlin”); split or label the senses.",
+    "why": "The combined gloss spans two common senses with different Perfekt auxiliaries."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      172
+    ],
+    "word": "treten",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; step/kick",
+    "correct": "sein for directional/intransitive “step”; haben for transitive “kick”; split or label the senses.",
+    "why": "Both auxiliaries are standard but meaning-dependent, so a single `sein` paradigm is false for the explicitly glossed “kick” sense."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      423
+    ],
+    "word": "stoßen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "False; push/bump into",
+    "correct": "haben for transitive “push”; sein for intransitive “bump/collide with”; split or label the senses.",
+    "why": "The gloss explicitly combines two common senses whose Perfekt auxiliaries differ."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      440
+    ],
+    "word": "hängen",
+    "field": "irregular/prateritum/perfekt/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "True; hing; gehangen; hang",
+    "correct": "Mark this as intransitive/state “hang” with hing/gehangen, and separately teach transitive “hang something” as hängte/gehängt.",
+    "why": "German has a strong intransitive and a weak transitive paradigm; the undifferentiated English gloss makes the stored forms falsely appear universal."
+  },
+  {
+    "batch": "verbs_001",
+    "bank": "verbs",
+    "source_rows": [
+      696
+    ],
+    "word": "einziehen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; move in/collect",
+    "correct": "sein for intransitive “move in”; haben for transitive “collect” (for example taxes); split or label the senses.",
+    "why": "The combined gloss explicitly spans senses with different Perfekt auxiliaries."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      757
+    ],
+    "word": "durchlaufen",
+    "field": "prateritum, perfekt, withSein, english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "lief durch; ist durchgelaufen; go through/pass through",
+    "correct": "Either teach inseparable `durchlaufen = go through/undergo` as `durchlief`, `hat durchlaufen`, or explicitly restrict the current separable paradigm to physical `durchlaufen = run/pass all the way through`.",
+    "why": "The entry conflates two stress/separability patterns and will teach the wrong forms and auxiliary for the common transitive “go through/undergo” sense."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      798
+    ],
+    "word": "stürzen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; fall/overthrow",
+    "correct": "Mark both paradigms: `ist gestürzt = fell` but `hat jemanden/etwas gestürzt = overthrew/toppled`.",
+    "why": "The two listed senses select different auxiliaries, so one unqualified `sein` value teaches a false Perfekt for “overthrow”."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      803
+    ],
+    "word": "wohlfühlen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "wohlfühlen; feel comfortable",
+    "correct": "`sich wohlfühlen = feel comfortable/well`",
+    "why": "The verb is used reflexively in the sense taught."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      834
+    ],
+    "word": "eintauchen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; dive in/immerse",
+    "correct": "Distinguish `ist (in etwas) eingetaucht = dived/entered deeply` from `hat etwas eingetaucht = dipped/immersed something`.",
+    "why": "“Immerse” can cue the transitive construction, which takes `haben`, while the stored auxiliary only fits the intransitive motion sense."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      838
+    ],
+    "word": "anfühlen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "anfühlen; feel",
+    "correct": "`sich anfühlen = feel/seem to the touch`; optionally distinguish rare/transitive `etwas anfühlen = feel something by touch`.",
+    "why": "The normal copular English sense taught here is reflexive in German."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      851
+    ],
+    "word": "übergehen",
+    "field": "prateritum, perfekt, withSein, english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "ging über; ist übergegangen; pass/skip over",
+    "correct": "For `skip/ignore`, use inseparable `überging`, `hat übergangen`; reserve separable `ging über`, `ist übergegangen` for `change/pass over/transition to`.",
+    "why": "The stored paradigm belongs to a different stress pattern and sense from “skip over”, producing both wrong forms and the wrong auxiliary for that gloss."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      878
+    ],
+    "word": "auskennen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "auskennen; be familiar with",
+    "correct": "`sich mit etwas/auf einem Gebiet auskennen = know one's way around, be knowledgeable about`",
+    "why": "This verb is used reflexively in the supplied sense and also needs its normal valency made clear."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      892
+    ],
+    "word": "abheben",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=False; take off/withdraw",
+    "correct": "Mark `ist abgehoben = took off` and `hat Geld abgehoben = withdrew money` as separate auxiliary patterns.",
+    "why": "The first listed sense uses `sein`, while the stored value causes the app to present `hat abgehoben` for both."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      899
+    ],
+    "word": "entschließen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "entschließen; decide",
+    "correct": "`sich entschließen = decide/make up one's mind`",
+    "why": "The verb is reflexive in the sense taught."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      928
+    ],
+    "word": "erholen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "erholen; recover/relax",
+    "correct": "`sich erholen = recover/recuperate/relax`",
+    "why": "Both supplied learner senses normally require the reflexive pronoun."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      940
+    ],
+    "word": "umziehen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; move/change clothes",
+    "correct": "`ist umgezogen = moved house`; `hat sich umgezogen = changed clothes/got changed`.",
+    "why": "The entry merges a `sein` motion sense with a reflexive `haben` sense."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      971
+    ],
+    "word": "tauchen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein missing (treated as haben); dive",
+    "correct": "Mark the contrast, e.g. `ist ins Wasser getaucht = dived into the water` versus activity/transitive uses with `haben` (`hat lange getaucht`, `hat etwas ins Wasser getaucht`).",
+    "why": "Generic “dive” includes the very common directed-motion construction with `sein`; the single default `haben` value is unsafe."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      990
+    ],
+    "word": "teilhaben",
+    "field": "irregular, prateritum, perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; forms blank",
+    "correct": "irregular=True; `hatte teil`; `teilgehabt`; withSein=False",
+    "why": "This compound retains the irregular paradigm of `haben`; treating it as regular excludes it from the form drill and would license false regular forms."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      991
+    ],
+    "word": "verbrennen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=False; burn",
+    "correct": "Distinguish transitive `hat etwas verbrannt = burned something` from intransitive/resultative `ist verbrannt = burned/burned up`.",
+    "why": "Generic “burn” covers both auxiliary patterns, so a single unqualified `haben` value teaches a false fact for the intransitive sense."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1007
+    ],
+    "word": "verlieben",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "verlieben; fall in love",
+    "correct": "`sich in jemanden verlieben = fall in love with someone`",
+    "why": "The supplied sense is obligatorily reflexive and normally takes `in + accusative`."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1013
+    ],
+    "word": "aufbrechen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; break open/set off",
+    "correct": "`hat etwas aufgebrochen = broke something open`; `ist aufgebrochen = set off/departed`.",
+    "why": "The two listed senses select different auxiliaries."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1065
+    ],
+    "word": "abbiegen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; bend/turn",
+    "correct": "Distinguish `ist abgebogen = turned off/turned a corner` from transitive technical `hat etwas abgebogen = bent something aside/down`.",
+    "why": "The broad gloss combines an intransitive motion sense using `sein` with a transitive sense using `haben`."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1092
+    ],
+    "word": "abzeichnen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "abzeichnen; become apparent",
+    "correct": "`sich abzeichnen = become apparent/emerge`",
+    "why": "The supplied intransitive sense is reflexive; bare `abzeichnen` instead has transitive senses such as trace/countersign."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1097
+    ],
+    "word": "rollen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; roll",
+    "correct": "Distinguish intransitive motion `ist gerollt = rolled` from transitive `hat etwas gerollt = rolled something`.",
+    "why": "The undifferentiated English gloss covers both auxiliary patterns."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1152
+    ],
+    "word": "abkühlen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein missing (treated as haben); cool",
+    "correct": "Distinguish intransitive `ist abgekühlt = cooled down` from transitive `hat etwas abgekühlt = cooled something`.",
+    "why": "The common intransitive sense uses `sein`, which the current default suppresses."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1155
+    ],
+    "word": "heilen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein missing (treated as haben); cure/heal",
+    "correct": "Distinguish transitive `hat jemanden/etwas geheilt = cured/healed` from intransitive `ist geheilt = healed`.",
+    "why": "The slash gloss combines transitive and intransitive uses with different auxiliary behaviour."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1228
+    ],
+    "word": "beschweren",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "beschweren; complain/weight down",
+    "correct": "`sich (bei jemandem) über etwas beschweren = complain`; `etwas beschweren = weigh something down`",
+    "why": "The principal learner sense is reflexive, whereas only the unrelated transitive sense is represented by bare `beschweren`."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1231
+    ],
+    "word": "anfahren",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; set off [sein] / run into, knock down, snap at [haben]",
+    "correct": "Represent both auxiliaries or split the entry: `ist angefahren` for setting off/approaching by vehicle, `hat jemanden angefahren` for hitting or snapping at someone.",
+    "why": "The gloss correctly notes the contrast, but the single stored boolean still makes the drill present `sein` for every listed sense."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1248
+    ],
+    "word": "ausdenken",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "ausdenken; come up with/make up/think up",
+    "correct": "`sich etwas ausdenken = come up with/invent/think up something`",
+    "why": "All supplied senses normally use a reflexive dative pronoun."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1254
+    ],
+    "word": "anhaben",
+    "field": "irregular, prateritum, perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; forms blank",
+    "correct": "irregular=True; `hatte an`; `angehabt`; withSein=False",
+    "why": "The compound retains the irregular forms of `haben`; it must not be treated as a regular verb."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1264
+    ],
+    "word": "ausziehen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; move out/take off clothes",
+    "correct": "`ist ausgezogen = moved out`; `hat etwas ausgezogen = took something off`; `hat sich ausgezogen = got undressed`.",
+    "why": "The listed meanings mix `sein` and `haben`, and the clothing sense also needs its transitive or reflexive valency stated."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1278
+    ],
+    "word": "vorhaben",
+    "field": "irregular, prateritum, perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; forms blank",
+    "correct": "irregular=True; `hatte vor`; `vorgehabt`; withSein=False",
+    "why": "This compound retains the irregular paradigm of `haben`."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1313
+    ],
+    "word": "zurechtfinden",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "zurechtfinden; find one's way around (sich zurechtfinden)",
+    "correct": "Store/present `sich zurechtfinden = find one's way around/cope` as the learner headword.",
+    "why": "The gloss acknowledges the reflexive form, but the headword and stored forms omit it."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1323
+    ],
+    "word": "weigern",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "weigern; decline/refuse",
+    "correct": "`sich weigern = refuse/decline to do something`",
+    "why": "The verb is obligatorily reflexive in the sense taught."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1325
+    ],
+    "word": "innehaben",
+    "field": "irregular, prateritum, perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; forms blank",
+    "correct": "irregular=True; `hatte inne`; `innegehabt`; withSein=False",
+    "why": "The compound retains the irregular paradigm of `haben`."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1329
+    ],
+    "word": "tummeln",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "tummeln; romp/hurry",
+    "correct": "`sich tummeln = romp/mill about/throng`; imperative `sich tummeln = hurry/get a move on` is colloquial.",
+    "why": "The listed meanings are reflexive, and unqualified “hurry” is also a poor account of the restricted colloquial use."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1345
+    ],
+    "word": "schweben",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein missing (treated as haben); float/glide/hover",
+    "correct": "Use/teach `ist geschwebt` for directed floating/gliding movement and explicitly note any stative regional/contextual `haben` use rather than defaulting all senses to it.",
+    "why": "The common motion senses in the gloss normally form the Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1360
+    ],
+    "word": "starkmachen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "starkmachen; advocate for/strengthen/support",
+    "correct": "`sich für jemanden/etwas starkmachen = advocate/campaign for someone or something`; use `stärken = strengthen` for the general transitive sense.",
+    "why": "The main lexical verb is reflexive, while the broad transitive glosses encourage non-idiomatic uses of the compound."
+  },
+  {
+    "batch": "verbs_002",
+    "bank": "verbs",
+    "source_rows": [
+      1370
+    ],
+    "word": "erwachsen",
+    "field": "cefrLevel",
+    "severity": "high",
+    "category": "cefr",
+    "current": "A2",
+    "correct": "C1 (for formal `aus etwas erwachsen = arise/result from`)",
+    "why": "The verb is a formal, abstract strong verb distinct from the elementary adjective `erwachsen`; A2 is grossly misleading."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1408
+    ],
+    "word": "abfahren",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; depart/leave/remove",
+    "correct": "sein for intransitive “depart/leave”; haben for transitive “transport/remove”; split or label the senses.",
+    "why": "The gloss includes common senses with different Perfekt auxiliaries."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1413
+    ],
+    "word": "kippen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); cant/overturn/tilt",
+    "correct": "haben for transitive “tilt/tip/pour”; sein for intransitive “tip over/overturn”; split or label the senses.",
+    "why": "The undifferentiated gloss spans transitive and intransitive paradigms with different auxiliaries."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1417
+    ],
+    "word": "durchbrechen",
+    "field": "prateritum/perfekt/withSein/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "brach durch; durchgebrochen; True; appear/break in two/break through",
+    "correct": "Label the stored separable intransitive verb (brach durch, ist durchgebrochen), and separately teach inseparable transitive durchbrechen (durchbrach, hat durchbrochen).",
+    "why": "“Break through” can denote either verb, so the current gloss falsely makes the separable forms look universal."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1567
+    ],
+    "word": "schmelzen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; melt",
+    "correct": "sein for intransitive “melt”; haben for transitive “melt something”; split or label the senses.",
+    "why": "German distinguishes the two common uses by auxiliary, but the generic gloss does not."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1570
+    ],
+    "word": "zerbrechen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; break",
+    "correct": "sein for intransitive “break”; haben for transitive “break something”; split or label the senses.",
+    "why": "The bare English gloss spans both auxiliary paradigms."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1614
+    ],
+    "word": "kollidieren",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben)",
+    "correct": "True (sein) for literal “collide”; note that figurative conflict can also take haben.",
+    "why": "Vehicle collision, the concrete core sense, forms the Perfekt with sein."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1656
+    ],
+    "word": "stürmen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); invade/rush/storm",
+    "correct": "sein for directional intransitive “rush/storm somewhere”; haben for transitive “storm/invade a place”; split or label the senses.",
+    "why": "The gloss explicitly combines common senses with different auxiliaries."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1691
+    ],
+    "word": "überziehen",
+    "field": "prateritum/perfekt/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "zog über; übergezogen; cover/overdraw",
+    "correct": "überzog; überzogen for inseparable “cover/overdraw”; reserve zog über/übergezogen for separable “put on/pull over”.",
+    "why": "The stored separable forms do not match either listed sense."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1713
+    ],
+    "word": "verderben",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; decay/ruin/spoil",
+    "correct": "sein for intransitive “go bad/spoil”; haben for transitive “ruin/spoil something”; split or label the senses.",
+    "why": "The combined gloss spans both common auxiliary paradigms."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1768
+    ],
+    "word": "abtreten",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; cede/step down/resign",
+    "correct": "haben for transitive “cede/hand over”; sein for intransitive “step down/resign”; split or label the senses.",
+    "why": "The first listed sense does not use the stored auxiliary."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1815
+    ],
+    "word": "streifen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); brush/stroke/wander",
+    "correct": "haben for transitive “brush/graze”; sein for intransitive directional “wander/roam”; split or label the senses.",
+    "why": "The listed senses take different auxiliaries."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1829
+    ],
+    "word": "fortfahren",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; continue/drive away",
+    "correct": "haben for “continue”; sein for “drive/go on”; split or label the senses.",
+    "why": "The primary listed abstract sense does not take the stored auxiliary."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1848
+    ],
+    "word": "hauen",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "False; UNSET; UNSET",
+    "correct": "True; haute (also hieb); gehauen",
+    "why": "Even when the common weak Präteritum haute is used, the standard participle is irregular gehauen, so a purely regular classification is false."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1865
+    ],
+    "word": "einfrieren",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; freeze",
+    "correct": "sein for intransitive “freeze”; haben for transitive “freeze something”; split or label the senses.",
+    "why": "The generic English gloss spans two everyday auxiliary paradigms."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1916
+    ],
+    "word": "krachen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); crack/crash",
+    "correct": "haben for impersonal “bang/crack”; sein for directional collision “crash into”; split or label the senses.",
+    "why": "The English “crash” sense commonly takes sein, unlike the sound-event sense."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1928
+    ],
+    "word": "wegziehen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; move away/pull away",
+    "correct": "sein for intransitive “move away”; haben for transitive “pull something away”; split or label the senses.",
+    "why": "The gloss combines two common senses with different auxiliaries."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1944
+    ],
+    "word": "pendeln",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); commute/oscillate/shuttle",
+    "correct": "sein for “commute/travel back and forth”; haben for “oscillate/swing”; split or label the senses.",
+    "why": "The first and most learner-relevant listed sense takes sein."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1965
+    ],
+    "word": "entfliehen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "escape/flee/fly past",
+    "correct": "escape/flee from",
+    "why": "“Fly past” is vorbeifliegen, not entfliehen, and teaches a false sense."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      1997
+    ],
+    "word": "schleudern",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); catapult/fishtail/hurl",
+    "correct": "haben for transitive “hurl/catapult”; sein for intransitive “skid/fishtail”; split or label the senses.",
+    "why": "The listed transitive and intransitive senses take different auxiliaries."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2001
+    ],
+    "word": "umreißen",
+    "field": "prateritum/perfekt/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "riss um; umgerissen; outline/sketch",
+    "correct": "umriss; umrissen for inseparable “outline/sketch”; reserve riss um/umgerissen for separable “knock/tear down”.",
+    "why": "The stored separable forms belong to a different verb from the glossed one."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2008
+    ],
+    "word": "zusammentreten",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; convene/crush underfoot/give a severe kicking",
+    "correct": "sein for intransitive “convene/meet”; haben for transitive “kick/beating someone severely”; split or label the senses.",
+    "why": "The violent transitive senses do not use the stored auxiliary."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2012
+    ],
+    "word": "anlangen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); arrive/concern/touch",
+    "correct": "sein for intransitive “arrive”; haben for the rarer transitive senses; split or label the senses.",
+    "why": "The first and ordinary listed sense forms the Perfekt with sein."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2016
+    ],
+    "word": "ausrücken",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); disengage/go on a mission/march out",
+    "correct": "sein for intransitive “go out on a mission/march out”; haben for transitive technical senses; split or label the senses.",
+    "why": "The two prominent movement glosses require sein."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2021
+    ],
+    "word": "eilen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (haben); be urgent/hurry",
+    "correct": "haben for impersonal “be urgent”; sein for directional “hurry somewhere”; split or label the senses.",
+    "why": "The two listed senses differ in auxiliary."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2024
+    ],
+    "word": "erschrecken",
+    "field": "prateritum/perfekt/withSein/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "erschrak; erschrocken; True; frighten/scare/startle",
+    "correct": "The stored strong paradigm means intransitive “become frightened/be startled”; transitive “frighten/scare/startle someone” is erschreckte/hat erschreckt.",
+    "why": "Every English gloss is transitive, but all stored forms and the auxiliary belong to the intransitive paradigm."
+  },
+  {
+    "batch": "verbs_003",
+    "bank": "verbs",
+    "source_rows": [
+      2085
+    ],
+    "word": "ersticken",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; suffocate",
+    "correct": "sein for intransitive “suffocate”; haben for transitive “suffocate/smother/choke”; split or label the senses.",
+    "why": "English “suffocate” can be transitive or intransitive, but German auxiliary choice changes accordingly."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2107
+    ],
+    "word": "verstreichen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=true`; “elapse/expire/fill in”",
+    "correct": "distinguish `ist verstrichen` for elapsed time from transitive `hat etwas verstrichen` for spreading/filling",
+    "why": "The single `sein` auxiliary is false for the listed transitive sense."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2190
+    ],
+    "word": "tappen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=true`; “grope”",
+    "correct": "`withSein=false` for “nach etw. tappen = grope/feel for”; alternatively gloss the movement sense that takes `sein`",
+    "why": "The listed groping sense forms its perfect with `haben`; `sein` belongs to movement such as `durchs Zimmer tappen`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2200
+    ],
+    "word": "anbrechen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=true`; “begin/break/start”",
+    "correct": "distinguish intransitive time/day beginning (`ist angebrochen`) from opening/breaking into something (`hat angebrochen`)",
+    "why": "The irregular-forms card currently attaches `sein` to a mixed gloss containing a common transitive `haben` sense."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2207
+    ],
+    "word": "einschreiten",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "`False`",
+    "correct": "`True` (`ist eingeschritten`)",
+    "why": "`einschreiten` forms the perfect with `sein` in the listed “intervene/step in” sense."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2221
+    ],
+    "word": "überreden",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“cajole/persuade/talk over”",
+    "correct": "“persuade/talk someone into something”",
+    "why": "English “talk something over” means discuss it, not persuade someone."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2258
+    ],
+    "word": "verschmutzen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=UNSET` (treated as `haben`); gloss itself says “sein when intransitive”",
+    "correct": "model both: transitive `hat etw. verschmutzt`, intransitive `etw. ist verschmutzt`",
+    "why": "The stored default contradicts the explicitly listed intransitive construction."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2287
+    ],
+    "word": "schleifen",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "`irregular=false`, forms unset; “drag/drill/grind”",
+    "correct": "split senses: “drag/grind/sharpen” = `schliff, geschliffen`; military “drill” = `schleifte, geschleift`",
+    "why": "The dominant listed senses are strong, so treating the whole entry as regular teaches false forms."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2299
+    ],
+    "word": "zurückhaben",
+    "field": "irregular/prateritum/perfekt/english",
+    "severity": "high",
+    "category": "classification",
+    "current": "`irregular=false`, forms unset; “ich will mein Geld zurückhaben”",
+    "correct": "`irregular=true`, `hatte zurück`, `zurückgehabt`; English “have/get back”",
+    "why": "A compound of irregular `haben` is irregular, and the English field currently contains only a German example."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2331
+    ],
+    "word": "vereidigen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“put under oath/swear an oath/take an oath”",
+    "correct": "“swear someone in/administer an oath to someone”",
+    "why": "`vereidigen` is transitive; “take/swear an oath” wrongly makes the oath-taker its subject."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2373
+    ],
+    "word": "verrutschen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "`UNSET` (treated as `haben`)",
+    "correct": "`True` (`ist verrutscht`)",
+    "why": "The intransitive “slip/shift out of place” verb forms its perfect with `sein`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2419
+    ],
+    "word": "scheren",
+    "field": "prateritum/perfekt/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "`schor, geschoren`; “care/mind/shear”",
+    "correct": "split “shear” = `schor, geschoren` from “sich um etw. scheren = care/mind” = `scherte, geschert`",
+    "why": "German has strong and weak paradigms by sense; the current card teaches the strong forms for “care/mind”."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2428
+    ],
+    "word": "verblassen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "`UNSET` (treated as `haben`)",
+    "correct": "`True` (`ist verblasst`)",
+    "why": "The intransitive change-of-state verb “fade” forms the perfect with `sein`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2431
+    ],
+    "word": "vollstrecken",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“execute/terminate”",
+    "correct": "“enforce/execute (a judgment, sentence or order)”",
+    "why": "`vollstrecken` does not generally mean “terminate”."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2503
+    ],
+    "word": "draufhaben",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "`irregular=false`, forms unset",
+    "correct": "`irregular=true`, `hatte drauf`, `draufgehabt`",
+    "why": "The compound retains the irregular forms of `haben`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2536
+    ],
+    "word": "wiederhaben",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "`irregular=false`, forms unset",
+    "correct": "`irregular=true`, `hatte wieder`, `wiedergehabt`",
+    "why": "The compound retains the irregular forms of `haben`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2560
+    ],
+    "word": "fristen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“keep alive/sustain”",
+    "correct": "“sein Dasein/Leben fristen = eke out/live out an existence”",
+    "why": "The verb is restricted to constructions such as `ein kümmerliches Dasein fristen`; it is not a general verb for sustaining something."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2631
+    ],
+    "word": "mutieren",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“crack/mutate”",
+    "correct": "“mutate/change into”",
+    "why": "`mutieren` does not mean that something cracks."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2781
+    ],
+    "word": "bröckeln",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=true`; “break/crumble/disappear”",
+    "correct": "use `haben` for “crumble/disintegrate” (`hat gebröckelt`) and `sein` only for directional detachment such as `von der Wand gebröckelt`",
+    "why": "The listed generic senses do not justify teaching `sein` as their sole auxiliary."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2659
+    ],
+    "word": "ausatmen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“breathe out/draw one's last breath/exhale”",
+    "correct": "“breathe out/exhale”",
+    "why": "“Draw one’s last breath” means die and is not a standard sense of `ausatmen`."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2688
+    ],
+    "word": "schränken",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "“restrict”",
+    "correct": "delete as an everyday “restrict” item or give its rare specialist senses; use `einschränken` for “restrict”",
+    "why": "Standalone `schränken` does not have the ordinary meaning taught by this gloss."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2749
+    ],
+    "word": "übergießen",
+    "field": "prateritum/perfekt/english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "`goss über, übergegossen`; “pour over/douse; spill over”",
+    "correct": "for “pour over/douse”, use inseparable `übergoss, übergossen`; split off separable `über|gießen = decant/pour across` if wanted",
+    "why": "The stored separable forms do not belong to the dominant listed sense."
+  },
+  {
+    "batch": "verbs_004",
+    "bank": "verbs",
+    "source_rows": [
+      2775
+    ],
+    "word": "ausreißen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=false`; gloss explicitly includes “intransitive, with sein = run away”",
+    "correct": "split transitive `hat etw. ausgerissen` from intransitive `ist ausgerissen`",
+    "why": "The irregular-forms card teaches `haben` while the same entry explicitly lists a common `sein` sense."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2842
+    ],
+    "word": "auftauen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"thaw\"",
+    "correct": "distinguish `ist aufgetaut` \"has thawed\" from `hat etwas aufgetaut` \"has thawed/defrosted something\"",
+    "why": "The gloss covers both intransitive and transitive senses, but the latter obligatorily takes `haben`; a single `sein` value teaches a false auxiliary for that sense."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2843
+    ],
+    "word": "aufweichen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"become soft/soak/soften\"",
+    "correct": "distinguish `ist aufgeweicht` \"became soft\" from `hat etwas aufgeweicht` \"soaked/softened something\"",
+    "why": "The entry explicitly mixes an intransitive `sein` sense with transitive `haben` senses."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2845
+    ],
+    "word": "aushärten",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"age/cure/harden\"",
+    "correct": "distinguish intransitive `ist ausgehärtet` from transitive `hat etwas ausgehärtet`",
+    "why": "Materials that harden/cure take `sein`, but causing a material to harden takes `haben`; the undifferentiated gloss includes both."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2858
+    ],
+    "word": "durchsuchten",
+    "field": "word",
+    "severity": "high",
+    "category": "junk",
+    "current": "`durchsuchten`",
+    "correct": "replace with the infinitive `durchsuchen`",
+    "why": "`durchsuchten` is an inflected past/plural form, not a verb lemma."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2859
+    ],
+    "word": "einfliegen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"fly in/fly into/get flying practice\"",
+    "correct": "split `ist eingeflogen` \"flew in\" from `hat etwas eingeflogen` \"flew something in\" and `hat sich eingeflogen` \"got flying practice\"",
+    "why": "The stored `sein` is correct only for intransitive arrival/motion; two of the listed senses require `haben`, and the practice sense is reflexive."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2910
+    ],
+    "word": "abhauen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"cut off/run away\"",
+    "correct": "split `ist abgehauen` \"ran off\" from `hat etwas abgehauen` \"cut/chopped something off\"",
+    "why": "The entry combines a motion sense with `sein` and a transitive sense with `haben` under one auxiliary."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2969
+    ],
+    "word": "rasen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"race/rage/rush\"",
+    "correct": "distinguish motion `ist gerast` from emotional/weather `hat gerast` \"raged\"",
+    "why": "The listed \"rage\" sense takes `haben`, whereas rapid directed motion takes `sein`."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2996
+    ],
+    "word": "abbrausen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"shower off; rush off\"",
+    "correct": "split `hat sich/jdn/etwas abgebraust` \"showered/rinsed off\" from `ist abgebraust` \"rushed off\"",
+    "why": "The two listed senses require different auxiliaries, and the washing sense is commonly reflexive or transitive."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      2999
+    ],
+    "word": "abscheiden",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=False` / \"separate; die/depart\"",
+    "correct": "split `hat (sich/etwas) abgeschieden` \"separated\" from elevated `ist abgeschieden` \"died/departed\"",
+    "why": "The death sense explicitly listed in the gloss takes `sein`, contradicting the stored `haben` value."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3000
+    ],
+    "word": "abstumpfen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"blunt\"",
+    "correct": "distinguish transitive `hat etwas abgestumpft` \"blunted something\" from intransitive `ist abgestumpft` \"became blunt/numb\"",
+    "why": "English \"blunt\" strongly permits the transitive reading, for which the stored `sein` is wrong."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3172
+    ],
+    "word": "abhandenkommen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"lose\"",
+    "correct": "\"get lost/go missing (etwas kommt jdm abhanden)\"",
+    "why": "The German subject is the thing that goes missing; translating it as transitive \"lose\" reverses the argument structure."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3176
+    ],
+    "word": "abtreiben",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=False` / \"abort/drive off/drift\"",
+    "correct": "distinguish `hat abgetrieben` \"aborted/drove off\" from `ist abgetrieben` \"drifted off course\"",
+    "why": "The explicitly listed intransitive drifting sense takes `sein`, while the other senses take `haben`."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3306
+    ],
+    "word": "ausheilen",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=True` / \"be cured/cure completely/heal\"",
+    "correct": "distinguish `ist ausgeheilt` \"has healed\" from rarer transitive/reflexive `hat (sich/jdn) ausgeheilt` \"cured completely/recovered fully\"",
+    "why": "The gloss includes both `sein` and `haben` constructions, but stores only `sein`."
+  },
+  {
+    "batch": "verbs_005",
+    "bank": "verbs",
+    "source_rows": [
+      3349
+    ],
+    "word": "kondensieren",
+    "field": "withSein, english",
+    "severity": "high",
+    "category": "aux",
+    "current": "`withSein=UNSET` (treated as `haben`) / \"condense/precipitate\"",
+    "correct": "support both transitive `hat kondensiert` and intransitive change-of-state `ist kondensiert`, or split the senses",
+    "why": "The primary intransitive meaning \"turn into liquid/condense\" takes `sein`, so defaulting the undifferentiated entry to `haben` teaches only the transitive auxiliary."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3508
+    ],
+    "word": "schliefen",
+    "field": "irregular; prateritum; perfekt; withSein",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET; withSein=UNSET",
+    "correct": "irregular=True; prateritum=schloff; perfekt=geschloffen; withSein=True; also label it as very rare hunting jargon or remove it from a general learner deck",
+    "why": "Standard citation data treats this rare strong verb as `schliefen – schloff – ist geschloffen`; the current entry would default to `haben` and suppress the irregular forms."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3564
+    ],
+    "word": "abfliegen",
+    "field": "withSein; english; cefrLevel",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; depart/overfly/patrol; A1",
+    "correct": "Split `ist abgeflogen` (departed/took off) from transitive `hat ... abgeflogen` (flew over/searched or patrolled by air); raise the level well above A1",
+    "why": "The single `sein` value is false for the listed transitive senses, and this polysemous separable verb is grossly beyond an A1 item."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3636
+    ],
+    "word": "ermüden",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=UNSET; tire (become tired)",
+    "correct": "withSein=True for the glossed intransitive sense (`ist ermüdet`); distinguish transitive `hat jemanden ermüdet`",
+    "why": "The entry explicitly glosses \"become tired\", whose Perfekt takes `sein`; UNSET defaults to `haben` in the app."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3702
+    ],
+    "word": "türmen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; pile up; run away (colloquial)",
+    "correct": "Keep `türmen — run away` with `sein`, or split off `sich türmen — pile up/tower` with `haben`",
+    "why": "The entry combines a `sein` intransitive colloquial verb with a reflexive `haben` construction, so one listed sense is taught with the wrong auxiliary and missing `sich`."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3775
+    ],
+    "word": "beisammenhaben",
+    "field": "irregular; prateritum; perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "irregular=True; prateritum=hatte beisammen; perfekt=beisammengehabt; withSein=False",
+    "why": "This compound inherits the irregular forms of `haben`; classifying it as regular suppresses the required forms."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3783
+    ],
+    "word": "brausen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=UNSET; race/roar/rush",
+    "correct": "Split `hat gebraust` (roared) from `ist gebraust` (raced/rushed at high speed)",
+    "why": "The gloss mixes senses with different auxiliaries, and UNSET defaults all of them to `haben`."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3831
+    ],
+    "word": "hineingebären",
+    "field": "word; english",
+    "severity": "high",
+    "category": "junk",
+    "current": "hineingebären — be born into/bear into",
+    "correct": "Remove; teach the passive construction `in etwas hineingeboren werden` — be born into something",
+    "why": "The active compound is at best an exceptional productive coinage; the natural and overwhelmingly attested learner expression is passive, which the current headword/gloss conflates with an active verb."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3957
+    ],
+    "word": "abblitzen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET",
+    "correct": "True (`ist abgeblitzt`)",
+    "why": "`abblitzen` in the stated sense forms its Perfekt with `sein`; UNSET makes the app default to `haben`."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      3964
+    ],
+    "word": "abspritzen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "(vulgar)",
+    "correct": "spray/hose down; ejaculate (vulgar)",
+    "why": "A register label alone is not a translation and entirely omits the ordinary non-vulgar sense."
+  },
+  {
+    "batch": "verbs_006",
+    "bank": "verbs",
+    "source_rows": [
+      4017
+    ],
+    "word": "diffundieren",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=UNSET; diffuse",
+    "correct": "withSein=True for the normal chemistry sense (`ist diffundiert`); distinguish the rarer transitive/physics `hat` sense if retained",
+    "why": "For a substance penetrating or diffusing into another medium, the Perfekt takes `sein`; the current default teaches `haben`."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4211
+    ],
+    "word": "verwehen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "False; blow away",
+    "correct": "Distinguish transitive `hat etwas verweht` from intransitive/resultative `ist verweht` (be blown away/disperse).",
+    "why": "The generic gloss covers both constructions, so one unqualified `haben` value teaches a false auxiliary for the intransitive sense."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4270
+    ],
+    "word": "anschleichen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; come sneaking up/creep up on",
+    "correct": "`ist angeschlichen` only for non-reflexive motion; `hat sich an jemanden/etwas angeschlichen = crept/sneaked up on someone/something`.",
+    "why": "The supplied “creep up on” sense normally uses the reflexive `haben` construction, not the stored `sein` paradigm."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4350
+    ],
+    "word": "entschlafen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "fall asleep; pass away",
+    "correct": "pass away/die (euphemistic, elevated)",
+    "why": "Modern `entschlafen` means “die/pass away”; ordinary “fall asleep” is `einschlafen`."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4354
+    ],
+    "word": "erküren",
+    "field": "word/irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "spelling",
+    "current": "erküren; True; erkor; erkoren",
+    "correct": "Replace with `erkiesen — erkor — erkoren` (elevated), or drop the entry.",
+    "why": "The standard infinitive belonging to `erkor/erkoren` is `erkiesen`; `erküren` is a non-standard back-formation."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4357
+    ],
+    "word": "erodieren",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; erode",
+    "correct": "`hat etwas erodiert = eroded something`; `etwas ist erodiert = something eroded/was worn away`.",
+    "why": "German uses `haben` transitively and `sein` intransitively, while the generic English gloss covers both."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4536
+    ],
+    "word": "uploaden",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "False; UNSET; UNSET",
+    "correct": "Store `uploadete` and `upgeloadet` (accepted variant `geuploadet`) and ensure the item is not treated as productively regular.",
+    "why": "This weak anglicism has an exceptional participle placement that cannot be safely derived as an ordinary regular German verb."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4555
+    ],
+    "word": "versaufen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "False; drown/inundate/waste on alcohol",
+    "correct": "`ist versoffen = sank/drowned` (intransitive); `hat Geld versoffen = squandered money on drink` (transitive).",
+    "why": "The first and last listed senses require different auxiliaries, so default `haben` is false for “drown/sink”."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4583
+    ],
+    "word": "wiederwollen",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "False; UNSET; UNSET",
+    "correct": "Prefer the ordinary phrase `jemanden/etwas wiederhaben wollen`; if retained, treat the modal compound as irregular (`wollte wieder`, `wiedergewollt`).",
+    "why": "A compound of `wollen` does not acquire a regular paradigm, and the ad-hoc lemma is poor learner vocabulary."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4601
+    ],
+    "word": "zurückrollen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; roll back/roll back something",
+    "correct": "`etwas hat etwas zurückgerollt = rolled something back`; `etwas ist zurückgerollt = rolled back` intransitively.",
+    "why": "The gloss explicitly includes a transitive sense, which takes `haben`, alongside the stored intransitive `sein` paradigm."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4603
+    ],
+    "word": "zurückschwimmen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "False",
+    "correct": "True (`ist zurückgeschwommen`)",
+    "why": "Directed motion back to a place takes `sein`."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4615
+    ],
+    "word": "abkratzen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (app treats as haben); scrape off (haben); colloq. kick the bucket (sein)",
+    "correct": "Split the senses or represent both auxiliaries exactly as the gloss notes.",
+    "why": "The stored default teaches `haben` even for the explicitly included intransitive “die” sense, which requires `sein`."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4624
+    ],
+    "word": "abschmieren",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (app treats as haben); grease; crash (plane/software); copy/crib",
+    "correct": "`hat etwas abgeschmiert = greased/copied something`; `ist abgeschmiert = crashed/went down`.",
+    "why": "The entry explicitly combines transitive `haben` senses with an intransitive `sein` sense."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4671
+    ],
+    "word": "auseinandertreiben",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "False; break up/broaden/disperse",
+    "correct": "`hat etwas auseinandergetrieben = drove/dispersed something apart`; `etwas ist auseinandergetrieben = drifted apart`.",
+    "why": "The broad gloss covers transitive and intransitive uses with different auxiliaries; “broaden” is also not a reliable core translation."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4687
+    ],
+    "word": "ausschaffen",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "True; schuf aus; ausgeschaffen",
+    "correct": "False; `schaffte aus`; `ausgeschafft`",
+    "why": "Swiss/regional `ausschaffen` “deport/remove” uses weak `schaffen`; the stored strong forms belong to `schaffen` “create”."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4728
+    ],
+    "word": "crashen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; crash",
+    "correct": "Mark the sense split: vehicle-crash commonly uses `sein`, markets use `haben`, software may use `sein` or `haben`, and transitive “crash something” uses `haben`.",
+    "why": "Generic “crash” spans several standard German senses that cannot truthfully share one `sein` value."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4761
+    ],
+    "word": "durchschwimmen",
+    "field": "withSein/prateritum/perfekt/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "False; schwamm durch; durchgeschwommen; swim through/across",
+    "correct": "Separable `dúrchschwimmen — schwamm durch — ist durchgeschwommen`; inseparable transitive `durchschwímmen — durchschwamm — hat durchschwommen`.",
+    "why": "The stored forms are separable but the auxiliary is from the inseparable transitive verb, conflating two paradigms."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4824
+    ],
+    "word": "fortwollen",
+    "field": "irregular/prateritum/perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "False; UNSET; UNSET",
+    "correct": "True; `wollte fort`; `fortgewollt`; withSein=False",
+    "why": "This compound retains the irregular modal paradigm of `wollen`; treating it as regular would derive false forms and exclude it from irregular-form practice."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4833
+    ],
+    "word": "gefriertrocknen",
+    "field": "prateritum/perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "UNSET; UNSET",
+    "correct": "Store `gefriergetrocknete` and `gefriergetrocknet` (the verb is used mainly in the infinitive and participle).",
+    "why": "The exceptional participle lacks an initial extra `ge-` and cannot safely be produced by ordinary regular-verb derivation."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4875
+    ],
+    "word": "hinunterstürzen",
+    "field": "withSein/english",
+    "severity": "high",
+    "category": "aux",
+    "current": "True; plunge/fall down; gulp down",
+    "correct": "`ist hinuntergestürzt = plunged/fell down`; `hat etwas hinuntergestürzt = gulped something down`.",
+    "why": "The gloss explicitly combines an intransitive `sein` sense with a transitive `haben` sense."
+  },
+  {
+    "batch": "verbs_007",
+    "bank": "verbs",
+    "source_rows": [
+      4879
+    ],
+    "word": "hopfen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "hop",
+    "correct": "add hops to/hop (beer)",
+    "why": "German `hopfen` is a brewing verb; English “hop” in the movement sense is German `hüpfen`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      4939
+    ],
+    "word": "losmarschieren",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist losmarschiert`)",
+    "why": "This directed-motion/departure verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      4951
+    ],
+    "word": "mitsegeln",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist mitgesegelt`)",
+    "why": "In the supplied “sail along” sense it is an intransitive motion verb and takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      4969
+    ],
+    "word": "outsourcen",
+    "field": "prateritum; perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "Store `sourcte out/outsourcte` and `outgesourct` (variant `outgesourced`)",
+    "why": "This anglicism has variable, partly separable inflection that cannot be safely generated as an ordinary weak verb from the written infinitive."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5049
+    ],
+    "word": "spurten",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist gespurtet`)",
+    "why": "In the supplied “sprint” motion sense the verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5052
+    ],
+    "word": "staubsaugen",
+    "field": "perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "irregular=False; perfekt=UNSET",
+    "correct": "Store `staubgesaugt` (Präteritum `staubsaugte`)",
+    "why": "The weak verb has exceptional participle placement; ordinary prefixing would produce the false form `gestaubsaugt`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5061
+    ],
+    "word": "taumeln",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); stagger",
+    "correct": "withSein=True for the usual motion sense (`ist zur Tür getaumelt`); note `haben` only for non-directional staggering",
+    "why": "The unqualified supplied gloss naturally denotes movement, for which the app's default `haben` teaches the wrong Perfekt."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5063
+    ],
+    "word": "tippeln",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist getippelt`)",
+    "why": "The glossed small-step motion verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5068
+    ],
+    "word": "trippeln",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist getrippelt`)",
+    "why": "The glossed motion verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5076
+    ],
+    "word": "überfragen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "be stumped; ask too much of someone",
+    "correct": "jemanden überfragen — ask/quiz someone beyond their knowledge; überfragt sein — be stumped/out of one's depth",
+    "why": "`Überfragen` itself does not mean “be stumped”; that English meaning belongs to the adjectival passive `überfragt sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5079
+    ],
+    "word": "überschäumen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist übergeschäumt`)",
+    "why": "In the supplied “foam/brim over” sense it denotes a change/movement and takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5080
+    ],
+    "word": "überschwappen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist übergeschwappt`)",
+    "why": "The intransitive “overflow/spill over” verb takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5081
+    ],
+    "word": "übersprudeln",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist übergesprudelt`)",
+    "why": "The intransitive “bubble/brim over” verb takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5083
+    ],
+    "word": "überwallen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist übergewallt`)",
+    "why": "In the listed “overflow” sense the separable verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5086
+    ],
+    "word": "umlaufen",
+    "field": "prateritum; perfekt; withSein; english",
+    "severity": "high",
+    "category": "verbform",
+    "current": "lief um; umgelaufen; True; circulate/knock over",
+    "correct": "Split separable `úmlaufen` — lief um, umgelaufen, sein (knock over by running into) from inseparable `umláufen` — umlief, umlaufen, haben (circulate/orbit/go around)",
+    "why": "One entry conflates two differently stressed verbs; the stored forms and auxiliary contradict the first listed sense."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5093
+    ],
+    "word": "upcyceln",
+    "field": "prateritum; perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "Store `cycelte up/upcycelte` and `upgecycelt`",
+    "why": "Like other separable English-derived verbs, its accepted inflection is not safely derivable as an ordinary unsplit weak verb."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5106
+    ],
+    "word": "verfilzen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); become felted/become matted",
+    "correct": "withSein=True (`ist verfilzt`) for the supplied intransitive result sense",
+    "why": "“Become matted/felted” is a change of state and takes `sein`; transitive `etwas verfilzen` would take `haben`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5117
+    ],
+    "word": "verholzen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); lignify",
+    "correct": "withSein=True (`ist verholzt`) for the intransitive botanical sense",
+    "why": "The usual sense describes becoming woody and takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5128
+    ],
+    "word": "vernarben",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); scar",
+    "correct": "withSein=True (`die Wunde ist vernarbt`); gloss heal over/form a scar",
+    "why": "The normal intransitive change-of-state verb takes `sein`, and bare English “scar” misleadingly suggests a transitive verb."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5133
+    ],
+    "word": "verrecken",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist verreckt`)",
+    "why": "This intransitive change-of-state verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5136
+    ],
+    "word": "versacken",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist versackt`)",
+    "why": "The intransitive “sink/subside” verb takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5138
+    ],
+    "word": "verschimmeln",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist verschimmelt`)",
+    "why": "This change-of-state verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5149
+    ],
+    "word": "verwahrlosen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); degenerate/get in a bad state/neglect",
+    "correct": "withSein=True (`ist verwahrlost`); fall into neglect/become run-down/deteriorate",
+    "why": "The verb is intransitive and takes `sein`; it does not ordinarily mean transitive “neglect”."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5150
+    ],
+    "word": "verweichlichen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; grow soft/make soft/render effeminate",
+    "correct": "Split `ist verweichlicht` — has grown soft from transitive `hat jemanden verweichlicht` — has made someone soft",
+    "why": "The entry combines intransitive and transitive senses with different auxiliaries, so `sein` is false for two listed glosses."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5164
+    ],
+    "word": "waten",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist durch den Fluss gewatet`)",
+    "why": "In its supplied motion sense, `waten` forms the Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5170
+    ],
+    "word": "widerhallen",
+    "field": "prateritum; perfekt",
+    "severity": "high",
+    "category": "verbform",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "Store `hallte wider` and `widergehallt`",
+    "why": "This `wider-` verb is separable; leaving the forms blank is unsafe because the identically written prefix is inseparable in many other verbs."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5197
+    ],
+    "word": "zurückzucken",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist zurückgezuckt`)",
+    "why": "The recoil/backward-motion sense takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5201
+    ],
+    "word": "zusammenkrachen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist zusammengekracht`)",
+    "why": "Both collision and collapse senses are intransitive events and take `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5205
+    ],
+    "word": "zutreten",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; kick (out at sb.)",
+    "correct": "withSein=False (`hat zugetreten`) for “kick/kick out at someone”",
+    "why": "The stored auxiliary belongs to a movement/approach reading, not to the only sense actually glossed."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5218
+    ],
+    "word": "anfallen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; attack/set upon sb",
+    "correct": "withSein=False (`hat jemanden angefallen`) for the supplied attack sense; split off `ist angefallen` — accrued/arose",
+    "why": "The entry assigns the auxiliary of the accrue/arise sense to the transitive attack sense."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5223
+    ],
+    "word": "ausströmen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); emit/escape (of gas, smell)",
+    "correct": "Split transitive `hat etwas ausgeströmt` — emitted something from intransitive `ist ausgeströmt` — escaped/flowed out",
+    "why": "The current single auxiliary is false for the listed intransitive “escape” sense."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5229
+    ],
+    "word": "einreißen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=False; tear down/get out of hand",
+    "correct": "Split transitive `hat etwas eingerissen` — tore something down from intransitive `ist eingerissen` — became widespread/got out of hand",
+    "why": "The two supplied senses take different auxiliaries, but the entry assigns `haben` to both."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5233
+    ],
+    "word": "unterlaufen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "withSein=True; undermine/circumvent (Vorschriften unterlaufen)",
+    "correct": "withSein=False (`hat Vorschriften unterlaufen`) for circumvent/evade; reserve `sein` for `jemandem ist ein Fehler unterlaufen`",
+    "why": "The stored auxiliary contradicts the only glossed, transitive sense."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5241
+    ],
+    "word": "aufpoppen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist aufgepoppt`)",
+    "why": "The intransitive “pop up” sense forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5308
+    ],
+    "word": "draufhauen",
+    "field": "irregular; prateritum; perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "irregular=True; prateritum=haute/hieb drauf; perfekt=draufgehauen; withSein=False",
+    "why": "The compound inherits the non-regular participle `gehauen`; a regular derivation would teach the false form `draufgehaut`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5324
+    ],
+    "word": "erfolgen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist erfolgt`)",
+    "why": "This frequent formal verb obligatorily forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5332
+    ],
+    "word": "ausreisen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist ausgereist`)",
+    "why": "This intransitive departure verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5346
+    ],
+    "word": "aufkochen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); boil up/bring to the boil",
+    "correct": "Split intransitive `ist aufgekocht` — boiled up from transitive `hat etwas aufgekocht` — brought something to the boil",
+    "why": "The gloss combines senses with different auxiliaries, while the app assigns `haben` to both."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5353
+    ],
+    "word": "einstürmen",
+    "field": "withSein; english",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben); storm in",
+    "correct": "withSein=True (`ist auf jemanden eingestürmt`); gloss rush/storm at someone",
+    "why": "The verb takes `sein`, and its normal construction is `auf jemanden einstürmen`, not generic “storm in” (`hineinstürmen`)."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5354
+    ],
+    "word": "hindurchgelangen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist hindurchgelangt`)",
+    "why": "`Gelangen` and its directional compounds form the Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5360
+    ],
+    "word": "hinauswollen",
+    "field": "irregular; prateritum; perfekt; english",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET; want to go out",
+    "correct": "irregular=True; prateritum=wollte hinaus; perfekt=hinausgewollt; add `auf etwas hinauswollen` — be getting at/aim at something",
+    "why": "The compound inherits the irregular modal `wollen`, and the gloss omits its especially frequent abstract idiom."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5366
+    ],
+    "word": "zusammenhaben",
+    "field": "irregular; prateritum; perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "irregular=True; prateritum=hatte zusammen; perfekt=zusammengehabt; withSein=False",
+    "why": "The compound inherits the irregular forms of `haben`; regular derivation would produce false forms."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5367
+    ],
+    "word": "herumirren",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist herumgeirrt`)",
+    "why": "In the supplied wandering/motion sense, the verb takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5370
+    ],
+    "word": "verpuffen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist verpufft`)",
+    "why": "The intransitive “fizzle out/come to nothing” verb takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5387
+    ],
+    "word": "missglücken",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist missglückt`)",
+    "why": "This intransitive failure/result verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5390
+    ],
+    "word": "erschauern",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist erschauert`)",
+    "why": "The intransitive “shiver/shudder” verb conventionally takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5405
+    ],
+    "word": "herumreisen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist herumgereist`)",
+    "why": "The supplied “travel around” motion sense takes `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5413
+    ],
+    "word": "vorbeirasen",
+    "field": "withSein",
+    "severity": "high",
+    "category": "aux",
+    "current": "UNSET (defaults to haben)",
+    "correct": "withSein=True (`ist vorbeigerast`)",
+    "why": "This directed-motion verb forms its Perfekt with `sein`."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5434
+    ],
+    "word": "freihaben",
+    "field": "irregular; prateritum; perfekt",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET",
+    "correct": "irregular=True; prateritum=hatte frei; perfekt=freigehabt; withSein=False",
+    "why": "The compound inherits the irregular forms of `haben`; regular derivation would produce false forms."
+  },
+  {
+    "batch": "verbs_008",
+    "bank": "verbs",
+    "source_rows": [
+      5440
+    ],
+    "word": "zuhaben",
+    "field": "irregular; prateritum; perfekt; english",
+    "severity": "high",
+    "category": "classification",
+    "current": "irregular=False; prateritum=UNSET; perfekt=UNSET; to be closed",
+    "correct": "irregular=True; prateritum=hatte zu; perfekt=zugehabt; withSein=False; gloss `be closed`",
+    "why": "The compound inherits the irregular forms of `haben`, and the English gloss should use the bank's bare-verb style."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "fahren mit",
+    "field": "preposition",
+    "severity": "high",
+    "category": "preposition",
+    "current": "`fahren mit + Dat` — `Ich fahre mit dem Zug.`",
+    "correct": "Remove from the fixed verb–preposition bank; teach `mit + Dat` separately as transport/means (and accompaniment).",
+    "why": "The sentence is correct, but `mit dem Zug` is an ordinary adverbial of means, not fixed government of `fahren`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "gründen auf",
+    "field": "case / valency / example",
+    "severity": "high",
+    "category": "case",
+    "current": "`gründen auf + Akk` — `be based on / found on` — `Die Theorie gründet auf Fakten.`",
+    "correct": "For the intransitive illustrated sense use `gründen auf + Dat`, preferably with an unambiguous example such as `Die Theorie gründet auf einer falschen Annahme.` Reserve `auf + Akk` for transitive `etwas auf etwas gründen`.",
+    "why": "Intransitive `etwas gründet auf etwas` meaning “is based on” takes dative; plural `Fakten` hides the incorrect case label."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "kommen zu",
+    "field": "preposition",
+    "severity": "high",
+    "category": "preposition",
+    "current": "`kommen zu + Dat` — `come to / arrive at` — `Wie komme ich zum Bahnhof?`",
+    "correct": "Remove this literal destination use from the fixed-government bank, or replace it with a genuinely lexical pattern such as `zu einem Ergebnis kommen` and a matching gloss/example.",
+    "why": "`zum Bahnhof` is an ordinary destination phrase; the destination determines whether German uses `zu`, `nach`, `in`, etc., not fixed government of `kommen`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "tun für",
+    "field": "preposition",
+    "severity": "high",
+    "category": "preposition",
+    "current": "`tun für + Akk` — `Was kann ich für Sie tun?`",
+    "correct": "Remove from the fixed verb–preposition bank.",
+    "why": "`für Sie` is an ordinary beneficiary phrase that can accompany innumerable verbs, not a prepositional object fixed by `tun`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "blicken auf",
+    "field": "verb / english / example",
+    "severity": "high",
+    "category": "verbform",
+    "current": "`blicken auf + Akk` — `look at / look back on` — `Er blickt auf eine lange Karriere zurück.`",
+    "correct": "Either use `blicken auf` only for literal `look at` with a matching example, or change the headword to `zurückblicken auf`; the latter already occurs later in this batch.",
+    "why": "`blickt ... zurück` is the separated form of `zurückblicken`, not an example of plain `blicken`; the current row conflates two verbs and duplicates the later construction."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "sich freisprechen von",
+    "field": "verb / example",
+    "severity": "high",
+    "category": "verbform",
+    "current": "`sich freisprechen von + Dat` — `Das Gericht spricht ihn vom Vorwurf frei.`",
+    "correct": "`jemanden von etwas freisprechen` / headword `freisprechen von + Dat`",
+    "why": "In the acquittal sense, `freisprechen` is transitive, not reflexive; the example itself correctly contains `ihn`, not `sich`."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "bieten an",
+    "field": "verb / preposition / example",
+    "severity": "high",
+    "category": "preposition",
+    "current": "`bieten an + Akk` — `offer (to someone)` — `Er bietet die Ware an.`",
+    "correct": "Remove this row from the fixed-government bank and teach the separable verb `anbieten` in the ordinary verb bank.",
+    "why": "In `bietet ... an`, `an` is the separated prefix of `anbieten`; there is no `an + Akk` prepositional phrase at all."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "gelangen in",
+    "field": "preposition",
+    "severity": "high",
+    "category": "preposition",
+    "current": "`gelangen in + Akk` — `get into / reach` — `Die Daten gelangen in das System.`",
+    "correct": "Remove this literal destination use from the fixed-government bank, or restrict the row to a clearly lexical construction and label it accordingly.",
+    "why": "`in das System` is a directional destination phrase; `gelangen` also combines with destination-dependent `zu`, `nach`, `auf`, etc., so `in` is not fixed government here."
+  },
+  {
+    "batch": "verb_preps_001",
+    "bank": "verb_preps",
+    "source_rows": [],
+    "word": "zurückkehren nach",
+    "field": "preposition",
+    "severity": "high",
+    "category": "preposition",
+    "current": "`zurückkehren nach + Dat` — `return to` — `Sie kehrt nach Wien zurück.`",
+    "correct": "Remove from the fixed-government bank and teach destination prepositions as a separate rule.",
+    "why": "`nach Wien` is an ordinary destination construction (contrast `in die Schweiz`, `zum Bahnhof`); `nach` is chosen by the kind of place name, not governed by `zurückkehren`."
+  }
+]

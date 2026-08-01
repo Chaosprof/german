@@ -1,0 +1,204 @@
+{
+  "nouns": [
+    {
+      "word": "Lederhose",
+      "rank": 9413,
+      "article": "die",
+      "current": "football landspout",
+      "deepl": "leather trousers",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Hose-related (meteorological mis-sense)"
+    },
+    {
+      "word": "Erhaltungszustand",
+      "rank": 9636,
+      "article": "der",
+      "current": "preservation condition",
+      "deepl": "state of preservation",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "-haltung MT failure (only in compound contexts)"
+    },
+    {
+      "word": "Bearbeitungsdauer",
+      "rank": 12505,
+      "article": "die",
+      "current": "adaptation duration",
+      "deepl": "processing time",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Bearbeitungsdauer = processing time"
+    },
+    {
+      "word": "Behandlungsdauer",
+      "rank": 12506,
+      "article": "die",
+      "current": "care duration",
+      "deepl": "duration of treatment",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: -dauer compound"
+    },
+    {
+      "word": "Benutzergruppe",
+      "rank": 12508,
+      "article": "die",
+      "current": "borrower group",
+      "deepl": "user group",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Benutzergruppe = user group"
+    },
+    {
+      "word": "Bereinigung",
+      "rank": 12510,
+      "article": "die",
+      "current": "depuration",
+      "deepl": "clean-up",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: depuration archaic"
+    },
+    {
+      "word": "Berufsoberschule",
+      "rank": 12512,
+      "article": "die",
+      "current": "business high school",
+      "deepl": "vocational high school",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Berufsoberschule"
+    },
+    {
+      "word": "Berufszweig",
+      "rank": 12513,
+      "article": "der",
+      "current": "business branch",
+      "deepl": "profession",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: -zweig compound"
+    },
+    {
+      "word": "Beschäftigungsverbot",
+      "rank": 12515,
+      "article": "das",
+      "current": "activity prohibition",
+      "deepl": "employment ban",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Beschäftigungsverbot = employment ban"
+    },
+    {
+      "word": "Geschäftszweig",
+      "rank": 16633,
+      "article": "der",
+      "current": "business branch",
+      "deepl": "line of business",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: -zweig compound"
+    },
+    {
+      "word": "Gesunderhaltung",
+      "rank": 16636,
+      "article": "die",
+      "current": "preservation",
+      "deepl": "health maintenance",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "-haltung MT failure (only in compound contexts)"
+    },
+    {
+      "word": "Käsesorte",
+      "rank": 17936,
+      "article": "die",
+      "current": "baloney kind",
+      "deepl": "cheese type",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: baloney as primary"
+    },
+    {
+      "word": "Krebsvorsorge",
+      "rank": 18006,
+      "article": "die",
+      "current": "Cancer foresight",
+      "deepl": "cancer screening",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Krebsvorsorge = cancer screening"
+    },
+    {
+      "word": "Kreditlinie",
+      "rank": 18008,
+      "article": "die",
+      "current": "credit file",
+      "deepl": "credit line",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Kreditlinie = credit line"
+    },
+    {
+      "word": "Kreisklasse",
+      "rank": 18009,
+      "article": "die",
+      "current": "circle class",
+      "deepl": "district class",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Kreis- compound"
+    },
+    {
+      "word": "Kronprinzessin",
+      "rank": 18016,
+      "article": "die",
+      "current": "beer head princess",
+      "deepl": "crown princess",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Kron-/Krone- compound"
+    },
+    {
+      "word": "Hühnerhaltung",
+      "rank": 21008,
+      "article": "die",
+      "current": "preservation",
+      "deepl": "chicken farming",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "-haltung MT failure (only in compound contexts)"
+    },
+    {
+      "word": "Ideenaustausch",
+      "rank": 21015,
+      "article": "der",
+      "current": "idea discussion",
+      "deepl": "exchange of ideas",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Ideenaustausch = exchange of ideas"
+    },
+    {
+      "word": "Idyll",
+      "rank": 21017,
+      "article": "das",
+      "current": "idyllic life",
+      "deepl": "idyll",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Idyll = idyll"
+    },
+    {
+      "word": "Imbissbude",
+      "rank": 21019,
+      "article": "die",
+      "current": "snack shack",
+      "deepl": "snack bar",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Imbissbude = snack bar"
+    },
+    {
+      "word": "Käsetheke",
+      "rank": 21100,
+      "article": "die",
+      "current": "baloney counter",
+      "deepl": "cheese counter",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: baloney as primary"
+    },
+    {
+      "word": "Mauerkrone",
+      "rank": 23491,
+      "article": "die",
+      "current": "wall beer head",
+      "deepl": "wall crown",
+      "category": "DIVERGENT_SINGLE",
+      "reason": "MT failure: Kron-/Krone- compound"
+    }
+  ],
+  "verbs": [],
+  "adjectives": []
+}

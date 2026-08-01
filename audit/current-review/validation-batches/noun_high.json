@@ -1,0 +1,4874 @@
+[
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      154
+    ],
+    "word": "Sicherheit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Sicherheiten` with \"safety/security\"",
+    "correct": "use `—` for \"safety/security\"; add \"collateral/guarantees\" if `Sicherheiten` is retained",
+    "why": "the everyday safety, certainty and security senses have no plural; *Sicherheiten* belongs to the financial collateral/guarantee sense."
+  },
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      165
+    ],
+    "word": "Weise",
+    "field": "article, flags",
+    "severity": "high",
+    "category": "article",
+    "current": "`der Weise` / `Weisen` / \"way/manner\" / `adjectivalNoun`",
+    "correct": "`die Weise` / `Weisen` / \"way/manner\" and remove the adjectival-noun flag",
+    "why": "\"way/manner\" is the feminine ordinary noun *die Weise*; *der Weise* is an adjectival noun meaning \"wise man/sage\"."
+  },
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      221
+    ],
+    "word": "Spaß",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Späße` / \"fun\"",
+    "correct": "use `—` for \"fun\", or add the separate count sense \"joke/prank\" for plural `Späße`",
+    "why": "*Spaß* meaning fun is normally uncountable; *Späße* denotes jokes or pranks."
+  },
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      229
+    ],
+    "word": "Alltag",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Alltage` / \"everyday life\"",
+    "correct": "use `—` for \"everyday life\"; `Alltage` is only the rare plural of the separate sense \"weekday/working day\"",
+    "why": "the stored plural does not belong to the glossed everyday-life sense."
+  },
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      578
+    ],
+    "word": "Krankenkasse",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"health insurance\"",
+    "correct": "\"health insurer/statutory health insurance fund\"",
+    "why": "the insurance itself is *Krankenversicherung*; a *Krankenkasse* is the fund or organisation providing it."
+  },
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      587
+    ],
+    "word": "Druck",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—` / \"pressure/print\"",
+    "correct": "`Drücke` for countable physical pressures; `Drucke` for printed works (or split/remove the countable \"print\" sense)",
+    "why": "the entry falsely presents the noun as plural-less even though both gloss families have established, sense-dependent plurals."
+  },
+  {
+    "batch": "nouns_001",
+    "bank": "nouns",
+    "source_rows": [
+      633
+    ],
+    "word": "Nachfrage",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`Nachfragen` / \"demand\"",
+    "correct": "\"demand; enquiry/follow-up question\" and clarify that plural `Nachfragen` normally realizes the question/enquiry senses",
+    "why": "economic *Nachfrage* is normally singular, while the very usable plural refers to enquiries or follow-up questions omitted from the gloss."
+  },
+  {
+    "batch": "nouns_002",
+    "bank": "nouns",
+    "source_rows": [
+      1163
+    ],
+    "word": "Diagnose",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "diagnosis/diagnostics",
+    "correct": "diagnosis",
+    "why": "German `Diagnose` means a diagnosis; “diagnostics” is normally `Diagnostik` or diagnostic testing and is not an interchangeable translation."
+  },
+  {
+    "batch": "nouns_002",
+    "bank": "nouns",
+    "source_rows": [
+      1166
+    ],
+    "word": "Mithilfe",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Mithilfen",
+    "correct": "—",
+    "why": "`Mithilfe` in the sense “assistance/help” has no standard plural; `Mithilfen` is not a valid learner citation plural."
+  },
+  {
+    "batch": "nouns_002",
+    "bank": "nouns",
+    "source_rows": [
+      1320
+    ],
+    "word": "Finanz",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "die Finanz | Finanzen | finance",
+    "correct": "Replace with `die Finanzen` (plural-only) = finances, or `das Finanzwesen` = finance; if singular `die Finanz` is retained, mark it as jargon and give no plural.",
+    "why": "Jargon singular `die Finanz` has no plural; `Finanzen` is a separate plural-only lexeme, not its regular plural, so the row splices two entries together."
+  },
+  {
+    "batch": "nouns_002",
+    "bank": "nouns",
+    "source_rows": [
+      1380
+    ],
+    "word": "Zoll",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Zölle | customs/inch",
+    "correct": "`Zoll | Zölle | customs duty/tariff; customs authority`; distinguish `Zoll | Zoll | inch`",
+    "why": "The plural `Zölle` belongs to customs duties/tariffs, while the unit “inch” has invariant plural `Zoll`; the row merges the homographs without explaining the incompatible plurals."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      1415
+    ],
+    "word": "Presse",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Pressen for “press”",
+    "correct": "Use — for the media sense “the press”; retain Pressen only in a separate machine/printing-press sense.",
+    "why": "The media sense is uncountable in German; Pressen is the plural of the physical machine sense."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      1428
+    ],
+    "word": "Linker",
+    "field": "word/plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "der Linker; plural Linker",
+    "correct": "der Linke; stored plural Linken; mark as an adjectival noun.",
+    "why": "With the definite article, the masculine nominative is der Linke, not der Linker; because the app prepends die to stored plurals, the stored value must produce die Linken."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      1599
+    ],
+    "word": "Radweg",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "bike path/cycle lane",
+    "correct": "cycle path/cycle route",
+    "why": "A cycle lane is normally a Radfahrstreifen/Radspur and is not a general synonym of Radweg."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      1811
+    ],
+    "word": "Süd",
+    "field": "article/word/gloss",
+    "severity": "high",
+    "category": "article",
+    "current": "der Süd; south; no plural",
+    "correct": "Teach der Süden, —, “south”, or change this entry to der Süd, Süde, “southerly/south wind” and label its poetic/nautical use.",
+    "why": "Der Süd is a marked word for a south wind; generic directional “south” is Süd without an article or der Süden."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      2076
+    ],
+    "word": "Nord",
+    "field": "article/word/gloss",
+    "severity": "high",
+    "category": "article",
+    "current": "der Nord; north; no plural",
+    "correct": "Teach der Norden, —, “north”, or change this entry to der Nord, Norde, “northerly/north wind” and label its marked use.",
+    "why": "Der Nord is a word for a north wind; generic directional “north” is Nord without an article or der Norden."
+  },
+  {
+    "batch": "nouns_003",
+    "bank": "nouns",
+    "source_rows": [
+      2092
+    ],
+    "word": "Watt",
+    "field": "plural/english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Watten; watt (unit); tidal flats",
+    "correct": "Split the homonyms: das Watt, plural Watt, “watt (unit)”; and das Watt, plural Watten, “tidal flat”.",
+    "why": "Watten is the plural of the coastal landform, not of the unit, so one plural cannot correctly serve the two combined senses."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2120
+    ],
+    "word": "Celsius",
+    "field": "word/article/plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Celsius; plural Celsius; Celsius",
+    "correct": "Remove this noun entry; teach Celsius only in a construction such as Grad Celsius.",
+    "why": "Celsius is not normally an article-bearing count noun in German, so “das Celsius/die Celsius” teaches a nonexistent paradigm."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2140
+    ],
+    "word": "Handhabung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Handhabungen",
+    "why": "Handhabung has the standard plural Handhabungen, even though the singular is more frequent."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2148
+    ],
+    "word": "Gebot",
+    "field": "english/cefrLevel",
+    "severity": "high",
+    "category": "gloss",
+    "current": "commandment/requirement/bid; B2; cefrLevel A1",
+    "correct": "commandment/requirement/bid; move the apparent level annotation to cefrLevel B2.",
+    "why": "“; B2” is stray metadata embedded in the learner-facing translation, and A1 is a gross mismatch for this polysemous abstract/legal noun."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2234
+    ],
+    "word": "Fahrbahn",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "roadway/lane",
+    "correct": "carriageway/roadway; use Fahrstreifen or Fahrspur for “lane”.",
+    "why": "A Fahrbahn can contain several lanes, so teaching it as “lane” gives learners a false road-vocabulary equivalence."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2428
+    ],
+    "word": "Präsidium",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "headquarters",
+    "correct": "executive committee/presiding board/presidium",
+    "why": "Präsidium denotes a presiding or executive body, not the place or offices meant by “headquarters”."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2646
+    ],
+    "word": "Geschäftsfeld",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "business unit",
+    "correct": "business area/field/line of business",
+    "why": "A Geschäftsfeld is an area of commercial activity; a business unit is an organisational entity, normally a Geschäftseinheit."
+  },
+  {
+    "batch": "nouns_004",
+    "bank": "nouns",
+    "source_rows": [
+      2758
+    ],
+    "word": "Richtigkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Richtigkeiten",
+    "correct": "—",
+    "why": "Standard Richtigkeit in the stated “correctness/rightness” sense has no plural; Richtigkeiten is not the citation plural."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      2898
+    ],
+    "word": "Blicke",
+    "field": "article, word, plural, english",
+    "severity": "high",
+    "category": "junk",
+    "current": "die Blicke | plural Blicken | glances/views",
+    "correct": "der Blick | plural Blicke | glance/look/view",
+    "why": "The stored headword is already a nominative plural, while Blicken is its dative plural; learners need the singular lemma Blick."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      2964
+    ],
+    "word": "Kerze",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "candle/candlestick/spark plug",
+    "correct": "candle; colloquially spark plug",
+    "why": "A Kerze is the candle itself, not a candlestick (Kerzenhalter/Leuchter)."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      3067
+    ],
+    "word": "Whatsapp",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "Whatsapp | Whatsapps",
+    "correct": "WhatsApp | WhatsApps",
+    "why": "The brand-derived German noun retains the internal capital A in both singular and plural."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      3296
+    ],
+    "word": "Drucke",
+    "field": "article, word, plural, english",
+    "severity": "high",
+    "category": "junk",
+    "current": "die Drucke | plural Drucken | prints",
+    "correct": "der Druck | plural Drucke | print/impression",
+    "why": "Drucke is already the nominative plural of Druck for the glossed sense, and Drucken is its dative plural rather than a citation plural."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      3318
+    ],
+    "word": "Zeug",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Zeuge",
+    "correct": "— for the modern glossed sense “stuff/things”",
+    "why": "Although Zeuge exists for obsolete specialist senses of Zeug, modern Zeug meaning “stuff” is uncountable; displaying die Zeuge teaches a misleading plural for this entry."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      3325
+    ],
+    "word": "Durchfall",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "diarrhoea; failure (in an exam)",
+    "correct": "diarrhoea",
+    "why": "Exam failure is das Durchfallen; der Durchfall does not carry that everyday meaning."
+  },
+  {
+    "batch": "nouns_005",
+    "bank": "nouns",
+    "source_rows": [
+      3432
+    ],
+    "word": "Blau",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Blau",
+    "correct": "— for the ordinary colour-as-mass sense; Blaus for the rare plural “shades/types of blue”",
+    "why": "The singular form Blau is not also the citation plural, so the UI would display the false form die Blau."
+  },
+  {
+    "batch": "nouns_006",
+    "bank": "nouns",
+    "source_rows": [
+      3505
+    ],
+    "word": "Radler",
+    "field": "article / english",
+    "severity": "high",
+    "category": "article",
+    "current": "der Radler — cyclist/shandy",
+    "correct": "Keep `der Radler` = cyclist; put the drink sense in a separate `das Radler` entry.",
+    "why": "The cyclist is masculine, but the shandy is neuter in standard German; one article cannot teach both senses."
+  },
+  {
+    "batch": "nouns_006",
+    "bank": "nouns",
+    "source_rows": [
+      3601
+    ],
+    "word": "Metropolis",
+    "field": "word / plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "die Metropolis; Metropolen; metropolis",
+    "correct": "Replace the headword with `die Metropole`, plural `Metropolen`.",
+    "why": "The common German noun is `Metropole`; `Metropolis` is not its German singular and does not match the stored plural."
+  },
+  {
+    "batch": "nouns_006",
+    "bank": "nouns",
+    "source_rows": [
+      3752
+    ],
+    "word": "Zuversicht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Zuversichten",
+    "correct": "—",
+    "why": "Standard citation use treats `Zuversicht` as a mass noun without a usable plural."
+  },
+  {
+    "batch": "nouns_006",
+    "bank": "nouns",
+    "source_rows": [
+      4066
+    ],
+    "word": "Sauberkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Sauberkeiten",
+    "correct": "—",
+    "why": "Standard `Sauberkeit` is an abstract mass noun without a citation plural."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4211
+    ],
+    "word": "Date",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "date",
+    "correct": "romantic date",
+    "why": "German *Date* normally means a romantic meeting, not a calendar date; the bare English gloss teaches a false friend."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4249
+    ],
+    "word": "Tausend",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Tausenden",
+    "correct": "Tausend (for neuter *das Tausend*); alternatively split out feminine *die Tausend*, plural *Tausenden*, as a different sense",
+    "why": "*Tausenden* is not the nominative plural belonging to the listed neuter lemma *das Tausend*; the entry mixes declensions of two distinct uses."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4347
+    ],
+    "word": "Police",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "policy",
+    "correct": "insurance policy",
+    "why": "*Police* is specifically an insurance policy; bare *policy* falsely suggests the much broader English and German senses."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4350
+    ],
+    "word": "Redner",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "lecturer/orator/speaker",
+    "correct": "speaker/orator",
+    "why": "A lecturer is normally a *Dozent* or *Vortragender*, not simply a *Redner*."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4441
+    ],
+    "word": "Obdachlose",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "homeless",
+    "correct": "homeless man / homeless person",
+    "why": "The German item is a person noun, while the current English value is only an adjective."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4483
+    ],
+    "word": "Instandsetzung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "maintenance/overhaul",
+    "correct": "repair/restoration; overhaul where context supports it",
+    "why": "Routine maintenance is *Instandhaltung*; translating *Instandsetzung* as maintenance erases an important distinction."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4494
+    ],
+    "word": "Personaler",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "headhunter/recruiter",
+    "correct": "HR professional / human-resources manager or staff member",
+    "why": "A *Personaler* works in human resources and is not necessarily a recruiter or external headhunter."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4517
+    ],
+    "word": "Achtsamkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Achtsamkeiten",
+    "correct": "—",
+    "why": "In the listed senses “attentiveness/care/mindfulness”, standard citation use is singular-only; the supplied plural is not a learner-safe form."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4595
+    ],
+    "word": "Eichen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Eichen",
+    "correct": "—",
+    "why": "*Das Eichen* is a nominalised infinitive (“calibrating/calibration”) and has no plural; the stored form merely repeats the infinitive."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4631
+    ],
+    "word": "Verlässlichkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Verlässlichkeiten",
+    "correct": "—",
+    "why": "The listed abstract sense “dependability/reliability” is standardly singular-only."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4639
+    ],
+    "word": "Zitrone",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "lemon/lemon tree",
+    "correct": "lemon",
+    "why": "The tree is a *Zitronenbaum*; *Zitrone* denotes the fruit."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4722
+    ],
+    "word": "Meinungsfreiheit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Meinungsfreiheiten",
+    "correct": "—",
+    "why": "Standard German treats *Meinungsfreiheit* (“freedom of expression/opinion”) as having no plural."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4752
+    ],
+    "word": "Anmeldeformular",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "application form",
+    "correct": "registration form / enrolment form",
+    "why": "An application form is normally a *Bewerbungsformular* or *Antragsformular*; *Anmeldeformular* is for registering or enrolling."
+  },
+  {
+    "batch": "nouns_007",
+    "bank": "nouns",
+    "source_rows": [
+      4842
+    ],
+    "word": "Kürbis",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "gourd/nut/pumpkin",
+    "correct": "pumpkin/squash/gourd",
+    "why": "*Nut* is not a meaning of *Kürbis*."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      4910
+    ],
+    "word": "Kinderarbeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Kinderarbeiten",
+    "correct": "—",
+    "why": "In the glossed sense “child labour,” Kinderarbeit has no plural; Kinderarbeiten is understood as works or pieces of work by children."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      4925
+    ],
+    "word": "Pressefreiheit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Pressefreiheiten",
+    "correct": "—",
+    "why": "Standard German treats Pressefreiheit as having no plural."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5077
+    ],
+    "word": "Aalen",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "das Aalen",
+    "correct": "Aalen (no article), or remove the proper name if the schema requires an article",
+    "why": "The gloss identifies the German city Aalen, whose name is normally used without an article; das Aalen would instead look like a nominalised verb."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5089
+    ],
+    "word": "Solarenergie",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "solar energy; plural —",
+    "correct": "solar energy",
+    "why": "The embedded note is false and conflicts with the valid stored plural Solarenergien."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5106
+    ],
+    "word": "Sonneneinstrahlung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "solar radiation / sunlight exposure; plural —",
+    "correct": "solar radiation / sunlight exposure",
+    "why": "The embedded note is false and conflicts with the valid stored plural Sonneneinstrahlungen."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5308
+    ],
+    "word": "Kundschaft",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Kundschaften",
+    "correct": "— for the glossed sense “clientele”",
+    "why": "Kundschaft meaning the collective body of customers has no plural; Kundschaften belongs to other, non-glossed uses."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5409
+    ],
+    "word": "Hetze",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "agitation, incitement, hate campaign; plural —",
+    "correct": "agitation/incitement/hate campaign; remove the plural note, or set stored plural to — if only this no-plural sense is taught",
+    "why": "The English field asserts no plural while the card stores and will display die Hetzen, producing a direct learner-facing contradiction."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5564
+    ],
+    "word": "Bug",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Bugs",
+    "correct": "Buge (also Büge) for “bow of a ship”",
+    "why": "Bugs is the plural of the computing loanword pronounced like English “bug”; the glossed nautical Bug has a long vowel and a different plural."
+  },
+  {
+    "batch": "nouns_008",
+    "bank": "nouns",
+    "source_rows": [
+      5574
+    ],
+    "word": "Gelb",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "yellow/yolk",
+    "correct": "yellow (the colour)",
+    "why": "Das Gelb denotes the colour; egg yolk is das Eigelb or der Dotter (and das Gelbe only contextually), not das Gelb."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5605
+    ],
+    "word": "Pad",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "pad/pod",
+    "correct": "pad; depending on the intended sense, tablet, touchpad, sanitary pad, etc.",
+    "why": "`pod` is not a translation of German `Pad`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5685
+    ],
+    "word": "Kreuzfahrtschiff",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "cruise liner/cruise ship/cruiser",
+    "correct": "cruise ship/cruise liner",
+    "why": "A cruiser is a `Kreuzer`, not a `Kreuzfahrtschiff`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5730
+    ],
+    "word": "Trieb",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "desire/instinct/pinion",
+    "correct": "drive/urge/instinct; shoot/sprout; technical drive/mechanism where relevant",
+    "why": "A pinion is normally `Ritzel`; the current gloss also omits the common plant and drive senses."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5752
+    ],
+    "word": "Zollverein",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "customs association",
+    "correct": "customs union",
+    "why": "`Customs union` is the established economic and historical term; `association` does not express the shared customs area."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5796
+    ],
+    "word": "Katholikentag",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "Catholic day",
+    "correct": "German Catholic convention/assembly (`Katholikentag`)",
+    "why": "This is the name of a major convention, not an ordinary “Catholic day”."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5831
+    ],
+    "word": "Schnabel",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "beak/bill/pecker",
+    "correct": "beak/bill; colloquially nose or mouth where relevant",
+    "why": "`Pecker` is not a safe standard translation and in British English commonly has an unrelated vulgar meaning."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5895
+    ],
+    "word": "Glied",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "formation/limb/link",
+    "correct": "limb/member/link/segment",
+    "why": "`Formation` is not a dependable translation of `Glied` and is likely corpus-derived noise."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5902
+    ],
+    "word": "Hemmnis",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "hazard/hindrance/obstruction",
+    "correct": "hindrance/obstacle/impediment",
+    "why": "A hazard is a `Gefahr` or `Gefahrenquelle`, not a `Hemmnis`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5903
+    ],
+    "word": "Herzschlag",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "beating of the heart/heart attack/heartbeat",
+    "correct": "heartbeat/beating of the heart",
+    "why": "A heart attack is a `Herzinfarkt`, not a `Herzschlag`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5912
+    ],
+    "word": "Kippe",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "fag-end/pocket",
+    "correct": "cigarette end/butt/fag end; also tip/dump in the relevant sense",
+    "why": "`Pocket` is not a translation of `Kippe`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5947
+    ],
+    "word": "Uraufführung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "debut performance",
+    "correct": "world premiere/first-ever performance",
+    "why": "`Uraufführung` is the first performance anywhere, not merely a performer's debut."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5952
+    ],
+    "word": "Vorgeschichte",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "plural `—`; English `Vorgeschichten / background, previous history (of a case, illness); also prehistory`",
+    "correct": "plural `Vorgeschichten`; English `background/previous history; prehistory`",
+    "why": "The plural has leaked into the English field while the actual plural field is blank."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5964
+    ],
+    "word": "Anhebung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "accentuation/increase",
+    "correct": "raising/increase",
+    "why": "`Accentuation` is normally `Betonung` or `Akzentuierung`, not `Anhebung` without a special context."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5989
+    ],
+    "word": "Ernst",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "austerity/earnestness/seriousness",
+    "correct": "seriousness/earnestness; solemnity where appropriate",
+    "why": "`Austerity` is not a normal translation of `Ernst`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      5991
+    ],
+    "word": "Fang",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "catch/claws/fang",
+    "correct": "catch/capture; jaws/muzzle in the animal sense",
+    "why": "`Claws` are `Klauen/Krallen`, and an English fang is a tooth rather than the German animal-mouth sense of `Fang`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      6050
+    ],
+    "word": "Trümmer",
+    "field": "article, headword, plural",
+    "severity": "high",
+    "category": "article",
+    "current": "das Trümmer; plural `Trümmer`",
+    "correct": "model as plural-only `die Trümmer`, or remove until the app supports plural-only nouns",
+    "why": "`Trümmer` meaning ruins/debris is a plural-only noun; there is no singular `das Trümmer`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      6124
+    ],
+    "word": "Masche",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "bow/hole/mesh",
+    "correct": "stitch/loop/mesh; trick/ruse/scam",
+    "why": "`Bow` and generic `hole` are unreliable translations, while the common figurative “trick/ruse” sense is absent."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      6144
+    ],
+    "word": "Reinigungskraft",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "cleaner/cleaning operative/detergency",
+    "correct": "cleaner/cleaning worker/cleaning operative",
+    "why": "`Detergency` is an abstract property, not a person, and is a false part-of-speech translation here."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      6258
+    ],
+    "word": "Letzte",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "last one/person",
+    "correct": "the last thing; the ultimate/the worst (context-dependent)",
+    "why": "Neuter `das Letzte` does not normally denote a person; a last person would require masculine or feminine `der/die Letzte`."
+  },
+  {
+    "batch": "nouns_009",
+    "bank": "nouns",
+    "source_rows": [
+      6295
+    ],
+    "word": "Staatsbürger",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "citizen/national/subject",
+    "correct": "citizen/national",
+    "why": "A subject is an `Untertan` or, in the formal British-status sense, a distinct legal category from citizen."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6378
+    ],
+    "word": "Klassenerhalt",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Klassenerhalte",
+    "correct": "—",
+    "why": "In the sports sense this is normally a mass/event noun without a standard usable plural; “die Klassenerhalte” is not a suitable learner citation form."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6388
+    ],
+    "word": "Lebenswerk",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "lifetime achievement",
+    "correct": "life's work/lifework",
+    "why": "A Lebenswerk is the body of work produced over a lifetime, not a lifetime achievement or award."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6475
+    ],
+    "word": "Drehe",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "turn/spin (colloquial)",
+    "correct": "vicinity/neighbourhood; approximately (regional, chiefly in “in/um die Drehe”)",
+    "why": "The regional noun Drehe refers to a vicinity or occurs in a phrase meaning “approximately”; it does not mean a physical turn or spin."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6487
+    ],
+    "word": "Epilepsie",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "epilepsy/grand mal",
+    "correct": "epilepsy",
+    "why": "Grand mal is a type of seizure, not a synonym for epilepsy as a disease."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6595
+    ],
+    "word": "Zivilsenat",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "civil senate",
+    "correct": "civil division/panel of a court",
+    "why": "“Civil senate” is a literal false-friend translation; a Senat in this judicial sense is a panel or division of a higher court."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6602
+    ],
+    "word": "Alster",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Alstern",
+    "correct": "—",
+    "why": "The Hamburg river/lake name is a proper name with no plural; “Alstern” does not belong to the glossed sense."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6635
+    ],
+    "word": "Eigen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "one's own/the self",
+    "correct": "property/possession (formal, chiefly in “sein Eigen”)",
+    "why": "Das Eigen is a formal noun for something owned; “the self” belongs to das Eigene or philosophical terminology and is false for this headword."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6826
+    ],
+    "word": "Jura",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "der",
+    "correct": "no article",
+    "why": "Jura meaning “law as a university subject” is used without an article; der Jura instead denotes the mountain range, canton, or geological period."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6852
+    ],
+    "word": "Marmelade",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "jam/marmalade/snarl-up",
+    "correct": "jam/marmalade",
+    "why": "“Snarl-up” is an English sense of “jam” that German Marmelade does not have; this is a machine-translation polysemy error."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6940
+    ],
+    "word": "Bildungswesen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Bildungswesen",
+    "correct": "—",
+    "why": "In the sense “education system”, Bildungswesen has no plural; the identical stored value would make the UI teach the false form “die Bildungswesen”."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6959
+    ],
+    "word": "Erneuerbare",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Erneuerbare",
+    "correct": "Erneuerbaren",
+    "why": "This is a substantivised adjective; with the UI-supplied article the plural must render as “die Erneuerbaren”."
+  },
+  {
+    "batch": "nouns_010",
+    "bank": "nouns",
+    "source_rows": [
+      6966
+    ],
+    "word": "Folkwang",
+    "field": "word",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Folkwang | Folkwang (university/museum name)",
+    "correct": "remove from the general noun bank",
+    "why": "Folkwang here is a proper-name component, not a general German noun with a learnable neuter article."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7181
+    ],
+    "word": "Luftverkehr",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Luftverkehre` with \"air traffic\"",
+    "correct": "`—`",
+    "why": "*Luftverkehr* in the glossed collective sense \"air traffic\" is standardly singular-only; the mechanically possible-looking *Luftverkehre* is not a normal learner citation plural."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7279
+    ],
+    "word": "Eckdaten",
+    "field": "article, word, plural",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Eckdaten` / `Eckdaten` / \"key data/key figures\"",
+    "correct": "represent it as the plural-only noun `die Eckdaten`, or remove it if the schema cannot model plural-only entries",
+    "why": "*Eckdaten* is plural, so neuter singular `das Eckdaten` is ungrammatical and teaches a false article/number analysis."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7355
+    ],
+    "word": "Positiv",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`der Positiv` / `Positive` / \"positive degree (grammar)\"",
+    "correct": "`das Positiv` / `Positive`",
+    "why": "The grammatical degree is neuter in standard German; the stored masculine article teaches a false gender."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7522
+    ],
+    "word": "Notfallversorgung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Notfallversorgungen`",
+    "correct": "`—`",
+    "why": "*Notfallversorgung* meaning emergency care is a singular mass/collective noun and has no normal standard plural."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7557
+    ],
+    "word": "Stausee",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"dam/reservoir/storage lake\"",
+    "correct": "\"reservoir/artificial lake\"",
+    "why": "A *Stausee* is the body of impounded water, not the dam structure (*Staudamm*); leading with \"dam\" teaches a false distinction."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7618
+    ],
+    "word": "Entertainment",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Entertainments`",
+    "correct": "`—`",
+    "why": "German *Entertainment* in the glossed mass-noun sense has no standard plural; the English-looking plural is not a valid German learner citation form."
+  },
+  {
+    "batch": "nouns_011",
+    "bank": "nouns",
+    "source_rows": [
+      7671
+    ],
+    "word": "Langlebigkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Langlebigkeiten`",
+    "correct": "`—`",
+    "why": "*Langlebigkeit* meaning longevity/durability is singular-only in standard use; the stored plural is not a genuine learner citation form."
+  },
+  {
+    "batch": "nouns_012",
+    "bank": "nouns",
+    "source_rows": [
+      8022
+    ],
+    "word": "Buckel",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"hump/hunchback (colloq. back)\"",
+    "correct": "\"hump; hunched/rounded back; back (colloquial)\"",
+    "why": "a “hunchback” is a person, whereas *Buckel* denotes the hump or back; the current gloss teaches a false person/object equivalence."
+  },
+  {
+    "batch": "nouns_012",
+    "bank": "nouns",
+    "source_rows": [
+      8252
+    ],
+    "word": "Bogenschießen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Bogenschießen`",
+    "correct": "`—`",
+    "why": "*Bogenschießen* “archery” is an activity noun/nominalised infinitive without a normal count plural; the stored value makes the UI falsely display *die Bogenschießen*."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8413
+    ],
+    "word": "Schönste",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Schönste` / \"most beautiful one\"",
+    "correct": "`Schönsten` / \"most beautiful woman/girl; the prettiest (female person)\"",
+    "why": "With the stored definite article, the UI needs the weak plural *die Schönsten*; *die Schönste* is specifically feminine, which the vague English gloss hides."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8559
+    ],
+    "word": "Iban",
+    "field": "word, plural, english",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Iban` / `Iban` / \"Iban\"",
+    "correct": "`IBAN` / `IBANs` / \"IBAN (international bank account number)\"",
+    "why": "The abbreviation is conventionally all capitals, and its standard German plural is *IBANs*; the current gloss also fails to expand it for learners."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8602
+    ],
+    "word": "Meerwasser",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Meerwasser`",
+    "correct": "`—`",
+    "why": "*Meerwasser* is a mass noun explicitly used without a plural; the stored form would render as the invalid learner model *die Meerwasser*."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8594
+    ],
+    "word": "Lappen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"banknote/botch/cloth\"",
+    "correct": "\"rag/cloth; (colloquial) banknote, driving licence; (insult) idiot\"",
+    "why": "*Lappen* does not mean the noun \"botch\"; including that sense teaches a false lexical equivalence and obscures the basic \"rag\" sense."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8775
+    ],
+    "word": "Fremdenverkehr",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Fremdenverkehre`",
+    "correct": "`—`",
+    "why": "In the sense \"tourism\", *Fremdenverkehr* is explicitly used without a plural; the stored form would teach an unusable plural."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8886
+    ],
+    "word": "Requisite",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"prop/requisite\"",
+    "correct": "\"stage/film prop\"",
+    "why": "English *requisite* ordinarily means something required, so retaining it as a gloss creates a strong false-friend trap."
+  },
+  {
+    "batch": "nouns_013",
+    "bank": "nouns",
+    "source_rows": [
+      8923
+    ],
+    "word": "Tresor",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"safe/safety deposit box/vault\"",
+    "correct": "\"safe/vault\"",
+    "why": "A safety deposit box is a *Schließfach/Safe*, typically one compartment in a bank vault, not a *Tresor* itself."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9127
+    ],
+    "word": "Nanopartikel",
+    "field": "article, plural",
+    "severity": "high",
+    "category": "article",
+    "current": "`die Nanopartikel` / `Nanopartikel`",
+    "correct": "prefer `das Nanopartikel` / `Nanopartikel`; if the feminine variant is deliberately retained, its plural is `Nanopartikeln`",
+    "why": "The row mixes the feminine singular variant with the neuter plural paradigm, so it does not teach a coherent declension."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9170
+    ],
+    "word": "Scherben",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—` / \"shards/pieces of broken glass\"",
+    "correct": "`Scherben` / \"shard/piece of broken glass\" for the singular headword",
+    "why": "*der Scherben* is singular and has the usable plural *die Scherben*; the English field is currently plural while the German headword is singular."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9225
+    ],
+    "word": "Vorschulalter",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Vorschulalter`",
+    "correct": "`—`",
+    "why": "*Vorschulalter* denotes the preschool stage of life and is standardly used without a plural; the unchanged form is not a learner citation plural."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9257
+    ],
+    "word": "Aufenthaltsstatus",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`Aufenthaltsstatus`",
+    "why": "The plural is rare but standard and genuinely useful when contrasting people's legal statuses; marking it as absent teaches a false inflectional fact."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9401
+    ],
+    "word": "Markise",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"awning/marquise cut/marquise cut stone\"",
+    "correct": "\"awning\"",
+    "why": "The gemstone cut is *Marquise* in German as well as English; those senses do not belong to *Markise*."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9443
+    ],
+    "word": "Reflektion",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Reflektion` / `Reflektionen`",
+    "correct": "`Reflexion` / `Reflexionen`",
+    "why": "The standard German noun is spelled with *-xion*; the current analogical spelling from *reflektieren* is not the standard learner headword."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9456
+    ],
+    "word": "Röntgen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Röntgen`",
+    "correct": "`—`",
+    "why": "*das Röntgen* is a nominalised infinitive denoting X-raying/radiography and has no plural; the identical stored form falsely presents one."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9467
+    ],
+    "word": "Schießen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Schießen`",
+    "correct": "`—`",
+    "why": "*das Schießen* in the activity/sport sense is a nominalised infinitive and has no plural."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9518
+    ],
+    "word": "Verkehrssektor",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`Verkehrssektoren`",
+    "why": "The regular plural is usable when comparing transport sectors across regions, economies or periods; the row incorrectly marks the noun as plural-less."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9553
+    ],
+    "word": "Anbringen",
+    "field": "whole row, plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`das Anbringen` / `Anbringen` / \"attachment/mounting\"",
+    "correct": "remove this freely formed nominalised infinitive; if retained for the process sense, use plural `—`",
+    "why": "The generic process nominalisation is weak lexical-bank material, and nominalised infinitives do not acquire an unchanged plural."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9638
+    ],
+    "word": "Funken",
+    "field": "word",
+    "severity": "high",
+    "category": "junk",
+    "current": "`der Funken` / `Funken` / \"spark\"",
+    "correct": "`der Funke` / `Funken` / \"spark\"",
+    "why": "*Funken* is the plural/oblique form of the noun *Funke*, not the standard nominative singular headword; the row has promoted an inflected corpus form to a lemma."
+  },
+  {
+    "batch": "nouns_014",
+    "bank": "nouns",
+    "source_rows": [
+      9755
+    ],
+    "word": "Nachsehen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"das Nachsehen haben\"",
+    "correct": "\"disadvantage; to lose out (in the phrase das Nachsehen haben)\"",
+    "why": "The English field currently repeats a German phrase instead of translating it, leaving the learner with no English meaning."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9809
+    ],
+    "word": "Sodbrennen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Sodbrennen`",
+    "correct": "`—`",
+    "why": "*Sodbrennen* \"heartburn\" is a mass noun without a standard plural; the stored value would teach the false form *die Sodbrennen*."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9815
+    ],
+    "word": "Spielball",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"game ball/plaything/set ball\"",
+    "correct": "\"ball used in play; plaything/pawn\"",
+    "why": "\"set ball\" is not a translation of *Spielball* and is likely contamination from sports terminology."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9898
+    ],
+    "word": "Wirren",
+    "field": "article, word, plural",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Wirren` / `Wirren` / \"disturbances/riots\"",
+    "correct": "`die Wirren` as a plural-only noun; do not present a separate singular/plural pair",
+    "why": "the gloss belongs to plural-only *die Wirren*; *das Wirren* would instead be a nominalised infinitive meaning \"confusing/muddling\"."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9922
+    ],
+    "word": "Auditorium",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"auditorium/auditory\"",
+    "correct": "\"auditorium; audience\"",
+    "why": "English \"auditory\" is primarily an adjective meaning related to hearing; German *Auditorium* can instead denote the hall or its audience."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9944
+    ],
+    "word": "Bevölkerungsentwicklung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"demographic development/population development/vital statistics\"",
+    "correct": "\"demographic change/trends; population development\"",
+    "why": "\"vital statistics\" means population data or records, not the development or change in a population itself."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9965
+    ],
+    "word": "Collagen",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Collagen` / `Collagene`",
+    "correct": "`Kollagen` / `Kollagene`",
+    "why": "the German protein name is spelled with initial K; the stored C-spelling is English contamination."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      9967
+    ],
+    "word": "Dämpfer",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"damper/mute/steamer\"",
+    "correct": "\"damper; mute/silencer; setback\"",
+    "why": "\"steamer\" translates *Dampfer* without an umlaut, not *Dämpfer*."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10012
+    ],
+    "word": "Fundus",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`Fundus`",
+    "why": "the collection/stock/repository sense has a usable unchanged plural, as in multiple theatrical or museum *Fundus*."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10071
+    ],
+    "word": "Knete",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Kneten`",
+    "correct": "`—`",
+    "why": "*Knete* meaning modelling clay or, colloquially, money is uncountable; *Kneten* is not its standard plural."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10156
+    ],
+    "word": "Saum",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"edge/seam\"",
+    "correct": "\"hem; edge/border\"",
+    "why": "a seam is normally *Naht*; clothing *Saum* is a hem."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10206
+    ],
+    "word": "Umschreibung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"paraphrase/transliteration\"",
+    "correct": "\"paraphrase/periphrasis; rewriting/re-registration (by context)\"",
+    "why": "transliteration is *Transliteration* or *Umschrift*, not normally *Umschreibung*."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10207
+    ],
+    "word": "Umspannwerk",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"transformer/transformer station\"",
+    "correct": "\"electrical substation/transformer substation\"",
+    "why": "an *Umspannwerk* is the entire substation, not an individual transformer."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10212
+    ],
+    "word": "Upcycling",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Upcyclings`",
+    "correct": "`—`",
+    "why": "German *Upcycling* denotes the uncountable process or practice and has no standard plural."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10227
+    ],
+    "word": "Voraussicht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Voraussichten`",
+    "correct": "`—`",
+    "why": "*Voraussicht* \"foresight/expectation\" has no standard plural; *Voraussichten* is a spurious form likely confused with *Aussichten*."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10275
+    ],
+    "word": "Anglistik",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Anglistiken`",
+    "correct": "`—`",
+    "why": "*Anglistik* is the academic discipline of English language and literature and does not have a standard plural."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10440
+    ],
+    "word": "Knast",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`Knäste` (also `Knaste`)",
+    "why": "the countable \"prison\" sense has a standard usable plural, even though the \"imprisonment\" sense does not."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10461
+    ],
+    "word": "Lobbyarbeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Lobbyarbeiten`",
+    "correct": "`—`",
+    "why": "*Lobbyarbeit* \"lobbying\" is an uncountable activity noun and has no established ordinary plural."
+  },
+  {
+    "batch": "nouns_015",
+    "bank": "nouns",
+    "source_rows": [
+      10475
+    ],
+    "word": "Mietrecht",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Mietrechte` / \"landlord and tenant law\"",
+    "correct": "use `—` for \"tenancy law/landlord and tenant law\"; add the separate sense \"tenancy right\" if plural `Mietrechte` is retained",
+    "why": "the legal field *Mietrecht* is uncountable; *Mietrechte* denotes individual rights and does not belong to the stored gloss."
+  },
+  {
+    "batch": "nouns_016",
+    "bank": "nouns",
+    "source_rows": [
+      10731
+    ],
+    "word": "Erbgut",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Erbgüter",
+    "correct": "—",
+    "why": "In the glossed biological sense “genetic material”, Erbgut has no plural; Erbgüter belongs to the distinct inherited-estate/property sense."
+  },
+  {
+    "batch": "nouns_016",
+    "bank": "nouns",
+    "source_rows": [
+      10898
+    ],
+    "word": "Neunziger",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "das Neunziger",
+    "correct": "der Neunziger (a person/thing with the value 90); die Neunziger is the plural-only form for the 1990s",
+    "why": "The count noun for a ninety-year-old is masculine, while the decade sense is plural; neuter singular is not the correct citation form for either supplied gloss."
+  },
+  {
+    "batch": "nouns_016",
+    "bank": "nouns",
+    "source_rows": [
+      11059
+    ],
+    "word": "Atomkraft",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Atomkräfte",
+    "correct": "—",
+    "why": "Atomkraft meaning nuclear energy has no plural; Atomkräfte would instead be read as atomic/nuclear forces, a different sense."
+  },
+  {
+    "batch": "nouns_016",
+    "bank": "nouns",
+    "source_rows": [
+      11165
+    ],
+    "word": "Frühgeburt",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "premature baby/premature birth/preterm delivery",
+    "correct": "premature birth; preterm delivery",
+    "why": "Frühgeburt denotes the birth/delivery, not the baby; the latter is Frühchen or Frühgeborenes."
+  },
+  {
+    "batch": "nouns_016",
+    "bank": "nouns",
+    "source_rows": [
+      11182
+    ],
+    "word": "Gicht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Gichten",
+    "correct": "—",
+    "why": "Gicht meaning the disease gout has no plural; Gichten is the plural of the separate metallurgical sense referring to the upper part/charge of a blast furnace."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11221
+    ],
+    "word": "Kelten",
+    "field": "word/article/plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Kelten | Kelten | Celts",
+    "correct": "der Kelte | Kelten | Celt",
+    "why": "`Kelten` is the inflected plural, not a neuter singular headword; the current card teaches a nonexistent singular with a false article."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11338
+    ],
+    "word": "Quinoa",
+    "field": "article/plural",
+    "severity": "high",
+    "category": "article",
+    "current": "der Quinoa | —",
+    "correct": "die Quinoa | Quinoas",
+    "why": "Standard German uses feminine `die Quinoa`; the masculine article teaches the wrong gender, and the countable plant sense has standard plural `Quinoas`."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11487
+    ],
+    "word": "Abfallvermeidung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Abfallvermeidungen",
+    "correct": "—",
+    "why": "In the stated sense “waste prevention/avoidance”, this is a process/concept noun used in the singular; the generated-looking plural is not a genuine learner citation form."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11499
+    ],
+    "word": "Ambivalenz",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "ambiguity/ambivalence",
+    "correct": "ambivalence/mixed feelings",
+    "why": "`Ambivalenz` is ambivalence, not linguistic or semantic ambiguity (`Mehrdeutigkeit/Ambiguität`); the first gloss teaches a false friend."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11547
+    ],
+    "word": "Bollwerk",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "bastion/bulkhead/bulwark",
+    "correct": "bastion/bulwark/stronghold",
+    "why": "A bulkhead is a ship’s internal partition (`Schott`), not a normal sense of `Bollwerk`; the card mixes it up with the similar-looking “bulwark”."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11664
+    ],
+    "word": "Iren",
+    "field": "word/article/plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Iren | Irene | Irish people/the Irish",
+    "correct": "der Ire | Iren | Irish person/Irishman",
+    "why": "`Iren` is the plural of `Ire`, not a neuter singular; `Irene` is a personal name, not its plural."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11765
+    ],
+    "word": "Ratio",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "ratio/reason",
+    "correct": "reason/rational mind/rational faculty",
+    "why": "German `die Ratio` means reason or rational thought, not the English mathematical noun “ratio” (`Verhältnis`)."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11862
+    ],
+    "word": "Telearbeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Telearbeiten",
+    "correct": "—",
+    "why": "`Telearbeit` in the sense “telework” is a singular mass/activity noun and has no standard plural."
+  },
+  {
+    "batch": "nouns_017",
+    "bank": "nouns",
+    "source_rows": [
+      11870
+    ],
+    "word": "Tierschützer",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "animal rights activist/animal rights campaigner",
+    "correct": "animal welfare activist/campaigner; animal protection campaigner",
+    "why": "`Tierschutz` is animal welfare/protection and is not synonymous with the distinct ideology `Tierrechte` (animal rights)."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      11901
+    ],
+    "word": "Vertragsrecht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Vertragsrechte",
+    "correct": "—",
+    "why": "The legal field *Vertragsrecht* is used without a plural; *Vertragsrechte* instead reads as contractual rights."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      11914
+    ],
+    "word": "Wandlung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "… / transubstantiation",
+    "correct": "change/transformation; also transubstantiation (Catholicism)",
+    "why": "The ellipsis is corrupt learner-facing text and omits the ordinary primary sense."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      11918
+    ],
+    "word": "Wasserratte",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "water vole",
+    "correct": "water rat/water vole; colloquially, a keen swimmer",
+    "why": "German *Wasserratte* can denote the vole commonly called a water rat, but bare British *water vole* alone omits the very common humorous human sense and over-specifies the zoological one."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      11962
+    ],
+    "word": "Atomenergie",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Atomenergien",
+    "correct": "—",
+    "why": "In the stated sense “atomic/nuclear energy” this noun has no plural."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12003
+    ],
+    "word": "Buddha",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "Buddha/Buddhahood",
+    "correct": "Buddha/an enlightened one",
+    "why": "“Buddhahood” is *Buddhaschaft*, not a sense of the count noun *Buddha*."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12260
+    ],
+    "word": "Poker",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "das Poker / poker",
+    "correct": "poker",
+    "why": "The English field is polluted with a German article and a duplicate translation."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12307
+    ],
+    "word": "Schlichtung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "arbitration/conciliation/mediation",
+    "correct": "conciliation/mediation/settlement",
+    "why": "Arbitration is normally *Schiedsverfahren* and, unlike *Schlichtung*, ordinarily culminates in a binding arbitral decision."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12368
+    ],
+    "word": "Translation",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "translation",
+    "correct": "translation (biology: protein synthesis from mRNA; mathematics: displacement); for language translation use *Übersetzung*",
+    "why": "Without a domain label this is a dangerous false friend: ordinary linguistic “translation” is not normally *Translation* in German."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12427
+    ],
+    "word": "Wohlfahrt",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Wohlfahrten",
+    "correct": "—",
+    "why": "*Wohlfahrt* in the senses “welfare/well-being/social welfare” has no plural."
+  },
+  {
+    "batch": "nouns_018",
+    "bank": "nouns",
+    "source_rows": [
+      12597
+    ],
+    "word": "Flurbereinigung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "land consolidation first",
+    "correct": "land consolidation",
+    "why": "The stray word “first” is corrupt translation text."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      12685
+    ],
+    "word": "Kerle",
+    "field": "word/article/plural/english",
+    "severity": "high",
+    "category": "junk",
+    "current": "der Kerle | Kerle | blokes/guys",
+    "correct": "der Kerl | Kerle | bloke/guy",
+    "why": "The headword is already the plural/inflected form; *der Kerle* is not a valid singular citation entry."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      12752
+    ],
+    "word": "Liquid",
+    "field": "article/plural/english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "der | Liquide | restrict to liquid consonant (phonetics) or e-liquid",
+    "correct": "Keep `der Liquid | Liquide | liquid consonant (phonetics)`; make the vaping sense a separate `das Liquid | Liquids | e-liquid` entry.",
+    "why": "The row mixes two homographs with different gender and plural, and the editorial phrase “restrict to” has leaked into the learner gloss."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      12819
+    ],
+    "word": "Perfekt",
+    "field": "english",
+    "severity": "high",
+    "category": "plural",
+    "current": "perfect tense; plural —",
+    "correct": "perfect tense",
+    "why": "The gloss falsely says there is no plural, directly contradicting the correctly stored plural *Perfekte*."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      12866
+    ],
+    "word": "Rettungssanitäter",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "ambulance officer/paramedic",
+    "correct": "emergency medical technician (EMT); ambulance technician",
+    "why": "The German qualification is below *Notfallsanitäter* and should not be taught as “paramedic”; “ambulance officer” is also not idiomatic British usage."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      13028
+    ],
+    "word": "Zugspitze",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Zugspitzen",
+    "correct": "—",
+    "why": "For the glossed proper-name sense, Germany’s mountain *die Zugspitze*, no plural is used."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      13050
+    ],
+    "word": "Allerheiligen",
+    "field": "article/plural",
+    "severity": "high",
+    "category": "article",
+    "current": "das | Allerheiligen",
+    "correct": "normally no article | —",
+    "why": "The holiday name is normally used without an article (*heute ist Allerheiligen*, *zu Allerheiligen*) and has no plural; neuter agreement appears only when an attribute forces it, as in *das nächste Allerheiligen*."
+  },
+  {
+    "batch": "nouns_019",
+    "bank": "nouns",
+    "source_rows": [
+      13141
+    ],
+    "word": "Buntstift",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "coloured pencil/crayon",
+    "correct": "coloured pencil",
+    "why": "A *Buntstift* is a coloured pencil; a wax crayon is a *Wachsmalstift*, so “crayon” teaches a false equivalence."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13399
+    ],
+    "word": "Maniküre",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "manicure/manicurist",
+    "correct": "manicure",
+    "why": "A manicurist is a person (`Manikürist`/`Maniküristin`), not `Maniküre`."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13406
+    ],
+    "word": "Messi",
+    "field": "article/word/plural/english",
+    "severity": "high",
+    "category": "spelling",
+    "current": "die | Messi | Messis | hoarder (slang)/Messi",
+    "correct": "der Messie | Messies | hoarder (colloquial)",
+    "why": "The standard lemma is `Messie`, and the bank combines a misspelling with the wrong article; the untranslated second gloss is also useless."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13433
+    ],
+    "word": "Obdachlosigkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Obdachlosigkeiten",
+    "correct": "—",
+    "why": "`Obdachlosigkeit` in the glossed abstract sense has no standard plural."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13515
+    ],
+    "word": "Schotten",
+    "field": "word/plural/english",
+    "severity": "high",
+    "category": "junk",
+    "current": "der Schotten | — | Scots/the Scottish",
+    "correct": "der Schotte | Schotten | Scot",
+    "why": "The stored headword is the plural/oblique form under a singular masculine article rather than a valid singular lemma."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13551
+    ],
+    "word": "Sprachausgabe",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Sprachausgaben",
+    "why": "The noun has a standard, usable plural, for example when choosing among German and English voice outputs."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13654
+    ],
+    "word": "Vollbeschäftigung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Vollbeschäftigungen",
+    "correct": "—",
+    "why": "In both its economic `full employment` sense and its `full-time employment` sense, the noun is normally singular-only."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13657
+    ],
+    "word": "Vorland",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Vorlande",
+    "why": "The geographical noun has the standard plural `Vorlande`, which is usable for distinct forelands."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13694
+    ],
+    "word": "Zehntausend",
+    "field": "article/plural",
+    "severity": "high",
+    "category": "article",
+    "current": "die | Zehntausenden",
+    "correct": "das | Zehntausende (also invariant Zehntausend in appropriate constructions)",
+    "why": "The noun is neuter, and `Zehntausenden` is a dative plural form rather than the nominative citation plural."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13726
+    ],
+    "word": "Angemessenheit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Angemessenheiten",
+    "correct": "—",
+    "why": "The abstract noun in the glossed sense `appropriateness` is singular-only."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13838
+    ],
+    "word": "Durcheinander",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Durcheinander",
+    "correct": "—",
+    "why": "The noun meaning chaos/confusion has no standard plural; repeating the singular would teach a false plural."
+  },
+  {
+    "batch": "nouns_020",
+    "bank": "nouns",
+    "source_rows": [
+      13996
+    ],
+    "word": "Heiterkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Heiterkeiten",
+    "correct": "—",
+    "why": "`Heiterkeit` meaning cheerfulness, merriment or clear weather is singular-only."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14009
+    ],
+    "word": "Horizontale",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Horizontale",
+    "correct": "Horizontalen",
+    "why": "The noun is weakly declined in the plural: the UI should render `die Horizontalen`, not the singular-looking `die Horizontale`."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14013
+    ],
+    "word": "Hufe",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "oxgang",
+    "correct": "hide (historical land measure)",
+    "why": "A German Hufe is conventionally equivalent to a hide, land sufficient for a farming household; an oxgang is a smaller, more specific English subdivision and is not the general equivalent."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14181
+    ],
+    "word": "Paintball",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "das",
+    "correct": "der",
+    "why": "Standard German uses masculine `der Paintball` for the game."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14316
+    ],
+    "word": "Sternekoch",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "star chef",
+    "correct": "Michelin-starred chef/chef of a starred restaurant",
+    "why": "`Sternekoch` refers to restaurant-guide stars, not a celebrity or “star chef”; the current gloss teaches a false-friend sense."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14329
+    ],
+    "word": "Studi",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "die",
+    "correct": "der",
+    "why": "The standard jargon noun is masculine (`der Studi`, plural `die Studis`); the current row teaches the wrong singular article."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14505
+    ],
+    "word": "Atlas",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Atlanten — atlas/satin",
+    "correct": "Keep `atlas — Atlanten` here; split the textile homonym as `Atlas (satin) — Atlasse` if that rare sense is retained.",
+    "why": "`Atlanten` is the normal plural for the map-book sense, whereas the textile sense “satin” has plural `Atlasse`; combining both under one plural teaches a false form."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14582
+    ],
+    "word": "Bundesrecht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Bundesrechte",
+    "correct": "—",
+    "why": "In the glossed sense “federal law” (the body of law within federal jurisdiction), `Bundesrecht` has no plural; `Bundesrechte` would instead be understood as federal rights."
+  },
+  {
+    "batch": "nouns_021",
+    "bank": "nouns",
+    "source_rows": [
+      14625
+    ],
+    "word": "Einsatzleitung",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "operations management",
+    "correct": "operation/incident command; command team",
+    "why": "The German noun means command of a particular emergency or operation, or the people exercising it; generic business “operations management” is a different concept."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      14704
+    ],
+    "word": "Frauenbeauftragte",
+    "field": "plural, flags",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Frauenbeauftragte` with no `adjectivalNoun` flag",
+    "correct": "store `Frauenbeauftragten` and mark the row as an adjectival noun",
+    "why": "this is a substantivised adjective; the UI must render the nominative plural as `die Frauenbeauftragten`, not `die Frauenbeauftragte`."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      14808
+    ],
+    "word": "Hilfsbedürftige",
+    "field": "plural, english, flags",
+    "severity": "high",
+    "category": "plural",
+    "current": "`die Hilfsbedürftige | Hilfsbedürftige | person in need of help`, with no adjectival-noun flag",
+    "correct": "`die Hilfsbedürftige | Hilfsbedürftigen | woman/female person in need of help`, with `adjectivalNoun`",
+    "why": "the UI would currently show the singular form as the plural; the feminine article also denotes a female person, not an unspecified person."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      14840
+    ],
+    "word": "Jobticket",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"job ticket\"",
+    "correct": "\"employer-subsidised public-transport pass/commuter pass provided through an employer\"",
+    "why": "\"job ticket\" is not an explanatory English equivalent and conceals the specific German transport-pass meaning."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      14915
+    ],
+    "word": "Leichenschau",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"post-mortem examination\"",
+    "correct": "\"external examination of a body/death examination\"",
+    "why": "`Leichenschau` is the external medical examination and certification of a corpse, not a post-mortem dissection or autopsy (`Obduktion`)."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15015
+    ],
+    "word": "Pi",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Pis` with \"pi\"",
+    "correct": "use `—` for the mathematical constant; retain `Pis` only if the separate countable Greek-letter sense is explicitly given",
+    "why": "mathematical pi is not countable, so the stored plural does not belong to the glossed sense."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15056
+    ],
+    "word": "Relegation",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"relegation\"",
+    "correct": "\"promotion/relegation play-off\"",
+    "why": "in German sport `Relegation` normally names the play-off deciding promotion or relegation, not relegation itself (`Abstieg`)."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15120
+    ],
+    "word": "Skispringen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Skispringen`",
+    "correct": "`—`",
+    "why": "the sport noun `Skispringen` has no plural; repeating the singular as a stored plural falsely implies an invariant count noun."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15143
+    ],
+    "word": "Stabstelle",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Stabstelle | Stabstellen`",
+    "correct": "`Stabsstelle | Stabsstellen`",
+    "why": "the organisational term meaning \"staff unit\" requires the linking `-s-`; the stored headword and plural are misspelled."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15190
+    ],
+    "word": "Textverarbeitung",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Textverarbeitungen` with \"word processing\"",
+    "correct": "use `—` for the glossed field/activity \"word processing\"",
+    "why": "the ordinary glossed sense is uncountable; a highly contextual plural of processing operations should not be presented as its learner citation plural."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15233
+    ],
+    "word": "Verfahrensrecht",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Verfahrensrechte` with \"procedural law\"",
+    "correct": "use `—` for the body-of-law sense; add \"procedural right\" as a separate countable sense if retaining `Verfahrensrechte`",
+    "why": "procedural law as a legal system has no plural; `Verfahrensrechte` denotes individual procedural rights, a different sense absent from the gloss."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15304
+    ],
+    "word": "Zahnstein",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"tartar / dental plaque\"",
+    "correct": "\"tartar/dental calculus\"; use `Zahnbelag` for \"dental plaque\"",
+    "why": "plaque is the soft biofilm that can harden into tartar, so the two terms are not synonyms."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15369
+    ],
+    "word": "Apostelgeschichte",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Apostelgeschichten` with \"Acts of the Apostles/Book of Acts\"",
+    "correct": "use `—` for the biblical book title; retain `Apostelgeschichten` only with the separate literal sense \"stories about apostles\"",
+    "why": "the proper-title sense in the gloss has no plural; the stored plural belongs to a different compositional sense."
+  },
+  {
+    "batch": "nouns_022",
+    "bank": "nouns",
+    "source_rows": [
+      15388
+    ],
+    "word": "Augentropfen",
+    "field": "article, word, plural",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Augentropfen | Augentropfen | eye drops`",
+    "correct": "`die Augentropfen | Augentropfen | eye drops` as a plural-only entry",
+    "why": "medicine meaning \"eye drops\" is plural-only and takes `die`; `das Augentropfen` would instead be a nominalised action of dripping into the eyes."
+  },
+  {
+    "batch": "nouns_023",
+    "bank": "nouns",
+    "source_rows": [
+      15741
+    ],
+    "word": "Klaviermusik",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "plural `Klaviermusiken`; English `piano music`",
+    "correct": "use `—` for the mass sense “piano music”, or add the countable sense “piano piece” that licenses `Klaviermusiken`",
+    "why": "In the two ordinary “piano music” senses the noun is used without a plural; the stored plural belongs to the separate countable sense “piano piece”."
+  },
+  {
+    "batch": "nouns_023",
+    "bank": "nouns",
+    "source_rows": [
+      15909
+    ],
+    "word": "Paroli",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "plural `Parolis`; English `Paroli bieten — to stand up to / match someone`",
+    "correct": "use `—` for the fixed-expression resistance sense; retain `Parolis` only if separately glossing the historical gambling sense",
+    "why": "The resistance meaning occurs in the fixed singular expression `jemandem/einer Sache Paroli bieten`; `Parolis` is the plural of the homonymous bet-doubling term in the game of Pharao."
+  },
+  {
+    "batch": "nouns_024",
+    "bank": "nouns",
+    "source_rows": [
+      16171
+    ],
+    "word": "Vernehmen",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"hearing (in 'dem Vernehmen nach')\"",
+    "correct": "\"hearing/questioning; (dem Vernehmen nach) according to reports/as is understood\"",
+    "why": "in the cited fixed phrase, *Vernehmen* does not translate as \"hearing\"; the current parenthetical explicitly teaches a false interpretation of the idiom."
+  },
+  {
+    "batch": "nouns_024",
+    "bank": "nouns",
+    "source_rows": [
+      16437
+    ],
+    "word": "Dorfleben",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Dorfleben`",
+    "correct": "`—`",
+    "why": "*Dorfleben* meaning village life or the rural way of life is a mass noun without an ordinary plural; the UI would teach the unnatural form *die Dorfleben*."
+  },
+  {
+    "batch": "nouns_024",
+    "bank": "nouns",
+    "source_rows": [
+      16645
+    ],
+    "word": "Heimtextilien",
+    "field": "article, word",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Heimtextilien` / plural `Heimtextilien`",
+    "correct": "use singular `die Heimtextilie`, plural `Heimtextilien`; if retained as a plural-only headword, its article must be `die`",
+    "why": "*Heimtextilien* is plural and cannot take neuter singular *das*; the current card displays an impossible noun phrase."
+  },
+  {
+    "batch": "nouns_024",
+    "bank": "nouns",
+    "source_rows": [
+      16669
+    ],
+    "word": "Illustrierte",
+    "field": "plural, flags",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Illustrierte` / no `adjectivalNoun` flag",
+    "correct": "plural `Illustrierten` and add `adjectivalNoun`",
+    "why": "the magazine noun follows adjectival declension: singular *die Illustrierte*, plural *die Illustrierten*; the stored value would make the UI display the singular form as a plural."
+  },
+  {
+    "batch": "nouns_025",
+    "bank": "nouns",
+    "source_rows": [
+      16827
+    ],
+    "word": "Magenbeschwerden",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "das",
+    "correct": "die",
+    "why": "Magenbeschwerden is a plural-only noun and therefore takes the plural article die."
+  },
+  {
+    "batch": "nouns_025",
+    "bank": "nouns",
+    "source_rows": [
+      17196
+    ],
+    "word": "Tops",
+    "field": "word, article, english",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Tops | Tops | tops",
+    "correct": "das Top | Tops | top (garment)",
+    "why": "The stored headword is the plural form paired with a singular neuter article, evidently a malformed corpus extraction."
+  },
+  {
+    "batch": "nouns_025",
+    "bank": "nouns",
+    "source_rows": [
+      17289
+    ],
+    "word": "Weichteile",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "der",
+    "correct": "die",
+    "why": "Weichteile is a plural-only noun and therefore takes die; der is only possible in an inflected genitive-plural phrase, not as its article."
+  },
+  {
+    "batch": "nouns_025",
+    "bank": "nouns",
+    "source_rows": [
+      17306
+    ],
+    "word": "Windpocke",
+    "field": "word, plural, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "die Windpocke | Windpocken | chicken pox",
+    "correct": "die Windpocken | — | chickenpox; alternatively keep singular Windpocke only with “chickenpox blister/pock”",
+    "why": "The disease name is conventionally plural-only; the singular denotes an individual blister, so the current citation form and disease gloss do not match."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17542
+    ],
+    "word": "DIA",
+    "field": "word; english",
+    "severity": "high",
+    "category": "junk",
+    "current": "die DIA — DIA",
+    "correct": "remove unless a specific expanded acronym and sense can be supplied",
+    "why": "An unexplained all-capital acronym translated only as itself is not a usable German noun entry and has no determinate learner meaning."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17609
+    ],
+    "word": "Erfindergeist",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Erfindergeister",
+    "correct": "—",
+    "why": "In the glossed abstract sense “inventiveness/ingenuity”, Erfindergeist has no plural; Erfindergeister would instead be interpreted as inventive people/spirits."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17688
+    ],
+    "word": "Football",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "American football",
+    "correct": "American football; for the count noun with plural Footballs, specifically an American-football ball",
+    "why": "The stored plural belongs to the physical ball, whereas the gloss reads as the normally uncountable sport and hides that distinction."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17717
+    ],
+    "word": "Garnier",
+    "field": "word; english",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Garnier — garnish",
+    "correct": "remove; use die Garnierung or die Garnitur for “garnish” as appropriate",
+    "why": "Garnier is not a standard German common-noun lemma meaning “garnish” and appears to be corpus/name contamination."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17760
+    ],
+    "word": "Gorleben",
+    "field": "article; word; english",
+    "severity": "high",
+    "category": "junk",
+    "current": "das Gorleben — Gorleben",
+    "correct": "remove from the common-noun bank, or store Gorleben as a proper place name without an article in a proper-name resource",
+    "why": "Gorleben is a place name normally used without an article, not a neuter common noun for learners."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17778
+    ],
+    "word": "Grundton",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "keynote",
+    "correct": "fundamental note/tone; underlying tone or mood",
+    "why": "“Keynote” is not the normal musical or figurative meaning and points learners toward Hauptgedanke/Leitmotiv instead."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17810
+    ],
+    "word": "Hausgebrauch",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Hausgebräuche",
+    "correct": "— for the glossed sense “domestic/personal use”",
+    "why": "Hausgebrauch is uncountable in this sense; Hausgebräuche would suggest household customs, not multiple instances of domestic use."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      17953
+    ],
+    "word": "Königsweg",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "royal road/silver bullet",
+    "correct": "ideal/best solution or course of action",
+    "why": "The usual figurative meaning is omitted; “royal road” is a literal calque and “silver bullet” adds the different idea of an effortless magic solution."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      18004
+    ],
+    "word": "Landleben",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Landleben",
+    "correct": "—",
+    "why": "Landleben “country life” has no plural; the stored form would incorrectly render as die Landleben."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      18022
+    ],
+    "word": "Lebensphilosophie",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Lebensphilosophien",
+    "why": "The regular plural is standard and genuinely usable when referring to different philosophies/outlooks on life."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      18171
+    ],
+    "word": "Outing",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "coming out/outing",
+    "correct": "outing, i.e. public disclosure of another person’s sexuality or private identity; distinguish das Coming-out for voluntary coming out",
+    "why": "German Outing normally denotes disclosure by others, so teaching it as “coming out” reverses the crucial agency distinction."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      18175
+    ],
+    "word": "Palladium",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Palladien",
+    "correct": "— for the chemical element “palladium”",
+    "why": "The metal is a mass noun without a plural; Palladien is associated with the separate historical sense “Palladium/Palladion statue”."
+  },
+  {
+    "batch": "nouns_026",
+    "bank": "nouns",
+    "source_rows": [
+      18180
+    ],
+    "word": "Parkschein",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "parking ticket (pay-and-display) / parking permit",
+    "correct": "pay-and-display ticket/parking ticket; remove “parking permit”",
+    "why": "A parking permit is a Parkausweis/Parkberechtigung, not a Parkschein."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18249
+    ],
+    "word": "Re",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "re/regarding",
+    "correct": "redouble/counter-call (in card games)",
+    "why": "The German neuter noun with plural Res is the card-game call made in response to Kontra; “re/regarding” is an English preposition, not this noun's meaning."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18288
+    ],
+    "word": "Safety",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "safety",
+    "correct": "safety (American-football defensive player or two-point scoring play)",
+    "why": "German der Safety is the borrowed American-football term, not the ordinary abstract concept “safety” (Sicherheit)."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18394
+    ],
+    "word": "Speis",
+    "field": "article / english",
+    "severity": "high",
+    "category": "article",
+    "current": "der Speis — pantry/mortar",
+    "correct": "der Speis — mortar (Austrian/regional); treat die Speis — pantry as a separate feminine entry",
+    "why": "The row conflates two regional nouns with different genders and meanings."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18421
+    ],
+    "word": "Staphylococcus",
+    "field": "word / plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "Staphylococcus — Staphylococcen",
+    "correct": "Staphylokokkus — Staphylokokken; alternatively retain scientific Staphylococcus only as a taxonomic name without the hybrid plural",
+    "why": "The standard German common noun is Staphylokokkus; Staphylococcen is not its standard plural."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18503
+    ],
+    "word": "Tröpfcheninfektion",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "airborne infection/droplet infection",
+    "correct": "droplet-transmitted infection/infection spread by respiratory droplets",
+    "why": "Droplet and airborne transmission are medically distinct; the first alternative teaches a false equivalence."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18612
+    ],
+    "word": "Weltkugel",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Weltkugeln",
+    "why": "The countable globe sense has the regular, standard plural die Weltkugeln."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18622
+    ],
+    "word": "Wikidata",
+    "field": "word / article",
+    "severity": "high",
+    "category": "junk",
+    "current": "die Wikidata",
+    "correct": "remove from the noun bank; ordinary German uses the bare proper name Wikidata",
+    "why": "Wikidata is a proper name, not a feminine count noun that learners should memorise with die."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18692
+    ],
+    "word": "Affekt",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "affect",
+    "correct": "strong emotion/fit of passion; affective outburst",
+    "why": "English “affect” is a dangerous false friend and does not normally mean the intense, short-lived emotional state denoted by German Affekt."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18732
+    ],
+    "word": "Anzucht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Anzüchte",
+    "correct": "— for the glossed cultivation/growing/raising sense",
+    "why": "The cultivation sense is used without a plural; Anzüchte is the plural attached to the separate mining term meaning drainage ditches."
+  },
+  {
+    "batch": "nouns_027",
+    "bank": "nouns",
+    "source_rows": [
+      18814
+    ],
+    "word": "Beamtenrecht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Beamtenrechte (with gloss “civil service law”)",
+    "correct": "— for the “civil-service law” sense",
+    "why": "The legal-system sense is uncountable; Beamtenrechte is interpreted as “civil servants' rights,” a separate sense, not multiple bodies of civil-service law."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19058
+    ],
+    "word": "Fernost",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "der",
+    "correct": "no article (Fernost, as in in/nach/aus Fernost)",
+    "why": "Standard German uses this geographical name without an article; teaching “der Fernost” gives learners an unusable citation phrase."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19116
+    ],
+    "word": "Früh",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "der",
+    "correct": "die",
+    "why": "The Austrian noun occurs as die Früh, especially in the phrase in der Früh."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19155
+    ],
+    "word": "Gemeine",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "the common/lowly",
+    "correct": "community/congregation (obsolete/regional variant of Gemeinde), or remove the entry",
+    "why": "The feminine noun die Gemeine means Gemeinde; the current gloss instead mistranslates a nominalised use of the adjective gemein."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19245
+    ],
+    "word": "Heizwerk",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "heating plant/thermal power station",
+    "correct": "heating plant/district-heating plant",
+    "why": "A Heizwerk supplies heat; a power station, especially one also producing electricity, is a Kraftwerk or Heizkraftwerk."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19287
+    ],
+    "word": "Ich",
+    "field": "plural; english",
+    "severity": "high",
+    "category": "plural",
+    "current": "plural=Ich; english=Ichs",
+    "correct": "plural=Ichs; english=ego/self/the I",
+    "why": "The plural and translation appear shifted: Ichs is the German plural, while the English field currently contains no translation at all."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19368
+    ],
+    "word": "Kinderbekleidung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Kinderbekleidungen",
+    "correct": "—",
+    "why": "Kinderbekleidung is normally an uncountable collective; the stored plural is not a standard, genuinely useful citation plural."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19508
+    ],
+    "word": "Mass",
+    "field": "article; word; plural; english",
+    "severity": "high",
+    "category": "junk",
+    "current": "die | Mass | Mass | die Maß, plural Maß",
+    "correct": "replace with das Maß | Maße | measure/degree/dimensions, or use Swiss das Mass | Masse with an explicit regional label",
+    "why": "This row is corrupted: its article is wrong, its English field contains German metadata, and neither the standard-German nor Swiss spelling has been given a valid plural."
+  },
+  {
+    "batch": "nouns_028",
+    "bank": "nouns",
+    "source_rows": [
+      19586
+    ],
+    "word": "Nachmittagsunterricht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Nachmittagsunterrichte",
+    "correct": "—",
+    "why": "In its normal collective sense “afternoon teaching/classes”, this compound is used without a plural; the stored form is artificial and not learner-worthy."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19693
+    ],
+    "word": "Polizeigewalt",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Polizeigewalten",
+    "correct": "— for the glossed sense \"police violence/brutality\"",
+    "why": "The violence sense is uncountable; Polizeigewalten belongs to the distinct sense of police powers/authorities."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19758
+    ],
+    "word": "Rechtsfähigkeit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Rechtsfähigkeiten",
+    "correct": "—",
+    "why": "The legal status/capacity denoted by Rechtsfähigkeit has no standard plural."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19834
+    ],
+    "word": "Schichtbetrieb",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Schichtbetriebe; shift operation",
+    "correct": "Use — with \"shift work/shift operation\", or retain Schichtbetriebe and add the countable sense \"business/facility operating shifts\".",
+    "why": "The plural is valid only for countable workplaces; the currently glossed operating arrangement is singular-only."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19853
+    ],
+    "word": "Schneehase",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "alpine hare/arctic hare/mountain hare",
+    "correct": "mountain hare / alpine hare",
+    "why": "Arctic hare is a different species; German Schneehase denotes Lepus timidus, not Lepus arcticus."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19919
+    ],
+    "word": "Sojamilch",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Sojamilchen",
+    "correct": "Sojamilche (rare sort plural), or — for ordinary soy milk",
+    "why": "Sojamilchen is the dative plural, not the nominative citation plural that the app displays after die."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19953
+    ],
+    "word": "Stahlbau",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Stahlbauten; steel construction",
+    "correct": "Use — for \"steel construction\", or retain Stahlbauten and add \"steel structure/building\".",
+    "why": "Stahlbauten is the plural of the countable structure sense, whereas the gloss names the uncountable construction method/industry."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19976
+    ],
+    "word": "Strafantrag",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "criminal complaint",
+    "correct": "request/application for criminal prosecution",
+    "why": "A criminal complaint is a Strafanzeige; a Strafantrag is the legally distinct request needed to prosecute certain offences."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      19980
+    ],
+    "word": "Stringenz",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "stringency",
+    "correct": "cogency / logical rigour / coherence",
+    "why": "This is a dangerous false friend: English stringency normally means strictness, not the logical consistency meant by German Stringenz."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      20031
+    ],
+    "word": "Torschuss",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "on-target shot/shot on goal",
+    "correct": "shot at goal / goal attempt",
+    "why": "A Torschuss need not be on target; the current first equivalent wrongly narrows the football term."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      20096
+    ],
+    "word": "Verderben",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Verderben",
+    "correct": "—",
+    "why": "The noun meaning ruin, spoilage or undoing has no plural; the stored value would render as the invalid learner form \"die Verderben\"."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      20171
+    ],
+    "word": "Wasserstoffperoxid",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Wasserstoffperoxide",
+    "correct": "—",
+    "why": "Hydrogen peroxide is the name of a specific chemical substance and has no standard plural in this sense."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      20238
+    ],
+    "word": "Zeus",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "der",
+    "correct": "no article; mark as a proper name or remove it from an article-drilling noun bank",
+    "why": "Zeus is a personal proper name and is normally used articlelessly, so teaching \"der Zeus\" as its citation form is false."
+  },
+  {
+    "batch": "nouns_029",
+    "bank": "nouns",
+    "source_rows": [
+      20296
+    ],
+    "word": "Alkoholmissbrauch",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Alkoholmissbräuche",
+    "correct": "—",
+    "why": "The fixed substance-abuse term Alkoholmissbrauch is singular-only; separate incidents would be Fälle von Alkoholmissbrauch."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20314
+    ],
+    "word": "Anfangskapital",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Anfangskapitalien (also Anfangskapitale)",
+    "why": "the noun has a usable standard plural, especially when comparing the starting capital of several firms or projects."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20331
+    ],
+    "word": "Arbeiterschaft",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Arbeiterschaften",
+    "why": "the standard plural is established and usable for the workforces or working classes of different places or periods."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20337
+    ],
+    "word": "As",
+    "field": "word, plural, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "das As; plural Asse; \"as/ace\"",
+    "correct": "das As; plural As; \"A flat (musical note)\"",
+    "why": "the row conflates As, the musical note A flat, with Ass \"ace\"; Asse is the plural of Ass, not of this lemma."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20394
+    ],
+    "word": "Bauklotz",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"building brick\"",
+    "correct": "\"building block; toy block\"",
+    "why": "a Bauklotz is a child's building block, not an ordinary masonry brick."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20395
+    ],
+    "word": "Baumwollstoff",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"scrim\"",
+    "correct": "\"cotton fabric; cotton cloth\"",
+    "why": "scrim is only one particular loosely woven fabric; it is not the general meaning of Baumwollstoff."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20397
+    ],
+    "word": "Befangenheit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Befangenheiten",
+    "why": "the noun has the standard plural Befangenheiten, usable for distinct forms or instances of inhibition, partiality, or bias."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20657
+    ],
+    "word": "Farbige",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"person of colour\"",
+    "correct": "\"coloured person (dated and discriminatory); do not teach as the neutral equivalent of Person of Color\"",
+    "why": "der Farbige is not a neutral German rendering of the self-designation Person of Color and is now widely marked as discriminatory."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20668
+    ],
+    "word": "Feldmark",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Feldmarken",
+    "why": "Feldmark has the regular, genuinely usable plural Feldmarken for the lands belonging to different settlements."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20840
+    ],
+    "word": "Goldstandard",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Goldstandards",
+    "why": "the standard plural Goldstandards is common when comparing monetary systems, procedures, or benchmark methods."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20865
+    ],
+    "word": "Gruppendynamik",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Gruppendynamiken",
+    "why": "the noun has a standard usable plural for the differing dynamics of multiple groups."
+  },
+  {
+    "batch": "nouns_030",
+    "bank": "nouns",
+    "source_rows": [
+      20961
+    ],
+    "word": "Hörsturz",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Hörstürze",
+    "why": "Hörsturz is countable and has the ordinary plural Hörstürze."
+  },
+  {
+    "batch": "nouns_031",
+    "bank": "nouns",
+    "source_rows": [
+      21052
+    ],
+    "word": "Kapitalertragsteuer",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "capital gains tax",
+    "correct": "tax on investment income/capital-income tax",
+    "why": "Kapitalertragsteuer covers investment income such as interest and dividends, not merely capital gains; the current gloss teaches the wrong tax concept."
+  },
+  {
+    "batch": "nouns_031",
+    "bank": "nouns",
+    "source_rows": [
+      21315
+    ],
+    "word": "Mucke",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "plural —; also note Mucken is the plural of a different word (whims/quirks)",
+    "correct": "gig (music jargon); music (informal)",
+    "why": "The English field contains a misleading editorial note instead of a translation. For the music/gig senses, Mucken is in fact a standard plural too."
+  },
+  {
+    "batch": "nouns_031",
+    "bank": "nouns",
+    "source_rows": [
+      21537
+    ],
+    "word": "Rechtsakte",
+    "field": "article, word, plural, english",
+    "severity": "high",
+    "category": "junk",
+    "current": "die Rechtsakte; plural Rechtsakten; legal act",
+    "correct": "der Rechtsakt; plural Rechtsakte; legal act",
+    "why": "The row has mistaken the plural Rechtsakte for a feminine singular and then generated Rechtsakten; the gloss belongs to the masculine lemma Rechtsakt."
+  },
+  {
+    "batch": "nouns_032",
+    "bank": "nouns",
+    "source_rows": [
+      21847
+    ],
+    "word": "Tatar",
+    "field": "article, english",
+    "severity": "high",
+    "category": "article",
+    "current": "der Tatar; Tatar/steak tartare",
+    "correct": "keep **der Tatar** = Tatar (person); make a separate **das Tatar** = steak tartare/minced raw beef entry",
+    "why": "The row conflates two homographs with different genders, teaching the masculine article for the food sense, which is neuter."
+  },
+  {
+    "batch": "nouns_032",
+    "bank": "nouns",
+    "source_rows": [
+      22130
+    ],
+    "word": "Zivil",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "in Zivil",
+    "correct": "civilian/plain clothes; **in Zivil** = in plain clothes / out of uniform",
+    "why": "The English field merely repeats a German phrase, so the learner is given no translation at all."
+  },
+  {
+    "batch": "nouns_032",
+    "bank": "nouns",
+    "source_rows": [
+      22140
+    ],
+    "word": "Zungenschlag",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "tone/undertone; slip of the tongue",
+    "correct": "accent / intonation / characteristic tone of speech",
+    "why": "*Slip of the tongue* is *Versprecher* or *Freud'scher Versprecher*, not *Zungenschlag*; the row teaches a false sense."
+  },
+  {
+    "batch": "nouns_033",
+    "bank": "nouns",
+    "source_rows": [
+      22637
+    ],
+    "word": "Elbe",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Elben",
+    "correct": "—",
+    "why": "The river name *die Elbe* has no plural; *Elben* is the plural of *Elb* (“elf”), not of this proper name."
+  },
+  {
+    "batch": "nouns_033",
+    "bank": "nouns",
+    "source_rows": [
+      22638
+    ],
+    "word": "Elbmündung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Elbmündungen",
+    "why": "The standard citation plural is *Elbmündungen* and is usable when referring to channels, historical configurations, or representations of the estuary."
+  },
+  {
+    "batch": "nouns_033",
+    "bank": "nouns",
+    "source_rows": [
+      22903
+    ],
+    "word": "Genua",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "das",
+    "correct": "die",
+    "why": "The foresail is *die Genua* (plural *Genuas*); neuter *das Genua* is the city name, not the glossed sailing term."
+  },
+  {
+    "batch": "nouns_033",
+    "bank": "nouns",
+    "source_rows": [
+      22970
+    ],
+    "word": "Grußformel",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "greeting/form of address (in a letter)",
+    "correct": "complimentary close/sign-off/closing formula (in a letter or email)",
+    "why": "A *Grußformel* is the closing expression such as *Mit freundlichen Grüßen*, not the greeting, salutation, or form of address."
+  },
+  {
+    "batch": "nouns_033",
+    "bank": "nouns",
+    "source_rows": [
+      22984
+    ],
+    "word": "Halbschatten",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "plural —; English half-shadow",
+    "correct": "plural Halbschatten; English penumbra/partial shade",
+    "why": "*Halbschatten* has the standard usable zero-ending plural *Halbschatten*, and “half-shadow” is an unidiomatic literal rendering."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23243
+    ],
+    "word": "Kokosraspel",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "die",
+    "correct": "der",
+    "why": "Standard German has der Kokosraspel, plural die Kokosraspel; the stored feminine article teaches the wrong gender."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23280
+    ],
+    "word": "Kreischen",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Kreischen",
+    "correct": "—",
+    "why": "The nominalised infinitive das Kreischen is a mass/event noun without a normal plural; the UI would incorrectly display “die Kreischen”."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23289
+    ],
+    "word": "Kriminaltechnik",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Kriminaltechniken",
+    "correct": "—",
+    "why": "Kriminaltechnik in the glossed sense “forensic science” is a field name and standard dictionaries mark it as having no plural."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23320
+    ],
+    "word": "Labordiagnostik",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Labordiagnostiken",
+    "correct": "—",
+    "why": "The medical field/process Labordiagnostik has no standard count plural; the generated-looking form is not a useful citation plural."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23519
+    ],
+    "word": "Moses",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "Moses",
+    "correct": "ship's boy/youngest crew member; yacht tender (nautical, dated)",
+    "why": "The article der and plural Moses belong to the nautical common noun, not the biblical proper name supplied as the translation."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23567
+    ],
+    "word": "Naturverbundenheit",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Naturverbundenheiten",
+    "correct": "—",
+    "why": "This abstract noun meaning closeness to or love of nature has no standard plural."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23574
+    ],
+    "word": "Net",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Nets; net",
+    "correct": "—; the Internet/the Net",
+    "why": "German das Net is a short form of Internet and has no standard plural; the generic English “net” instead suggests German Netz."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23603
+    ],
+    "word": "Nutrition",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Nutritionen",
+    "correct": "—",
+    "why": "The medical noun Nutrition meaning nutrition/feeding has no standard plural."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23710
+    ],
+    "word": "Pokemon",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "Pokemon; Pokemon",
+    "correct": "Pokémon; Pokémon",
+    "why": "The official and standard spelling includes the acute accent, as the current English gloss itself shows."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23720
+    ],
+    "word": "POS",
+    "field": "article, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "die; point of sale",
+    "correct": "der POS; point of sale (or retain die POS and translate the DDR abbreviation “polytechnic secondary school”)",
+    "why": "Die POS is the former East German Polytechnische Oberschule, whereas point of sale is masculine after der Point; the row combines the gender of one expansion with the meaning of another."
+  },
+  {
+    "batch": "nouns_034",
+    "bank": "nouns",
+    "source_rows": [
+      23770
+    ],
+    "word": "Radiowerbung",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "Radiowerbungen; radio advertisement",
+    "correct": "—; radio advertising",
+    "why": "Radiowerbung denotes advertising as a medium/activity and standard dictionaries mark it as having no plural; an individual advert is a Radiospot/Werbespot."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      23873
+    ],
+    "word": "Sakko",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "der",
+    "correct": "das",
+    "why": "the standard noun is das Sakko; Sakkos is the correct stored plural."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      23837
+    ],
+    "word": "Revers",
+    "field": "article, english",
+    "severity": "high",
+    "category": "article",
+    "current": "der Revers; \"lapel/reverse\"",
+    "correct": "das Revers; plural Revers; \"lapel\" (separate the specialist der Revers \"reverse side of a coin\" if wanted)",
+    "why": "standard German uses das Revers for a lapel; der Revers is Austrian for that sense or belongs to other specialist senses, so the row conflates senses and their gender."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      23882
+    ],
+    "word": "Satellitendaten",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "das",
+    "correct": "die",
+    "why": "Satellitendaten is a plural headword (singular: das Satellitendatum), so its citation article is die."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      23972
+    ],
+    "word": "Seemannsgarn",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Seemannsgarne",
+    "correct": "—",
+    "why": "in the glossed figurative sense \"tall tale/yarn\", Seemannsgarn is a mass noun used without a plural."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      24034
+    ],
+    "word": "Spachtel",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "der Spachtel; plural Spachteln",
+    "correct": "der Spachtel; plural Spachtel (alternatively Austrian die Spachtel; plural Spachteln)",
+    "why": "the stored gender and plural mix two declension variants; masculine der takes the unchanged plural Spachtel, while Spachteln belongs to feminine die Spachtel."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      24142
+    ],
+    "word": "Stura",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "Stura",
+    "correct": "StuRa",
+    "why": "this is the abbreviation of Studierendenrat/Studentenrat and conventionally retains its internal capital R; Stura is not the standard written form."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      24253
+    ],
+    "word": "Trias",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Trias",
+    "correct": "— for the glossed geological sense \"Triassic\"",
+    "why": "the geological period die Trias has no plural; unchanged plural Trias belongs to the separate learned sense \"triads/groups of three\"."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      24330
+    ],
+    "word": "Vereinsrecht",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Vereinsrechte",
+    "correct": "— for \"association law\"",
+    "why": "the legal-field sense das Vereinsrecht is uncountable; Vereinsrechte means rights held by a club or association, not multiple instances of association law."
+  },
+  {
+    "batch": "nouns_035",
+    "bank": "nouns",
+    "source_rows": [
+      24434
+    ],
+    "word": "Reduzierung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Reduzierungen",
+    "why": "Reduzierung is countable and has the ordinary, productive plural Reduzierungen for multiple reductions."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24502
+    ],
+    "word": "Melange",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"put the Viennese-coffee sense first\"",
+    "correct": "\"Viennese coffee/mélange; mixture/blend\"",
+    "why": "The stored value is an editing instruction, not an English translation."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24566
+    ],
+    "word": "Vinyl",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—` / \"vinyl (records)\"",
+    "correct": "use `Vinyls` for the countable record sense, or change the gloss to the uncountable material/medium sense \"vinyl\"",
+    "why": "*Vinyl* as jargon for an individual record has the standard plural *Vinyls*; the no-plural value fits only the material/medium sense."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24579
+    ],
+    "word": "Studierende",
+    "field": "article, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`der Studierende` / \"student (gender-neutral)\"",
+    "correct": "\"male student; student (grammatically masculine singular)\"; use plural `die Studierenden` or `die studierende Person` for explicitly gender-neutral reference",
+    "why": "The masculine definite article and inflection make this a masculine singular form, not a gender-neutral singular citation form."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24587
+    ],
+    "word": "Konsumierende",
+    "field": "article, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`der Konsumierende` / \"consumer (gender-neutral)\"",
+    "correct": "\"male consumer; consumer (grammatically masculine singular)\"; use plural `die Konsumierenden` or a gender-neutral periphrasis for explicitly inclusive reference",
+    "why": "With `der`, the nominalised participle is masculine singular; calling that form gender-neutral teaches a false agreement fact."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24622
+    ],
+    "word": "Anti-Held",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Anti-Held`",
+    "correct": "`Antiheld`",
+    "why": "The standard German compound is written closed, without a hyphen."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24644
+    ],
+    "word": "AspergerSyndrom",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`AspergerSyndrom` / `—`",
+    "correct": "remove this malformed duplicate; the correctly hyphenated `Asperger-Syndrom` already occurs at source row 24582",
+    "why": "German requires the hyphen in this proper-name compound, and this row duplicates an existing correct bank entry."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24645
+    ],
+    "word": "Preis-LeistungsVerhältnis",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Preis-LeistungsVerhältnis` / `Preis-LeistungsVerhältnisse`",
+    "correct": "remove this malformed duplicate; `Preis-Leistungs-Verhältnis` already occurs at source row 24591",
+    "why": "A hyphen is missing before *Verhältnis* in both singular and plural, and the correctly written item is already present."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24646
+    ],
+    "word": "Pro-KopfEinkommen",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Pro-KopfEinkommen`",
+    "correct": "remove this malformed duplicate; `Pro-Kopf-Einkommen` already occurs at source row 24595",
+    "why": "The multi-part compound requires the second hyphen, and an otherwise identical correct entry is already present."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24647
+    ],
+    "word": "Work-LifeBalance",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Work-LifeBalance`",
+    "correct": "remove this malformed duplicate; `Work-Life-Balance` already occurs at source row 24596",
+    "why": "The final component must also be linked by a hyphen, and the correct form is already in the bank."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24691
+    ],
+    "word": "Serviceangestellte",
+    "field": "article, english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`die Serviceangestellte` / \"service employee (gender-neutral)\"",
+    "correct": "\"service employee (female)\"",
+    "why": "The feminine article and weak feminine singular ending explicitly mark a female employee; this form is not gender-neutral."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24753
+    ],
+    "word": "Deutschland",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Deutschland`",
+    "correct": "mark the country name as normally articleless; retain neuter gender only as metadata or explain exceptional modified uses such as `das heutige Deutschland`",
+    "why": "The unmodified country name is normally used without an article, so presenting `das Deutschland` as its citation form gives learners a false model."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24754
+    ],
+    "word": "Österreich",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Österreich`",
+    "correct": "mark the country name as normally articleless; retain neuter gender only as metadata",
+    "why": "Standard unmodified usage is `Österreich`, not `das Österreich`."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24755
+    ],
+    "word": "Luxemburg",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Luxemburg`",
+    "correct": "mark the country name as normally articleless; retain neuter gender only as metadata",
+    "why": "The country name ordinarily appears without an article; the definite article requires a special modified or contrastive context."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24756
+    ],
+    "word": "Europa",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Europa`",
+    "correct": "mark the proper name as normally articleless; retain neuter gender only as metadata",
+    "why": "The continent name is normally simply `Europa`; `das Europa` is possible only in marked constructions such as `das Europa des 19. Jahrhunderts`."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24758
+    ],
+    "word": "Griechenland",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Griechenland`",
+    "correct": "mark the country name as normally articleless; retain neuter gender only as metadata",
+    "why": "Unmodified `Griechenland` does not take the definite article in ordinary German."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24760
+    ],
+    "word": "Finnland",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Finnland`",
+    "correct": "mark the country name as normally articleless; retain neuter gender only as metadata",
+    "why": "Teaching `das Finnland` as the default form falsely implies that this neuter country name normally takes an article."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24761
+    ],
+    "word": "Mexiko",
+    "field": "article",
+    "severity": "high",
+    "category": "article",
+    "current": "`das Mexiko`",
+    "correct": "mark the country name as normally articleless; retain neuter gender only as metadata",
+    "why": "The ordinary country name is articleless; `das Mexiko` occurs only in specially modified or contrastive uses."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24769
+    ],
+    "word": "Angestellter",
+    "field": "article, word, plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "`der Angestellter` / `Angestellten`",
+    "correct": "`der Angestellte` / stored plural `Angestellten`",
+    "why": "With the definite article, this adjectival noun takes weak nominative singular `-e`; `der Angestellter` is ungrammatical."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24770
+    ],
+    "word": "Auszubildender",
+    "field": "article, word, plural",
+    "severity": "high",
+    "category": "junk",
+    "current": "`der Auszubildender` / `Auszubildenden`",
+    "correct": "`der Auszubildende` / stored plural `Auszubildenden`",
+    "why": "The definite article requires weak adjectival-noun inflection, so the displayed citation form must be `der Auszubildende`."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24795
+    ],
+    "word": "Arbeitsvertag",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Arbeitsvertag`",
+    "correct": "`Arbeitsvertrag`",
+    "why": "The headword is missing the `r` in *Vertrag*; the stored plural already reflects the intended noun."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24873
+    ],
+    "word": "EDV-Kenntnisse",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`EDV-Kenntnisse`",
+    "why": "The headword is itself a normal plural-only learner expression; marking it as having no plural conflicts with the form and with the bank's treatment of comparable plural headwords."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24903
+    ],
+    "word": "Selbstbeherrschung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Selbstbeherrschungen`",
+    "correct": "`—`",
+    "why": "*Selbstbeherrschung* meaning self-control is an uncountable abstract noun and has no standard plural in this sense."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24916
+    ],
+    "word": "Weltbank",
+    "field": "plural, english",
+    "severity": "high",
+    "category": "plural",
+    "current": "`Weltbanken` / \"World Bank\"",
+    "correct": "use `—` for the proper-name sense \"the World Bank\"; retain `Weltbanken` only with a separate generic gloss",
+    "why": "The capitalised English gloss denotes the single international institution, for which the stored plural teaches the wrong sense pairing."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      24923
+    ],
+    "word": "Familiengründung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`Familiengründungen`",
+    "why": "This is a countable event noun and its plural is standard and genuinely used when discussing multiple cases of starting families."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      25012
+    ],
+    "word": "Monoskibobfahrer",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"monoski bobber\"",
+    "correct": "\"monoski-bob skier/rider; sit-skier\"",
+    "why": "\"Bobber\" does not name a person who uses the adaptive monoskibob and gives an English learner no reliable meaning."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      25013
+    ],
+    "word": "Polizeimeister",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"police sergeant\"",
+    "correct": "\"police constable/junior police officer (specific German rank)\"",
+    "why": "*Polizeimeister* is an entry-level German police rank and is commonly aligned with constable, not the distinct British rank of sergeant."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      25123
+    ],
+    "word": "Haupthandlung",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "`—`",
+    "correct": "`Haupthandlungen`",
+    "why": "The main plots/storylines of different works are readily countable, and the regular plural is standard and useful."
+  },
+  {
+    "batch": "nouns_036",
+    "bank": "nouns",
+    "source_rows": [
+      25166
+    ],
+    "word": "Stand-up-paddling",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "`Stand-up-paddling`",
+    "correct": "`Stand-up-Paddling`",
+    "why": "As part of the German noun compound, *Paddling* is capitalised after the hyphen."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25219
+    ],
+    "word": "Lehrende",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Lehrende",
+    "correct": "Lehrenden",
+    "why": "This is a nominalised adjective; after the article supplied by the UI, the nominative plural is die Lehrenden, not die Lehrende."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25323
+    ],
+    "word": "Normalsterbliche",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Normalsterbliche",
+    "correct": "Normalsterblichen",
+    "why": "As a nominalised adjective, its definite nominative plural is die Normalsterblichen; the stored form currently renders the wrong inflection."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25363
+    ],
+    "word": "Arbeitnehmende",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Arbeitnehmende",
+    "correct": "Arbeitnehmenden",
+    "why": "This nominalised participle takes the weak plural after die: die Arbeitnehmenden."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25369
+    ],
+    "word": "Mitarbeitende",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Mitarbeitende",
+    "correct": "Mitarbeitenden",
+    "why": "This nominalised participle takes the weak plural after die: die Mitarbeitenden."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25457
+    ],
+    "word": "Kohlehydrat",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "Kohlehydrat; Kohlehydrate",
+    "correct": "Kohlenhydrat; Kohlenhydrate",
+    "why": "The standard word contains the linking n in both singular and plural; the current headword is misspelled."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25461
+    ],
+    "word": "Möhrengrün",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Möhrengrüns",
+    "correct": "—",
+    "why": "Möhrengrün is normally a mass noun for carrot tops/greens; Möhrengrüns is not a genuinely useful citation plural for learners."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25482
+    ],
+    "word": "Unfallbeteiligte",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Unfallbeteiligte",
+    "correct": "Unfallbeteiligten",
+    "why": "This nominalised adjective has the definite plural die Unfallbeteiligten, which is the form the UI needs to render."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25495
+    ],
+    "word": "Landesverrat",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Landesverrate",
+    "correct": "—",
+    "why": "The legal noun Landesverrat is used without a plural; Landesverrate is not its standard citation plural."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25515
+    ],
+    "word": "Krimischauplatz",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "crime scene",
+    "correct": "setting/location of a crime story",
+    "why": "A real-world crime scene is a Tatort; Krimischauplatz denotes the setting in which a crime novel, film, or series takes place."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25538
+    ],
+    "word": "Begabte",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Begabte",
+    "correct": "Begabten",
+    "why": "This nominalised adjective has the definite plural die Begabten, not die Begabte."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25591
+    ],
+    "word": "Startloch",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "starting block",
+    "correct": "starting hole (historical athletics); chiefly encountered in the idiom in den Startlöchern stehen",
+    "why": "A starting block is a Startblock; a Startloch was a hole dug in the track for a runner's foot before starting blocks came into use."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25644
+    ],
+    "word": "Ja-",
+    "field": "word, plural, english",
+    "severity": "high",
+    "category": "junk",
+    "current": "die Ja-; plural Ja-; yes/no question",
+    "correct": "replace with die Ja-/Nein-Frage; plural Ja-/Nein-Fragen",
+    "why": "Ja- is a truncated first component, not a usable noun lemma; the gloss reveals the missing remainder of the compound."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25710
+    ],
+    "word": "Small",
+    "field": "word, plural, english",
+    "severity": "high",
+    "category": "junk",
+    "current": "der Small; plural Small; small talk",
+    "correct": "replace with der Small Talk/der Smalltalk; plural normally —",
+    "why": "Small on its own is an English adjective and not the German noun meaning “small talk”; this row is truncated corpus material."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25724
+    ],
+    "word": "Verletzte",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Verletzte",
+    "correct": "Verletzten",
+    "why": "This nominalised adjective has the definite plural die Verletzten, which is the form the UI needs."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25818
+    ],
+    "word": "Nächste",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Nächste",
+    "correct": "Nächsten",
+    "why": "This nominalised adjective has the definite plural die Nächsten; the stored form currently produces the wrong inflection."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25838
+    ],
+    "word": "Redewiedergabe",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Redewiedergabe",
+    "correct": "Redewiedergaben",
+    "why": "The standard countable plural is Redewiedergaben; repeating the singular teaches the wrong form."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25851
+    ],
+    "word": "Prüfende",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Prüfende",
+    "correct": "Prüfenden",
+    "why": "This nominalised participle has the definite plural die Prüfenden."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25855
+    ],
+    "word": "Lernende",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Lernende",
+    "correct": "Lernenden",
+    "why": "This nominalised participle has the definite plural die Lernenden."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25858
+    ],
+    "word": "Repair-Caf",
+    "field": "word, plural",
+    "severity": "high",
+    "category": "spelling",
+    "current": "Repair-Caf; Repair-Caf",
+    "correct": "Repair-Café; Repair-Cafés",
+    "why": "The final accented e has been truncated from both forms, leaving a nonexistent headword and plural."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25870
+    ],
+    "word": "Wagenburg",
+    "field": "english, cefrLevel",
+    "severity": "high",
+    "category": "cefr",
+    "current": "circle of wagons/wagon fort — not A2; A2",
+    "correct": "circle of wagons/wagon fort; move to B2/C1 (approximately)",
+    "why": "The English field contains an editorial audit note, and the note itself correctly signals that this uncommon historical/figurative noun is grossly mislevelled at A2."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25880
+    ],
+    "word": "Mausi",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Mausi",
+    "correct": "Mausis",
+    "why": "The normal plural of this pet name is Mausis; the English field itself even notes that form."
+  },
+  {
+    "batch": "nouns_037",
+    "bank": "nouns",
+    "source_rows": [
+      25887
+    ],
+    "word": "Arme",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Arme",
+    "correct": "Armen",
+    "why": "This nominalised adjective has the definite plural die Armen, not die Arme."
+  },
+  {
+    "batch": "nouns_038",
+    "bank": "nouns",
+    "source_rows": [
+      25914
+    ],
+    "word": "Tiermalerei",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Tiermalerei",
+    "correct": "— for the glossed genre/technique sense; use Tiermalereien only for individual animal paintings",
+    "why": "The singular cannot also serve as the plural. The art-form sense “animal painting” is normally uncountable, while the distinct count sense forms its plural regularly in -en."
+  },
+  {
+    "batch": "nouns_038",
+    "bank": "nouns",
+    "source_rows": [
+      25925
+    ],
+    "word": "Werbesprache",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "—",
+    "correct": "Werbesprachen",
+    "why": "Standard German records and uses the plural Werbesprachen, especially when comparing the advertising language of different periods, media, or markets; presenting the noun as plural-less is too restrictive."
+  },
+  {
+    "batch": "nouns_038",
+    "bank": "nouns",
+    "source_rows": [
+      25932
+    ],
+    "word": "Solarpanel",
+    "field": "plural",
+    "severity": "high",
+    "category": "plural",
+    "current": "Solarpaneele",
+    "correct": "Solarpanels",
+    "why": "Solarpanel is the English-derived lemma and takes the plural Solarpanels; Solarpaneele belongs with the alternative singular Solarpaneel."
+  }
+]

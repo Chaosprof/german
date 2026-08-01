@@ -1,0 +1,39 @@
+{
+  "nouns": [
+    25995,
+    {
+      "EXACT_MATCH": 10187,
+      "CURRENT_SUPERSET": 5512,
+      "DIVERGENT_MULTI": 2264,
+      "DIVERGENT_SINGLE": 5714,
+      "DEEPL_SUPERSET": 860,
+      "PUNCT_DIFF": 46,
+      "DUAL_GENDER": 8,
+      "NO_DEEPL": 1404
+    }
+  ],
+  "verbs": [
+    5583,
+    {
+      "EXACT_MATCH": 1589,
+      "CURRENT_SUPERSET": 1930,
+      "DIVERGENT_SINGLE": 628,
+      "DIVERGENT_MULTI": 1047,
+      "DEEPL_SUPERSET": 72,
+      "PUNCT_DIFF": 5,
+      "NO_DEEPL": 312
+    }
+  ],
+  "adjectives": [
+    9759,
+    {
+      "EXACT_MATCH": 3903,
+      "CURRENT_SUPERSET": 2212,
+      "DIVERGENT_SINGLE": 1756,
+      "DIVERGENT_MULTI": 1115,
+      "DEEPL_SUPERSET": 111,
+      "PUNCT_DIFF": 47,
+      "NO_DEEPL": 615
+    }
+  ]
+}

@@ -1,0 +1,701 @@
+row	rank	word	irregular	prateritum	perfekt	withSein	english	cefrLevel	source
+4201	4205	verchromen	False	UNSET	UNSET	UNSET	chromium-plate	UNSET	UNSET
+4202	4206	verfünffachen	False	UNSET	UNSET	UNSET	increase fivefold/quintuple	UNSET	UNSET
+4203	4207	vergeigen	False	UNSET	UNSET	UNSET	bungle/mess up	UNSET	UNSET
+4204	4208	verhehlen	False	UNSET	UNSET	UNSET	conceal	UNSET	UNSET
+4205	4209	verklären	False	UNSET	UNSET	UNSET	transfigure/idealise/romanticise	UNSET	UNSET
+4206	4210	verlanden	False	UNSET	UNSET	True	silt up	UNSET	UNSET
+4207	4211	verleimen	False	UNSET	UNSET	UNSET	bond/glue	UNSET	UNSET
+4208	4212	verquirlen	False	UNSET	UNSET	UNSET	whisk	UNSET	UNSET
+4209	4213	verramschen	False	UNSET	UNSET	UNSET	sell off cheaply	UNSET	UNSET
+4210	4214	versiegen	False	UNSET	UNSET	True	run dry	UNSET	UNSET
+4211	4215	verwehen	False	UNSET	UNSET	False	blow away	UNSET	UNSET
+4212	4216	verwirken	False	UNSET	UNSET	UNSET	forfeit	UNSET	UNSET
+4213	4217	vorsortieren	False	UNSET	UNSET	UNSET	presort	UNSET	UNSET
+4214	4218	vortreten	True	trat vor	vorgetreten	True	advance	UNSET	UNSET
+4215	4219	voten	False	UNSET	UNSET	UNSET	vote	UNSET	UNSET
+4216	4220	walken	False	UNSET	UNSET	UNSET	power-walk / do Nordic walking	UNSET	UNSET
+4217	4221	walzen	False	UNSET	UNSET	UNSET	mill/roll	UNSET	UNSET
+4218	4222	wegblasen	True	blies weg	weggeblasen	False	blow away	UNSET	UNSET
+4219	4223	weismachen	False	UNSET	UNSET	UNSET	jdm etw weismachen = fool/kid someone into believing sth	C1	UNSET
+4220	4224	weiterfliegen	True	flog weiter	weitergeflogen	True	continue one's flight/fly on	UNSET	UNSET
+4221	4225	witzeln	False	UNSET	UNSET	UNSET	joke	UNSET	UNSET
+4222	4226	würgen	False	UNSET	UNSET	UNSET	choke/gag/retch	UNSET	UNSET
+4223	4227	wuseln	False	UNSET	UNSET	UNSET	scurry	UNSET	UNSET
+4224	4228	zelten	False	UNSET	UNSET	UNSET	camp	B1	UNSET
+4225	4229	zerlassen	True	zerließ	zerlassen	False	melt	UNSET	UNSET
+4226	4230	zermürben	False	UNSET	UNSET	UNSET	wear down	UNSET	UNSET
+4227	4231	zerschießen	True	zerschoss	zerschossen	False	shoot to pieces/riddle with bullets	UNSET	UNSET
+4228	4232	zerschmettern	False	UNSET	UNSET	UNSET	shatter/smash	UNSET	UNSET
+4229	4233	zerstückeln	False	UNSET	UNSET	UNSET	dismember	UNSET	UNSET
+4230	4234	zukleistern	False	UNSET	UNSET	UNSET	cover/plaster	UNSET	UNSET
+4231	4235	zurückerlangen	False	UNSET	UNSET	UNSET	regain	UNSET	UNSET
+4232	4236	zurücktragen	True	trug zurück	zurückgetragen	False	carry back	B2	UNSET
+4233	4237	zusammenrufen	True	rief zusammen	zusammengerufen	False	call together/convene/summon	UNSET	UNSET
+4234	4238	zusammenschreiben	True	schrieb zusammen	zusammengeschrieben	False	write as one word/compile	B2	UNSET
+4235	4239	zusammenwerfen	True	warf zusammen	zusammengeworfen	False	lump together/pool/throw together	UNSET	UNSET
+4236	4240	abatmen	False	UNSET	UNSET	UNSET	eliminate by breathing/breathe off (technical)	UNSET	UNSET
+4237	4241	abbaggern	False	UNSET	UNSET	UNSET	excavate	UNSET	UNSET
+4238	4242	abbeißen	True	biss ab	abgebissen	False	bite off	UNSET	UNSET
+4239	4243	abblättern	False	UNSET	UNSET	True	flake off/peel/peel off	UNSET	UNSET
+4240	4244	abblenden	False	UNSET	UNSET	UNSET	dim/dip/stop down	UNSET	UNSET
+4241	4245	abbröckeln	False	UNSET	UNSET	True	crumble away/ease off	UNSET	UNSET
+4242	4246	abdreschen	True	drosch ab	abgedroschen	False	thresh; overuse	UNSET	UNSET
+4243	4247	abernten	False	UNSET	UNSET	UNSET	harvest/pick	UNSET	UNSET
+4244	4248	abfrieren	True	fror ab	abgefroren	True	freeze off	UNSET	UNSET
+4245	4249	abhärten	False	UNSET	UNSET	UNSET	harden/harden oneself/toughen	UNSET	UNSET
+4246	4250	abhusten	False	UNSET	UNSET	UNSET	cough up/expectorate	UNSET	UNSET
+4247	4251	abisolieren	False	UNSET	UNSET	UNSET	strip (a wire/cable)	UNSET	UNSET
+4248	4252	abkacken	False	UNSET	UNSET	True	crash/die/pass out	UNSET	UNSET
+4249	4253	abklappern	False	UNSET	UNSET	UNSET	canvass	UNSET	UNSET
+4250	4254	ablecken	False	UNSET	UNSET	UNSET	lick clean/lick off	UNSET	UNSET
+4251	4255	abmähen	False	UNSET	UNSET	UNSET	mow/scythe	UNSET	UNSET
+4252	4256	abnötigen	False	UNSET	UNSET	UNSET	extort/wring out	UNSET	UNSET
+4253	4257	abrasieren	False	UNSET	UNSET	UNSET	shave off (raze)	UNSET	UNSET
+4254	4258	abspulen	False	UNSET	UNSET	UNSET	reel off/unwind	UNSET	UNSET
+4255	4259	abstillen	False	UNSET	UNSET	UNSET	wean	UNSET	UNSET
+4256	4260	abteilen	False	UNSET	UNSET	UNSET	divide/group/hyphenate	UNSET	UNSET
+4257	4261	abtörnen	False	UNSET	UNSET	UNSET	turn somebody off	UNSET	UNSET
+4258	4262	abzäunen	False	UNSET	UNSET	UNSET	fence off	UNSET	UNSET
+4259	4263	abzwacken	False	UNSET	UNSET	UNSET	cut off/pinch off	UNSET	UNSET
+4260	4264	adjustieren	False	UNSET	UNSET	UNSET	adjust; (AT) kit out/equip	UNSET	UNSET
+4261	4265	akkumulieren	False	UNSET	UNSET	UNSET	accumulate	UNSET	UNSET
+4262	4266	alternieren	False	UNSET	UNSET	UNSET	alternate	UNSET	UNSET
+4263	4267	amalgamieren	False	UNSET	UNSET	UNSET	amalgamate	UNSET	UNSET
+4264	4268	anbeißen	True	biss an	angebissen	False	accept/bite/buy into	UNSET	UNSET
+4265	4269	anbellen	False	UNSET	UNSET	UNSET	bark at	UNSET	UNSET
+4266	4270	anhaken	False	UNSET	UNSET	UNSET	hook/tick off	UNSET	UNSET
+4267	4271	anlächeln	False	UNSET	UNSET	UNSET	smile at	UNSET	UNSET
+4268	4272	anlachen	False	UNSET	UNSET	UNSET	smile at	UNSET	UNSET
+4269	4273	annotieren	False	UNSET	UNSET	UNSET	annotate	UNSET	UNSET
+4270	4274	anschleichen	True	schlich an	angeschlichen	True	come sneaking up/creep up on	UNSET	UNSET
+4271	4275	anschwärzen	False	UNSET	UNSET	UNSET	blacken/denigrate	UNSET	UNSET
+4272	4276	anstupsen	False	UNSET	UNSET	UNSET	nudge/poke	UNSET	UNSET
+4273	4277	argwöhnen	False	UNSET	UNSET	UNSET	suspect	UNSET	UNSET
+4274	4278	arrondieren	False	UNSET	UNSET	UNSET	round off/consolidate	UNSET	UNSET
+4275	4279	assimilieren	False	UNSET	UNSET	UNSET	assimilate	UNSET	UNSET
+4276	4280	aufbahren	False	UNSET	UNSET	UNSET	lay out	UNSET	UNSET
+4277	4281	aufbauschen	False	UNSET	UNSET	UNSET	billow/blow up/exaggerate	UNSET	UNSET
+4278	4282	aufblinken	False	UNSET	UNSET	UNSET	flash	UNSET	UNSET
+4279	4283	aufbrezeln	False	UNSET	UNSET	UNSET	dress up/doll up	UNSET	UNSET
+4280	4284	auffädeln	False	UNSET	UNSET	UNSET	string together/thread together	UNSET	UNSET
+4281	4285	aufnähen	False	UNSET	UNSET	UNSET	patch/sew	UNSET	UNSET
+4282	4286	aufplatzen	False	UNSET	UNSET	True	burst	UNSET	UNSET
+4283	4287	aufprägen	False	UNSET	UNSET	UNSET	emboss/imprint on/stamp	UNSET	UNSET
+4284	4288	aufprallen	False	UNSET	UNSET	True	crash into/collide with/bounce off	UNSET	UNSET
+4285	4289	aufschwimmen	True	schwamm auf	aufgeschwommen	True	float up; aquaplane	UNSET	UNSET
+4286	4290	aufstöhnen	False	UNSET	UNSET	UNSET	groan	UNSET	UNSET
+4287	4291	aufstreben	False	UNSET	UNSET	UNSET	aspire	UNSET	UNSET
+4288	4292	auftreffen	True	traf auf	aufgetroffen	True	hit/impinge/strike	UNSET	UNSET
+4289	4293	aufzehren	False	UNSET	UNSET	UNSET	consume/use up/deplete	UNSET	UNSET
+4290	4294	auseinanderschrauben	False	UNSET	UNSET	UNSET	unscrew	UNSET	UNSET
+4291	4295	ausflippen	False	UNSET	UNSET	True	flip out/freak out	UNSET	UNSET
+4292	4296	ausfransen	False	UNSET	UNSET	True	become frayed/fray	UNSET	UNSET
+4293	4297	ausgucken	False	UNSET	UNSET	UNSET	case/look (everywhere) for/look out	UNSET	UNSET
+4294	4298	auskämpfen	False	UNSET	UNSET	UNSET	battle it out/fight it out/fight out	UNSET	UNSET
+4295	4299	auskommentieren	False	UNSET	UNSET	UNSET	comment out	UNSET	UNSET
+4296	4300	auslichten	False	UNSET	UNSET	UNSET	prune/thin out	UNSET	UNSET
+4297	4301	auspeitschen	False	UNSET	UNSET	UNSET	flog/whip	UNSET	UNSET
+4298	4302	ausschütteln	False	UNSET	UNSET	UNSET	shake out	C1	UNSET
+4299	4303	ausspeichern	False	UNSET	UNSET	UNSET	read out/retrieve from storage; page out	UNSET	UNSET
+4300	4304	austräumen	False	UNSET	UNSET	UNSET	be over/come down to earth again	UNSET	UNSET
+4301	4305	auswringen	True	wrang aus	ausgewrungen	False	twist/wring/wring out	UNSET	UNSET
+4302	4306	ballern	False	UNSET	UNSET	UNSET	shoot/bang	UNSET	UNSET
+4303	4307	befremden	False	UNSET	UNSET	UNSET	disconcert	C1	UNSET
+4304	4308	begießen	True	begoss	begossen	False	water/pour over	UNSET	UNSET
+4305	4309	beieinanderstehen	True	stand beieinander	beieinandergestanden	False	stand together	UNSET	UNSET
+4306	4310	beiseitelassen	True	ließ beiseite	beiseitegelassen	False	disregard/ignore/leave aside	UNSET	UNSET
+4307	4311	bellen	False	UNSET	UNSET	UNSET	bark	A2	UNSET
+4308	4312	benebeln	False	UNSET	UNSET	UNSET	fog/cloud; befuddle	UNSET	UNSET
+4309	4313	beratschlagen	False	UNSET	UNSET	UNSET	deliberate	UNSET	UNSET
+4310	4314	bersten	True	barst	geborsten	True	asunder/break/burst	UNSET	UNSET
+4311	4315	bescheißen	True	beschiss	beschissen	False	pull a fast one/screw/swindle	UNSET	UNSET
+4312	4316	besolden	False	UNSET	UNSET	UNSET	pay a salary/remunerate	UNSET	UNSET
+4313	4317	bespaßen	False	UNSET	UNSET	UNSET	entertain	UNSET	UNSET
+4314	4318	biken	False	UNSET	UNSET	UNSET	bike	UNSET	UNSET
+4315	4319	blondieren	False	UNSET	UNSET	UNSET	bleach blond	UNSET	UNSET
+4316	4320	briefen	False	UNSET	UNSET	UNSET	brief	UNSET	UNSET
+4317	4321	budgetieren	False	UNSET	UNSET	UNSET	budget/budget for/draw up a budget	UNSET	UNSET
+4318	4322	casten	False	UNSET	UNSET	UNSET	cast	UNSET	UNSET
+4319	4323	crawlen	False	UNSET	UNSET	UNSET	swim (the) front crawl	UNSET	UNSET
+4320	4324	darben	False	UNSET	UNSET	UNSET	go without/live in want	UNSET	UNSET
+4321	4325	davonfahren	True	fuhr davon	davongefahren	True	draw ahead/drive away/drive off	UNSET	UNSET
+4322	4326	davonziehen	True	zog davon	davongezogen	True	march off/move ahead/move on	UNSET	UNSET
+4323	4327	dedizieren	False	UNSET	UNSET	UNSET	dedicate	UNSET	UNSET
+4324	4328	deformieren	False	UNSET	UNSET	UNSET	deform	UNSET	UNSET
+4325	4329	defragmentieren	False	UNSET	UNSET	UNSET	defragment	UNSET	UNSET
+4326	4330	dekompilieren	False	UNSET	UNSET	UNSET	decompile	UNSET	UNSET
+4327	4331	demolieren	False	UNSET	UNSET	UNSET	demolish/vandalize	UNSET	UNSET
+4328	4332	desavouieren	False	UNSET	UNSET	UNSET	compromise/disavow/expose	UNSET	UNSET
+4329	4333	destruieren	False	UNSET	UNSET	UNSET	destroy	UNSET	UNSET
+4330	4334	dezentralisieren	False	UNSET	UNSET	UNSET	decentralise	UNSET	UNSET
+4331	4335	dressieren	False	UNSET	UNSET	UNSET	train	UNSET	UNSET
+4332	4336	durchfragen	False	UNSET	UNSET	UNSET	ask/ask one after another/ask one after the other	UNSET	UNSET
+4333	4337	durchknallen	False	UNSET	UNSET	True	snap/go berserk	UNSET	UNSET
+4334	4338	egalisieren	False	UNSET	UNSET	UNSET	equalise/level	UNSET	UNSET
+4335	4339	eifern	False	UNSET	UNSET	UNSET	emulate/strive	UNSET	UNSET
+4336	4340	einflößen	False	UNSET	UNSET	UNSET	administer (a liquid) to sb; inspire (fear/respect) in sb	UNSET	UNSET
+4337	4341	einheften	False	UNSET	UNSET	UNSET	file/staple in	UNSET	UNSET
+4338	4342	einnorden	False	UNSET	UNSET	UNSET	orient	UNSET	UNSET
+4339	4343	einprasseln	False	UNSET	UNSET	True	pelt down/come pouring in	UNSET	UNSET
+4340	4344	einsagen	False	UNSET	UNSET	UNSET	prompt	UNSET	UNSET
+4341	4345	einschwören	True	schwor ein	eingeschworen	False	swear in	UNSET	UNSET
+4342	4346	eintopfen	False	UNSET	UNSET	UNSET	pot	UNSET	UNSET
+4343	4347	eloxieren	False	UNSET	UNSET	UNSET	anodise	UNSET	UNSET
+4344	4348	entbürokratisieren	False	UNSET	UNSET	UNSET	cut bureaucracy	UNSET	UNSET
+4345	4349	enterben	False	UNSET	UNSET	UNSET	disinherit	UNSET	UNSET
+4346	4350	entgelten	True	entgalt	entgolten	False	repay/compensate/pay for	UNSET	UNSET
+4347	4351	enträtseln	False	UNSET	UNSET	UNSET	unravel	UNSET	UNSET
+4348	4352	entrinden	False	UNSET	UNSET	UNSET	strip the bark from/bark (a tree)	UNSET	UNSET
+4349	4353	entrinnen	True	entrann	entronnen	True	avoid/escape/run away from	UNSET	UNSET
+4350	4354	entschlafen	True	entschlief	entschlafen	True	fall asleep; pass away	UNSET	UNSET
+4351	4355	entsprießen	True	entspross	entsprossen	True	emanate/issue from/spring	UNSET	UNSET
+4352	4356	entzaubern	False	UNSET	UNSET	UNSET	disenchant/disenthrall	UNSET	UNSET
+4353	4357	erblassen	False	UNSET	UNSET	True	turn pale	UNSET	UNSET
+4354	4358	erküren	True	erkor	erkoren	False	choose	UNSET	UNSET
+4355	4359	erlügen	True	erlog	erlogen	False	fabricate	UNSET	UNSET
+4356	4360	ernüchtern	False	UNSET	UNSET	UNSET	sober up; disillusion	UNSET	UNSET
+4357	4361	erodieren	False	UNSET	UNSET	True	erode	UNSET	UNSET
+4358	4362	erschaudern	False	UNSET	UNSET	True	shudder	UNSET	UNSET
+4359	4363	erschnüffeln	False	UNSET	UNSET	UNSET	sniff out/ferret out	UNSET	UNSET
+4360	4364	erstversorgen	False	UNSET	UNSET	UNSET	give first aid/provide initial care	UNSET	UNSET
+4361	4365	eskortieren	False	UNSET	UNSET	UNSET	escort	UNSET	UNSET
+4362	4366	exekutieren	False	UNSET	UNSET	UNSET	execute	UNSET	UNSET
+4363	4367	exhumieren	False	UNSET	UNSET	UNSET	exhume	UNSET	UNSET
+4364	4368	explizieren	False	UNSET	UNSET	UNSET	explicate	UNSET	UNSET
+4365	4369	exzerpieren	False	UNSET	UNSET	UNSET	excerpt	UNSET	UNSET
+4366	4370	falzen	False	UNSET	UNSET	UNSET	crimp/fold/groove	UNSET	UNSET
+4367	4371	fehlinterpretieren	False	UNSET	UNSET	UNSET	misinterpret	UNSET	UNSET
+4368	4372	fertigmachen	False	UNSET	UNSET	UNSET	finish/get ready (sich fertigmachen); also colloq. beat up/wear out	UNSET	UNSET
+4369	4373	filtrieren	False	UNSET	UNSET	UNSET	filter/filtrate	UNSET	UNSET
+4370	4374	firmen	False	UNSET	UNSET	UNSET	confirm (administer the sacrament of confirmation)	UNSET	UNSET
+4371	4375	flanken	False	UNSET	UNSET	UNSET	cross (football); flank	UNSET	UNSET
+4372	4376	forttragen	True	trug fort	fortgetragen	False	bear away	UNSET	UNSET
+4373	4377	freiräumen	False	UNSET	UNSET	UNSET	clear	UNSET	UNSET
+4374	4378	fremdgehen	True	ging fremd	fremdgegangen	True	cheat/cheat on one's partner/have an affair	UNSET	UNSET
+4375	4379	frotzeln	False	UNSET	UNSET	UNSET	tease	UNSET	UNSET
+4376	4380	fuchteln	False	UNSET	UNSET	UNSET	wave about	UNSET	UNSET
+4377	4381	gabeln	False	UNSET	UNSET	UNSET	branch/fork	UNSET	UNSET
+4378	4382	geifern	False	UNSET	UNSET	UNSET	foam at the mouth; rant/rail against	UNSET	UNSET
+4379	4383	glotzen	False	UNSET	UNSET	UNSET	gape/gawk	UNSET	UNSET
+4380	4384	gurgeln	False	UNSET	UNSET	UNSET	gargle/gurgle	UNSET	UNSET
+4381	4385	häckseln	False	UNSET	UNSET	UNSET	chip/shred	UNSET	UNSET
+4382	4386	hebeln	False	UNSET	UNSET	UNSET	lever	UNSET	UNSET
+4383	4387	hecken	False	UNSET	UNSET	UNSET	breed/hatch/produce	UNSET	UNSET
+4384	4388	heiligen	False	UNSET	UNSET	UNSET	sanctify/consecrate	UNSET	UNSET
+4385	4389	heimzahlen	False	UNSET	UNSET	UNSET	pay back	UNSET	UNSET
+4386	4390	hellen	False	UNSET	UNSET	UNSET	bleach/brighten/discharge	UNSET	UNSET
+4387	4391	herausschmecken	False	UNSET	UNSET	UNSET	taste/detect (a flavour) in sth	UNSET	UNSET
+4388	4392	herauswerfen	True	warf heraus	herausgeworfen	False	kick out/throw out	UNSET	UNSET
+4389	4393	herbeiholen	False	UNSET	UNSET	UNSET	call for/fetch/summon	UNSET	UNSET
+4390	4394	herhören	False	UNSET	UNSET	UNSET	listen	UNSET	UNSET
+4391	4395	herumfummeln	False	UNSET	UNSET	UNSET	fiddle around/fumble	UNSET	UNSET
+4392	4396	herunternehmen	True	nahm herunter	heruntergenommen	False	lower/take down	UNSET	UNSET
+4393	4397	herunterstufen	False	UNSET	UNSET	UNSET	degrade/downgrade	UNSET	UNSET
+4394	4398	hervorbrechen	True	brach hervor	hervorgebrochen	True	burst out/burst through/erupt	UNSET	UNSET
+4395	4399	heuern	False	UNSET	UNSET	UNSET	enlist/hire	UNSET	UNSET
+4396	4400	hexen	False	UNSET	UNSET	UNSET	astound/do wonders/practise witchcraft	UNSET	UNSET
+4397	4401	hinabgehen	True	ging hinab	hinabgegangen	True	descend/go down/walk down	UNSET	UNSET
+4398	4402	hinreichen	False	UNSET	UNSET	UNSET	hand/suffice	UNSET	UNSET
+4399	4403	hintergehen	True	hinterging	hintergangen	False	deceive	UNSET	UNSET
+4400	4404	hintragen	True	trug hin	hingetragen	False	carry/take	UNSET	UNSET
+4401	4405	humpeln	False	UNSET	UNSET	True	hobble	UNSET	UNSET
+4402	4406	hypnotisieren	False	UNSET	UNSET	UNSET	hypnotise	UNSET	UNSET
+4403	4407	indoktrinieren	False	UNSET	UNSET	UNSET	indoctrinate	UNSET	UNSET
+4404	4408	industrialisieren	False	UNSET	UNSET	UNSET	industrialise	C1	UNSET
+4405	4409	inhibieren	False	UNSET	UNSET	UNSET	inhibit	UNSET	UNSET
+4406	4410	insistieren	False	UNSET	UNSET	UNSET	insist	UNSET	UNSET
+4407	4411	internalisieren	False	UNSET	UNSET	UNSET	internalise	UNSET	UNSET
+4408	4412	interpolieren	False	UNSET	UNSET	UNSET	interpolate	UNSET	UNSET
+4409	4413	invertieren	False	UNSET	UNSET	UNSET	invert	UNSET	UNSET
+4410	4414	ironisieren	False	UNSET	UNSET	UNSET	treat ironically/satirise	C1	UNSET
+4411	4415	jäten	False	UNSET	UNSET	UNSET	weed	UNSET	UNSET
+4412	4416	kandieren	False	UNSET	UNSET	UNSET	candy/crystallise	UNSET	UNSET
+4413	4417	kannibalisieren	False	UNSET	UNSET	UNSET	cannibalise	UNSET	UNSET
+4414	4418	karikieren	False	UNSET	UNSET	UNSET	caricature/cartoon	UNSET	UNSET
+4415	4419	kellnern	False	UNSET	UNSET	UNSET	wait tables/work as a waiter	UNSET	UNSET
+4416	4420	keuchen	False	UNSET	UNSET	UNSET	gasp/wheeze	UNSET	UNSET
+4417	4421	klirren	False	UNSET	UNSET	UNSET	clink	UNSET	UNSET
+4418	4422	kommerzialisieren	False	UNSET	UNSET	UNSET	commercialise	UNSET	UNSET
+4419	4423	konfiszieren	False	UNSET	UNSET	UNSET	confiscate	B2	UNSET
+4420	4424	konnotieren	False	UNSET	UNSET	UNSET	connote	UNSET	UNSET
+4421	4425	konvergieren	False	UNSET	UNSET	UNSET	converge	UNSET	UNSET
+4422	4426	konzedieren	False	UNSET	UNSET	UNSET	admit/concede	UNSET	UNSET
+4423	4427	kriseln	False	UNSET	UNSET	UNSET	es kriselt = there is trouble brewing	UNSET	UNSET
+4424	4428	kupieren	False	UNSET	UNSET	UNSET	dock/crop; check/curb	UNSET	UNSET
+4425	4429	kurzhalten	True	hielt kurz	kurzgehalten	False	keep short	UNSET	UNSET
+4426	4430	kurzschließen	True	schloss kurz	kurzgeschlossen	False	short/short out/short-circuit	UNSET	UNSET
+4427	4431	kuschen	False	UNSET	UNSET	UNSET	knuckle under/kowtow/lie down	UNSET	UNSET
+4428	4432	labern	False	UNSET	UNSET	UNSET	blather/yap	UNSET	UNSET
+4429	4433	lasieren	False	UNSET	UNSET	UNSET	glaze/apply a wash to	UNSET	UNSET
+4430	4434	läutern	False	UNSET	UNSET	UNSET	clarify/purge/purify	UNSET	UNSET
+4431	4435	leaken	False	UNSET	UNSET	UNSET	leak	UNSET	UNSET
+4432	4436	leichtern	False	UNSET	UNSET	UNSET	lighten	UNSET	UNSET
+4433	4437	losfliegen	True	flog los	losgeflogen	True	fly off	UNSET	UNSET
+4434	4438	lupfen	False	UNSET	UNSET	UNSET	lift	UNSET	UNSET
+4435	4439	lynchen	False	UNSET	UNSET	UNSET	lynch	UNSET	UNSET
+4436	4440	maßregeln	False	UNSET	UNSET	UNSET	censure/reprimand	UNSET	UNSET
+4437	4441	miauen	False	UNSET	UNSET	UNSET	meow/mew/miaow	UNSET	UNSET
+4438	4442	missbilligen	False	UNSET	UNSET	UNSET	disapprove	C1	UNSET
+4439	4443	mogeln	False	UNSET	UNSET	UNSET	cheat	UNSET	UNSET
+4440	4444	mulchen	False	UNSET	UNSET	UNSET	mulch	UNSET	UNSET
+4441	4445	murren	False	UNSET	UNSET	UNSET	grumble/murmur	UNSET	UNSET
+4442	4446	nachäffen	False	UNSET	UNSET	UNSET	ape/imitate/monkey	UNSET	UNSET
+4443	4447	nachbesetzen	False	UNSET	UNSET	UNSET	backfill/fill a vacancy	C1	UNSET
+4444	4448	nachfahren	True	fuhr nach	nachgefahren	True	drive behind/follow/hunt a trail	UNSET	UNSET
+4445	4449	nachtreten	True	trat nach	nachgetreten	False	kick after; kick someone when they are down	UNSET	UNSET
+4446	4450	nassmachen	False	UNSET	UNSET	UNSET	wet	UNSET	UNSET
+4447	4451	nebeneinandersitzen	True	saß nebeneinander	nebeneinandergesessen	False	sit next to each other	UNSET	UNSET
+4448	4452	nebeneinanderstehen	True	stand nebeneinander	nebeneinandergestanden	False	stand side by side	UNSET	UNSET
+4449	4453	neiden	False	UNSET	UNSET	UNSET	envy	UNSET	UNSET
+4450	4454	niederknien	False	UNSET	UNSET	True	kneel down	UNSET	UNSET
+4451	4455	notlanden	False	UNSET	UNSET	True	make an emergency landing/force-land	UNSET	UNSET
+4452	4456	ohrfeigen	False	UNSET	UNSET	UNSET	box someone's ears/slap	UNSET	UNSET
+4453	4457	onanieren	False	UNSET	UNSET	UNSET	masturbate	UNSET	UNSET
+4454	4458	optieren	False	UNSET	UNSET	UNSET	opt	UNSET	UNSET
+4455	4459	panaschieren	False	UNSET	UNSET	UNSET	cross-vote/split one's vote; variegate	UNSET	UNSET
+4456	4460	partitionieren	False	UNSET	UNSET	UNSET	partition	UNSET	UNSET
+4457	4461	pathologisieren	False	UNSET	UNSET	UNSET	pathologise	UNSET	UNSET
+4458	4462	pauschalisieren	False	UNSET	UNSET	UNSET	generalise	B2	UNSET
+4459	4463	peinigen	False	UNSET	UNSET	UNSET	torment	UNSET	UNSET
+4460	4464	perpetuieren	False	UNSET	UNSET	UNSET	perpetuate	UNSET	UNSET
+4461	4465	plappern	False	UNSET	UNSET	UNSET	babble/chatter/gabble	UNSET	UNSET
+4462	4466	plattdrücken	False	UNSET	UNSET	UNSET	flatten/squeeze flat	UNSET	UNSET
+4463	4467	plumpsen	False	UNSET	UNSET	True	flop/plump	UNSET	UNSET
+4464	4468	pochieren	False	UNSET	UNSET	UNSET	poach	UNSET	UNSET
+4465	4469	politisieren	False	UNSET	UNSET	UNSET	be politically active/make politically aware/politicise	UNSET	UNSET
+4466	4470	poltern	False	UNSET	UNSET	UNSET	jangle/rant/rumble	UNSET	UNSET
+4467	4471	prellen	False	UNSET	UNSET	UNSET	bounce/bruise/cheat	C1	UNSET
+4468	4472	prickeln	False	UNSET	UNSET	UNSET	tingle	UNSET	UNSET
+4469	4473	puzzeln	False	UNSET	UNSET	UNSET	do a jigsaw (puzzle)	UNSET	UNSET
+4470	4474	quengeln	False	UNSET	UNSET	UNSET	moan/whine	UNSET	UNSET
+4471	4475	quieken	False	UNSET	UNSET	UNSET	squeal	UNSET	UNSET
+4472	4476	rausrutschen	False	UNSET	UNSET	True	slip out	UNSET	UNSET
+4473	4477	reinnehmen	True	nahm rein	reingenommen	False	take in/include/bring in	UNSET	UNSET
+4474	4478	rekurrieren	False	UNSET	UNSET	UNSET	refer back to (auf etw rekurrieren)	UNSET	UNSET
+4475	4479	robben	False	UNSET	UNSET	True	crawl/creep	UNSET	UNSET
+4476	4480	röntgen	False	UNSET	UNSET	UNSET	X-ray	UNSET	UNSET
+4477	4481	rotsehen	True	sah rot	rotgesehen	False	see red	B2	UNSET
+4478	4482	ruhigstellen	False	UNSET	UNSET	UNSET	immobilise/sedate	C1	UNSET
+4479	4483	rülpsen	False	UNSET	UNSET	UNSET	burp	UNSET	UNSET
+4480	4484	rumkriegen	False	UNSET	UNSET	UNSET	cajole/pass the time	UNSET	UNSET
+4481	4485	rumpeln	False	UNSET	UNSET	UNSET	rumble	UNSET	UNSET
+4482	4486	runzeln	False	UNSET	UNSET	UNSET	crinkle/wrinkle	UNSET	UNSET
+4483	4487	scheffeln	False	UNSET	UNSET	UNSET	accumulate/amass/pile up	UNSET	UNSET
+4484	4488	scheißen	True	schiss	geschissen	False	defecate/not care (vulgar)	UNSET	UNSET
+4485	4489	schellen	False	UNSET	UNSET	UNSET	jingle/ring	UNSET	UNSET
+4486	4490	scheuchen	False	UNSET	UNSET	UNSET	shoo	UNSET	UNSET
+4487	4491	schillern	False	UNSET	UNSET	UNSET	shimmer/be iridescent	C1	UNSET
+4488	4492	schlechtmachen	False	UNSET	UNSET	UNSET	badmouth	UNSET	UNSET
+4489	4493	schlingen	True	schlang	geschlungen	False	gobble/tie/wind around	UNSET	UNSET
+4490	4494	schludern	False	UNSET	UNSET	UNSET	work sloppily/be careless	UNSET	UNSET
+4491	4495	schlurfen	False	UNSET	UNSET	True	shuffle	UNSET	UNSET
+4492	4496	schmähen	False	UNSET	UNSET	UNSET	revile/disparage/abuse	UNSET	UNSET
+4493	4497	schmatzen	False	UNSET	UNSET	UNSET	champ/chomp/smack	UNSET	UNSET
+4494	4498	schmollen	False	UNSET	UNSET	UNSET	pout/sulk	UNSET	UNSET
+4495	4499	schraffieren	False	UNSET	UNSET	UNSET	hatch/shade (in a drawing)	UNSET	UNSET
+4496	4500	schwindeln	False	UNSET	UNSET	UNSET	cheat/feel dizzy/lie	B2	UNSET
+4497	4501	seilspringen	True	sprang seil	seilgesprungen	False	jump rope/skip rope	UNSET	UNSET
+4498	4502	sieben	False	UNSET	UNSET	UNSET	shake out/sieve/sift	A1	UNSET
+4499	4503	spachteln	False	UNSET	UNSET	UNSET	level out (with a spatula)/putty	UNSET	UNSET
+4500	4504	spähen	False	UNSET	UNSET	UNSET	look out/peek/peer	UNSET	UNSET
+4501	4505	spaßen	False	UNSET	UNSET	UNSET	joke	UNSET	UNSET
+4502	4506	steinigen	False	UNSET	UNSET	UNSET	stone	UNSET	UNSET
+4503	4507	stelzen	False	UNSET	UNSET	True	stalk/strut	UNSET	UNSET
+4504	4508	strangulieren	False	UNSET	UNSET	UNSET	strangle	UNSET	UNSET
+4505	4509	strippen	False	UNSET	UNSET	UNSET	strip	UNSET	UNSET
+4506	4510	sublimieren	False	UNSET	UNSET	UNSET	sublimate/sublime	UNSET	UNSET
+4507	4511	substanziieren	False	UNSET	UNSET	UNSET	substantiate	UNSET	UNSET
+4508	4512	tänzeln	False	UNSET	UNSET	UNSET	prance/sashay	UNSET	UNSET
+4509	4513	testieren	False	UNSET	UNSET	UNSET	certify/attest	UNSET	UNSET
+4510	4514	timen	False	UNSET	UNSET	UNSET	time	UNSET	UNSET
+4511	4515	titrieren	False	UNSET	UNSET	UNSET	titrate	UNSET	UNSET
+4512	4516	topfen	False	UNSET	UNSET	UNSET	pot	UNSET	UNSET
+4513	4517	töpfern	False	UNSET	UNSET	UNSET	do pottery	UNSET	UNSET
+4514	4518	traben	False	UNSET	UNSET	True	trot	UNSET	UNSET
+4515	4519	tradieren	False	UNSET	UNSET	UNSET	hand down	UNSET	UNSET
+4516	4520	traktieren	False	UNSET	UNSET	UNSET	beat up/maltreat/pester	UNSET	UNSET
+4517	4521	trampen	False	UNSET	UNSET	True	hitchhike	UNSET	UNSET
+4518	4522	trotten	False	UNSET	UNSET	True	plod/trot/trudge	UNSET	UNSET
+4519	4523	überbleiben	True	blieb über	übergeblieben	True	be left	UNSET	UNSET
+4520	4524	überblenden	False	UNSET	UNSET	UNSET	fade/fade over/outshine	UNSET	UNSET
+4521	4525	überdrehen	False	UNSET	UNSET	UNSET	over-rev/overspeed/overwind	UNSET	UNSET
+4522	4526	übereinanderschlagen	True	schlug übereinander	übereinandergeschlagen	False	cross/fold over each other; overlap	UNSET	UNSET
+4523	4527	überhandnehmen	True	nahm überhand	überhandgenommen	False	increase uncontrollably/to get out of control	C1	UNSET
+4524	4528	überrunden	False	UNSET	UNSET	UNSET	lap/outstrip	UNSET	UNSET
+4525	4529	überstimmen	False	UNSET	UNSET	UNSET	defeat/outvote/override	UNSET	UNSET
+4526	4530	übertünchen	False	UNSET	UNSET	UNSET	whitewash	UNSET	UNSET
+4527	4531	übervorteilen	False	UNSET	UNSET	UNSET	cheat	UNSET	UNSET
+4528	4532	umentscheiden	True	entschied um	umentschieden	False	sich umentscheiden — change one's mind	UNSET	UNSET
+4529	4533	umformulieren	False	UNSET	UNSET	UNSET	rephrase/restate	UNSET	UNSET
+4530	4534	umherirren	False	UNSET	UNSET	True	stray	UNSET	UNSET
+4531	4535	umladen	True	lud um	umgeladen	False	transfer/tranship (load onto another vehicle)	UNSET	UNSET
+4532	4536	umpolen	False	UNSET	UNSET	UNSET	change/change the polarity/reverse	UNSET	UNSET
+4533	4537	umringen	False	UNSET	UNSET	UNSET	surround	UNSET	UNSET
+4534	4538	unken	False	UNSET	UNSET	UNSET	predict the worst/prophesy doom	UNSET	UNSET
+4535	4539	unterjubeln	False	UNSET	UNSET	UNSET	saddle with	UNSET	UNSET
+4536	4540	uploaden	False	UNSET	UNSET	UNSET	upload	UNSET	UNSET
+4537	4541	urinieren	False	UNSET	UNSET	UNSET	urinate	UNSET	UNSET
+4538	4542	verachtfachen	False	UNSET	UNSET	UNSET	increase eightfold/octuple	UNSET	UNSET
+4539	4543	verängstigen	False	UNSET	UNSET	UNSET	frighten/scare	C1	UNSET
+4540	4544	verbrühen	False	UNSET	UNSET	UNSET	scald	UNSET	UNSET
+4541	4545	verdrücken	False	UNSET	UNSET	UNSET	beat it/polish off	UNSET	UNSET
+4542	4546	verdursten	False	UNSET	UNSET	True	be dying of thirst/die from thirst/die of thirst	UNSET	UNSET
+4543	4547	verebben	False	UNSET	UNSET	True	ebb away	UNSET	UNSET
+4544	4548	verfeuern	False	UNSET	UNSET	UNSET	burn/fire	UNSET	UNSET
+4545	4549	verfinstern	False	UNSET	UNSET	UNSET	darken	UNSET	UNSET
+4546	4550	vergasen	False	UNSET	UNSET	UNSET	fumigate/gas/gasify	UNSET	UNSET
+4547	4551	verkomplizieren	False	UNSET	UNSET	UNSET	complicate	UNSET	UNSET
+4548	4552	verlautbaren	False	UNSET	UNSET	UNSET	proclaim	UNSET	UNSET
+4549	4553	verleumden	False	UNSET	UNSET	UNSET	slander/defame/libel	UNSET	UNSET
+4550	4554	vernageln	False	UNSET	UNSET	UNSET	nail down/nail up	UNSET	UNSET
+4551	4555	verniedlichen	False	UNSET	UNSET	UNSET	minimise/play something down	UNSET	UNSET
+4552	4556	verprassen	False	UNSET	UNSET	UNSET	blow/fritter away/squander	UNSET	UNSET
+4553	4557	verpulvern	False	UNSET	UNSET	UNSET	blow/throw away	UNSET	UNSET
+4554	4558	verquicken	False	UNSET	UNSET	UNSET	amalgamate/bring together/combine	UNSET	UNSET
+4555	4559	versaufen	True	versoff	versoffen	False	drown/inundate/waste on alcohol	UNSET	UNSET
+4556	4560	verschneiden	True	verschnitt	verschnitten	False	blend/intersect/neuter	UNSET	UNSET
+4557	4561	verschwören	True	verschwor	verschworen	False	sich verschwören — conspire/plot	UNSET	UNSET
+4558	4562	versemmeln	False	UNSET	UNSET	UNSET	screw up	UNSET	UNSET
+4559	4563	versklaven	False	UNSET	UNSET	UNSET	enslave	UNSET	UNSET
+4560	4564	versohlen	False	UNSET	UNSET	UNSET	spank	UNSET	UNSET
+4561	4565	verstaatlichen	False	UNSET	UNSET	UNSET	nationalise	UNSET	UNSET
+4562	4566	verstauchen	False	UNSET	UNSET	UNSET	sprain	UNSET	UNSET
+4563	4567	versteinern	False	UNSET	UNSET	True	be petrified/turn into stone	UNSET	UNSET
+4564	4568	vertelefonieren	False	UNSET	UNSET	UNSET	spend on phone calls	UNSET	UNSET
+4565	4569	verunfallen	False	UNSET	UNSET	True	have an accident	UNSET	UNSET
+4566	4570	verwelken	False	UNSET	UNSET	True	wilt	UNSET	UNSET
+4567	4571	verwesen	False	UNSET	UNSET	True	decompose/rot	UNSET	UNSET
+4568	4572	verzapfen	False	UNSET	UNSET	UNSET	spout/talk nonsense; tap	UNSET	UNSET
+4569	4573	vorausahnen	False	UNSET	UNSET	UNSET	foresee/have a premonition of	UNSET	UNSET
+4570	4574	vorbacken	True	backte vor	vorgebacken	False	pre-bake	UNSET	UNSET
+4571	4575	vorbohren	False	UNSET	UNSET	UNSET	predrill	UNSET	UNSET
+4572	4576	vorladen	True	lud vor	vorgeladen	False	subpoena/summon/summons	UNSET	UNSET
+4573	4577	vorschützen	False	UNSET	UNSET	UNSET	pretend/use as a pretext	UNSET	UNSET
+4574	4578	warmmachen	False	UNSET	UNSET	UNSET	warm up	UNSET	UNSET
+4575	4579	watscheln	False	UNSET	UNSET	True	waddle	UNSET	UNSET
+4576	4580	wegbleiben	True	blieb weg	weggeblieben	True	stay away	B2	UNSET
+4577	4581	weglocken	False	UNSET	UNSET	UNSET	entice away	UNSET	UNSET
+4578	4582	wegmachen	False	UNSET	UNSET	UNSET	remove	UNSET	UNSET
+4579	4583	wegpusten	False	UNSET	UNSET	UNSET	blow away	UNSET	UNSET
+4580	4584	weiterregieren	False	UNSET	UNSET	UNSET	continue governing	UNSET	UNSET
+4581	4585	wetzen	False	UNSET	UNSET	UNSET	sharpen/whet	UNSET	UNSET
+4582	4586	wiederauferstehen	True	erstand wieder auf	wiederauferstanden	True	rise from the dead	UNSET	UNSET
+4583	4587	wiederwollen	False	UNSET	UNSET	UNSET	want (someone/something) back	UNSET	UNSET
+4584	4588	winseln	False	UNSET	UNSET	UNSET	whimper/whine	UNSET	UNSET
+4585	4589	zähnen	False	UNSET	UNSET	UNSET	serrate/perforate (stamps); cut teeth into	UNSET	UNSET
+4586	4590	zanken	False	UNSET	UNSET	UNSET	fight/quarrel	UNSET	UNSET
+4587	4591	zappen	False	UNSET	UNSET	UNSET	channel-hop/channel-surf/zap	UNSET	UNSET
+4588	4592	zerfleddern	False	UNSET	UNSET	UNSET	tatter	UNSET	UNSET
+4589	4593	zerplatzen	False	UNSET	UNSET	True	blow up/burst/explode	UNSET	UNSET
+4590	4594	zerreden	False	UNSET	UNSET	UNSET	discuss to death	UNSET	UNSET
+4591	4595	zerspringen	True	zersprang	zersprungen	True	shatter/burst	UNSET	UNSET
+4592	4596	zerstampfen	False	UNSET	UNSET	UNSET	crush/mash/pound	UNSET	UNSET
+4593	4597	zerstäuben	False	UNSET	UNSET	UNSET	spray	UNSET	UNSET
+4594	4598	zertrampeln	False	UNSET	UNSET	UNSET	stomp/trample	UNSET	UNSET
+4595	4599	zertreten	True	zertrat	zertreten	False	crush/tread on	UNSET	UNSET
+4596	4600	zueinanderfinden	True	fand zueinander	zueinandergefunden	False	find each other/come together	UNSET	UNSET
+4597	4601	zuknöpfen	False	UNSET	UNSET	UNSET	button up	UNSET	UNSET
+4598	4602	zumauern	False	UNSET	UNSET	UNSET	wall up	B2	UNSET
+4599	4603	zurechtmachen	False	UNSET	UNSET	UNSET	groom/prepare	UNSET	UNSET
+4600	4604	zurückentwickeln	False	UNSET	UNSET	UNSET	regress/retrogress	UNSET	UNSET
+4601	4605	zurückrollen	False	UNSET	UNSET	True	roll back/roll back something	UNSET	UNSET
+4602	4606	zurückscheuen	False	UNSET	UNSET	UNSET	shy away	UNSET	UNSET
+4603	4607	zurückschwimmen	True	schwamm zurück	zurückgeschwommen	False	swim back	UNSET	UNSET
+4604	4608	zusammenkneifen	True	kniff zusammen	zusammengekniffen	False	pinch together/squeeze shut	UNSET	UNSET
+4605	4609	zusammenrühren	False	UNSET	UNSET	UNSET	mix	UNSET	UNSET
+4606	4610	zusammensammeln	False	UNSET	UNSET	UNSET	gather	UNSET	UNSET
+4607	4611	zusammenzucken	False	UNSET	UNSET	True	cringe/flinch/jump	UNSET	UNSET
+4608	4612	zuschließen	True	schloss zu	zugeschlossen	False	lock/lock up	UNSET	UNSET
+4609	4613	zutexten	False	UNSET	UNSET	UNSET	talk someone's ear off/barrage with messages	UNSET	UNSET
+4610	4614	zweigen	False	UNSET	UNSET	UNSET	branch off	UNSET	UNSET
+4611	4615	abblasen	True	blies ab	abgeblasen	False	call off/cancel; blow off (dust)	UNSET	UNSET
+4612	4616	abfälschen	False	UNSET	UNSET	UNSET	deflect	UNSET	UNSET
+4613	4617	abflachen	False	UNSET	UNSET	UNSET	flatten out/go flat/level out	UNSET	UNSET
+4614	4618	abhacken	False	UNSET	UNSET	UNSET	chop off	UNSET	UNSET
+4615	4619	abkratzen	False	UNSET	UNSET	UNSET	scrape off (haben); colloq. kick the bucket (sein)	UNSET	UNSET
+4616	4620	abkündigen	False	UNSET	UNSET	UNSET	announce cancellation/terminate	UNSET	UNSET
+4617	4621	abluchsen	False	UNSET	UNSET	UNSET	wheedle out of/wangle	UNSET	UNSET
+4618	4622	abnabeln	False	UNSET	UNSET	UNSET	become independent/become self-reliant/cut a baby's umbilical cord	UNSET	UNSET
+4619	4623	abputzen	False	UNSET	UNSET	UNSET	clean off/clean up/plaster	UNSET	UNSET
+4620	4624	abqualifizieren	False	UNSET	UNSET	UNSET	dismiss as worthless/write off/disparage	UNSET	UNSET
+4621	4625	abreagieren	False	UNSET	UNSET	UNSET	work off/let off steam (sich abreagieren)	UNSET	UNSET
+4622	4626	abrüsten	False	UNSET	UNSET	UNSET	disarm/take the scaffolding down	UNSET	UNSET
+4623	4627	abschaben	False	UNSET	UNSET	UNSET	scrape/scrape off/wear thin	UNSET	UNSET
+4624	4628	abschmieren	False	UNSET	UNSET	UNSET	grease; crash (plane/software); copy/crib	UNSET	UNSET
+4625	4629	abschmirgeln	False	UNSET	UNSET	UNSET	abrade/rub off with emery/sand	UNSET	UNSET
+4626	4630	abschnüren	False	UNSET	UNSET	UNSET	choke/cut off/have a stranglehold	UNSET	UNSET
+4627	4631	abschuppen	False	UNSET	UNSET	UNSET	descale/scale	UNSET	UNSET
+4628	4632	abspannen	False	UNSET	UNSET	UNSET	brace/guy; unharness	UNSET	UNSET
+4629	4633	adsorbieren	False	UNSET	UNSET	UNSET	adsorb	UNSET	UNSET
+4630	4634	allokieren	False	UNSET	UNSET	UNSET	allocate	UNSET	UNSET
+4631	4635	allozieren	False	UNSET	UNSET	UNSET	allocate	UNSET	UNSET
+4632	4636	amnestieren	False	UNSET	UNSET	UNSET	grant an amnesty/pardon	UNSET	UNSET
+4633	4637	anbaggern	False	UNSET	UNSET	UNSET	flirt/hit on	UNSET	UNSET
+4634	4638	anbohren	False	UNSET	UNSET	UNSET	bore into/drill for/drill into	UNSET	UNSET
+4635	4639	andichten	False	UNSET	UNSET	UNSET	impute	UNSET	UNSET
+4636	4640	anfärben	False	UNSET	UNSET	UNSET	dye/stain	UNSET	UNSET
+4637	4641	anfrieren	True	fror an	angefroren	True	be damaged by frost/freeze/freeze on	UNSET	UNSET
+4638	4642	angeloben	False	UNSET	UNSET	UNSET	inaugurate/swear in	UNSET	UNSET
+4639	4643	anketten	False	UNSET	UNSET	UNSET	chain/chain up	C1	UNSET
+4640	4644	anknipsen	False	UNSET	UNSET	UNSET	switch on	UNSET	UNSET
+4641	4645	anlabern	False	UNSET	UNSET	UNSET	accost	UNSET	UNSET
+4642	4646	anläuten	False	UNSET	UNSET	UNSET	ring the bell/call by phone	UNSET	UNSET
+4643	4647	anpingen	False	UNSET	UNSET	UNSET	ping	UNSET	UNSET
+4644	4648	anrempeln	False	UNSET	UNSET	UNSET	bump into	UNSET	UNSET
+4645	4649	anschleppen	False	UNSET	UNSET	UNSET	tow/haul/drag in	UNSET	UNSET
+4646	4650	anschrauben	False	UNSET	UNSET	UNSET	screw on/tighten a screw	UNSET	UNSET
+4647	4651	ansprühen	False	UNSET	UNSET	UNSET	spray on	UNSET	UNSET
+4648	4652	approbieren	False	UNSET	UNSET	UNSET	license (to practise medicine)	UNSET	UNSET
+4649	4653	äsen	False	UNSET	UNSET	UNSET	browse/graze	UNSET	UNSET
+4650	4654	aufdampfen	False	UNSET	UNSET	False	evaporate/vapour-deposit	UNSET	UNSET
+4651	4655	aufdröseln	False	UNSET	UNSET	UNSET	disentangle/unravel	UNSET	UNSET
+4652	4656	aufgabeln	False	UNSET	UNSET	UNSET	fork up/pick up	UNSET	UNSET
+4653	4657	aufhalsen	False	UNSET	UNSET	UNSET	land/saddle	UNSET	UNSET
+4654	4658	aufklaren	False	UNSET	UNSET	UNSET	brighten/clear	UNSET	UNSET
+4655	4659	aufknöpfen	False	UNSET	UNSET	UNSET	unbutton/undo	UNSET	UNSET
+4656	4660	auflöten	False	UNSET	UNSET	UNSET	solder on	UNSET	UNSET
+4657	4661	aufmontieren	False	UNSET	UNSET	UNSET	attach to/mount onto	UNSET	UNSET
+4658	4662	aufpflanzen	False	UNSET	UNSET	UNSET	plant; mount/fix in place; plant oneself	UNSET	UNSET
+4659	4663	aufpicken	False	UNSET	UNSET	UNSET	peck up/pick up	UNSET	UNSET
+4660	4664	aufrauen	False	UNSET	UNSET	UNSET	roughen	UNSET	UNSET
+4661	4665	aufscheuchen	False	UNSET	UNSET	UNSET	rouse/startle	UNSET	UNSET
+4662	4666	aufschwemmen	False	UNSET	UNSET	UNSET	wash up; swell/bloat	UNSET	UNSET
+4663	4667	aufsprühen	False	UNSET	UNSET	False	spray on	UNSET	UNSET
+4664	4668	ausbooten	False	UNSET	UNSET	UNSET	boot out/disembark/kick out	UNSET	UNSET
+4665	4669	ausbuhen	False	UNSET	UNSET	UNSET	boo	UNSET	UNSET
+4666	4670	ausbüxen	False	UNSET	UNSET	True	abscond	UNSET	UNSET
+4667	4671	auseinanderbrechen	True	brach auseinander	auseinandergebrochen	True	break/break apart/break up	UNSET	UNSET
+4668	4672	auseinanderbreiten	False	UNSET	UNSET	UNSET	unfold	UNSET	UNSET
+4669	4673	auseinanderklappen	False	UNSET	UNSET	UNSET	fold out	UNSET	UNSET
+4670	4674	auseinanderlaufen	True	lief auseinander	auseinandergelaufen	True	break up/differ/disperse	UNSET	UNSET
+4671	4675	auseinandertreiben	True	trieb auseinander	auseinandergetrieben	False	break up/broaden/disperse	UNSET	UNSET
+4672	4676	ausfetten	False	UNSET	UNSET	UNSET	grease	UNSET	UNSET
+4673	4677	ausformen	False	UNSET	UNSET	UNSET	form/mould	UNSET	UNSET
+4674	4678	ausgrauen	False	UNSET	UNSET	UNSET	grey out	UNSET	UNSET
+4675	4679	aushauchen	False	UNSET	UNSET	UNSET	exhale/exude/whisper	UNSET	UNSET
+4676	4680	aushorchen	False	UNSET	UNSET	UNSET	pump/sound someone out	UNSET	UNSET
+4677	4681	ausixen	False	UNSET	UNSET	UNSET	cross out/ex out/x out	UNSET	UNSET
+4678	4682	ausklopfen	False	UNSET	UNSET	UNSET	beat/knock out	UNSET	UNSET
+4679	4683	auskuppeln	False	UNSET	UNSET	UNSET	declutch/disengage the clutch	UNSET	UNSET
+4680	4684	auslutschen	False	UNSET	UNSET	UNSET	suck out	UNSET	UNSET
+4681	4685	ausposaunen	False	UNSET	UNSET	UNSET	broadcast/blab/tell the whole world	UNSET	UNSET
+4682	4686	auspreisen	False	UNSET	UNSET	UNSET	price/put a price tag on	UNSET	UNSET
+4683	4687	ausrangieren	False	UNSET	UNSET	UNSET	discard/decommission	UNSET	UNSET
+4684	4688	ausräuchern	False	UNSET	UNSET	UNSET	fumigate/smoke out	UNSET	UNSET
+4685	4689	aussägen	False	UNSET	UNSET	UNSET	saw out	UNSET	UNSET
+4686	4690	aussaugen	False	UNSET	UNSET	UNSET	suck out	UNSET	UNSET
+4687	4691	ausschaffen	True	schuf aus	ausgeschaffen	False	deport/remove	UNSET	UNSET
+4688	4692	ausschlüpfen	False	UNSET	UNSET	True	hatch	UNSET	UNSET
+4689	4693	aussöhnen	False	UNSET	UNSET	UNSET	reconcile	UNSET	UNSET
+4690	4694	auswalzen	False	UNSET	UNSET	UNSET	laminate/roll/roll out	UNSET	UNSET
+4691	4695	ausweiden	False	UNSET	UNSET	UNSET	gut/dress (game, fish)	UNSET	UNSET
+4692	4696	auszehren	False	UNSET	UNSET	UNSET	deplete	UNSET	UNSET
+4693	4697	auszischen	False	UNSET	UNSET	UNSET	hiss off (the stage)/boo off	UNSET	UNSET
+4694	4698	auszupfen	False	UNSET	UNSET	UNSET	pluck/pull	UNSET	UNSET
+4695	4699	beackern	False	UNSET	UNSET	UNSET	plough/plough through/work on	UNSET	UNSET
+4696	4700	befehligen	False	UNSET	UNSET	UNSET	command	UNSET	UNSET
+4697	4701	beflecken	False	UNSET	UNSET	UNSET	stain	UNSET	UNSET
+4698	4702	beflocken	False	UNSET	UNSET	UNSET	flock	UNSET	UNSET
+4699	4703	befühlen	False	UNSET	UNSET	UNSET	feel	UNSET	UNSET
+4700	4704	beiseiteschaffen	False	UNSET	UNSET	UNSET	get rid of/hide/stash away	UNSET	UNSET
+4701	4705	beistimmen	False	UNSET	UNSET	UNSET	agree with/concur	UNSET	UNSET
+4702	4706	belauern	False	UNSET	UNSET	UNSET	eye/spy/watch	UNSET	UNSET
+4703	4707	bemuttern	False	UNSET	UNSET	UNSET	mother/fuss over	UNSET	UNSET
+4704	4708	bepreisen	False	UNSET	UNSET	UNSET	price/put a price tag on	UNSET	UNSET
+4705	4709	berühmen	False	UNSET	UNSET	UNSET	sich berühmen (+ Gen.) — boast of, lay claim to (dated)	UNSET	UNSET
+4706	4710	besaufen	True	besoff	besoffen	False	get drunk	UNSET	UNSET
+4707	4711	beschicken	False	UNSET	UNSET	UNSET	load	UNSET	UNSET
+4708	4712	besohlen	False	UNSET	UNSET	UNSET	sole	UNSET	UNSET
+4709	4713	besudeln	False	UNSET	UNSET	UNSET	befoul/besmirch	UNSET	UNSET
+4710	4714	betupfen	False	UNSET	UNSET	UNSET	dab/swab	UNSET	UNSET
+4711	4715	beweinen	False	UNSET	UNSET	UNSET	mourn/weep for	UNSET	UNSET
+4712	4716	bimmeln	False	UNSET	UNSET	UNSET	jingle	UNSET	UNSET
+4713	4717	blankziehen	True	zog blank	blankgezogen	False	draw/flash/strip	UNSET	UNSET
+4714	4718	blaumachen	False	UNSET	UNSET	UNSET	skive	UNSET	UNSET
+4715	4719	blechen	False	UNSET	UNSET	UNSET	cough up/fork out	UNSET	UNSET
+4716	4720	bluffen	False	UNSET	UNSET	UNSET	bluff	UNSET	UNSET
+4717	4721	böllern	False	UNSET	UNSET	UNSET	fire firecrackers/make loud bangs	UNSET	UNSET
+4718	4722	bonitieren	False	UNSET	UNSET	UNSET	examine/rate	UNSET	UNSET
+4719	4723	brocken	False	UNSET	UNSET	UNSET	pick	UNSET	UNSET
+4720	4724	brüskieren	False	UNSET	UNSET	UNSET	affront	UNSET	UNSET
+4721	4725	buttern	False	UNSET	UNSET	UNSET	butter/churn	UNSET	UNSET
+4722	4726	buzzern	False	UNSET	UNSET	UNSET	buzz	UNSET	UNSET
+4723	4727	cachen	False	UNSET	UNSET	UNSET	cache/geocache	UNSET	UNSET
+4724	4728	camouflieren	False	UNSET	UNSET	UNSET	camouflage	UNSET	UNSET
+4725	4729	canceln	False	UNSET	UNSET	UNSET	cancel	UNSET	UNSET
+4726	4730	chiffrieren	False	UNSET	UNSET	UNSET	encipher/encrypt	UNSET	UNSET
+4727	4731	christianisieren	False	UNSET	UNSET	UNSET	Christianise	UNSET	UNSET
+4728	4732	crashen	False	UNSET	UNSET	True	crash	UNSET	UNSET
+4729	4733	dahinraffen	False	UNSET	UNSET	UNSET	carry off	UNSET	UNSET
+4730	4734	dahinschwinden	True	schwand dahin	dahingeschwunden	True	decline/dwindle/wane	UNSET	UNSET
+4731	4735	davonbrausen	False	UNSET	UNSET	True	speed off	UNSET	UNSET
+4732	4736	davonrennen	True	rannte davon	davongerannt	True	run away	UNSET	UNSET
+4733	4737	dazunehmen	True	nahm dazu	dazugenommen	False	add	UNSET	UNSET
+4734	4738	dazwischenkommen	True	kam dazwischen	dazwischengekommen	True	come up/intervene	UNSET	UNSET
+4735	4739	dealen	False	UNSET	UNSET	UNSET	deal	UNSET	UNSET
+4736	4740	dechiffrieren	False	UNSET	UNSET	UNSET	decipher/decrypt	UNSET	UNSET
+4737	4741	degustieren	False	UNSET	UNSET	UNSET	taste/sample	UNSET	UNSET
+4738	4742	dehydrieren	False	UNSET	UNSET	UNSET	become dry/dehydrate/dehydrogenise	UNSET	UNSET
+4739	4743	deklassieren	False	UNSET	UNSET	UNSET	outclass/demote	UNSET	UNSET
+4740	4744	dekolonisieren	False	UNSET	UNSET	UNSET	decolonise	UNSET	UNSET
+4741	4745	demaskieren	False	UNSET	UNSET	UNSET	unmask	UNSET	UNSET
+4742	4746	denominieren	False	UNSET	UNSET	UNSET	denominate	UNSET	UNSET
+4743	4747	designieren	False	UNSET	UNSET	UNSET	designate	UNSET	UNSET
+4744	4748	detaillieren	False	UNSET	UNSET	UNSET	detail/give full details of something/specify	UNSET	UNSET
+4745	4749	dezidieren	False	UNSET	UNSET	UNSET	decide	UNSET	UNSET
+4746	4750	dicken	False	UNSET	UNSET	UNSET	thicken	UNSET	UNSET
+4747	4751	dippen	False	UNSET	UNSET	UNSET	dip/dip the flag	UNSET	UNSET
+4748	4752	diskontieren	False	UNSET	UNSET	UNSET	discount	UNSET	UNSET
+4749	4753	dispensieren	False	UNSET	UNSET	UNSET	dispense	UNSET	UNSET
+4750	4754	dispergieren	False	UNSET	UNSET	UNSET	disperse	UNSET	UNSET
+4751	4755	dissen	False	UNSET	UNSET	UNSET	dis/diss	UNSET	UNSET
+4752	4756	doppelklicken	False	UNSET	UNSET	UNSET	double-click	UNSET	UNSET
+4753	4757	draften	False	UNSET	UNSET	UNSET	draft	UNSET	UNSET
+4754	4758	dreiteilen	False	UNSET	UNSET	UNSET	trisect	UNSET	UNSET
+4755	4759	drillen	False	UNSET	UNSET	UNSET	drill	UNSET	UNSET
+4756	4760	dritteln	False	UNSET	UNSET	UNSET	trisect	UNSET	UNSET
+4757	4761	dünken	True	dünkte	gedünkt	False	meseems/methinks/seem	UNSET	UNSET
+4758	4762	durchbiegen	True	bog durch	durchgebogen	False	bend/bend back/sag	UNSET	UNSET
+4759	4763	durchdehnen	False	UNSET	UNSET	UNSET	stretch completely	UNSET	UNSET
+4760	4764	durchfeuchten	False	UNSET	UNSET	UNSET	soak through	UNSET	UNSET
+4761	4765	durchschwimmen	True	schwamm durch	durchgeschwommen	False	swim through/across	UNSET	UNSET
+4762	4766	durchtränken	False	UNSET	UNSET	UNSET	saturate	UNSET	UNSET
+4763	4767	dynamisieren	False	UNSET	UNSET	UNSET	dynamise	UNSET	UNSET
+4764	4768	ehelichen	False	UNSET	UNSET	UNSET	marry	UNSET	UNSET
+4765	4769	einbalsamieren	False	UNSET	UNSET	UNSET	embalm	UNSET	UNSET
+4766	4770	einheben	True	hob ein	eingehoben	False	collect/levy/lift	UNSET	UNSET
+4767	4771	einkoppeln	False	UNSET	UNSET	UNSET	couple into/inject	UNSET	UNSET
+4768	4772	einkriegen	False	UNSET	UNSET	UNSET	sich (nicht) einkriegen — (not) be able to calm down	UNSET	UNSET
+4769	4773	einlullen	False	UNSET	UNSET	UNSET	lull	UNSET	UNSET
+4770	4774	einrenken	False	UNSET	UNSET	UNSET	set right; set a joint	UNSET	UNSET
+4771	4775	einsauen	False	UNSET	UNSET	UNSET	make dirty	UNSET	UNSET
+4772	4776	einschiffen	False	UNSET	UNSET	UNSET	sich einschiffen — embark	UNSET	UNSET
+4773	4777	einschwimmen	True	schwamm ein	eingeschwommen	True	swim in; get into one's rhythm	UNSET	UNSET
+4774	4778	einseifen	False	UNSET	UNSET	UNSET	soap/soap up	UNSET	UNSET
+4775	4779	einsickern	False	UNSET	UNSET	True	seep	UNSET	UNSET
+4776	4780	eislaufen	True	lief eis	eisgelaufen	True	ice-skate/skate	UNSET	UNSET
+4777	4781	emporschießen	True	schoss empor	emporgeschossen	True	jump up/mushroom/run up	UNSET	UNSET
+4778	4782	entblöden	False	UNSET	UNSET	UNSET	sich nicht entblöden — not be ashamed to, have the nerve to	UNSET	UNSET
+4779	4783	entehren	False	UNSET	UNSET	UNSET	dishonor/dishonour	UNSET	UNSET
+4780	4784	entflechten	True	entflocht	entflochten	False	detangle/disentangle/split	UNSET	UNSET
+4781	4785	entgegenschleudern	False	UNSET	UNSET	UNSET	hurl against/hurl towards	UNSET	UNSET
+4782	4786	entgegenwerfen	True	warf entgegen	entgegengeworfen	False	throw back/retort	UNSET	UNSET
+4783	4787	entgräten	False	UNSET	UNSET	UNSET	bone	UNSET	UNSET
+4784	4788	entmüllen	False	UNSET	UNSET	UNSET	clear (sth) out/declutter	UNSET	UNSET
+4785	4789	entsagen	False	UNSET	UNSET	UNSET	renounce	UNSET	UNSET
+4786	4790	entschweben	False	UNSET	UNSET	True	float away	UNSET	UNSET
+4787	4791	entsetzen	False	UNSET	UNSET	UNSET	horrify/appal; (military) relieve	UNSET	UNSET
+4788	4792	entspiegeln	False	UNSET	UNSET	UNSET	apply an antireflection coating	UNSET	UNSET
+4789	4793	entwaffnen	False	UNSET	UNSET	UNSET	disarm	UNSET	UNSET
+4790	4794	entwarnen	False	UNSET	UNSET	UNSET	give the all clear	UNSET	UNSET
+4791	4795	erbeben	False	UNSET	UNSET	True	quake/shudder	UNSET	UNSET
+4792	4796	erbittern	False	UNSET	UNSET	UNSET	embitter/enrage	UNSET	UNSET
+4793	4797	erdrosseln	False	UNSET	UNSET	UNSET	throttle	UNSET	UNSET
+4794	4798	erheischen	False	UNSET	UNSET	UNSET	demand	UNSET	UNSET
+4795	4799	erklettern	False	UNSET	UNSET	UNSET	climb/climb up	UNSET	UNSET
+4796	4800	ersäufen	False	UNSET	UNSET	UNSET	drown	UNSET	UNSET
+4797	4801	erzittern	False	UNSET	UNSET	True	quake/tremble	UNSET	UNSET
+4798	4802	erzürnen	False	UNSET	UNSET	UNSET	enrage	UNSET	UNSET
+4799	4803	exerzieren	False	UNSET	UNSET	UNSET	drill/practice/practise	UNSET	UNSET
+4800	4804	exkludieren	False	UNSET	UNSET	UNSET	debar/exclude/expel	UNSET	UNSET
+4801	4805	expedieren	False	UNSET	UNSET	UNSET	dispatch/forward/post	UNSET	UNSET
+4802	4806	fabulieren	False	UNSET	UNSET	UNSET	fabricate/tell tall tales	UNSET	UNSET
+4803	4807	fakturieren	False	UNSET	UNSET	UNSET	bill/invoice	UNSET	UNSET
+4804	4808	falsifizieren	False	UNSET	UNSET	UNSET	falsify	UNSET	UNSET
+4805	4809	fauchen	False	UNSET	UNSET	UNSET	hiss	UNSET	UNSET
+4806	4810	feixen	False	UNSET	UNSET	UNSET	smirk/sneer at	UNSET	UNSET
+4807	4811	fermentieren	False	UNSET	UNSET	UNSET	ferment	C1	UNSET
+4808	4812	festnageln	False	UNSET	UNSET	UNSET	nail down/pin down	UNSET	UNSET
+4809	4813	fetzen	False	UNSET	UNSET	UNSET	shred/tear; fight	UNSET	UNSET
+4810	4814	ficken	False	UNSET	UNSET	UNSET	have sex (vulgar)	UNSET	UNSET
+4811	4815	fiepen	False	UNSET	UNSET	UNSET	beep/squeak	UNSET	UNSET
+4812	4816	fingern	False	UNSET	UNSET	UNSET	finger/touch	UNSET	UNSET
+4813	4817	fingieren	False	UNSET	UNSET	UNSET	feign	UNSET	UNSET
+4814	4818	flambieren	False	UNSET	UNSET	UNSET	flambe/flambé	UNSET	UNSET
+4815	4819	flanschen	False	UNSET	UNSET	UNSET	flange	UNSET	UNSET
+4816	4820	flehen	False	UNSET	UNSET	UNSET	entreat/implore/supplicate	UNSET	UNSET
+4817	4821	flektieren	False	UNSET	UNSET	UNSET	inflect	UNSET	UNSET
+4818	4822	fliesen	False	UNSET	UNSET	UNSET	tile	UNSET	UNSET
+4819	4823	flirren	False	UNSET	UNSET	UNSET	shimmer	UNSET	UNSET
+4820	4824	flügeln	False	UNSET	UNSET	UNSET	wing	UNSET	UNSET
+4821	4825	fluoreszieren	False	UNSET	UNSET	UNSET	fluoresce	UNSET	UNSET
+4822	4826	forteilen	False	UNSET	UNSET	True	hasten away/hurry away/hurry off	UNSET	UNSET
+4823	4827	fortspülen	False	UNSET	UNSET	UNSET	wash away	UNSET	UNSET
+4824	4828	fortwollen	False	UNSET	UNSET	UNSET	want to get away/want to leave	UNSET	UNSET
+4825	4829	fotokopieren	False	UNSET	UNSET	UNSET	photocopy	UNSET	UNSET
+4826	4830	frappieren	False	UNSET	UNSET	UNSET	amaze/astonish/astound	UNSET	UNSET
+4827	4831	freipressen	False	UNSET	UNSET	UNSET	deliver by blackmail/obtain someone's release	UNSET	UNSET
+4828	4832	frickeln	False	UNSET	UNSET	UNSET	tinker	UNSET	UNSET
+4829	4833	fringsen	False	UNSET	UNSET	UNSET	steal	UNSET	UNSET
+4830	4834	fugen	False	UNSET	UNSET	UNSET	joint	UNSET	UNSET
+4831	4835	fummeln	False	UNSET	UNSET	UNSET	fiddle/fumble/grope	UNSET	UNSET
+4832	4836	gaffen	False	UNSET	UNSET	UNSET	gape	UNSET	UNSET
+4833	4837	gefriertrocknen	False	UNSET	UNSET	UNSET	freeze-dry	UNSET	UNSET
+4834	4838	geloben	False	UNSET	UNSET	UNSET	swear/vow	UNSET	UNSET
+4835	4839	genieren	False	UNSET	UNSET	UNSET	embarrass; be embarrassed	UNSET	UNSET
+4836	4840	gerieren	False	UNSET	UNSET	UNSET	sich gerieren (als) — pose as, behave (formal)	UNSET	UNSET
+4837	4841	gesundschrumpfen	False	UNSET	UNSET	UNSET	downsize to viability/right-size	UNSET	UNSET
+4838	4842	girren	False	UNSET	UNSET	UNSET	coo	UNSET	UNSET
+4839	4843	gleichschalten	False	UNSET	UNSET	UNSET	bring into line/coordinate	UNSET	UNSET
+4840	4844	gleißen	False	UNSET	UNSET	UNSET	gleam/glisten/glitter	UNSET	UNSET
+4841	4845	gluckern	False	UNSET	UNSET	UNSET	bubble/chuckle/gurgle	UNSET	UNSET
+4842	4846	goutieren	False	UNSET	UNSET	UNSET	appreciate/approve	UNSET	UNSET
+4843	4847	graduieren	False	UNSET	UNSET	UNSET	graduate	UNSET	UNSET
+4844	4848	gratinieren	False	UNSET	UNSET	UNSET	brown/cook au gratin	UNSET	UNSET
+4845	4849	grauen	False	UNSET	UNSET	UNSET	be terrified/dawn/grey	UNSET	UNSET
+4846	4850	greinen	False	UNSET	UNSET	UNSET	grizzle/whinge	UNSET	UNSET
+4847	4851	grölen	False	UNSET	UNSET	UNSET	bawl/howl	UNSET	UNSET
+4848	4852	grooven	False	UNSET	UNSET	UNSET	groove	UNSET	UNSET
+4849	4853	gummieren	False	UNSET	UNSET	UNSET	gum/rubberise	UNSET	UNSET
+4850	4854	halluzinieren	False	UNSET	UNSET	UNSET	hallucinate	UNSET	UNSET
+4851	4855	hampeln	False	UNSET	UNSET	UNSET	fidget	UNSET	UNSET
+4852	4856	hartsieden	True	sott hart	hartgesotten	False	hard-boil	UNSET	UNSET
+4853	4857	hätscheln	False	UNSET	UNSET	UNSET	coddle/fondle/pamper	UNSET	UNSET
+4854	4858	heimfahren	True	fuhr heim	heimgefahren	True	drive back/drive home/go back	UNSET	UNSET
+4855	4859	heimschicken	False	UNSET	UNSET	UNSET	send home	UNSET	UNSET
+4856	4860	herankarren	False	UNSET	UNSET	UNSET	cart in/haul in	UNSET	UNSET
+4857	4861	herausfliegen	True	flog heraus	herausgeflogen	True	be thrown out/drop out/fly out	UNSET	UNSET
+4858	4862	herbeieilen	False	UNSET	UNSET	True	rush over	UNSET	UNSET
+4859	4863	hereinbitten	True	bat herein	hereingebeten	False	invite in	UNSET	UNSET
+4860	4864	hereinrufen	True	rief herein	hereingerufen	False	call in	UNSET	UNSET
+4861	4865	hereinschneien	False	UNSET	UNSET	True	drop in unexpectedly; snow in	UNSET	UNSET
+4862	4866	heroisieren	False	UNSET	UNSET	UNSET	heroise	UNSET	UNSET
+4863	4867	hersetzen	False	UNSET	UNSET	UNSET	put down here; sit down here	UNSET	UNSET
+4864	4868	herumfuchteln	False	UNSET	UNSET	UNSET	gesticulate	UNSET	UNSET
+4865	4869	herunterbeten	False	UNSET	UNSET	UNSET	rattle off/reel off	UNSET	UNSET
+4866	4870	hervorziehen	True	zog hervor	hervorgezogen	False	pull out	UNSET	UNSET
+4867	4871	herzeigen	False	UNSET	UNSET	UNSET	show	UNSET	UNSET
+4868	4872	herzen	False	UNSET	UNSET	UNSET	hug	UNSET	UNSET
+4869	4873	hinausgucken	False	UNSET	UNSET	UNSET	look out	UNSET	UNSET
+4870	4874	hinaustragen	True	trug hinaus	hinausgetragen	False	broadcast/carry beyond/carry out	B2	UNSET
+4871	4875	hineinrennen	True	rannte hinein	hineingerannt	True	run into/rush in/rush into	UNSET	UNSET
+4872	4876	hineinströmen	False	UNSET	UNSET	True	pour in	UNSET	UNSET
+4873	4877	hinunterklettern	False	UNSET	UNSET	True	climb down	UNSET	UNSET
+4874	4878	hinunterschlucken	False	UNSET	UNSET	UNSET	swallow	UNSET	UNSET
+4875	4879	hinunterstürzen	False	UNSET	UNSET	True	plunge/fall down; gulp down	UNSET	UNSET
+4876	4880	hochstemmen	False	UNSET	UNSET	UNSET	heave up/lift up/push oneself up	UNSET	UNSET
+4877	4881	höhlen	False	UNSET	UNSET	UNSET	hollow out	UNSET	UNSET
+4878	4882	holpern	False	UNSET	UNSET	True	bump/jolt/lurch	UNSET	UNSET
+4879	4883	hopfen	False	UNSET	UNSET	UNSET	hop	UNSET	UNSET
+4880	4884	hupen	False	UNSET	UNSET	UNSET	beep one's horn/honk/hoot	B1	UNSET
+4881	4885	hüsteln	False	UNSET	UNSET	UNSET	cough slightly	UNSET	UNSET
+4882	4886	hyperventilieren	False	UNSET	UNSET	UNSET	hyperventilate	UNSET	UNSET
+4883	4887	imkern	False	UNSET	UNSET	UNSET	keep bees	UNSET	UNSET
+4884	4888	immigrieren	False	UNSET	UNSET	True	immigrate	UNSET	UNSET
+4885	4889	innovieren	False	UNSET	UNSET	UNSET	innovate	UNSET	UNSET
+4886	4890	intrigieren	False	UNSET	UNSET	UNSET	scheme/plot (against sb)	UNSET	UNSET
+4887	4891	intubieren	False	UNSET	UNSET	UNSET	intubate	UNSET	UNSET
+4888	4892	ionisieren	False	UNSET	UNSET	UNSET	ionise	UNSET	UNSET
+4889	4893	irrewerden	True	wurde irre	irregeworden	True	go crackers/lose faith	UNSET	UNSET
+4890	4894	islamisieren	False	UNSET	UNSET	UNSET	Islamise	UNSET	UNSET
+4891	4895	japsen	False	UNSET	UNSET	UNSET	gasp/pant	UNSET	UNSET
+4892	4896	jauchzen	False	UNSET	UNSET	UNSET	cheer/exult/rejoice	UNSET	UNSET
+4893	4897	jaulen	False	UNSET	UNSET	UNSET	howl/yowl	UNSET	UNSET
+4894	4898	kabeln	False	UNSET	UNSET	UNSET	cable	UNSET	UNSET
+4895	4899	kacken	False	UNSET	UNSET	UNSET	defecate/poop	UNSET	UNSET
+4896	4900	kahlschlagen	True	schlug kahl	kahlgeschlagen	False	deforest	UNSET	UNSET
+4897	4901	kapitalisieren	False	UNSET	UNSET	UNSET	capitalise/cash in	UNSET	UNSET
+4898	4902	kegeln	False	UNSET	UNSET	UNSET	play skittles/play ninepins	UNSET	UNSET
+4899	4903	kehrtmachen	False	UNSET	UNSET	UNSET	turn back	UNSET	UNSET
+4900	4904	kerben	False	UNSET	UNSET	UNSET	notch/score	UNSET	UNSET

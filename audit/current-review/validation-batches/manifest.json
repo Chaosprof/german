@@ -1,0 +1,47 @@
+[
+  {
+    "batch": "noun_high",
+    "count": 348,
+    "banks": [
+      "nouns"
+    ],
+    "path": "C:\\Users\\tamas\\src\\german\\audit\\current-review\\validation-batches\\noun_high.json"
+  },
+  {
+    "batch": "verb_high",
+    "count": 190,
+    "banks": [
+      "verb_preps",
+      "verbs"
+    ],
+    "path": "C:\\Users\\tamas\\src\\german\\audit\\current-review\\validation-batches\\verb_high.json"
+  },
+  {
+    "batch": "adjective_high",
+    "count": 235,
+    "banks": [
+      "adjectives"
+    ],
+    "path": "C:\\Users\\tamas\\src\\german\\audit\\current-review\\validation-batches\\adjective_high.json"
+  },
+  {
+    "batch": "dual_gender_high",
+    "count": 9,
+    "banks": [
+      "dual_gender"
+    ],
+    "path": "C:\\Users\\tamas\\src\\german\\audit\\current-review\\validation-batches\\dual_gender_high.json"
+  },
+  {
+    "batch": "medium_low_sample",
+    "count": 183,
+    "banks": [
+      "adjectives",
+      "dual_gender",
+      "nouns",
+      "verb_preps",
+      "verbs"
+    ],
+    "path": "C:\\Users\\tamas\\src\\german\\audit\\current-review\\validation-batches\\medium_low_sample.json"
+  }
+]

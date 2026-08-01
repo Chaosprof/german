@@ -1,0 +1,51 @@
+# adjectives — PUNCT_DIFF (47 entries)
+
+| rank | word | current | DeepL |
+|---:|---|---|---|
+| 69 | kostenlos | free (of charge) | free of charge |
+| 764 | einseitig | onesided | one-sided |
+| 951 | kooperativ | cooperative | co-operative |
+| 1204 | hochmodern | ultramodern | ultra-modern |
+| 1473 | sozialpolitisch | sociopolitical | socio-political |
+| 1849 | antisemitisch | anti-Semitic | antisemitic |
+| 1948 | sozioökonomisch | socioeconomic | socio-economic |
+| 2035 | soziokulturell | sociocultural | socio-cultural |
+| 2470 | autofrei | carfree | car-free |
+| 2604 | entzündungshemmend | antiinflammatory | anti-inflammatory |
+| 2719 | frühlingshaft | springlike | spring-like |
+| 3405 | verfassungsfeindlich | anticonstitutional | anti-constitutional |
+| 3607 | gewaltlos | nonviolent | non-violent |
+| 3693 | vorindustriell | preindustrial | pre-industrial |
+| 3793 | mehrschichtig | multilayered | multi-layered |
+| 4155 | handverlesen | hand-picked | handpicked |
+| 4157 | hauteng | skintight | skin-tight |
+| 4307 | antifaschistisch | antifascist | anti-fascist |
+| 4340 | elektroakustisch | electro-acoustic | electroacoustic |
+| 4721 | mehrfarbig | multi-coloured | multicoloured |
+| 4739 | nichtlinear | nonlinear | non-linear |
+| 4910 | antiautoritär | antiauthoritarian | anti-authoritarian |
+| 4911 | antidemokratisch | antidemocratic | anti-democratic |
+| 5077 | menschenähnlich | humanlike | human-like |
+| 5412 | handbemalt | handpainted | hand-painted |
+| 5464 | kurzwellig | shortwave | short-wave |
+| 5633 | ultramodern | ultra-modern | ultramodern |
+| 5643 | undeutsch | un-German | unGerman |
+| 5755 | antikapitalistisch | anticapitalist | anti-capitalist |
+| 5960 | herzerwärmend | heart-warming | heartwarming |
+| 5971 | hochrein | ultra-pure | ultrapure |
+| 6107 | orkanartig | hurricanelike | hurricane-like |
+| 6341 | vielfarbig | multi-coloured | multicoloured |
+| 6607 | euroskeptisch | Euro-sceptic | eurosceptic |
+| 6995 | pseudoreligiös | pseudoreligious | pseudo-religious |
+| 7519 | bestgeplant | best-planned | bestplanned |
+| 7661 | einbruchsicher | burglarproof | burglar-proof |
+| 7804 | gasdicht | gastight | gas-tight |
+| 7920 | handgewebt | hand-woven | handwoven |
+| 7961 | holzfrei | wood-free | woodfree |
+| 8006 | intraabdominal | intraabdominal | intra-abdominal |
+| 8082 | koedukativ | coeducational | co-educational |
+| 8208 | mehrspurig | multilane | multi-lane |
+| 8382 | postfossil | post-fossil | postfossil |
+| 8416 | quasistatisch | quasistatic | quasi-static |
+| 8589 | sonnenbeschienen | sun-lit | sunlit |
+| 8978 | wüstenartig | desertlike | desert-like |

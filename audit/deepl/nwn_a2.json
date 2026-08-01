@@ -1,0 +1,766 @@
+{
+  "Bankkaufmann": {
+    "kind": "noun",
+    "english": "banker"
+  },
+  "Augenoptikerin": {
+    "kind": "noun",
+    "english": "optician"
+  },
+  "Hauptsatz": {
+    "kind": "noun",
+    "english": "main theorem"
+  },
+  "Lernerfahrung": {
+    "kind": "noun",
+    "english": "learning experience"
+  },
+  "Au-pair": {
+    "kind": "noun",
+    "english": "au pair"
+  },
+  "Hotelkauffrau": {
+    "kind": "noun",
+    "english": "hotel manager"
+  },
+  "Hotelkaufmann": {
+    "kind": "noun",
+    "english": "hotel manager"
+  },
+  "Englischlehrerin": {
+    "kind": "noun",
+    "english": "English teacher"
+  },
+  "Schulplattform": {
+    "kind": "noun",
+    "english": "school platform"
+  },
+  "Vokabeltest": {
+    "kind": "noun",
+    "english": "vocabulary test"
+  },
+  "AG": {
+    "kind": "noun",
+    "english": "AG"
+  },
+  "Schulkleidung": {
+    "kind": "noun",
+    "english": "school uniform"
+  },
+  "Hauptschulabschluss": {
+    "kind": "noun",
+    "english": "secondary school leaving certificate"
+  },
+  "Realschulabschluss": {
+    "kind": "noun",
+    "english": "secondary school leaving certificate"
+  },
+  "Arbeitswelt": {
+    "kind": "noun",
+    "english": "world of work"
+  },
+  "Arzthelfer": {
+    "kind": "noun",
+    "english": "medical assistant"
+  },
+  "Unterrichtszeit": {
+    "kind": "noun",
+    "english": "teaching time"
+  },
+  "VR-Brille": {
+    "kind": "noun",
+    "english": "VR glasses"
+  },
+  "Komparativ": {
+    "kind": "noun",
+    "english": "comparative"
+  },
+  "E-Book-Reader": {
+    "kind": "noun",
+    "english": "e-book reader"
+  },
+  "Dings": {
+    "kind": "noun",
+    "english": "thing"
+  },
+  "Grammatikaufgabe": {
+    "kind": "noun",
+    "english": "grammar task"
+  },
+  "Käsebrot": {
+    "kind": "noun",
+    "english": "cheese bread"
+  },
+  "Web-Adresse": {
+    "kind": "noun",
+    "english": "web address"
+  },
+  "Blogbeitrag": {
+    "kind": "noun",
+    "english": "blog post"
+  },
+  "Fantasy-Film": {
+    "kind": "noun",
+    "english": "fantasy film"
+  },
+  "Entertainerin": {
+    "kind": "noun",
+    "english": "entertainer"
+  },
+  "Filmbeschreibung": {
+    "kind": "noun",
+    "english": "film description"
+  },
+  "Kurzbeschreibung": {
+    "kind": "noun",
+    "english": "short description"
+  },
+  "Dankeskarte": {
+    "kind": "noun",
+    "english": "thank you card"
+  },
+  "Glückwunschkarte": {
+    "kind": "noun",
+    "english": "greeting card"
+  },
+  "Reflexivpronomen": {
+    "kind": "noun",
+    "english": "reflexive pronoun"
+  },
+  "Musikfan": {
+    "kind": "noun",
+    "english": "music fan"
+  },
+  "Segelregatta": {
+    "kind": "noun",
+    "english": "sailing regatta"
+  },
+  "Tango-Musik": {
+    "kind": "noun",
+    "english": "tango music"
+  },
+  "Beste": {
+    "kind": "noun",
+    "english": "best"
+  },
+  "Probetag": {
+    "kind": "noun",
+    "english": "trial day"
+  },
+  "Nächste": {
+    "kind": "noun",
+    "english": "Next"
+  },
+  "Clubdisco": {
+    "kind": "noun",
+    "english": "club disco"
+  },
+  "Bahnhofshalle": {
+    "kind": "noun",
+    "english": "station concourse"
+  },
+  "Fahrkartenschalter": {
+    "kind": "noun",
+    "english": "ticket counter"
+  },
+  "Abend-Programm": {
+    "kind": "noun",
+    "english": "evening programme"
+  },
+  "Stadtprogramm": {
+    "kind": "noun",
+    "english": "city programme"
+  },
+  "Trattoria": {
+    "kind": "noun",
+    "english": "trattoria"
+  },
+  "Artikelwort": {
+    "kind": "noun",
+    "english": "article word"
+  },
+  "Kursort": {
+    "kind": "noun",
+    "english": "course location"
+  },
+  "Arztkleidung": {
+    "kind": "noun",
+    "english": "doctor's clothing"
+  },
+  "Englisch-Studium": {
+    "kind": "noun",
+    "english": "English degree programme"
+  },
+  "Fernfahrer": {
+    "kind": "noun",
+    "english": "lorry driver"
+  },
+  "Fernfahrerin": {
+    "kind": "noun",
+    "english": "lorry driver"
+  },
+  "Herzchirurgin": {
+    "kind": "noun",
+    "english": "heart surgeon"
+  },
+  "Herzzentrum": {
+    "kind": "noun",
+    "english": "heart centre"
+  },
+  "Oberarzt": {
+    "kind": "noun",
+    "english": "senior physician"
+  },
+  "Tiertrainer": {
+    "kind": "noun",
+    "english": "animal trainer"
+  },
+  "Kurspartner": {
+    "kind": "noun",
+    "english": "course partner"
+  },
+  "Kinderabteil": {
+    "kind": "noun",
+    "english": "children's compartment"
+  },
+  "Fragesatz": {
+    "kind": "noun",
+    "english": "interrogative sentence"
+  },
+  "Redewiedergabe": {
+    "kind": "noun",
+    "english": "speech reproduction"
+  },
+  "Bordbistro": {
+    "kind": "noun",
+    "english": "on-board bistro"
+  },
+  "Bordcomputer": {
+    "kind": "noun",
+    "english": "on-board computer"
+  },
+  "E-Scooter": {
+    "kind": "noun",
+    "english": "e-scooter"
+  },
+  "Platzreservierung": {
+    "kind": "noun",
+    "english": "seat reservation"
+  },
+  "Wohnungsschlüssel": {
+    "kind": "noun",
+    "english": "flat key"
+  },
+  "Wortgrenze": {
+    "kind": "noun",
+    "english": "word limit"
+  },
+  "Stadtbewohnerin": {
+    "kind": "noun",
+    "english": "city dweller"
+  },
+  "Verkehrsproblem": {
+    "kind": "noun",
+    "english": "traffic problem"
+  },
+  "Magenschmerzen": {
+    "kind": "noun",
+    "english": "stomach ache"
+  },
+  "Lernproblem": {
+    "kind": "noun",
+    "english": "learning problem"
+  },
+  "Lernhelfer": {
+    "kind": "noun",
+    "english": "learning assistant"
+  },
+  "Lernhelferin": {
+    "kind": "noun",
+    "english": "learning assistant"
+  },
+  "Prüfende": {
+    "kind": "noun",
+    "english": "examiner"
+  },
+  "Gebärdendolmetscher": {
+    "kind": "noun",
+    "english": "sign language interpreter"
+  },
+  "Gebärdendolmetscherin": {
+    "kind": "noun",
+    "english": "sign language interpreter"
+  },
+  "Gebärdentelefon": {
+    "kind": "noun",
+    "english": "sign language telephone"
+  },
+  "Lernende": {
+    "kind": "noun",
+    "english": "learner"
+  },
+  "Sprachenlernen": {
+    "kind": "noun",
+    "english": "language learning"
+  },
+  "PC": {
+    "kind": "noun",
+    "english": "PC"
+  },
+  "Repair-Caf": {
+    "kind": "noun",
+    "english": "Repair Caf"
+  },
+  "Fußballschuh": {
+    "kind": "noun",
+    "english": "football boot"
+  },
+  "Skistock": {
+    "kind": "noun",
+    "english": "ski pole"
+  },
+  "Taucherbrille": {
+    "kind": "noun",
+    "english": "diving goggles"
+  },
+  "Fanartikel": {
+    "kind": "noun",
+    "english": "fan article"
+  },
+  "Fanseite": {
+    "kind": "noun",
+    "english": "fan page"
+  },
+  "Klettergurt": {
+    "kind": "noun",
+    "english": "climbing harness"
+  },
+  "Kletterin": {
+    "kind": "noun",
+    "english": "climber"
+  },
+  "Eishöhle": {
+    "kind": "noun",
+    "english": "ice cave"
+  },
+  "Wortfamilie": {
+    "kind": "noun",
+    "english": "word family"
+  },
+  "Kitesurfen": {
+    "kind": "noun",
+    "english": "kitesurfing"
+  },
+  "Ferienwohnung": {
+    "kind": "noun",
+    "english": "holiday flat"
+  },
+  "Wagenburg": {
+    "kind": "noun",
+    "english": "wagon castle"
+  },
+  "Lampion": {
+    "kind": "noun",
+    "english": "lantern"
+  },
+  "Positionsverb": {
+    "kind": "noun",
+    "english": "position verb"
+  },
+  "Richtungsverb": {
+    "kind": "noun",
+    "english": "directional verb"
+  },
+  "Nebenkosten": {
+    "kind": "noun",
+    "english": "ancillary costs"
+  },
+  "Satzakzent": {
+    "kind": "noun",
+    "english": "sentence accent"
+  },
+  "Bärchen": {
+    "kind": "noun",
+    "english": "little bear"
+  },
+  "Hasilein": {
+    "kind": "noun",
+    "english": "hare"
+  },
+  "Kosename": {
+    "kind": "noun",
+    "english": "pet name"
+  },
+  "Mäuschen": {
+    "kind": "noun",
+    "english": "little mouse"
+  },
+  "Mausi": {
+    "kind": "noun",
+    "english": "mouse"
+  },
+  "Tiername": {
+    "kind": "noun",
+    "english": "animal name"
+  },
+  "Lebenssituation": {
+    "kind": "noun",
+    "english": "life situation"
+  },
+  "Tiergeschichte": {
+    "kind": "noun",
+    "english": "animal story"
+  },
+  "Textanfang": {
+    "kind": "noun",
+    "english": "beginning of the text"
+  },
+  "Satzhälfte": {
+    "kind": "noun",
+    "english": "half of the sentence"
+  },
+  "Gegenvorschlag": {
+    "kind": "noun",
+    "english": "counter-proposal"
+  },
+  "Arme": {
+    "kind": "noun",
+    "english": "poor"
+  },
+  "Kajaktour": {
+    "kind": "noun",
+    "english": "kayak tour"
+  },
+  "Märchenschloss": {
+    "kind": "noun",
+    "english": "fairytale castle"
+  },
+  "Synchronsprecher": {
+    "kind": "noun",
+    "english": "dubbing artist"
+  },
+  "Synchronsprecherin": {
+    "kind": "noun",
+    "english": "dubbing artist"
+  },
+  "Wanderin": {
+    "kind": "noun",
+    "english": "hiker"
+  },
+  "Festivalbesuch": {
+    "kind": "noun",
+    "english": "festival visit"
+  },
+  "AGB": {
+    "kind": "noun",
+    "english": "GTC"
+  },
+  "Datenschutzbestimmung": {
+    "kind": "noun",
+    "english": "privacy policy"
+  },
+  "Firmenkunde": {
+    "kind": "noun",
+    "english": "corporate client"
+  },
+  "Kontaktdaten": {
+    "kind": "noun",
+    "english": "contact details"
+  },
+  "Rechnungsinformation": {
+    "kind": "noun",
+    "english": "invoice information"
+  },
+  "Sofort-Überweisung": {
+    "kind": "noun",
+    "english": "instant bank transfer"
+  },
+  "Ticketwahl": {
+    "kind": "noun",
+    "english": "ticket selection"
+  },
+  "Versandart": {
+    "kind": "noun",
+    "english": "shipping method"
+  },
+  "Zahlungsart": {
+    "kind": "noun",
+    "english": "payment method"
+  },
+  "Zwischensumme": {
+    "kind": "noun",
+    "english": "subtotal"
+  },
+  "Hardrock": {
+    "kind": "noun",
+    "english": "hard rock"
+  },
+  "Pop": {
+    "kind": "noun",
+    "english": "pop"
+  },
+  "Kunstexperte": {
+    "kind": "noun",
+    "english": "art expert"
+  },
+  "Kunstexpertin": {
+    "kind": "noun",
+    "english": "art expert"
+  },
+  "Nachrichtensprecherin": {
+    "kind": "noun",
+    "english": "newsreader"
+  },
+  "Radiosprecher": {
+    "kind": "noun",
+    "english": "radio announcer"
+  },
+  "Radiosprecherin": {
+    "kind": "noun",
+    "english": "radio announcer"
+  },
+  "Relativpronomen": {
+    "kind": "noun",
+    "english": "relative pronoun"
+  },
+  "Bezugswort": {
+    "kind": "noun",
+    "english": "reference word"
+  },
+  "Tierbild": {
+    "kind": "noun",
+    "english": "animal picture"
+  },
+  "Tiermalerei": {
+    "kind": "noun",
+    "english": "animal painting"
+  },
+  "Bildbeschreibung": {
+    "kind": "noun",
+    "english": "image description"
+  },
+  "runterladen": {
+    "kind": "verb",
+    "english": "download"
+  },
+  "wennwhen": {
+    "kind": "verb",
+    "english": "whenwhen"
+  },
+  "wohl-fühlen": {
+    "kind": "verb",
+    "english": "feel-good"
+  },
+  "sogareven": {
+    "kind": "verb",
+    "english": "sogareven"
+  },
+  "also": {
+    "kind": "adj",
+    "english": "so"
+  },
+  "Wollt": {
+    "kind": "adj",
+    "english": "Want"
+  },
+  "weilbecause": {
+    "kind": "adj",
+    "english": "becausebecause"
+  },
+  "fastalmost": {
+    "kind": "adj",
+    "english": "fastalmost"
+  },
+  "konjugiertconjugated": {
+    "kind": "adj",
+    "english": "conjugatedconjugated"
+  },
+  "jeeach": {
+    "kind": "adj",
+    "english": "jeeach"
+  },
+  "paar": {
+    "kind": "adj",
+    "english": "pair"
+  },
+  "wenigstensat": {
+    "kind": "adj",
+    "english": "at leastat"
+  },
+  "Schultypen": {
+    "kind": "adj",
+    "english": "School types"
+  },
+  "Kunsterziehung": {
+    "kind": "adj",
+    "english": "Art education"
+  },
+  "Lieblings": {
+    "kind": "adj",
+    "english": "Favourite"
+  },
+  "als": {
+    "kind": "adj",
+    "english": "as"
+  },
+  "Meine": {
+    "kind": "adj",
+    "english": "My"
+  },
+  "worumabout": {
+    "kind": "adj",
+    "english": "worumabout"
+  },
+  "zuletztlastly": {
+    "kind": "adj",
+    "english": "lastlastlylastly"
+  },
+  "außerdembesides": {
+    "kind": "adj",
+    "english": "alsobesides"
+  },
+  "Hier": {
+    "kind": "adj",
+    "english": "Here"
+  },
+  "dabeiseinto": {
+    "kind": "adj",
+    "english": "to be there"
+  },
+  "nirgendsnowhere": {
+    "kind": "adj",
+    "english": "nowherenowhere"
+  },
+  "weg": {
+    "kind": "adj",
+    "english": "away"
+  },
+  "wovonhier": {
+    "kind": "adj",
+    "english": "of which here"
+  },
+  "hin": {
+    "kind": "adj",
+    "english": "towards"
+  },
+  "unter": {
+    "kind": "adj",
+    "english": "under"
+  },
+  "wofür": {
+    "kind": "adj",
+    "english": "for which"
+  },
+  "mehr": {
+    "kind": "adj",
+    "english": "more"
+  },
+  "nunnow": {
+    "kind": "adj",
+    "english": "nownow"
+  },
+  "Telefonieren": {
+    "kind": "adj",
+    "english": "Phone calls"
+  },
+  "außer": {
+    "kind": "adj",
+    "english": "except"
+  },
+  "rückwärtsbackward": {
+    "kind": "adj",
+    "english": "backwardbackward"
+  },
+  "ob": {
+    "kind": "adj",
+    "english": "whether"
+  },
+  "unpraktischimpractical": {
+    "kind": "adj",
+    "english": "impracticalimpractical"
+  },
+  "etwaapproximately": {
+    "kind": "adj",
+    "english": "approximatelyapproximately"
+  },
+  "Wo": {
+    "kind": "adj",
+    "english": "Where"
+  },
+  "damit": {
+    "kind": "adj",
+    "english": "so that"
+  },
+  "wohl": {
+    "kind": "adj",
+    "english": "probably"
+  },
+  "Voneinander": {
+    "kind": "adj",
+    "english": "From each other"
+  },
+  "Mein": {
+    "kind": "adj",
+    "english": "My"
+  },
+  "mega": {
+    "kind": "adj",
+    "english": "mega"
+  },
+  "deshalbtherefore": {
+    "kind": "adj",
+    "english": "thereforetherefore"
+  },
+  "trotzdemstill": {
+    "kind": "adj",
+    "english": "still quiet"
+  },
+  "usw": {
+    "kind": "adj",
+    "english": "etc"
+  },
+  "queracross": {
+    "kind": "adj",
+    "english": "queracross"
+  },
+  "fashionable": {
+    "kind": "adj",
+    "english": "fashionable"
+  },
+  "Tiergeschichten": {
+    "kind": "adj",
+    "english": "Animal stories"
+  },
+  "bestens": {
+    "kind": "adj",
+    "english": "best"
+  },
+  "woraufwhat": {
+    "kind": "adj",
+    "english": "whereuponwhat"
+  },
+  "damalsback": {
+    "kind": "adj",
+    "english": "Back then"
+  },
+  "Sprichwörter": {
+    "kind": "adj",
+    "english": "Proverbs"
+  },
+  "Elektro": {
+    "kind": "adj",
+    "english": "Electrical"
+  },
+  "Indie": {
+    "kind": "adj",
+    "english": "Indie"
+  },
+  "zuzüglich": {
+    "kind": "adj",
+    "english": "plus"
+  },
+  "dahinterbehind": {
+    "kind": "adj",
+    "english": "behind it"
+  }
+}

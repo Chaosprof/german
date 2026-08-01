@@ -1,0 +1,72 @@
+{
+  "audited_revision": "4fbfd4e",
+  "primary_rows_reviewed": 41015,
+  "supplemental_dual_gender_records_reviewed": 98,
+  "all_review_records": 41113,
+  "first_pass": {
+    "candidate_findings": 3307,
+    "clean_records": 37806,
+    "severity": {
+      "high": 782,
+      "medium": 1365,
+      "low": 1160
+    }
+  },
+  "independent_validation": {
+    "all_high_candidates_reviewed": 782,
+    "high_retained": 602,
+    "high_packet_downgrades": 163,
+    "high_packet_rejects": 13,
+    "high_packet_noun_revisions_to_medium": 4,
+    "medium_low_sample_reviewed": 183,
+    "medium_low_sample_real_issue_retained": 169,
+    "medium_low_sample_rejected": 14
+  },
+  "validated_worklist": {
+    "retained_findings": 3280,
+    "no_retained_finding": 37833,
+    "severity": {
+      "high": 602,
+      "medium": 1491,
+      "low": 1187
+    },
+    "primary": {
+      "rows": 41015,
+      "retained_findings": 3250,
+      "no_retained_finding": 37765
+    },
+    "by_bank": {
+      "nouns": {
+        "rows": 25947,
+        "retained_findings": 1829,
+        "confirmed_high": 325
+      },
+      "verbs": {
+        "rows": 5442,
+        "retained_findings": 633,
+        "confirmed_high": 175
+      },
+      "adjectives": {
+        "rows": 9262,
+        "retained_findings": 763,
+        "confirmed_high": 84
+      },
+      "verb_prepositions": {
+        "rows": 364,
+        "retained_findings": 25,
+        "confirmed_high": 9
+      },
+      "supplemental_dual_gender": {
+        "records": 98,
+        "retained_findings": 30,
+        "confirmed_high": 9
+      }
+    }
+  },
+  "coverage": {
+    "review_reports": 62,
+    "missing_reports": 0,
+    "reconciliation_errors": 0
+  },
+  "note": "Validated counts apply exact adjudications only. Unsampled medium/low rows retain their first-pass severity."
+}

@@ -1,0 +1,3292 @@
+[
+  {
+    "batch": "adjectives_001",
+    "bank": "adjectives",
+    "source_rows": [
+      4
+    ],
+    "word": "weiter",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"further\"",
+    "correct": "remove this separate entry and teach it as the comparative of `weit`; keep `weit` as the lemma",
+    "why": "`weiter` is the comparative form of `weit`, which already appears in this batch, rather than an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_001",
+    "bank": "adjectives",
+    "source_rows": [
+      20
+    ],
+    "word": "besser",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"better\"",
+    "correct": "remove this separate entry and teach it as the comparative of `gut`; keep `gut` as the lemma",
+    "why": "`besser` is the irregular comparative of `gut`, already present in this batch, not a separate adjective lemma."
+  },
+  {
+    "batch": "adjectives_001",
+    "bank": "adjectives",
+    "source_rows": [
+      46
+    ],
+    "word": "später",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"later\"",
+    "correct": "remove this separate entry and teach it as the comparative of `spät`; keep `spät` as the lemma",
+    "why": "`später` is the comparative of `spät`, which also appears in this batch, so retaining both as lemmas contaminates the adjective bank with an inflected degree form."
+  },
+  {
+    "batch": "adjectives_001",
+    "bank": "adjectives",
+    "source_rows": [
+      692
+    ],
+    "word": "vorgestellt",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"presented\"",
+    "correct": "remove from the lexical adjective bank; teach it as the past participle of `vorstellen`",
+    "why": "in this sense it is an ordinary eventive passive participle (`die vorgestellten Ergebnisse`), not a lexical adjective lemma with an independent learner meaning."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      762
+    ],
+    "word": "zusammengefasst",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "summarised / in summary",
+    "correct": "remove from the adjective bank; teach under `zusammenfassen` or as the phrase `zusammengefasst`",
+    "why": "This is the productive past participle of `zusammenfassen`, not an independently lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      825
+    ],
+    "word": "pflanzlich",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "vegetable",
+    "correct": "plant-based/plant/herbal",
+    "why": "`pflanzlich` relates to plants or plant origin; it does not generally mean “vegetable” (`Gemüse-`)."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      855
+    ],
+    "word": "gemacht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "made/done",
+    "correct": "remove from the adjective bank; teach as the past participle of `machen`",
+    "why": "The row is a bare productive verb participle with no lexical adjective sense represented by the gloss."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      873
+    ],
+    "word": "erwartet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "expected",
+    "correct": "remove from the adjective bank; teach as the past participle of `erwarten`",
+    "why": "As glossed, this is an eventive/resultative participle rather than an independently lexical adjective."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      876
+    ],
+    "word": "gefüllt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "filled",
+    "correct": "remove from the adjective bank; teach as the past participle of `füllen`",
+    "why": "The row supplies only the ordinary productive participle meaning “filled”."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      998
+    ],
+    "word": "betrieben",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "operated/run",
+    "correct": "remove from the adjective bank; teach as the past participle of `betreiben`",
+    "why": "The meanings shown are purely verbal participle meanings, not a lexical adjective."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1007
+    ],
+    "word": "besucht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "attended",
+    "correct": "remove from the adjective bank; teach as the past participle of `besuchen`",
+    "why": "“Attended” is only the ordinary verb participle here; no lexical adjective sense is supplied."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1009
+    ],
+    "word": "geschaffen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "created/made",
+    "correct": "remove from the adjective bank; teach as the past participle of `schaffen`",
+    "why": "This is a bare irregular participle with only its verbal meanings represented."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1026
+    ],
+    "word": "hergestellt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "constructed/made",
+    "correct": "remove from the adjective bank; teach as the past participle of `herstellen`",
+    "why": "The row is the productive verb participle and has no independent adjective sense in the gloss."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1045
+    ],
+    "word": "beschlossen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "agreed/decided",
+    "correct": "remove from the adjective bank; teach as the past participle of `beschließen`",
+    "why": "The listed meanings are ordinary participial results of deciding or agreeing, not a lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1066
+    ],
+    "word": "aktualisiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "refreshed/updated",
+    "correct": "remove from the adjective bank; teach as the past participle of `aktualisieren`",
+    "why": "The row is the productive participle “updated” rather than an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1089
+    ],
+    "word": "gebaut",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "built",
+    "correct": "remove from the adjective bank; teach as the past participle of `bauen`",
+    "why": "This is the ordinary past participle of `bauen`, with no lexical adjective sense represented."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1138
+    ],
+    "word": "verkauft",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "sold",
+    "correct": "remove from the adjective bank; teach as the past participle of `verkaufen`",
+    "why": "The entry is purely the regular verb participle “sold”."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1212
+    ],
+    "word": "ausgebaut",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "expanded/developed",
+    "correct": "remove from the adjective bank; teach as the past participle of `ausbauen`",
+    "why": "As glossed, this is only the productive participle of the verb."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1223
+    ],
+    "word": "bestanden",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "passed/stood",
+    "correct": "remove from the adjective bank; teach as the past participle of `bestehen`",
+    "why": "The gloss contains ordinary verb-participle meanings and no independent adjective sense."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1231
+    ],
+    "word": "umgerechnet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "converted/equivalent to",
+    "correct": "remove from the adjective bank; teach as the past participle/adverbial use of `umrechnen`",
+    "why": "This is a productive calculation/conversion participle, not a lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1310
+    ],
+    "word": "finanziert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "financed/funded",
+    "correct": "remove from the adjective bank; teach as the past participle of `finanzieren`",
+    "why": "The row gives only the productive verbal participle meaning."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1329
+    ],
+    "word": "spielend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "effortless/hands down",
+    "correct": "remove from the adjective bank; teach the idiom `spielend leicht` or adverbial `spielend`",
+    "why": "As “effortlessly” this is an adverbial present participle/idiomatic use; otherwise it simply means “playing” and is not a lexical adjective."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1331
+    ],
+    "word": "ausgestellt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "exhibited/issued",
+    "correct": "remove from the adjective bank; teach as the past participle of `ausstellen`",
+    "why": "Both supplied senses are ordinary participle meanings of the verb."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1335
+    ],
+    "word": "geschrieben",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "written",
+    "correct": "remove from the adjective bank; teach as the past participle of `schreiben`",
+    "why": "The entry is the bare irregular past participle and supplies no lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_002",
+    "bank": "adjectives",
+    "source_rows": [
+      1388
+    ],
+    "word": "gefertigt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "manufactured/crafted",
+    "correct": "remove from the adjective bank; teach as the past participle of `fertigen`",
+    "why": "The current meanings are purely those of the productive verb participle."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1441
+    ],
+    "word": "ungeklärt",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "unresolved/untreated",
+    "correct": "unresolved/unclarified/unexplained",
+    "why": "`ungeklärt` does not mean “untreated”; that is `unbehandelt`."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1442
+    ],
+    "word": "zerstört",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "zerstört — destroyed",
+    "correct": "Remove this transparent past participle from the adjective bank; teach it under `zerstören` (retaining only a separately glossed lexicalised sense if one is intended).",
+    "why": "With the supplied meaning it is simply the past participle of `zerstören`, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1621
+    ],
+    "word": "generiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "generiert — generated",
+    "correct": "Remove from the adjective bank and teach as the past participle of `generieren`.",
+    "why": "This is a fully transparent event/result participle with no distinct lexical adjective sense supplied."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1651
+    ],
+    "word": "unterschrieben",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "unterschrieben — signed",
+    "correct": "Remove from the adjective bank and teach as the past participle of `unterschreiben`.",
+    "why": "“Signed” merely describes completion of the verb's action; it is not an independent adjective lemma here."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1652
+    ],
+    "word": "benutzt",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "benutzt — used",
+    "correct": "Remove and teach as the past participle of `benutzen`; use `gebraucht` for lexical “used/second-hand”.",
+    "why": "This transparent participle can also misteach `benutzt` as the ordinary adjective for second-hand goods."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1720
+    ],
+    "word": "verordnet",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "verordnet — decreed/enacted",
+    "correct": "Remove from the adjective bank and teach as the past participle of `verordnen`, glossed prescribed/ordered/decreed as context requires.",
+    "why": "It is a transparent participle, and the current gloss also omits the very common medical sense “prescribed”."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1809
+    ],
+    "word": "ermordet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "ermordet — murdered",
+    "correct": "Remove from the adjective bank and teach as the past participle of `ermorden`.",
+    "why": "The entry supplies only the result of the verb's action, not a lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1851
+    ],
+    "word": "versprochen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "versprochen — promised",
+    "correct": "Remove from the adjective bank and teach as the past participle of `versprechen`.",
+    "why": "The supplied sense is a transparent verb form rather than an independently lexicalised adjective."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1860
+    ],
+    "word": "geformt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "geformt — shaped/formed/moulded",
+    "correct": "Remove from the adjective bank and teach as the past participle of `formen`.",
+    "why": "All supplied meanings directly express the result of `formen`; no distinct adjective sense is present."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1867
+    ],
+    "word": "prognostiziert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "prognostiziert — predicted",
+    "correct": "Remove from the adjective bank and teach as the past participle of `prognostizieren`.",
+    "why": "This is a contextual/event participle, not an adjective lemma suitable for a standalone card."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1873
+    ],
+    "word": "acht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "acht — eight",
+    "correct": "Move to a numeral/number bank or remove from the adjective bank.",
+    "why": "`acht` is a cardinal numeral, not an adjective lemma."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1886
+    ],
+    "word": "gestohlen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "gestohlen — stolen",
+    "correct": "Remove from the adjective bank and teach as the past participle of `stehlen`.",
+    "why": "The entry is only a transparent irregular participle and carries no separate lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      1947
+    ],
+    "word": "gesteuert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "gesteuert — controlled/guided/steered",
+    "correct": "Remove from the adjective bank and teach as the past participle of `steuern`.",
+    "why": "These are transparent event/result readings of the verb, not a distinct lexical adjective."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      2060
+    ],
+    "word": "aktiviert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "aktiviert — activated",
+    "correct": "Remove from the adjective bank and teach as the past participle of `aktivieren`.",
+    "why": "The supplied meaning is solely the transparent result of the verb's action."
+  },
+  {
+    "batch": "adjectives_003",
+    "bank": "adjectives",
+    "source_rows": [
+      2095
+    ],
+    "word": "angefertigt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "angefertigt — made/produced/manufactured",
+    "correct": "Remove from the adjective bank and teach as the past participle of `anfertigen`.",
+    "why": "This is a contextual past participle, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2187
+    ],
+    "word": "kommentiert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"commented/annotated\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `kommentieren`",
+    "why": "In the stated senses this is an ordinary resultative/eventive participle, as in `eine kommentierte Ausgabe`, not an independently lexicalised adjective lemma."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2194
+    ],
+    "word": "platziert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"placed/positioned\"",
+    "correct": "remove from the lexical adjective bank and teach it with the verb `platzieren`",
+    "why": "\"Placed/positioned\" is simply the ordinary past-participle meaning of `platzieren`, not a separate adjective lexeme."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2217
+    ],
+    "word": "gelagert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"stored\"",
+    "correct": "remove this sense from the adjective bank and teach `gelagert` as the past participle of `lagern`",
+    "why": "With the gloss \"stored\" the row contains only the verb's ordinary participle; a genuinely lexical use would need a construction such as `ähnlich gelagert`."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2219
+    ],
+    "word": "geschwächt",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"weakened\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `schwächen`",
+    "why": "The gloss merely reproduces the compositional passive/result meaning of the verb and supplies no independent adjective sense."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2312
+    ],
+    "word": "dominiert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"dominated\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `dominieren`",
+    "why": "In this sense it is the ordinary passive participle used with an expressed or understood agent, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2329
+    ],
+    "word": "publiziert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"publicised/published\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `publizieren`",
+    "why": "The row gives only the event/result of publishing and therefore stores an ordinary verb participle as an adjective lemma."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2388
+    ],
+    "word": "vergrößert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"enlarged\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `vergrößern`",
+    "why": "\"Enlarged\" is only the transparent result of the verb and does not establish an independent lexical adjective."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2551
+    ],
+    "word": "recherchiert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"researched\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `recherchieren`",
+    "why": "In phrases such as `gut recherchiert`, the headword is the ordinary participle modified by an adverb; \"researched\" supplies no independently lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2565
+    ],
+    "word": "übersetzt",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"translated\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `übersetzen`",
+    "why": "In this sense it is the ordinary result/event participle of the translation verb, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2637
+    ],
+    "word": "beendet",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"finished/ended\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `beenden`",
+    "why": "The row stores the transparent event/result participle of the verb and supplies no lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2653
+    ],
+    "word": "gestützt",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"supported/based on\"",
+    "correct": "remove as a standalone adjective and teach the participle with `stützen`/`sich auf etwas stützen`",
+    "why": "The meaning is compositional and valency-dependent, normally requiring the support or an `auf` complement, so it is not a self-contained lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2680
+    ],
+    "word": "verifiziert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"verified\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `verifizieren`",
+    "why": "The row gives only the transparent result of verifying and therefore treats a regular verb participle as an adjective lexeme."
+  },
+  {
+    "batch": "adjectives_004",
+    "bank": "adjectives",
+    "source_rows": [
+      2759
+    ],
+    "word": "getötet",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"killed\"",
+    "correct": "remove from the lexical adjective bank and teach it as the past participle of `töten`",
+    "why": "It is an ordinary eventive passive participle, as in `die getöteten Menschen`, with no independent adjective meaning."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      2976
+    ],
+    "word": "auslösend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"triggering\"",
+    "correct": "remove from the lexical adjective bank and teach it as the present participle of `auslösen`",
+    "why": "In ordinary uses such as `der den Alarm auslösende Rauch`, it expresses the verb's current causal relation and has no independent lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      2986
+    ],
+    "word": "energisch",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"energetic\"",
+    "correct": "\"forceful; firm/resolute; emphatic\"",
+    "why": "This is a major false-friend trap: German `energisch` normally describes decisive or forceful conduct, not someone full of energy, which is usually `energiegeladen` or `tatkräftig`."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3119
+    ],
+    "word": "schlafend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"sleeping\"",
+    "correct": "remove from the lexical adjective bank and teach it as the present participle of `schlafen`",
+    "why": "`schlafend` simply denotes the ongoing action of sleeping (`ein schlafendes Kind`) and is a productive participial form, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3168
+    ],
+    "word": "betriebsbedingt",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"operational\"",
+    "correct": "\"due to operational/business reasons\" (especially `betriebsbedingte Kündigung` = \"redundancy/dismissal for operational reasons\")",
+    "why": "Bare \"operational\" means functioning or ready for use, while `betriebsbedingt` expresses that something is caused or necessitated by circumstances within a business."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3286
+    ],
+    "word": "clean",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"clean\"",
+    "correct": "\"drug-free; free of harmful substances; fair/legitimate; clean/minimalist (in restricted modern contexts)\"",
+    "why": "German `clean` is a restricted loanword, not the general equivalent of English \"clean\", which is `sauber`; the bare identical gloss teaches a serious false friend."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3386
+    ],
+    "word": "völkisch",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"völkisch\"",
+    "correct": "\"ethno-nationalist; racial-nationalist (especially in German nationalist and Nazi ideology)\"",
+    "why": "Repeating the German headword supplies no translation and conceals its essential ideological and historical connotations from learners."
+  },
+  {
+    "batch": "adjectives_005",
+    "bank": "adjectives",
+    "source_rows": [
+      3487
+    ],
+    "word": "schrumpfend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"shrinking\"",
+    "correct": "remove from the lexical adjective bank and teach it as the present participle of `schrumpfen`",
+    "why": "In uses such as `eine schrumpfende Bevölkerung`, this is the ordinary productive participle describing an ongoing process, not an independent lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3542
+    ],
+    "word": "beamtet",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "civil-service",
+    "correct": "employed/appointed as a civil servant; having civil-servant status",
+    "why": "`beamtet` denotes the specific legal status of a `Beamter`, not merely something relating to the civil service."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3695
+    ],
+    "word": "befürchtet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "befürchtet",
+    "correct": "remove from the adjective bank; teach as the participle of `befürchten` (or use lexical `gefürchtet` for “feared/dreaded”)",
+    "why": "This is an ordinary verbal participle in such phrases as `die befürchteten Folgen`, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3708
+    ],
+    "word": "desolat",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "desolate",
+    "correct": "in a dreadful/deplorable state; disastrous/ruinous",
+    "why": "This is a strong false friend: German `desolat` usually evaluates a condition or performance, whereas English “desolate” primarily means deserted, bleak or grief-stricken."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3803
+    ],
+    "word": "sachgrundlos",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "without material reason",
+    "correct": "without objective grounds/justification (especially of fixed-term employment)",
+    "why": "`Sachgrund` is the legal concept of an objective justification, not a “material reason”; the current literal rendering misteaches the term."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3861
+    ],
+    "word": "zusammengenommen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "zusammengenommen",
+    "correct": "remove from the adjective bank and teach the fixed participial phrase `zusammengenommen` = “taken together”",
+    "why": "This is the participle of `zusammennehmen` used in a sentence-level summarising construction, not a lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3878
+    ],
+    "word": "beantwortet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "beantwortet",
+    "correct": "remove from the adjective bank; teach as the past participle of `beantworten`",
+    "why": "“Answered” is compositionally the result of the verb and has no independent lexical adjective sense; the bank already contains the genuinely useful adjective `unbeantwortet`."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3925
+    ],
+    "word": "gendergerecht",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "gender-appropriate",
+    "correct": "gender-equitable/gender-inclusive/gender-sensitive",
+    "why": "“Gender-appropriate” can suggest conformity to gender stereotypes, nearly the opposite of the usual German sense of equitable or inclusive treatment and language."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      3991
+    ],
+    "word": "sichergestellt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "sichergestellt",
+    "correct": "remove from the adjective bank; teach as the past participle of separable `sicherstellen`",
+    "why": "Both “ensured/guaranteed” and police “seized” are ordinary resultative uses of the verb, not independent adjective senses."
+  },
+  {
+    "batch": "adjectives_006",
+    "bank": "adjectives",
+    "source_rows": [
+      4053
+    ],
+    "word": "abfließend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "abfließend",
+    "correct": "remove from the adjective bank; teach as the present participle of `abfließen`",
+    "why": "“Draining/flowing off” is a fully compositional ongoing action with no lexicalised adjective meaning."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4289
+    ],
+    "word": "auferstanden",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "auferstanden — resurrected",
+    "correct": "remove from the adjective bank; teach it as the Partizip II of auferstehen",
+    "why": "This is the verb form used in ist auferstanden, not an independently lexicalised adjective lemma."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4313
+    ],
+    "word": "einsichtig",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "insightful/sensible/understandable",
+    "correct": "reasonable / willing to see reason; understandable/comprehensible (of a point)",
+    "why": "\"Insightful\" is a false friend (normally einsichtsreich); einsichtig describes willingness to accept reason or something readily comprehensible."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4357
+    ],
+    "word": "halbiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "halbiert — halved",
+    "correct": "remove from the adjective bank; it is the regular result participle of halbieren",
+    "why": "It contributes no lexical adjective sense beyond \"having been halved\" and is ordinary participial contamination."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4380
+    ],
+    "word": "jubelnd",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "jubelnd — cheering/jubilant",
+    "correct": "remove from the adjective bank; teach jubeln and derive its present participle",
+    "why": "In uses such as jubelnde Fans this is the ordinary Partizip I denoting an ongoing action, not a lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4395
+    ],
+    "word": "kratzfest",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "scratch-proof",
+    "correct": "scratch-resistant",
+    "why": "-fest normally promises resistance, not absolute immunity; \"scratch-proof\" teaches a materially stronger and often false claim."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4572
+    ],
+    "word": "befüllt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "befüllt — filled",
+    "correct": "remove from the adjective bank; teach it as the regular Partizip II of befüllen",
+    "why": "It is an ordinary result participle with no independent lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4591
+    ],
+    "word": "dement",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "demented",
+    "correct": "having dementia / affected by dementia",
+    "why": "Modern English \"demented\" usually means crazed or wildly irrational and is a misleading, stigmatising false friend for the German medical adjective."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4625
+    ],
+    "word": "gehäkelt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "gehäkelt — crocheted",
+    "correct": "remove from the adjective bank; teach it as the regular Partizip II of häkeln",
+    "why": "This is merely a productive material/result participle (a crocheted item), not an independently lexicalised adjective lemma."
+  },
+  {
+    "batch": "adjectives_007",
+    "bank": "adjectives",
+    "source_rows": [
+      4828
+    ],
+    "word": "unzerkaut",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "unzerkaut — unchewed",
+    "correct": "remove from the adjective bank; it is a freely generated negated participle of zerkauen",
+    "why": "This is a transparent one-off result form, not a lexical adjective worth teaching as an independent lemma."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      4949
+    ],
+    "word": "erstarkend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`erstarkend` — \"growing stronger\"",
+    "correct": "remove from the adjective bank and teach under the verb `erstarken`",
+    "why": "This is the transparent present participle of `erstarken`, not an independently lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5020
+    ],
+    "word": "klappernd",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`klappernd` — \"clattering/rattling\"",
+    "correct": "remove from the adjective bank and teach under `klappern`",
+    "why": "The row is merely the productive present participle of `klappern`, with no lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5028
+    ],
+    "word": "kopfschüttelnd",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`kopfschüttelnd` — \"shaking one's head\"",
+    "correct": "remove from the adjective bank and teach it as the participial construction `den Kopf schüttelnd`",
+    "why": "This is a compositional present participle describing an accompanying action, not an adjective lemma."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5198
+    ],
+    "word": "vorhergesagt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`vorhergesagt` — \"predicted/projected\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `vorhersagen`",
+    "why": "This is a regular verbal participle with no independently lexical adjective sense in the supplied gloss."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5305
+    ],
+    "word": "drittletzte",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`drittletzte`",
+    "correct": "use the uninflected lemma `drittletzt` (\"third from last/antepenultimate\")",
+    "why": "The final `-e` is an adjective inflection, so the stored headword is an inflected attributive form rather than the lemma."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5328
+    ],
+    "word": "erstrebt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`erstrebt` — \"desired/pursued/strived\"",
+    "correct": "remove from the adjective bank and teach under `erstreben`; use `erstrebenswert` for the lexical adjective \"desirable\"",
+    "why": "`erstrebt` is simply the past participle of `erstreben`, and the supplied gloss gives only verbal-result meanings."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5349
+    ],
+    "word": "fußend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`fußend` — \"based on\"",
+    "correct": "remove from the adjective bank and teach the verbal construction `auf etwas fußen`",
+    "why": "This is the productive present participle of `fußen` and cannot be used with the supplied sense without its governed `auf` phrase."
+  },
+  {
+    "batch": "adjectives_008",
+    "bank": "adjectives",
+    "source_rows": [
+      5397
+    ],
+    "word": "hochgezogen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "`hochgezogen` — \"raised/pulled up\"",
+    "correct": "remove this generic action-result entry and teach it as the past participle of `hochziehen`",
+    "why": "The gloss represents only the compositional verbal participle, with no independent lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5648
+    ],
+    "word": "vibrierend",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "vibrierend — vibrating",
+    "correct": "remove from the adjective bank, or replace with the verb **vibrieren**; retain only with a genuinely lexical adjectival sense such as “vibrant/thrumming”",
+    "why": "As glossed, this is merely the productive present participle “vibrating”, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5733
+    ],
+    "word": "aufkeimend",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "aufkeimend — budding/burgeoning/germinal",
+    "correct": "remove from the adjective bank; teach **aufkeimen** as the verb, or use an established adjective such as **beginnend** where appropriate",
+    "why": "This is the transparent eventive present participle of “aufkeimen”, not a lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5792
+    ],
+    "word": "dingfest",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "dingfest — arrest/come to grips/master",
+    "correct": "remove as a standalone adjective; teach the fixed expression **jemanden/etwas dingfest machen** (“arrest/catch someone; pin something down”)",
+    "why": "“Dingfest” is phrase-bound, while all three stored English items are verb phrases and cannot serve as an adjective gloss."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5861
+    ],
+    "word": "fressend",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "fressend — feeding/gorging",
+    "correct": "remove from the adjective bank and teach **fressen** as a verb",
+    "why": "This is an ordinary eventive present participle with no lexical adjectival meaning in the supplied gloss."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5923
+    ],
+    "word": "herbeigerufen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "herbeigerufen — summoned/called for",
+    "correct": "remove from the adjective bank and teach **herbeirufen** as the verb",
+    "why": "This is a transparent eventive past participle, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      5962
+    ],
+    "word": "internal",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "internal",
+    "correct": "internalised; inward/inner (specialist or formal)",
+    "why": "German “internal” does not normally mean English “internal” (that is “intern”); the identical-looking gloss teaches a false friend."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      6042
+    ],
+    "word": "morbide",
+    "field": "word",
+    "severity": "high",
+    "category": "spelling",
+    "current": "morbide",
+    "correct": "morbid",
+    "why": "“Morbide” is an inflected form (for example, “eine morbide Gesellschaft”); the citation lemma is “morbid”."
+  },
+  {
+    "batch": "adjectives_009",
+    "bank": "adjectives",
+    "source_rows": [
+      6293
+    ],
+    "word": "vermeidlich",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "supposed",
+    "correct": "avoidable (rare; normally **vermeidbar**)",
+    "why": "“Supposed/alleged” translates “vermeintlich”; “vermeidlich” means capable of being avoided."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6361
+    ],
+    "word": "abbezahlt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "paid off",
+    "correct": "remove from the adjective bank and teach as the past participle of `abbezahlen`",
+    "why": "The supplied sense is only the transparent result of the verb, not an independently lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6366
+    ],
+    "word": "abgefallen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "fallen off/apostate",
+    "correct": "remove from the adjective bank and teach under `abfallen`",
+    "why": "Both supplied readings are ordinary past-participle uses of `abfallen`, not a distinct adjective lemma."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6446
+    ],
+    "word": "beschützt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "protected",
+    "correct": "remove from the adjective bank and teach as the past participle of `beschützen`",
+    "why": "“Protected” gives only the productive passive/result meaning of the verb and no independently lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6453
+    ],
+    "word": "beurkundet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "officially recorded",
+    "correct": "remove from the adjective bank and teach as the past participle of `beurkunden`",
+    "why": "This is an ordinary legal/administrative participle describing something that has been formally recorded."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6456
+    ],
+    "word": "bewundert",
+    "field": "word; english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "admired/adored/renowned",
+    "correct": "remove from the adjective bank and teach as the past participle of `bewundern`",
+    "why": "“Admired/adored” merely expresses the verb's passive result, while “renowned” additionally means famous and is not a reliable equivalent."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6458
+    ],
+    "word": "bezeugt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "evidenced/testified",
+    "correct": "remove from the adjective bank and teach as the past participle of `bezeugen`",
+    "why": "The row contains only transparent participial meanings such as attested or evidenced, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6529
+    ],
+    "word": "eingestürzt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "collapsed",
+    "correct": "remove from the adjective bank and teach as the past participle of `einstürzen`",
+    "why": "The row gives only the transparent result of the verb “to collapse”."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6570
+    ],
+    "word": "erzogen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "brought up/educated",
+    "correct": "remove this bare entry and teach as the past participle of `erziehen`; retain lexical compounds such as `wohlerzogen` separately",
+    "why": "The gloss supplies only ordinary verbal results and does not represent a standalone lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6619
+    ],
+    "word": "gealtert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "aged",
+    "correct": "remove from the adjective bank and teach as the past participle of `altern`",
+    "why": "As glossed, this is simply the productive participle for something that has aged or been aged."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6620
+    ],
+    "word": "gebleicht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "bleached",
+    "correct": "remove from the adjective bank and teach as the past participle of `bleichen`",
+    "why": "“Bleached” is only the transparent event/result participle and supplies no separate lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6630
+    ],
+    "word": "gekippt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "tilted/tipped over",
+    "correct": "remove from the adjective bank and teach as the past participle of `kippen`",
+    "why": "Both English readings are ordinary results of the verb's action."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6641
+    ],
+    "word": "gerollt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "rolled",
+    "correct": "remove from the adjective bank and teach as the past participle of `rollen`",
+    "why": "The row gives only the ordinary productive participle of the verb."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6644
+    ],
+    "word": "geschlachtet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "slaughtered",
+    "correct": "remove from the adjective bank and teach as the past participle of `schlachten`",
+    "why": "This is a transparent passive/result participle, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6655
+    ],
+    "word": "getippt",
+    "field": "word; cefrLevel",
+    "severity": "high",
+    "category": "notadj",
+    "current": "typed; B1",
+    "correct": "remove from the adjective bank and teach as the past participle of `tippen`",
+    "why": "The assigned B1 card is merely a productive verb form; it should not be independently levelled as an adjective."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6758
+    ],
+    "word": "kastriert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "castrated",
+    "correct": "remove from the adjective bank and teach as the past participle of `kastrieren`",
+    "why": "The supplied meaning is solely the transparent result of the verb's action."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6791
+    ],
+    "word": "krachledern",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "of leather (Bavarian)",
+    "correct": "rough-hewn/rustic/blunt and forceful",
+    "why": "The lexical adjective figuratively describes a coarse, hearty or forceful style; it does not simply mean made of Bavarian leather."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6944
+    ],
+    "word": "präzisiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "specified more precisely",
+    "correct": "remove from the adjective bank and teach as the past participle of `präzisieren`",
+    "why": "This is a productive event/result participle with no independent lexical adjective meaning supplied."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6969
+    ],
+    "word": "rebellierend",
+    "field": "word; english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "rebelling/rebellious",
+    "correct": "remove from the adjective bank and teach the present participle under `rebellieren`; use `rebellisch` for “rebellious”",
+    "why": "`rebellierend` means currently engaging in rebellion, while the lexical character adjective “rebellious” is `rebellisch`."
+  },
+  {
+    "batch": "adjectives_010",
+    "bank": "adjectives",
+    "source_rows": [
+      6980
+    ],
+    "word": "restaurativ",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "restorative",
+    "correct": "restorationist/aimed at restoring the old political or social order/reactionary",
+    "why": "German `restaurativ` normally concerns political or social restoration; English “restorative” usually means healing or replenishing and therefore teaches a false everyday sense."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7006
+    ],
+    "word": "schlängelnd",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"meandering/winding\"",
+    "correct": "remove from the adjective bank and teach as the present participle of `sich schlängeln`",
+    "why": "This is the ordinary productive participle describing something that is currently winding or meandering, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7014
+    ],
+    "word": "schulterzuckend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"shrugging\"",
+    "correct": "remove from the adjective bank and teach `mit den Schultern zucken` or the participle under `schulterzucken`",
+    "why": "The form is a contextual present participle, used chiefly adverbially to describe someone shrugging, rather than a lexical adjective."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7061
+    ],
+    "word": "stirnrunzelnd",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"frowning\"",
+    "correct": "remove from the adjective bank and teach `die Stirn runzeln` or the participle under `stirnrunzeln`",
+    "why": "This is a transparent, contextual present participle describing the act of frowning, not a lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7114
+    ],
+    "word": "überrumpelt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"caught off guard\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `überrumpeln`",
+    "why": "The gloss gives only the result of the verb's action; no independently lexical adjective sense is represented."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7136
+    ],
+    "word": "unehrlich",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"dishonest first\"",
+    "correct": "\"dishonest\"",
+    "why": "The stray word \"first\" makes the stored translation false and nonsensical."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7163
+    ],
+    "word": "unterlaufen",
+    "field": "word, english",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"bloodshot (mit Blut unterlaufen); as a participle: circumvented\"",
+    "correct": "remove this standalone row; teach `mit Blut/rot unterlaufen` as a phrase and the relevant meanings under the verb `unterlaufen`",
+    "why": "This is a verb participle in both supplied readings, and the blood-discolouration sense requires a complement such as `mit Blut` or `rot`; bare `unterlaufen` is not a useful adjective lemma meaning \"bloodshot\"."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7195
+    ],
+    "word": "verlustig",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"verlustig gehen\"",
+    "correct": "\"deprived of/having forfeited\"; note the formal constructions `einer Sache verlustig gehen/sein`",
+    "why": "The current value merely repeats a German phrase instead of giving an English translation, so a learner cannot infer the meaning or the required genitive construction."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7201
+    ],
+    "word": "verschriftlicht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"written down\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `verschriftlichen`",
+    "why": "\"Written down\" is simply the transparent result of the verb, not an independently lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7241
+    ],
+    "word": "weiterverarbeitet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"further processed\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `weiterverarbeiten`",
+    "why": "The supplied meaning is solely the productive verb participle, with no separate lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7272
+    ],
+    "word": "zertrümmert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"smashed/wrecked\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `zertrümmern`",
+    "why": "The row gives only the ordinary resultative participle of the verb, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7279
+    ],
+    "word": "zusammengerollt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"rolled up\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `zusammenrollen`",
+    "why": "This is a transparent event/result participle and has no distinct lexical adjective sense in the gloss."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7299
+    ],
+    "word": "abblätternd",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"flaking/peeling\"",
+    "correct": "remove from the adjective bank and teach as the present participle of `abblättern`",
+    "why": "It productively describes something undergoing the verb's action, rather than functioning as an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7302
+    ],
+    "word": "abfliegend",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"departing\"",
+    "correct": "remove from the adjective bank and teach as the present participle of `abfliegen`",
+    "why": "\"Departing\" is only the contextual participle of the verb, not a lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7311
+    ],
+    "word": "abgelenkt",
+    "field": "word, cefrLevel",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"distracted\"; C1",
+    "correct": "remove from the adjective bank and teach as the past participle of `ablenken`",
+    "why": "The entry supplies the ordinary participial result of distraction rather than a separately lexicalised adjective; its C1 label therefore should not be retained as an adjective-card level."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7369
+    ],
+    "word": "amtssässig",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "\"officially resident\"",
+    "correct": "\"subject to the jurisdiction of a local Amt\" (historical)",
+    "why": "This historical administrative term contrasted local-`Amt` jurisdiction with direct territorial or chancery jurisdiction; it does not mean officially resident."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7376
+    ],
+    "word": "angeschwollen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"swollen\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `anschwellen`",
+    "why": "The form and supplied sense are the ordinary resultative participle of the verb, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7392
+    ],
+    "word": "antizipiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"anticipated\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `antizipieren`",
+    "why": "This is a transparent verb participle used contextually, with no distinct lexical adjective sense supplied."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7407
+    ],
+    "word": "aromatisiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"flavoured\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `aromatisieren`",
+    "why": "\"Flavoured\" directly records the result of the verb's action and does not establish an independent German adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7418
+    ],
+    "word": "assimiliert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"assimilated\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `assimilieren`",
+    "why": "The row gives only the ordinary participial meaning of the verb, not a lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7432
+    ],
+    "word": "backsteingefasst",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"brick-trimmed\"",
+    "correct": "remove this one-off participial compound from the adjective bank; express it compositionally as `mit Backsteinen gefasst`",
+    "why": "This is a context-built past-participial description, not an established adjective lemma suitable for a standalone learner card."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7467
+    ],
+    "word": "beschienen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"illuminated/lit up\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `bescheinen`",
+    "why": "The form transparently denotes something on which light has shone; it is a verb participle rather than an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7473
+    ],
+    "word": "bestgeplant",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"best-planned\"",
+    "correct": "remove; teach the superlative construction `am besten geplant` or attributive `bestgeplant-` in context under `gut geplant`",
+    "why": "This is contextual superlative/participle contamination, not the citation form of a lexical adjective."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7499
+    ],
+    "word": "blumengeschmückt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"flower-decked\"",
+    "correct": "remove this contextual participial compound; express it as `mit Blumen geschmückt` and teach under `schmücken`",
+    "why": "The form simply specifies how something has been decorated and is not an independent lexical adjective lemma."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7598
+    ],
+    "word": "durchgekreuzt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"thwarted\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `durchkreuzen`",
+    "why": "The gloss is solely the transparent result of the verb's action, not an independent adjective sense."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7660
+    ],
+    "word": "ertrunken",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"drowned\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `ertrinken`",
+    "why": "This is the irregular past participle of the verb and supplies no independent adjective meaning."
+  },
+  {
+    "batch": "adjectives_011",
+    "bank": "adjectives",
+    "source_rows": [
+      7661
+    ],
+    "word": "erwählt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "\"chosen/elected\"",
+    "correct": "remove from the adjective bank and teach as the past participle of `erwählen`",
+    "why": "Both English meanings directly represent the verb's participial result rather than a lexical adjective."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7757
+    ],
+    "word": "geduscht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "geduscht — showered",
+    "correct": "remove from the adjective bank and teach as the past participle of `duschen`",
+    "why": "The supplied meaning is only the transparent result of taking/giving a shower, not an independently lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7765
+    ],
+    "word": "gegoren",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "gegoren — fermented",
+    "correct": "remove from the adjective bank and teach as the past participle of `gären`",
+    "why": "This is the irregular participle of `gären`; the gloss gives only that verb’s ordinary fermentation result and no independent adjective sense."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7785
+    ],
+    "word": "gepökelt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "gepökelt — brined/cured",
+    "correct": "remove from the adjective bank and teach as the past participle of `pökeln`",
+    "why": "The row gives only the transparent result of curing food in brine, with no lexical meaning distinct from the verb."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7791
+    ],
+    "word": "geschwärzt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "geschwärzt — blackened; (of documents) redacted",
+    "correct": "remove from the adjective bank and teach these contextual participle senses under `schwärzen`",
+    "why": "Both blackening something and obscuring passages in a document are ordinary results of the verb `schwärzen`, not a separate adjective lemma."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7801
+    ],
+    "word": "gezoomt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "gezoomt — zoomed",
+    "correct": "remove from the adjective bank and teach as the past participle of `zoomen`",
+    "why": "This is a transparent technical verb participle and supplies no independently lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7884
+    ],
+    "word": "heruntergewirtschaftet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "heruntergewirtschaftet — ruined",
+    "correct": "remove from the adjective bank and teach as the past participle of `herunterwirtschaften`",
+    "why": "It describes the result of running an organisation, property or economy into the ground and is the ordinary participle of the separable verb."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7940
+    ],
+    "word": "innegehabt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "innegehabt — held (of an office, post or right)",
+    "correct": "remove from the adjective bank and teach as the past participle of `innehaben`",
+    "why": "It is the participle of the separable verb `innehaben`, not an adjective lemma."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7948
+    ],
+    "word": "interpoliert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "interpoliert — interpolated",
+    "correct": "remove from the adjective bank and teach as the past participle of `interpolieren`",
+    "why": "The mathematical/scientific meaning shown is exactly the productive result of the verb, with no independent lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7958
+    ],
+    "word": "invertiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "invertiert — inverted",
+    "correct": "remove from the adjective bank and teach as the past participle of `invertieren`",
+    "why": "The entry is a transparent technical participle rather than an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      7981
+    ],
+    "word": "kandiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "kandiert — candied",
+    "correct": "remove from the adjective bank and teach as the past participle of `kandieren`",
+    "why": "The row gives only the ordinary result of candying food and no adjective meaning independent of the verb."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      8071
+    ],
+    "word": "kupiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "kupiert — docked/cropped/cut short",
+    "correct": "remove from the adjective bank and teach these senses as the past participle of `kupieren`",
+    "why": "Docking an animal, cropping something or cutting it short are direct applications of the verb; the row has no separate lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      8152
+    ],
+    "word": "meistgeklickt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "meistgeklickt — most-clicked",
+    "correct": "remove as a headword; teach `geklickt` under `klicken` and form `am meisten geklickt` contextually",
+    "why": "This is a corpus-style superlative construction built from a verb participle, not a positive adjective lemma."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      8250
+    ],
+    "word": "oktroyiert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "oktroyiert — forced upon/imposed",
+    "correct": "remove from the adjective bank and teach as the past participle of `oktroyieren`",
+    "why": "The supplied meanings are the ordinary passive/result meanings of the verb “to impose”, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      8328
+    ],
+    "word": "präjudiziell",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "prejudicial",
+    "correct": "precedential/creating a precedent; prejudging",
+    "why": "German `präjudiziell` concerns creating a precedent or pre-emptively deciding a question, whereas modern English “prejudicial” primarily means harmful or unfairly biasing."
+  },
+  {
+    "batch": "adjectives_012",
+    "bank": "adjectives",
+    "source_rows": [
+      8362
+    ],
+    "word": "radiziert",
+    "field": "whole row",
+    "severity": "high",
+    "category": "notadj",
+    "current": "radiziert — rooted/with a root",
+    "correct": "remove from the adjective bank and teach as the past participle of mathematical `radizieren` (to extract a root)",
+    "why": "It is a transparent technical participle, and the current gloss also misleadingly suggests possessing a root rather than having a mathematical root extracted."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8568
+    ],
+    "word": "strafbefreiend",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "exempting from prosecution",
+    "correct": "exempting from punishment / providing immunity from punishment",
+    "why": "*Strafe* is punishment, not prosecution; a measure can be *strafbefreiend* even though proceedings occur."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8606
+    ],
+    "word": "tariffähig",
+    "field": "english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "eligible to be covered by a collective wage agreement",
+    "correct": "legally capable of concluding collective agreements",
+    "why": "German labour law uses this of parties such as trade unions and employers that have capacity to conclude a collective agreement, not of workers eligible to be covered by one."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8609
+    ],
+    "word": "tausendst",
+    "field": "word",
+    "severity": "high",
+    "category": "classification",
+    "current": "tausendst",
+    "correct": "tausendste (or teach the fully declined forms explicitly)",
+    "why": "*tausendst-* is only the stem to which an adjective ending must be attached; it is not a usable standalone ordinal headword."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8910
+    ],
+    "word": "wollen",
+    "field": "english",
+    "severity": "high",
+    "category": "junk",
+    "current": "woollen (made of wool) — and mark it as the adjective, distinct from the modal verb wollen",
+    "correct": "woollen / made of wool",
+    "why": "The headword is a valid adjective, but its gloss contains an internal editorial instruction that would be shown to learners."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8966
+    ],
+    "word": "zweihundertst",
+    "field": "word",
+    "severity": "high",
+    "category": "classification",
+    "current": "zweihundertst",
+    "correct": "zweihundertste (or teach the fully declined forms explicitly)",
+    "why": "*zweihundertst-* is only an ordinal stem requiring an adjective ending, not a usable standalone word."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8997
+    ],
+    "word": "mehrmals",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "mehrmals",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is an adverb meaning “several times” and has no adjectival use."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8998
+    ],
+    "word": "erstmals",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "erstmals",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is an adverb meaning “for the first time”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      8999
+    ],
+    "word": "anlässlich",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "anlässlich",
+    "correct": "remove from the adjective bank; classify as a preposition",
+    "why": "In current German this is a genitive preposition meaning “on the occasion of”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9000
+    ],
+    "word": "angesichts",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "angesichts",
+    "correct": "remove from the adjective bank; classify as a preposition",
+    "why": "This is a genitive preposition meaning “in view of”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9001
+    ],
+    "word": "mangels",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "mangels",
+    "correct": "remove from the adjective bank; classify as a preposition",
+    "why": "This is a genitive preposition meaning “for lack of”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9002
+    ],
+    "word": "zumal",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "zumal",
+    "correct": "remove from the adjective bank; classify as a conjunction/adverb",
+    "why": "This introduces an additional reason (“especially since”) and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9004
+    ],
+    "word": "zwischendurch",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "zwischendurch",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is a temporal adverb, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9005
+    ],
+    "word": "folgendermaßen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "folgendermaßen",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This fixed word means “as follows” and is an adverb, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9006
+    ],
+    "word": "wobei",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "wobei",
+    "correct": "remove from the adjective bank; classify as a pronominal adverb/conjunction",
+    "why": "This is a pronominal adverb with conjunctive uses, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9007
+    ],
+    "word": "nichtsdestotrotz",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "nichtsdestotrotz",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is a conjunctive adverb meaning “nevertheless”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9008
+    ],
+    "word": "oftmals",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "oftmals",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is a frequency adverb, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9009
+    ],
+    "word": "weiterhin",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "weiterhin",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is an adverb meaning “still/continuing to” or “furthermore”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9010
+    ],
+    "word": "inwieweit",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "inwieweit",
+    "correct": "remove from the adjective bank; classify as an interrogative/relative adverb",
+    "why": "This means “to what extent” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9011
+    ],
+    "word": "entgegen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "entgegen",
+    "correct": "remove from the adjective bank; classify as a preposition/adverb",
+    "why": "This is a dative preposition or directional adverb/particle, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9012
+    ],
+    "word": "wohingegen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "wohingegen",
+    "correct": "remove from the adjective bank; classify as a conjunction",
+    "why": "This is an adversative conjunction meaning “whereas”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9013
+    ],
+    "word": "demgegenüber",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "demgegenüber",
+    "correct": "remove from the adjective bank; classify as a pronominal adverb",
+    "why": "This is a contrastive pronominal adverb, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9014
+    ],
+    "word": "somit",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "somit",
+    "correct": "remove from the adjective bank; classify as a conjunctive adverb",
+    "why": "This means “therefore/thus” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9015
+    ],
+    "word": "womit",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "womit",
+    "correct": "remove from the adjective bank; classify as a pronominal adverb",
+    "why": "This means “with what/with which/whereby” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9017
+    ],
+    "word": "wodurch",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "wodurch",
+    "correct": "remove from the adjective bank; classify as a pronominal adverb",
+    "why": "This means “through what/through which/whereby” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9018
+    ],
+    "word": "rundum",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "rundum",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "The standalone word is an adverb meaning “all around/completely”, not a declinable adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9019
+    ],
+    "word": "demzufolge",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "demzufolge",
+    "correct": "remove from the adjective bank; classify as a conjunctive adverb",
+    "why": "This means “consequently/accordingly” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9020
+    ],
+    "word": "stets",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "stets",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is an adverb meaning “always”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9021
+    ],
+    "word": "infolgedessen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "infolgedessen",
+    "correct": "remove from the adjective bank; classify as a conjunctive adverb",
+    "why": "This fixed word means “as a result” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9022
+    ],
+    "word": "weswegen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "weswegen",
+    "correct": "remove from the adjective bank; classify as an interrogative/relative adverb",
+    "why": "This means “for what reason/which is why” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9023
+    ],
+    "word": "derzeit",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "derzeit",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is a temporal adverb meaning “currently”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9025
+    ],
+    "word": "daraufhin",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "daraufhin",
+    "correct": "remove from the adjective bank; classify as a pronominal adverb",
+    "why": "This means “after that/in response” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9028
+    ],
+    "word": "sicherlich",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "sicherlich",
+    "correct": "remove from the adjective bank; classify as an adverb/modal particle",
+    "why": "This means “certainly/surely” and is not an adjective; the corresponding adjective is *sicher*."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9032
+    ],
+    "word": "keineswegs",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "keineswegs",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This fixed negative expression is an adverb, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9033
+    ],
+    "word": "sozusagen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "sozusagen",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This discourse adverb means “so to speak” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9034
+    ],
+    "word": "jedenfalls",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "jedenfalls",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is an adverb meaning “in any case/at any rate”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9035
+    ],
+    "word": "einigermaßen",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "einigermaßen",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This degree adverb means “reasonably/to some extent” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9036
+    ],
+    "word": "zufolge",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "zufolge",
+    "correct": "remove from the adjective bank; classify as a dative postposition",
+    "why": "In the glossed sense “according to” this is a postposition, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9037
+    ],
+    "word": "zutiefst",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "zutiefst",
+    "correct": "remove from the adjective bank; classify as an adverb",
+    "why": "This is an intensifying adverb meaning “deeply/profoundly”, not an adjective."
+  },
+  {
+    "batch": "adjectives_013",
+    "bank": "adjectives",
+    "source_rows": [
+      9065
+    ],
+    "word": "hierzu",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "hierzu",
+    "correct": "remove from the adjective bank; classify as a pronominal adverb",
+    "why": "This means “on/about this” or “for this purpose” and is not an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9101
+    ],
+    "word": "elfte",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "elfte — eleventh",
+    "correct": "normalise the adjective lemma to `elft`; teach inflected `elfte` only in an example",
+    "why": "The bank otherwise stores adjective stems, while `elfte` is the declined weak/strong form rather than the citation stem."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9102
+    ],
+    "word": "zweitens",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "secondly",
+    "correct": "remove from the adjective bank and teach as a sentence-ordering adverb",
+    "why": "`zweitens` is an adverb meaning “secondly”, not an adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9103
+    ],
+    "word": "drittens",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "thirdly",
+    "correct": "remove from the adjective bank and teach as a sentence-ordering adverb",
+    "why": "`drittens` is an adverb meaning “thirdly”, not an adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9121
+    ],
+    "word": "geteilt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "divided; shared",
+    "correct": "remove from the adjective bank and teach as the past participle of `teilen`",
+    "why": "Both supplied senses are transparent passive/result uses of the verb, with no independent lexical adjective sense represented."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9138
+    ],
+    "word": "ausgewechselt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "substituted/replaced",
+    "correct": "remove from the adjective bank and teach as the past participle of `auswechseln`",
+    "why": "Substitution or replacement is simply the result of the separable verb's action, not a standalone adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9142
+    ],
+    "word": "eingerechnet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "included",
+    "correct": "remove from the adjective bank and teach as the past participle of `einrechnen`, commonly in `mit eingerechnet`",
+    "why": "The row gives only the ordinary verbal result “included/taken into account”."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9143
+    ],
+    "word": "verstärkt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "reinforced",
+    "correct": "remove this row and teach `verstärkt` as the past participle of `verstärken`; retain contextual adverbial uses under the verb",
+    "why": "“Reinforced” is the transparent passive/result meaning of `verstärken`, not an independently supplied adjective sense."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9148
+    ],
+    "word": "wiedererkannt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "recognised",
+    "correct": "remove from the adjective bank and teach as the past participle of `wiedererkennen`",
+    "why": "This is an ordinary separable-verb participle denoting the completed act of recognising someone or something again."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9150
+    ],
+    "word": "äußere",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "outer",
+    "correct": "normalise to the adjective stem `äußer`",
+    "why": "`äußere` is a declined attributive form, not the adjective's citation form."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9152
+    ],
+    "word": "manikürt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "manicured",
+    "correct": "remove from the adjective bank and teach as the past participle of `maniküren`",
+    "why": "The gloss gives only the transparent result of manicuring, with no distinct lexical adjective meaning."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9163
+    ],
+    "word": "aufgerichtet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "upright/raised",
+    "correct": "remove this row and teach as the past participle of `aufrichten`; use `aufrecht` for the lexical adjective “upright”",
+    "why": "“Raised” is the direct result of the verb, while presenting it as “upright” obscures the ordinary lexical adjective `aufrecht`."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9169
+    ],
+    "word": "sowie",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "as well as",
+    "correct": "remove from the adjective bank and teach as a conjunction",
+    "why": "`sowie` joins words or clauses and is not an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9173
+    ],
+    "word": "contra",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "against",
+    "correct": "remove from the adjective bank and teach as the preposition/adverb `contra` or in the expression `pro und contra`",
+    "why": "The supplied “against” sense is prepositional, not adjectival."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9174
+    ],
+    "word": "allermeist",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "by far the most/most of all",
+    "correct": "remove as a positive adjective lemma and teach the superlative expression contextually, especially `die allermeisten` = the vast majority",
+    "why": "This is an intensified superlative formation, not a positive adjective lemma, and the supplied translations are superlative/adverbial."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9175
+    ],
+    "word": "gefärbt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "coloured",
+    "correct": "remove this bare row and teach as the past participle of `färben`; any lexical figurative sense such as `politisch gefärbt` needs its own contextual treatment",
+    "why": "As currently glossed, it supplies only the transparent result of colouring something."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9184
+    ],
+    "word": "haufenweise",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "in heaps/loads of",
+    "correct": "remove from the adjective bank and teach as an adverbial quantifier",
+    "why": "`haufenweise` means “in heaps/in large quantities” and does not function as a declinable adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9185
+    ],
+    "word": "höchst",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "extremely/most",
+    "correct": "remove this row; teach adverbial `höchst` = extremely separately and the superlative of `hoch` within its paradigm",
+    "why": "The gloss is purely adverbial, while adjectival `höchst-` is a superlative form of `hoch`, not a positive adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9189
+    ],
+    "word": "ausgenutzt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "exploited/taken advantage of",
+    "correct": "remove from the adjective bank and teach as the past participle of `ausnutzen`",
+    "why": "Both supplied readings are ordinary passive/result meanings of the verb, not an independent adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9190
+    ],
+    "word": "zugange",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "at work/underway",
+    "correct": "remove from the adjective bank and teach the fixed predicative expression `zugange sein`",
+    "why": "`zugange` is restricted to an adverbial/predicative expression and cannot serve as a normal adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9193
+    ],
+    "word": "erbracht",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "provided",
+    "correct": "remove from the adjective bank and teach as the past participle of `erbringen`",
+    "why": "This is the irregular participle of the verb and the gloss gives only its ordinary result meaning."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9195
+    ],
+    "word": "erspart",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "saved/spared",
+    "correct": "remove from the adjective bank and teach as the past participle of `ersparen`",
+    "why": "Saving money or sparing someone something are direct verbal results, not an independently lexical adjective sense."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9199
+    ],
+    "word": "obere",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "upper",
+    "correct": "normalise to the adjective stem `ober`",
+    "why": "`obere` is a declined attributive form rather than the citation form stored elsewhere in the adjective bank."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9203
+    ],
+    "word": "eigens",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "specially/expressly",
+    "correct": "remove from the adjective bank and teach as an adverb",
+    "why": "`eigens` is used adverbially to mean “specially/expressly” and is not the adjective `eigen`."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9206
+    ],
+    "word": "entfettet",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "degreased",
+    "correct": "remove from the adjective bank and teach as the past participle of `entfetten`",
+    "why": "The row supplies only the transparent result of removing fat or grease."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9209
+    ],
+    "word": "innere",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "inner",
+    "correct": "normalise to the adjective stem `inner`",
+    "why": "`innere` is a declined attributive form, not a citation-form adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9211
+    ],
+    "word": "beschädigt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "damaged",
+    "correct": "remove from the adjective bank and teach as the past participle of `beschädigen`",
+    "why": "“Damaged” is only the ordinary passive/result meaning of the verb, with no separate lexical adjective sense supplied."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9213
+    ],
+    "word": "bekanntlich",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "as is well known",
+    "correct": "remove from the adjective bank and teach as a sentence adverb",
+    "why": "`bekanntlich` comments on the known status of a proposition and is not an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9220
+    ],
+    "word": "ausgesetzt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "exposed",
+    "correct": "remove this bare row and teach as the past participle of `aussetzen`, with its required context such as `einer Gefahr ausgesetzt sein`",
+    "why": "Bare “exposed” presents only a passive/result use and omits the complement that makes the common German construction learnable."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9228
+    ],
+    "word": "gedruckt",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "printed",
+    "correct": "remove from the adjective bank and teach as the past participle of `drucken`",
+    "why": "The row gives only the transparent result of printing, not an independent adjective meaning."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9235
+    ],
+    "word": "nahm",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "took",
+    "correct": "remove from the adjective bank and teach as the third-person singular/simple-past form of `nehmen`",
+    "why": "`nahm` is a finite verb form, not an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9237
+    ],
+    "word": "wie",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "how; as/like",
+    "correct": "remove from the adjective bank and teach as an interrogative adverb/conjunction",
+    "why": "None of the supplied uses is adjectival."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9238
+    ],
+    "word": "sehr",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "very (How are you? Thank you, very well.)",
+    "correct": "remove from the adjective bank and teach as a degree adverb",
+    "why": "`sehr` modifies adjectives, adverbs and verbs but is not itself an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9239
+    ],
+    "word": "noch",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "still; yet; (`noch ein`) another",
+    "correct": "remove from the adjective bank and teach as an adverb/particle",
+    "why": "The listed meanings are adverbial or particle uses, not an adjective lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9240
+    ],
+    "word": "Brasilien",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "Brazil",
+    "correct": "remove from the adjective bank and place in a proper-noun/country list if wanted",
+    "why": "`Brasilien` is a country name and a proper noun, not an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9241
+    ],
+    "word": "darauf",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "on it/thereupon; after that",
+    "correct": "remove from the adjective bank and teach as a pronominal adverb",
+    "why": "`darauf` is a `da(r)-` adverb and has no adjectival use."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9243
+    ],
+    "word": "am",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "delete — contraction of `an dem`",
+    "correct": "delete from the adjective bank",
+    "why": "This is a preposition–article contraction, and the editorial instruction has itself leaked into the learner translation."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9244
+    ],
+    "word": "für",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "for",
+    "correct": "remove from the adjective bank and teach as an accusative-governing preposition",
+    "why": "`für` is a preposition, not an adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9245
+    ],
+    "word": "eigene",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "own",
+    "correct": "normalise to the adjective stem `eigen`",
+    "why": "`eigene` is an inflected attributive form rather than the citation lemma."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9246
+    ],
+    "word": "zum",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "delete — contraction of `zu dem`",
+    "correct": "delete from the adjective bank",
+    "why": "This is a preposition–article contraction, and the translation field contains an editorial deletion instruction rather than learner content."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9250
+    ],
+    "word": "besonders",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "especially/particularly",
+    "correct": "remove this row and teach as an adverb; use adjective stem `besonder` for “special” where appropriate",
+    "why": "The headword and supplied meanings are adverbial and should not be confused with the adjective `besonder`."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9257
+    ],
+    "word": "renoviert",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "renovated/done up",
+    "correct": "remove from the adjective bank and teach as the past participle of `renovieren`",
+    "why": "Both readings are transparent passive/result meanings of the verb rather than a separate lexical adjective."
+  },
+  {
+    "batch": "adjectives_014",
+    "bank": "adjectives",
+    "source_rows": [
+      9262
+    ],
+    "word": "bestens",
+    "field": "word",
+    "severity": "high",
+    "category": "notadj",
+    "current": "very well/perfectly",
+    "correct": "remove from the adjective bank and teach as an adverb",
+    "why": "`bestens` is an adverbial superlative meaning “very well/in the best possible way”, not an adjective lemma."
+  }
+]

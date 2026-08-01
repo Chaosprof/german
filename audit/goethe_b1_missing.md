@@ -1,0 +1,2401 @@
+# Goethe B1 missing entries
+
+## noun missing (90)
+
+- **Getränke** — `die Getränke besorgst. 1. Morgen können wir den Verband`
+- **Wohnungen** — `die Wohnungen sind zu teuer. Du darfst im Brief die Anrede nicht`
+- **Wohnungen** — `die Wohnungen sind zu teuer. 2. Hier dürfen Sie nicht parken, sonst`
+- **Getränke** — `die Getränke besorgst. 4. Haben Sie einen Termin ausgemacht? Normalerweise muss ich am Wochenende arbeiten. Aber heute ist`
+- **U-Bahn** — `die U-Bahn, -en`
+- **Bancomat** — `der Bancomat/Bankomat, -en (A, CH) → D: Geldautomat`
+- **Bankomat-Karte** — `die Bankomat-Karte, -n (A) → ec-Karte/EC-Karte 1. Setzen wir uns doch an die Bar! 2. Ich treffe meine Freundin in der Hotelbar. Zahlen Sie bar? Ich habe kein Bargeld mehr. John trägt jetzt einen Bart. 1. Sie spielt sehr gern Basketball. 2. Er hat zum Geburtstag einen neuen Basketball bekommen. 1. Die Kinder basteln ein Vogelhaus. 2. Ich arbeite gern mit natürlichen Bastelmaterialien. Bringst du bitte Batterien für die Kamera mit? Mir tut der Bauch weh. Mein Nachbar hat ein Haus gebaut. 1. Ich wohne in einer Neubauwohnung. 2. Unser Haus ist ein Altbau. Wir müssen die Baustelle umfahren. Wir kaufen unser Gemüse beim Bauern. Wir haben zwei Bäume im Garten. Bitte beachten Sie die Ansagen am Bahnsteig. Meine Frau ist Beamtin bei der Polizei. Hast du schon einen neuen Pass`
+- **Betriebsrätin** — `die Betriebsrätin, -nen`
+- **Blatt** — `das Blatt, ¨-er`
+- **Billett** — `das Billett, -e/-s → D, A: Fahrkarte`
+- **Briefträger** — `der Briefträger, →CH:dieBriefträgerin,-nen Pöstler`
+- **Brötli** — `das Brötli, - (CH) → D: Brötchen; A: Semmel`
+- **Couvert** — `das Couvert, -s (CH) → Briefumschlag; A: Kuvert`
+- **Buffet** — `das Buffet, -s`
+- **Café** — `das Café, -s`
+- **Coiffeur** — `der Coiffeur, -e`
+- **Coiffeuse** — `die Coiffeuse, -n (CH) → D, A: Friseur Wir haben uns eine Couch und neue Sessel gekauft. 1. Ich hätte gern eine Creme für die Hände. 2. Für die Creme habe ich Butter und Schokolade genommen. Meine Cousine wohnt jetzt in Brasilien. Ich hätte gern 50 Couverts und Briefmarken dazu. 1. Da drüben ist ein Getränkeautomat. 2. Was Sie da sagen, ist richtig. 3. Ich wollte gerade einparken. Da kam`
+- **Doktorin** — `die Doktorin, -nen`
+- **Einbrecherin** — `die Einbrecherin, -nen`
+- **Erdapfel** — `der Erdapfel, ¨- (A) → Kartoffel`
+- **Steuern** — `die Steuern erhöhen. 1. Das kann ich nicht allein entscheiden,`
+- **Fachleute** — `die Fachleute (Pl.)`
+- **Faschierte** — `das Faschierte (A) → D, CH: Hackfleisch`
+- **Fasnacht** — `die Fasnacht (CH) → D, A: Fasching; D: Karneval`
+- **Fauteuil** — `der Fauteuil, -s (A, CH) → D, CH: Sessel`
+- **Fleischhauer** — `der Fleischhauer, -`
+- **Fleischhauerin** — `die Fleischhauerin, -nen (A) → Metzger`
+- **Fernseher** — `der Fernseher, -`
+- **Führerausweis** — `der Führerausweis, -e (CH) → D, A: Führerschein`
+- **Gehsteig** — `der Gehsteig (D, A) → CH: Trottoir`
+- **Geschwindigkeits-** — `die Geschwindigkeits-`
+- **Händlerin** — `die Händlerin, -nen`
+- **Hend** — `das Hend(e)l, - (A) → D: Hähnchen/Hühnchen; CH: Poulet`
+- **Hausmeisterin** — `die Hausmeisterin, -nen (D, A) → CH: Abwart`
+- **Hinweise** — `der Hinweise, -e`
+- **Jause** — `die Jause, -n (A) → D: Im-`
+- **Journalistin** — `die Journalistin, -nen`
+- **Kenntnisse** — `die Kenntnisse (Pl.)`
+- **Kuli** — `der Kuli, -s`
+- **Lernerin** — `die Lernerin, -nen`
+- **Leiterin** — `die Leiterin, -nen`
+- **Matura** — `die Matura (A, CH) → D: Abitur`
+- **Mechanikerin** — `die Mechanikerin, -nen`
+- **Marille** — `die Marille, -n (A) → D, CH: Aprikose`
+- **Migrantin** — `die Migrantin, -nen`
+- **Mobilbox** — `die Mobilbox, -en`
+- **Mobilität** — `die Mobilität, -en Wie kann ich Sie erreichen? Haben Sie`
+- **Müesli** — `das Müesli/Müsli, -`
+- **Nichtraucherin** — `die Nichtraucherin, -nen`
+- **Ober** — `der Ober, - (D, A) → Kellner; CH: Serviceangestellter`
+- **Paradeiser** — `der Paradeiser, - (A) → To-`
+- **Partnerin** — `die Partnerin, -nen`
+- **Passagierin** — `die Passagierin, -nen`
+- **Paar** — `das Paar, -e Ich muss noch meinen Koffer packen. Hast du das Paket zur Post gebracht? 1. Kurz vor München hatten wir eine Panne mit dem Auto. 2. Die Reise war schlecht organisiert, es`
+- **Phantasie** — `die Phantasie/Fantasie, -n`
+- **Pensionist** — `der Pensionist, -en / die Pensionistin, -nen (A) → D, CH: Rentner`
+- **Perron** — `der Perron, -s (CH) → D, A: Bahnsteig`
+- **Personalien** — `die Personalien (Pl.)`
+- **Personenstand** — `der Personenstand → D, A: Familienstand; CH: Zivilstand`
+- **Pöstler** — `der Pöstler, - / die Pöst-`
+- **Poulet** — `das Poulet, -s (CH) → D: Hähnchen/Hühnchen; A: Hend(e)l`
+- **Profisportlerin** — `die Profisportlerin, -nen`
+- **Rüebli** — `das Rüebli, - (CH) → Karotte; D: Möhre`
+- **Rufnummer** — `die Rufnummer, -n`
+- **Schularbeit** — `die Schularbeit, -en (A) → D: Klassenarbeit`
+- **Schwammerl** — `das Schwammerl, -n (A) → Pilz`
+- **Nord-** — `die Nord-/Ostsee`
+- **Senioren** — `die Senioren (Pl.)`
+- **Serviceangestellte** — `der Serviceangestellte, -n / die Serviceangestellte, -`
+- **Speisewagen** — `der Speisewagen, - Spezial-`
+- **Donau** — `der Donau. Ich habe schon ein paar Mal bei`
+- **Steward** — `der Steward, -s`
+- **Stiegenhaus** — `das Stiegenhaus, ¨-er (A) → D, CH: Treppenhaus`
+- **U-Bahn** — `der U-Bahn? 1. Sind Sie die ganze Strecke zu Fuß`
+- **U-Bahn** — `die U-Bahn, -en`
+- **Trottoir** — `das Trottoir, -s (CH) → Gehsteig (D, A)`
+- **Unternehmerin** — `die Unternehmerin, -nen`
+- **Umweltver-** — `die Umweltver-`
+- **Velo** — `das Velo, -s (CH) → Fahrrad; D, A: Rad`
+- **Verbrecherin** — `die Verbrecherin, -nen`
+- **Versichertenkarte** — `die Versichertenkarte, -n (D) → A: e-card`
+- **Verliererin** — `die Verliererin, -nen`
+- **Vertreterin** — `die Vertreterin, -nen`
+- **Benutzen** — `das Benutzen der Bibliothek. Vorsicht! Der Teller ist heiß. Bitte fahr vorsichtig, die Straße ist`
+- **Zahncreme** — `die Zahncreme/-pasta`
+- **Zinsen** — `die Zinsen (nur Pl.)`
+- **Zivilstand** — `der Zivilstand (CH) → Per-`
+- **Zünder** — `die Zünder (A) (Pl.) → Streichholz; Zündholz`
+- **Zündholz** — `das Zündholz, ¨-er → Stre-`
+- **Zutaten** — `die Zutaten (Pl.)`
+
+## verb missing (202)
+
+- **abgeschrieben** — `abgeschrieben. Meine Tochter hat gerade Abitur`
+- **teuergeschichten** — `teuergeschichten. 1. Heute kann ich nicht, aber morgen`
+- **gesprochen** — `gesprochen hätten. 1. Also, die Sache ist so: … 2. Irina hat Urlaub. Sie kann uns also`
+- **itäten** — `itäten. Umweltschutz ist ein aktuelles Thema. Ich kann diese Bedingungen nicht`
+- **gesehen** — `gesehen habe. Wir können uns morgen treffen,`
+- **gegangen** — `gegangen. 2. Bitte nicht alle auf einmal! Einer nach`
+- **gefunden** — `gefunden. Wir haben uns neue Möbel`
+- **angesprochen** — `angesprochen. Sie wohnen im Stadtzentrum. Deshalb`
+- **angenehmen** — `angenehmen Aufenthalt. Mir ist aufgefallen, dass Harriett ganz`
+- **aufgegeben** — `aufgegeben. 2. Man darf nie aufgeben. Es gibt immer`
+- **aufgenommen** — `aufgenommen. 2. Ich habe den Film im Urlaub`
+- **aufgenommen** — `aufgenommen. Bitte seid leise! – Ich starte die Aufnahme. Dieses Haus hat eine berühmte Architektin gebaut. 1. Ärgern Sie sich nicht. 2. Mein Bruder hat mich schon als Kind`
+- **gestritten** — `gestritten. Der Zug hat schon wieder Verspätung. Das ist wirklich ärgerlich. 1. Die Regierung hilft armen Nachbarländern. 2. Ich hätte gerne 200 g fettarmen Käse. Mein Freund hat sich den Arm`
+- **gelesen** — `gelesen. 2. Im Deutschen gibt es drei Artikel: der,`
+- **unden** — `unden einen Ausflug nach Heidelberg. Füllen Sie bitte dieses Formular aus! 1. Wie hoch sind Ihre Ausgaben in einem Monat? 2. Wo ist die Essensausgabe? 3. In welchem Buch hast du das gelesen? In welcher Ausgabe? Wo ist der Ausgang bitte? Carola gibt viel Geld für ihr Hobby aus. 1. Plötzlich ist das Licht ausgegangen. 2. Gehen wir heute Abend aus? 3. Wie ist das Spiel ausgegangen? Essen und Unterkunft waren`
+- **außen** — `außen`
+- **ausgezogen** — `ausgezogen. Mario fährt mit dem Auto zur Arbeit. Das Dorf liegt direkt an der Autobahn. 1. Zigaretten bekommst du am Automaten. 2. Der Fahrkartenautomat ist auf dem Bahnsteig. 1. Die Tür schließt automatisch. 2. Das Zeugnis bekommen Sie`
+- **gesehen** — `gesehen. 2. Außen ist das Haus nicht sehr schön. Wir wohnen außerhalb von Berlin. Das Medikament dürfen Sie nur`
+- **zuständigen** — `zuständigen Behörde. 1. Potsdam liegt bei Berlin. 2. Ich wohne bei meinen Eltern. 3. Bei uns ist das anders als bei euch. Wir`
+- **neuen** — `neuen Arbeitszeiten informieren. 1. Ich würde meine Familie niemals`
+- **beworben** — `beworben. 2. Ich habe mich als Kellner beworben. 1. Wohin soll ich meine Bewerbung`
+- **angerufen** — `angerufen. Es ist immer besetzt. Im Urlaub haben wir Schloss Schön-`
+- **gesehen** — `gesehen? 2. Hast du das Foto mit Blitz gemacht? 1. Mein Sohn ist blond. 2. Nina hat lange blonde Haare. 1. Ich möchte nichts kaufen. Ich möchte`
+- **unseren** — `unseren Nachbarn. Die Stadtbibliothek hat bereits`
+- **neuesten** — `neuesten Informationen. 1. Brot kaufe ich immer beim Bäcker,`
+- **gesprochen** — `gesprochen. Da bist du ja. 7. Welche Bluse nehmen Sie? – Die da. 8. Ist Herr Klein schon da? 1. Was hast du dir dabei gedacht? 2. Schön, dass du da bist. Ist deine Familie auch dabei? 3. Hast du einen Stift dabei? 1. Wir müssen das Dach reparieren`
+- **deswegen** — `deswegen`
+- **daneben** — `daneben`
+- **auszumachen** — `auszumachen. 5. Es ist mir ganz egal, was die Leute von`
+- **zusammen** — `zusammen fahren könnten. 1. Ich muss zuerst meine Gedanken`
+- **daneben** — `daneben ist die Bank. Ich danke dir für die Einladung. 1. Vielen Dank für Ihre Mühe. 2. Hier ist Ihr Kaffee. – Vielen Dank! 3. Herzlichen Dank! 4. Gott sei Dank hat es nicht geregnet. Ich bin Ihnen sehr dankbar für Ihre Hilfe. 1. Soll ich Ihnen helfen? Nein, danke,`
+- **draußen** — `draußen`
+- **gewonnen** — `gewonnen. Ich habe eine Digitaluhr gekauft. Die`
+- **drüben** — `drüben`
+- **verstanden** — `verstanden. 1. Der Durchschnitt der Ausgaben liegt`
+- **drinnen** — `drinnen? 2. Bei der Hitze ist es drinnen viel`
+- **vorderen** — `vorderen Reifen sein? 1. Entschuldigung, das war dumm von`
+- **eingebrochen** — `eingebrochen. Die Einbrecher haben nichts gestohlen. In der Urlaubszeit gibt es viele Wohnungseinbrüche. 1. Das Ergebnis ist eindeutig. Du hast`
+- **gewonnen** — `gewonnen. 2. Du kannst eindeutig besser kochen als`
+- **bisschen** — `bisschen einsam. Können Sie bitte die Heizung`
+- **vollen** — `vollen Eintritt. 2. Der Eintritt ist frei. 1. Als Termin schlage ich den 3. Mai vor. – Gut, einverstanden! 2. Bist du einverstanden, wenn wir bald`
+- **gesehen** — `gesehen. 2. Bitte rufen Sie morgen noch einmal an. 3. Auf einmal ging das Licht aus. 4. Ich kann nicht alles auf einmal machen. 5. Sehen wir uns (ein)mal wieder? 6. Vor Jahren habe ich (ein)mal in Wien`
+- **zusammen** — `zusammen. Alle meine Enkel gehen schon zur Schule. Ich habe in deinem Brief noch ein paar Fehler entdeckt. 1. Der Müll muss dringend entfernt`
+- **gesehen** — `gesehen habe. Die Wohnung ist fertig. Wir können`
+- **funden** — `funden. Die Erfindung des Buchdrucks war`
+- **taten** — `taten für den Kuchen. 2. Es ist erforderlich, dass man den Pass`
+- **beiden** — `beiden Mannschaften. 2. Ich bin noch immer unentschieden,`
+- **diesen** — `diesen Apparat bedient? 2. Ich kann mir nicht erklären, wie der Brief verschwinden konnte. 1. Hast du schon die Steuererklärung`
+- **gefahren** — `gefahren`
+- **funden** — `funden. Wir haben gestern Karls Geburtstag`
+- **gefunden** — `gefunden`
+- **gefunden** — `gefunden. 2. Ich kann meinen Schlüssel nicht finden. 3. Luigi finde ich sehr nett. Alessandro hat sich in den Finger`
+- **geschnitten** — `geschnitten. Seit wann arbeiten Sie bei dieser Firma? 1. Für die Arbeit brauche ich flache Schuhe. 2. An dieser Stelle ist der See sehr flach. Unsere Wohnung hat eine Wohnfläche`
+- **festgenommen** — `festgenommen. Die Schule hat den Termin für die Prüfung festgesetzt. Der Termin steht seit Langem fest. 1. Er hat festgestellt, dass der Absender`
+- **geflossen** — `geflossen`
+- **nächsten** — `nächsten Donnerstag um 11 Uhr fort. Fortsetzung folgt. Ich melde mich heute bei diesem Forum an. Ich fotografiere gern. Können Sie dieses Foto vergrößern? Ich möchte mir einen Fotoapparat`
+- **verstanden** — `verstanden. 2. Das kommt gar nicht infrage! 1. In meinem Deutschkurs sind mehr Frauen als Männer. 2. Ist Ihre Frau berufstätig? 3. Guten Tag, Frau Müller! Du darfst in der Schule nicht so frech`
+- **gekommen** — `gekommen. 5. Wecken Sie mich bitte morgen früh um 6 Uhr. 1. Früher habe ich in Berlin gewohnt. 2. Wir nehmen den früheren Zug. Haben Sie schon gefrühstückt? 1. Wir sitzen gerade beim Frühstück. 2. Sollen wir Ihnen das Frühstück aufs Zimmer bringen? 1. Wie fühlen Sie sich? - Danke, ich fühle`
+- **sten** — `sten Urlaub. Diese Arbeit macht mir viel Freude. Ich sehe meine Freunde nur am Wochenende. 1. Er hat uns sehr freundlich begrüßt. 2. Der Mann ist sehr freundlich zu mir. 3. Mit freundlichen Grüßen Deine Freundschaft ist mir sehr`
+- **gegessen** — `gegessen. 2. Den Zahnarzttermin habe ich ganz`
+- **gegen** — `gegen`
+- **gegeben** — `gegeben. Ich hole noch Geld vom Geldautomaten. Ich habe nur Kleingeld in meiner Geldbörse. Das Fest ist eine gute Gelegenheit,`
+- **gern** — `gern/gerne`
+- **gegossen** — `gegossen`
+- **gestern** — `gestern`
+- **aufzustehen** — `aufzustehen. 1. Er hat die Gewohnheit, morgens zuerst`
+- **jeden** — `jeden Samstagabend. Ich bin gewohnt, früh ins Bett zu`
+- **grillieren** — `grillieren, grilliert,`
+- **letzten** — `letzten Jahr. Wir lagen den ganzen Tag im Gras. Ich gratuliere euch zur Geburt eurer Tochter. Herzliche Gratulation! Sie haben`
+- **gewonnen** — `gewonnen! Diese Reparatur kostet Sie gar nichts,`
+- **hageln** — `hageln, hagelt, hagelte,`
+- **halben** — `halben Preis. 4. Die Flasche ist ja noch halb voll. Wir möchten ein Hotel mit Halbpension. Ich habe ein kleines Kind und kann`
+- **nächsten** — `nächsten Monat umziehen. 2. Die Tabletten haben mir gut geholfen. 1. Vielen Dank für Ihre Hilfe. 2. Haben Sie einen Kurs für Erste Hilfe`
+- **hinten** — `hinten`
+- **runterwerfen** — `runterwerfen? Ich habe meinen`
+- **innen** — `innen`
+- **gefunden** — `gefunden. 2. Dietmars neue Freundin ist sehr hüb-`
+- **inzwischen** — `inzwischen`
+- **gesehen** — `gesehen. 1. Du irrst dich. Das Auto war nicht grün,`
+- **sondern** — `sondern rot. 2. Ich habe mich in der Hausnummer`
+- **abzuschließen** — `abzuschließen. – Ja, ja, mach´ ich. 4. Heute Morgen um fünf hat es`
+- **zwischen** — `zwischen 40 und 60 Euro. 2. Fahren Sie im Juni oder im Juli? – Je`
+- **kleinen** — `kleinen Sprachinstitut. Ich spiele Klavier. Spielen Sie auch ein Musikinstrument? 1. Sie ist schon sehr gut im Team`
+- **gelesen** — `gelesen. 2. Den Artikel über Brasilien finde ich`
+- **alten** — `alten Tisch. 1. Ich kann Sie kaum verstehen. Bitte`
+- **gegangen** — `gegangen. Wer hat die Lampe kaputtgemacht? Dort hängt mein Kostüm für den Karnevals(um)zug. Hasen fressen gern Karotten. Mein Bruder hat große Pläne. Er will Karriere machen. 1. Schreibst du mir eine Karte aus dem Urlaub? 2. Diese Karte gilt nur für die 2. Klasse. 3. Hast du schon die Karten für das Konzert abgeholt? 4. Haben Sie eine Karte von Nord-`
+- **kranken** — `kranken Onkel zu besuchen. 1. Da klopft jemand ans Fenster. 2. Hat es nicht eben geklopft? 3. Bitte klopfen Sie an. Möchten Sie zum Fleisch Kartoffeln`
+- **teuren** — `teuren Restaurant. Ich habe den Koffer schon gepackt. 1. Ich habe guten Kontakt zu meinen Kollegen. 2. Mein neuer Kollege ist sehr nett. Ich habe zwei Kisten Bier gekauft. Ohne Kopfkissen kann ich nicht`
+- **beiten** — `beiten immer gute Noten. Meine Tochter möchte Klavier spielen`
+- **gekommen** — `gekommen? Die Kommunikation zwischen den Abteilungen ist gut. 1. Ich habe den Termin komplett`
+- **tern** — `tern. Der spanische König ist in Deutschland`
+- **schweren** — `schweren Krise. Kritisiere mich nicht so oft. 1. Es gibt viel Kritik an der Politik der Regierung. 2. Dieser Film hat sehr gute Kritiken`
+- **zwischen** — `zwischen den Ländern. 1. Ich kann nicht arbeiten. Ich muss mich`
+- **stlerinnen** — `stlerinnen. Neben uns wohnt eine Musikerin. Ich mag kein künstliches Licht. Der Stuhl ist aus Kunststoff. Ich besuche regelmäßig einen Deutschkurs. Die Kursleiterin ist mit unserer Kursgruppe manchmal in den Computerraum gegangen. 1. Fahr bitte nicht so schnell in die Kurven. 2. Achtung. Das Stauende ist gleich hinter`
+- **gekommen** — `gekommen. 5. Ich bin vor Kurzem nach München`
+- **gezogen** — `gezogen. 6. Ich wohne seit Kurzem in München. 7. Ich habe das Kleid kürzer machen`
+- **gesprochen** — `gesprochen, dass wir am Wochenende`
+- **gelaufen** — `gelaufen. 2. Bist du mit dem Auto hier? – Nein, ich`
+- **neuen** — `neuen Tee. 1. Ich habe Ihnen die Briefe auf den Schreibtisch gelegt. 2. Legen Sie die Zeitungen bitte dort ins Regal. Mein Cousin will eine dreijährige Lehre`
+- **schrecklichen** — `schrecklichen Lärm. 1. Ich habe mein Gepäck am Bahnhof`
+- **gaben** — `gaben gegeben. Als Lehrling verdient man nicht sehr`
+- **verschrieben** — `verschrieben. 3. Für dieses Medikament müssen Sie`
+- **geholfen** — `geholfen. 1. Du musst noch deine Medizin nehmen. 2. Mein Sohn will Medizin studieren. Wir machen immer Urlaub am Meer. Ich möchte einen Kuchen backen. Ist`
+- **meinetwegen** — `meinetwegen`
+- **mitten** — `mitten`
+- **möchten** — `möchten, möchte, mochte,`
+- **angekommen** — `angekommen. In den mittleren Reihen sind noch Plätze frei. Am Anfang war die Arbeit schwer. Mit-`
+- **fremden** — `fremden Land ganz neu anzufangen. Es war sehr mutig von dir, deine Meinung laut zu sagen. 1. Meine Mutter heißt Klara. 2. Dieser Raum ist für Mütter mit kleinen Kindern reserviert. 1. Ich fahre morgen nach Hamburg. 2. Ich muss jetzt nach Hause. 3. Wir treffen uns nach dem Essen. 4. Es ist schon nach acht. Wir müssen uns`
+- **beeilen** — `beeilen. Meine neue Nachbarin ist sehr nett. ZERTIFIKAT B1 66 WORTLISTE`
+- **neben** — `neben`
+- **schlossen** — `schlossen? 1. Soziale Netzwerke sind wichtig. 2. Das Telefonnetzwerk wird ständig`
+- **genommen** — `genommen. Aber es hat nichts genützt. Danke für den Tipp. Das war sehr`
+- **oben** — `oben`
+- **weggefahren** — `weggefahren, ohne mich zu fragen. 4. In diesem Haus kann man nichts`
+- **geworden** — `geworden. Nächste Woche fahre ich zu meinem Onkel nach Berlin. Mein Opa heißt Hans. 1. Ich mag Opern. 2. Warst du schon mal in der Oper? Wir müssen das Knie sofort operieren. Seit der Operation kann ich mein Knie`
+- **oben** — `oben. Die Wohnung im oberen Stockwerk ist`
+- **öffentlichen** — `öffentlichen Verkehrsmitteln. 2. In öffentlichen Gebäuden darf man`
+- **parkieren** — `parkieren`
+- **parkieren** — `parkieren, parkiert,`
+- **morgen** — `morgen Abend? 3. Passt das T-Shirt zu diesem Rock? 1. Entschuldigung! – Kein Problem. Es ist`
+- **sondern** — `sondern mitdiskutieren. 1. Mein Bruder ist ein sehr ordentlicher Mensch. 2. Auf seinem Schreibtisch sieht es immer`
+- **chen** — `chen Ozean. 1. Ich komme gleich. Es dauert nur ein`
+- **geschnitten** — `geschnitten. Ich esse gern Pflaumen und noch`
+- **verschrieben** — `verschrieben. Haben Sie frische Pilze? Lass uns eine Pizza bestellen! Im Unterricht haben wir ein Plakat`
+- **angefangen** — `angefangen zu regnen. Ich bin Patientin bei Dr. Hausner. Ich`
+- **gestiegen** — `gestiegen. 2. Wer hat den ersten Preis gewonnen? Die Jacke ist sehr preiswert. Darüber konnte sich jeder in der Presse informieren. Mit diesen Leuten verstehe ich mich`
+- **sprochen** — `sprochen. 1. Seien Sie bitte pünktlich. 2. Der Bus fährt pünktlich um acht Uhr. Unsere kleine Tochter bekommt zum Geburtstag eine Puppe. 1. Ich muss heute noch die Wohnung`
+- **regnen** — `regnen, es regnet,`
+- **zurückzubekommen** — `zurückzubekommen. Wir beraten Sie in rechtlichen Fragen. 1. Ist es Ihnen recht, wenn ich morgen`
+- **gesehen** — `gesehen? Die Reporterin macht gerade ein Interview. 1. Dieser Tisch ist reserviert. 2. Bitte reservieren Sie mir ein Doppelzimmer. Was kostet eine Reservierung? 1. Ich habe großen Respekt vor meinem Lehrer. 2. Du solltest ihr mehr Respekt entgegen-`
+- **gesprochen** — `gesprochen. 1. Was Sie da sagen, ist richtig. 2. Geht Ihre Uhr richtig? 3. Das ist nicht die richtige Größe. 1. Der Zug in Richtung Köln hat Verspätung. 2. Wo ist der Bahnhof? In welche Richtung muss ich fahren? 1. Dieses Parfüm riecht sehr gut. 2. Im ganzen Haus riecht es nach Farbe. 3. Ich bin erkältet. Ich kann nichts`
+- **wiedergefunden** — `wiedergefunden habe. 3. Das Wasser ist so rein, dass man es`
+- **sten** — `sten Preisen. Möchten Sie zum Fisch einen Salat? Diese Salbe gibt es nur auf Rezept. Sie arbeitet als Friseurin in einem Salon. Gib mir bitte mal das Salz! Dieses Essen ist zu salzig für mich. 1. Mein Bruder sammelt Briefmarken. 2. Im Herbst sammeln wir im Wald Pilze. Sämtliche Fenster müssen geschlossen`
+- **gefahren** — `gefahren. Mir tut der Rücken weh. Nehmen Sie bitte Rücksicht auf die`
+- **anderen** — `anderen Gäste. Hasen fressen gern Rüebli. 1. Ich habe die Kinder gerufen, aber sie`
+- **waren** — `waren sehr gut. 1. Fünf Scheiben Käse, bitte. 2. Die Scheiben sind ganz schmutzig. Ich`
+- **gegangen** — `gegangen. Ich musste es nach Hause`
+- **geschossen** — `geschossen. Sind Sie mit dem Schiff oder mit dem Flugzeug gekommen? Wie findest du diesen Sänger? − Ich`
+- **geschnitten** — `geschnitten. 1. Kannst du lesen, was dort auf dem Schild steht? 2. Machen Sie bitte das Schild ab? Der Pullover ist ein Geschenk. 1. Der Arzt hat mit mir geschimpft, weil`
+- **geschrien** — `geschrien. Ich kann leider deine Schrift nicht`
+- **halben** — `halben Tag. 2. Wir brauchen von Ihnen eine`
+- **gegessen** — `gegessen. 2. Bringen Sie mir bitte eine Tasse heiße Schokolade. 1. Ist das Essen schon fertig? 2. Mirko ist erst fünf. Aber er kann schon`
+- **aufgeschrieben** — `aufgeschrieben. WORTLISTE WORTLISTE`
+- **übermorgen** — `übermorgen. 7. Um 11 Uhr ist Pause. 8. Herr Müller ist in seinem Zimmer. 9. Das Auto ist mir zu teuer. 10.Das ist schwer zu verstehen. 11. Mir ist kalt. 12.Mit Präposition wie: Das Licht ist`
+- **gesungen** — `gesungen`
+- **gesessen** — `gesessen`
+- **hinten** — `hinten. 2. Die Jacke sitzt sehr gut. Ich suche für meinen Sohn einen Sitz`
+- **nachsenden** — `nachsenden? 1. Welchen Sender siehst du am liebsten? 2. Ich höre im Radio am liebsten Sender`
+- **sondern** — `sondern`
+- **gegangen** — `gegangen? 2. Karten für das Konzert bekommen Sie`
+- **morgen** — `morgen regnen. 3. Sollten Sie mit dem Vorschlag nicht`
+- **sondern** — `sondern morgen. 1. Das Wetter ist schön. Die Sonne`
+- **gesprungen** — `gesprungen. 2. Wie weit bist du heute gesprungen? – 3,40 m. Ich habe heute vom Arzt eine Spritze`
+- **gegen** — `gegen die Schmerzen bekommen. 1. Hast du das Geschirr gespült? 2. Spülen Sie bitte jetzt den Mund aus. Fahren Sie bitte auf der linken Spur,`
+- **möchten** — `möchten Ihnen ein paar Fragen stellen. 6. Ich habe den Wecker auf 5 Uhr`
+- **gestiegen** — `gestiegen. ZERTIFIKAT B1 84 WORTLISTE`
+- **strengen** — `strengen Lehrer. Ich habe bei der Arbeit viel Stress. Wie kann ich im Haushalt Strom`
+- **gegangen** — `gegangen? 2. Auf der Strecke München – Salzburg: 8 km Stau. 3. Ich möchte nach Hamburg fahren. Können Sie mir sagen, welche Strecke`
+- **standen** — `standen. Nach der praktischen habe`
+- **ersten** — `ersten Teil nicht verstanden 2. Der Film hat zwei Teile. Heute kommt Teil 1. 3. Gefällt dir der neue Job? – Nur zum Teil. Ich arbeite im Moment nur Teilzeit. Leider konnte ich an dem Kurs nicht`
+- **getrieben** — `getrieben`
+- **getroffen** — `getroffen. Unser Treffpunkt ist um 17 Uhr am Hauptbahnhof. Welchen Sport treibst du? 1. Wir leben getrennt. 2. Meine Freundin und ihr Mann haben`
+- **gegangen** — `gegangen. Es war ziemlich kalt. Trotzdem bin ich`
+- **oben** — `oben. 3. Hast du ein Taschentuch für mich? 1. Ich habe heute viel zu tun. 2. Was kann ich für Sie tun? 3. Ich habe zu viel Zucker in den Kaffee`
+- **übermorgen** — `übermorgen`
+- **gekommen** — `gekommen? In Deutschland ist es üblich, früh zu Abend zu essen. Ist noch etwas zu essen übrig? Übrigens, kennst du schon die neuen Nachbarn? 1. Er schwimmt ans Ufer zurück. 2. Am Seeufer ist es schön spazieren zu`
+- **übermorgen** — `übermorgen. Wir haben auf dem Campingplatz`
+- **überwiesen** — `überwiesen. 1. Sie können bar oder per Überweisung`
+- **unten** — `unten`
+- **umgezogen** — `umgezogen`
+- **unten** — `unten im 1. Stock. 2. Sie ist mal kurz nach unten gegangen. 1. Unter uns wohnt eine Familie mit drei Kindern. 2. Die CDs sind im Regal unter dem Fernseher. Mein Pass ist im unteren Regal. 1. Wir unterbrechen die Sendung für eine`
+- **terlassen** — `terlassen. Wollen wir heute Abend noch etwas`
+- **umgezogen** — `umgezogen. Sie wohnen nicht mehr`
+- **liebsten** — `liebsten vegetarisch. 2. Haben Sie auch vegetarische Gerichte? 1. Sie fährt jeden Morgen mit dem Velo`
+- **schwierigen** — `schwierigen Situation. Ich habe ein gutes Verhältnis zu`
+- **genommen** — `genommen? – Ich weiß es nicht, aber`
+- **gesehen** — `gesehen? 1. In diesem Beruf verdient man gut. 2. Er hat den Urlaub wirklich verdient. Ich bin schon seit 15 Jahren Mitglied in`
+- **anzurufen** — `anzurufen. 1. Ich habe den Termin ganz vergessen. 2. Ich habe meinen Pass vergessen. Vergleichen Sie die Angebote. 1. Ein Vergleich ist schwer möglich. 2. Im Vergleich zum Wetter letzte Woche`
+- **verschrieben** — `verschrieben. Mein Ausweis ist verschwunden. Hast`
+- **aufgenommen** — `aufgenommen. 2. Lass uns ein Video vom Fest machen! 1. Ich habe schon viel gelernt. 2. Ich wünsche Ihnen viel Spaß. 3. Hier regnet es viel. 4. Das ist mir viel zu teuer. 5. Im Winter sind viele Leute erkältet. 1. Kommst du mit in die Stadt? - Ich weiß`
+- **virtuellen** — `virtuellen Stadtrundfahrt teilnehmen. Ich habe mal wieder einen Virus auf`
+- **vollen** — `vollen Namen. Ich möchte gerne Vollzeit arbeiten. Im Sommer spiele ich gern Volleyball. Das halte ich für völlig ausgeschlossen. 1. Ich komme gerade vom Zahnarzt. 2. Emil ist ein Freund von mir. 3. Haben Sie noch eine Zeitung von`
+- **vorgestern** — `vorgestern`
+- **gekommen** — `gekommen. 2. Das Auto steht vor der Tür. 3. Ich konnte vor Schmerzen nicht`
+- **warmen** — `warmen Pullover. Wärme ist gut gegen meine Schmerzen. Ich warne Sie. Der Hund ist gefährlich. 1. Können Sie ein paar Minuten warten? 2. Ich warte seit einer Stunde auf den Bus. 1. Warum besuchst du mich nicht? 2. Ich weiß nicht, warum es hier so kalt`
+- **gewaschen** — `gewaschen. 2. Wo kann ich mir die Hände waschen? 1. Ich muss heute noch Wäsche waschen. 2. Kannst du bitte die Wäsche`
+- **wegen** — `wegen`
+- **weltweiten** — `weltweiten Markt. 2. Das Zertifikat B1 wird weltweit`
+- **angeboten** — `angeboten. Sie müssen zurückfahren, aber hier`
+- **geworfen** — `geworfen. Wir haben gestern das Werk besichtigt. Mein Wagen ist zurzeit in der Werk-`
+- **guten** — `guten Wein. Bitte nicht weinen. Du bekommst eine`
+- **winkten** — `winkten zum Abschied. Die Tabletten haben nicht gewirkt. Welche Wirkungen hat dieses Medika-`
+- **oben** — `oben. 1. Ich habe heute keine Zeit. 2. Es ist noch früh. Wir haben noch viel Zeit. 3. Um welche Zeit sind Sie normaler-`
+- **zusammen** — `zusammen/zusammen-`
+- **eingeladen** — `eingeladen. Ich habe zugesagt. 1. Wir haben als Kinder oft zusammen`
+- **diesen** — `diesen beiden Themen? Sie müssen in Zukunft eine Stunde`
+- **getroffen** — `getroffen. 2. Hast du zufällig meine Brille gesehen? 1. Meine Kinder haben heute Zeugnisse`
+- **gesehen** — `gesehen. Mach bitte die Tür zu! Ich möchte nicht in der Stadt wohnen,`
+- **zwischen** — `zwischen`
+- **umzukehren** — `umzukehren. 1. Das Regal stellen wir zwischen die`
+- **beiden** — `beiden Schränke. 2. Heidelberg liegt zwischen Frankfurt`
+- **diesen** — `diesen Kuchen? Der Kollege kommt bestimmt gleich. Er`
+
+## adj missing (2069)
+
+- **ab** — `ab`
+- **bog** — `bog ab, ist abgebogen`
+- **aber** — `aber`
+- **fuhr** — `fuhr ab, ist abgefahren`
+- **hat** — `hat abgegeben`
+- **ab** — `ab, hat abgehangen (von)`
+- **hat** — `hat abgehoben`
+- **hat** — `hat abgeholt Er hat die Hausaufgaben von mir`
+- **weil** — `weil ich krank geworden bin. Ein guter Schulabschluss ist sehr`
+- **hat** — `hat das nicht mit Absicht gemacht. 2. Hast du die Absicht zu studieren? 1. Was Sie da sagen, ist absolut falsch. 2. Ich habe absolutes Vertrauen zu dir. Lasst uns über diesen Punkt abstimmen. Meine Freundin arbeitet in der Abteilung von Frau Kaufmann. Der Abwart hat mir geholfen, den Schrank in die Wohnung zu tragen. Von dort führt der Weg abwärts ins Tal. Ich muss noch das Geschirr abwaschen. Herr Huber ist bis zum 25. April`
+- **links** — `links abbiegen. Auf der Abbildung sehen Sie, wie man`
+- **trotzdem** — `trotzdem mit dem Motorrad gefahren. 3. Wir haben nur eine kleine Wohnung,`
+- **sind** — `sind aber damit zufrieden. 4. Es war sehr schön. Jetzt muss ich aber`
+- **leider** — `leider nicht. 6. Darf ich dich zu einem Kaffee`
+- **bis** — `bis zur Abfahrt. Werfen Sie den Bioabfall bitte nicht`
+- **zum** — `zum normalen Müll. Wirf das bitte in den Abfalleimer! Abgase aus Industrie und Haushalten`
+- **länger** — `länger, das hängt vom Wetter ab. Gregor ist finanziell von seinen Eltern`
+- **meinem** — `meinem Konto abgehoben. Meine Freundin hat mich vom Bahnhof`
+- **abgeholt** — `abgeholt. 2 Alphabetischer Wortschatz WORTLISTE WORTLISTE`
+- **als** — `als`
+- **als** — `als ob`
+- **also** — `also`
+- **sich** — `sich amüsieren, amüsiert`
+- **sich** — `sich, amüsierte sich,`
+- **hat** — `hat sich amüsiert`
+- **an** — `an`
+- **analysierte** — `analysierte, hat analysiert`
+- **bot** — `bot an, hat angeboten Achtung!`
+- **akzeptierte** — `akzeptierte, hat akzeptiert`
+- **allein** — `allein`
+- **alltägliche** — `alltägliche Geschichte. Wie viele Buchstaben hat das Alphabet`
+- **in** — `in Ihrer Sprache? 1. Als mein Mann kam, war die Party`
+- **schon** — `schon zu Ende. 2. Sie können sich sowohl persönlich als`
+- **auch** — `auch im Internet anmelden. 3. Meine Schwester ist älter als ich. 4. Es ist später, als ich dachte. Er tut so, als ob wir nie darüber`
+- **im** — `im Altenheim. Die Großeltern unserer Nachbarn sind`
+- **im** — `im Altersheim. Wir brauchen alternative Energien. Auf dieser Strecke ist der Zug eine`
+- **gute** — `gute Alternative zum Flugzeug. Dort an der Ampel kannst du über die Straße gehen. Das Arbeitsamt befindet sich neben`
+- **dem** — `dem Busbahnhof. Bei dem Fest haben wir uns sehr gut`
+- **und** — `und fragst da. 5. Das Licht war die ganze Nacht an. Die Politiker analysieren die Situation`
+- **auf** — `auf dem Arbeitsmarkt. Darf ich Ihnen etwas zu trinken`
+- **nicht** — `nicht benutzen. 1. Du musst die Wunde mit Alkohol`
+- **ist** — `ist alles. 3. Alles Gute! 1. Ich gehe nicht gern allein spazieren. 2. Soll ich Ihnen helfen? – Danke, ich`
+- **schaffe** — `schaffe es schon allein. 3. Es war sehr teuer. Allein das Essen hat`
+- **schon** — `schon über 50 Euro gekostet. 1. Am allerbesten ist es, wenn du dich ins Bett legst und lange schläfst. Dann`
+- **wirst** — `wirst du schnell wieder gesund. 2. Das ist das Allerschönste, was ich je`
+- **hier** — `hier gut essen kann. 3. Im Allgemeinen bin ich mit meiner Arbeit sehr zufrieden. Das ist mein Alltag: putzen, waschen,`
+- **hat** — `hat angehabt`
+- **klickte** — `klickte an, hat angeklickt`
+- **kam** — `kam an, ist angekommen`
+- **kündigte** — `kündigte an,`
+- **hat** — `hat angekündigt`
+- **meldete** — `meldete an,`
+- **hat** — `hat angemeldet`
+- **nahm** — `nahm an,`
+- **hat** — `hat angenommen`
+- **hat** — `hat angerufen`
+- **andererseits** — `andererseits`
+- **hat** — `hat geändert`
+- **anders** — `anders`
+- **erkannte** — `erkannte an,`
+- **hat** — `hat anerkannt`
+- **fing** — `fing an, hat angefangen`
+- **hat** — `hat angegeben`
+- **passiert** — `passiert. Meine Mutter ist etwas ängstlich. Sie`
+- **geht** — `geht nicht gern allein auf die Straße. Gestern hatte Julia ein rotes Kleid an. Du musst das Bild anklicken. Dann`
+- **wird** — `wird es größer. 1. Wann kommt der Zug in Hamburg an? 2. Bei dem Spiel kommt es darauf an,`
+- **schneller** — `schneller zu laufen als die anderen. 1. Die Abfahrt ist um 0.55 Uhr, die Ankunft um 8.07 Uhr. 2. Gleich nach der Ankunft habe ich`
+- **meine** — `meine Eltern angerufen. Wir sollten unseren Besuch`
+- **günstige** — `günstige Wohnungsangebote gelesen. 2. Der Käse ist heute im Angebot. 1. Die anderen sind schon nach Hause`
+- **dem** — `dem anderen. 3. Ich hätte gern ein anderes Auto. 4. Natascha hat unter anderem Chinesisch und Spanisch gelernt. Tarek möchte zwar studieren, aber`
+- **andererseits** — `andererseits möchte er auch gleich Geld verdienen. 1. Das Wetter hat sich geändert. 2. Ich habe meine Meinung inzwischen`
+- **geändert** — `geändert. Es gibt eine Programmänderung. 1. Anders geht das leider nicht. 2. Oliver ist anders als seine Freunde. 3. Ich würde das anders machen. Meine Ausbildung wird hier nicht`
+- **viele** — `viele Fragen gestellt. 3. Mein Chef ist Anfang fünfzig. 4. Meine Mutter war von Anfang an`
+- **an** — `an. Wir brauchen von Ihnen folgende Angaben: Name, Adresse, Geburtsdatum. Der Arzt darf nur Familienangehörigen Auskunft geben. Wir wünschen Ihnen eine angenehme Reise. WORTLISTE WORTLISTE`
+- **zeigte** — `zeigte an, hat angezeigt`
+- **zog** — `zog an, hat angezogen`
+- **arbeitete** — `arbeitete, hat gearbeitet`
+- **schaffte** — `schaffte an,`
+- **hat** — `hat angeschafft`
+- **schloss** — `schloss an,`
+- **hat** — `hat angeschlossen`
+- **schnallte** — `schnallte an,`
+- **hat** — `hat angeschnallt`
+- **hat** — `hat angesehen`
+- **sprach** — `sprach an,`
+- **hat** — `hat angesprochen`
+- **stellte** — `stellte an, hat angestellt`
+- **sich** — `sich anstrengen, strengt`
+- **sich** — `sich an, strengte sich an,`
+- **hat** — `hat sich angestrengt`
+- **wandte** — `wandte an, hat ange-`
+- **wandt** — `wandt/angewendet`
+- **antwortete** — `antwortete, hat geant-`
+- **wortet** — `wortet`
+- **möchte** — `möchte zuerst mit meinem Anwalt`
+- **erkältest** — `erkältest du dich. 2. Heute ziehe ich mein neues T-Shirt an. Mein Mann hat sich einen neuen Anzug`
+- **gekauft** — `gekauft. Wir haben ein Ferienapartment`
+- **gemietet** — `gemietet. Zum Frühstück esse ich jeden Tag`
+- **leiser** — `leiser stellen? 2. Wo ist mein Fotoapparat? 1. Ich habe heute keinen Appetit. Ich mag`
+- **nichts** — `nichts essen. 2. Auf was hast du Appetit? Vielleicht auf`
+- **eine** — `eine Arbeit gefunden. Maria ist seit zwei Jahren Arbeiterin`
+- **bei** — `bei Siemens. Haben Sie eine Arbeitserlaubnis? Wie lange sind Sie schon arbeitslos? Die Arbeitslosigkeit ist gesunken. In der Industrie gibt es immer weniger Arbeitsplätze. Meine Frau hat eine neue Arbeitsstelle`
+- **angeschafft** — `angeschafft. Wo kann ich den Computer`
+- **an** — `an? 2. Darf ich eure Urlaubsfotos ansehen? Gestern hat mich unsere neue Nachbarin im Treppenhaus`
+- **musst** — `musst du dich mehr anstrengen. Ich finde diese Arbeit sehr`
+- **fiel** — `fiel auf, ist aufgefallen`
+- **forderte** — `forderte auf,`
+- **hat** — `hat aufgefordert`
+- **führte** — `führte auf, hat aufgeführt`
+- **auf** — `auf, hat aufgegeben`
+- **auf** — `auf, hat aufgehalten`
+- **hob** — `hob auf, hat aufgehoben`
+- **hörte** — `hörte auf, hat aufgehört`
+- **hat** — `hat aufgeladen`
+- **löste** — `löste auf, hat aufgelöst`
+- **nahm** — `nahm auf,`
+- **hat** — `hat aufgenommen`
+- **ärgerte** — `ärgerte, hat geärgert`
+- **hat** — `hat geatmet`
+- **auch** — `auch`
+- **auf** — `auf 9. Ich bin schon seit zwei Stunden auf. 10.Komm herein, die Tür ist auf. (D) (A, CH: offen) 1. Der Zug hat in München nur 20 Minuten Aufenthalt. 2. Wir wünschen Ihnen einen`
+- **zu** — `zu sagen. 2. Er fordert sie zum Tanz auf. Sie erhalten eine Aufforderung, den Betrag bis Juni zu zahlen. Die Kinder führen zu Weihnachten ein Theaterstück auf. 1. Hast du deine Hausaufgaben für die Schule schon gemacht? 2. Das ist nicht meine Aufgabe. 1. Ich habe auf der Post ein Paket`
+- **eine** — `eine Hoffnung. 1. Wo hält er sich gerade auf? – In München. 2. Darf ich Ihnen die Tür aufhalten? 3. Entschuldigen Sie die Verspätung, ich`
+- **wurde** — `wurde aufgehalten. 1. Lassen Sie die Papiere nur auf dem Boden liegen, ich hebe sie schon auf. 2. Die Quittung müssen Sie gut aufheben. 1. Es hört nicht auf zu schneien. 2. Wann hört ihr mit der Arbeit auf? 3. Hier hört die Hauptstraße auf. Ich muss mein Telefon aufladen. Die Batterie ist leer. Die Tablette bitte in Wasser auflösen. 1. Die Schülerin hörte aufmerksam zu. 2. Ich mache Sie darauf aufmerksam,`
+- **dass** — `dass wir in einer halben Stunde`
+- **immer** — `immer geärgert. Ich hatte heute Ärger im Büro. Ich`
+- **habe** — `habe mich mit einem Kollegen`
+- **die** — `die, das. 1. Ich muss heute zum Arzt. 2. Wann warst du beim Zahnarzt? Die Menschen sind auf der Flucht und`
+- **durch** — `durch die Nase atmen. Bitte den Atem anhalten. 1. Ich muss leider gehen. – Ich auch. 2. Ich arbeite die ganze Woche und muss`
+- **auch** — `auch am Wochenende arbeiten. 3. Wir fahren auf jeden Fall, auch wenn`
+- **es** — `es regnet. 4. Der Zug ist gerade eben abgefahren. Warum kommst du auch so spät! 1. Deine Brille liegt auf dem Schreibtisch. 2. Die Kinder spielen unten auf der Straße. 3. Meine Eltern leben auf dem Land. 4. Gestern waren wir auf einer Party. 5. Auf unsere Anzeige in der Abendzeitung hat sich noch niemand`
+- **gemeldet** — `gemeldet. 6. Wie heißt das auf Deutsch? 7. Meine Tochter kommt nächstes Jahr`
+- **aufs** — `aufs Gymnasium. (D) (A, CH: ins) 8. Im Mai war ich auf Urlaub. (A) (D: in) WORTLISTE WORTLISTE`
+- **ausgebildet** — `ausgebildet`
+- **druckte** — `druckte aus,`
+- **hat** — `hat ausgedruckt`
+- **auseinander** — `auseinander`
+- **fiel** — `fiel aus, ist ausgefallen`
+- **füllte** — `füllte aus, hat ausgefüllt`
+- **gab** — `gab aus, hat ausgegeben`
+- **ging** — `ging aus,`
+- **ist** — `ist ausgegangen`
+- **passte** — `passte auf,`
+- **hat** — `hat aufgepasst`
+- **räumte** — `räumte auf,`
+- **hat** — `hat aufgeräumt`
+- **regte** — `regte auf,`
+- **hat** — `hat aufgeregt`
+- **stand** — `stand auf,`
+- **ist** — `ist aufgestanden`
+- **trat** — `trat auf, ist aufgetreten`
+- **wachte** — `wachte auf,`
+- **ist** — `ist aufgewacht`
+- **aufwärts** — `aufwärts`
+- **aus** — `aus 1. Ich habe meine Ausbildung`
+- **ausgebildet** — `ausgebildet sein. Kann ich das auf deinem Drucker`
+- **gehört** — `gehört. 2. Machen Sie doch bitte einen Ausdruck`
+- **von** — `von der E-Mail. Wir wohnen nicht weit auseinander. 1. Hier ist eine Ausfahrt, da dürfen Sie`
+- **nicht** — `nicht parken. 2. Wie weit ist es noch bis zur Ausfahrt Freiburg? Nächste Woche fällt der Kurs aus. Am Wochenende machen wir mit Fre-`
+- **für** — `für unser Geschäft. 1. Ich hätte gern eine Auskunft. 2. Die Firma hat eine neue Nummer. Bitte, rufen Sie die Auskunft an. Wir fahren im Urlaub meistens ins Aus-`
+- **land** — `land. 1. Tut mir leid. Da habe ich wohl nicht`
+- **aufgepasst** — `aufgepasst. 2. Ich muss zu Hause bleiben und auf die Kinder aufpassen. Vor meinem Urlaub muss ich unbed-`
+- **ingt** — `ingt noch meinen Schreibtisch`
+- **auf** — `auf. 3. Heute hast du eine Prüfung. Bist du`
+- **schon** — `schon aufgeregt? 4. Die Musikgruppe zu erleben war sehr`
+- **auf** — `auf. 2. Sie brauchen nicht aufzustehen. Sie`
+- **und** — `und soll Ihnen diesen Brief geben. 2. Im Moment hat die Firma besonders`
+- **viele** — `viele Aufträge. Nächste Woche tritt in der Stadthalle`
+- **eine** — `eine berühmte Musikgruppe auf. Nach dem Auftritt feiern die Musiker. Von dem Lärm bin ich aufgewacht. 1. Sie müssen gute Schuhe anziehen. Der Weg geht immer aufwärts. 2. In letzter Zeit geht es wieder aufwärts`
+- **mit** — `mit der Wirtschaft. Im Büro ist leider der Aufzug kaputt. Meine beiden Kinder haben blaue Augen. 1. Ich wollte gerade parken. In dem Au-`
+- **genblick** — `genblick ist ein Wagen aus der Ausfahrt gekommen. 2. Einen Augenblick, bitte! 3. Im Augenblick sind keine Plätze frei. 1. Frau Müller geht jeden Morgen um 8 Uhr aus dem Haus. 2. Frau Özgen kommt aus der Türkei. 3. Die Möbel sind noch aus der Zeit um 1900. 4. Ich trage nur Pullover aus reiner Wolle. 5. Wir haben aus Liebe geheiratet. 6. Wann ist der Kurs aus? 7. Ich seh‘ nichts! Das Licht ist aus! ZERTIFIKAT B1 22 WORTLISTE`
+- **sprach** — `sprach aus,`
+- **hat** — `hat ausgesprochen`
+- **stellte** — `stellte aus,`
+- **hat** — `hat ausgestellt`
+- **sucht** — `sucht aus, suchte aus,`
+- **hat** — `hat ausgesucht`
+- **wählte** — `wählte aus,`
+- **hat** — `hat ausgewählt`
+- **zog** — `zog aus,`
+- **hat** — `hat/ist ausgezogen`
+- **machte** — `machte aus,`
+- **hat** — `hat ausgemacht`
+- **ichte** — `ichte aus,`
+- **hat** — `hat ausgereicht`
+- **richtete** — `richtete aus,`
+- **hat** — `hat ausgerichtet`
+- **ruhte** — `ruhte aus, hat ausgeruht`
+- **schloss** — `schloss aus,`
+- **hat** — `hat ausgeschlossen`
+- **sah** — `sah aus,`
+- **hat** — `hat ausgesehen`
+- **außerhalb** — `außerhalb`
+- **außer** — `außer`
+- **außerdem** — `außerdem 1. Von diesem Turm hat man eine tolle Aussicht. 2. Mit mehreren Fremdsprachen hat man`
+- **gute** — `gute Aussichten im Beruf. Wie spricht man dieses Wort aus? Ali hat eine gute Aussprache. 1. Im Schaufenster sind Winterschuhe`
+- **dauert** — `dauert zwei Wochen. Such dir etwas Schönes aus! Ich lade`
+- **dich** — `dich ein. Für die Aufgabe können Sie aus drei Themen auswählen. 1. Wir müssen eine Auswahl aus den Büchern treffen. 2. Das Geschäft hat eine große Auswahl. Darf ich mal Ihren Ausweis sehen? 1. Willst du den Mantel nicht ausziehen? 2. Müllers sind schon vor vier Wochen`
+- **zwei** — `zwei Bücher geschrieben. Viele Ausländer und Ausländerinnen`
+- **zuerst** — `zuerst einen Deutschkurs besuchen. 1. Sie müssen leider warten. – Kein Problem. Das macht mir nichts aus. 2. Machen Sie bitte das Licht aus! 3. Wir hatten doch ausgemacht, dass du`
+- **eine** — `eine Ausnahme. 1. Das Geld muss bis März ausreichen. 2. Seine Kenntnisse reichen für diese Arbeit aus. Das Geld ist für die Reise ausreichend. Mein Mann ist nicht da. Soll ich ihm`
+- **etwas** — `etwas ausrichten? 1. Sie ruhen sich von der Arbeit aus. 2. Bist du gut ausgeruht? 1. Das kann man nicht ganz ausschließen. 2. So viel kann ich nicht bezahlen. Das ist`
+- **wieder** — `wieder gesund? 2. Er sieht genauso aus wie sein Vater. 3. Es sieht so aus, als ob es bald regnen`
+- **würde** — `würde. 1. Wir haben das Schloss nur von außen`
+- **gespielt** — `gespielt. WORTLISTE WORTLISTE`
+- **bastelte** — `bastelte, hat gebastelt`
+- **hat** — `hat gebaut`
+- **beachtete** — `beachtete, hat beachtet`
+- **beantragte** — `beantragte, hat beantragt`
+- **wortet** — `wortet, beantwortete,`
+- **hat** — `hat beantwortet`
+- **sich** — `sich bedanken, bedankt,`
+- **bedankte** — `bedankte, hat bedankt`
+- **bedeutete** — `bedeutete, hat bedeutet`
+- **backte** — `backte, hat gebacken`
+- **gebadet** — `gebadet`
+- **bald** — `bald`
+- **beantragt** — `beantragt? Sie haben meine Frage leider nicht`
+- **zlich** — `zlich für Ihre Hilfe bedanken. An diesem Produkt besteht großer Bedarf. 1. Was bedeutet dieses Wort? 2. Ich bin krank. Das bedeutet, dass ich`
+- **heute** — `heute nicht arbeiten kann. Das Wort „Maus“ hat inzwischen zwei Bedeutungen. Wenn du kommst, backe ich einen Kuchen. Wir kaufen unser Brot immer in der Bäckerei am Markt. 1. Wenn du baden möchtest: Das Badezimmer ist dort hinten links. 2. Hier ist Baden verboten! 1. Nach einem warmen Bad fühlt man`
+- **sich** — `sich gleich viel besser. 2. Ich möchte ein Zimmer mit Bad. Nach einem langen Arbeitstag setzte`
+- **sie** — `sie sich in die Badewanne. Ich komme mit der Bahn. Die S-Bahn ist schneller als die Straßenbahn. Nehmen Sie die Straßenbahn Nr. 16. Die letzte U-Bahn geht um 23.15 Uhr. Ich bringe Sie zum Bahnhof. Auf Hauptbahnhöfen gibt es meist`
+- **viele** — `viele Bahnsteige. 1. Besuchen Sie uns doch bald mal. 2. Geben Sie mir bitte so bald wie`
+- **vorne** — `vorne. Bei welcher Bank haben Sie Ihr Konto? Ich hole noch schnell Geld vom Bankomaten. Bitte geben Sie Ihre Bankleitzahl an. Sie können auch mit Bankomat-Karte`
+- **behauptete** — `behauptete,`
+- **hat** — `hat behauptet`
+- **behinderte** — `behinderte, hat behindert`
+- **bei** — `bei`
+- **beinahe** — `beinahe`
+- **hat** — `hat gebissen`
+- **bekam** — `bekam, hat bekommen`
+- **bediente** — `bediente, hat bedient`
+- **sich** — `sich beeilen, beeilt sich,`
+- **beeilte** — `beeilte sich,`
+- **hat** — `hat sich beeilt`
+- **beendete** — `beendete, hat beendet`
+- **sich** — `sich befinden, befindet`
+- **sich** — `sich, befand sich,`
+- **hat** — `hat sich befunden`
+- **befreit** — `befreit`
+- **begegnete** — `begegnete, ist begegnet`
+- **begann** — `begann, hat begonnen`
+- **begleitete** — `begleitete, hat begleitet`
+- **begründete** — `begründete,`
+- **hat** — `hat begründet`
+- **begrüßte** — `begrüßte, hat begrüßt`
+- **hat** — `hat behalten`
+- **behandelte** — `behandelte,`
+- **hat** — `hat behandelt 1. Er behauptet, unsere Meinung sei nicht`
+- **den** — `den behindern. 2. Seit dem Unfall ist das Kind unserer Freunde behindert. Sie erhalten ein Schreiben von der`
+- **oder** — `oder die grüne? – Ich nehme beide. Andreas hat sich das Bein gebrochen. Ich habe heute beinahe den Bus`
+- **verpasst** — `verpasst. 1. Können Sie mir ein Beispiel sagen? 2. Mein Freund hat viele Hobbys wie zum Beispiel Kochen, Tanzen, Fußballspielen. 3. Hier gibt’s so viele Sachen:`
+- **beißt** — `beißt! 1. Die Krankenkasse hat die Beiträge`
+- **mir** — `mir. Den Prüfungsort geben wir Ihnen noch`
+- **nicht** — `nicht. 1. Wenn Sie unsere Bedingungen`
+- **gute** — `gute Arbeitsbedingungen. Wir müssen uns beeilen. Sonst`
+- **den** — `den Rundfunk-Gebühren befreit. Das Ergebnis ist befriedigend. Sind wir uns nicht schon mal`
+- **irgendwann** — `irgendwann begegnet? Es war ein tolles Konzert. Ich bin`
+- **behandelt** — `behandelt? 2. So lasse ich mich von Ihnen nicht`
+- **länger** — `länger behandeln. WORTLISTE WORTLISTE`
+- **berichtete** — `berichtete, hat berichtet`
+- **beruhigte** — `beruhigte, hat beruhigt`
+- **beschädigte** — `beschädigte,`
+- **hat** — `hat beschädigt`
+- **beschäftigte** — `beschäftigte,`
+- **hat** — `hat beschäftigt`
+- **beschloss** — `beschloss,`
+- **hat** — `hat beschlossen`
+- **beschrieb** — `beschrieb,`
+- **hat** — `hat beschrieben`
+- **sich** — `sich beschweren,`
+- **beschwert** — `beschwert sich,`
+- **beschwerte** — `beschwerte sich,`
+- **hat** — `hat sich beschwert`
+- **beleidigte** — `beleidigte, hat beleidigt`
+- **bemerkte** — `bemerkte, hat bemerkt`
+- **sich** — `sich bemühen, bemüht,`
+- **bemühte** — `bemühte, hat bemüht`
+- **benötigte** — `benötigte, hat benötigt`
+- **benutzte** — `benutzte, hat benutzt`
+- **beobachtete** — `beobachtete,`
+- **hat** — `hat beobachtet`
+- **hat** — `hat beraten`
+- **berechnete** — `berechnete, hat berechnet`
+- **bereits** — `bereits`
+- **berichtet** — `berichtet. Ich habe gestern einen interessanten Bericht gelesen. Was sind Sie von Beruf? Was machen Sie beruflich? Sind Sie berufstätig? 1. Beruhigen Sie sich bitte. Es ist alles in Ordnung. 2. Ich kann Sie beruhigen. Ihrem Sohn ist`
+- **nichts** — `nichts passiert. Michael Schumacher ist ein berühmter Rennfahrer. Bitte machen Sie eine Liste davon, was`
+- **weil** — `weil ich ein kleines Kind habe. Den endgültigen Bescheid erhalten Sie`
+- **in** — `in etwa vier Wochen. Ich erkundige mich nach den Terminen`
+- **und** — `und sage Ihnen dann Bescheid. Kannst du mir bis morgen Bescheid`
+- **kleineres** — `kleineres Auto zu kaufen. Die Teilnehmerzahl für den Kurs ist`
+- **zu** — `zu kochen. 2. Ich werde mich um einen Termin`
+- **etwas** — `etwas benötigen. Benutzen Sie bitte die öffentlichen Verkehrsmittel. Das Benzin soll wieder teurer werden. Wer hat den Unfall beobachtet? 1. Meine Kinder ziehen am liebsten`
+- **bequeme** — `bequeme Sachen an. 2. Im Supermarkt einkaufen ist sehr`
+- **berechnet** — `berechnet werden. 1. In welchem Bereich möchten Sie`
+- **hat** — `hat bereits dreimal angerufen. 1. Die Zugspitze ist der höchste Berg in Deutschland. 2. Wir fahren jeden Sonntag in die Berge. ZERTIFIKAT B1 26 WORTLISTE`
+- **sich** — `sich beteiligen, beteiligt`
+- **sich** — `sich, beteiligte sich,`
+- **hat** — `hat sich beteiligt`
+- **betreute** — `betreute, hat betreut`
+- **hat** — `hat betrogen`
+- **bevor** — `bevor`
+- **bewegte** — `bewegte, hat bewegt`
+- **bewies** — `bewies, hat bewiesen`
+- **sich** — `sich bewerben, bewirbt`
+- **sich** — `sich, bewarb sich,`
+- **hat** — `hat sich beworben`
+- **besetzte** — `besetzte, hat besetzt`
+- **besichtigte** — `besichtigte, hat besichtigt`
+- **hat** — `hat besessen`
+- **besonders** — `besonders`
+- **besorgte** — `besorgte, hat besorgt`
+- **besprach** — `besprach,`
+- **hat** — `hat besprochen`
+- **bestätigte** — `bestätigte,`
+- **hat** — `hat bestätigt`
+- **bestand** — `bestand, hat bestanden`
+- **bestellte** — `bestellte, hat bestellt`
+- **bestrafte** — `bestrafte, hat bestraft`
+- **besuchte** — `besuchte, hat besucht`
+- **unser** — `unser Konto. Wer betreut bei Ihnen die Kinder? Die Betreuerin der Kinder ist sehr nett. Haben Sie eine Betreuung für Ihre Kinder? 1. In diesem Betrieb arbeiten zehn Leute. 2. Kurz vor Weihnachten ist in den Kaufhäusern immer viel Betrieb. 3. Der Aufzug ist in Betrieb/außer Betrieb. Der Betriebsrat wird Sie über die`
+- **hat** — `hat mich betrogen. Wenn Sie betrunken Auto fahren,`
+- **im** — `im Bett bleiben. 11 % der Bevölkerung wurden nicht im Inland geboren. Bevor wir gehen, möchte ich noch`
+- **etwas** — `etwas essen. 1. Ich kann mich vor Schmerzen kaum`
+- **noch** — `noch bewegen. 2. Ich kann meinen Finger nicht mehr`
+- **über** — `über die Ampel gefahren sind. Haben Sie dafür Beweise? 1. Ich habe mich um diese Stelle`
+- **brunn** — `brunn besichtigt. Besitzt Ihre Frau ein eigenes Auto? Meine Eltern wollten uns mit dieser Reise eine ganz besondere Freude`
+- **günstiges** — `günstiges Angebot gesehen. 2. Durch den Sturm gab es besonders in Süddeutschland schwere Schäden. 3. Wie geht’s? – Nicht besonders. Soll ich die Eintrittskarten besorgen? Wir müssen noch genau besprechen,`
+- **wann** — `wann wir losfahren und was wir`
+- **einer** — `einer Besprechung. Gute Besserung! 1. Die Firma hat mir den Termin`
+- **gespräch** — `gespräch bestellt. 3. Ich soll Ihnen Grüße von Frau Meier`
+- **gemeint** — `gemeint. 2. Möchtest du ein bestimmtes Brot? Zu schnelles Fahren wird streng`
+- **bestraft** — `bestraft. 1. Besuchen Sie uns doch mal. 2. Sie müssen noch einen Kurs besuchen. 1. Wir bekommen Besuch. 2. Ich mache einen Besuch im Kranken-`
+- **haus** — `haus. 3. Ich bin hier nur zu Besuch. WORTLISTE WORTLISTE`
+- **bitte** — `bitte`
+- **ist** — `ist geblieben`
+- **hat** — `hat geblitzt`
+- **hat** — `hat geblüht`
+- **hat** — `hat geblutet`
+- **bezahlte** — `bezahlte, hat bezahlt`
+- **hat** — `hat geboten`
+- **bis** — `bis`
+- **bisher** — `bisher`
+- **hat** — `hat gebeten Ich habe eine Bitte. Kann ich mal Ihr Handy benutzen? 1. Eine Tasse Kaffee, bitte! 2. Bitte schön! 3. Wie bitte? Was haben Sie gesagt? 4. Sprechen Sie bitte langsam. Hast du Zucker? Der Tee ist sehr bitter. Du siehst ganz blass aus. Bist du`
+- **samstags** — `samstags geschlossen. 3. Bleiben Sie bitte am Apparat. 4. Bleiben Sie doch sitzen! 5. Wir bleiben nur bis morgen. Hast du einen Bleistift für mich? Von hier hat man einen tollen Blick`
+- **über** — `über die Stadt. Er ist von Geburt an blind. 1. Gestern Abend gab es ein Gewitter. Es`
+- **hat** — `hat furchtbar geblitzt und gedonnert. 2. Ihre Augen blitzen vor Freude. 1. Was für ein Gewitter, hast du den Blitz`
+- **mich** — `mich bloß umsehen. 2. Komm bloß nicht zu spät. Wir müssen`
+- **würde** — `würde! Die Bäume blühen schon. Es ist Frühling. Wir haben meiner Mutter Blumen zum Geburtstag geschenkt. Ich hätte gerne eine weiße Bluse. Ich habe mich verletzt. Meine Hand`
+- **blutet** — `blutet. Der Verletzte hat viel Blut verloren. Ich kenne die anderen Hausbewohner`
+- **nicht** — `nicht. Hast du die Rechnung schon bezahlt? Wir haben gute Beziehungen zu`
+- **über** — `über meinem Schreibtisch. 1. Ich brauche einen größeren Bildschirm`
+- **für** — `für meinen Computer. 2. Wir haben einen Fernsehapparat mit`
+- **einem** — `einem sehr großen Bildschirm. Ein Billett können Sie am Schalter`
+- **auch** — `auch im Supermarkt. Möchten Sie Obst? Die Birnen sind`
+- **heute** — `heute besonders schön. 1. Die Linie 8 fährt nur bis zum Hauptbahnhof. 2. Bis wann können Sie bleiben? 3. Tschüs. Bis gleich! 4. Einige Züge hatten bis zu zwei Stunden Verspätung. 5. Für die Renovierung brauchen wir drei`
+- **bis** — `bis vier Tage. 6. Warte hier, bis ich zurückkomme. Bisher ist alles in Ordnung. 1. Wenn Sie ein bisschen warten, können`
+- **wir** — `wir zusammen gehen. 2. Möchten Sie noch ein bisschen Reis? 3. Können Sie bitte ein bisschen lauter`
+- **monee** — `monee; A: Geldbörse`
+- **hat** — `hat gebracht`
+- **hat** — `hat gebucht`
+- **hat** — `hat gebraten`
+- **brauchte** — `brauchte, hat gebraucht`
+- **hat** — `hat gebrochen`
+- **bremste** — `bremste, hat gebremst`
+- **hat** — `hat gebrannt Ich schreibe nicht gern Briefe. 1. Ist hier in der Nähe ein Briefkasten? 2. Hol bitte mal die Zeitung aus dem Briefkasten. Briefmarken bekommen Sie am Schalter 7. War die Briefträgerin schon da? Ich hätte gern 50 Briefumschläge und Briefmarken dazu. Ich habe nur Kleingeld in meiner Brieftasche. Ich brauche eine neue Brille. 1. Bringen Sie mir bitte ein Glas Tee! 2. Ich bringe dich nach Hause. 3. Die Abendzeitung hat einen Bericht`
+- **über** — `über den Unfall gebracht. In der Broschüre finden Sie die`
+- **nicht** — `nicht im Supermarkt. 2. Was möchtest du aufs Brot haben? 3. Nimm noch ein paar belegte Brote für`
+- **und** — `und dann rechts. Mein jüngster Bruder geht noch zur Schule. Ich habe Schmerzen in der Brust. In der Schulklasse sind 15 Buben und 10 Mädchen. Haben Sie ein Buch über die Geschichte von Berlin? In der Buchhandlung in der Stadt`
+- **besonders** — `besonders gut. Bitte schreiben Sie Ihren Namen auf`
+- **den** — `den Antwortbogen. Ich esse gern Bohnen. An diesem See kann man Boote`
+- **nicht** — `nicht gekommen! 4. Zeig mal! Du hast dich verletzt? Das`
+- **sieht** — `sieht aber böse aus. 1. Das Fleisch muss zehn Minuten braten. 2. Heute gibt’s gebratenen Fisch. Nehmen Sie noch etwas Soße zum Braten? 1. Ich brauche ein Auto. 2. Brauchst du die Zeitung noch? 3. Meine Großmutter ist krank. Sie`
+- **braucht** — `braucht viel Ruhe. 4. Ich habe für die Renovierung eine Woche gebraucht. 5. Sie brauchen morgen nicht zu`
+- **gebrannt** — `gebrannt. 2. Die Kerze brennt noch. Mach sie bitte`
+- **aus** — `aus. 3. In deinem Zimmer hat die ganze Nacht`
+- **da** — `da`
+- **dabei** — `dabei`
+- **daher** — `daher`
+- **dahin** — `dahin`
+- **biert** — `biert, buchstabierte,`
+- **hat** — `hat buchstabiert`
+- **kann** — `kann man nichts machen. 5. Da Sie keinen Mitgliedsausweis haben,`
+- **ist** — `ist es etwas teurer. 6. Wir haben gerade über dich`
+- **schon** — `schon nach Hause gehen. Ich bin erkältet, daher kann ich heute`
+- **nicht** — `nicht kommen. Der Zug kommt in 30 Minuten. Bis`
+- **dahin** — `dahin können wir einen Kaffee trinken. Würden Sie Ihren Namen bitte`
+- **deiner** — `deiner Muttersprache? 2. Ihr Name beginnt mit K. – Buchstabe K`
+- **ist** — `ist in Zimmer 3. Bitte warten Sie dort. Ich habe noch eine Büchse Bohnen. Das Buffet ist eröffnet! Er steht gern auf der Bühne. Das bunte Kleid gefällt mir gut. Von der Burg hat man eine schöne Aussicht. EU-Bürgerinnen und Bürger können`
+- **überall** — `überall in Europa arbeiten. 1. Unser Büro bleibt samstags`
+- **sind** — `sind so schmutzig. 2. Ich brauche eine Bürste für meine Haare. Ich brauche eine neue Zahnbürste. Ich fahre meistens mit dem Bus zur Arbeit. Ich möchte nur Butter aufs Brot. Hier in der Nähe ist ein Café. Lass uns`
+- **zu** — `zu bekommen. Das kann ich nicht allein entscheiden,`
+- **da** — `da muss ich erst die Chefin fragen. Ich finde dein Kleid sehr chick. 1. Du siehst toll aus! Wer ist dein Coiffeur? 2. Meine Tochter will Coiffeuse werden. ZERTIFIKAT B1 30 WORTLISTE`
+- **hat** — `hat gedauert`
+- **dekorierte** — `dekorierte, hat dekoriert`
+- **hat** — `hat gedacht`
+- **denn** — `denn`
+- **derselbe** — `derselbe, dieselbe,`
+- **dasselbe** — `dasselbe`
+- **deshalb** — `deshalb`
+- **damals** — `damals`
+- **damit** — `damit`
+- **danach** — `danach`
+- **hat** — `hat gedankt`
+- **danke** — `danke`
+- **dann** — `dann`
+- **stellte** — `stellte dar, hat dargestellt`
+- **dass** — `dass`
+- **halbe** — `halbe Stunde. 1. Sie können das Buch für die Dauer`
+- **einer** — `einer Woche ausleihen. 2. Auf Dauer ist die Arbeit nicht`
+- **stört** — `stört mich. 2. Er ist dauernd krank. 1. Im Wohnzimmer haben wir keine Lampe an der Decke. 2. Kann ich noch eine Decke bekommen? Mir ist kalt. Hilfst du mir, den Tisch für die Party`
+- **zu** — `zu dekorieren? 1. Du lachst - was denkst du gerade? 2. Ich denke, dass du recht hast. 3. Wir diskutieren gerade über das Rauchen. Wie denken Sie darüber? 4. Denk bitte daran, die Heizung`
+- **mir** — `mir denken. 6. Ich denke oft an meine Familie. 7. Ich hatte mir gedacht, dass wir`
+- **uns** — `uns traurig. 4. Lass uns einen Ausflug machen, damit`
+- **du** — `du auf andere Gedanken kommst. 5. Sie ist ganz in Gedanken versunken. In dieser Stadt gibt es viele berühmte Denkmäler. 1. Ich lerne jetzt auch Portugiesisch, denn`
+- **ich** — `ich möchte nach Südamerika reisen. 2. Wie ist das Spiel denn ausgegangen? Mein Freund und ich gehen in dieselbe Schule. Ich war krank. Deshalb war ich nicht`
+- **im** — `im Büro. Nach dem Essen gab es noch ein`
+- **leckeres** — `leckeres Dessert. Ich habe falsch geparkt. Deswegen`
+- **habe** — `habe ich einen Strafzettel bekommen. Mit 15 wollte ich gerne Klavier spielen`
+- **nicht** — `nicht nötig. 2. Guten Appetit! – Danke gleichfalls. 1. Ich muss noch schnell zur Post, dann`
+- **komme** — `komme ich. 2. Wir waren pünktlich am Bahnhof. Aber`
+- **dann** — `dann hatte der Zug Verspätung. 3. Ich habe im Moment sehr viel zu tun. – Dann will ich nicht länger stören. 4. Wenn es nicht regnet, dann kommen`
+- **wir** — `wir. Er konnte das Problem sehr gut`
+- **dieser** — `dieser Probleme. Rico hat mir gesagt, dass er auch zur Party kommt. Wo hast du die Datei gespeichert? 1. Welches Datum haben wir heute? 2. Bitte Datum und Unterschrift nicht`
+- **diskutierte** — `diskutierte, hat diskutiert`
+- **doch** — `doch`
+- **donnerte** — `donnerte, hat gedonnert`
+- **dort** — `dort`
+- **dorthin** — `dorthin`
+- **hat** — `hat gedient`
+- **diesmal** — `diesmal`
+- **zum** — `zum Thema „Kinderbetreuung“. Diese Firma transportiert Waren auch`
+- **über** — `über große Distanzen. 1. Isst du kein Fleisch? – Doch, manchmal`
+- **schon** — `schon. 2. Ich habe es mir anders überlegt. Ich`
+- **komme** — `komme doch mit in die Stadt. 3. Ihr kommt doch heute Abend? 4. Fragen Sie doch Herrn Müller, der ist Computerspezialist. 5. Ach, wenn doch schon Sonntag wäre! 1. Ist Frau Dr. Müller da? 2. Meine Tochter ist krank. Wir gehen`
+- **zum** — `zum Doktor. 1. Hast du alle Dokumente für die Anmeldung dabei? 2. Dieser Stein ist ein wichtiges Dokument für die alte römische Kultur. 1. Hörst du es donnern? Das Gewitter`
+- **kommt** — `kommt näher. 2. Der Lkw donnert über die Landstraße. Der Donner kam erst lange nach dem Blitz. Das Buch habe ich doppelt. 1. Wir hätten gern ein Doppelbett. 2. Wollen Sie ein Doppelzimmer oder ein Einzelzimmer? Unser Dorf liegt direkt an der Autobahn. 1. Dort drüben ist der Bahnhof. 2. Ich werde in fünf Minuten dort sein. Deine Tasche kannst du dorthin stellen. Ich habe noch eine Dose Bohnen. 1. Es ist kalt draußen. 2. Wir müssen draußen warten. 1. Iss den Apfel nicht! Der lag im Dreck. 2. Ich konnte vor lauter Dreck auf dem Fenster nichts sehen. 3. Kümmere dich um deinen eigenen Dreck! 1. Dieses Detail ist unwichtig. 2. Ich habe alles bis ins kleinste Detail vorbereitet. Schreiben Sie bitte deutlich! Ich möchte abnehmen. Deshalb mache`
+- **ich** — `ich eine Diät. Ich verstehe dich besser, wenn du`
+- **nicht** — `nicht Dialekt sprichst. Sie hören jetzt einen Dialog. Unsere Fenster sind nicht dicht. Es`
+- **zieht** — `zieht immer. 1. Ich bin zu dick. Ich muss weniger`
+- **gedient** — `gedient. 1. Als Krankenschwester habe ich oft Frühdienst. 2. Morgen habe ich Dienst. Deshalb kann`
+- **ich** — `ich nicht kommen. 1. Wohin fährst du dieses Jahr in Urlaub? 2. Welche Hose nehmen Sie? – Diese hier. Die letzten Spiele haben wir verloren. Diesmal haben wir zum Glück`
+- **geht** — `geht genauer als meine alte Uhr. Gib mir bitte mal das Ding da drüben. Wo kann ich mein Diplom abholen? 1. Wir liefern Ihnen die Waren direkt ins Haus. 2. Das Dorf liegt direkt an der Autobahn. 3. Gibt es keinen direkten Zug nach Hamburg? 4. Sie übertragen das Fußballspiel direkt. Ich möchte gern mit dem Direktor`
+- **durcheinander** — `durcheinander`
+- **hat** — `hat gedurft (hat dürfen`
+- **als** — `als Modalverb)`
+- **duschte** — `duschte, hat geduscht`
+- **geduzt** — `geduzt`
+- **ebenfalls** — `ebenfalls`
+- **ebenso** — `ebenso`
+- **hat** — `hat gedreht`
+- **drin** — `drin, drinnen`
+- **hat** — `hat gedruckt`
+- **hat** — `hat gedrückt`
+- **durch** — `durch 3. Wir haben den ganzen Mai durch`
+- **geheizt** — `geheizt. 4. Wir haben unsere Wohnung durch`
+- **bei** — `bei 150 Euro im Monat. 2. Im Durchschnitt brauchen wir täglich 20 Minuten zur Arbeit. 3. Die Studentin gehört zum Durchschnitt. Die Preise sind im letzten Jahr um`
+- **nicht** — `nicht mehr als 1000 Euro kosten. Ich hole Ihnen etwas zu trinken. Sie`
+- **du** — `du trinken? 1. Wenn Sie sich duschen wollen: Das Badezimmer ist dort hinten links. 2. Ich bade nicht so gern, ich dusche`
+- **lieber** — `lieber. 1. Wir haben leider nur noch ein Zimmer`
+- **mit** — `mit Dusche. 2. Unsere Wohnung hat nur eine Dusche. Wollen wir Du zueinander sagen? Ja,`
+- **wir** — `wir können uns gern duzen? 1. Ich bin eben erst angekommen. 2. Ich gebe auf. Ich habe eben kein Glück! Ich wünsche Ihnen ein schönes Wochenende. – Danke, ebenfalls. Schöne Feiertage. – Danke, ebenso. 1. Drehen Sie zum Einschalten den Schalter nach rechts. 2. Die Kinder drehen sich zur Musik im Kreis. 3. Bei Familie Huber dreht sich jetzt alles`
+- **um** — `um das Baby. 1. Ich muss dich dringend sprechen. 2. Ich erwarte einen dringenden Anruf. 3. Bitte kommen Sie schnell. Es ist`
+- **angenehmer** — `angenehmer. 3. In der Packung ist nichts mehr drin. Nimmst du etwa Drogen? Waschmittel bekommst du in der Drogerie. Dort drüben ist die Haltestelle. 1. Warum hast du den Brief noch nicht`
+- **ausgedruckt** — `ausgedruckt? 2. Bei welcher Firma haben Sie diese Prospekte drucken lassen? 3. Du gehst einfach auf „Datei drucken“! Ich brauche einen neuen Drucker für`
+- **mir** — `mir. 2. Mir ist etwas Dummes passiert. 3. Ich fand den Film wirklich sehr dumm. 1. Um sechs Uhr ist es schon dunkel. 2. Meine Schwester hat dunkle Haare. 3. Ich habe mir eine dunkelblaue Bluse`
+- **gekauft** — `gekauft. 1. Mein Sohn ist sehr dünn. Er isst zu`
+- **wenig** — `wenig. 2. Warum ziehst du nur so einen dünnen Mantel an? Es ist kalt draußen. 1. Wir sind mit dem Fahrrad durch den Wald gefahren. 2. Wenn Sie zum Bahnhof gehen, kom-`
+- **men** — `men Sie durch die Goethestraße. WORTLISTE WORTLISTE`
+- **hat** — `hat/ist geeilt`
+- **ist** — `ist eingebrochen`
+- **einerseits** — `einerseits`
+- **ist** — `ist eingefallen`
+- **die** — `die e-card (A) → D: die Versichertenkarte`
+- **die** — `die ec-Karte/EC-Karte → A: Bankomat-Karte`
+- **eher** — `eher`
+- **sich** — `sich eignen, eignet sich,`
+- **eignete** — `eignete sich,`
+- **hat** — `hat sich geeignet Es eilt sehr. Bitte machen Sie schnell. 1. Ich bin sehr in Eile 2. Das hat keine Eile. Hast du es eilig? 1. Ich nehme ein Bier. Willst du auch`
+- **eins** — `eins? 2. Wir haben zu wenig Mitspieler. Wir`
+- **ich** — `ich. 1. Ich finde die Leute auf der Straße`
+- **bitte** — `bitte einfacher sagen? 3. Wir haben am Wochenende einen Ausflug gemacht. Es war einfach toll. 1. Da parkt wieder jemand vor unserer Einfahrt. 2. Können Sie nicht lesen: Einfahrt`
+- **immer** — `immer gute Einfälle. Das Wetter hat Einfluss auf die Gesundheit der Menschen. Haben Sie Ihre e-card dabei? 1. Ich träume von einem echten Perserteppich. 2. Der Film war echt gut. Bezahlen Sie bar? Sie können auch mit`
+- **der** — `der ec-Karte zahlen. 1. Das Regal stellen wir hier in die Ecke. 2. Das bekommen Sie im Kiosk an der Ecke. 3. Wo ist die Apotheke? − Gleich um die Ecke. 1. Das Regal stellen wir hier ins Eck. 2. Das bekommen Sie im Kiosk am Eck. 3. Wo ist die Apotheke? − Gleich ums Eck. Ich möchte einen eckigen Tisch, keinen`
+- **eher** — `eher Krimis. 1. Sie ist ein ehrlicher Mensch. 2. Bitte sei in dieser Sache ehrlich. 3. Die Pause haben wir uns ehrlich`
+- **verdient** — `verdient. Möchtest du zum Frühstück ein Ei? 1. Fast jedes Kind hat ein eigenes Zimmer. 2. Manche Leute haben keine eigene Meinung. 1. Wir wollten eigentlich Freunde`
+- **packte** — `packte ein, hat eingepackt`
+- **richtete** — `richtete ein,`
+- **hat** — `hat eingerichtet`
+- **schaltete** — `schaltete ein,`
+- **hat** — `hat eingeschaltet`
+- **einschließlich** — `einschließlich`
+- **setzte** — `setzte ein, hat eingesetzt`
+- **stellte** — `stellte ein, hat eingestellt`
+- **trug** — `trug ein, hat eingetragen`
+- **beeinflusste** — `beeinflusste,`
+- **hat** — `hat beeinflusst`
+- **fügte** — `fügte ein, hat eingefügt`
+- **führte** — `führte ein, hat eingeführt`
+- **sich** — `sich einigen, einigt sich,`
+- **einigte** — `einigte sich,`
+- **hat** — `hat sich geeinigt`
+- **kaufte** — `kaufte ein, hat eingekauft`
+- **hat** — `hat eingeladen`
+- **einmal** — `einmal`
+- **nahm** — `nahm ein,`
+- **hat** — `hat eingenommen Unser Geschäft läuft gut. Unsere Einnahmen waren in diesem Monat`
+- **höher** — `höher als im letzten. 1. Hast du Handtücher eingepackt? 2. Soll ich Ihnen das als Geschenk`
+- **eingerichtet** — `eingerichtet. 2. Wenn Sie Fragen haben, rufen Sie uns`
+- **an** — `an. Wir haben eine extra Telefon-num-`
+- **mer** — `mer eingerichtet. Deine Wohnung ist sehr gemütlich, die Einrichtung gefällt mir sehr gut. Ohne meine Familie fühle ich mich ein`
+- **einschließlich** — `einschließlich Fahrtkosten. Ich habe den Brief als Einschreiben`
+- **ich** — `ich den Job bekomme. 1. Ab 20 Uhr vorne beim Fahrer`
+- **neue** — `neue Leute einstellen. 2. Das Gerät ist nicht richtig eingestellt. Tragen Sie sich bitte in die Liste ein. Letztes Jahr bin ich in einen Sportverein eingetreten. 1. Kinder über 10 Jahre zahlen den`
+- **nach** — `nach Hause gehen? Berlin hat über drei Millionen Einwohner. Dieses Ereignis hat die Wahlen`
+- **einheitliche** — `einheitliche Kleidung. 1. In diesem Bericht sind einige Fehler. 2. Das wird noch einige Zeit dauern. 3. Einige Leute sind für das Gesetz, aber`
+- **viele** — `viele sind auch dagegen. Jeder hat einen anderen Vorschlag. Wir können uns leider nicht einigen. Wir gehen einmal pro Woche`
+- **man** — `man mehr Steuern zahlen. Darf ich Sie zum Essen einladen? Danke für die Einladung. 1. Ich habe diese Oper leider nur einmal`
+- **mir** — `mir. Wie muss ich die Tropfen einnehmen? WORTLISTE WORTLISTE`
+- **hat** — `hat geendet`
+- **entdeckte** — `entdeckte, hat entdeckt`
+- **entfernte** — `entfernte, hat entfernt`
+- **thielt** — `thielt, hat enthalten`
+- **entlang** — `entlang`
+- **entließ** — `entließ, hat entlassen`
+- **zahlte** — `zahlte ein, hat eingezahlt`
+- **zog** — `zog ein, ist eingezogen`
+- **empfing** — `empfing, hat empfangen`
+- **empfahl** — `empfahl, hat empfohlen`
+- **um** — `um Sport zu machen. 1. Die Jacke ist mir zu eng. 2. Wir arbeiten mit dieser Firma eng`
+- **wenig** — `wenig Zucker. 2. Ist die Änderung im Preis enthalten? Gehen Sie diese Straße entlang. Dann`
+- **larzt** — `larzt kommen.`
+- **z** — `z. B. Einzelkind, Einzelzimmer Du musst mir das in allen Einzelheiten`
+- **nächste** — `nächste Woche einziehen. 1. Im Winter gibt es Eis und Schnee. 2. Bitte eine Cola ohne Eis. Zum Nachtisch gibt es Schokoladeneis. Die Kinder wünschen sich eine`
+- **elektrische** — `elektrische Eisenbahn. Ich finde dein Kleid sehr elegant. Wir kochen nicht mit Gas, sondern`
+- **z** — `z.B. Elektrogeschäft, Elektroingenieur, Elektroherd Wir sollten die Daten elektronisch`
+- **über** — `über 30 Programme empfangen. 2. Die Gäste wurden sehr herzlich`
+- **einem** — `einem kleinen Empfang. Es fehlt die genaue Adresse des Empfängers. Was können Sie mir denn empfehlen? Ich rufe auf Empfehlung von Herrn Weber an. ZERTIFIKAT B1 36 WORTLISTE`
+- **sich** — `sich ereignen,`
+- **ereignet** — `ereignet sich,`
+- **ereignete** — `ereignete sich,`
+- **hat** — `hat sich ereignet`
+- **hat** — `hat erfahren`
+- **hat** — `hat erfunden`
+- **erforderte** — `erforderte, hat erfordert`
+- **hat** — `hat erfüllt`
+- **ergänzte** — `ergänzte, hat ergänzt`
+- **hat** — `hat erhalten`
+- **hat** — `hat erhöht`
+- **entschied** — `entschied,`
+- **hat** — `hat entschieden`
+- **sich** — `sich entschließen,`
+- **entschließt** — `entschließt sich,`
+- **entschloss** — `entschloss sich,`
+- **hat** — `hat sich entschlossen`
+- **entschuldigt** — `entschuldigt,`
+- **entschuldigte** — `entschuldigte,`
+- **hat** — `hat entschuldigt`
+- **entsorgte** — `entsorgte, hat entsorgt`
+- **entspannend** — `entspannend`
+- **entstand** — `entstand, ist entstanden`
+- **enttäuschte** — `enttäuschte, hat ent-`
+- **täuscht** — `täuscht`
+- **entweder** — `entweder ... oder`
+- **entwickelte** — `entwickelte,`
+- **hat** — `hat entwickelt`
+- **aus** — `aus fast allen Ländern der Erde teil. Kann ich bitte noch Erdäpfel`
+- **diesem** — `diesem Beruf. 2. Mit diesem Gerät haben wir gute Erfahrungen gemacht. Das Rad wurde vor ca. 6000 Jahren er-`
+- **sehr** — `sehr wichtig für die Menschen. 1. Der Film war ein großer Erfolg. 2. Ich wünsche Ihnen viel Erfolg bei der Prüfung. Mein Großvater war ein erfolgreicher Geschäftsmann. 1. Hier ist die Liste der erforderlichen Zu-`
+- **da** — `da muss ich erst fragen. 2. Für welchen Anzug haben Sie sich`
+- **ich** — `ich zuerst mit meinem Mann`
+- **was** — `was ich morgen tun soll. Mein Nachbar hat sich nun doch`
+- **störe** — `störe. Aber es gibt ein Problem. 2. Herr Meier lässt sich entschuldigen, er`
+- **ist** — `ist stark erkältet. Oh, Entschuldigung! – Macht nichts. Kein Problem. Wie kann ich meine alte Kaffeemaschine entsorgen? Der Urlaub war sehr entspannend. 1. Hier entsteht ein neues Einkaufs-`
+- **zentrum** — `zentrum. 2. Andere Kosten entstehen nicht. 1. Leider hat mich sein Verhalten`
+- **oder** — `oder ich. 1. Unser Sohn entwickelt sich gut in der Schule. 2. Die Firma hat ein neues Produkt`
+- **erledigte** — `erledigte, hat erledigt`
+- **erleichterte** — `erleichterte,`
+- **hat** — `hat erleichtert`
+- **ernährte** — `ernährte, hat ernährt`
+- **eröffnete** — `eröffnete, hat eröffnet`
+- **erreichte** — `erreichte, hat erreicht`
+- **erschrak** — `erschrak, ist erschrocken/`
+- **jdn** — `jdn. erschrecken,`
+- **erschreckt** — `erschreckt, erschreckte,`
+- **hat** — `hat erschreckt`
+- **hat** — `hat ersetzt`
+- **sich** — `sich erholen,`
+- **erholt** — `erholt sich,`
+- **erholte** — `erholte sich,`
+- **hat** — `hat sich erholt`
+- **erinnerte** — `erinnerte, hat erinnert`
+- **sich** — `sich erkälten, erkältet sich,`
+- **erkältete** — `erkältete sich,`
+- **hat** — `hat sich erkältet`
+- **erkältet** — `erkältet`
+- **erkannte** — `erkannte, hat erkannt`
+- **hat** — `hat erklärt`
+- **sich** — `sich erkundigen,`
+- **erkundigt** — `erkundigt sich, erkundigte`
+- **sich** — `sich, hat sich erkundigt`
+- **erlaubte** — `erlaubte, hat erlaubt`
+- **hat** — `hat erlebt`
+- **geklappt** — `geklappt hat. 2. Das Internet erleichtert mir die Arbeit`
+- **sehr** — `sehr. Es gibt eine Ermäßigung für Kinder`
+- **und** — `und Senioren. 1. Wie ernähre ich mich richtig? 2. Meine Eltern müssen beide arbeiten,`
+- **um** — `um die Familie zu ernähren. Ich finde eine gesunde Ernährung`
+- **andere** — `andere Stadt ziehen soll. Die Ernte ist dieses Jahr gut. 1. Mein Nachbar hat letzten Monat ein Geschäft eröffnet. 2. Ich möchte ein Konto eröffnen. Die Eröffnung der neuen Oper ist am 1. Juni. 1. Wenn wir uns beeilen, erreichen wir`
+- **noch** — `noch den 8-Uhr-Zug. 2. Bis 17 Uhr können Sie mich im Büro`
+- **nichts** — `nichts. 4. Dieser Zug erreicht eine Geschwindigkeit von 200 km/h. Nach dem Sport bin ich immer sehr er-`
+- **schöpft** — `schöpft. 1. Du hast richtig krank ausgesehen. Ich`
+- **war** — `war ganz erschrocken. 2. Hast du mich aber erschreckt! 3. Entschuldigung. Ich wollte Sie nicht er-`
+- **daran** — `daran gewöhnt. 2. Die Zahl der Unfälle hat sich stark`
+- **erholt** — `erholt. 2. Er hat sich nach dem Unfall sehr`
+- **brauche** — `brauche ich etwas Erholung. 1. Bitte, erinnern Sie mich noch einmal an`
+- **den** — `den Termin 2. Ich erinnere mich noch genau an Francescos Vater. An diese Zeit habe ich viele schöne Erinnerungen. Der Junge hat sich beim Baden`
+- **erkältet** — `erkältet. Ich bin stark erkältet. Du hast eine schlimme Erkältung! 1. Ich habe Roberto gleich an seiner Stimme erkannt. 2. Auf dem Foto kann man kaum etwas`
+- **war** — `war, den Kurs nicht fertigzumachen. 1. Kannst du mir erklären, wie man`
+- **als** — `als die Erklärung im Buch. 1. Hast du dich schon nach einem Zug`
+- **erkundigt** — `erkundigt? 2. Ich möchte mich erkundigen, wie es Ihnen geht. 1. Ich erlaube meinen Kindern nicht, so`
+- **lange** — `lange fernzusehen. 2. Parken ist hier nicht erlaubt. Sie hätten ihn vorher um Erlaubnis bit-`
+- **ten** — `ten müssen. In unserem Urlaub haben wir viel Schönes erlebt. Die Reise war ein tolles Erlebnis. ZERTIFIKAT B1 38 WORTLISTE`
+- **etwas** — `etwas`
+- **erstellte** — `erstellte, hat erstellt`
+- **erwartete** — `erwartete, hat erwartet`
+- **erzählte** — `erzählte, hat erzählt`
+- **hat** — `hat erzogen`
+- **es** — `es`
+- **hat** — `hat gegessen`
+- **etwa** — `etwa 2. Von zu Hause brauche ich etwa 10 Minuten bis zur Arbeit. 3. Du bist doch nicht etwa krank? 1. Ich muss dir etwas erzählen. 2. Ich habe nur Tee. Etwas anderes kann`
+- **ich** — `ich Ihnen leider nicht anbieten. 3. Haben Sie etwas zum Schreiben? 4. Wollen wir mit dem Nachtisch noch`
+- **etwas** — `etwas warten? 5. So etwas habe ich noch nie gehört. 6. Ich habe etwas Gutes für dich gekocht. Ich komme eventuell etwas später. Ich warte schon ewig auf mein neues Auto! Ich verstehe ein bisschen was von Computern. Aber ich bin kein Experte. 1. Hier ist die Firma Schulz, Import und Export. 2. Sonja arbeitet in der Exportabteilung. 1. Die Getränke kosten extra. 2. Warum sind Sie nicht gekommen? Ich`
+- **habe** — `habe extra auf Sie gewartet. Die Prüfung war extrem schwer. Ich arbeite in einer Autofabrik. 1. Die Handtücher sind im obersten Fach`
+- **links** — `links. 2. Welches Fach magst du in der Schule`
+- **am** — `am liebsten? Meine Schwester ist Computerfachfrau. Die suchen Fachleute für dieses Computerprogramm. 1. In seiner Position braucht man die Fähigkeit, andere zu überzeugen. 2. Ich glaube, sie hat die Fähigkeit dazu. 1. Wir sind mit dem Zug gefahren. 2. Fahr nicht so schnell. 3. Frau Koch fährt einen Mercedes. 4. Soll ich dich nach Hause fahren? 5. Er hat das Auto in die Garage gefahren. Wir nehmen die Fähre über den Bodensee. 1. Ich war zum ersten Mal allein im Urlaub. 2. Ich wohne im ersten Stock. 3. An erster Stelle kommt die Schule. Erstellen Sie bitte eine Liste mit allen Informationen, die Sie brauchen. 1. Die Kinder sind schon fast erwachsen. 2. Wir haben zwei erwachsene Töchter. 1. Erwachsene zahlen 5 Euro, für Kinder`
+- **ist** — `ist der Eintritt frei. 2. Dieser Film ist nur für Erwachsene. 1. Ich erwarte einen Anruf aus Berlin. 2. Frau Müller erwartet ein Kind. 3. Wir hatten nichts anderes erwartet. 4. Ich kann es gar nicht erwarten, euch`
+- **wieder** — `wieder zu sehen. 1. Mein Mann hat mir schon viel von Ihnen erzählt. 2. Ich muss meinen Kindern abends`
+- **immer** — `immer eine Geschichte erzählen. Diese Erzählung ist sehr berühmt. Du`
+- **musst** — `musst sie lesen. Kinder zu erziehen ist nicht leicht. Heute kümmern sich auch viele Väter`
+- **um** — `um die Erziehung der Kinder. 1. Mein Auto muss in die Werkstatt. Es ist`
+- **zu** — `zu machen. 1. Haben Sie schon zu Mittag gegessen? 2. Ich esse gern Bananen. 3. Was gibt es heute zu essen? 1. Darf ich Sie zum Essen einladen? 2. Das Essen ist kalt geworden. Am Salat fehlt noch etwas Essig. Das Büro ist in der 3. Etage, Zimmer 305. 1. Von hier sind es etwa zwanzig Kilometer. WORTLISTE WORTLISTE`
+- **hat** — `hat gefasst`
+- **fast** — `fast`
+- **faulenzte** — `faulenzte, hat gefaulenzt`
+- **hat** — `hat gefehlt`
+- **hat** — `hat gefeiert`
+- **ist** — `ist gefallen`
+- **falls** — `falls`
+- **hat** — `hat gefangen`
+- **farbiges** — `farbiges Papier. Geben Sie mir bitte 500 g Faschiertes. Dort hängt mein Kostüm für den Faschings(um)zug. Dort hängt mein Kostüm für den Fasnachtsumzug. 1. Sie haben den Dieb gefasst. 2. Ich habe den Entschluss gefasst, nach Wien zu ziehen. 1. Das Konzent ist fast zu Ende. 2. Ich habe fast alles verstanden. 1. Mein Sohn war am Anfang in der Schule sehr faul. Heute lernt er sehr`
+- **fehlt** — `fehlt schon seit drei Tagen. 5. Was fehlt Ihnen? Haben Sie Schmerzen? 1. Ich glaube, da haben Sie einen Fehler`
+- **schutzfaktor** — `schutzfaktor. 1. Was würden Sie in diesem Fall tun? 2. Rufen Sie auf jeden Fall vorher noch`
+- **einmal** — `einmal an. 3. Für den Fall, dass meine Mutter aus`
+- **dem** — `dem Krankenhaus kommt, bleibe ich zu Hause. 1. Das Glas ist auf den Boden gefallen. 2. In den Bergen ist schon Schnee`
+- **null** — `null gefallen. Die Rechnung ist Énde des Monats`
+- **finanzierte** — `finanzierte, hat finanziert`
+- **sah** — `sah fern, hat ferngesehen`
+- **hielt** — `hielt fest, hat festgehalten`
+- **legte** — `legte fest, hat festgelegt`
+- **nahm** — `nahm fest,`
+- **hat** — `hat festgenommen.`
+- **zte** — `zte fest, hat festgesetzt`
+- **stand** — `stand fest,`
+- **ist** — `ist festgestanden`
+- **stellte** — `stellte fest,`
+- **hat** — `hat festgestellt`
+- **von** — `von 100 m². 1. Wo kann man die leeren Flaschen`
+- **immer** — `immer ihre Hausaufgaben. Ich habe noch drei Tage Ferien. Ich suche eine günstige Ferienwohnung. Hast du die Fernbedienung gesehen? Meine Kinder dürfen abends nur eine Stunde fernsehen. Was gibt es heute Abend im Fernsehen? Der Fernseher ist schon wieder kaputt. 1. Das Essen ist gleich fertig. 2. Wenn ich mit der Arbeit fertig bin,`
+- **gehe** — `gehe ich nach Hause. 3. Bist du fertig? 4. Das war ein schlimmer Tag. Ich bin`
+- **die** — `die neue Stelle bekommt. 2. Als wir nach Hause kamen, haben die Kinder schon fest geschlafen. 3. Für die nächste Familienfeier gibt es`
+- **noch** — `noch keinen festen Termin. 1. Wenn ich 18 werde, feiern wir ein`
+- **großes** — `großes Fest. 2. Frohes Fest! Mein Computer hat eine große Festplatte. 1. Halt dich gut fest. 2. Halt die Flasche gut fest. 1. Ich weiß noch nicht, ob ich das mache. Ich möchte mich noch nicht festlegen. 2. Habt ihr den Hochzeitstermin schon`
+- **des** — `des Briefes falsch war. 2. Der Arzt hat mich untersucht, konnte`
+- **aber** — `aber nichts feststellen. 1. Die Wurst ist mir zu fett. 2. Das ist aber eine fette Katze! WORTLISTE WORTLISTE`
+- **zte** — `zte fort, hat fortgesetzt`
+- **fotografierte** — `fotografierte,`
+- **hat** — `hat fotografiert`
+- **hat** — `hat gefragt`
+- **im** — `im Freien`
+- **ist** — `ist geflogen`
+- **ist** — `ist geflohen`
+- **fließend** — `fließend`
+- **ist** — `ist gefolgt`
+- **hat** — `hat gefordert`
+- **hat** — `hat gefördert`
+- **ist** — `ist sehr teuer. Ich habe beim Deutschlernen große Fortschritte gemacht. Wir setzen die Behandlung am`
+- **gekauft** — `gekauft. Sie spielt sehr schön Flöte. Ich habe den Flug für Sie gebucht. Der Flughafen liegt 30 km außerhalb`
+- **kann** — `kann man in dieser E-Mail lesen. Die Stadt fördert viele Sportprojekte. Für das Projekt bekommen wir eine Förderung von der Stadt. 1. Diese Schuhe haben eine schöne Form. 2. Ich möchte für den Geburtstag einen Kuchen backen. Kannst du mir eine Backform leihen? ZERTIFIKAT B1 42 WORTLISTE`
+- **früher** — `früher/früher-`
+- **frühstückte** — `frühstückte,`
+- **hat** — `hat gefrühstückt`
+- **hat** — `hat gefühlt`
+- **hat** — `hat geführt`
+- **iert** — `iert, funktionierte,`
+- **hat** — `hat funktioniert`
+- **für** — `für`
+- **hat** — `hat gefressen`
+- **sich** — `sich freuen, freut sich,`
+- **freute** — `freute sich,`
+- **hat** — `hat sich gefreut`
+- **hat** — `hat gefroren`
+- **mich** — `mich wohl. 2. Fühl mal, ob das Wasser nicht zu heiß`
+- **ist** — `ist. 1. Der Lehrer führt seine Schüler durch`
+- **seit** — `seit zehn Jahren. 3. Nach 20 Minuten führte unsere Mannschaft 2 : 0. 4. Die Straße führt direkt zum Bahnhof. Hast du einen Führerausweis? 1. Hast du einen Führerschein? 2. Ich habe vor einem halben Jahr den Führerschein gemacht. 1. Die nächste Führung beginnt um 15 Uhr. 2. Bayern München liegt in Führung. Sie haben Ihren Schirm verloren. Da`
+- **sehr** — `sehr gut Klavier. 6. Du kannst nicht einkaufen gehen? Ich`
+- **kann** — `kann es für dich machen. 7. Für mich ist das ein schwerer Fehler. 8. Wir haben die Wohnung für ein Jahr`
+- **gemietet** — `gemietet. Manchmal bleibe ich freiwillig länger`
+- **im** — `im Büro. 1. Ich reise gern in fremde Länder. 2. Ich bin fremd hier. Hat der Hund schon etwas zu fressen`
+- **geklappt** — `geklappt hat. 2. Ich habe mich über Ihr Geschenk sehr`
+- **gefreut** — `gefreut. 3. Ich freue mich schon auf meinen näch-`
+- **beim** — `beim Friseur? Die Frist für die Anmeldung zum Deutschkurs ist abgelaufen. 1. Ich bin froh, dass alles so gut geklappt`
+- **hat** — `hat. 2. Frohes Fest! 1. Die Musik klingt fröhlich. 2. Sie ist ein fröhlicher Mensch. Welche Früchte kann man essen? Früchte kaufe ich am liebsten auf dem Markt. 1. Hier ist schon am frühen Morgen`
+- **starker** — `starker Verkehr. 2. Mein Vater arbeitet von früh bis spät. 3. Ich bin heute sehr früh aufgestanden. WORTLISTE WORTLISTE`
+- **hat** — `hat gegeben`
+- **ist** — `ist geboren worden`
+- **gebrauchte** — `gebrauchte, hat gebraucht`
+- **fürchtete** — `fürchtete, hat gefürchtet`
+- **hat** — `hat gefüttert`
+- **gar** — `gar`
+- **garantierte** — `garantierte, hat garantiert`
+- **beschwert** — `beschwert. Gehen wir noch in ein Gasthaus ein Bier trinken? Ich arbeite seit einem Monat in einer Gaststätte. In diesem Gebäude sind nur Büros. 1. Geben Sie mir bitte eine Quittung! 2. Können Sie mir etwas zum Schreiben`
+- **über** — `über Fortschritte auf dem Gebiet der Medizin. Wir haben unseren Urlaub im Gebirge`
+- **verbracht** — `verbracht. Wann und wo sind Sie geboren? 1. Wir können diese Möbel gut`
+- **gekauft** — `gekauft. 3. Ich suche eine gebrauchte Waschmaschine. Lesen Sie bitte zuerst die Gebrauchsanweisung. Die Gebühr liegt bei 60 Euro. Wir gratulieren zur Geburt eures Kindes! Herzlichen Glückwunsch zum Geburtstag! Kennst du ein schönes Gedicht? Bitte haben Sie etwas Geduld. 1. Dennis hat furchtbare Schmerzen. 2. Das war mir furchtbar unangenehm. Sie fürchtet sich vor Schlangen. 1. Er hat sich den linken Fuß gebrochen. 2. Sind Sie zu Fuß gekommen? 1. Spielt ihr gerne Fußball? 2. Jonas wünscht sich zu Weihnachten`
+- **ich** — `ich ganz sicher. 5. Gott sei Dank ist meine Brille noch`
+- **ist** — `ist gar nicht wahr. Hier ist eine Garage zu vermieten. Ich kann Ihnen nicht garantieren, dass`
+- **gegenüber** — `gegenüber`
+- **ist** — `ist gegangen`
+- **hat** — `hat gehört`
+- **monnaie** — `monnaie/Portmonee`
+- **ist** — `ist gelungen`
+- **hat** — `hat gefallen`
+- **sich** — `sich etwas gefallen lassen,`
+- **lässt** — `lässt sich etwas gefallen,`
+- **ließ** — `ließ sich etwas gefallen,`
+- **hat** — `hat sich etwas gefallen`
+- **nicht** — `nicht höflich. 3. Das Café liegt gegenüber vom Bahnhof. Ich bin mit meinem Gehalt zufrieden. Das kann ich dir nicht sagen. Das ist`
+- **niemandem** — `niemandem sagen. 1. Ich gehe jeden Morgen zu Fuß zur Arbeit. 2. Meine Tochter geht noch aufs Gymnasium. 3. Ich muss jetzt leider gehen. 4. Ein Freund von mir geht ins Ausland. 5. Der nächste Zug geht erst in zwei Stunden. 6. Am Anfang ging alles ganz gut. 7. Geht Ihre Uhr richtig? 8. Geht das bis morgen? – Nein, das geht`
+- **nicht** — `nicht. Ich brauche mehr Zeit. 9. Der Mantel geht nicht mehr in den Koffer. 10.Das Fenster geht auf die Straße. 11. Geht es hier zum Zentrum? 12.Wie geht es Ihnen heute? 13.Ist das sehr teuer? – Es geht. 14.Um was geht es denn? 15.Warum geht das Licht nicht? 16.Ich weiß nicht, wie das geht. Gehört Ihnen das Haus? Das Fahrradfahren auf dem Gehsteig`
+- **ist** — `ist nicht erlaubt. 1. Ich habe nicht genug Geld dabei. 2. Sie haben mir zu viel Wechselgeld`
+- **unsere** — `unsere Freunde zu sehen. Es ist mir gelungen, meinen Chef zu`
+- **habe** — `habe ein gutes Gefühl. 1. Ich bin gegen einen Baum gefahren. 2. Das ist gegen die Vorschrift. 3. Haben Sie ein Mittel gegen Grippe? 4. Wir liefern nur gegen bar. 5. Ich bin gegen 14 Uhr wieder da. 6. Ich bin gegen diesen Vorschlag. 7. Wer spielt gegen wen? 1. Sie ist eine Gegnerin von Tierversuchen. 2. Die Mannschaft aus Frankreich war ein`
+- **sehr** — `sehr starker Gegner. 1. Der Schwarzwald ist eine sehr schöne Gegend. 2. Die Schule muss hier in der Gegend`
+- **starkem** — `starkem Gegensatz zueinander. 2. Im Gegensatz zu ihm ist sein Vater`
+- **geschah** — `geschah, ist geschehen`
+- **beschränkung** — `beschränkung, -en`
+- **hat** — `hat gegolten`
+- **genauso** — `genauso`
+- **genehmigte** — `genehmigte,`
+- **hat** — `hat genehmigt`
+- **hat** — `hat genossen`
+- **genug** — `genug`
+- **hat** — `hat genügt`
+- **geradeaus** — `geradeaus`
+- **beim** — `beim Gericht. 2. Mein Lieblingsgericht ist Pizza. 1. Unsere Mannschaft hatte nur eine`
+- **geringe** — `geringe Chance. 2. Wenn Sie ein geringes Einkommen`
+- **verschenkt** — `verschenkt. 2. z. B. Gesamtgewicht, Gesamtsumme 1. Die Geschäfte schließen um 18.30 Uhr. 2. Wissen Sie, wo hier ein Schuhgeschäft`
+- **ist** — `ist? Vielen Dank für Ihre Hilfe. – Gern`
+- **immer** — `immer eine Geschichte. Ich bin seit drei Jahren geschieden. Für die Geburtstagsfeier brauche ich Geschirr für zwölf Personen. Bitte kreuzen Sie an: „Geschlecht:`
+- **wohl** — `wohl. Das Parlament hat ein neues Gesetz`
+- **als** — `als Garantie. 1. Du musst die Wohnung renovieren? Ich`
+- **helfe** — `helfe dir. Wir können das gemeinsam`
+- **mit** — `mit dem Nachbarn. Rauchen ist in den Gemeinschafts-räu-`
+- **men** — `men nicht erlaubt. Wir kaufen das Gemüse direkt beim Bauern. 1. Wir haben eine sehr gemütliche Wohnung. 2. Es ist sehr gemütlich bei dir. 1. Haben Sie die genaue Zeit? 2. Sind Sie sicher, dass heute Ruhetag ist? – Ja, das weiß ich genau. 3. Die Uhr geht genau. 4. Es ist genau acht Uhr. Katarina sieht genauso aus wie ihre Schwester. Mein Chef hat mir sechs Wochen Urlaub genehmigt. In diesem Haus wohnen drei Generationen zusammen. 1. Er kann das Essen leider nicht`
+- **genügt** — `genügt eine 2-Zimmer-Wohnung. Ich habe mein Gepäck am Bahnhof`
+- **die** — `die/das Glace/Glacé, -n (CH) → D, A: Eis`
+- **hat** — `hat geglaubt`
+- **gleichfalls** — `gleichfalls`
+- **gewann** — `gewann, hat gewonnen`
+- **gewöhnte** — `gewöhnte, hat`
+- **gewöhnt** — `gewöhnt/ist gewöhnt`
+- **man** — `man Durst. Es hat nicht geregnet. Ich muss meine Blumen gießen. Vorsicht, das Gift dieser Pflanze ist für Menschen gefährlich! Vorsicht, das ist giftig! Ich spiele seit drei Jahren Gitarre. Zum Dessert gibt es Schokoladenglace. 1. Vorsicht, die Kanne ist aus Glas! 2. Eine Flasche Mineralwasser und zwei Gläser bitte! 3. Ein Glas Bier bitte. Fahr vorsichtig! Es ist glatt. 1. Ich glaube, der Chef ist heute nicht im Büro. 2. Er glaubt mir nicht, dass ich schon um 8 Uhr hier war. 3. Glaubst du an Zufälle? 1. Ich komme gleich. 2. Wir sind gleich alt. 3. Es ist mir ganz gleich, was Sie von mir`
+- **sehr** — `sehr glücklich. 2. Ich wünsche Ihnen ein glückliches`
+- **neues** — `neues Jahr. 3. Ich bin glücklich verheiratet. Herzlichen Glückwunsch zum Geburtstag! Ist der Ring aus Gold? Nein, der sieht`
+- **nur** — `nur so aus. Kannst du Golf spielen? Ich bin gespannt, wer bei diesem Spiel`
+- **gewinnt** — `gewinnt. 1. Herr Müller ist gerade in einem Gespräch. 2. Ich erwarte ein Gespräch aus Berlin. Ich bin erst gestern zurückgekommen. 1. Ich hatte Grippe. Jetzt bin ich wieder`
+- **vorkommt** — `vorkommt. 2. Die Tür ließ sich nur mit Gewalt`
+- **hängt** — `hängt vom Gewicht ab. 2. Sie dürfen Gepäck bis zu einem Gewicht von 15 kg mitnehmen. 1. Ich möchte so gern einmal im Lotto`
+- **macht** — `macht. Der Hauptgewinn ist ein Auto. Ich habe deinen Geburtstag vergessen. Ich habe ein ganz schlechtes Gewissen. Es wird gleich ein Gewitter geben. 1. Wir haben uns an das Leben hier`
+- **gewöhnt** — `gewöhnt. 2. Ich bin daran gewöhnt, früh`
+- **hat** — `hat gegrüßt`
+- **hat** — `hat geguckt`
+- **hat** — `hat gehabt`
+- **gratulierte** — `gratulierte, hat gratuliert`
+- **hat** — `hat gegriffen`
+- **hat** — `hat gegrillt (D, A) → CH: grillieren`
+- **grillierte** — `grillierte, hat grilliert (CH) → D, A: grillen`
+- **gründete** — `gründete, hat gegründet`
+- **hast** — `hast? 2. Ich soll Sie von Frau Meier grüßen. 1. Schönen Gruß an Ihren Mann. 2. Viele Grüße an Ihre Frau. 3. Mit freundlichen Grüßen 1. Guck doch mal! Es schneit. 2. Was bedeutet dieses Wort? – Guck`
+- **doch** — `doch im Wörterbuch nach. Mein Pass ist nur noch zwei Monate`
+- **wohnung** — `wohnung. 1. Ich kenne ein gutes Lokal. 2. Maria kann gut tanzen. 3. Ich glaube, die Wurst ist nicht mehr`
+- **überall** — `überall in der Wohnung. 1. Wir haben Hunger. 2. Heute habe ich keine Zeit. 3. Wir haben ein neues Auto. 4. Kann ich bitte eine Suppe haben? 5. Unsere Wohnung hat vier Zimmer. 6. Ich habe heute viel zu tun. 7. Du hast es gut. Du kannst in Urlaub`
+- **wir** — `wir machen das gratis für Sie. Greifen Sie doch zu! An der Grenze musst du deinen Ausweis zeigen. Heute wollen wir im Garten grillen. Heute wollen wir im Garten grillieren. Kannst du mir deinen Grill leihen? Wir`
+- **nicht** — `nicht kommen. 1. Wir haben einen großen Garten. 2. Wie groß sind Sie? 3. Die Jacke ist mir zu groß. 4. Wenn die Kinder groß sind, haben wir`
+- **wieder** — `wieder mehr Zeit. 5. Ich habe keinen großen Hunger.`
+- **z** — `z.B. die Großeltern, die Großmutter, der Großvater 1. Welche Größe haben Sie? 2. Größe: 170 cm 3. Haben Sie das Hemd auch in Größe 40? Frau Bauer hat eine eigene Firma`
+- **gegründet** — `gegründet. 1. Sie haben Ihre Stelle gekündigt. Aus`
+- **welchem** — `welchem Grund? 2. Sie haben keinen Grund, sich zu`
+- **handelte** — `handelte, hat gehandelt`
+- **hing** — `hing/hängte,`
+- **hat** — `hat gehangen/gehängt`
+- **hat** — `hat gehasst`
+- **hat** — `hat gehagelt`
+- **halbtags** — `halbtags`
+- **hallo** — `hallo`
+- **halt** — `halt`
+- **hat** — `hat gehalten 6. Halt, Polizei! Fahren Sie bitte an den Straßenrand. 7. Die Wurst hält sich noch ein paar Tage. Nächster Halt ist am Südbahnhof. An der nächsten Haltestelle müssen`
+- **wir** — `wir aussteigen. Ich möchte ein Bild aufhängen. Hast du`
+- **jetzt** — `jetzt über die Straße. Morgen sind bei uns die Handwerker. Wir bekommen eine neue Badewanne. 1. Herr Huber hat ein kleines Geschäft. Er`
+- **handelt** — `handelt mit Obst und Gemüse. 2. Kann ich Sie bitte mal sprechen? – Worum handelt es sich denn? 3. Auf diesem Markt kannst du handeln`
+- **und** — `und bekommst die Sachen billiger. Der Handel mit Computern ist ein`
+- **gutes** — `gutes Geschäft. Ich gehe zum Gemüsehändler, soll ich`
+- **dir** — `dir etwas mitbringen? 1. Ich habe kein Festnetztelefon, aber ein Handy. 2. Soll ich Ihnen meine Handynummer`
+- **muss** — `muss jeden Tag Überstunden machen. 4. Wir haben hart gearbeitet, um die Wohnung zu bezahlen. 1. Ich hasse Autofahren. 2. Ich hasse es, zu spät zu kommen. 1. Das ist aber eine hässliche Lampe! 2. Dieses Kleid finde ich hässlich. Haben Sie häufig Kopfschmerzen? Dann sollten Sie nicht so lange am Computer sitzen. Berlin ist die Hauptstadt von Deutschland. Geben Sie mir bitte 500g Hackfleisch. Wenn du in Hamburg bist, musst du dir`
+- **nicht** — `nicht acht Stunden am Tag arbeiten. Deshalb möchte ich halbtags arbeiten. 1. Bitte teilt euch die Schokolade. Jeder`
+- **bekommt** — `bekommt die Hälfte. 2. Die Hälfte vom Urlaub ist schon`
+- **vorbei** — `vorbei. 3. Was hat der Mann gesagt? Ich habe`
+- **nur** — `nur die Hälfte verstanden. Die Stadt baut eine neue Sporthalle. Sie geht jeden Tag zum Schwimmen ins Hallenbad. Hallo, wie geht’s? − Danke, gut, und`
+- **dir** — `dir? 1. Mir tut der Hals weh. 2. Ich habe seit gestern Halsschmerzen. Es gibt leider keine Karten mehr. – Schade. Da kann man nichts machen. Das ist halt so. Diese Tomaten sind mindestens 2 Wochen haltbar. 1. Kannst du mal kurz meine Handtasche`
+- **hat** — `hat geholfen`
+- **her** — `her/her-`
+- **heraus** — `heraus, fand heraus,`
+- **hat** — `hat herausgefunden`
+- **stellte** — `stellte her, hat hergestellt`
+- **herunter** — `herunter, lud herunter,`
+- **hat** — `hat heruntergeladen`
+- **mann** — `mann`
+- **hat** — `hat gehoben`
+- **heim** — `heim`
+- **heiratete** — `heiratete, hat geheiratet`
+- **hat** — `hat geheißen`
+- **hat** — `hat geheizt Es ist kalt. Ist die Heizung kaputt? 1. Er spielt gern den Helden. 2. Sie ist die Heldin des Tages. 1. Kannst du mir helfen? Ich muss`
+- **den** — `den Führerschein machen wollen. 3. Hilfe! Jemand hat mir die Handtasche`
+- **gekauft** — `gekauft. Nikos trägt heute ein weißes Hemd. Zum Mittagessen gibt es Hendl mit Reis. 1. Wir haben uns lange nicht gesehen. – Ja, das ist wirklich lange her. 2. Komm her zu mir! Hast du schon rausgefunden, wann und`
+- **wo** — `wo man sich für den Kurs anmelden`
+- **muss** — `muss? Das Spiel ist eine Herausforderung. In der neuen Küche fehlt noch der Herd. Kommt doch herein! Viele Leute fragen mich nach meiner Herkunft. 1. Da ist ein Herr, der möchte Sie`
+- **an** — `an den Hersteller zurück und lassen es`
+- **sich** — `sich um die Kinder./Mein Mann ist Hausmann und kümmert sich um die Kinder. Ich kümmere mich um den Haushalt,`
+- **d** — `d. h. ich putze, wasche, koche etc. Der Hausmeister hat mir geholfen, den Schrank in die Wohnung zu tragen. Haben Sie eine Creme für trockene Haut? 1. Kannst du mir helfen? Das Paket kann`
+- **ich** — `ich allein nicht heben. 2. Wenn Sie für diesen Vorschlag sind,`
+- **ist** — `ist meine neue Heimat. Gestern habe ich gehört, dass mein Sohn heimlich raucht. Ich habe oft Heimweh nach meiner Familie. 1. Unsere Freunde heiraten nächsten Monat in Italien. 2. Wir haben 1980 geheiratet. 3. Meine Schwester heiratet einen Japaner. 1. Für die Jahreszeit ist es zu heiß. 2. Ich mache dir einen heißen Tee. 1. Wie heißen Sie? 2. Wie heißt das auf Deutsch? 3. Die Erklärung verstehe ich nicht. Was`
+- **heißt** — `heißt das? 1. Wir heizen mit Öl. 2. Ziehen Sie sich warm an. In der Halle`
+- **ist** — `ist nicht geheizt. ZERTIFIKAT B1 50 WORTLISTE`
+- **lud** — `lud hoch, hat hochgeladen`
+- **hat** — `hat gehofft`
+- **hoffentlich** — `hoffentlich`
+- **hat** — `hat geholt`
+- **hat** — `hat gehört (herunter-)fahren, fährt`
+- **herunter** — `herunter, fuhr herunter,`
+- **hat** — `hat heruntergefahren`
+- **heute** — `heute`
+- **hier** — `hier/hier-`
+- **hierher** — `hierher`
+- **wirft** — `wirft runter, warf runter,`
+- **hat** — `hat runtergeworfen`
+- **hinter** — `hinter/hinter-`
+- **hinterließ** — `hinterließ,`
+- **hat** — `hat hinterlassen`
+- **hinterher** — `hinterher`
+- **wies** — `wies hin, hat hingewiesen Die Polizei hat viele Hinweise zum Unfall bekommen. Wir waren mit unserer Klasse im Historischen Museum. Gestern war eine schreckliche Hitze! Ich habe keine Zeit mehr für meine Hobbys. 1. Der Berg ist fast 3000 m hoch. 2. Das Hotel liegt hoch über dem See. 3. Die Benzinpreise sind sehr hoch. 1. Mein Tisch hat folgende Maße: Länge: 1,20 m, Breite: 0,60 m, Höhe: 0,80 m. 2. Wir fliegen jetzt in 6000 m Höhe. Kannst du bitte die Datei für die Hausaufgabe hochladen? Ich habe wenig Zeit. Ich kann`
+- **fünfzig** — `fünfzig Gäste. Die Kinder spielen am liebsten im Hof. Meine Großeltern hatten einen Bauernhof. 1. Ich hoffe, dass ihr zu meinem Geburtstag kommen könnt. 2. Wir alle hoffen auf besseres Wetter. Hoffentlich hat unser Zug keine Verspätung. Man darf die Hoffnung nicht verlieren. Unser Nachbar ist sehr höflich. Er sagt`
+- **immer** — `immer als Erster Guten Tag. 1. Soll ich uns was zu trinken holen? 2. Warum haben Sie nicht sofort einen Arzt geholt? Möchten Sie ein Regal aus Holz oder`
+- **aus** — `aus Metall? Ich esse gern Brötchen mit Honig und Butter zum Frühstück. 1. Ich kann nicht mehr so gut hören. 2. Ich höre jeden Tag die Nachrichten. 3. Dieses Wort habe ich noch nie gehört. 4. Ich habe gehört, dass Herr Müller im Krankenhaus liegt. Zum Schluss musst du den Computer`
+- **nachmittags** — `nachmittags geschlossen. 3. Frau Müller kommt heute in acht Tagen`
+- **zurück** — `zurück. 4. Heute kann man sich eine Welt ohne Internet nicht mehr vorstellen. Die heutigen Computer können viel`
+- **mehr** — `mehr als noch vor ein paar Jahren. 1. Hier wohne ich. 2. Von hier hat man eine herrliche Aussicht. 3. Hier sind die Schlüssel für meine Woh-`
+- **nung** — `nung. Kannst Du meine Blumen`
+- **gibt** — `gibt es guten Kuchen. Wir hatten im Urlaub so tolles Wetter. Immer Sonne und blauer Himmel. Kannst du mir bitte den Schlüssel`
+- **vorne** — `vorne? 2. Bitte hinten aussteigen! 1. Hinter dem Haus haben wir einen Garten. 2. Fahren Sie Ihren Wagen bitte hinter`
+- **nicht** — `nicht sehr viel sehen. Möchten Sie eine Nachricht`
+- **wieder** — `wieder vergessen. Wir möchten Sie darauf hinweisen,`
+- **dass** — `dass das Rauchen am Bahnsteig nicht`
+- **gestattet** — `gestattet ist. WORTLISTE WORTLISTE`
+- **immer** — `immer`
+- **in** — `in`
+- **indem** — `indem`
+- **informierte** — `informierte,`
+- **hat** — `hat informiert`
+- **inklusive** — `inklusive`
+- **innerhalb** — `innerhalb`
+- **hat** — `hat gehupt`
+- **hat** — `hat gehustet`
+- **schlimmer** — `schlimmer. 1. Im dritten Stock ist die Firma Schmidt & Co, Import und Export. 2. Der Import von Zigaretten ist nur bis`
+- **zu** — `zu einer bestimmten Menge erlaubt. 1. Ich wohne in Frankfurt. 2. Meine Wohnung ist im dritten Stock. 3. Wollen wir heute ins Einkaufszentrum`
+- **einmal** — `einmal an. 5. Im Mai war ich in Urlaub. (D) (A: auf) 6. Wir sind in einer schwierigen Lage. 7. Meine Tochter kommt nächstes Jahr`
+- **ins** — `ins Gymnasium. (A) (D: aufs) Du kannst die Datei öffnen, indem du`
+- **hier** — `hier klickst. Die Lehrerin versucht, jedes Kind`
+- **die** — `die neuen Prüfungstermine. 2. Du musst dich vor der Reise genau`
+- **über** — `über die Bedingungen informieren. 1. Bitte lesen Sie diese Informationen`
+- **innerhalb** — `innerhalb einer Woche ummelden. Die Sendung hat viele Hörer und Hörerinnen. Können Sie die Hose etwas kürzer`
+- **sch** — `sch. Auf diesem Hügel machen wir eine Pause. 1. Wir mögen Paul, weil er so viel Humor`
+- **hat** — `hat. 2. Den Humor des Komikers verstehe ich`
+- **nicht** — `nicht. Möchtest du Suppe? – Nein danke, ich`
+- **habe** — `habe keinen Hunger. Ich bin sehr hungrig. Hier ist ein Krankenhaus. Hier darfst`
+- **du** — `du nicht hupen. Der Junge hat die ganze Nacht`
+- **gehustet** — `gehustet. Haben Sie ein Medikament gegen Husten? Sie sollten im Sommer nicht ohne Hut`
+- **in** — `in die Sonne gehen. Wir übernachten in der Hütte auf dem Berg. Eine Wohnung mit Garten wäre für uns`
+- **finde** — `finde die Idee toll. Ohne Steuerkarte zu arbeiten ist`
+- **du** — `du Strafe zahlen. Es ist Zeit für einen kleinen Imbiss. ZERTIFIKAT B1 52 WORTLISTE`
+- **irgendein** — `irgendein`
+- **irgendwann** — `irgendwann`
+- **sich** — `sich irren, irrt sich,`
+- **irrte** — `irrte sich, hat sich geirrt`
+- **ja** — `ja`
+- **biss** — `biss; CH: Znüni/Zvieri`
+- **je** — `je`
+- **je** — `je … desto …`
+- **jeder** — `jeder, jedes, jede`
+- **insgesamt** — `insgesamt`
+- **installierte** — `installierte, hat installiert`
+- **tegrierte** — `tegrierte, hat integriert`
+- **interessierte** — `interessierte,`
+- **hat** — `hat interessiert`
+- **santes** — `santes Interview mit zwei Schauspiel-`
+- **ern** — `ern gesehen. Herr Müller kommt gleich zurück. Sie`
+- **geirrt** — `geirrt. 1. Sind Sie verheiratet? – Ja. 2. Hallo? – Ja, bitte? Wer spricht denn`
+- **da** — `da? 3. Denk bitte daran, die Tür`
+- **geschneit** — `geschneit. – Ja, wirklich? 5. Ich würde ja gern kommen, aber es`
+- **geht** — `geht wirklich nicht. 6. Du weißt ja, dass ich kein Bier trinke. Gib mir bitte einen Tee. 7. Du bist hier in Berlin? – Das ist ja eine Überraschung. 8. Steige bitte ja nicht auf den Stuhl! Zieh dir eine Jacke an. Es ist kalt. Es ist Zeit für eine kleine Jause. 1. Die Pullover kosten je nach Qualität`
+- **nachdem** — `nachdem, wann mein Mann Urlaub`
+- **bekommt** — `bekommt. Je länger ich Deutsch lerne, desto`
+- **für** — `für die Prüfung angemeldet. Können Sie mir helfen, meinen Computer zu installieren? Ich besuche einen Sprachkurs in einem`
+- **sehr** — `sehr interessant. Ich habe viele Interessen: Sport, Lesen, Handarbeit, Tanzen Mein Nachbar zieht nächsten Monat`
+- **aus** — `aus. Sind Sie noch an der Wohnung in-`
+- **teressiert** — `teressiert? Wir haben in der Sprachschule ein`
+- **interkulturelles** — `interkulturelles Fest gefeiert. 1. Die Teilnehmenden in unserem Kurs`
+- **sind** — `sind ganz international: Silvana kommt`
+- **aus** — `aus Italien, Conchi aus Spanien, Yin aus China … 2. Der Professor war international`
+- **kämpfte** — `kämpfte, hat gekämpft`
+- **jederzeit** — `jederzeit`
+- **jedes** — `jedes Mal`
+- **jedoch** — `jedoch`
+- **jemals** — `jemals`
+- **jemand** — `jemand`
+- **jetzt** — `jetzt`
+- **gerät** — `gerät? 2. Mit Kabel bekommen Sie über 30 Fernsehkanäle. Um zu wählen, gehen Sie bitte in diese Kabine. 1. Bring bitte noch eine Packung Kaffee`
+- **mit** — `mit. 2. Zum Frühstück trinke ich gerne Kaffee. 3. Wir sind bei Müllers zum Kaffee einge-`
+- **der** — `der nachschauen. 1. Es ist kalt heute. 2. Du hast ja ganz kalte Hände. 3. Das Mittagessen ist kalt geworden. 4. Abends essen wir immer kalt. 5. Wir hatten einen kalten Winter. 6. Mir ist kalt. Mach bitte die Heizung an. Bei dieser Kälte fahre ich nicht mit`
+- **dem** — `dem Fahrrad. Ich habe eine ganz neue Kamera. Die Frauen kämpfen für mehr Rechte. Im Schulbus gibt es immer einen Kampf um die Sitzplätze. Mit Kabel bekommen Sie über 30 Fernsehkanäle. Wie viele Kandidaten kommen zur Prüfung? 1. Das ist aber eine schöne Teekanne. – Ja, die ist aus China. 2. Bitte einen Kaffee! – Eine Tasse oder`
+- **zwei** — `zwei Kapitel im Buch wiederholen. Sie können mich jederzeit anrufen. Inge erzählt die Geschichte jedes Mal`
+- **anders** — `anders. Sie ruft immer wieder an, jedoch ohne Erfolg. Hast du jemals von dem Problem`
+- **gehört** — `gehört? – Nein, nie. 1. Hat jemand einen Bleistift für mich? 2. Kennst du jemand, der mir ein Fahrrad`
+- **meinem** — `meinem Bruder angerufen. Aber er ist`
+- **nie** — `nie da. 5. Über viele Dinge denke ich jetzt`
+- **anders** — `anders als früher. Der Kurs findet jeweils montags und`
+- **donnerstags** — `donnerstags um 18 Uhr statt. Meine Tochter möchte Journalistin`
+- **für** — `für Musik interessiert. 1. Die Jugendlichen gehen gerne in die Disko. 2. Der Eintritt ist für Kinder und Jugendliche bis 16 Jahre frei. Wo habt ihr übernachtet? – In einer Jugendherberge. 1. Für diesen Film bist du noch zu jung. 2. Meine Mutter ist jung geblieben. 3. Claudia ist 21. – Was? Noch so jung? 4. Ich habe sehr jung geheiratet. 5. Bei uns im Haus wohnen viele junge Leute. 6. Mein Bruder ist zehn Jahre jünger als`
+- **ich** — `ich. 7. Ich bin in unserer Familie die Jüngste. In der Schulklasse sind 15 Jungen und 10 Mädchen. ZERTIFIKAT B1 54 WORTLISTE`
+- **kaum** — `kaum`
+- **hat** — `hat gekannt`
+- **hat** — `hat kennengelernt`
+- **nacht** — `nacht`
+- **dapfel** — `dapfel`
+- **kaufte** — `kaufte, hat gekauft`
+- **keins** — `keins. Unser Keller ist nicht besonders groß. Ich bin Kellnerin von Beruf. 1. Kennen Sie hier in der Nähe ein`
+- **gemütliches** — `gemütliches Café? 2. Kennen Sie diese Frau? – Nein, leider`
+- **nicht** — `nicht. 3. Kennen Sie Berlin? – Ja, eine tolle Stadt. 1. Wo habt ihr euch kennengelernt? 2. Ich möchte gern reisen und andere Länder kennenlernen. 1. In vielen Berufen braucht man heute Sprachkenntnisse. 2. Ich möchte meine Deutschkenntnisse`
+- **viele** — `viele Blumen und Kerzen. Ich habe zum Geburtstag eine goldene Kette bekommen. 1. Mein Bruder hat zwei Kinder. 2. Wir haben ein Kind bekommen. 3. Die Kinder spielen Fußball. Morgens bringe ich meinen Sohn in`
+- **den** — `den Kindergarten. In meiner Kindheit war ich oft auf dem Land bei meinen Großeltern. Wollen wir ins Kino gehen? Zeitungen bekommst du am Kiosk. Diese Kirche ist aus dem 12. Jahrhun-`
+- **dert** — `dert. 1. Unsere Waschmaschine ist kaputt. 2. Ich bin noch ganz kaputt von der Reise. 1. Pass bitte mit diesem Glas auf. Es geht`
+- **deutschland** — `deutschland? 5. Herr Ober, bitte die Speisekarte. 6. Spielen Sie Karten? Ich habe eine Chipkarte für diesen Automaten. Fahrkarten können Sie am Schalter`
+- **bestellt** — `bestellt. Der Urlaub war eine Katastrophe. Es`
+- **hat** — `hat nur geregnet. 1. Im Supermarkt kauft man sehr günstig`
+- **klingelte** — `klingelte, hat geklingelt`
+- **hat** — `hat geklungen`
+- **hat** — `hat geklopft`
+- **hat** — `hat gekocht`
+- **hat** — `hat geklagt`
+- **hat** — `hat geklappt`
+- **hat** — `hat geklärt`
+- **hat** — `hat geklebt`
+- **kletterte** — `kletterte, ist geklettert`
+- **hat** — `hat geklickt`
+- **danach** — `danach zusammen kochen? – Ja, das`
+- **klingt** — `klingt gut. Ich muss in die Klinik, um meinen`
+- **oder** — `oder Klöße? – Klöße, bitte. 1. Ich halte sie für klug. 2. Er hat sich in der Diskussion nicht`
+- **besonders** — `besonders klug verhalten. 3. Das ist ein kluger Hund. 1. Mach schnell. Die Zeit ist knapp. 2. Unser Geld wird knapp. Wir müssen`
+- **gekostet** — `gekostet. Gehen wir noch in eine Kneipe ein Bier`
+- **kann** — `kann ich nicht laufen. Ich bin hingefallen. Jetzt tun mir alle Knochen weh. Möchten Sie zum Fleisch Erdäpfel oder Knödel? – Knödel bitte. 1. An meiner Jacke fehlt ein Knopf. 2. Der Fahrstuhl kommt nicht. – Sie`
+- **prima** — `prima geklappt. 1. Sie müssen noch mehr Deutsch lernen. – Ja, das ist mir klar. 2. Kommst du mit? – Klar! 3. Ich komme zu deinem Geburtstag, das`
+- **ist** — `ist doch klar. 4. Leider haben wir bei der Bahn keine`
+- **klare** — `klare Auskunft bekommen. Ich hoffe, wir können dieses Problem`
+- **bald** — `bald klären. Ich finde unseren Lehrer klasse. 1. In der Klasse sind 24 Schülerinnen und Schüler. 2. Im Herbst komme ich in die 7. Klasse. 3. Einmal nach Frankfurt, 1. Klasse, bitte. Mein Sohn schreibt bei Klassenar-`
+- **warme** — `warme Kleidung. 1. Unsere Wohnung ist klein. 2. Unser Kind ist noch klein. 3. Wir machen am Sonntag einen kleinen Ausflug. Die Kinder sind auf den Baum`
+- **geklettert** — `geklettert. Wenn du die Datei öffnen willst, musst`
+- **du** — `du mit der Maus zweimal klicken. Um das Wort zu markieren, genügt ein Doppelklick mit der linken Maustaste. Alle sagen, dass sich das Klima ändert. Im Sommer brauchen wir eine Klimaanlage. ZERTIFIKAT B1 56 WORTLISTE`
+- **konsumierte** — `konsumierte,`
+- **hat** — `hat konsumiert`
+- **kontrollierte** — `kontrollierte,`
+- **hat** — `hat kontrolliert`
+- **sich** — `sich konzentrieren,`
+- **konzentrierte** — `konzentrierte sich,`
+- **hat** — `hat sich konzentriert`
+- **rrigierte** — `rrigierte, hat korrigiert`
+- **ist** — `ist gekommen`
+- **hat** — `hat gekonnt (hat können`
+- **als** — `als Modalverb) Ein Visum bekommst du auch im Konsulat. Die Europäer haben im letzten Jahr`
+- **mehr** — `mehr Fleisch konsumiert. Der Konsum von Lebensmitteln steigt. Ich habe wenig Kontakt zu meinen Kollegen. 1. Ich möchte ein Konto eröffnen. 2. Das Geld überweisen wir am 1. März`
+- **auf** — `auf Ihr Konto. Mein Girokonto kostet gar nichts. Beim Auto müssen Sie regelmäßig das Öl kontrollieren. 1. An den Grenzen gibt es kaum noch Kontrollen. 2. Fahrkartenkontrolle! Bitte Ihre Fahrkarten! Bitte stör mich jetzt nicht. Ich muss`
+- **mich** — `mich auf meine Arbeit konzentrieren. Für das Konzert am Sonntag gibt es`
+- **noch** — `noch Karten. 1. Ich habe Kopfschmerzen. 2. Michael kann gut im Kopf rechnen. 1. Kann ich mir diesen Artikel kopieren? 2. Ich kopiere dir die Datei auf die Speicherkarte. 3. Ich kann dir die CD kopieren. Machst du mir bitte eine Kopie? Der Kopierer ist schon wieder kaputt. Der Arzt sagt, ich muss etwas für`
+- **oder** — `oder Fahrrad fahren. Körperliche Arbeit macht mir nichts`
+- **aus** — `aus. Ich habe die Rechnung geprüft. Alles`
+- **ist** — `ist korrekt. Wir warten draußen im Korridor. 1. Können Sie bitte meinen Brief`
+- **mal** — `mal. 2. Der Film war sehr komisch. Wir haben`
+- **viel** — `viel gelacht. 3. Eine grüne Hose und gelbe Schuhe? Das sieht komisch aus. 1. Woher kommen Sie? – Aus Frankreich. 2. Wir gehen heute Abend ins Konzert. Kommen Sie auch? 3. Kommen Sie doch mal wieder zu uns. 4. Wenn Sie mal nach Köln kommen, be-`
+- **eingerichtet** — `eingerichtet. Er schreibt viel zu kompliziert. Alle wollen etwas anderes. Wir müssen`
+- **zu** — `zu Besuch. 1. Die Reparatur ist mir hier zu teuer. Bei`
+- **regnet** — `regnet. WORTLISTE WORTLISTE`
+- **hat** — `hat gekriegt Kriminal-`
+- **kritisierte** — `kritisierte, hat kritisiert`
+- **hat** — `hat gekostet`
+- **hat** — `hat gekostet (A) → D, CH:`
+- **gekauft** — `gekauft. 2. Wir haben von der Bank einen Kredit`
+- **rechts** — `rechts. 1. Es herrscht noch immer Krieg in`
+- **diesem** — `diesem Land. 2. Der Lehrer spricht über den Zweiten Weltkrieg. 1. Haben Sie meinen Brief gekriegt? 2. Was kriegen Sie? – Ein Schwarzbrot,`
+- **bitte** — `bitte. Ein Nachbar von uns arbeitet bei der Kriminalpolizei. Heute Abend kommt ein spannender Krimi im Fernsehen. Die Wirtschaft steckt in einer`
+- **kritische** — `kritische Fragen gestellt. 1. Ich suche eine Wohnung mit drei Zimmern, Küche und Bad. 2. Ich mag die deutsche Küche. Ich habe einen Kuchen gebacken. Mein Kugelschreiber ist weg. Hast du einen Kuli für mich? Es ist kühl draußen. Zieh dir eine Jacke`
+- **an** — `an. Stell die Milch in den Kühlschrank! 1. Wie viel kostet das T-Shirt? – 15 Euro. 2. Eine Wohnung zu finden, kostet viel Zeit. Die Kosten für die Reise bekomme ich`
+- **von** — `von der Firma. Diese Zeitschrift kostet nichts. Sie ist`
+- **nicht** — `nicht erlaubt. Die Menschen protestieren gegen das Kraftwerk. 1. Ich war zwei Wochen krank. 2. Ich muss mich um meine kranke Großmutter kümmern. Kranke brauchen viel Ruhe. Er hat sich verletzt und musste ins Krankenhaus. Die Krankenkasse bezahlt die Medikamente. Mein Bruder arbeitet als Krankenpfleger im Krankenhaus. Meine Cousine möchte gern Kranken-`
+- **schwester** — `schwester werden. Wir mussten einen Krankenwagen`
+- **mich** — `mich impfen lassen? 2. Was für eine Krankheit hat Herr Brandner? 1. Die Kinder sind beim Basteln sehr`
+- **dieses** — `dieses Problem. ZERTIFIKAT B1 58 WORTLISTE`
+- **hat** — `hat geküsst`
+- **vert** — `vert`
+- **hat** — `hat gelächelt`
+- **gelacht** — `gelacht`
+- **gelandet** — `gelandet`
+- **sich** — `sich kümmern, kümmert`
+- **sich** — `sich, kümmerte sich,`
+- **hat** — `hat sich gekümmert`
+- **kündigte** — `kündigte, hat gekündigt`
+- **sie** — `sie. 2. Beim Verabschieden haben wir uns`
+- **alle** — `alle geküsst. Gib der Mama einen Kuss! Unser Dorf liegt direkt an der Küste. Ich hätte gern 50 Kuverts und Briefmarken dazu. Schauen Sie in die Kamera. Bitte`
+- **gelacht** — `gelacht. 1. Dieses Kleid habe ich in einem Laden`
+- **im** — `im Zentrum gekauft. 2. Ich kaufe meine Zeitung immer beim Zeitungsladen am Eck. Wir suchen eine Wohnung an/in`
+- **zentraler** — `zentraler Lage. 1. Ich weiß nicht, ob wir diesen Schuh in Ihrer Größe haben. Ich sehe mal im Lager nach. 2. Unsere Kinder fahren im Sommer ins Zeltlager. 1. Ich habe mir eine neue Lampe gekauft. 2. Mach doch bitte die Lampe an. Es ist`
+- **so** — `so dunkel hier. 1. Deutschland ist ein schönes Land. 2. Möchten Sie lieber auf dem Land oder`
+- **in** — `in der Stadt wohnen? 3. Wir haben ein Stück Land gekauft und`
+- **gelandet** — `gelandet. 2. Wegen starken Nebels konnte die Maschine nicht in Frankfurt landen. Ich interessiere mich für andere Länder und Kulturen. Es gibt große kulturelle Unterschiede`
+- **um** — `um die Kinder kümmern. 2. Ich habe keine Zeit. Ich muss mich um`
+- **habe** — `habe ihr einen Sonderpreis gegeben. 2. Einen Augenblick, bitte. Ich habe einen Kunden. 1. Ich war mit meiner Stelle nicht`
+- **gekündigt** — `gekündigt? 3. Ich möchte die Zeitschrift nicht mehr. – Dann musst du schriftlich kündigen. Ich habe die Kündigung bekommen. Jetzt bin ich arbeitslos. Ich verstehe nichts von moderner Kunst. In diesem Stadtteil wohnen viele Kün-`
+- **einer** — `einer Kurve. 1. Ricardo hat kurze Haare. 2. Kann ich Sie kurz sprechen? 3. Kurz vor 8 Uhr hat das Telefon`
+- **geklingelt** — `geklingelt. 4. Mein Mann ist kurz nach mir`
+- **ist** — `ist gelaufen`
+- **gelebt** — `gelebt`
+- **gelegt** — `gelegt`
+- **lange** — `lange, lang`
+- **längst** — `längst`
+- **sich** — `sich langweilen, langweilt,`
+- **langweilte** — `langweilte,`
+- **hat** — `hat gelangweilt`
+- **hat** — `hat gelassen`
+- **bin** — `bin gelaufen. 3. Jeden Morgen gehe ich eine halbe Stunde laufen. 4. Wann läuft der Film? 5. Wie geht´s beruflich? – Danke, das Geschäft läuft gut. Für meinen Computer habe ich mir ein`
+- **neues** — `neues Laufwerk gekauft. Heute geht es mir besser, aber gestern`
+- **hatte** — `hatte ich richtig schlechte Laune. 1. Lass uns gehen. Hier ist es mir zu laut. 2. Können Sie bitte etwas lauter`
+- **gelebt** — `gelebt. 3. Von der Rente allein kann meine Tante`
+- **nicht** — `nicht leben. 4. Ich lebe noch bei meinen Eltern. 1. Ich habe mich an das Leben auf dem Land gewöhnt. 2. Hier ist das Leben teuer. Hast du den Lebenslauf für die Bewerbung schon geschrieben? 1. Lebensmittel werden immer teurer. 2. Meine Lebensmittel kaufe ich im Supermarkt. Ist die Tasche aus Leder? Wie ist Ihr Familienstand? – Ledig. 1. Das Restaurant war fast leer. 2. Die Kanne ist fast leer. Ich mache uns`
+- **kürzer** — `kürzer machen? Mein Schreibtisch hat folgende Maße: Länge 1.20 m, Breite: 0,85 m, Höhe: 0,75 m. 1. Wie lange dauert die Fahrt von Hamburg nach Berlin? 2. Wie lange bist du schon in Deutschland? 3. Wartest du schon lange? 4. Wir sind noch lange nicht fertig mit`
+- **lange** — `lange. 1. Könnten Sie bitte etwas langsamer`
+- **habe** — `habe ich schon längst repariert. Der Film war sehr langweilig. Langweilst du dich? Es ist aus Langeweile eingeschlafen. Die Flugzeuge machen einen`
+- **nicht** — `nicht allein lassen. 8. Lass mich in Ruhe. Ich muss arbeiten. Auf der Autobahn waren so viele Laster. Deshalb hat es so lange`
+- **gedauert** — `gedauert. ZERTIFIKAT B1 60 WORTLISTE`
+- **hat** — `hat gelesen`
+- **hat** — `hat geliebt`
+- **geliefert** — `geliefert`
+- **hat** — `hat/ist gelegen`
+- **hat** — `hat leidgetan`
+- **hat** — `hat gelitten`
+- **leider** — `leider`
+- **hat** — `hat geliehen`
+- **hat** — `hat geleistet`
+- **hat** — `hat geleitet`
+- **so** — `so nichts sehen. 2. Es ist so dunkel. Wo macht man hier`
+- **wir** — `wir lieben uns immer noch. 1. Die Kinder waren heute sehr lieb. 2. Vielen Dank für deine Hilfe. Das ist`
+- **sehr** — `sehr lieb von dir. 3. Liebe Frau Meier! 1. Wir haben aus Liebe geheiratet. 2. Für mich ist das Wichtigste die Liebe`
+- **zu** — `zu meiner Familie und zu meinen Kindern. 3. Die Kinder haben die Geschenke mit`
+- **viel** — `viel Liebe gemacht.`
+- **z** — `z. B. Lieblingsfarbe, Lieblingsfilm, Lieblingsessen Mein Lieblingsessen ist Pizza. Zu deinem Geburtstag singen wir dir`
+- **viel** — `viel Geld. 1. Der Koffer ist ganz leicht. Ich kann ihn`
+- **allein** — `allein tragen. 2. Es ist nicht leicht, bei diesem Arzt`
+- **mir** — `mir leid, das weiß ich nicht. 3. Es tut mir leid, dass ich Ihnen nicht`
+- **muss** — `muss zum Arzt. 1. Ich habe mir von meinem Bruder 50 Euro geliehen. 2. Ich kann dir mein Fahrrad leihen. 3. Sie können das Buch in der Bibliothek`
+- **leiser** — `leiser stellen? 1. So ein teures Auto kann ich mir leider`
+- **nicht** — `nicht leisten. 2. Bei einem Unfall muss jeder Erste Hilfe`
+- **hat** — `hat gelogen`
+- **hat** — `hat gemacht`
+- **links** — `links`
+- **hat** — `hat gelobt`
+- **sich** — `sich lohnen, lohnt sich,`
+- **lohnte** — `lohnte sich,`
+- **hat** — `hat sich gelohnt`
+- **los** — `los/los-`
+- **fuhr** — `fuhr los, ist losgefahren`
+- **hat** — `hat gelöscht`
+- **hat** — `hat gelöst 1. Wir fahren alle zusammen mit dem Zug. Das ist die beste Lösung. 2. Die Aufgabe ist nicht schwer. Die Lösung ist ganz einfach. 1. Oh, hier ist aber schlechte Luft. 2. Die Seeluft tut mir gut. 3. Bitte mach das Fenster auf. Ich`
+- **brauche** — `brauche frische Luft. 1. Du sollst nicht lügen. 2. Glaube nicht alles, was man dir sagt. Es`
+- **ist** — `ist oft gelogen. Das ist eine Lüge! 1. Ich habe keine Lust zu grillen. 2. Hast du Lust auf einen Tee? 1. Ich habe einen lustigen Film gesehen. 2. Mir ist heute etwas Lustiges passiert. 1. Was machst du am Wochenende? 2. Ich muss jetzt das Essen machen. 3. Ich habe die Betten noch nicht`
+- **nichts** — `nichts. 10.Das macht zusammen 20 Euro. Familie Kurz hat zwei Mädchen und`
+- **einmal** — `einmal am Tag eine warme Mahlzeit. Wenn du die Rechnung nicht pünktlich`
+- **bezahlst** — `bezahlst, bekommst du eine Mahnung. 5. In den Bergen liegt schon Schnee. Im Büro ist leider der Lift kaputt. Die Limonade ist sehr süß. Zum Hauptbahnhof können Sie mit der Linie 8 fahren. 1. An der Kreuzung müssen Sie nach links`
+- **zum** — `zum Zahnarzt. 2. Deine Hose hat ein Loch. – Ich weiß,`
+- **sie** — `sie ist schon alt. Lassen Sie bitte die Arme ganz locker`
+- **und** — `und atmen Sie tief ein. Bitte, bringen Sie mir einen Löffel. 1. Sie bekommen Ihren Lohn immer am Ende des Monats. 2. Die Löhne sind hier sehr niedrig. Für drei Tage zu meinen Eltern fahren`
+- **lohnt** — `lohnt sich nicht. Es ist zu weit. Gibt es hier in der Nähe ein`
+- **gemütliches** — `gemütliches Lokal? 1. Los! Beeilt euch! 2. Gibt es ein Problem? Was ist denn los? 3. Achtung – fertig – los! Wir fahren um 8 Uhr los. Sei bitte`
+- **brauche** — `brauche sie nicht mehr. 2. Das Feuer wurde schnell gelöscht. 1. Wir müssen dieses Problem lösen. 2. Sie können die Fahrkarten auch am Automaten lösen. ZERTIFIKAT B1 62 WORTLISTE`
+- **mehr** — `mehr (siehe auch viel)`
+- **mehrere** — `mehrere`
+- **hat** — `hat gemeint`
+- **mal** — `mal`
+- **hat** — `hat gemalt`
+- **man** — `man`
+- **manchmal** — `manchmal`
+- **markierte** — `markierte, hat markiert`
+- **mit** — `mit. 1. Ich habe eine neue Kaffeemaschine. 2. Unsere Maschine soll um 7 Uhr 10`
+- **geklettert** — `geklettert. 1. Wie lange braucht ein Brief? – Maximal`
+- **zwei** — `zwei Tage. 2. Wie schwer darf der Brief sein? – Maximal 20 g. 1. Das kann nur ein Mechaniker`
+- **bei** — `bei Opel. Umweltschutz ist in den Medien ein`
+- **großes** — `großes Thema. 1. Dieses Medikament gibt es nur auf Rezept. 2. Der Arzt hat mir ein Medikament`
+- **fünf** — `fünf Euro dazu zahlen. 4. Dieses Medikament hat mir sehr gut`
+- **noch** — `noch genug Mehl da? 1. Ich habe diesmal mehr gelernt als bei`
+- **der** — `der letzten Prüfung. 2. Mehr kann ich nicht essen! 1. Ich habe mehrere Leute gefragt. Aber`
+- **niemand** — `niemand konnte mir helfen. 2. Viele Wörter haben mehrere Bedeutungen. Die Mehrheit der Menschen in Deutschland besitzt ein Handy. Die Mehrwertsteuer bei diesem Produkt beträgt 20 %. 1. Dieser Film ist gut. Was meinst du? 2. Ich meine, du solltest weniger rauchen. (siehe einmal) 1. Das machen wir nächstes Mal. 2. Das erste Mal war ich vor fünf Jahren`
+- **in** — `in England. 3. Bis zum nächsten Mal. Das Bild hat mein Vater gemalt. 1. Wir haben die Maler im Haus. Wir`
+- **billiger** — `billiger. 1. Manchmal gehe ich mit meiner Frau`
+- **ins** — `ins Café. 2. Rauchen Sie? – Manchmal. 1. In dieser Stadt gibt es einen großen Mangel an Wohnungen. 2. Die Maschine hat technische Mängel. 1. In unserer Firma arbeiten fast nur Männer. 2. Mein Mann arbeitet bei der Post. Kreuzen Sie bitte an: „weiblich“ oder „männlich“. Unsere Mannschaft hat 0:1 verloren. Es ist sehr kalt. Zieh deinen Mantel an. Mein Pass ist in dieser Mappe. Meine Großmutter hat uns viele Märchen erzählt. Meine Frau isst nur Margarine und`
+- **keine** — `keine Butter. Schmecken dir die Marillen? 1. Ich brauche bitte fünf Briefmarken zu 1 Euro. 2. Markenschuhe sind mir zu teuer. Hier ist unser Hotel. Ich markiere Ihnen auf dem Plan den Weg zum Bahnhof. 1. Ich gehe heute auf den Markt. 2. Mittwochs und samstags ist bei uns Markt. WORTLISTE WORTLISTE`
+- **hat** — `hat gemessen`
+- **chhauer** — `chhauer`
+- **hat** — `hat gemietet`
+- **mindestens** — `mindestens`
+- **hat** — `hat gemischt`
+- **hat** — `hat gemeldet`
+- **hat** — `hat gemerkt`
+- **sind** — `sind genau 20 m². Das Messer schneidet nicht gut. Dieser Tisch hier ist ganz aus Metall. Weißt du eine gute Methode, um`
+- **gemietet** — `gemietet. 2. Im Urlaub haben wir ein Auto`
+- **gemietet** — `gemietet. 1. Unsere Miete ist sehr hoch. 2. Wie viel Miete bezahlst du? Sie hat heute neue Mieter für die Wohnung gefunden. Viele Migranten kommen aus Osteuropa. Gestern gab es im Fernsehen eine Diskussion zum Thema Migration. Stellst du bitte die Milch in den Kühlschrank? 1. Möchten Sie die Soße scharf? – Nein,`
+- **bitte** — `bitte ganz mild. 2. Wie wird das Wetter? – Es soll etwas`
+- **milder** — `milder werden. Frauen sind in unserer Firma in der Minderheit. 1. Ein guter Fernsehapparat kostet`
+- **mindestens** — `mindestens 500 Euro. 2. Bitte kommen Sie mindestens eine Stunde vor Abflug zum Flughafen. Kann ich bitte ein Mineralwasser`
+- **hast** — `hast. 2. Ich habe meine Meinung geändert. 3. Meiner Meinung nach gibt es hier zu`
+- **viele** — `viele Autos. 1. Wie gut kannst du Deutsch? – Das Meiste verstehe ich. 2. Ich bin neu im Haus. Die meisten Nachbarn kenne ich noch nicht. 1. Meistens trinke ich zum Frühstück nur`
+- **gemeldet** — `gemeldet? Warst du krank? Hast du die Meldung im Radio gehört? Es wird starken Sturm geben. 1. Diesen Preis gibt es nur, wenn Sie`
+- **große** — `große Mengen kaufen. 2. Wir haben noch eine Menge Zeit. 3. Ich kenne schon eine Menge Leute in`
+- **anders** — `anders als im Süden. Fehler zu machen ist menschlich. Nimm doch das Menü, das sieht gut`
+- **aus** — `aus. 1. Ich habe nicht gemerkt, dass es schon`
+- **so** — `so spät ist. Ich muss gehen. 2. Ich kann mir keine Zahlen merken. Ich`
+- **vergesse** — `vergesse sie sofort wieder. Das ist eine merkwürdige Geschichte. 1. Kommst du mit zur Automobilmesse? 2. Vielleicht kann ich auf der Messe einen Job bekommen. ZERTIFIKAT B1 64 WORTLISTE`
+- **hat** — `hat gemocht`
+- **möglichst** — `möglichst`
+- **mit** — `mit`
+- **teilte** — `teilte mit, hat mitgeteilt`
+- **hat** — `hat gemocht`
+- **zum** — `zum Chef kommen. Kann ich bitte sofort einen Termin`
+- **mehrere** — `mehrere Möglichkeiten. 1. Sagen Sie mir bitte möglichst bald, ob Ihnen der Termin passt. 2. Wir suchen eine Wohnung, möglichst`
+- **im** — `im Erdgeschoss. Hasen fressen gern Möhren. 1. Warten Sie bitte einen Moment. 2. Einen Moment bitte. 3. Ich habe im Moment sehr viel zu tun. Bei Vollmond kann ich nicht schlafen. Ich habe mir einen größeren Monitor`
+- **gekauft** — `gekauft. Das ist besser für meine Augen. Der Motor ist kaputt. Das Auto fährt`
+- **nicht** — `nicht mehr. Oskar fährt jeden Tag mit dem Motorrad zur Arbeit. Ich bin müde. Ich gehe schlafen. 1. Vielen Dank für Ihre Mühe. 2. Mit ein bisschen mehr Mühe können`
+- **wir** — `wir das schaffen. 1. Bringst du bitte noch den Müllsack`
+- **raus** — `raus? 2. Wir müssen den Müll trennen. Die Müllabfuhr kommt zweimal pro Woche. 4. Das ist ein Missverständnis. Das habe`
+- **ich** — `ich nicht gesagt. 1. Ich gehe heute Abend mit Maria aus. 2. Wir suchen eine Dreizimmerwohnung`
+- **mit** — `mit Küche und Bad. 3. Ich hätte gern einen Tee mit Zitrone. 4. Mit meiner Mutter sind wir acht Personen. 5. Ich bin mit dem Fahrrad gekommen. Unsere Firma hat sieben Mitarbeiter. Sprechen Sie bitte miteinander. Für Mitglieder ist der Eintritt zum Konzert gratis. 1. Wo möchten Sie sitzen? – In der Mitte. 2. Bis Mitte der Woche bin ich fertig. 3. Ich habe Urlaub bis Mitte August. 4. Den Schrank stellen wir ans Fenster,`
+- **den** — `den Tisch in die Mitte. Den Prüfungstermin teilen wir Ihnen`
+- **noch** — `noch mit. 1. Haben Sie ein Mittel gegen Magen-`
+- **sind** — `sind erst mitten in der Nacht`
+- **tlerweile** — `tlerweile habe ich mich daran`
+- **gewöhnt** — `gewöhnt. Wir haben uns neue Möbel gekauft. Ich suche ein möbliertes Zimmer. 1. Möchtest du auch einen Kaffee? 2. Im Sommer möchten wir gern ans Meer fahren. Mit dem Fahrrad bin ich in der Stadt`
+- **sehr** — `sehr mobil. Ich habe zwei Nachrichten auf meiner Mobilbox. Sprachen zu lernen fördert die Mobilität. WORTLISTE WORTLISTE`
+- **nachdem** — `nachdem`
+- **dachte** — `dachte nach,`
+- **hat** — `hat nachgedacht`
+- **nachher** — `nachher`
+- **nach** — `nach, schlug nach,`
+- **hat** — `hat nachgeschlagen`
+- **genäht** — `genäht`
+- **sich** — `sich nähern, nähert sich,`
+- **näherte** — `näherte sich,`
+- **hat** — `hat sich genähert`
+- **hat** — `hat gemusst (hat müssen`
+- **als** — `als Modalverb)`
+- **nach** — `nach`
+- **muss** — `muss nachdenken. Die Nachfrage für dieses Produkt ist`
+- **gehört** — `gehört. 3. Im Moment bin ich nicht zu Hause. Aber Sie können eine Nachricht hinter-`
+- **du** — `du im Wörterbuch nachschlagen. Nach dem Essen gab es noch eine`
+- **leckere** — `leckere Nachspeise 1. Wo ist hier die nächste Apotheke? 2. Rufen Sie bitte nächste Woche noch`
+- **einmal** — `einmal an. 3. Wann fährt der nächste Zug nach Frankfurt? 4. Wer ist der Nächste bitte? Einen Nachteil hat die Wohnung. Sie`
+- **liegt** — `liegt nicht zentral. 1. Der Nachwuchs bei Forschern soll`
+- **gefördert** — `gefördert werden. 2. Die Katze hat Nachwuchs bekommen. Hast du eine Nadel für mich? Ich muss`
+- **wenn** — `wenn du willst. Man braucht viel Mut, um in einem`
+- **nein** — `nein`
+- **hat** — `hat genannt`
+- **neulich** — `neulich`
+- **nicht** — `nicht`
+- **nebenan** — `nebenan`
+- **nebenbei** — `nebenbei`
+- **hat** — `hat genommen 4. Sollen wir ein Taxi nehmen? 5. In diesem Jahr kann ich meinen Urlaub`
+- **geht** — `geht mir auf die Nerven. 1. Das Warten macht mich ganz nervös. 2. Bei Prüfungen bin ich immer sehr`
+- **erweitert** — `erweitert. 1. Mein Wagen ist noch ganz neu. 2. Wir haben eine neue Wohnung. 3. Man darf hier nicht mehr rauchen? Das`
+- **ist** — `ist mir ganz neu. In dieser Sache gibt es keine Neuigkeiten. Die Nachbarn sind ziemlich neugierig. Ich war neulich bei der Bank und habe`
+- **stimmt** — `stimmt nicht. Die Tasche ist ein Geschenk von`
+- **meiner** — `meiner Nichte. 1. In unserer Familie sind alle Nichtraucher. 2. Möchten Sie einen Tisch im Nichtraucherbereich? In diesen Ländern fehlen vor allem Nahrungsmittel. 1. Wie ist Ihr Name? 2. An den Namen kann ich mich nicht`
+- **mehr** — `mehr erinnern. Ludin ist mein Familienname. Mein Vorname ist Thomas. Ich muss leider gehen. Ich habe näm-`
+- **lich** — `lich noch einen Termin beim Zahnarzt. Haben Sie Nasentropfen? Ich bin stark`
+- **erkältet** — `erkältet. 1. Es hat schrecklich geregnet. Ich bin`
+- **nicht** — `nicht in Frankfurt landen. 2. Fahren Sie bei Nebel besonders`
+- **nebenbei** — `nebenbei arbeitet er in einer Kneipe. 2. Ich mache die Hausarbeit und neben-`
+- **bei** — `bei höre ich Radio. Meine Schwester hat zwei Kinder. Meine Neffen sind drei und fünf Jahre`
+- **nun** — `nun`
+- **nur** — `nur`
+- **hat** — `hat genutzt`
+- **hat** — `hat genützt`
+- **nichts** — `nichts`
+- **nie** — `nie`
+- **niemand** — `niemand`
+- **nirgends** — `nirgends`
+- **nirgendwo** — `nirgendwo`
+- **noch** — `noch`
+- **noch** — `noch mal`
+- **nochmals** — `nochmals`
+- **eine** — `eine Tablette. 2. Kann ich Ihnen helfen? – Danke, nicht`
+- **geirrt** — `geirrt. 2. Ich habe die falsche Nummer gewählt. 3. Der Wagen hatte eine Münchner Nummer. 4. Sie haben Zimmer Nummer zwölf. 5. Bitte geben Sie mir Ihre Kontonummer. 6. Haben Sie die Bluse eine Nummer`
+- **kleiner** — `kleiner? 1. Schade, dass du arbeiten musst. – Das`
+- **ist** — `ist nun mal so. 2. Was ist jetzt? Kommst du nun endlich? 1. Im Kaufhaus gibt‘s T-Shirts für nur fünf Euro. 2. Ich habe keinen Hunger. Ich möchte`
+- **nur** — `nur etwas trinken. 3. Ich habe nur heute Abend Zeit. 4. Kannst du mir Geld leihen? Tut mir`
+- **und** — `und spazieren gehen. Ich habe jeden Tag eine Tablette`
+- **rant** — `rant. 1. Die Räume hier sind mir zu niedrig. 2. Für die Jahreszeit sind die Temperaturen zu niedrig. 3. Die Firma zahlt sehr niedrige Löhne. Ich habe geklingelt. Aber es war`
+- **niemand** — `niemand zu Hause. 1. Ich kann die Quittung nirgends finden. 2. Hier kann man nirgends parken. Die Schlüssel kann ich nirgendwo`
+- **bitte** — `bitte noch ein Bier. 4. Sonst noch etwas? – Nein, danke. 5. Ich komme später. Ich muss erst noch`
+- **arbeitet** — `arbeitet sie noch als Kellnerin. 7. Es ist nicht mehr viel Zeit. Nur noch`
+- **fünf** — `fünf Minuten. 8. Ich habe nur noch 20 Euro. 9. Ist das Essen schon fertig. – Nein, es`
+- **dauert** — `dauert noch ein paar Minuten. 10.Ist Amadeo schon da? – Vielleicht`
+- **kommt** — `kommt er noch. 1. Vielen Dank nochmal. 2. Bitte sagen Sie das nochmal. Nochmals vielen Dank! Fehler zu machen ist doch ganz`
+- **hat** — `hat geöffnet`
+- **oft** — `oft/öfter`
+- **ohne** — `ohne`
+- **operierte** — `operierte, hat operiert`
+- **ob** — `ob`
+- **das** — `das/der (Schlag-)Obers (A) → D: (Schlag-)Sahne; CH: (Schlag-)Rahm`
+- **obwohl** — `obwohl`
+- **oder** — `oder`
+- **der** — `der (Back-)Ofen, ¨- (D, CH) → A: (Back-)Rohr`
+- **fentlicht** — `fentlicht, veröffentlichte,`
+- **hat** — `hat veröffentlicht`
+- **darüber** — `darüber reden. 1. Ich habe Ohrenschmerzen. 2. Das Baby hat aber kleine Ohren!`
+- **z** — `z.B. Ökoladen, Ökostrom, ökologischer Anbau 1. Es fehlt Öl am Salat. 2. Wir heizen mit Öl. 3. Können Sie bei meinem Auto bitte das Öl kontrollieren? Meine Oma ist achtzig Jahre alt`
+- **nicht** — `nicht mehr bewegen. Bei der Schiffskatastrophe gab es viele Opfer. Glaubst du, dass du den Job`
+- **bekommst** — `bekommst. – Ja, ich bin ganz`
+- **kann** — `kann. 1. Wir wohnen oben im 4. Stock. 2. Die Butter liegt im Kühlschrank ganz`
+- **vermietet** — `vermietet. Ich bin Ober von Beruf. Ich hätte gern ein Stück Torte mit (Schlag-)Obers. Obst kaufe ich am liebsten auf dem Markt. Obwohl meine Kollegin krank ist, geht`
+- **sie** — `sie arbeiten. 1. Möchten Sie Kaffee oder Tee? 2. Entweder wir fahren mit dem Bus oder`
+- **wir** — `wir gehen zu Fuß. Ich habe gerade eine Pizza gemacht. Sie ist ganz frisch aus dem Ofen. 1. Komm rein. Die Haustür ist offen. (A) (D: auf) 2. Ich glaube, der Supermarkt ist jetzt`
+- **noch** — `noch offen. 3. Im Sommer schlafe ich immer bei`
+- **offenem** — `offenem Fenster. 4. Ich habe mit meinem Kollegen ganz`
+- **nicht** — `nicht rauchen. 1. Von solchen Dingen erfährt die Öffentlichkeit nur selten. 2. Ich möchte in der Öffentlichkeit nicht`
+- **hat** — `hat gepackt`
+- **mate** — `mate`
+- **parkierte** — `parkierte, hat parkiert (CH) → D, A: parken`
+- **hat** — `hat gepasst`
+- **passierte** — `passierte, ist passiert`
+- **hat** — `hat geordnet`
+- **organisierte** — `organisierte,`
+- **hat** — `hat organisiert`
+- **gab** — `gab mehrere Pannen. 1. Hast du ein Blatt Papier für mich? 2. Bitte bringen Sie zu dem Termin alle Papiere mit. Kauf bitte noch Paradeiser auf dem Markt. Die Goethestraße ist parallel zur Hauptstraße. Zum Geburtstag habe ich von meinem Mann ein Parfüm bekommen. Ich gehe gern im Park spazieren. 1. Hier dürfen Sie nicht parken. 2. Hier ist das Parken verboten. 1. Hier dürfen Sie nicht parkieren. 2. Hier ist das Parkieren verboten. 1. Wir haben das Geschäft zusammen. Wir sind Partner. 2. Beide Partner kümmern sich um die Kinder. 3. Herr Aydin ist mein Geschäftspartner. Letzte Woche war ich auf einer Geburtstagsparty. 1. Ich muss meinen Pass verlängern`
+- **nichts** — `nichts passiert. 2. Wie ist der Unfall passiert? 3. Man hat mir die Brieftasche gestohlen. – Das ist mir auch schon passiert. Man sollte im Kurs nicht passiv sein,`
+- **sehr** — `sehr ordentlich aus. Die Ordination bleibt bis zum 7. Jänner`
+- **habe** — `habe ich mir einen Ordner gekauft. 1. Mach mal etwas Ordnung in deinem Zimmer! 2. Bitte beachten Sie die Hausordnung. 3. Mit dem Motor ist etwas nicht in Ordnung. Für den nächsten Sommerurlaub habe`
+- **ich** — `ich schon alles organisiert. 1. Die Organisation des Festes war sehr`
+- **von** — `von Hamburg. Tragen Sie bitte auch Ihren Wohnort`
+- **paar** — `paar Minuten. 2. Wir fahren mit ein paar Freunden in Urlaub. 1. Ina und Pedro sind ein Paar. 2. Gestern habe ich mir ein Paar neue Schuhe gekauft. ZERTIFIKAT B1 70 WORTLISTE`
+- **pflanzte** — `pflanzte, hat gepflanzt`
+- **hat** — `hat gepflegt`
+- **hat** — `hat geplant`
+- **in** — `in Pension gehen/sein (D, A) → D: in Rente`
+- **sioniert** — `sioniert werden/sein`
+- **per** — `per`
+- **lieber** — `lieber Pflaumenkuchen. Meine Mutter ist sehr krank. Ich muss`
+- **sie** — `sie pflegen. Meine Freundin ist Pflegerin in einem Altersheim. Als Autofahrer müssen Sie eine Versicherung haben. Das ist Pflicht. Mein Sohn malt sehr gut. Er hat viel Phantasie. Am Sonntag machen wir ein Picknick. Der Arzt hat mir neue Pillen`
+- **nach** — `nach Österreich zu fahren. 2. Unser Familientreffen ist für Juni`
+- **noch** — `noch nicht, wir haben noch keine Pläne. 2. Haben Sie einen Plan von Berlin? Unsere Planung für das Sommerfest`
+- **steht** — `steht schon lange. Was für ein Spielzeug möchten Sie? Aus Plastik oder aus Holz? 1. In unserer Wohnung haben wir nicht`
+- **genug** — `genug Platz. 2. Ist dieser Platz noch frei? 3. Nehmen Sie bitte Platz. 4. Die Post ist auf dem Platz, direkt am Markt. Es war zuerst so schön. Plötzlich hat es`
+- **möchte** — `möchte bitte einen Termin. Sie haben die Reise pauschal gebucht. Wir machen zehn Minuten Pause. 1. Es regnet. Unser Picknick fällt leider`
+- **aus** — `aus. – So ein Pech! 2. Wir hatten im Urlaub Pech mit dem Wetter. 1. Das muss dir nicht peinlich sein. 2. Das war eine peinliche Situation. Im Urlaub haben wir in einer kleinen Pension gewohnt. Sie ist 67 und bekommt jetzt eine gute Pension. 1. Ich gehe Ende des Jahres in Pension. 2. Mein Nachbar ist seit zehn Jahren in Pension. 1. Ich werde Ende des Jahres pensioniert. 2. Mein Nachbar ist seit zehn Jahren pen-`
+- **sioniert** — `sioniert. Meine Großmutter arbeitet nicht mehr. Sie ist Pensionistin. Wie kann ich mich für den Kurs`
+- **viele** — `viele Perrons. Eintritt pro Person: 2 Euro. 1. Hier gibt es zu viele Autos. Das ist`
+- **meine** — `meine persönliche Meinung. 2. Ich muss Herrn Meier persönlich`
+- **möchte** — `möchte Kartoffeln kochen. WORTLISTE WORTLISTE`
+- **prima** — `prima`
+- **pro** — `pro`
+- **probierte** — `probierte, hat probiert`
+- **probierte** — `probierte, hat probiert (D, CH) → A: kosten`
+- **produzierte** — `produzierte,`
+- **hat** — `hat produziert`
+- **monee** — `monee, -s (D, CH) → Brief-`
+- **tasche** — `tasche; A: Geldbörse`
+- **lerin** — `lerin, -nen (CH) → Briefträger`
+- **eine** — `eine gute Note bekommen. Das ist die Theorie. In der Praxis ist`
+- **vieles** — `vieles ganz anders. Die Arztpraxis bleibt bis zum 7. Januar`
+- **prima** — `prima. 1. Hier meine Nummer im Büro und`
+- **meine** — `meine private Nummer. 2. Über meine Probleme möchte ich nicht`
+- **einmal** — `einmal probiert? 2. Ich habe probiert, die Zeitung zu lesen,`
+- **aber** — `aber es war zu schwer. 3. Darf ich die Schuhe anprobieren? Möchten Sie den Käse mal probieren? José spricht nicht gern über seine Probleme. Unsere Firma produziert Feuerzeuge. 1. Unsere Produkte haben eine hohe Qualität. 2. Der Arzt sagt, ich soll keine fertigen Produkte essen. Die Produktion von Käse dauert oft`
+- **viele** — `viele Wochen. Unsere Nachbarin ist Professorin an`
+- **doch** — `doch ein Profi. Ich interessiere mich nicht für Politik. Weißt du, wie dieser Politiker heißt? 1. Ich diskutiere mit meinem Mann oft`
+- **über** — `über politische Probleme. 2. Die politischen Meinungen zum Thema Umwelt sind sehr verschieden. 1. Rufen Sie bitte die Polizei. 2. Er arbeitet bei der Polizei. Die Ampel war kaputt. Ein Polizist hat`
+- **den** — `den Verkehr geregelt. Die Kinder essen gern Würstchen mit Pommes frites. Diese Musik ist bei Jugendlichen`
+- **als** — `als Praktikantin gearbeitet. 1. Ich finde diese Küchenmaschine sehr`
+- **noch** — `noch praktische Erfahrung. 3. Dieses Handy kann praktisch alles, was`
+- **im** — `im Kurs. ZERTIFIKAT B1 72 WORTLISTE`
+- **quer** — `quer`
+- **der** — `der (Schlag-)Rahm (CH) → D: (Schlag-)Sahne, A: (Schlag-)Obers`
+- **rasierte** — `rasierte, hat rasiert`
+- **hat** — `hat geraten`
+- **hat** — `hat geraucht`
+- **protestierte** — `protestierte,`
+- **hat** — `hat protestiert`
+- **geprüft** — `geprüft`
+- **hat** — `hat geputzt`
+- **die** — `die ganze Stadt fahren. Brauchen Sie eine Quittung? Er hat beim Quiz gewonnen. Sie bekommen zehn Prozent Rabatt. Hast du noch ein Rad? Ich bin durch Glas gefahren und jetzt ist mein Rad`
+- **zur** — `zur Arbeit. 2. Am Sonntag fahren wir oft Rad. Achtung! Da kommt eine Radfahrerin. 1. Ich möchte mir ein neues Radio`
+- **mal** — `mal wieder rasieren. 1. Ich möchte billig Urlaub machen. Was`
+- **habe** — `habe! Deinen Lehrer. Was soll ich machen? Können Sie mir`
+- **am** — `am Computer? Der Staat fördert Projekte für Kinder`
+- **und** — `und Jugendliche. Bitte schicken Sie mir einen Prospekt`
+- **von** — `von Ihrem Hotel. Wir trinken auf Ihre Gesundheit! Prost! Wir protestieren gegen den Bau der Autobahn. Alle Proteste haben nichts genützt. Der Prozess wird direkt aus dem Gerichtssaal im Fernsehen übertragen. Bitte prüfen Sie sofort, ob die Rechnung stimmt. Mein Freund hat die Prüfung`
+- **hat** — `hat geredet`
+- **reduzierte** — `reduzierte, hat reduziert`
+- **hat** — `hat geregelt`
+- **es** — `es regnete,`
+- **es** — `es hat geregnet`
+- **hat** — `hat gereicht`
+- **rauf** — `rauf/rauf-`
+- **raus** — `raus/raus-`
+- **reagierte** — `reagierte, hat reagiert`
+- **realisierte** — `realisierte, hat realisiert`
+- **rechnete** — `rechnete, hat gerechnet`
+- **rechts** — `rechts`
+- **reduziert** — `reduziert. 2. Ist dieser Pullover auch reduziert? Vielen Dank für dieses interessante Referat. Die Regierung plant für nächstes Jahr`
+- **eine** — `eine Reform. Die Steuern sollen`
+- **aus** — `aus dem Haus. Sie müssen die Tabletten regelmäßig`
+- **den** — `den Verkehr. Es hat gestern den ganzen Tag`
+- **geregnet** — `geregnet. Bei Regen fällt das Konzert aus. 1. In der Rhein-Main-Region sind die Mieten sehr hoch. 2. Die Milch ist aus der Region. Du kannst mit einer Regionalbahn`
+- **mir** — `mir. 2. Wie lange reicht das Papier noch? Ich`
+- **glaube** — `glaube, wir müssen neues bestellen. Die Banane kannst du nicht essen. Sie`
+- **ist** — `ist noch nicht reif. Ihr Wagen braucht neue Reifen. 1. Ich habe Karten für das Konzert. Wir`
+- **rauf** — `rauf! 2. Möchtest du nicht raufkommen? 1. Willst du rein oder raus? 2. Er ist gerade rausgelaufen. Ich habe dem Vermieter geschrieben,`
+- **aber** — `aber er hat noch nicht reagiert. Diese Reaktion ist typisch für ihn. 1. Diese Pläne sind nicht zu realisieren. 2. Ich habe nicht realisiert, dass die Zeit`
+- **schon** — `schon um ist. Das gefällt dir nicht? Aber das ist die Realität. Ich glaube nicht, dass du für das Auto`
+- **noch** — `noch so viel Geld bekommst. Das ist`
+- **nicht** — `nicht realistisch. Für diesen Bericht waren viele Recherchen nötig. 1. Meine Tochter kann gut rechnen. 2. Im/In Rechnen hat sie eine Eins. 3. Mit solchen Schwierigkeiten hatten wir`
+- **nicht** — `nicht gerechnet. Mein Rechner ist kaputt. 1. Bitte, die Rechnung! 2. Brauchen Sie für diese Reparatur eine Rechnung? 1. Nach deutschem Recht kann er dafür`
+- **nicht** — `nicht bestraft werden. 2. Ich hatte Vorfahrt. Ich war im Recht. 3. Die Rechnung stimmt nicht? Dann`
+- **vorbeikomme** — `vorbeikomme? 2. Da haben Sie recht. 3. Da muss ich Ihnen recht geben. 1. An der nächsten Kreuzung müssen Sie`
+- **rechts** — `rechts abbiegen. 2. Der Bahnhof ist da vorne rechts. Ich habe mir den rechten Arm`
+- **reservierte** — `reservierte, hat reserviert`
+- **hat** — `hat gerettet`
+- **en** — `en`
+- **hat** — `hat gerochen`
+- **hat** — `hat gereinigt`
+- **ist** — `ist gereist`
+- **ist** — `ist geritten`
+- **ist** — `ist gerannt`
+- **in** — `in Rente gehen/sein (D) → D, A: in Pension`
+- **sioniert** — `sioniert werden/sein`
+- **reparierte** — `reparierte, hat repariert Eine Reparatur wäre zu teuer. Hast du die Reportage über Afrika`
+- **erreicht** — `erreicht! – Respekt! 1. Hier sind 100 Euro. Den Rest gebe ich`
+- **dir** — `dir später. 2. Es ist noch ein Rest Wein da. Möchtest`
+- **du** — `du noch? Wir essen heute im Restaurant. Der Arzt konnte das Kind noch retten. 1. Diese Schmerztabletten gibt es nur auf Rezept. 2. Weißt du ein gutes Rezept für Gemüsesuppe? Geben Sie bitte den Schlüssel an der Rezeption ab. Der Richter hat noch kein Urteil`
+- **gebucht** — `gebucht. 2. Auf der Reise haben wir nette Leute`
+- **kennengelernt** — `kennengelernt. Wir haben die Reise im Reisebüro`
+- **gebucht** — `gebucht. Möchtest du gerne reiten lernen? Ich möchte keine Reklame im Briefkasten. Es gibt einen neuen Rekord im Schwimmen. Die Wohnung ist relativ groß, aber`
+- **sehr** — `sehr teuer. Religion ist für manche Menschen sehr`
+- **mehr** — `mehr reparieren. WORTLISTE WORTLISTE`
+- **hat** — `hat gesagt`
+- **die** — `die (Schlag-)Sahne (D) → A: (Schlag-)Obers; CH: (Schlag-)Rahm`
+- **sammelte** — `sammelte, hat gesammelt`
+- **sämtliche** — `sämtliche`
+- **das** — `das (Back-)Rohr, -e (A) → D, CH: (Back-)Ofen`
+- **rückwärts** — `rückwärts`
+- **hat** — `hat gerufen`
+- **teurer** — `teurer. Das ist die Saison mit den höch-`
+- **ist** — `ist noch roh. Ich habe gerade eine Pizza gemacht. Sie ist ganz frisch aus dem Rohr. 1. Die Schauspielerin hat ihre Rolle sehr`
+- **großes** — `großes Fest gefeiert. Ich bin rückwärts aus der Garage`
+- **hat** — `hat geschaut`
+- **sich** — `sich scheiden lassen, lässt`
+- **sich** — `sich scheiden, ließ sich`
+- **hat** — `hat sich scheiden lassen`
+- **hat** — `hat geschienen`
+- **schenkte** — `schenkte, hat geschenkt`
+- **hat** — `hat geschickt`
+- **hat** — `hat geschoben`
+- **hat** — `hat geschossen`
+- **schade** — `schade`
+- **schadete** — `schadete, hat geschadet`
+- **hat** — `hat geschafft`
+- **schaltete** — `schaltete, hat geschaltet`
+- **schätzte** — `schätzte, hat geschätzt Schau mal! Da vorne ist noch ein Platz`
+- **muss** — `muss die Fenster putzen. Meine Nachbarn haben sich scheiden`
+- **wieder** — `wieder die Sonne. 2. Mein Kollege scheint krank zu sein. Er`
+- **war** — `war heute nicht im Büro. Wir wollen dir zum Geburtstag etwas`
+- **ladung** — `ladung zur Hochzeit geschickt. 2. Schick mir doch eine E-Mail. 3. Ich habe die Kinder einkaufen`
+- **zu** — `zu Hause. 1. Leider ist mein Fahrrad kaputt-`
+- **finde** — `finde seine Stimme toll. Möchten Sie noch etwas? – Nein`
+- **danke** — `danke, ich bin satt. Den letzten Satz verstehe ich nicht. 1. Bringen Sie mir bitte ein sauberes Glas! 2. Ich muss noch das Bad sauber machen. 1. Die Äpfel sind mir zu sauer. 2. Die Milch ist sauer. 3. Immer kommst du zu spät. Ich bin`
+- **kannst** — `kannst. Ein kleines Glas Wein kann nicht`
+- **ich** — `ich schätze, um die Fünfzig. 2. Ich schätze deine gute Arbeit. WORTLISTE WORTLISTE`
+- **schmeckte** — `schmeckte,`
+- **hat** — `hat geschmeckt`
+- **schminkte** — `schminkte, hat geschminkt`
+- **verschmutzte** — `verschmutzte,`
+- **hat** — `hat verschmutzt`
+- **schneite** — `schneite, es hat geschneit`
+- **schneidet** — `schneidet, schnitt,`
+- **hat** — `hat geschnitten`
+- **schimpfte** — `schimpfte, hat geschimpft`
+- **hat** — `hat geschlafen`
+- **hat** — `hat geschlagen`
+- **der** — `der/das (Schlag-)Obers (A) → D: (Schlag-)Sahne; CH: (Schlag-)Rahm`
+- **schloss** — `schloss, hat geschlossen 7. Du kannst die Datei schließen. Ich bin`
+- **besichtigt** — `besichtigt. 1. Ich muss jetzt Schluss machen. Es`
+- **klingelt** — `klingelt an der Tür. 2. Zum Schluss nochmals herzlichen Dank. Ich kann meine Schlüssel nicht finden. Hier kannst du nicht parken. Die Straße ist zu schmal. 1. Hat es Ihnen geschmeckt? 2. Die Suppe schmeckt nach Knoblauch. 1. Haben Sie Schmerzen? 2. Ich kann vor Schmerzen nicht laufen. Sie haben Zahnschmerzen? Ich`
+- **verschreibe** — `verschreibe Ihnen ein Schmerzmittel. Du bist heute sehr schön geschminkt. Dieser Schmuck ist von meiner Großmutter. Du hast Schmutz an deinen Schuhen. 1. Leg bitte die schmutzige Wäsche in die Waschmaschine. 2. Das Handtuch ist schmutzig. Die Fabrik verschmutzt den Fluss. Im Februar gibt es oft viel Schnee. Heute Nacht hat es geschneit. 1. Das Messer schneidet nicht. 2. Hast du ein Pflaster? Ich habe mich`
+- **ich** — `ich zu wenig Sport mache. 2. Alle schimpfen über/auf das Wetter. Bitte, ein Brötchen mit Schinken. Es regnet. Hast du einen Schirm dabei? 1. Haben Sie gut geschlafen? 2. Wenn Sie mal nach München kommen,`
+- **aus** — `aus. 1. Das Wetter ist schlecht. 2. Du siehst aber schlecht aus. Bist du`
+- **dich** — `dich nicht gut. 9. Der Film war nicht schlecht. Er hat mir`
+- **hat** — `hat geschrien`
+- **schuld** — `schuld`
+- **schüttelte** — `schüttelte, hat geschüttelt`
+- **schützte** — `schützte, hat geschützt`
+- **schon** — `schon`
+- **schrieb** — `schrieb, hat geschrieben`
+- **schriftliche** — `schriftliche Bestätigung. 3. Sie müssen sich schriftlich anmelden. Kennst du diese Schriftstellerin? Ich`
+- **liebe** — `liebe ihre Bücher. 1. Die Sprachschule ist nur ein paar Schritte von hier. 2. Du musst der Anleitung Schritt für Schritt folgen. Die neuen Schuhe sind mir zu eng. Es ist nicht meine Schuld, dass das`
+- **nicht** — `nicht geklappt hat. Ich hatte einen Unfall. Aber ich war`
+- **nicht** — `nicht schuld. Jetzt habe ich alle meine Schulden`
+- **bezahlt** — `bezahlt. Was bin ich Ihnen schuldig? – 50 Euro,`
+- **bitte** — `bitte. 1. Meine Tochter geht schon in die Schule. 2. Nächste Woche fängt die Schule`
+- **wieder** — `wieder an. 3. Die Schule ist gleich hier um die Ecke. Mein Sohn schreibt bei Schularbeiten`
+- **immer** — `immer gute Noten. In der Klasse sind 25 Schülerinnen. Ich habe Schmerzen in der rechten Schulter. Gibst du mir bitte eine Schüssel für`
+- **den** — `den Salat? Die Flasche muss man vor dem Öffnen`
+- **sehr** — `sehr fit. 4. Mach schon, ich kann nicht länger`
+- **schon** — `schon Lust, aber ich muss arbeiten. 7. Ich mag keine Kartoffeln. Und du? – Ich`
+- **schon** — `schon. 1. Ich finde eure Wohnung sehr schön. 2. Es ist schön heute. 3. Wir wünschen Ihnen einen schönen Aufenthalt in Kiel. 4. Schöne Grüße von Herrn Meier. 5. Möchten Sie noch eine Tasse Kaffee? – Nein, danke schön. 6. Schön, dass du kommst. 7. Ich muss noch arbeiten. – Schön, dann`
+- **mehr** — `mehr. Ich habe mir deine Telefonnummer`
+- **sehr** — `sehr`
+- **seit** — `seit`
+- **selbst** — `selbst`
+- **selber** — `selber`
+- **schwieg** — `schwieg, hat geschwiegen`
+- **schwamm** — `schwamm,`
+- **ist** — `ist geschwommen`
+- **schwitzte** — `schwitzte, hat geschwitzt`
+- **hat** — `hat gesehen 5. Sieh mal! Es schneit. 6. Ich komme gleich wieder, ich muss mal`
+- **noch** — `noch nicht. Mal sehen. 9. Du siehst deiner Mutter sehr ähnlich. Welche Sehenswürdigkeiten gibt es`
+- **hier** — `hier? 1. Ich habe mich sehr über Ihren Besuch`
+- **gefreut** — `gefreut. 2. Hier ist Ihr Essen. - Danke sehr. 3. Das Wetter ist heute sehr schön. Hier gibt es keine Seife. 1. Ich bin Mechaniker. 2. Das sind meine Kollegen. 3. Ich bin müde. 4. Das Auto ist jetzt fünfzehn Jahre alt. 5. Heute ist Montag. 6. Der Termin beim Zahnarzt ist erst`
+- **an** — `an/aus. 1. Wir wohnen seit dem 1. März in Dortmund. 2. Seit ich in Deutschland wohne, lerne`
+- **ich** — `ich Deutsch. Ich bin vor zwei Jahren nach Deutsch-`
+- **land** — `land gekommen. Seitdem lerne ich Deutsch. 1. Das hier ist die Goethestraße. Ich`
+- **wohne** — `wohne auf der linken Seite. 2. Der Text steht auf Seite 20. Der neue Sekretär hat sich gestern`
+- **du** — `du. Den Kuchen habe ich selbst gebacken. Sie will das selber machen. 1. Jetzt bin ich angestellt. Früher war ich`
+- **fort** — `fort Bescheid. 1. Das ist ein guter Schutz gegen Kälte. 2. Alle reden heute über den Schutz der Umwelt. 1. Ich bin noch nicht gesund. Ich fühle`
+- **mich** — `mich noch sehr schwach. 2. Die Tabletten sind zu schwach. Sie`
+- **schaft** — `schaft nicht rauchen. Sie sprach viel, aber ihr Mann schwieg`
+- **den** — `den ganzen Abend lang. 1. Der Koffer ist viel zu schwer. 2. Die Prüfung war schwer. 3. Das ist eine schwere Arbeit. 4. Dieses Wort ist schwer zu erklären. 1. Ich habe eine ältere Schwester und`
+- **geschwitzt** — `geschwitzt. Unser Hotel war direkt am See. Im Sommer fahren wir immer an die See. Warst du schon mal an der Nord/Ostsee? 1. Ich sehe nicht gut. Ich brauche eine Brille. 2. Ich habe einen schönen Film gesehen. 3. Wir haben uns lange nicht gesehen. 4. Darf ich mal Ihren Ausweis sehen? ZERTIFIKAT B1 80 WORTLISTE`
+- **hat** — `hat gesiegt`
+- **siezte** — `siezte, hat gesiezt`
+- **ist** — `ist gesunken`
+- **so** — `so`
+- **sobald** — `sobald`
+- **sendete** — `sendete/sandte, hat`
+- **gesendet** — `gesendet/gesandt`
+- **n** — `n (CH) → Kellner; D, A: Ober`
+- **hat** — `hat gesetzt`
+- **hat** — `hat gesichert Es gibt keine sichtbaren Verletzungen. Aber wir müssen das Bein trotzdem`
+- **erkältet** — `erkältet. 1. Das Schiff ist vor der Küste gesunken. 2. Der Preis ist um 3 % gesunken. Es hat keinen Sinn, noch ein Spiel zu`
+- **lange** — `lange nicht mehr gelesen. Es funktioniert einfach nicht. Es ist`
+- **fürs** — `fürs Auto. Erst ist erst drei Jahre alt. 1. Gehen wir am Wochenende Ski laufen? 2. Das sind aber schöne Skier! 1. Wie macht man das? – So! 2. Sie müssen das so machen. Nicht so! 3. Sie sind auch hier! So ein Zufall! 4. Ich melde mich, so schnell ich kann. 5. Wann treffen wir uns? – So gegen 10 Uhr. Ist dir das recht? 6. Dauert es lange? – Eine Stunde oder so`
+- **kann** — `kann es schon dauern. 7. Ich hatte kein Geld dabei. Da haben sie`
+- **mich** — `mich so hineingelassen. 8. So, jetzt bin ich fertig. Was machen wir`
+- **jetzt** — `jetzt? 9. Fahren Sie bitte nicht so schnell! 10.Meine Frau ist so groß wie ich. 11. Was macht ihr denn so? Sobald ich den Termin weiß, gebe ich Ihnen Bescheid. Ich gehe ganz selten ins Kino. 1. Es ist seltsam, dass mein Bruder noch`
+- **nicht** — `nicht hier ist. 2. Sie hörte ein seltsames Geräusch. Mein Neffe studiert im 7. Semester Medizin. Ich möchte dieses Seminar unbedingt`
+- **per** — `per E-Mail. 2. Können Sie uns die Post bitte`
+- **mit** — `mit moderner Musik. 1. Wir wiederholen die Sendung am 11. Mai. 2. Ich warte auf eine Postsendung. Dieser Computerkurs ist für Senioren. Ziehen Sie bitte eine senkrechte Linie. Meine Tochter liebt es, im Fernsehen Serien zu schauen. 1. Rufst du beim Pizza-Service an? 2. Ich war mit dem Service in der Werk-`
+- **statt** — `statt nicht zufrieden. Ich bin Serviceangestellte von Beruf. Ich hätte gern einen bequemen Sessel. Da hinten ist noch ein Sessel frei. 1. Darf ich mich zu Ihnen setzen? 2. Bitte setzen Sie sich, wohin Sie wollen! 1. Dieses Auto ist besonders sicher. 2. Bist du sicher, dass die Bank heute`
+- **soviel** — `soviel`
+- **so** — `so viel/so viel wie`
+- **sowieso** — `sowieso`
+- **sowohl** — `sowohl … als auch`
+- **gespart** — `gespart`
+- **spätestens** — `spätestens`
+- **ist** — `ist spazieren gegangen`
+- **speicherte** — `speicherte,`
+- **hat** — `hat gespeichert`
+- **sodass** — `sodass`
+- **sofort** — `sofort`
+- **sogar** — `sogar`
+- **solange** — `solange`
+- **gesollt** — `gesollt (hat sollen als Modalverb) Sonder-`
+- **sonst** — `sonst`
+- **hat** — `hat gesorgt`
+- **heute** — `heute Ruhetag. 1. Ich habe so viel gegessen. Jetzt ist mir`
+- **gehe** — `gehe sowieso zur Post. Sowohl Sie als auch Ihre Frau müssen`
+- **sehr** — `sehr sparsam sein. 2. Mein Auto ist sehr sparsam. Es`
+- **verbraucht** — `verbraucht nur 5 Liter auf 100 km. 1. Meine Arbeit macht mir viel Spaß. 2. Viel Spaß bei der Party! 1. Wie spät ist es? 2. Es ist schon spät, ich muss gehen. 3. Ich muss mich beeilen. Sonst komme`
+- **ich** — `ich zu spät. 4. Sonntags stehen wir immer spät auf. 5. Am späten Nachmittag ist der Verkehr`
+- **besonders** — `besonders stark. 6. Können Sie später noch mal anrufen? 7. Was willst du denn später mal`
+- **nach** — `nach Hause kam. Wir hätten gern ein modernes Sofa. 1. Warum sind Sie nicht sofort zum Arzt`
+- **ab** — `ab sofort im Kartenbüro. 1. Studenten, die lange studieren, sind so-`
+- **genannte** — `genannte Langzeitstudierende. 2. Wo bleiben denn deine sogenannten Freunde? Auf dem Berg war es so kalt. Es hat`
+- **sogar** — `sogar geschneit. Mein jüngster Sohn ist vier. Solange Sie Fieber haben, dürfen Sie`
+- **auf** — `auf keinen Fall arbeiten gehen. Solche Schuhe finde ich toll. 1. Wann soll ich kommen? 2. Ich habe im Radio gehört, es soll`
+- **duziert** — `duziert. Unser Besuch kommt nicht heute,`
+- **scheint** — `scheint. 2. Ich habe zu lange in der Sonne`
+- **zu** — `zu spät. 3. Heute ist der Chef nicht mehr da. Sonst`
+- **ist** — `ist er um diese Zeit immer im Büro. 1. Wer sorgt denn für die Kinder? 2. Können Sie bitte dafür sorgen, dass die Heizung funktioniert? Um Ihre Zukunft brauchen Sie sich`
+- **keine** — `keine Sorgen zu machen. Gibst du mir bitte mal die Soße? ZERTIFIKAT B1 82 WORTLISTE`
+- **ist** — `ist gesprungen`
+- **hat** — `hat gespült`
+- **hat** — `hat gespürt`
+- **stammte** — `stammte, hat gestammt`
+- **ist** — `ist gestartet Speise-/-speise, -n`
+- **hat** — `hat gespielt`
+- **hat** — `hat gesprochen 3. Ich möchte nicht darüber sprechen. 4. Die Bundeskanzlerin spricht heute Abend im Fernsehen. 5. Kann ich bitte Herrn Müller sprechen? Frau Dr. Berger hat von 8 bis 12 Uhr Sprechstunde. 1. Wir waren im Schwimmbad. Mein Sohn`
+- **ist** — `ist immer wieder ins Wasser`
+- **wenn** — `wenn Sie schneller fahren. Wo tut es weh? Spüren Sie das hier? Ich möchte am Samstag ins Stadion`
+- **meiner** — `meiner Freundin angerufen. Es ist`
+- **besonders** — `besonders stark. 3. Ich habe starke Kopfschmerzen. 4. Können Sie mir kein stärkeres Mittel`
+- **aber** — `aber dafür nehme ich keine Nachspeise. (D, A) Bitte, die Speisekarte. Wo ist der Speisewagen? Ich brauche eine Spezialpflege für`
+- **trockenes** — `trockenes Haar. Mein Arzt hat mich zur Spezialistin`
+- **für** — `für meine Freundin. Ich möchte gerne sehen, wie mein Kleid sitzt. Hast du einen Spiegel? 1. Wir haben einen großen Garten, da`
+- **vier** — `vier Spieler. 2. Beim Fußball gibt es elf Spieler. Die Kinder sind auf dem Spielplatz. Zu Weihnachten wünschen sich die Kinder vor allem Spielzeug. Der Bleistift ist nicht spitz. 1. Für Sport interessiere ich mich sehr. 2. Ich mache viel Sport. Welche Sportart findest du am besten? Sie ist eine gute Sportlerin. 1. Ich bin nicht sehr sportlich. 2. Ich mag bequeme und sportliche Klei-`
+- **dung** — `dung. Franco spricht mehrere Sprachen. Ich spreche drei Fremdsprachen. Was ist Ihre Muttersprache? Deutsch ist seine Zweitsprache. 1. Können Sie bitte etwas lauter`
+- **hat** — `hat gestellt`
+- **statt** — `statt`
+- **fand** — `fand statt,`
+- **hat** — `hat stattgefunden`
+- **staubsaugte** — `staubsaugte,`
+- **hat** — `hat gestaubsaugt`
+- **hat** — `hat gestochen`
+- **hat** — `hat gesteckt`
+- **hat** — `hat/ist gestanden`
+- **hat** — `hat gestohlen`
+- **ist** — `ist gestiegen Die Straße zu unserem Haus ist sehr`
+- **nicht** — `nicht ganz klar. 4. An Ihrer Stelle würde ich den Vertrag`
+- **nicht** — `nicht unterschreiben. 1. Stell das Bier in den Kühlschrank! 2. Ich hole noch Milch. Stell dich bitte`
+- **schon** — `schon mal in die Schlange an der Kasse. 3. Wo kann ich mein Auto hinstellen? 4. Würden Sie das Radio bitte etwas`
+- **leiser** — `leiser stellen. 5. Haben Sie einen Moment Zeit? Wir`
+- **gestellt** — `gestellt. Der Poststempel trägt das Datum von`
+- **letzter** — `letzter Woche. Das Paket war lange un-`
+- **terwegs** — `terwegs. Mein Kollege kommt heute nicht. Sein Vater ist gestern gestorben. Heute sieht man viele Sterne am Himmel. Wir müssen immer mehr Steuern`
+- **warme** — `warme Stiefel gekauft. 1. Wo ist die Toilette? – Die Stiege hoch`
+- **und** — `und dann links. 2. Meine Oma kann nicht gut Stiegen`
+- **eine** — `eine gute Entwicklung. Kann ich diese Woche statt Donnerstag`
+- **am** — `am Freitag kommen? Das Spiel findet auch bei Regen statt. 1. Auf der A3 gibt es wegen eines Unfalls 5 km Stau. 2. Wir standen eine Stunde im Stau. Ich habe überall Staub gewischt. Ich muss heute in meiner Wohnung`
+- **noch** — `noch staubsaugen. Stefan wird beim Zelten immer von`
+- **den** — `den Mücken gestochen. 1. Wo ist denn mein Pass? Ich hatte ihn`
+- **doch** — `doch in die Handtasche gesteckt. 2. Du kannst reingehen. Der Schlüssel`
+- **steckt** — `steckt. 3. Die Zeitung steckt im Briefkasten. Es gibt drei Steckdosen in diesem Zimmer. Der Stecker passt nicht in diese Steckdose. 1. In meinem Beruf muss ich viel stehen. 2. Als wir kamen, stand das Essen schon`
+- **auf** — `auf dem Tisch. 3. Der Bus steht schon an der Haltestelle. 4. Was steht heute in der Zeitung? 5. Nach 20 Minuten stand das Spiel 1:1. 6. Die neue Bluse steht dir gut. 1. Bitte bleiben Sie stehen. 2. Meine Uhr ist stehen geblieben. Gestern hat mir jemand im Zug meine Uhr gestohlen. 1. Die Preise für Milch und Gemüse sind`
+- **schon** — `schon wieder gestiegen. 2. Gegen Abend ist das Fieber wieder`
+- **hat** — `hat gestreikt`
+- **stritt** — `stritt, hat gestritten`
+- **studierte** — `studierte, hat studiert`
+- **hat** — `hat gestimmt`
+- **hat** — `hat gestunken`
+- **hat** — `hat gestoppt`
+- **hat** — `hat gestört`
+- **hat** — `hat gestoßen`
+- **losigkeit** — `losigkeit durch. 2. Eine aktuelle Studie zeigt, dass die Umweltverschmutzung zunimmt. 1. Mein Sohn will Medizin studieren. 2. Ich studiere in Mainz. Schüler und Studenten zahlen die Hälfte. Zehn Studierende besuchen das Seminar. Sie brauchen für diese Stelle ein`
+- **abgeschlossenes** — `abgeschlossenes Studium. Zu Gast im Studio sind heute ... 1. Vorsicht, Stufe! 2. Die Volkshochschule bietet Sprach-`
+- **kurse** — `kurse auf verschiedenen Stufen an. Da hinten ist noch ein Stuhl frei. Stell bitte dein Handy leise oder auf`
+- **erkannt** — `erkannt. 1. Meine Adresse stimmt nicht mehr. 2. Das Wetter in Deutschland könnte`
+- **war** — `war sehr gut. Was stinkt denn hier so? – Das ist der Fisch. Er ist nicht mehr frisch. Das Büro ist im 3. Stock, Zimmer 305. Das Gebäude hat zwanzig Stockwerke. 1. Was für ein Stoff ist das? – Wolle. 2. In manchen Farben sind giftige Stoffe. Ich bin stolz auf dich. Das hast du sehr`
+- **bei** — `bei Rot über die Ampel gefahren bin. 1. Darf ich Sie einen Augenblick stören? 2. Du kannst das Radio anlassen. Das`
+- **stört** — `stört mich nicht. Entschuldigen Sie bitte die Störung. Wie haben Sie sich denn verletzt? – Ich`
+- **habe** — `habe mich an der Autotür gestoßen. Schwarzfahren kostet 60 Euro Strafe. Was du da machst, ist strafbar. So ein Pech! Ich habe einmal falsch`
+- **am** — `am besten ist? WORTLISTE WORTLISTE`
+- **hat** — `hat getankt`
+- **hat** — `hat getanzt`
+- **ist** — `ist gestürzt`
+- **hat** — `hat gesucht`
+- **super** — `super`
+- **getanzt** — `getanzt. Diese modernen Tänze kann ich nicht. 1. Ich habe nicht viel Gepäck, nur eine Tasche. 2. Meine Jacke hat keine Taschen. Wie viel Taschengeld bekommst du im Monat? Hast du ein Taschentuch für mich? 1. Die Tassen sind von meiner Großmutter. 2. Möchten Sie eine Tasse Kaffee? Die Tastatur an meinem Computer ist`
+- **habe** — `habe mir den Fuß gebrochen. 2. Bitte pass auf der Treppe auf, dass du`
+- **nicht** — `nicht hinunterstürzt! 1. Ich suche meine Brille. 2. Wir suchen eine größere Wohnung. 3. Wen suchen Sie? 1. Die Sucht nach Medikamenten nimmt`
+- **zu** — `zu. 2. Er kämpft gegen seine Alkoholsucht. 3. Das Internet kann zur Sucht werden. 1. Ich bin süchtig nach Schokolade. 2. Fernsehen kann süchtig machen. Manche Medikamente sind auch Suchtmittel. Die Summe scheint mir zu hoch! 1. Das war ein super Film! 2. Er kann super tanzen. 3. Weißt du was? Ich komme mit. – Super! Donnerstags gehe ich immer in den Su-`
+- **permarkt** — `permarkt. Schmeckt dir die Suppe? 1. Ich esse gern süße Sachen. 2. Das ist aber ein süßes Baby! 1. Das Herz ist ein Symbol für die Liebe. 2. Auf dem Bildschirm finden Sie viele Symbole. Ich finde unsere neue Kollegin sehr`
+- **es** — `es mir erklären? 1. In dieser Szene des Films stirbt der Held. 2. Ich kenne mich in der Szene nicht aus. Ich bin zu alt. 3. Bitte mach keine Szene! ZERTIFIKAT B1 86 WORTLISTE`
+- **hat** — `hat getestet`
+- **ist** — `ist/hat getaucht`
+- **tauschte** — `tauschte, hat getauscht`
+- **hat** — `hat geteilt`
+- **nahm** — `nahm teil,`
+- **hat** — `hat teilgenommen`
+- **telefonierte** — `telefonierte,`
+- **hat** — `hat telefoniert 1. Darf ich bitte Ihr Telefon benutzen? 1. Stell bitte schon mal die Teller auf den Tisch! 2. Willst du noch einen Teller Suppe? Die Temperaturen steigen heute um 10 Grad. 1. Hier darfst du nur Tempo 30 fahren. 2. Achtung, hier ist eine Tempo-30-Zone! Ich spiele gern Tennis. 1. Ich habe mir einen neuen Teppich`
+- **gekauft** — `gekauft. 2. Habt ihr in eurer neuen Wohnung Teppich oder einen Holzfußboden? Als Termin schlage ich den 3. Mai vor. Hast du unser Treffen schon in deinen Terminkalender eingetragen? Setzen wir uns auf die Terrasse! Testen Sie unsere Angebote kostenlos. Ich bin ganz sicher: Du wirst den Test`
+- **ich** — `ich den Führerschein. Das ist die Theorie. In der Praxis ist`
+- **vieles** — `vieles ganz anders. Die Therapie hat geholfen. Es geht mir`
+- **schon** — `schon viel besser. 1. Wir müssen die Tickets für unseren Flug ausdrucken. 2. Ich kaufe heute Tickets für das Konzert. 1. Vorsicht, Kinder! Das Wasser ist hier`
+- **sehr** — `sehr tief. 2. Der Schrank ist drei Meter breit und 60 Zentimeter tief. 3. Bitte jetzt tief einatmen! Er mag Tiere sehr und geht darum oft`
+- **in** — `in den Zoo. Das widerspricht den Tatsachen. Die Hose ist tatsächlich zu klein,`
+- **obwohl** — `obwohl sie so groß aussieht. 1. Sie hört schlecht, sie ist schon fast`
+- **eine** — `eine gute Arbeitstechnik. 1. Es gab ein technisches Problem. 2. Sind Sie technisch interessiert? Große Fortschritte gab es in der Technologie. 1. Bitte einen Tee mit Zitrone. 2. Was kostet dieser Tee hier? Diesen Tee sollte man 10 Minuten`
+- **teile** — `teile ihn mit meiner Familie. Dieses Teil müssen wir erst bestellen. 1. Was steht in dem Brief? Ich habe den`
+- **hat** — `hat getragen`
+- **trainierte** — `trainierte, hat trainiert`
+- **portiert** — `portiert, transportierte,`
+- **hat** — `hat transportiert`
+- **hat** — `hat geträumt`
+- **hat** — `hat getroffen`
+- **trennte** — `trennte, hat getrennt`
+- **getrennt** — `getrennt leben`
+- **radeiser** — `radeiser`
+- **ist** — `ist bei uns Tradition. Ich mag die traditionelle Küche. 1. Lass mich den Koffer tragen. Der ist zu`
+- **sich** — `sich getrennt. 3. Wir müssen den Müll trennen. Das`
+- **kommt** — `kommt zum Altpapier. 1. Die Trennung von der Familie war`
+- **wir** — `wir haben einen Hund. Wollen wir am Samstag mit den Kindern in den Tierpark gehen? Kannst du mir einen Tipp geben? Wo`
+- **finde** — `finde ich billige Möbel? Wie schnell kannst du tippen? Das Essen steht schon auf dem Tisch. 1. Wie heißt der Film? – Ich weiß den Titel nicht mehr. 2. Haben Sie einen Titel? – Ja, Doktor. Das ist meine Tochter Katharina. Ich habe ihn vor seinem Tod noch`
+- **einmal** — `einmal gesehen. Dieses Gift kann für den Menschen`
+- **möchte** — `möchte Kartoffeln kochen. → (CH: Pfanne) 1. Hinter dem Tor geht es zur Fabrik. 2. Die Mannschaft konnte vier Tore`
+- **unsere** — `unsere Stadt. ZERTIFIKAT B1 88 WORTLISTE`
+- **über** — `über`
+- **überall** — `überall`
+- **überfuhr** — `überfuhr, hat überfahren`
+- **überholte** — `überholte, hat überholt`
+- **überlegte** — `überlegte, hat überlegt`
+- **hat** — `hat/ist getreten`
+- **hat** — `hat getrunken`
+- **trocknete** — `trocknete,`
+- **hat** — `hat/ist getrocknet`
+- **trotz** — `trotz`
+- **trotzdem** — `trotzdem`
+- **du** — `du gerne? 3. Kennen Sie sich mit den verschiedenen Typen aus? Auch mit meinem Auto? 1. Im Hotel gab es typisch deutsches Essen. 2. Er kommt wieder zu spät, das ist`
+- **übe** — `übe jeden Tag zwei Stunden. 1. Diese Übung war sehr schwer. 2. Ich fahre nicht oft Auto. Mir fehlt die Übung. 1. Die Müllers wohnen direkt über uns. 2. Pass bitte auf, wenn du über die Straße gehst. 3. Fahren Sie über Stuttgart oder über Würzburg? 4. Übers Wochenende fahren wir in die Berge. 5. Kinder über zehn Jahre müssen voll`
+- **nicht** — `nicht. 2. Tut mir leid. Ich habe überhaupt keine Zeit. 3. Du willst mit meinem Auto fahren? Hast du überhaupt einen Führerschein? Hier dürfen Lkws nicht überholen. 1. Ich kann mich nicht entscheiden. Ich`
+- **muss** — `muss mir das noch überlegen. 2. Ich habe mir überlegt, ein Auto zu`
+- **und** — `und dann links. 2. Meine Oma kann nicht gut Treppen`
+- **uns** — `uns. Trinken Sie einen Tee mit uns? Ich habe dem Kellner zwei Euro Trinkgeld gegeben. 1. Die Wäsche ist noch nicht trocken. 2. Hoffentlich regnet es bald. Alles ist`
+- **du** — `du doch keinen Schirm. Das Velofahren auf dem Trottoir ist`
+- **nicht** — `nicht erlaubt. Trotz Grippe bin ich zur Arbeit`
+- **gekauft** — `gekauft? 2. Die Handtücher sind im Schrank ganz`
+- **getan** — `getan. 4. Es tut mir leid. Ich kann nicht kommen. 5. Der Arm tut mir weh. 6. Ich habe endlich mal ausgeschlafen. Das hat gut getan. Machen Sie bitte die Tür zu! Es zieht. Kommen Sie auf den Turm, von hier`
+- **sieht** — `sieht man die ganze Stadt. WORTLISTE WORTLISTE`
+- **überzeugt** — `überzeugt, überzeugte,`
+- **hat** — `hat überzeugt`
+- **übrigens** — `übrigens`
+- **um** — `um`
+- **umarmte** — `umarmte, hat umarmt`
+- **um** — `um … zu`
+- **um** — `um, drehte um,`
+- **hat** — `hat umgedreht`
+- **ging** — `ging um, ist umgegangen`
+- **umso** — `umso`
+- **umsonst** — `umsonst`
+- **übernachtete** — `übernachtete,`
+- **hat** — `hat übernachtet`
+- **übernahm** — `übernahm,`
+- **hat** — `hat übernommen.`
+- **überprüfte** — `überprüfte, hat überprüft`
+- **überquerte** — `überquerte, hat überquert`
+- **überraschte** — `überraschte,`
+- **hat** — `hat überrascht`
+- **überredete** — `überredete, hat überredet`
+- **übersetzte** — `übersetzte, hat übersetzt`
+- **übertrieb** — `übertrieb, hat übertrieben`
+- **überwies** — `überwies, hat überwiesen`
+- **meine** — `meine Entscheidung richtig ist. Wie bist du zu dieser Überzeugung`
+- **um** — `um 3 % gestiegen. Lass dich zum Abschied umarmen. Um gesund zu bleiben, musst du Sport`
+- **auf** — `auf der Rückseite. Wir machen eine Umfrage zum Thema Umweltschutz. In der Umgebung von Berlin kann man`
+- **schöne** — `schöne Ausflüge machen. Er kann sehr gut mit Kindern umgehen. Nein, umgekehrt: erst der Vorname,`
+- **dann** — `dann der Nachname. Es gibt wegen des Unfalls eine Umleitung. 1. Je früher wir dort sind, umso besser`
+- **sind** — `sind unsere Chancen auf einen guten Sitzplatz. 2. Ich kann dir nicht nur heute, sondern`
+- **auch** — `auch morgen helfen. – Umso besser! 1. Ich musste nichts bezahlen. Die Reparatur war umsonst. Morgen kann ich nicht. Wir sehen uns`
+- **übernachtet** — `übernachtet. In diesem Hotel kostet die Übernach-`
+- **tung** — `tung mit Frühstück 90 Euro. Ich habe das Geschäft von meinem Vater übernommen. Bitte überprüfen Sie, ob Ihr Name`
+- **dachte** — `dachte, du bist im Urlaub. Zuerst wollte ich nicht, aber mein Bruder hat mich überredet, einen Englischkurs zu machen. 1. Der Artikel erschien unter der folgen-`
+- **den** — `den Überschrift: „…“ 2. Die Überschrift passt überhaupt nicht`
+- **zum** — `zum Inhalt des Artikels. Können Sie mir bitte diesen Brief`
+- **man** — `man sollte es nicht übertreiben. 1. Ich überweise dir das Geld. 2. Der Arzt hat mich ins Krankenhaus`
+- **weisung** — `weisung fürs Krankenhaus gegeben. ZERTIFIKAT B1 90 WORTLISTE`
+- **unter** — `unter`
+- **unterbrach** — `unterbrach,`
+- **hat** — `hat unterbrochen`
+- **hält** — `hält, unterhielt,`
+- **hat** — `hat unterhalten`
+- **unterließ** — `unterließ, hat unterlassen`
+- **immt** — `immt, unternahm,`
+- **hat** — `hat unternommen`
+- **unterrichtete** — `unterrichtete,`
+- **hat** — `hat unterrichtet`
+- **untersagt** — `untersagt`
+- **scheidet** — `scheidet, unterschied,`
+- **hat** — `hat unterschieden`
+- **stieg** — `stieg um, ist umgestiegen`
+- **tauschte** — `tauschte um,`
+- **hat** — `hat umgetauscht`
+- **schmutzung** — `schmutzung, -en`
+- **um** — `um, ist umgezogen`
+- **sich** — `sich umziehen, zieht sich`
+- **um** — `um, zog sich um, hat sich`
+- **und** — `und`
+- **ungefähr** — `ungefähr`
+- **man** — `man Uniformen. Mein Sohn studiert an der Universität. 1. Wir wohnen im 3. Stock, meine Eltern`
+- **wichtige** — `wichtige Nachricht. 2. Bitte unterbrich mich nicht, wenn ich`
+- **spreche** — `spreche. 1. Wir haben uns über das Fußballspiel`
+- **und** — `und suche eine günstige Unterkunft. 2. Ist dieser Preis inklusive Unterkunft`
+- **und** — `und Essen? Ich schicke Ihnen alle Unterlagen mit`
+- **bis** — `bis 19 Uhr. Es ist untersagt, hier zu rauchen. Ihr seid euch sehr ähnlich. Auf dem Foto kann man euch beide nicht`
+- **günstiger** — `günstiger? 2. Nichts hat geholfen, es war alles`
+- **umsonst** — `umsonst. In Ulm müssen Sie umsteigen. 1. Ich möchte diese Bluse umtauschen. Sie passt mir nicht. 2. Wo kann ich Geld umtauschen? Ein Umtausch ist leider nicht möglich. Alte Autos sind ein Problem für die Umwelt. Das Land muss mehr Geld für Umweltschutz ausgeben. Die Umweltverschmutzung nimmt`
+- **hier** — `hier. Der Umzug ist nächste Woche. Bevor wir zur Party gehen, möchte ich`
+- **mich** — `mich umziehen. 1. Der Verkäufer war sehr unfreundlich. 2. Dieses Geräusch ist mir unangenehm. 3. Er kam wie immer unpünktlich. Ich muss unbedingt mit dir sprechen. 1. Ich habe heute und morgen frei. 2. Ich kaufe ein und mein Mann kocht. Ich hatte letzte Woche einen Unfall. Wie weit ist es bis zum Bahnhof? – Nicht weit, ungefähr zehn Minuten zu Fuß. Ich finde diese Speise ungewöhnlich,`
+- **aber** — `aber sie schmeckt gut. Es ist unglaublich. Schon wieder so ein Unglück. Bei dem Unglück gab es viele Verletzte. 1. Ich mag dieses Haus nicht. Es sieht`
+- **verabredet** — `verabredet, verabredete,`
+- **hat** — `hat verabredet`
+- **verabredet** — `verabredet`
+- **verabschiedet** — `verabschiedet,`
+- **verabschiedete** — `verabschiedete,`
+- **hat** — `hat verabschiedet`
+- **verändert** — `verändert, veränderte,`
+- **hat** — `hat verändert`
+- **verbessert** — `verbessert, verbesserte,`
+- **hat** — `hat verbessert`
+- **verbot** — `verbot, hat verboten`
+- **verband** — `verband, hat verbunden`
+- **schreibt** — `schreibt, unterschrieb,`
+- **hat** — `hat unterschrieben`
+- **icht** — `icht, unterstrich,`
+- **hat** — `hat unterstrichen`
+- **unterstützte** — `unterstützte,`
+- **hat** — `hat unterstützt`
+- **untersuchte** — `untersuchte,`
+- **hat** — `hat untersucht`
+- **unterwegs** — `unterwegs`
+- **verursachte** — `verursachte,`
+- **hat** — `hat verursacht`
+- **zur** — `zur Arbeit. 2. Am Sonntag fahren wir oft Velo. Wir haben uns mit Freunden`
+- **verabredet** — `verabredet. Wir wollen zusammen`
+- **bin** — `bin mit meiner Freundin verabredet. Ich habe um 15 Uhr eine Verabredung`
+- **mit** — `mit Klaus. 1. Ich wurde von meinen Freunden sehr`
+- **fiel** — `fiel mir schwer. 1. Das geht so nicht. Wir müssen die Organisation verändern. 2. Wir haben uns lange nicht gesehen. Aber du hast dich gar nicht verändert. Am Samstag ist unser Lokal geschlos-`
+- **sen** — `sen. Wir haben eine Veranstaltung. Sie sind für Ihre Kinder verantwortlich. Sie tragen die Verantwortung für Ihre Kinder. 1. Ich habe mein Deutsch verbessert. 2. Meine Kinder haben sich in der Schule`
+- **verbessert** — `verbessert. Ich werde meinen Kindern das Rauchen verbieten. Ich bin für das Verbot dieses neuen Videospiels. In den meisten Restaurants ist Rauchen`
+- **rechts** — `rechts. Auf dem Schreiben fehlt die Unterschrift. Wir sollen alle wichtigen Wörter`
+- **komme** — `komme gleich. 2. Unterwegs können wir noch etwas`
+- **vergrößerte** — `vergrößerte,`
+- **hat** — `hat vergrößert`
+- **verhaftete** — `verhaftete, hat verhaftet`
+- **sich** — `sich verhalten, verhält`
+- **sich** — `sich, verhielt sich,`
+- **hat** — `hat sich verhalten`
+- **verhinderte** — `verhinderte,`
+- **hat** — `hat verhindert`
+- **verkaufte** — `verkaufte, hat verkauft`
+- **verlangte** — `verlangte, hat verlangt`
+- **verlängerte** — `verlängerte,`
+- **hat** — `hat verlängert`
+- **verließ** — `verließ, hat verlassen`
+- **verbrauchte** — `verbrauchte,`
+- **hat** — `hat verbraucht`
+- **verbrennt** — `verbrennt, verbrannte,`
+- **hat** — `hat verbrannt`
+- **verbrachte** — `verbrachte, hat verbracht`
+- **verdiente** — `verdiente, hat verdient`
+- **vereinbarte** — `vereinbarte,`
+- **hat** — `hat vereinbart`
+- **vergaß** — `vergaß, hat vergessen`
+- **verglich** — `verglich, hat verglichen`
+- **sich** — `sich vergnügen, vergnügt`
+- **sich** — `sich,`
+- **vergnügte** — `vergnügte sich,`
+- **hat** — `hat sich vergnügt 1. Es ist ein Vergnügen, den Kindern`
+- **beim** — `beim Spielen zuzusehen. 2. Ich wünsche dir viel Vergnügen bei der Party! Er kam mit einem vergnügten Grinsen`
+- **herein** — `herein. 1. Können Sie das Foto vergrößern? 2. Wir wollen unser Geschäft vergrößern. Die Polizei hat 23 Menschen verhaftet. Der Mann hat sich uns gegenüber`
+- **mit** — `mit öffentlichen Verkehrsmitteln`
+- **verlangt** — `verlangt. 1. Ich muss meinen Pass verlängern`
+- **helfe** — `helfe dir auf jeden Fall. 2. Sie sind falsch verbunden! Hier ist Müller, nicht Meyer. 1. Die Verbindung ist sehr gut. Ich kann`
+- **nicht** — `nicht umsteigen. 2. Kannst du bitte lauter sprechen? Die Verbindung ist sehr schlecht. Wie viel Benzin verbraucht dein Auto? Die Polizei hat den Verbrecher`
+- **ich** — `ich habe einen Verdacht. 2. Wen haben Sie in Verdacht? 1. Die Tür war nicht abgeschlossen. Das`
+- **ist** — `ist verdächtig. 2. Haben Sie etwas Verdächtiges`
+- **diesem** — `diesem Verein. Können wir einen Termin vereinbaren? In der Vergangenheit war das anders. Ich habe vergeblich versucht dich`
+- **ist** — `ist es heute warm. Auf der Party habe ich mich sehr`
+- **verpflegte** — `verpflegte, hat verpflegt`
+- **verpflichtet** — `verpflichtet`
+- **hat** — `hat verraten`
+- **verreiste** — `verreiste, ist verreist`
+- **versäumte** — `versäumte, hat versäumt`
+- **verschob** — `verschob, hat verschoben`
+- **verschrieb** — `verschrieb,`
+- **hat** — `hat verschrieben`
+- **verschwindet** — `verschwindet,`
+- **verschwand** — `verschwand,`
+- **ist** — `ist verschwunden`
+- **versicherte** — `versicherte,`
+- **hat** — `hat versichert`
+- **versprach** — `versprach,`
+- **hat** — `hat versprochen`
+- **sich** — `sich verlaufen,`
+- **verläuft** — `verläuft sich, verlief sich,`
+- **hat** — `hat sich verlaufen`
+- **verletzte** — `verletzte, hat verletzt`
+- **sich** — `sich verlieben, verliebt`
+- **sich** — `sich, verliebte sich,`
+- **hat** — `hat sich verliebt`
+- **hat** — `hat verloren`
+- **vermied** — `vermied, hat vermieden`
+- **mietete** — `mietete, hat vermietet`
+- **vermisste** — `vermisste, hat vermisst`
+- **vermutete** — `vermutete, hat vermutet`
+- **vermutlich** — `vermutlich`
+- **verpackte** — `verpackte, hat verpackt`
+- **verpasste** — `verpasste, hat verpasst Wir werden hier sehr gut mit Essen`
+- **verpflegt** — `verpflegt. Sie sind verpflichtet, den Unfall zu`
+- **ist** — `ist. Frau Dr. Müller ist zurzeit verreist. 1. Bist du verrückt geworden?! 2. So eine verrückte Idee. Der Minister hielt bei der Versamm-`
+- **lung** — `lung eine Rede. Tut mir leid, ich habe die Anmeldefrist`
+- **versäumt** — `versäumt. Leider muss ich den Termin`
+- **nen** — `nen Farben. Die Ärztin hat mir Tabletten`
+- **du** — `du ihn vielleicht gesehen? 1. Wollen Sie Ihr Gepäck versichern? 2. Wie sind Sie versichert? Haben Sie Ihre Versichertenkarte`
+- **dabei** — `dabei? 1. Sie sollten eine Versicherung für Ihr Gepäck abschließen. 2. Sie müssen den Unfall der Ver-`
+- **sicherung** — `sicherung melden. Unser Zug hatte 10 Minuten Verspä-`
+- **tung** — `tung. Meine Mutter hat mir versprochen,`
+- **mich** — `mich abzuholen. Nach acht Stunden Schule haben die Kinder keine Lust mehr, die Hausaufgaben zu machen. Ich finde`
+- **das** — `das verständlich. Gestern haben wir uns im Wald`
+- **sehr** — `sehr. Der Arzt sagt, ich soll Stress`
+- **ältere** — `ältere Frau. Mit der Vermietung von Wohnungen`
+- **kann** — `kann man viel Geld verdienen. Ich vermisse meine Familie. 1. Du suchst ein Zimmer? Dann frag bei`
+- **von** — `von Herrn Fischer. Ich vermute, sie wird heute nicht`
+- **verpasst** — `verpasst. ZERTIFIKAT B1 94 WORTLISTE`
+- **verwendete** — `verwendete, hat verwen-`
+- **det** — `det`
+- **verzieh** — `verzieh, hat verziehen Verzeihung`
+- **verzichtete** — `verzichtete, hat verzichtet`
+- **viel** — `viel/viele`
+- **vielleicht** — `vielleicht`
+- **von** — `von`
+- **hat** — `hat versteckt`
+- **verstand** — `verstand, hat verstanden`
+- **versuchte** — `versuchte, hat versucht`
+- **verteilte** — `verteilte, hat verteilt`
+- **vertraute** — `vertraute, hat vertraut`
+- **hat** — `hat vertreten`
+- **verurteilte** — `verurteilte, hat verurteilt`
+- **verwechselte** — `verwechselte,`
+- **hat** — `hat verwechselt Dieses Wort wird oft verwendet. Das werde ich ihm nie verzeihen`
+- **noch** — `noch nicht. Vielleicht. 2. Vielleicht bekomme ich den Job. 3. Die Fahrkarte war vielleicht teuer! 4. Hast du vielleicht Kleingeld für mich? Wir wohnen in einem schönen Viertel. Auf dieser Website kann man an einer`
+- **meinem** — `meinem Computer. Darf ich Ihnen meine Visitenkarte`
+- **immer** — `immer sehr voll. 3. Bitte unterschreiben Sie mit Ihrem`
+- **heute** — `heute? Wir bitten um Ihr Verständnis. 1. Ich habe das Geld hinter dem Regal`
+- **sehr** — `sehr gut. 1. Haben Sie es schon mal mit diesem Mittel versucht? 2. Ich habe immer wieder versucht, Sie`
+- **zu** — `zu erreichen. 3. Versuchen Sie doch mal meinen Apfelkuchen. 1. In der Forschung werden viele Ver-`
+- **suche** — `suche gemacht. 2. Mein Versuch, etwas zu ändern, blieb`
+- **ohne** — `ohne Erfolg. Kannst du bitte schon mal die Gläser`
+- **ich** — `ich zu seiner Vertreterin gegangen. 2. Die Elternvertreter treffen sich morgen Abend in der Schule. Herr Dr. Meyer macht für mich die Vertretung. Das Gericht hat den Täter zu einer Geldstrafe verurteilt. Sprechen Sie bitte mit der Verwaltung. Die können Ihnen helfen. Sind Sie mit Frau Meyer verwandt? Zu meinem Geburtstag kommen alle Verwandten. Entschuldigen Sie, ich habe Sie mit`
+- **jemandem** — `jemandem verwechselt. WORTLISTE WORTLISTE`
+- **las** — `las vor, hat vorgelesen`
+- **vorn** — `vorn, vorne`
+- **schlug** — `schlug vor,`
+- **hat** — `hat vorgeschlagen`
+- **stellte** — `stellte vor,`
+- **hat** — `hat vorgestellt`
+- **vorwärts** — `vorwärts`
+- **voneinander** — `voneinander`
+- **vor** — `vor`
+- **vor** — `vor allem`
+- **vorbei** — `vorbei/vorbei-`
+- **bereitet** — `bereitet vor, bereitete vor,`
+- **hat** — `hat vorbereitet`
+- **hatte** — `hatte vor, hat vorgehabt`
+- **vorher** — `vorher`
+- **vorhin** — `vorhin`
+- **kam** — `kam vor,`
+- **ist** — `ist vorgekommen 1. Ich habe noch keine Wohnung. Ich`
+- **wohne** — `wohne vorläufig bei einem Freund. 2. Das ist eine vorläufige Entscheidung. Ich lese meinen Kindern oft etwas vor. 1. Bitte vorn beim Fahrer einsteigen! 2. Zwei Kinokarten, bitte. – Wo möchten Sie sitzen, vorne oder hinten? 3. Das war noch nicht ganz richtig. Bitte`
+- **noch** — `noch mal von vorne. Wir wohnen in einem Vorort von Köln. Ich schlage vor, dass wir eine Pause`
+- **fst** — `fst mir beim Deutschlernen, und ich`
+- **lade** — `lade dich zum Essen ein. Beachten Sie bitte die Vorschriften für`
+- **nicht** — `nicht vorgestellt. 2. Darf ich dir meine Frau vorstellen? 3. Ich möchte mich vorstellen: Mein Name ist Schuster. Wann läuft der Film? – Die nächste Vorstellung ist um 15 Uhr. Wann hast du dein Vorstellungs-`
+- **gespräch** — `gespräch? Der Vorteil von dieser Wohnung ist,`
+- **dass** — `dass sie direkt im Zentrum liegt. Ihr Vortrag war sehr interessant. Wie ist die Vorwahl von Hamburg? Ich kann nicht vorbei. Bitte fahr noch`
+- **gehört** — `gehört. 1. Ich bin vor einer Woche zurück-`
+- **zung** — `zung für ein langes Leben. 2. Er will die Arbeit nur unter der Voraussetzung annehmen, dass ihm die Firma eine Wohnung organisiert. Der Zug hat voraussichtlich 20 Minuten Verspätung. 1. Die Linie 8 fährt am Krankenhaus`
+- **vorbei** — `vorbei. 2. Keine Sorge! Die Schmerzen sind in ein`
+- **paar** — `paar Minuten vorbei. 3. Kommst du um 3 Uhr bei mir vorbei? 1. Am Sonntag machen wir ein kleines Fest. Ich muss noch viel dafür vor-`
+- **vor** — `vor? Ich komme mit ins Café. Vorher muss`
+- **ich** — `ich aber noch zur Bank. Vorhin hat Heidrun angerufen. Du`
+- **sollst** — `sollst sie zurückrufen. Kein Problem. Das kann vorkommen. ZERTIFIKAT B1 96 WORTLISTE`
+- **wann** — `wann`
+- **hat** — `hat gewarnt`
+- **hat** — `hat gewartet`
+- **warum** — `warum`
+- **was** — `was`
+- **was** — `was für ein-`
+- **wusch** — `wusch, hat gewaschen`
+- **wechselte** — `wechselte, hat gewechselt`
+- **hat** — `hat geweckt`
+- **ist** — `ist gewachsen`
+- **hat** — `hat gewählt`
+- **wanderte** — `wanderte, ist gewandert`
+- **ist** — `ist. 1. Was ist das? 2. Was möchten Sie? 3. Wissen Sie, was das ist? 4. Hast du schon (et)was gegessen? Ich will mir ein Auto kaufen. – Was`
+- **denn** — `denn für eins? 1. Ich habe die Bluse gerade frisch`
+- **hier** — `hier ist zu teuer. Können Sie mich morgen früh um`
+- **sechs** — `sechs wecken? Hast du den Wecker schon gestellt? Ziehen Sie bitte einen waagerechten Strich. 1. Bist du schon lange wach? 2. Ich bin gerade wach geworden. 1. Mein Sohn ist sehr gewachsen. Er ist`
+- **jetzt** — `jetzt schon größer als ich. 2. Ich will mir die Haare wachsen lassen. 3. In meinem Garten wachsen Tomaten`
+- **und** — `und Kartoffeln. 1. Ich habe meinen Wagen in die Werk-`
+- **statt** — `statt gebracht. 2. Im zweiten Wagen befindet sich das Zugrestaurant. 1. Sie können wählen: Als Vorspeise gibt`
+- **es** — `es Suppe oder Salat. 2. Sie müssen erst eine Null wählen. 3. Ich habe diese Partei nicht gewählt. 1. Sie haben die Wahl: mit Vollpension`
+- **oder** — `oder Halbpension? 2. Die nächste Wahl ist im Herbst. 1. Du fährst viel zu schnell. Bist du`
+- **wieder** — `wieder geraucht? 1. Während ich arbeite, höre ich oft Musik. 2. Während der Prüfung dürfen wir`
+- **unsere** — `unsere Handys nicht benutzen. Wahrscheinlich mache ich im Herbst`
+- **noch** — `noch einen Deutschkurs. 1. Hinter unserem Haus fängt der Wald`
+- **an** — `an. 2. Ich gehe gern im Wald spazieren. 1. Ich stelle das Regal rechts an die Wand. 2. Die Wände sind hier sehr dünn. Man`
+- **hört** — `hört alles. Wir gehen oft wandern. Wir haben in den Ferien eine schöne Wanderung gemacht. WORTLISTE WORTLISTE`
+- **wendete** — `wendete, hat gewendet`
+- **wenig** — `wenig/wenige`
+- **wenigstens** — `wenigstens`
+- **wenn** — `wenn`
+- **wer** — `wer`
+- **ist** — `ist geworden`
+- **hat** — `hat geworfen`
+- **weshalb** — `weshalb`
+- **weder** — `weder … noch`
+- **weg** — `weg/weg-`
+- **hat** — `hat wehgetan`
+- **sich** — `sich weigern, weigert sich,`
+- **weigerte** — `weigerte sich,`
+- **hat** — `hat sich geweigert`
+- **weil** — `weil`
+- **hat** — `hat geweint -weise`
+- **welcher** — `welcher, welche, welches`
+- **wenn** — `wenn ich nicht arbeiten muss. 1. Wer ist das? Kennst du die Frau? 2. Wer will die Prüfung machen? 1. Ich sehe gern Werbung im Fernsehen. 2. Ich möchte keine Werbung im Briefkasten. 1. Es wird kalt. 2. Ich habe morgen Geburtstag. − Wie alt`
+- **wirst** — `wirst du denn? 3. Warum fährst du so schnell? Bist du`
+- **glaube** — `glaube, wir werden dieses Jahr zu Hause bleiben. Die Kinder haben Steine ins Wasser`
+- **statt** — `statt. Wir hatten kein Werkzeug für die Reparatur dabei. Das Auto ist vielleicht noch 1000 Euro`
+- **von** — `von meiner Großmutter. 1. Weshalb rufst du an? 2. Ich bekomme Besuch, weshalb ich`
+- **leider** — `leider nicht zur Party gehen werde. Für Urlaub haben wir weder Zeit noch Geld. 1. Dieser Weg ist sehr breit und`
+- **nicht** — `nicht landen. 2. Ich rufe wegen meiner Tochter an. 1. Wo tut es weh? 2. Mir tut der Rücken weh. 3. Hast du dir wehgetan? Kreuzen Sie bitte an: „weiblich“ oder „männlich“. 1. Ich möchte zum Frühstück ein weiches Ei. 2. Das Bett im Hotel war mir zu weich. Ich weigere mich diese Arbeit zu tun. Ich kann nicht kommen, weil ich krank`
+- **bin** — `bin. In diesem Restaurant gibt es sehr`
+- **neue** — `neue Puppe. 1. War der Test schwierig? – Teilweise. 2. Das ist möglicherweise nicht so`
+- **wie** — `wie viel(e)`
+- **hat** — `hat gewinkt`
+- **hat** — `hat gewirkt`
+- **hat** — `hat gewusst`
+- **wo** — `wo`
+- **woher** — `woher`
+- **wohin** — `wohin`
+- **hat** — `hat gewettet`
+- **widerspricht** — `widerspricht,`
+- **widersprach** — `widersprach,`
+- **hat** — `hat widersprochen`
+- **wie** — `wie`
+- **wieder** — `wieder/wieder-`
+- **wiederholte** — `wiederholte,`
+- **hat** — `hat wiederholt`
+- **hat** — `hat gewogen`
+- **wieso** — `wieso 1. Wie viel Geld hast du dabei? 2. Wie viel ist ein Euro hier wert? 3. Wie viele Kinder haben Sie? Herzlich willkommen in Köln. Der Wind kommt heute von Westen. Es ist heute sehr windig. Alle standen auf dem Bahnsteig und`
+- **ment** — `ment? Muss ich vorsichtig sein? 1. Du glaubst mir nicht? Es ist aber`
+- **um** — `um 1900 sehr gut. 2. Man sagte mir, das Buch kostet nur 9 Euro. In Wirklichkeit kostet es 14 Euro. Ich kenne die Wirtin von diesem Lokal. Sie ist sehr nett. In der Schule lernen die Kinder viel`
+- **über** — `über Wirtschaft und Politik. 1. Weißt du, wie der Hausmeister heißt? 2. Ich habe nicht gewusst, dass Pascal`
+- **gelacht** — `gelacht. 1. Wo waren Sie im Urlaub? 2. Wo wohnen Sie? 3. Wo ist denn meine Uhr? 1. Woher kommst du? 2. Unsere Nachbarn ziehen nach Berlin. – Woher wissen Sie das? 1. Wohin kommt der Schrank? 2. Wohin fährt dieser Bus? Meine Tochter hat bei einem Wettbe-`
+- **werb** — `werb gewonnen. Sie hat das beste Bild`
+- **gemalt** — `gemalt. 1. Wir haben gewettet, dass sie wieder zu`
+- **gehört** — `gehört? Die Wettervorhersage für morgen:`
+- **aber** — `aber wieder gesund. 3. Mein Bruder kommt schon wieder zu`
+- **men** — `men. Morgen fahren sie wieder zurück. Ich wiederhole: Die Nummer ist 3487. Eine Wiederholung der Prüfung ist`
+- **sich** — `sich wundern,`
+- **wundert** — `wundert sich,`
+- **wunderte** — `wunderte sich,`
+- **hat** — `hat sich gewundert`
+- **wünschte** — `wünschte, hat gewünscht`
+- **hat** — `hat gezahlt`
+- **hat** — `hat gezählt`
+- **wohl** — `wohl`
+- **hat** — `hat gewohnt`
+- **hat** — `hat gewollt (hat wollen als Modalverb)`
+- **worüber** — `worüber`
+- **worum** — `worum`
+- **war** — `war wunderschön. 2. Ich habe mir ein wunderschönes Kleid`
+- **gekauft** — `gekauft. 1. Es hat mich gewundert, dass das Essen`
+- **hier** — `hier so günstig ist. 2. Ich wundere mich, dass du schon so`
+- **los** — `los? 1. Ich wünsche Ihnen alles Gute. 2. Was wünschst du dir zum Geburtstag? 3. Wünsch mir Glück! 1. Haben Sie sonst noch einen Wunsch? 2. Mit den besten Wünschen für Sie und Ihre Familie. Diese Wurst ist mir zu fett. Warum bist du so wütend? 1. Können Sie die Zahl bitte wiederholen? 2. Die Zahl der Internetnutzer wird`
+- **immer** — `immer größer. Die Anzahl der Teilnehmer war groß. Die Gäste sind zahlreich gekommen. Es gibt zahlreiche Beispiele für gute Zusammenarbeit. 1. Herr Ober, zahlen bitte! 2. Ich hatte keinen Fahrschein und`
+- **musste** — `musste 60 Euro Strafe zahlen. 3. Wir müssen im nächsten Jahr mehr Steuern zahlen. Bitte geben Sie bei der Zahlung die Rechnungsnummer an. 1. Bitte zählen Sie das Wechselgeld`
+- **sofort** — `sofort nach. 2. Mein Sohn kann schon bis 100 zählen. 3. Ich zähle auf dich! Der Zahn tut mir schon lange weh. Die neue Zahncreme riecht sehr gut. Um das Fahrrad zu reparieren,`
+- **brauchst** — `brauchst du eine Zange. Bitte fangen Sie erst an, wenn ich Ihnen ein Zeichen gebe. 1. Kann ich nach Hause gehen? Ich fühle`
+- **mich** — `mich nicht wohl. 2. Das wird wohl etwas länger dauern als`
+- **möglichst** — `möglichst im Zentrum. Wir sitzen im Wohnzimmer und sehen`
+- **gesagt** — `gesagt. Ich muss das Wort im Wörterbuch`
+- **war** — `war ein Wunder, dass nichts Schlimmes passiert ist. 2. Du isst zu viel Schokolade. Kein Wunder, dass die Hose nicht mehr`
+- **passt** — `passt. 1. Im ganzen Urlaub hatten wir wunder-`
+- **bares** — `bares Wetter. 2. Diese Schokolade schmeckt wunderbar. ZERTIFIKAT B1 100 WORTLISTE`
+- **hat** — `hat/ist gezogen`
+- **sonenstand** — `sonenstand; D, A: Fami-`
+- **lienstand** — `lienstand`
+- **zu** — `zu`
+- **bereitete** — `bereitete zu,`
+- **hat** — `hat zubereitet`
+- **zeichnete** — `zeichnete, hat gezeichnet`
+- **hat** — `hat gezeigt`
+- **e** — `e`
+- **zurzeit** — `zurzeit`
+- **hat** — `hat gezeltet`
+- **zerstörte** — `zerstörte, hat zerstört`
+- **ins** — `ins Bett. 2. Ich musste beim Arzt ziemlich lange`
+- **serviert** — `serviert. Wie viele Zinsen bekomme ich für`
+- **mein** — `mein Sparkonto? Heute gehen wir mit den Kindern in`
+- **den** — `den Zirkus. Ich hätte gern einen Tee mit Zitrone. Bei „Zivilstand“ musst du „ledig“`
+- **jetzt** — `jetzt noch durch den Zoll. Hier können wir nicht fahren. Das ist`
+- **eine** — `eine Fußgängerzone. Am Sonntag gehen wir mit den Kindern in den Zoo. 1. Ich bringe Sie zum Bahnhof. 2. Wann sind Sie zu Hause? 3. Am besten gehen Sie zu Fuß. 4. Gehen Ihre Kinder schon/noch zur Schule? 5. Das Kleid ist mir zu teuer. 6. Bitte zwanzig Briefmarken zu 55 Cent. 7. Ich trinke zum Essen ein Bier. 8. Unsere Mannschaft hat 2 zu 1 gewon-`
+- **nen** — `nen. 9. Ich habe vor, mir ein neues Auto zu`
+- **zu** — `zu. Nehmen Sie Zucker in den Tee? Meine Kinder lernen in der Schule`
+- **zeige** — `zeige Ihnen den Weg. 3. Komm her! Ich zeige dir etwas. Das Wort steht in der fünften Zeile von`
+- **punkt** — `punkt für einen Besuch. Zurzeit habe ich sehr viel zu tun. Diese Zeitschrift kaufe ich jede Woche. Ich lese manchmal Zeitung. Wir machen Camping-Urlaub und`
+- **in** — `in zentraler Lage. 1. Im Zentrum gibt es fast keine Park-`
+- **plätze** — `plätze. 2. Es gibt ein neues Zentrum mit vielen Geschäften. Es wird am Samstag`
+- **eröffnet** — `eröffnet. Der Sturm hat viele Häuser zerstört. Wenn ich die Prüfung schaffe,`
+- **bekomme** — `bekomme ich ein Zertifikat. Hast du einen Zettel für mich? Ich`
+- **muss** — `muss etwas aufschreiben. Was hast du mit meinen Sachen`
+- **in** — `in dein Zimmer getan. Die Polizei sucht noch Zeugen für den Unfall. WORTLISTE WORTLISTE`
+- **ichholz** — `ichholz; A: Zünder`
+- **nahm** — `nahm zu,`
+- **hat** — `hat zugenommen`
+- **kommt** — `kommt zurecht,`
+- **kam** — `kam zurecht,`
+- **ist** — `ist zurechtgekommen`
+- **zurück** — `zurück/zurück-`
+- **zurzeit** — `zurzeit`
+- **hat** — `hat zugesagt`
+- **fasst** — `fasst zusammen,`
+- **fasste** — `fasste zusammen,`
+- **hat** — `hat zusammengefasst`
+- **schaute** — `schaute zu,`
+- **hat** — `hat zugeschaut`
+- **zuerst** — `zuerst`
+- **ist** — `ist zugegangen`
+- **hörte** — `hörte zu, hat zugehört`
+- **zuletzt** — `zuletzt`
+- **machte** — `machte zu, hat zugemacht`
+- **zumindest** — `zumindest`
+- **zunächst** — `zunächst Ich hätte gern eine Schachtel Zünder. Ich hätte gern eine Schachtel Zündhölzer. Ich habe im Urlaub 1 Kilo zugenom-`
+- **men** — `men. Soll ich Ihnen helfen? - Danke. Ich`
+- **komme** — `komme allein zurecht. 1. Bitte eine Fahrkarte nach Frankfurt`
+- **und** — `und zurück! 2. Wann wirst du zurückkommen? 3. Wann muss ich das Buch zurückgeben? Zurzeit ist kein Zimmer frei. Meine Eltern haben uns zum Essen`
+- **gespielt** — `gespielt. 2. Zahlen bitte. - Zusammen oder`
+- **getrennt** — `getrennt? 3. Das macht zusammen 10 Euro 80. 4. Fuß und Ball musst du zusammen-`
+- **schaue** — `schaue lieber nur zu. Liebe Zuschauer, wir wünschen Ihnen`
+- **gute** — `gute Unterhaltung. Für diesen Zug müssen Sie einen Zuschlag zahlen. 1. Wer war zuerst? – Der Herr hier. 2. Zuerst gibt es Mittagessen. Dann könnt`
+- **ihr** — `ihr Schokolade essen. 3. Zuerst hat mir die Arbeit gar nicht`
+- **ist** — `ist nicht so groß, aber sie hat einen Balkon. 1. Der Zugang zu diesem Haus ist`
+- **zumindest** — `zumindest jetzt nicht, wenn die Kinder`
+- **noch** — `noch so klein sind. Zunächst möchte ich alle begrüßen! ZERTIFIKAT B1 102 WORTLISTE`
+- **zweifelte** — `zweifelte, hat gezweifelt`
+- **zwang** — `zwang, hat gezwungen`
+- **zu** — `zu sein, ist zu, war zu, ist`
+- **zu** — `zu gewesen`
+- **stimmte** — `stimmte zu,`
+- **hat** — `hat zugestimmt`
+- **das** — `das/der Zvieri/Znüni, -s (CH) → D: Imbiss; A: Jause`
+- **zu** — `zu bewerben. Der Job ist sicher schon`
+- **weg** — `weg. Ich zweifle nicht daran, dass Sie recht`
+- **und** — `und Stuttgart. 3. Zwischen 8 und 10 Uhr bin ich zu Hause. 1. Am Sonntag sind die die meisten Läden zu. 2. Das Fenster war nicht zu. Als wir in die Wohnung eingezogen`
+- **sind** — `sind, war sie in sehr schlechtem Zustand. Wir haben ein Problem mit der Heizung. Wer ist dafür zuständig? 1. Ich stimme dir in dieser Sache völlig`
+- **zu** — `zu. 2. Er nickt zustimmend. Wir brauchen Ihre Zustimmung, um Ihnen Werbung zu schicken. Welche Zutaten braucht man für`
+- **ist** — `ist immer sehr zuverlässig. Es ist Zeit für ein kleines Zvieri. 1. Diese Schuhe sind zwar teuer, aber gut. 2. Ich kriege jetzt doch eine Woche Urlaub, und zwar nächsten Monat. WORTLISTE WORTLISTE Ihre Notizen Felix Brandl | München6 B1_Wortliste_04 Goethe-Institut e.V. Dachauer Straße 122 80637 München`
+
+## adj_stem missing (22)
+
+- **all** — `all-`
+- **aller** — `aller-`
+- **ander** — `ander-`
+- **beid** — `beid-`
+- **dies** — `dies-`
+- **heraus** — `heraus-, raus- (heraus-) finden, findet`
+- **herein** — `herein-, rein-`
+- **herunter** — `herunter-, runter- (herunter-)laden, lädt`
+- **inner** — `inner-`
+- **irgend** — `irgend-`
+- **ness** — `ness-Studio gehen. 4. Ich habe jetzt schon dreimal bei`
+- **kein** — `kein-`
+- **manch** — `manch-`
+- **miss** — `miss-`
+- **mittler** — `mittler-`
+- **ober** — `ober-`
+- **rück** — `rück-`
+- **selb** — `selb-`
+- **solch** — `solch-`
+- **über** — `über-`
+- **unter** — `unter-`
+- **un** — `un-`
+
+## expression missing (0)
+
+_None._
+

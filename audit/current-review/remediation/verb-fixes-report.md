@@ -1,0 +1,698 @@
+# Verb remediation manifest report
+
+This deliverable converts every retained verb and verb-with-preposition finding into a source-addressed, machine-readable remediation record. Production data was not edited.
+
+## Reconciliation
+
+| Bank | Consolidated | Retained fixes | Rejected/excluded |
+|---|---:|---:|---:|
+| verbs | 641 | 633 | 8 |
+| verb_preps | 26 | 25 | 1 |
+| **Total** | **667** | **658** | **9** |
+
+The five medium/low spelling rejections had validation batch labels that differed from their consolidated-finding batches. They were joined by canonical bank plus exact headword after exact batch-plus-headword matching failed. Each word resolves uniquely in the relevant findings.
+
+## Effective severities
+
+| Severity | Count |
+|---|---:|
+| high | 184 |
+| low | 89 |
+| medium | 385 |
+
+## Validation verdicts among retained fixes
+
+| Verdict | Count |
+|---|---:|
+| CONFIRM | 217 |
+| DOWNGRADE | 9 |
+| NOT_SAMPLED | 421 |
+| REVISE | 10 |
+| UPGRADE | 1 |
+
+## Actions
+
+| Action | Count |
+|---|---:|
+| remove_record | 1 |
+| replace_or_relabel_record | 1 |
+| split_senses | 261 |
+| update_cefr | 60 |
+| update_fields | 220 |
+| update_morphology_or_split_senses | 107 |
+| update_spelling_or_gloss | 8 |
+
+## Exactness
+
+- Safe for automatic application: 30
+- Flagged for editorial/schema review: 628
+- Every flagged record carries explicit machine-readable flags and retains the full validated remedy text.
+- Multi-sense verbs preserve structured sense records for reflexivity, separability, valency, auxiliary selection, and principal-part evidence. A first-sense top-level default is recorded for backward compatibility, but is explicitly flagged when frequency/commonness still needs confirmation.
+
+## Excluded validation rejects
+
+- `verbs / verbs_003 / fortfahren` — For “continue,” standard German permits both *hat fortgefahren* and *ist fortgefahren*; intransitive “drive away” takes *sein*. The stored *sein* is therefore valid for both actually listed senses. Only unlisted transitive “transport away” would require *haben*.
+- `verbs / verbs_005 / kanalisieren` — `Canalize` is accepted Oxford British spelling; `canalise` is a permissible style preference, not a correctness requirement.
+- `verbs / verbs_005 / beäugen` — `Scrutinize` is accepted Oxford British spelling; changing it to `scrutinise` is optional house style, not correction.
+- `verbs / verbs_006 / verzinken` — `Galvanize` is valid Oxford British spelling, not an American-only error; `galvanise` may be chosen for house-style consistency but is not a correctness fix. [Oxford explains that both endings are correct in British English.](https://home.oxfordowl.co.uk/spelling-spotlight-when-to-use-ize-and-ise/)
+- `verbs / verbs_006 / uniformieren` — `Standardize` is accepted Oxford British spelling; consistency may justify `standardise`, but the stored form is not wrong.
+- `verbs / verbs_007 / erküren` — *Erküren* is a recognized standard lemma (elevated, especially Swiss), and Duden explicitly allows strong and weak inflection. The stored strong *erkor/erkoren* is valid; *erkiesen* is not the only permissible infinitive.
+- `verbs / verbs_008 / rubrizieren` — `Categorize` is accepted Oxford British spelling; `categorise` is optional house style rather than a correction.
+- `verbs / verbs_008 / staubsaugen` — Standard forms are *staubsaugte, hat gestaubsaugt*, not `staubgesaugt`; the current item is correctly weak/regular, and regular verbs’ blank principal-part fields are not presented in the app’s irregular-form drill. The alleged false derivation is both linguistically and operationally unsupported.
+- `verb_preps / verb_preps_001 / sich grämen über` — `Grieve about` is grammatical and semantically accurate, even if `grieve over/be distressed about` is stylistically more frequent.
+
+## Flagged retained records
+
+- `verbs:verbs_001:00050:sorgen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00057:schaffen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_001:00059:vorstellen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00087:ziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_001:00116:leisten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00132:ergeben`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00138:beteiligen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00172:treten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_001:00185:beziehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00196:anmelden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00207:wenden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00213:verpflichten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00217:erinnern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00227:gefallen`: contains_nonexact_top_level_default
+- `verbs:verbs_001:00239:vornehmen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00244:eingehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00355:aktivieren`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00405:konzentrieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00423:stoßen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_001:00429:verabschieden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00430:binden`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00433:merken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00440:hängen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_001:00457:verschaffen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00465:ausbilden`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00517:formulieren`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00538:unterhalten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00540:erweisen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00554:begeben`: contains_nonexact_top_level_default
+- `verbs:verbs_001:00577:auftauchen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00588:qualifizieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00590:spezialisieren`: contains_nonexact_top_level_default
+- `verbs:verbs_001:00597:anhören`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00608:ausweisen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_001:00610:vermuten`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00628:ansiedeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_001:00636:variieren`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00653:auszahlen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00659:kontaktieren`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00666:herausstellen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00687:beeindrucken`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_001:00689:zusammensetzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_001:00696:einziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_002:00701:anziehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00704:bevorzugen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_002:00709:demonstrieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_002:00711:berufen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_002:00718:entspannen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00745:bewähren`: contains_nonexact_top_level_default
+- `verbs:verbs_002:00755:recherchieren`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_002:00757:durchlaufen`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_002:00798:stürzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00803:wohlfühlen`: contains_nonexact_top_level_default
+- `verbs:verbs_002:00815:gönnen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00827:trauen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00829:zurückziehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00834:eintauchen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00838:anfühlen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00842:stützen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00851:übergehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_002:00857:wandeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00858:einigen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00878:auskennen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_002:00892:abheben`: no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00899:entschließen`: contains_nonexact_top_level_default
+- `verbs:verbs_002:00908:einlassen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00913:anweisen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_002:00928:erholen`: contains_nonexact_top_level_default
+- `verbs:verbs_002:00940:umziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00948:ausbreiten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:00971:tauchen`: no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00975:wiedergeben`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_002:00978:erhoffen`: contains_nonexact_top_level_default
+- `verbs:verbs_002:00990:teilhaben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_002:00991:verbrennen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:00995:unterziehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01007:verlieben`: contains_nonexact_top_level_default
+- `verbs:verbs_002:01013:aufbrechen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:01043:wundern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01050:zusammenschließen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01065:abbiegen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:01092:abzeichnen`: contains_nonexact_top_level_default
+- `verbs:verbs_002:01097:rollen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:01100:beruhigen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01108:abmelden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_002:01114:vertragen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01118:beklagen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01125:erfragen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01133:verschlechtern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01151:rüsten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01152:abkühlen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:01155:heilen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:01186:anschaffen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01196:jagen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_002:01204:auslaufen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01209:zuwenden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01228:beschweren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01231:anfahren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01248:ausdenken`: contains_nonexact_top_level_default
+- `verbs:verbs_002:01254:anhaben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01258:entzünden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01264:ausziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_002:01265:lauschen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01272:niederlassen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01278:vorhaben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01308:erwärmen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_002:01313:zurechtfinden`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_002:01321:gewöhnen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01323:weigern`: contains_nonexact_top_level_default
+- `verbs:verbs_002:01325:innehaben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01326:platzen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_002:01329:tummeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01345:schweben`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01356:festschreiben`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01360:starkmachen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_002:01362:abarbeiten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_002:01363:ansteuern`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01365:bereisen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_002:01370:erwachsen`: contains_nonexact_top_level_default, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01408:abfahren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01409:anlehnen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_003:01413:kippen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01417:durchbrechen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01459:wehen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01464:anschreiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01470:spinnen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01495:hinlegen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01499:strecken`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01502:verabreden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01504:wappnen`: contains_nonexact_top_level_default
+- `verbs:verbs_003:01515:entschuldigen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01527:bedauern`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01554:offenlegen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01556:regen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01557:schwärmen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01566:niederlegen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01567:schmelzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01570:zerbrechen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01588:beugen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01594:hinziehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01598:abwechseln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01614:kollidieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01623:bessern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01632:kreisen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01646:ausruhen`: no_lossless_top_level_field_assignment
+- `verbs:verbs_003:01656:stürmen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01679:absenken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01680:bestreben`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_003:01691:überziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01700:zuspitzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01705:einmischen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01713:verderben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01714:verkleiden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01677:zerlegen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01732:distanzieren`: contains_nonexact_top_level_default
+- `verbs:verbs_003:01747:anbahnen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01759:profilieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01761:saugen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01768:abtreten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01774:daherkommen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01775:einstehen`: sense_construction_not_fully_parsed
+- `verbs:verbs_003:01803:dabeihaben`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01815:streifen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01818:zusammentun`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01820:annähern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01828:fortbewegen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_003:01840:zurückmelden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01843:anliegen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01848:hauen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01854:umschreiben`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01865:einfrieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01869:scrollen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01875:wiedersehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01877:anstrengen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_003:01889:zurücklehnen`: contains_nonexact_top_level_default
+- `verbs:verbs_003:01892:aufdrehen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01894:beschenken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01912:einatmen`: sense_construction_not_fully_parsed
+- `verbs:verbs_003:01916:krachen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01926:unterstehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01927:verschlimmern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01928:wegziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01929:zerfallen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01931:ausschauen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01933:billigen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01944:pendeln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01961:aufspielen`: contains_nonexact_top_level_default
+- `verbs:verbs_003:01965:entfliehen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:01971:hüpfen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01977:verteuern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:01991:jubeln`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:01997:schleudern`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02001:umreißen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02003:verschulden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:02008:zusammentreten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02012:anlangen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02016:ausrücken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02020:dehnen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_003:02021:eilen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02024:erschrecken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02036:spicken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02039:überlasten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02057:erraten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02059:frieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02060:hochziehen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02066:stauen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_003:02072:umrüsten`: sense_construction_not_fully_parsed
+- `verbs:verbs_003:02085:ersticken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02087:großschreiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_003:02097:pfeifen`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_004:02107:verstreichen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02126:herantragen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02151:einprägen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02155:konstituieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02167:verschlucken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02173:bummeln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02174:dirigieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_004:02181:hochfahren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_004:02190:tappen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02198:abzweigen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02200:anbrechen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02207:einschreiten`: sense_construction_not_fully_parsed
+- `verbs:verbs_004:02215:plaudern`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_004:02221:überreden`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02226:aufrichten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02238:erlösen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02243:hungern`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02244:hüten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02245:jucken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02255:verheißen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02258:verschmutzen`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02287:schleifen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_004:02288:schwertun`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02298:zurückbilden`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_004:02299:zurückhaben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02306:aufregen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02310:bedrängen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02322:rächen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02331:vereidigen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02344:bereiterklären`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02349:erkaufen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02350:erübrigen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_004:02360:outen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_004:02362:rentieren`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02373:verrutschen`: sense_construction_not_fully_parsed
+- `verbs:verbs_004:02396:einnisten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_004:02419:scheren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_004:02420:schminken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02428:verblassen`: sense_construction_not_fully_parsed
+- `verbs:verbs_004:02431:vollstrecken`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02433:zurückfallen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02443:aufhellen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02471:umfahren`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_004:02479:zollen`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02497:ausprägen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02513:hinsetzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02537:zerren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02560:fristen`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02566:klammern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02589:weggehen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_004:02605:buhlen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02609:einengen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02621:hervortun`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_004:02623:hocken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02625:keimen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02631:mutieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02643:verbünden`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02781:bröckeln`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02653:aberkennen`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02659:ausatmen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02667:entkernen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02673:fortpflanzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_004:02679:mausern`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02681:mitschwingen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02688:schränken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02696:verspäten`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02705:abschauen`: contains_nonexact_top_level_default
+- `verbs:verbs_004:02707:amortisieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02713:aufgießen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02715:aufstecken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02716:aufwecken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02718:auswerfen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02729:inhalieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_004:02733:liebäugeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02741:reglementieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02749:übergießen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02753:untertauchen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02766:anbrennen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02768:anklopfen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02763:abschotten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02775:ausreißen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_004:02796:kitzeln`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:02801:maskieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02815:umwerfen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02816:verbiegen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02818:verhören`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02840:aufblasen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02842:auftauen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02843:aufweichen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02844:ausgliedern`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02845:aushärten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02846:ausholen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02852:bewirten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02853:bezichtigen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02858:durchsuchten`: sense_construction_not_fully_parsed
+- `verbs:verbs_005:02859:einfliegen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02861:entledigen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02869:hinken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02877:mühen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02883:prügeln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02889:solidarisieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02890:sprinten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:02902:verstummen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02910:abhauen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02924:auflehnen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02952:gruseln`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02958:hinwegsetzen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02965:losziehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02969:rasen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02972:schwächeln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02996:abbrausen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:02999:abscheiden`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03000:abstumpfen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03006:befreunden`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03023:einverleiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03026:erstechen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03028:frönen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03029:gegenübersehen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03042:lasten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03053:scharen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03054:schmeicheln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03059:spucken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:03060:spuken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03063:überkommen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03116:gehorchen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03121:herumgehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03127:lähmen`: sense_construction_not_fully_parsed
+- `verbs:verbs_005:03128:liieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03135:oxidieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03156:umbrechen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03160:verkneifen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03172:abhandenkommen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03176:abtreiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03183:ansaugen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03184:anspannen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03191:auslachen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:03193:ausrasten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03194:ausrutschen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:03195:ausschlachten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03201:betrinken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03203:bloßstellen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03210:ducken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03212:durchringen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03214:duzen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03230:herumtreiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03245:lechzen`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03271:verknoten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03279:vorgaukeln`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03285:zerstreiten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03290:zuwinken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03296:ängstigen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03305:auserkiesen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03306:ausheilen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03309:ausreden`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03313:beipflichten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03316:betonieren`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03327:einschenken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03328:empören`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03338:herausputzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03339:herunterbrechen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03349:kondensieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03378:überstürzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03386:vergesellschaften`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03391:verplanen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:03404:abgewöhnen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03408:abwinken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03423:ausschweigen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03437:davonlaufen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_005:03450:einrennen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03457:ergötzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03458:erhängen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03468:gegenübersitzen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03477:kiffen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03488:misstrauen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03489:munkeln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03492:niederschießen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03497:picken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_005:03499:protzen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03507:röten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03508:schliefen`: requires_schema_or_multi-record_decision, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03635:erhören`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03545:wegbrechen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03564:abfliegen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03574:akklimatisieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03589:aufsitzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03602:bereden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03628:entarten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03636:ermüden`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03640:frittieren`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:03645:häkeln`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:03661:krallen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03697:stunden`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:03702:türmen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_006:03711:verhaken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03714:verklemmen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03720:verschanzen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:03731:vorknöpfen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:03750:abschminken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03754:abseilen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03759:anlagern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03775:beisammenhaben`: requires_schema_or_multi-record_decision
+- `verbs:verbs_006:03777:betrauern`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03783:brausen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03794:durchkreuzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03804:erlesen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03813:festfahren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:03825:grätschen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03831:hineingebären`: destructive_remove, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03884:schnarchen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:03888:schwarzsehen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03892:sonnen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:03898:suhlen`: no_lossless_top_level_field_assignment
+- `verbs:verbs_006:03903:trudeln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03905:übereilen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:03911:umhängen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03918:verleiden`: contains_nonexact_top_level_default
+- `verbs:verbs_006:03954:zusammenreißen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_006:03956:aalen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_006:03957:abblitzen`: sense_construction_not_fully_parsed
+- `verbs:verbs_006:03964:abspritzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:03976:anschmiegen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_006:04002:bereitfinden`: contains_nonexact_top_level_default
+- `verbs:verbs_006:04013:daten`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:04017:diffundieren`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_006:04027:dürsten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:04029:einimpfen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_006:04040:entkleiden`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:04046:entzweien`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:04048:erbarmen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:04066:gähnen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:04067:galoppieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:04073:glimmen`: sense_construction_not_fully_parsed
+- `verbs:verbs_006:04074:grämen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:04112:linken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_006:04118:marinieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:04151:reüssieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_006:04167:schwadronieren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_006:04171:seufzen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_006:04173:siezen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_006:04175:sputen`: contains_nonexact_top_level_default
+- `verbs:verbs_006:04176:steckenbleiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04211:verwehen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04245:abhärten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04264:anbeißen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04270:anschleichen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04277:aufbauschen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04279:aufbrezeln`: contains_nonexact_top_level_default
+- `verbs:verbs_007:04281:aufnähen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04293:ausgucken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04310:bersten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04332:durchfragen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_007:04335:eifern`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04350:entschlafen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04356:ernüchtern`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04357:erodieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04377:gabeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04432:leichtern`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04463:plumpsen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04484:scheißen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04496:schwindeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04497:seilspringen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04498:sieben`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_007:04530:umherirren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04536:uploaden`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04541:verdrücken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04555:versaufen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04583:wiederwollen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04586:zanken`: contains_nonexact_top_level_default
+- `verbs:verbs_007:04601:zurückrollen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04603:zurückschwimmen`: sense_construction_not_fully_parsed
+- `verbs:verbs_007:04615:abkratzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04618:abnabeln`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04621:abreagieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04624:abschmieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04627:abschuppen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04650:aufdampfen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04664:ausbooten`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04668:auseinanderbreiten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04671:auseinandertreiben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04687:ausschaffen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04689:aussöhnen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04706:besaufen`: contains_nonexact_top_level_default
+- `verbs:verbs_007:04728:crashen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04735:dealen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04754:dreiteilen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04757:dünken`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04758:durchbiegen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04761:durchschwimmen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04768:einkriegen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04772:einschiffen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04785:entsagen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04799:exerzieren`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04809:fetzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04824:fortwollen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04829:fringsen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04833:gefriertrocknen`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04835:genieren`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04836:gerieren`: contains_nonexact_top_level_default
+- `verbs:verbs_007:04839:gleichschalten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04845:grauen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04852:hartsieden`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_007:04863:hersetzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04875:hinunterstürzen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_007:04876:hochstemmen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_007:04879:hopfen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:04933:leichttun`: contains_nonexact_top_level_default
+- `verbs:verbs_008:04938:loseisen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:04963:niedersetzen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:04969:outsourcen`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_008:04972:paralysieren`: sense_construction_not_fully_parsed
+- `verbs:verbs_008:04984:pirschen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:04990:popeln`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:04996:protegieren`: sense_construction_not_fully_parsed
+- `verbs:verbs_008:05009:rechten`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05014:rosten`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05025:schippen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05045:snowboarden`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05061:taumeln`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05071:überanstrengen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:05076:überfragen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:05077:überheben`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:05086:umlaufen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05093:upcyceln`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05108:verfrühen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05114:verheben`: no_lossless_top_level_field_assignment
+- `verbs:verbs_008:05121:verknappen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:05128:vernarben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05135:verrennen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05149:verwahrlosen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05150:verweichlichen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_008:05158:vorglühen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05170:widerhallen`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05174:wohltun`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_008:05218:anfallen`: requires_schema_or_multi-record_decision
+- `verbs:verbs_008:05222:verirren`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05223:ausströmen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_008:05229:einreißen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_008:05233:unterlaufen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05235:schämen`: no_lossless_top_level_field_assignment
+- `verbs:verbs_008:05237:vorspielen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05238:erschließen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05243:hineinversetzen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05251:sehnen`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_008:05254:bedanken`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05274:dazusetzen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05275:dazustellen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05307:herumschlagen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier
+- `verbs:verbs_008:05308:draufhauen`: requires_schema_or_multi-record_decision
+- `verbs:verbs_008:05313:gewittern`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05315:besagen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05320:vergewissern`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05321:verwählen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05325:aufdrücken`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default
+- `verbs:verbs_008:05331:ereignen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05337:sträuben`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05338:zurufen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05343:gesellen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05346:aufkochen`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment
+- `verbs:verbs_008:05348:wehren`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05353:einstürmen`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05356:strukturieren`: sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05357:verzetteln`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05359:entpuppen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05360:hinauswollen`: requires_schema_or_multi-record_decision
+- `verbs:verbs_008:05366:zusammenhaben`: requires_schema_or_multi-record_decision
+- `verbs:verbs_008:05368:verzweigen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05369:aufraffen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05375:wärmen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05379:ausschöpfen`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05380:hingucken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05382:anmalen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05383:ausloggen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05391:totlachen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05393:einparken`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05396:breitmachen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05397:durchbeißen`: requires_schema_or_multi-record_decision, contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05406:verhelfen`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05415:rätseln`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05421:weitererzählen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05424:zusammenfegen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05425:danebenstellen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05426:hochschauen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05427:pieksen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed, cefr_is_pedagogical_estimate
+- `verbs:verbs_008:05428:zunicken`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05430:hineinleben`: contains_nonexact_top_level_default
+- `verbs:verbs_008:05432:mitlesen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05433:nachsprechen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05434:freihaben`: requires_schema_or_multi-record_decision
+- `verbs:verbs_008:05435:zusammenpassen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05436:drankommen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05438:rausgehen`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05440:zuhaben`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verbs:verbs_008:05441:zurückfahren`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00006:anpassen an`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00025:sich bemühen um`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00065:erzählen über`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00066:fahren mit`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00068:fluchen über`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00087:gründen auf`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00105:kommen zu`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00155:tun für`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00197:blicken auf`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00202:drängen zu`: requires_schema_or_multi-record_decision, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00214:sich freisprechen von`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00226:jubeln über`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00249:sich vergewissern über`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00262:anlehnen an`: contains_nonexact_top_level_default, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00268:bieten an`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00275:hervorgehen aus`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00297:sich hervortun durch`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00301:bewundern an`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00316:unterscheiden von`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00327:gelangen in`: no_lossless_top_level_field_assignment, remedy_contains_editorial_choice_or_qualifier, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00329:zurückkehren nach`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00351:sich austauschen mit`: no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00360:heranführen an`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00365:sich anfreunden mit`: contains_nonexact_top_level_default, sense_construction_not_fully_parsed
+- `verb_preps:verb_preps_001:00369:belegen mit`: requires_schema_or_multi-record_decision, no_lossless_top_level_field_assignment, sense_construction_not_fully_parsed
+
+## Attestation
+
+The JSON manifest contains the exact current source object for every retained or excluded finding, its exact source row identity, original and effective severity, validation disposition, action, field-level set/remove instructions, structured sense/paradigm records, and automatic-application safety flags. The manifest is intentionally an edit plan only; no file under `data/` was changed.
+

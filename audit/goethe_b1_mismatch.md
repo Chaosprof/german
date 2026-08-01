@@ -1,0 +1,52 @@
+# Goethe B1 mismatches
+
+## noun mismatches (48)
+
+- **Angehörige** `article` PDF `die` vs bank `der` — `die Angehörige, -n`
+- **Angestellte** `article` PDF `die` vs bank `der` — `die Angestellte, -n`
+- **Ausdruck** `plural` PDF `Ausdrucke` vs bank `Ausdrücke` — `der Ausdruck, -e`
+- **Balkon** `plural` PDF `Balkone` vs bank `Balkons` — `der Balkon, -e`
+- **Bank** `plural` PDF `Banken` vs bank `Bänke` — `die Bank, -en`
+- **Bekannte** `article` PDF `die` vs bank `der` — `die Bekannte, -n`
+- **Einbrecher** `article` PDF `die` vs bank `der` — `die Einbrecher beschädigt haben. 1. Womit haben Sie sich bei Ihrer Arbeit`
+- **Couch** `article` PDF `die` vs bank `der` — `die Couch, -s`
+- **Butter** `article` PDF `die` vs bank `der` — `die Butter`
+- **Cafeteria** `plural` PDF `Cafeterias` vs bank `Cafeterien` — `die Cafeteria, -s`
+- **Erholung** `plural` PDF `Erholungen` vs bank `—` — `die Erholung, -en`
+- **Fasching** `plural` PDF `Fasching` vs bank `Faschings` — `der Fasching, - (D, A) → D: Karneval; CH: Fasnacht`
+- **Stadt** `article` PDF `der` vs bank `die` — `der Stadt. Das Flugzeug ist gerade gelandet. Wir warten draußen im Flur. Wie heißt dieser Fluss? Dieses Medikament mit viel Flüssigkeit`
+- **Geschwister** `article` PDF `die` vs bank `das` — `die Geschwister (Pl.)`
+- **Jugendliche** `article` PDF `die` vs bank `der` — `die Jugendliche, -nen`
+- **Jugendliche** `plural` PDF `Jugendlichenen` vs bank `Jugendlichen` — `die Jugendliche, -nen`
+- **Karneval** `plural` PDF `Karnevals` vs bank `Karnevale` — `der Karneval, -s/-e (D) → D, A: Fasching; CH: Fas-`
+- **Girokonto** `plural` PDF `Girokontoen` vs bank `Girokonten` — `das Girokonto, -en`
+- **Konkurrenz** `article` PDF `der` vs bank `die` — `der Konkurrenz bekomme ich sie für`
+- **Kranke** `article` PDF `die` vs bank `der` — `die Kranke, -n`
+- **Kursleiter** `article` PDF `die` vs bank `der` — `die Kursleiter, -nen`
+- **Kursleiter** `plural` PDF `Kursleiternen` vs bank `Kursleiter` — `die Kursleiter, -nen`
+- **Lebensmittel** `article` PDF `die` vs bank `das` — `die Lebensmittel (Pl.)`
+- **Arbeit** `article` PDF `der` vs bank `die` — `der Arbeit. 5. Wir haben lange gefrühstückt. 6. Beim Arzt muss man oft lange`
+- **Lexikon** `plural` PDF `LexikonLexika` vs bank `Lexika` — `das Lexikon, -Lexika`
+- **Fenster** `article` PDF `die` vs bank `das` — `die Fenster putzen. Wie lange lernen Sie schon Deutsch? WORTLISTE WORTLISTE`
+- **Mensa** `plural` PDF `Mensas` vs bank `Mensen` — `die Mensa, -s/-en`
+- **Stadt** `article` PDF `der` vs bank `die` — `der Stadt. 4. Das Auto hat bestimmt eine Menge Geld gekostet. Ich esse fast jeden Tag in der Mensa. Die Menschen sind hier ein bisschen`
+- **Monitor** `plural` PDF `Monitore` vs bank `Monitoren` — `der Monitor, -e`
+- **Pommes** `article` PDF `die` vs bank `das` — `die Pommes frites (Pl.)`
+- **Universität** `article` PDF `der` vs bank `die` — `der Universität. Keine Angst. Mein Bruder kann die Heizung bestimmt reparieren. Er ist`
+- **Radio** `article` PDF `das` vs bank `der` — `das Radio, -s`
+- **Schnitzel** `article` PDF `das` vs bank `der` — `das Schnitzel, -`
+- **Schnupfen** `article` PDF `der` vs bank `das` — `der Schnupfen`
+- **Woche** `article` PDF `der` vs bank `die` — `der Woche. Das Spiel war spannend bis zur letzten Minute. 1. Ein Auto ist mir zu teuer, ich muss`
+- **Star** `plural` PDF `Stars` vs bank `Stare` — `der Star, -s`
+- **Stadt** `article` PDF `der` vs bank `die` — `der Stadt. 3. Gehst du mit mir in die Stadt? Ich gehe gern in die städtische Bibliothek. Haben Sie einen Stadtplan? Ich stamme aus einer kleinen Stadt an`
+- **Studierende** `article` PDF `die` vs bank `der` — `die Studierende, -n`
+- **Tram** `article` PDF `das` vs bank `die` — `das Tram, -s → D, A: Straßenbahn`
+- **Tote** `article` PDF `die` vs bank `der` — `die Tote, -n`
+- **Tropfen** `article` PDF `die` vs bank `der` — `die Tropfen (Pl.)`
+- **Überweisung** `plural` PDF `Überweisung` vs bank `Überweisungen` — `die Überweisung, - en 1. Ihr Vorschlag überzeugt mich gar nicht. 2. Ich bin fest davon überzeugt, dass`
+- **Vermittlung** `article` PDF `der` vs bank `die` — `der Vermittlung am Bahnhof nach. 2. Rufen Sie die Vermittlung an und`
+- **Verwandte** `article` PDF `die` vs bank `der` — `die Verwandte, -n`
+- **Weiterbildung** `plural` PDF `Weiterbildungen` vs bank `—` — `die Weiterbildung, -en`
+- **Wort** `plural` PDF `Worte` vs bank `Wörter` — `das Wort, -e`
+- **Zeitpunkt** `plural` PDF `Zeitpunkt` vs bank `Zeitpunkte` — `der Zeitpunkt, -`
+- **Zwiebel** `article` PDF `die` vs bank `der` — `die Zwiebel, -n`

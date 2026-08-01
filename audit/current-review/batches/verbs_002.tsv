@@ -1,0 +1,701 @@
+row	rank	word	irregular	prateritum	perfekt	withSein	english	cefrLevel	source
+701	701	anziehen	True	zog an	angezogen	False	put on (clothes), get dressed / attract	A1	UNSET
+702	702	aufkommen	True	kam auf	aufgekommen	True	arise/come up	B2	UNSET
+703	703	beheben	True	behob	behoben	False	fix/remedy	C1	UNSET
+704	704	bevorzugen	False	UNSET	UNSET	UNSET	prefer	C1	UNSET
+705	705	sanieren	False	UNSET	UNSET	UNSET	renovate/redevelop	C1	UNSET
+706	706	vorschreiben	True	schrieb vor	vorgeschrieben	False	prescribe/require	UNSET	UNSET
+707	707	zugehen	True	ging zu	zugegangen	True	approach	B1	UNSET
+708	708	aufteilen	False	UNSET	UNSET	UNSET	divide/split	B1	UNSET
+709	709	demonstrieren	False	UNSET	UNSET	UNSET	demonstrate	B1	UNSET
+710	710	herausgeben	True	gab heraus	herausgegeben	False	publish/issue	C1	UNSET
+711	711	berufen	True	berief	berufen	False	appoint/appeal	UNSET	UNSET
+712	712	schlafen	True	schlief	geschlafen	False	sleep	A1	UNSET
+713	713	verbergen	True	verbarg	verborgen	False	hide/conceal	B2	UNSET
+714	714	vertreiben	True	vertrieb	vertrieben	False	drive away/distribute	B2	UNSET
+715	715	bedenken	True	bedachte	bedacht	False	consider	B2	UNSET
+716	716	ehren	False	UNSET	UNSET	UNSET	honour	UNSET	UNSET
+717	717	vereinfachen	False	UNSET	UNSET	UNSET	simplify	C1	UNSET
+718	718	entspannen	False	UNSET	UNSET	UNSET	relax	A2	UNSET
+719	719	umwandeln	False	UNSET	UNSET	UNSET	convert/transform	C1	UNSET
+720	720	widersprechen	True	widersprach	widersprochen	False	contradict	B1	UNSET
+721	721	brechen	True	brach	gebrochen	False	break	A2	UNSET
+722	722	beschädigen	False	UNSET	UNSET	UNSET	damage	B1	UNSET
+723	723	sensibilisieren	False	UNSET	UNSET	UNSET	sensitise	C1	UNSET
+724	724	befürchten	False	UNSET	UNSET	UNSET	fear	B2	UNSET
+725	725	punkten	False	UNSET	UNSET	UNSET	score points	UNSET	UNSET
+726	726	aufsuchen	False	UNSET	UNSET	UNSET	visit/seek out	C1	UNSET
+727	727	einsteigen	True	stieg ein	eingestiegen	True	get in/board	A1	UNSET
+728	728	anordnen	False	UNSET	UNSET	UNSET	order/arrange	C1	UNSET
+729	729	zurückführen	False	UNSET	UNSET	UNSET	attribute/trace back	C1	UNSET
+730	730	erkranken	False	UNSET	UNSET	True	fall ill	UNSET	UNSET
+731	731	absetzen	False	UNSET	UNSET	UNSET	deduct/remove	C1	UNSET
+732	732	einlegen	False	UNSET	UNSET	UNSET	insert	C1	UNSET
+733	733	unterzeichnen	False	UNSET	UNSET	UNSET	sign	UNSET	UNSET
+734	734	widerspiegeln	False	UNSET	UNSET	UNSET	reflect/mirror	C1	UNSET
+735	735	bereithalten	True	hielt bereit	bereitgehalten	False	have ready	UNSET	UNSET
+736	736	beschleunigen	False	UNSET	UNSET	UNSET	accelerate	C1	UNSET
+737	737	überleben	False	UNSET	UNSET	UNSET	survive	B2	UNSET
+738	738	berühren	False	UNSET	UNSET	UNSET	touch	B2	UNSET
+739	739	erfinden	True	erfand	erfunden	False	invent	B1	UNSET
+740	740	initiieren	False	UNSET	UNSET	UNSET	initiate	B2	UNSET
+741	741	töten	False	UNSET	UNSET	UNSET	kill	UNSET	UNSET
+742	742	abschneiden	True	schnitt ab	abgeschnitten	False	cut off/perform	C1	UNSET
+743	743	einstufen	False	UNSET	UNSET	UNSET	classify/categorise	UNSET	UNSET
+744	744	rechtfertigen	False	UNSET	UNSET	UNSET	justify	C1	UNSET
+745	745	bewähren	False	UNSET	UNSET	UNSET	prove itself	UNSET	UNSET
+746	746	aufbewahren	False	UNSET	UNSET	UNSET	store/keep	C1	UNSET
+747	747	lachen	False	UNSET	UNSET	UNSET	laugh	A1	UNSET
+748	748	auskommen	True	kam aus	ausgekommen	True	get by/manage	B2	UNSET
+749	749	kooperieren	False	UNSET	UNSET	UNSET	cooperate	UNSET	UNSET
+750	750	losgehen	True	ging los	losgegangen	True	start/go off	A1	UNSET
+751	751	schießen	True	schoss	geschossen	False	shoot	A2	UNSET
+752	752	servieren	False	UNSET	UNSET	UNSET	serve	A2	UNSET
+753	753	bereichern	False	UNSET	UNSET	UNSET	enrich	C1	UNSET
+754	754	genehmigen	False	UNSET	UNSET	UNSET	approve/permit	A2	UNSET
+755	755	recherchieren	False	UNSET	UNSET	UNSET	research/investigate	A1	UNSET
+756	756	tauschen	False	UNSET	UNSET	UNSET	exchange/swap	A1	UNSET
+757	757	durchlaufen	True	lief durch	durchgelaufen	True	go through/pass through	C1	UNSET
+758	758	hinterlegen	False	UNSET	UNSET	UNSET	deposit	UNSET	UNSET
+759	759	nachfragen	False	UNSET	UNSET	UNSET	enquire/ask (again)	A1	UNSET
+760	760	tanzen	False	UNSET	UNSET	UNSET	dance	A1	UNSET
+761	761	schaden	False	UNSET	UNSET	UNSET	harm/damage	B1	UNSET
+762	762	vertrauen	False	UNSET	UNSET	UNSET	trust	B1	UNSET
+763	763	anhalten	True	hielt an	angehalten	False	stop/continue	B2	UNSET
+764	764	zertifizieren	False	UNSET	UNSET	UNSET	certify	UNSET	UNSET
+765	765	erleiden	True	erlitt	erlitten	False	suffer/sustain	UNSET	UNSET
+766	766	erschweren	False	UNSET	UNSET	UNSET	make more difficult	UNSET	UNSET
+767	767	bekanntgeben	True	gab bekannt	bekanntgegeben	False	announce	UNSET	UNSET
+768	768	nachkommen	True	kam nach	nachgekommen	True	comply with/follow	C1	UNSET
+769	769	umgeben	True	umgab	umgeben	False	surround	UNSET	UNSET
+770	770	belohnen	False	UNSET	UNSET	UNSET	reward	C1	UNSET
+771	771	verurteilen	False	UNSET	UNSET	UNSET	condemn/sentence	B1	UNSET
+772	772	aufhören	False	UNSET	UNSET	UNSET	stop/cease	A1	UNSET
+773	773	haften	False	UNSET	UNSET	UNSET	be liable/stick	UNSET	UNSET
+774	774	heranziehen	True	zog heran	herangezogen	False	consult/use	UNSET	UNSET
+775	775	lehren	False	UNSET	UNSET	UNSET	teach	C1	UNSET
+776	776	waschen	True	wusch	gewaschen	False	wash	A1	UNSET
+777	777	zustehen	True	stand zu	zugestanden	False	be entitled to	C1	UNSET
+778	778	brennen	True	brannte	gebrannt	False	burn	B1	UNSET
+779	779	freigeben	True	gab frei	freigegeben	False	release/approve	UNSET	UNSET
+780	780	bekämpfen	False	UNSET	UNSET	UNSET	fight/combat	UNSET	UNSET
+781	781	betreten	True	betrat	betreten	False	enter	B2	UNSET
+782	782	packen	False	UNSET	UNSET	UNSET	pack/grab	A1	UNSET
+783	783	schulen	False	UNSET	UNSET	UNSET	train	UNSET	UNSET
+784	784	verteidigen	False	UNSET	UNSET	UNSET	defend	B1	UNSET
+785	785	ausweiten	False	UNSET	UNSET	UNSET	expand/extend	UNSET	UNSET
+786	786	schildern	False	UNSET	UNSET	UNSET	describe	B2	UNSET
+787	787	basteln	False	UNSET	UNSET	UNSET	do crafts/tinker	A2	UNSET
+788	788	nachvollziehen	True	vollzog nach	nachvollzogen	False	understand/comprehend	C1	UNSET
+789	789	umstellen	False	UNSET	UNSET	UNSET	switch/rearrange	B2	UNSET
+790	790	veranlassen	False	UNSET	UNSET	UNSET	cause/arrange	UNSET	UNSET
+791	791	zulegen	False	UNSET	UNSET	UNSET	gain/acquire	C1	UNSET
+792	792	lagern	False	UNSET	UNSET	UNSET	store/camp	B2	UNSET
+793	793	verantworten	False	UNSET	UNSET	UNSET	take responsibility for	B2	UNSET
+794	794	zusammenfassen	False	UNSET	UNSET	UNSET	summarise	B1	UNSET
+795	795	ablösen	False	UNSET	UNSET	UNSET	replace/relieve	UNSET	UNSET
+796	796	drucken	False	UNSET	UNSET	UNSET	print	A1	UNSET
+797	797	entsorgen	False	UNSET	UNSET	UNSET	dispose of	B1	UNSET
+798	798	stürzen	False	UNSET	UNSET	True	fall/overthrow	B1	UNSET
+799	799	überarbeiten	False	UNSET	UNSET	UNSET	revise/rework	UNSET	UNSET
+800	800	vermissen	False	UNSET	UNSET	UNSET	miss	A1	UNSET
+801	801	einhergehen	True	ging einher	einhergegangen	True	go hand in hand with	C1	UNSET
+802	802	vergehen	True	verging	vergangen	True	pass/elapse	A2	UNSET
+803	803	wohlfühlen	False	UNSET	UNSET	UNSET	feel comfortable	B1	UNSET
+804	804	zurückgeben	True	gab zurück	zurückgegeben	False	return/give back	B1	UNSET
+805	805	angreifen	True	griff an	angegriffen	False	attack	C1	UNSET
+806	806	einschalten	False	UNSET	UNSET	UNSET	turn on/intervene	B1	UNSET
+807	807	malen	False	UNSET	UNSET	UNSET	paint/draw	A1	UNSET
+808	808	einplanen	False	UNSET	UNSET	UNSET	plan/schedule	A2	UNSET
+809	809	ausnehmen	True	nahm aus	ausgenommen	False	exclude/gut	C1	UNSET
+810	810	fungieren	False	UNSET	UNSET	UNSET	act as/function as	UNSET	UNSET
+811	811	begreifen	True	begriff	begriffen	False	understand/comprehend	B2	UNSET
+812	812	anfertigen	False	UNSET	UNSET	UNSET	produce/make	C1	UNSET
+813	813	schieben	True	schob	geschoben	False	push/shove	B1	UNSET
+814	814	wiederfinden	True	fand wieder	wiedergefunden	False	find again	C1	UNSET
+815	815	gönnen	False	UNSET	UNSET	UNSET	not begrudge/treat oneself to	B2	UNSET
+816	816	verdanken	False	UNSET	UNSET	UNSET	owe	C1	UNSET
+817	817	verkürzen	False	UNSET	UNSET	UNSET	shorten	UNSET	UNSET
+818	818	backen	True	backte	gebacken	False	bake	A2	UNSET
+819	819	erobern	False	UNSET	UNSET	UNSET	conquer	C1	UNSET
+820	820	implementieren	False	UNSET	UNSET	UNSET	implement	UNSET	UNSET
+821	821	gewähren	False	UNSET	UNSET	UNSET	grant	C1	UNSET
+822	822	abonnieren	False	UNSET	UNSET	UNSET	subscribe	A2	UNSET
+823	823	befestigen	False	UNSET	UNSET	UNSET	attach/fasten	UNSET	UNSET
+824	824	beherbergen	False	UNSET	UNSET	UNSET	accommodate/house	C1	UNSET
+825	825	entgegennehmen	True	nahm entgegen	entgegengenommen	False	accept/receive	UNSET	UNSET
+826	826	fliehen	True	floh	geflohen	True	flee	B1	UNSET
+827	827	trauen	False	UNSET	UNSET	UNSET	trust/dare/marry	C1	UNSET
+828	828	unterbrechen	True	unterbrach	unterbrochen	False	interrupt	B1	UNSET
+829	829	zurückziehen	True	zog zurück	zurückgezogen	False	withdraw/pull back	C1	UNSET
+830	830	abwarten	False	UNSET	UNSET	UNSET	wait/wait and see	UNSET	UNSET
+831	831	ausdrucken	False	UNSET	UNSET	UNSET	print (out)	A2	UNSET
+832	832	ausschreiben	True	schrieb aus	ausgeschrieben	False	advertise/announce	UNSET	UNSET
+833	833	einschließen	True	schloss ein	eingeschlossen	False	include/lock in	C1	UNSET
+834	834	eintauchen	False	UNSET	UNSET	True	dive in/immerse	B2	UNSET
+835	835	entgehen	True	entging	entgangen	True	escape/miss	UNSET	UNSET
+836	836	verkünden	False	UNSET	UNSET	UNSET	announce/proclaim	C1	UNSET
+837	837	einfallen	True	fiel ein	eingefallen	True	come to mind/occur	A1	UNSET
+838	838	anfühlen	False	UNSET	UNSET	UNSET	feel	B2	UNSET
+839	839	befördern	False	UNSET	UNSET	UNSET	promote/transport	C1	UNSET
+840	840	korrigieren	False	UNSET	UNSET	UNSET	correct	A1	UNSET
+841	841	schonen	False	UNSET	UNSET	UNSET	spare/be easy on	C1	UNSET
+842	842	stützen	False	UNSET	UNSET	UNSET	support/lean on	UNSET	UNSET
+843	843	abbrechen	True	brach ab	abgebrochen	False	break off/cancel	B2	UNSET
+844	844	anrechnen	False	UNSET	UNSET	UNSET	credit/count	UNSET	UNSET
+845	845	blockieren	False	UNSET	UNSET	UNSET	block	C1	UNSET
+846	846	minimieren	False	UNSET	UNSET	UNSET	minimise	UNSET	UNSET
+847	847	vorwerfen	True	warf vor	vorgeworfen	False	reproach/accuse	B1	UNSET
+848	848	abziehen	True	zog ab	abgezogen	False	subtract/withdraw	UNSET	UNSET
+849	849	hinausgehen	True	ging hinaus	hinausgegangen	True	go out/exceed	UNSET	UNSET
+850	850	zurückblicken	False	UNSET	UNSET	UNSET	look back	C1	UNSET
+851	851	übergehen	True	ging über	übergegangen	True	pass/skip over	C1	UNSET
+852	852	festsetzen	False	UNSET	UNSET	UNSET	set/determine	B1	UNSET
+853	853	mischen	False	UNSET	UNSET	UNSET	mix	A1	UNSET
+854	854	verstoßen	True	verstieß	verstoßen	False	violate/expel	B2	UNSET
+855	855	ernähren	False	UNSET	UNSET	UNSET	feed/nourish	B1	UNSET
+856	856	verbauen	False	UNSET	UNSET	UNSET	block/use up (materials)	B2	UNSET
+857	857	wandeln	False	UNSET	UNSET	False	change/stroll	C1	UNSET
+858	858	einigen	False	UNSET	UNSET	UNSET	agree/unite	B1	UNSET
+859	859	hinterfragen	False	UNSET	UNSET	UNSET	question	B2	UNSET
+860	860	lenken	False	UNSET	UNSET	UNSET	steer/direct	B2	UNSET
+861	861	sortieren	False	UNSET	UNSET	UNSET	sort	B2	UNSET
+862	862	verhandeln	False	UNSET	UNSET	UNSET	negotiate	UNSET	UNSET
+863	863	bewundern	False	UNSET	UNSET	UNSET	admire	A2	UNSET
+864	864	drängen	False	UNSET	UNSET	UNSET	push/urge	UNSET	UNSET
+865	865	vergrößern	False	UNSET	UNSET	UNSET	enlarge/increase	B1	UNSET
+866	866	verschließen	True	verschloss	verschlossen	False	close/lock	UNSET	UNSET
+867	867	verwöhnen	False	UNSET	UNSET	UNSET	spoil/pamper	B2	UNSET
+868	868	abhalten	True	hielt ab	abgehalten	False	hold/prevent	UNSET	UNSET
+869	869	anbauen	False	UNSET	UNSET	UNSET	grow/cultivate	C1	UNSET
+870	870	anstellen	False	UNSET	UNSET	UNSET	employ/hire	A2	UNSET
+871	871	entgegenwirken	False	UNSET	UNSET	UNSET	counteract	C1	UNSET
+872	872	gratulieren	False	UNSET	UNSET	UNSET	congratulate	A1	UNSET
+873	873	verbleiben	True	verblieb	verblieben	True	remain	B2	UNSET
+874	874	erlassen	True	erließ	erlassen	False	enact/waive	C1	UNSET
+875	875	fürchten	False	UNSET	UNSET	UNSET	fear	B1	UNSET
+876	876	hochladen	True	lud hoch	hochgeladen	False	upload	A2	UNSET
+877	877	montieren	False	UNSET	UNSET	UNSET	install/mount	UNSET	UNSET
+878	878	auskennen	True	kannte aus	ausgekannt	False	be familiar with	A2	UNSET
+879	879	fortführen	False	UNSET	UNSET	UNSET	continue	UNSET	UNSET
+880	880	spiegeln	False	UNSET	UNSET	UNSET	reflect/mirror	A2	UNSET
+881	881	träumen	False	UNSET	UNSET	UNSET	dream	A2	UNSET
+882	882	auflisten	False	UNSET	UNSET	UNSET	list	B2	UNSET
+883	883	erörtern	False	UNSET	UNSET	UNSET	discuss/debate	UNSET	UNSET
+884	884	fangen	True	fing	gefangen	False	catch	B1	UNSET
+885	885	überweisen	True	überwies	überwiesen	False	transfer	A1	UNSET
+886	886	verdoppeln	False	UNSET	UNSET	UNSET	double	B2	UNSET
+887	887	abschalten	False	UNSET	UNSET	UNSET	turn off	B2	UNSET
+888	888	anführen	False	UNSET	UNSET	UNSET	lead/cite	B2	UNSET
+889	889	ausliefern	False	UNSET	UNSET	UNSET	deliver/extradite	UNSET	UNSET
+890	890	abstellen	False	UNSET	UNSET	UNSET	turn off/park	A2	UNSET
+891	891	voranbringen	True	brachte voran	vorangebracht	False	advance/move forward	UNSET	UNSET
+892	892	abheben	True	hob ab	abgehoben	False	take off/withdraw	A2	UNSET
+893	893	entziehen	True	entzog	entzogen	False	withdraw/revoke	C1	UNSET
+894	894	fotografieren	False	UNSET	UNSET	UNSET	photograph/take a photo	A1	UNSET
+895	895	interpretieren	False	UNSET	UNSET	UNSET	interpret	UNSET	UNSET
+896	896	mitarbeiten	False	UNSET	UNSET	UNSET	collaborate	UNSET	UNSET
+897	897	ausleihen	True	lieh aus	ausgeliehen	False	borrow/lend	B1	UNSET
+898	898	hervorrufen	True	rief hervor	hervorgerufen	False	cause/evoke	UNSET	UNSET
+899	899	entschließen	True	entschloss	entschlossen	False	decide	UNSET	UNSET
+900	900	ermutigen	False	UNSET	UNSET	UNSET	encourage	UNSET	UNSET
+901	901	übertreffen	True	übertraf	übertroffen	False	surpass/exceed	UNSET	UNSET
+902	902	verpacken	False	UNSET	UNSET	UNSET	pack/wrap	B1	UNSET
+903	903	zuhören	False	UNSET	UNSET	UNSET	listen	A2	UNSET
+904	904	programmieren	False	UNSET	UNSET	UNSET	program/code	A2	UNSET
+905	905	darlegen	False	UNSET	UNSET	UNSET	explain/present	C1	UNSET
+906	906	heiraten	False	UNSET	UNSET	UNSET	marry	A1	UNSET
+907	907	widerrufen	True	widerrief	widerrufen	False	revoke/cancel	B2	UNSET
+908	908	einlassen	True	ließ ein	eingelassen	False	let in/get involved in	B2	UNSET
+909	909	ernennen	True	ernannte	ernannt	False	appoint	B2	UNSET
+910	910	werten	False	UNSET	UNSET	UNSET	rate/evaluate	UNSET	UNSET
+911	911	nachlesen	True	las nach	nachgelesen	False	look up/read up on	UNSET	UNSET
+912	912	abzielen	False	UNSET	UNSET	UNSET	aim at	C1	UNSET
+913	913	anweisen	True	wies an	angewiesen	False	instruct/assign	UNSET	UNSET
+914	914	bestechen	True	bestach	bestochen	False	bribe/impress	UNSET	UNSET
+915	915	schädigen	False	UNSET	UNSET	UNSET	damage/harm	C1	UNSET
+916	916	verweigern	False	UNSET	UNSET	UNSET	refuse/deny	C1	UNSET
+917	917	anklicken	False	UNSET	UNSET	UNSET	click on	A1	UNSET
+918	918	aufbringen	True	brachte auf	aufgebracht	False	raise/apply	C1	UNSET
+919	919	versammeln	False	UNSET	UNSET	UNSET	gather/assemble	C1	UNSET
+920	920	gliedern	False	UNSET	UNSET	UNSET	structure/divide	B2	UNSET
+921	921	unterschätzen	False	UNSET	UNSET	UNSET	underestimate	C1	UNSET
+922	922	abschaffen	False	UNSET	UNSET	UNSET	abolish	C1	UNSET
+923	923	abweichen	True	wich ab	abgewichen	True	deviate/differ	B2	UNSET
+924	924	stehlen	True	stahl	gestohlen	False	steal	B1	UNSET
+925	925	übersteigen	True	überstieg	überstiegen	False	exceed	UNSET	UNSET
+926	926	vortragen	True	trug vor	vorgetragen	False	present/recite	A2	UNSET
+927	927	ausstrahlen	False	UNSET	UNSET	UNSET	broadcast/radiate	C1	UNSET
+928	928	erholen	False	UNSET	UNSET	UNSET	recover/relax	B1	UNSET
+929	930	verschenken	False	UNSET	UNSET	UNSET	give away	B2	UNSET
+930	931	vorlesen	True	las vor	vorgelesen	False	read aloud	A1	UNSET
+931	932	zurücklegen	False	UNSET	UNSET	UNSET	cover (distance)/save	UNSET	UNSET
+932	933	schwimmen	True	schwamm	geschwommen	True	swim	A1	UNSET
+933	934	ansagen	False	UNSET	UNSET	UNSET	announce	UNSET	UNSET
+934	935	kriegen	False	UNSET	UNSET	UNSET	get	A1	UNSET
+935	936	repräsentieren	False	UNSET	UNSET	UNSET	represent	C1	UNSET
+936	937	streiten	True	stritt	gestritten	False	argue/fight	A2	UNSET
+937	938	abspielen	False	UNSET	UNSET	UNSET	play (back)	B1	UNSET
+938	939	ausscheiden	True	schied aus	ausgeschieden	True	drop out/be eliminated	UNSET	UNSET
+939	940	ignorieren	False	UNSET	UNSET	UNSET	ignore	B2	UNSET
+940	941	umziehen	True	zog um	umgezogen	True	move/change clothes	A1	UNSET
+941	942	übersehen	True	übersah	übersehen	False	overlook	B2	UNSET
+942	943	wiegen	True	wog	gewogen	False	weigh	A1	UNSET
+943	944	einbetten	False	UNSET	UNSET	UNSET	embed	UNSET	UNSET
+944	945	fokussieren	False	UNSET	UNSET	UNSET	focus	UNSET	UNSET
+945	946	kleben	False	UNSET	UNSET	UNSET	stick/glue	B1	UNSET
+946	947	zuweisen	True	wies zu	zugewiesen	False	assign	C1	UNSET
+947	948	abrechnen	False	UNSET	UNSET	UNSET	settle/bill	UNSET	UNSET
+948	949	ausbreiten	False	UNSET	UNSET	UNSET	spread out	UNSET	UNSET
+949	950	dominieren	False	UNSET	UNSET	UNSET	dominate	C1	UNSET
+950	951	eingreifen	True	griff ein	eingegriffen	False	intervene	UNSET	UNSET
+951	952	umbauen	False	UNSET	UNSET	UNSET	rebuild/renovate	B2	UNSET
+952	953	vollziehen	True	vollzog	vollzogen	False	carry out/execute	C1	UNSET
+953	954	aufladen	True	lud auf	aufgeladen	False	charge/load	B1	UNSET
+954	955	erbauen	False	UNSET	UNSET	UNSET	build/construct	UNSET	UNSET
+955	956	ernten	False	UNSET	UNSET	UNSET	harvest	B2	UNSET
+956	957	reservieren	False	UNSET	UNSET	UNSET	reserve	A1	UNSET
+957	958	verständigen	False	UNSET	UNSET	UNSET	notify/inform	B2	UNSET
+958	959	zusammenführen	False	UNSET	UNSET	UNSET	bring together	C1	UNSET
+959	960	zusammenhängen	True	hing zusammen	zusammengehangen	False	be connected/be related	B2	UNSET
+960	961	fressen	True	fraß	gefressen	False	eat (animals)/devour	B1	UNSET
+961	962	reparieren	False	UNSET	UNSET	UNSET	repair	A1	UNSET
+962	963	zugeben	True	gab zu	zugegeben	False	admit	B2	UNSET
+963	964	pflanzen	False	UNSET	UNSET	UNSET	plant	B1	UNSET
+964	965	unterteilen	False	UNSET	UNSET	UNSET	divide	C1	UNSET
+965	966	aufpassen	False	UNSET	UNSET	UNSET	pay attention/be careful	A1	UNSET
+966	967	bestreiten	True	bestritt	bestritten	False	deny/finance	B2	UNSET
+967	968	eintreffen	True	traf ein	eingetroffen	True	arrive	C1	UNSET
+968	969	erwirtschaften	False	UNSET	UNSET	UNSET	generate/earn	C1	UNSET
+969	970	hinnehmen	True	nahm hin	hingenommen	False	accept/put up with	B2	UNSET
+970	971	überfordern	False	UNSET	UNSET	UNSET	overwhelm	B2	UNSET
+971	972	tauchen	False	UNSET	UNSET	UNSET	dive	A2	UNSET
+972	973	zusagen	False	UNSET	UNSET	UNSET	accept/promise	A2	UNSET
+973	974	aufsetzen	False	UNSET	UNSET	UNSET	put on/draft	UNSET	UNSET
+974	975	bestaunen	False	UNSET	UNSET	UNSET	marvel at	UNSET	UNSET
+975	976	wiedergeben	True	gab wieder	wiedergegeben	False	reproduce/render	A1	UNSET
+976	977	austragen	True	trug aus	ausgetragen	False	deliver/host (event)	A2	UNSET
+977	978	einloggen	False	UNSET	UNSET	UNSET	log in	UNSET	UNSET
+978	979	erhoffen	False	UNSET	UNSET	UNSET	hope for	B2	UNSET
+979	980	zurückweisen	True	wies zurück	zurückgewiesen	False	reject/refuse	C1	UNSET
+980	981	behindern	False	UNSET	UNSET	UNSET	hinder/obstruct	B1	UNSET
+981	982	entlassen	True	entließ	entlassen	False	dismiss/fire	A2	UNSET
+982	983	klagen	False	UNSET	UNSET	UNSET	complain/sue	B1	UNSET
+983	984	weiterführen	False	UNSET	UNSET	UNSET	continue	C1	UNSET
+984	985	anheben	True	hob an	angehoben	False	raise/lift	UNSET	UNSET
+985	986	anknüpfen	False	UNSET	UNSET	UNSET	connect/resume	B2	UNSET
+986	987	aufgehen	True	ging auf	aufgegangen	True	open/work out	B2	UNSET
+987	988	beanspruchen	False	UNSET	UNSET	UNSET	claim/demand	C1	UNSET
+988	989	gucken	False	UNSET	UNSET	UNSET	look/watch	B1	UNSET
+989	990	ordnen	False	UNSET	UNSET	UNSET	arrange/organise	B1	UNSET
+990	991	teilhaben	False	UNSET	UNSET	UNSET	participate/share in	C1	UNSET
+991	992	verbrennen	True	verbrannte	verbrannt	False	burn	B1	UNSET
+992	993	versterben	True	verstarb	verstorben	True	pass away/die	B2	UNSET
+993	994	ausnutzen	False	UNSET	UNSET	UNSET	exploit/take advantage of	B2	UNSET
+994	995	schelten	True	schalt	gescholten	False	scold	UNSET	UNSET
+995	996	unterziehen	True	unterzog	unterzogen	False	undergo/subject to	UNSET	UNSET
+996	997	vermerken	False	UNSET	UNSET	UNSET	note/record	C1	UNSET
+997	998	vorfinden	True	fand vor	vorgefunden	False	find	UNSET	UNSET
+998	999	reißen	True	riss	gerissen	False	tear/rip	C1	UNSET
+999	1000	resultieren	False	UNSET	UNSET	UNSET	result	UNSET	UNSET
+1000	1001	abfragen	False	UNSET	UNSET	UNSET	query	UNSET	UNSET
+1001	1002	anreisen	False	UNSET	UNSET	True	arrive/travel (to)	UNSET	UNSET
+1002	1003	erwischen	False	UNSET	UNSET	UNSET	catch	B2	UNSET
+1003	1004	gegenüberstehen	True	stand gegenüber	gegenübergestanden	False	face	UNSET	UNSET
+1004	1005	nominieren	False	UNSET	UNSET	UNSET	designate/nominate	UNSET	UNSET
+1005	1006	notieren	False	UNSET	UNSET	UNSET	note/write down	A1	UNSET
+1006	1007	mitspielen	False	UNSET	UNSET	UNSET	play along/cooperate	A2	UNSET
+1007	1008	verlieben	False	UNSET	UNSET	UNSET	fall in love	A2	UNSET
+1008	1009	entführen	False	UNSET	UNSET	UNSET	kidnap/abduct	B2	UNSET
+1009	1010	hindeuten	False	UNSET	UNSET	UNSET	indicate/point	C1	UNSET
+1010	1011	neigen	False	UNSET	UNSET	UNSET	tend/incline	C1	UNSET
+1011	1012	rauchen	False	UNSET	UNSET	UNSET	smoke	A1	UNSET
+1012	1013	räumen	False	UNSET	UNSET	UNSET	clear/vacate	B1	UNSET
+1013	1014	aufbrechen	True	brach auf	aufgebrochen	True	break open/set off	B2	UNSET
+1014	1015	aufzeichnen	False	UNSET	UNSET	UNSET	record	C1	UNSET
+1015	1016	ausrüsten	False	UNSET	UNSET	UNSET	equip	UNSET	UNSET
+1016	1017	beschaffen	False	UNSET	UNSET	UNSET	obtain/procure	UNSET	UNSET
+1017	1018	surfen	False	UNSET	UNSET	UNSET	surf	A2	UNSET
+1018	1019	auflegen	False	UNSET	UNSET	UNSET	hang up/put on	UNSET	UNSET
+1019	1020	einteilen	False	UNSET	UNSET	UNSET	divide/classify	B2	UNSET
+1020	1021	evaluieren	False	UNSET	UNSET	UNSET	evaluate	UNSET	UNSET
+1021	1022	offenbaren	False	UNSET	UNSET	UNSET	reveal	C1	UNSET
+1022	1023	vermieten	False	UNSET	UNSET	UNSET	let/rent out	A1	UNSET
+1023	1024	bewilligen	False	UNSET	UNSET	UNSET	approve/grant	UNSET	UNSET
+1024	1025	fertigstellen	False	UNSET	UNSET	UNSET	complete/finish	UNSET	UNSET
+1025	1026	mindern	False	UNSET	UNSET	UNSET	reduce	UNSET	UNSET
+1026	1027	obliegen	True	oblag	oblegen	False	be the responsibility of	UNSET	UNSET
+1027	1028	überstehen	True	überstand	überstanden	False	survive/get through	UNSET	UNSET
+1028	1029	untersagen	False	UNSET	UNSET	UNSET	ban	UNSET	UNSET
+1029	1030	vernichten	False	UNSET	UNSET	UNSET	destroy/wipe out	B2	UNSET
+1030	1031	fügen	False	UNSET	UNSET	UNSET	join/merge	UNSET	UNSET
+1031	1032	herauskommen	True	kam heraus	herausgekommen	True	come out/result	C1	UNSET
+1032	1033	vorbeikommen	True	kam vorbei	vorbeigekommen	True	come by/pass by	UNSET	UNSET
+1033	1034	klarstellen	False	UNSET	UNSET	UNSET	clarify/make clear	UNSET	UNSET
+1034	1035	zielen	False	UNSET	UNSET	UNSET	aim/direct	UNSET	UNSET
+1035	1036	antreiben	True	trieb an	angetrieben	False	drive/urge	C1	UNSET
+1036	1037	freischalten	False	UNSET	UNSET	UNSET	activate/unlock	UNSET	UNSET
+1037	1038	bekennen	True	bekannte	bekannt	False	confess/profess	UNSET	UNSET
+1038	1039	zurückkommen	True	kam zurück	zurückgekommen	True	come back/return	A2	UNSET
+1039	1040	missen	False	UNSET	UNSET	UNSET	miss/do without	UNSET	UNSET
+1040	1041	riechen	True	roch	gerochen	False	smell	A1	UNSET
+1041	1042	überführen	False	UNSET	UNSET	UNSET	convict/transport	UNSET	UNSET
+1042	1043	überqueren	False	UNSET	UNSET	UNSET	cross/traverse	B1	UNSET
+1043	1044	wundern	False	UNSET	UNSET	UNSET	surprise/wonder	B2	UNSET
+1044	1045	anstoßen	True	stieß an	angestoßen	False	initiate/clink glasses	UNSET	UNSET
+1045	1046	aufwerten	False	UNSET	UNSET	UNSET	upgrade/enhance	UNSET	UNSET
+1046	1047	einweihen	False	UNSET	UNSET	UNSET	inaugurate/initiate	UNSET	UNSET
+1047	1048	errechnen	False	UNSET	UNSET	UNSET	calculate	C1	UNSET
+1048	1049	regulieren	False	UNSET	UNSET	UNSET	regulate/set	B2	UNSET
+1049	1050	verlinken	False	UNSET	UNSET	UNSET	link	B1	UNSET
+1050	1051	zusammenschließen	True	schloss zusammen	zusammengeschlossen	False	merge/join together	UNSET	UNSET
+1051	1052	besorgen	False	UNSET	UNSET	UNSET	get/obtain	A2	UNSET
+1052	1053	inszenieren	False	UNSET	UNSET	UNSET	stage	UNSET	UNSET
+1053	1054	mithelfen	True	half mit	mitgeholfen	False	assist/help	A2	UNSET
+1054	1055	trocknen	False	UNSET	UNSET	UNSET	dry	B1	UNSET
+1055	1056	verschlüsseln	False	UNSET	UNSET	UNSET	encrypt	UNSET	UNSET
+1056	1057	abwickeln	False	UNSET	UNSET	UNSET	handle/process	C1	UNSET
+1057	1058	einarbeiten	False	UNSET	UNSET	UNSET	train	C1	UNSET
+1058	1059	glänzen	False	UNSET	UNSET	UNSET	shine/excel	B2	UNSET
+1059	1060	lindern	False	UNSET	UNSET	UNSET	alleviate/ease	B2	UNSET
+1060	1061	verschärfen	False	UNSET	UNSET	UNSET	tighten/intensify	B2	UNSET
+1061	1062	vorbeischauen	False	UNSET	UNSET	UNSET	stop by/drop in	UNSET	UNSET
+1062	1063	zustellen	False	UNSET	UNSET	UNSET	block/deliver	B1	UNSET
+1063	1064	beibringen	True	brachte bei	beigebracht	False	teach	B2	UNSET
+1064	1065	küren	False	UNSET	UNSET	UNSET	choose/elect	UNSET	UNSET
+1065	1066	abbiegen	True	bog ab	abgebogen	True	bend/turn	B1	UNSET
+1066	1067	anrichten	False	UNSET	UNSET	UNSET	cause/serve (food)	UNSET	UNSET
+1067	1068	einschlagen	True	schlug ein	eingeschlagen	False	hit/take (a path)	B2	UNSET
+1068	1069	telefonieren	False	UNSET	UNSET	UNSET	telephone	A1	UNSET
+1069	1070	antreffen	True	traf an	angetroffen	False	find/encounter	C1	UNSET
+1070	1071	begünstigen	False	UNSET	UNSET	UNSET	facilitate/favour	UNSET	UNSET
+1071	1072	enttäuschen	False	UNSET	UNSET	UNSET	disappoint	B1	UNSET
+1072	1073	automatisieren	False	UNSET	UNSET	UNSET	automate	C1	UNSET
+1073	1074	beabsichtigen	False	UNSET	UNSET	UNSET	intend	UNSET	UNSET
+1074	1075	plädieren	False	UNSET	UNSET	UNSET	advocate/plead	B2	UNSET
+1075	1076	schlüpfen	False	UNSET	UNSET	True	slip/hatch	B2	UNSET
+1076	1077	verbuchen	False	UNSET	UNSET	UNSET	enter	UNSET	UNSET
+1077	1078	verlagern	False	UNSET	UNSET	UNSET	relocate/shift	B2	UNSET
+1078	1079	kehren	False	UNSET	UNSET	UNSET	sweep/turn	UNSET	UNSET
+1079	1080	stabilisieren	False	UNSET	UNSET	UNSET	stabilise	UNSET	UNSET
+1080	1081	zaubern	False	UNSET	UNSET	UNSET	do magic	UNSET	UNSET
+1081	1082	anmerken	False	UNSET	UNSET	UNSET	note/remark	B2	UNSET
+1082	1083	ärgern	False	UNSET	UNSET	UNSET	annoy	A2	UNSET
+1083	1084	experimentieren	False	UNSET	UNSET	UNSET	experiment	B2	UNSET
+1084	1085	formen	False	UNSET	UNSET	UNSET	form/shape	C1	UNSET
+1085	1086	anbinden	True	band an	angebunden	False	tie/connect	UNSET	UNSET
+1086	1087	aufmachen	False	UNSET	UNSET	UNSET	open	A1	UNSET
+1087	1088	ergehen	True	erging	ergangen	True	be issued/fare	B2	UNSET
+1088	1089	ermorden	False	UNSET	UNSET	UNSET	murder	UNSET	UNSET
+1089	1090	knacken	False	UNSET	UNSET	UNSET	crack	C1	UNSET
+1090	1091	kreieren	False	UNSET	UNSET	UNSET	create	B2	UNSET
+1091	1092	vermarkten	False	UNSET	UNSET	UNSET	market	UNSET	UNSET
+1092	1093	abzeichnen	False	UNSET	UNSET	UNSET	become apparent	C1	UNSET
+1093	1094	ähneln	False	UNSET	UNSET	UNSET	resemble	B2	UNSET
+1094	1095	aufstehen	True	stand auf	aufgestanden	True	get up/stand up	A1	UNSET
+1095	1096	aufsteigen	True	stieg auf	aufgestiegen	True	rise/climb	C1	UNSET
+1096	1097	durchsuchen	False	UNSET	UNSET	UNSET	search	UNSET	UNSET
+1097	1098	rollen	False	UNSET	UNSET	True	roll	UNSET	UNSET
+1098	1099	aussagen	False	UNSET	UNSET	UNSET	state/testify	UNSET	UNSET
+1099	1100	beibehalten	True	behielt bei	beibehalten	False	maintain	UNSET	UNSET
+1100	1101	beruhigen	False	UNSET	UNSET	UNSET	calm/calm down	A2	UNSET
+1101	1102	posten	False	UNSET	UNSET	UNSET	post	A2	UNSET
+1102	1103	wahren	False	UNSET	UNSET	UNSET	maintain/preserve	C1	UNSET
+1103	1104	zeugen	False	UNSET	UNSET	UNSET	testify/father	C1	UNSET
+1104	1105	zitieren	False	UNSET	UNSET	UNSET	cite/quote	UNSET	UNSET
+1105	1106	begehren	False	UNSET	UNSET	UNSET	desire	UNSET	UNSET
+1106	1107	betätigen	False	UNSET	UNSET	UNSET	operate/activate	C1	UNSET
+1107	1108	ruhen	False	UNSET	UNSET	UNSET	rest	B2	UNSET
+1108	1109	abmelden	False	UNSET	UNSET	UNSET	give notice of/log out	UNSET	UNSET
+1109	1110	bescheren	False	UNSET	UNSET	UNSET	bring/give (as a gift)	C1	UNSET
+1110	1111	schmücken	False	UNSET	UNSET	UNSET	adorn	UNSET	UNSET
+1111	1112	tippen	False	UNSET	UNSET	UNSET	type/tap/bet	B1	UNSET
+1112	1113	verdrängen	False	UNSET	UNSET	UNSET	displace/suppress	B2	UNSET
+1113	1114	vernachlässigen	False	UNSET	UNSET	UNSET	neglect	C1	UNSET
+1114	1115	vertragen	True	vertrug	vertragen	False	get along with/tolerate	UNSET	UNSET
+1115	1116	appellieren	False	UNSET	UNSET	UNSET	appeal	UNSET	UNSET
+1116	1117	füttern	False	UNSET	UNSET	UNSET	feed	A2	UNSET
+1117	1118	nachlassen	True	ließ nach	nachgelassen	False	decrease/let up	C1	UNSET
+1118	1119	beklagen	False	UNSET	UNSET	UNSET	bemoan/complain	C1	UNSET
+1119	1120	meiden	True	mied	gemieden	False	avoid	B2	UNSET
+1120	1121	verschreiben	True	verschrieb	verschrieben	False	prescribe	B1	UNSET
+1121	1122	zugutekommen	True	kam zugute	zugutegekommen	True	benefit	UNSET	UNSET
+1122	1123	andauern	False	UNSET	UNSET	UNSET	continue	UNSET	UNSET
+1123	1124	ausweichen	True	wich aus	ausgewichen	True	avoid/dodge	B2	UNSET
+1124	1125	befristen	False	UNSET	UNSET	UNSET	set a time limit on	UNSET	UNSET
+1125	1126	erfragen	False	UNSET	UNSET	UNSET	ask	A2	UNSET
+1126	1127	filtern	False	UNSET	UNSET	UNSET	filter	C1	UNSET
+1127	1128	intensivieren	False	UNSET	UNSET	UNSET	intensify	UNSET	UNSET
+1128	1129	erschaffen	True	erschuf	erschaffen	False	create	C1	UNSET
+1129	1130	festigen	False	UNSET	UNSET	UNSET	strengthen/consolidate	UNSET	UNSET
+1130	1131	klettern	False	UNSET	UNSET	True	climb	A1	UNSET
+1131	1132	kürzen	False	UNSET	UNSET	UNSET	shorten/reduce	UNSET	UNSET
+1132	1133	putzen	False	UNSET	UNSET	UNSET	clean	A2	UNSET
+1133	1134	verschlechtern	False	UNSET	UNSET	UNSET	worsen/deteriorate	UNSET	UNSET
+1134	1135	abreißen	True	riss ab	abgerissen	False	demolish/tear off	UNSET	UNSET
+1135	1136	bescheinigen	False	UNSET	UNSET	UNSET	certify/confirm	UNSET	UNSET
+1136	1137	mithalten	True	hielt mit	mitgehalten	False	keep up with	C1	UNSET
+1137	1138	stechen	True	stach	gestochen	False	sting	B1	UNSET
+1138	1139	verfallen	True	verfiel	verfallen	True	expire/decay	C1	UNSET
+1139	1140	kompensieren	False	UNSET	UNSET	UNSET	compensate	UNSET	UNSET
+1140	1141	loswerden	True	wurde los	losgeworden	True	get rid of	C1	UNSET
+1141	1142	riskieren	False	UNSET	UNSET	UNSET	hazard/risk	B2	UNSET
+1142	1143	stöbern	False	UNSET	UNSET	UNSET	browse/rummage	UNSET	UNSET
+1143	1144	veranschaulichen	False	UNSET	UNSET	UNSET	exemplify/illustrate	UNSET	UNSET
+1144	1145	wiederherstellen	False	UNSET	UNSET	UNSET	recover/restore	UNSET	UNSET
+1145	1146	bekräftigen	False	UNSET	UNSET	UNSET	confirm/reaffirm	UNSET	UNSET
+1146	1147	eindringen	True	drang ein	eingedrungen	True	intrude	UNSET	UNSET
+1147	1148	flüchten	False	UNSET	UNSET	True	escape/flee	UNSET	UNSET
+1148	1149	listen	False	UNSET	UNSET	UNSET	list	UNSET	UNSET
+1149	1150	festnehmen	True	nahm fest	festgenommen	False	arrest	B1	UNSET
+1150	1151	nützen	False	UNSET	UNSET	UNSET	be useful	B1	UNSET
+1151	1152	rüsten	False	UNSET	UNSET	UNSET	arm/prepare	UNSET	UNSET
+1152	1153	abkühlen	False	UNSET	UNSET	UNSET	cool	UNSET	UNSET
+1153	1154	ausbleiben	True	blieb aus	ausgeblieben	True	fail to appear/happen	C1	UNSET
+1154	1155	erhitzen	False	UNSET	UNSET	UNSET	heat/heat up	UNSET	UNSET
+1155	1156	heilen	False	UNSET	UNSET	UNSET	cure/heal	A2	UNSET
+1156	1157	rühren	False	UNSET	UNSET	UNSET	stir/move	C1	UNSET
+1157	1158	verzögern	False	UNSET	UNSET	UNSET	delay/hold back	C1	UNSET
+1158	1159	absagen	False	UNSET	UNSET	UNSET	cancel	A2	UNSET
+1159	1160	argumentieren	False	UNSET	UNSET	UNSET	argue	UNSET	UNSET
+1160	1161	ausarbeiten	False	UNSET	UNSET	UNSET	work out/develop	C1	UNSET
+1161	1162	ausbrechen	True	brach aus	ausgebrochen	True	break out/escape	C1	UNSET
+1162	1163	begutachten	False	UNSET	UNSET	UNSET	assess	UNSET	UNSET
+1163	1164	einzahlen	False	UNSET	UNSET	UNSET	deposit	B1	UNSET
+1164	1165	fixieren	False	UNSET	UNSET	UNSET	fix/focus	UNSET	UNSET
+1165	1166	importieren	False	UNSET	UNSET	UNSET	import	B2	UNSET
+1166	1167	leuchten	False	UNSET	UNSET	UNSET	shine	B1	UNSET
+1167	1168	übernachten	False	UNSET	UNSET	UNSET	sleep over/spend the night	A1	UNSET
+1168	1169	aushalten	True	hielt aus	ausgehalten	False	bear/endure	B2	UNSET
+1169	1170	hindern	False	UNSET	UNSET	UNSET	hinder/prevent	UNSET	UNSET
+1170	1171	münden	False	UNSET	UNSET	UNSET	flow into/lead into	UNSET	UNSET
+1171	1172	operieren	False	UNSET	UNSET	UNSET	operate	B1	UNSET
+1172	1173	publizieren	False	UNSET	UNSET	UNSET	publish	B2	UNSET
+1173	1174	simulieren	False	UNSET	UNSET	UNSET	fake/simulate	UNSET	UNSET
+1174	1175	aufspüren	False	UNSET	UNSET	UNSET	track down	UNSET	UNSET
+1175	1176	besiegen	False	UNSET	UNSET	UNSET	defeat	B2	UNSET
+1176	1177	bestrafen	False	UNSET	UNSET	UNSET	punish	B1	UNSET
+1177	1178	faszinieren	False	UNSET	UNSET	UNSET	fascinate	A2	UNSET
+1178	1179	koppeln	False	UNSET	UNSET	UNSET	connect/couple	UNSET	UNSET
+1179	1180	signalisieren	False	UNSET	UNSET	UNSET	signal	B2	UNSET
+1180	1181	tagen	False	UNSET	UNSET	UNSET	dawn/meet	UNSET	UNSET
+1181	1182	aussteigen	True	stieg aus	ausgestiegen	True	get off/exit	A1	UNSET
+1182	1183	deuten	False	UNSET	UNSET	UNSET	interpret/point to	A2	UNSET
+1183	1184	konsumieren	False	UNSET	UNSET	UNSET	consume	B1	UNSET
+1184	1185	mitbekommen	True	bekam mit	mitbekommen	False	notice/receive	UNSET	UNSET
+1185	1186	promovieren	False	UNSET	UNSET	UNSET	get a doctorate	B1	UNSET
+1186	1187	anschaffen	False	UNSET	UNSET	UNSET	acquire	B1	UNSET
+1187	1188	unterbinden	True	unterband	unterbunden	False	stop	UNSET	UNSET
+1188	1189	unterstellen	False	UNSET	UNSET	UNSET	assume/subordinate	UNSET	UNSET
+1189	1190	vollenden	False	UNSET	UNSET	UNSET	complete	UNSET	UNSET
+1190	1191	beitreten	True	trat bei	beigetreten	True	join	B2	UNSET
+1191	1192	entrichten	False	UNSET	UNSET	UNSET	pay	UNSET	UNSET
+1192	1193	renovieren	False	UNSET	UNSET	UNSET	refurbish/renovate	A2	UNSET
+1193	1194	absprechen	True	sprach ab	abgesprochen	False	arrange/deny	C1	UNSET
+1194	1195	aufdecken	False	UNSET	UNSET	UNSET	detect/uncover	C1	UNSET
+1195	1196	exportieren	False	UNSET	UNSET	UNSET	export	B1	UNSET
+1196	1197	jagen	False	UNSET	UNSET	UNSET	hunt/chase	C1	UNSET
+1197	1198	loslegen	False	UNSET	UNSET	UNSET	get started	B2	UNSET
+1198	1199	nachholen	False	UNSET	UNSET	UNSET	make up	C1	UNSET
+1199	1200	parken	False	UNSET	UNSET	UNSET	park	A2	UNSET
+1200	1201	prognostizieren	False	UNSET	UNSET	UNSET	predict/forecast	UNSET	UNSET
+1201	1202	übereinstimmen	False	UNSET	UNSET	UNSET	agree/correspond	B2	UNSET
+1202	1203	zurückzahlen	False	UNSET	UNSET	UNSET	repay/pay back	C1	UNSET
+1203	1204	ahnen	False	UNSET	UNSET	UNSET	guess/suspect	C1	UNSET
+1204	1205	auslaufen	True	lief aus	ausgelaufen	True	discontinue/expire/flow out	UNSET	UNSET
+1205	1206	bestücken	False	UNSET	UNSET	UNSET	equip	UNSET	UNSET
+1206	1207	erwecken	False	UNSET	UNSET	UNSET	arouse/awaken/evoke	B2	UNSET
+1207	1208	konkretisieren	False	UNSET	UNSET	UNSET	make concrete/specify	C1	UNSET
+1208	1209	vorangehen	True	ging voran	vorangegangen	True	lead the way/precede/proceed	C1	UNSET
+1209	1210	zuwenden	True	wandte zu	zugewandt	False	devote/donate/turn towards	C1	UNSET
+1210	1211	anpacken	False	UNSET	UNSET	UNSET	tackle/grab	C1	UNSET
+1211	1212	benachrichtigen	False	UNSET	UNSET	UNSET	inform/notify	B2	UNSET
+1212	1213	missbrauchen	False	UNSET	UNSET	UNSET	abuse	UNSET	UNSET
+1213	1214	schärfen	False	UNSET	UNSET	UNSET	sharpen (a blade)/heighten (awareness)	UNSET	UNSET
+1214	1215	verwechseln	False	UNSET	UNSET	UNSET	confuse/get muddled/mix up	B1	UNSET
+1215	1216	visualisieren	False	UNSET	UNSET	UNSET	visualise	UNSET	UNSET
+1216	1217	wegfallen	True	fiel weg	weggefallen	True	be omitted/drop out	B2	UNSET
+1217	1218	befähigen	False	UNSET	UNSET	UNSET	enable	UNSET	UNSET
+1218	1219	blühen	False	UNSET	UNSET	UNSET	bloom/blossom/come up	B1	UNSET
+1219	1220	einfangen	True	fing ein	eingefangen	False	capture	UNSET	UNSET
+1220	1221	gießen	True	goss	gegossen	False	cast/pour/water	A2	UNSET
+1221	1222	managen	False	UNSET	UNSET	UNSET	manage	C1	UNSET
+1222	1223	regieren	False	UNSET	UNSET	UNSET	govern/reign	UNSET	UNSET
+1223	1224	spazieren	False	UNSET	UNSET	True	stroll/walk	A1	UNSET
+1224	1225	vermindern	False	UNSET	UNSET	UNSET	decrease/diminish/reduce	UNSET	UNSET
+1225	1226	vorführen	False	UNSET	UNSET	UNSET	demonstrate/exhibit/pillory	C1	UNSET
+1226	1227	zögern	False	UNSET	UNSET	UNSET	hesitate	UNSET	UNSET
+1227	1228	aufarbeiten	False	UNSET	UNSET	UNSET	come to terms with, process (the past, a backlog)	UNSET	UNSET
+1228	1229	beschweren	False	UNSET	UNSET	UNSET	complain/weight down	A2	UNSET
+1229	1230	einschreiben	True	schrieb ein	eingeschrieben	False	enrol/inscribe/register	C1	UNSET
+1230	1231	abweisen	True	wies ab	abgewiesen	False	dismiss/refuse to see/reject	UNSET	UNSET
+1231	1232	anfahren	True	fuhr an	angefahren	True	set off (in a vehicle) [sein] / run into, knock down (sb) [haben] / snap at (sb) [haben]	UNSET	UNSET
+1232	1233	diagnostizieren	False	UNSET	UNSET	UNSET	diagnose	B2	UNSET
+1233	1234	freisetzen	False	UNSET	UNSET	UNSET	lay off/release/set free	UNSET	UNSET
+1234	1235	rutschen	False	UNSET	UNSET	True	slide/slip	UNSET	UNSET
+1235	1236	sichten	False	UNSET	UNSET	UNSET	look through/sight	UNSET	UNSET
+1236	1237	stiften	False	UNSET	UNSET	UNSET	bring about/cause/donate	UNSET	UNSET
+1237	1238	verordnen	False	UNSET	UNSET	UNSET	decree/prescribe	UNSET	UNSET
+1238	1239	aufwerfen	True	warf auf	aufgeworfen	False	bring up/pose	C1	UNSET
+1239	1240	beliefern	False	UNSET	UNSET	UNSET	provide/supply	UNSET	UNSET
+1240	1241	bremsen	False	UNSET	UNSET	UNSET	brake/slow down	A2	UNSET
+1241	1242	entwenden	False	UNSET	UNSET	UNSET	purloin/steal	UNSET	UNSET
+1242	1243	prämieren	False	UNSET	UNSET	UNSET	award a prize to	UNSET	UNSET
+1243	1244	schwanken	False	UNSET	UNSET	UNSET	alternate/fluctuate/hesitate	C1	UNSET
+1244	1245	verzaubern	False	UNSET	UNSET	UNSET	bewitch	UNSET	UNSET
+1245	1246	ausschalten	False	UNSET	UNSET	UNSET	eliminate/switch off/turn off	A2	UNSET
+1246	1247	abschätzen	False	UNSET	UNSET	UNSET	anticipate/estimate/foresee	UNSET	UNSET
+1247	1248	ausdehnen	False	UNSET	UNSET	UNSET	enlarge/expand	UNSET	UNSET
+1248	1249	ausdenken	True	dachte aus	ausgedacht	False	come up with/make up/think up	C1	UNSET
+1249	1250	konstruieren	False	UNSET	UNSET	UNSET	construct/design/fabricate	UNSET	UNSET
+1250	1251	nähen	False	UNSET	UNSET	UNSET	sew/stitch/suture	B1	UNSET
+1251	1252	respektieren	False	UNSET	UNSET	UNSET	respect	B2	UNSET
+1252	1253	abgrenzen	False	UNSET	UNSET	UNSET	define/delimit/demarcate	B2	UNSET
+1253	1254	abspeichern	False	UNSET	UNSET	UNSET	save/store	C1	UNSET
+1254	1255	anhaben	False	UNSET	UNSET	UNSET	harm/have on/have something switched on	B1	UNSET
+1255	1256	animieren	False	UNSET	UNSET	UNSET	animate	UNSET	UNSET
+1256	1257	aufziehen	True	zog auf	aufgezogen	False	raise (a child)/wind up (a clock)/tease	C1	UNSET
+1257	1258	differenzieren	False	UNSET	UNSET	UNSET	differentiate/distinguish	C1	UNSET
+1258	1259	entzünden	False	UNSET	UNSET	UNSET	become inflamed/ignite/inflame	UNSET	UNSET
+1259	1260	schrumpfen	False	UNSET	UNSET	True	shrink	B2	UNSET
+1260	1261	siegen	False	UNSET	UNSET	UNSET	win	B1	UNSET
+1261	1262	streuen	False	UNSET	UNSET	UNSET	scatter/sprinkle	UNSET	UNSET
+1262	1263	verstauen	False	UNSET	UNSET	UNSET	stack/stow	UNSET	UNSET
+1263	1264	zurechtkommen	True	kam zurecht	zurechtgekommen	True	cope/get along/manage	A2	UNSET
+1264	1265	ausziehen	True	zog aus	ausgezogen	True	move out/take off clothes	A1	UNSET
+1265	1266	lauschen	False	UNSET	UNSET	UNSET	eavesdrop/listen	UNSET	UNSET
+1266	1267	reizen	False	UNSET	UNSET	UNSET	irritate (skin, sb)/provoke/appeal to	B2	UNSET
+1267	1268	verkehren	False	UNSET	UNSET	UNSET	run (of buses/trains)/associate with sb	UNSET	UNSET
+1268	1269	abraten	True	riet ab	abgeraten	False	advise against something	C1	UNSET
+1269	1270	anlocken	False	UNSET	UNSET	UNSET	attract/lure	UNSET	UNSET
+1270	1271	gleichen	True	glich	geglichen	False	closely resemble	C1	UNSET
+1271	1272	miterleben	False	UNSET	UNSET	UNSET	experience/witness	UNSET	UNSET
+1272	1273	niederlassen	True	ließ nieder	niedergelassen	False	let down/lower/settle down	B2	UNSET
+1273	1274	strahlen	False	UNSET	UNSET	UNSET	beam/radiate	C1	UNSET
+1274	1275	überdenken	True	überdachte	überdacht	False	reconsider/rethink	C1	UNSET
+1275	1276	überwiegen	True	überwog	überwogen	False	outweigh/predominate/prevail	C1	UNSET
+1276	1277	zurücktreten	True	trat zurück	zurückgetreten	True	resign/step back	UNSET	UNSET
+1277	1278	skizzieren	False	UNSET	UNSET	UNSET	outline/sketch	C1	UNSET
+1278	1279	vorhaben	False	UNSET	UNSET	UNSET	intend	A2	UNSET
+1279	1280	zurückbleiben	True	blieb zurück	zurückgeblieben	True	linger/stagnate/stay behind	UNSET	UNSET
+1280	1281	zutrauen	False	UNSET	UNSET	UNSET	trust someone to be capable of	B2	UNSET
+1281	1282	aufräumen	False	UNSET	UNSET	UNSET	clean up/tidy up	A2	UNSET
+1282	1283	ausblenden	False	UNSET	UNSET	UNSET	fade out/hide, block out	B2	UNSET
+1283	1284	befahren	True	befuhr	befahren	False	drive on/serve a route/use a road	UNSET	UNSET
+1284	1285	debattieren	False	UNSET	UNSET	UNSET	debate/discuss	UNSET	UNSET
+1285	1286	erschießen	True	erschoss	erschossen	False	shoot dead	UNSET	UNSET
+1286	1287	erziehen	True	erzog	erzogen	False	educate/raise	B1	UNSET
+1287	1288	scheuen	False	UNSET	UNSET	UNSET	shy away from, avoid (keine Mühe scheuen)	B2	UNSET
+1288	1289	untergehen	True	ging unter	untergegangen	True	sink	B2	UNSET
+1289	1290	ablenken	False	UNSET	UNSET	UNSET	deflect/distract/divert	C1	UNSET
+1290	1291	alarmieren	False	UNSET	UNSET	UNSET	alarm	C1	UNSET
+1291	1292	anreichern	False	UNSET	UNSET	UNSET	enrich	UNSET	UNSET
+1292	1293	halbieren	False	UNSET	UNSET	UNSET	bisect/halve	UNSET	UNSET
+1293	1294	vermischen	False	UNSET	UNSET	UNSET	blend/mix	C1	UNSET
+1294	1295	versagen	False	UNSET	UNSET	UNSET	fail/refuse (sb sth)	C1	UNSET
+1295	1296	verzehren	False	UNSET	UNSET	UNSET	consume	C1	UNSET
+1296	1297	aufhängen	False	UNSET	UNSET	UNSET	hang/hang out/hang up	A1	UNSET
+1297	1298	aushändigen	False	UNSET	UNSET	UNSET	deliver/hand out/hand over	UNSET	UNSET
+1298	1299	begleichen	True	beglich	beglichen	False	settle, pay (a bill)	UNSET	UNSET
+1299	1300	stemmen	False	UNSET	UNSET	UNSET	brace (oneself) against / lift (weights) / cope with	UNSET	UNSET
+1300	1301	vorankommen	True	kam voran	vorangekommen	True	make headway/make progress/move forward	C1	UNSET
+1301	1302	weichen	True	wich	gewichen	True	give way/soften/wane	C1	UNSET
+1302	1303	aufschreiben	True	schrieb auf	aufgeschrieben	False	make a note/mark down/note down	A1	UNSET
+1303	1304	hervorbringen	True	brachte hervor	hervorgebracht	False	make/produce/utter	C1	UNSET
+1304	1305	mangeln	False	UNSET	UNSET	UNSET	lack	C1	UNSET
+1305	1306	umsteigen	True	stieg um	umgestiegen	True	change/switch	A2	UNSET
+1306	1307	verifizieren	False	UNSET	UNSET	UNSET	verify	UNSET	UNSET
+1307	1308	adressieren	False	UNSET	UNSET	UNSET	address	UNSET	UNSET
+1308	1309	erwärmen	False	UNSET	UNSET	UNSET	take to/warm up	B1	UNSET
+1309	1310	färben	False	UNSET	UNSET	UNSET	colour/dye	UNSET	UNSET
+1310	1311	guttun	True	tat gut	gutgetan	False	do good	C1	UNSET
+1311	1312	kassieren	False	UNSET	UNSET	UNSET	collect/confiscate	UNSET	UNSET
+1312	1313	unterbreiten	False	UNSET	UNSET	UNSET	submit/present	UNSET	UNSET
+1313	1314	zurechtfinden	True	fand zurecht	zurechtgefunden	False	find one's way around (sich zurechtfinden)	C1	UNSET
+1314	1315	zusammenfinden	True	fand zusammen	zusammengefunden	False	come together/form	UNSET	UNSET
+1315	1316	beleben	False	UNSET	UNSET	UNSET	invigorate	UNSET	UNSET
+1316	1317	beten	False	UNSET	UNSET	UNSET	pray	UNSET	UNSET
+1317	1318	herausarbeiten	False	UNSET	UNSET	UNSET	bring out/carve out/struggle out	B2	UNSET
+1318	1319	komponieren	False	UNSET	UNSET	UNSET	compose	C1	UNSET
+1319	1320	nahelegen	False	UNSET	UNSET	UNSET	advise/recommend/suggest	C1	UNSET
+1320	1321	vermehren	False	UNSET	UNSET	UNSET	augment/multiply	B2	UNSET
+1321	1322	gewöhnen	False	UNSET	UNSET	UNSET	accustom/get used to	A2	UNSET
+1322	1323	musizieren	False	UNSET	UNSET	UNSET	make music	UNSET	UNSET
+1323	1324	weigern	False	UNSET	UNSET	UNSET	decline/refuse	UNSET	UNSET
+1324	1325	durchstarten	False	UNSET	UNSET	True	take off/launch	UNSET	UNSET
+1325	1326	innehaben	False	UNSET	UNSET	UNSET	hold	UNSET	UNSET
+1326	1327	platzen	False	UNSET	UNSET	True	burst/burst with anger/burst with laughter	C1	UNSET
+1327	1328	referieren	False	UNSET	UNSET	UNSET	present/report	UNSET	UNSET
+1328	1329	tanken	False	UNSET	UNSET	UNSET	fill up/refuel/tank up	B1	UNSET
+1329	1330	tummeln	False	UNSET	UNSET	UNSET	romp/hurry	C1	UNSET
+1330	1331	unterwerfen	True	unterwarf	unterworfen	False	subdue	C1	UNSET
+1331	1332	vorziehen	True	zog vor	vorgezogen	False	bring forward/prefer	C1	UNSET
+1332	1333	aufrechterhalten	True	erhielt aufrecht	aufrechterhalten	False	maintain/perpetuate	C1	UNSET
+1333	1334	charakterisieren	False	UNSET	UNSET	UNSET	characterise	UNSET	UNSET
+1334	1335	filmen	False	UNSET	UNSET	UNSET	film	UNSET	UNSET
+1335	1336	isolieren	False	UNSET	UNSET	UNSET	insulate/isolate	UNSET	UNSET
+1336	1337	toben	False	UNSET	UNSET	UNSET	rage/romp	UNSET	UNSET
+1337	1338	überholen	False	UNSET	UNSET	UNSET	overtake/overhaul	B1	UNSET
+1338	1339	verhaften	False	UNSET	UNSET	UNSET	arrest/seize	B1	UNSET
+1339	1340	vorbeigehen	True	ging vorbei	vorbeigegangen	True	pass by/go past	A2	UNSET
+1340	1341	benachteiligen	False	UNSET	UNSET	UNSET	disadvantage/discriminate	C1	UNSET
+1341	1342	erringen	True	errang	errungen	False	achieve/gain/win	UNSET	UNSET
+1342	1343	hemmen	False	UNSET	UNSET	UNSET	block/dam/hamper	B2	UNSET
+1343	1344	niederschlagen	True	schlug nieder	niedergeschlagen	False	knock down/suppress	UNSET	UNSET
+1344	1345	schulden	False	UNSET	UNSET	UNSET	owe	B2	UNSET
+1345	1346	schweben	False	UNSET	UNSET	UNSET	float/glide/hover	C1	UNSET
+1346	1347	zurücknehmen	True	nahm zurück	zurückgenommen	False	go back on/take back/turn down	UNSET	UNSET
+1347	1348	abliefern	False	UNSET	UNSET	UNSET	deliver/hand in	UNSET	UNSET
+1348	1349	abschrecken	False	UNSET	UNSET	UNSET	deter/frighten off/quench	C1	UNSET
+1349	1350	abwägen	True	wog ab	abgewogen	False	weigh/weigh up	B2	UNSET
+1350	1351	andeuten	False	UNSET	UNSET	UNSET	allude/hint/indicate	B2	UNSET
+1351	1352	gedeihen	True	gedieh	gediehen	True	flourish/progress/prosper	UNSET	UNSET
+1352	1353	loslassen	True	ließ los	losgelassen	False	let go/let loose/release	C1	UNSET
+1353	1354	verwerten	False	UNSET	UNSET	UNSET	utilise	UNSET	UNSET
+1354	1355	abführen	False	UNSET	UNSET	UNSET	lead away (a suspect)/pay over (money)/act as a laxative	UNSET	UNSET
+1355	1356	bewohnen	False	UNSET	UNSET	UNSET	inhabit/live in/occupy	UNSET	UNSET
+1356	1357	festschreiben	True	schrieb fest	festgeschrieben	False	codify/sanction	UNSET	UNSET
+1357	1358	hacken	False	UNSET	UNSET	UNSET	chop/hack/hoe	C1	UNSET
+1358	1359	impfen	False	UNSET	UNSET	UNSET	vaccinate	UNSET	UNSET
+1359	1360	leihen	True	lieh	geliehen	False	borrow/lend	A2	UNSET
+1360	1361	starkmachen	False	UNSET	UNSET	UNSET	advocate for/strengthen/support	UNSET	UNSET
+1361	1362	vervollständigen	False	UNSET	UNSET	UNSET	complete	UNSET	UNSET
+1362	1363	abarbeiten	False	UNSET	UNSET	UNSET	process/slave/slave away	C1	UNSET
+1363	1364	ansteuern	False	UNSET	UNSET	UNSET	head/steer/strive	UNSET	UNSET
+1364	1365	befriedigen	False	UNSET	UNSET	UNSET	satisfy	UNSET	UNSET
+1365	1366	bereisen	False	UNSET	UNSET	UNSET	travel	UNSET	UNSET
+1366	1367	einbrechen	True	brach ein	eingebrochen	True	break down/break in/break through	B1	UNSET
+1367	1368	einspielen	False	UNSET	UNSET	UNSET	install/record	UNSET	UNSET
+1368	1369	entkommen	True	entkam	entkommen	True	escape	C1	UNSET
+1369	1370	erlöschen	True	erlosch	erloschen	True	become extinct/die out/expire	UNSET	UNSET
+1370	1371	erwachsen	True	erwuchs	erwachsen	True	arise	A2	UNSET
+1371	1372	rennen	True	rannte	gerannt	True	race/run/sprint	B1	UNSET
+1372	1373	schalten	False	UNSET	UNSET	UNSET	switch	B1	UNSET
+1373	1374	schöpfen	False	UNSET	UNSET	UNSET	create/draw (water)	UNSET	UNSET
+1374	1375	schwingen	True	schwang	geschwungen	False	oscillate/swing	C1	UNSET
+1375	1376	staunen	False	UNSET	UNSET	UNSET	be astonished	B2	UNSET
+1376	1377	ausleben	False	UNSET	UNSET	UNSET	act out/enjoy life/live out	C1	UNSET
+1377	1378	durchhalten	True	hielt durch	durchgehalten	False	hang on/hold out/persevere	B2	UNSET
+1378	1379	verlosen	False	UNSET	UNSET	UNSET	raffle	UNSET	UNSET
+1379	1380	zurückliegen	True	lag zurück	zurückgelegen	False	date far back/lag behind/trail	UNSET	UNSET
+1380	1381	ahnden	False	UNSET	UNSET	UNSET	punish/penalise	UNSET	UNSET
+1381	1382	bemängeln	False	UNSET	UNSET	UNSET	criticise/find fault with	UNSET	UNSET
+1382	1383	dotieren	False	UNSET	UNSET	UNSET	endow	UNSET	UNSET
+1383	1384	nerven	False	UNSET	UNSET	UNSET	annoy/bother/bug	A1	UNSET
+1384	1385	preisgeben	True	gab preis	preisgegeben	False	abandon/disclose/reveal	UNSET	UNSET
+1385	1386	speisen	False	UNSET	UNSET	UNSET	dine/feed	UNSET	UNSET
+1386	1387	strömen	False	UNSET	UNSET	True	stream/surge	UNSET	UNSET
+1387	1388	urteilen	False	UNSET	UNSET	UNSET	judge	B2	UNSET
+1388	1389	vermögen	True	vermochte	vermocht	False	be able/be capable	UNSET	UNSET
+1389	1390	auslassen	True	ließ aus	ausgelassen	False	leave off/leave out/let out	UNSET	UNSET
+1390	1391	baden	False	UNSET	UNSET	UNSET	bathe/have a bath/swim	A1	UNSET
+1391	1392	befallen	True	befiel	befallen	False	befall/overcome	UNSET	UNSET
+1392	1393	biegen	True	bog	gebogen	False	bend/turn	C1	UNSET
+1393	1394	ebnen	False	UNSET	UNSET	UNSET	even out/level	UNSET	UNSET
+1394	1395	freistellen	False	UNSET	UNSET	UNSET	dismiss/exempt/leave something up to someone	UNSET	UNSET
+1395	1396	gelangen	False	UNSET	UNSET	True	attain/reach	B2	UNSET
+1396	1397	komplettieren	False	UNSET	UNSET	UNSET	complete	UNSET	UNSET
+1397	1398	lehnen	False	UNSET	UNSET	UNSET	lean	UNSET	UNSET
+1398	1399	beisteuern	False	UNSET	UNSET	UNSET	contribute	UNSET	UNSET
+1399	1400	einblenden	False	UNSET	UNSET	UNSET	fade in/display	UNSET	UNSET
+1400	1401	herkommen	True	kam her	hergekommen	True	come/derive/originate	UNSET	UNSET

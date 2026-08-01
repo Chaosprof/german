@@ -1,0 +1,128 @@
+[
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      1
+    ],
+    "word": "Mensch",
+    "field": "genders[1].english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`wretch (archaic/dialectal, derogatory)`",
+    "correct": "`woman/female person (regional and dated, usually derogatory)`",
+    "why": "Neuter *das Mensch* specifically denotes a female person; “wretch” loses that defining sex-specific meaning. Article `das` and plural `Menscher` are correct, and keeping this rare sense out of drills is sound."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      5
+    ],
+    "word": "Ort",
+    "field": "genders[1].english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`pointed tool/awl (archaic)`",
+    "correct": "`point/tip of a weapon or tool (archaic/technical)`",
+    "why": "Neuter *Ort* is the point or tip, not the pointed tool or an awl itself. Article `das`, plural `Örter`, and exclusion from drills are otherwise correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      7
+    ],
+    "word": "Alter",
+    "field": "genders[0], genders[1].plural, genders[1].singularOnly",
+    "severity": "high",
+    "category": "junk",
+    "current": "`der Alter` = `old man (colloquial)`, plural `Alten`; `das Alter`, plural `Alter`, `singularOnly=false`",
+    "correct": "Remove the masculine sense from the spelling `Alter` (or model the nominalised adjective separately as headword `Alte`: `der Alte`, plural `Alten`); for `das Alter` store plural `—` and `singularOnly=true`",
+    "why": "With a definite article the nominalised adjective is *der Alte*, never *der Alter*. The age noun is normally a singulare tantum, matching the primary noun-bank entry, which already stores `das Alter` with plural `—`."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      63
+    ],
+    "word": "Orange",
+    "field": "genders[0].english, genders[1].plural, genders[1].singularOnly",
+    "severity": "high",
+    "category": "plural",
+    "current": "fruit = `China orange/bitter orange/orange/orange (fruit)`; colour = plural `Orange`, `singularOnly=false`",
+    "correct": "fruit = `orange (fruit)`, plural `Orangen`; colour = `orange (colour)`, plural `—`, `singularOnly=true`",
+    "why": "Ordinary *Orange* does not mean specifically bitter orange, and the repeated fruit gloss contradicts the clean primary entry. The colour noun *das Orange* is normally uncountable; both common gender-distinguished senses remain suitable for drills."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      66
+    ],
+    "word": "Korpus",
+    "field": "genders[0].english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`die Korpus` = `corpus`",
+    "correct": "`10-point type size (printing, historical/technical)`",
+    "why": "Feminine *Korpus* is a printing size, not a corpus. Neuter *Korpus* correctly denotes a text/evidence corpus with plural `Korpora`, while masculine *Korpus* denotes a body/base with plural `Korpusse`."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      73
+    ],
+    "word": "Graph",
+    "field": "genders[1].english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`grapheme`",
+    "correct": "`graph/concrete written character (linguistics)`",
+    "why": "A *Graph* is a concrete written realization; a *Graphem* is the abstract contrastive unit. The current gloss wrongly collapses that technical distinction. Article `das` and plural `Graphe` are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      75
+    ],
+    "word": "Page",
+    "field": "genders[0].english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`page (web/book)`",
+    "correct": "`web page (computing)`",
+    "why": "German feminine *Page* is an anglicism for a web page; an ordinary book page is *die Seite*. Masculine *Page* “page/bellboy” and both stored plurals are correct."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      84
+    ],
+    "word": "As",
+    "field": "genders[0].english",
+    "severity": "high",
+    "category": "gloss",
+    "current": "`as/ace`",
+    "correct": "`as (ancient Roman coin/unit)`",
+    "why": "Masculine single-s *As* is the Roman coin/unit. The playing-card “ace” is modern *das Ass* with double `s`. Neuter *As* “A-flat” is correctly represented separately."
+  },
+  {
+    "batch": "dual_gender_001",
+    "bank": "dual_gender",
+    "source_rows": [
+      98
+    ],
+    "word": "Kurkuma",
+    "field": "genders[0].plural, genders[1].singularOnly",
+    "severity": "high",
+    "category": "plural",
+    "current": "both gender records store plural `—` and `singularOnly=false`",
+    "correct": "`die Kurkuma` = `turmeric plant/spice`, plural `Kurkumen`, `singularOnly=false`; `das Kurkuma` = `turmeric (spice)`, plural `—`, `singularOnly=true`",
+    "why": "Feminine *Kurkuma* has the standard plural *Kurkumen* when plants are counted, matching the primary noun bank. The neuter variant denotes the uncountable spice and needs the singular-only flag; the current no-plural value and false flag contradict each other."
+  }
+]

@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "nouns": {
+      "path": "data/nouns.json",
+      "actual_count": 25995,
+      "meta_count": 25995,
+      "blank_english": 0,
+      "rank_summary": {
+        "rank_count": 25995,
+        "max_rank": 26523,
+        "duplicate_ranks": [],
+        "first_gaps": [
+          1833,
+          1834,
+          1835,
+          1837,
+          1843,
+          1844,
+          1846,
+          1850,
+          1852,
+          1855,
+          1861,
+          1864,
+          1865,
+          1866,
+          1870,
+          1878,
+          1881,
+          1889,
+          1890,
+          3784,
+          3785,
+          3786,
+          3787,
+          3788,
+          3789,
+          3790,
+          3793,
+          3794,
+          3796,
+          3797
+        ],
+        "gap_count": 528
+      }
+    },
+    "verbs": {
+      "path": "data/verbs.json",
+      "actual_count": 5583,
+      "meta_count": 5583,
+      "blank_english": 0,
+      "rank_summary": {
+        "rank_count": 5583,
+        "max_rank": 5583,
+        "duplicate_ranks": [],
+        "first_gaps": [],
+        "gap_count": 0
+      }
+    },
+    "adjectives": {
+      "path": "data/adjectives.json",
+      "actual_count": 9759,
+      "meta_count": 9759,
+      "blank_english": 0,
+      "rank_summary": {
+        "rank_count": 9759,
+        "max_rank": 9761,
+        "duplicate_ranks": [],
+        "first_gaps": [
+          9323,
+          9706
+        ],
+        "gap_count": 2
+      }
+    },
+    "verbs_with_prepositions": {
+      "path": "data/verbs-with-prepositions.json",
+      "actual_count": 364,
+      "meta_count": 364,
+      "blank_english": 0,
+      "rank_summary": {
+        "rank_count": 364,
+        "max_rank": 370,
+        "duplicate_ranks": [],
+        "first_gaps": [
+          110,
+          192,
+          223,
+          280,
+          289,
+          298
+        ],
+        "gap_count": 6
+      }
+    }
+  },
+  "article_pattern_issues": [],
+  "translation_issues": [],
+  "fixed_preposition_issues": [],
+  "noun_plural_help_issues": []
+}
