@@ -5545,7 +5545,10 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     shadowTint: new THREE.Color(0xffffff),
     highTint: new THREE.Color(0xffffff),
     vignette: 0.20,
-    aberration: 0.012
+    aberration: 0.012,
+    // Set by updateEnvironmentMood whenever any composite uniform changes, so
+    // renderPresent can skip the redundant per-frame uploads in between.
+    gradeDirty: true
   };
 
   var postVert = [
@@ -5728,7 +5731,17 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
         '  float mn = min(col.r, min(col.g, col.b));',
         '  col = mix(vec3(l), col, uSat + uVib * (1.0 - (mx - mn)));',
         '  col *= 1.0 - uVignette * smoothstep(0.05, 0.5, r2);',
-        '  gl_FragColor = vec4(encodeSRGB(col), 1.0);',
+        '  col = encodeSRGB(col);',
+        // The #c element used to carry a CSS filter saturate(1.09)/contrast(1.035).
+        // Running that as a compositor pass over the WebGL canvas every frame cost a
+        // full-resolution pass (and a copy, since filtered layers cannot be presented
+        // directly). Folding the exact same sRGB math into this pass is free — it is
+        // already a full-screen shader — so the canvas filter is turned off on this
+        // path and the direct-render fallback keeps its CSS rule.
+        '  float glum = dot(col, vec3(0.2126, 0.7152, 0.0722));',
+        '  col = glum + (col - glum) * 1.09;',
+        '  col = (col - 0.5) * 1.035 + 0.5;',
+        '  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);',
         '}'
       ].join('\n'),
       depthTest: false, depthWrite: false
@@ -5759,6 +5772,11 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = BASE_EXPOSURE;
   }
+  // The composite pass now bakes the saturate/contrast that used to live in the
+  // #c CSS filter. Killing that compositor filter on the post path removes a
+  // full-resolution filter pass (and a forced canvas copy) every frame; the
+  // direct-render fallback keeps the CSS rule, so its look is unchanged.
+  if (POST.on) canvas.style.filter = 'none';
 
   function postResize() {
     // applyRenderScale runs once at startup, long before this file has even
@@ -5814,17 +5832,26 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     }
 
     var cu = compositeMat.uniforms;
-    cu.uBloom.value = strength;
-    cu.uExposure.value = POST.exposure;
-    cu.uSat.value = POST.sat;
-    cu.uVib.value = POST.vib;
-    cu.uVignette.value = POST.vignette;
-    cu.uAberration.value = POST.aberration;
-    cu.uLift.value.set(POST.lift.r, POST.lift.g, POST.lift.b);
-    cu.uGain.value.set(POST.gain.r, POST.gain.g, POST.gain.b);
-    cu.uGamma.value.set(POST.gamma.r, POST.gamma.g, POST.gamma.b);
-    cu.uShadowTint.value.set(POST.shadowTint.r, POST.shadowTint.g, POST.shadowTint.b);
-    cu.uHighTint.value.set(POST.highTint.r, POST.highTint.g, POST.highTint.b);
+    // The grade only changes on mood transitions and verdict pulses. Uploading
+    // eleven uniforms on the full-screen composite every frame is pure waste
+    // when nothing moved; write only the ones that actually changed.
+    var gd = POST.gradeDirty;
+    if (gd) {
+      cu.uBloom.value = strength;
+      cu.uExposure.value = POST.exposure;
+      cu.uSat.value = POST.sat;
+      cu.uVib.value = POST.vib;
+      cu.uVignette.value = POST.vignette;
+      cu.uAberration.value = POST.aberration;
+      cu.uLift.value.set(POST.lift.r, POST.lift.g, POST.lift.b);
+      cu.uGain.value.set(POST.gain.r, POST.gain.g, POST.gain.b);
+      cu.uGamma.value.set(POST.gamma.r, POST.gamma.g, POST.gamma.b);
+      cu.uShadowTint.value.set(POST.shadowTint.r, POST.shadowTint.g, POST.shadowTint.b);
+      cu.uHighTint.value.set(POST.highTint.r, POST.highTint.g, POST.highTint.b);
+      POST.gradeDirty = false;
+    } else {
+      cu.uBloom.value = strength;
+    }
     postPass(compositeMat, null);
   }
 
@@ -14025,6 +14052,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
         Math.abs(answerKick - lastMoodAnswerKick) < 0.001) return;
     lastMoodFromIndex = moodFromIndex; lastMoodToIndex = moodToIndex;
     lastMoodMix = moodMix; lastMoodOverdrive = od; lastMoodAnswerKick = answerKick;
+    POST.gradeDirty = true;
     var moodA = MOOD_TREATMENTS[moodFromIndex];
     var moodB = MOOD_TREATMENTS[moodToIndex];
 
@@ -14112,6 +14140,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   }
 
   var lastSpeedveilOpacity = -1;
+  var lastTimerScaleX = -1;
   function updateWorldVisuals(dt, t) {
     var od = overdriveIntensity;
     updateEnvironmentMood(od);
@@ -14184,7 +14213,13 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
       var ud = activeGate.userData;
       var total = Math.max(1, ud.z - ud.spawnZ);
       var progress = clamp((player.z - ud.spawnZ) / total, 0, 1);
-      el.timer.style.transform = 'scaleX(' + progress.toFixed(3) + ')';
+      // The scaleX value moves continuously, but the DOM style write itself is
+      // throttled to a change in the value; identical frames skip the write.
+      var timerScaleX = progress.toFixed(3);
+      if (timerScaleX !== lastTimerScaleX) {
+        lastTimerScaleX = timerScaleX;
+        el.timer.style.transform = 'scaleX(' + timerScaleX + ')';
+      }
       var pulse = 0.16 + Math.sin(t * 6) * 0.04 + progress * 0.14;
       for (var i = 0; i < ud.portals.length; i++) {
         var p = ud.portals[i];
@@ -14193,7 +14228,11 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
         p.userData.sign.position.y = 4.5 + Math.sin(t * 3 + i) * 0.045;
       }
     } else {
-      el.timer.style.transform = 'scaleX(0)';
+      // The scaleX(0) reset is only needed when a gate was on screen before.
+      if (lastTimerScaleX !== '0') {
+        lastTimerScaleX = '0';
+        el.timer.style.transform = 'scaleX(0)';
+      }
     }
 
     // Pretzels spin and bob.
