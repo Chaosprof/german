@@ -96,7 +96,7 @@
   }
   /* Outlined "sticker" numerals — a dark rim in eight directions plus a drop
      shadow, so a white digit survives on top of a white lane marking. */
-  .wordstat-num, #pretzelcount, #distanceval, #quizscore, #combo,
+  .wordstat-num, #pretzelcount, #quizscore, #combo,
   .gameoverstat strong, #noun, #stumblemsg {
     paint-order:stroke fill;
     -webkit-text-stroke:0.5px rgba(9,17,38,.5);
@@ -124,13 +124,6 @@
                   text-shadow:0 2px 9px rgba(0,0,0,.5); }
   #pretzellabel { font-size:8.5px; font-weight:800; letter-spacing:.19em;
                   text-transform:uppercase; color:#a6b6d8; }
-
-  /* ------------------------------------------------------------ distance -- */
-  #distancehud { top:88px; right:16px; padding:8px 15px 9px; text-align:right; }
-  #distanceval { font-size:19px; line-height:1; font-weight:800; font-variant-numeric:tabular-nums; }
-  #distanceval small { font-size:10px; font-weight:700; color:#a6b6d8; margin-left:2px; }
-  #distancelabel { display:block; margin-top:5px; font-size:8.5px; font-weight:800;
-                   letter-spacing:.19em; text-transform:uppercase; color:#a6b6d8; }
 
   /* ------------------------------------------------------- mistake recall -- */
   #mistakehistory { top:104px; left:16px; width:264px; padding:11px 13px 12px; }
@@ -357,11 +350,6 @@
   body.running #pretzelcount { font-size:21px; color:#3d2500;
                                text-shadow:0 1px 0 rgba(255,240,190,.7); }
   body.running #pretzellabel { font-size:7px; letter-spacing:.13em; color:#6b4406; }
-  body.running #distancehud { top:57px; right:12px; padding:6px 13px 6px; border-radius:999px;
-                             opacity:.94; }
-  body.running #distanceval { font-size:16px; }
-  body.running #distanceval small { font-size:9px; color:#a9c6ee; }
-  body.running #distancelabel { display:inline; margin:0 0 0 5px; font-size:7px; letter-spacing:.12em; }
 
   body.running #mistakehistory { top:12px; left:12px; width:auto; max-width:264px;
                                  max-height:29px; overflow:hidden; padding:7px 10px;
@@ -375,8 +363,7 @@
                               transition:opacity .16s, max-height .25s, margin-top .25s, visibility 0s linear .25s; }
   body.running #mistakehistory.peek { width:264px; max-height:148px; opacity:.96; border-radius:12px;
                                       background:linear-gradient(160deg,rgba(20,24,40,.88),rgba(12,14,26,.82)); }
-  body.running #mistakehistory.peek #mistakelist { opacity:1; visibility:visible; max-height:108px; margin-top:8px;
-                                                  transition-delay:0s; }
+  body.running #mistakehistory.peek #mistakelist { opacity:1; visibility:visible; max-height:108px; margin-top:8px;                                                  transition-delay:0s; }
   body.running #mistakelist li { font-size:11px; min-height:18px; }
   body.running #answerflash { top:12%; }
   #gohint { margin-top:13px; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#7b88a8; }
@@ -420,6 +407,9 @@
   #touchhint { position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
                display:none; gap:9px; font-size:9.5px; font-weight:800; letter-spacing:.15em;
                text-transform:uppercase; color:#93a3c6; text-shadow:0 2px 8px rgba(0,0,0,.6); }
+  /* Controls only matter before the run begins; once running they would just
+     eat screen real estate, so drop them for the whole run. */
+  body.running #touchhint { display:none !important; }
 
   /* Embed (iframe inside Artikel Blitz): hide the in-page deck picker and
      show a compact exit chip that posts a message back to the host page. */
@@ -440,7 +430,6 @@
     #wordstats { top:auto; bottom:12px; left:10px; transform:scale(.76); transform-origin:bottom left; }
     #mistakehistory { display:none; }
     #pretzelhud { top:auto; bottom:12px; right:10px; transform:scale(.82); transform-origin:bottom right; }
-    #distancehud { top:12px; right:10px; transform:scale(.86); transform-origin:top right; }
 
     /* Mobile perf: drop the full-screen compositing layers that cost extra GPU
        passes over a live WebGL canvas on iPhone. The in-engine grade already
@@ -449,7 +438,7 @@
     #vig, #grain, #colorgrade, #colorgrade-night, #colorgrade-dawn,
     #halation, #halation-night, #halation-dawn, #speedveil { display:none; }
 
-    #quiz { top:11px; left:11px; right:auto; width:min(340px, calc(100vw - 130px)); margin:0; }
+    #quiz { top:calc(11px + var(--ios-safe-top, env(safe-area-inset-top, 0px))); left:11px; right:auto; width:min(340px, calc(100vw - 130px)); margin:0; }
     #noun { min-height:60px; padding:2px 12px 12px; }
     #nounword { font-size:clamp(32px,7.2vw,42px); }
     #nountrans { font-size:clamp(12px,3vw,15px); }
@@ -458,7 +447,7 @@
     #touchhint { display:flex; }
     #startcard { padding:26px 22px 22px; }
     .keys { font-size:11.5px; gap:8px 12px; }
-    body.running #quiz { top:calc(8px + env(safe-area-inset-top, 0px)); left:8px; right:8px; width:auto;
+    body.running #quiz { top:calc(8px + var(--ios-safe-top, env(safe-area-inset-top, 0px))); left:8px; right:8px; width:auto;
                          min-width:0; margin:0; grid-template-columns:24px auto auto; grid-template-rows:auto auto;
                          column-gap:8px; row-gap:3px; padding:7px 12px 10px; }
     body.running #ubadge { grid-column:1; grid-row:1; width:19px; height:19px; font-size:13px; line-height:19px; }
@@ -479,9 +468,9 @@
     body.running .wordstat-num { font-size:14px; }
     body.running .wordstat-label { font-size:5.5px; }
     body.running #pretzelhud { top:auto; bottom:12px; right:8px; transform:none; }
-    body.running #distancehud { top:auto; bottom:52px; right:8px; transform:none; }
     body.running #mistakehistory { display:none; }
     body.running #mistakehistory.peek { display:block; width:min(264px,calc(100vw - 16px)); }
+    body.running #touchhint { display:none; }
   }
 </style>
 </head>
@@ -514,11 +503,6 @@
       <span id="pretzelcount">0</span>
       <span id="pretzellabel">Brezeln</span>
     </div>
-  </div>
-
-  <div id="distancehud" class="panel" aria-label="Gelaufene Strecke">
-    <span id="distanceval">0<small>m</small></span>
-    <span id="distancelabel">Strecke</span>
   </div>
 
   <div id="mistakehistory" class="panel" aria-label="Letzte falsche Antworten">
@@ -575,7 +559,6 @@
       <div id="gameoverstats">
         <div class="gameoverstat"><strong id="finalwords">0</strong><span>Gelernt</span></div>
         <div class="gameoverstat"><strong id="finalcorrect">0</strong><span>Richtig</span></div>
-        <div class="gameoverstat"><strong id="finaldistance">0</strong><span>Meter</span></div>
         <div class="gameoverstat"><strong id="finalpretzels">0</strong><span>Brezeln</span></div>
       </div>
       <button id="restartgame" type="button">Deck erneut laufen · R</button>
@@ -5244,6 +5227,28 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   }
   if (typeof THREE === 'undefined') { fail('Die 3D-Bibliothek wurde nicht geladen.'); return; }
 
+  // ------------------------------------------------------ safe-area inset --
+  // env(safe-area-inset-*) returns 0 inside an iframe on iOS unless measured
+  // from the embedded page's own viewport, so derive the real insets with a
+  // probe element and expose them as CSS custom properties. Everything that
+  // must clear the Dynamic Island / notch uses these variables.
+  (function measureSafeArea() {
+    try {
+      var probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;' +
+        'top:env(safe-area-inset-top);left:env(safe-area-inset-left);' +
+        'bottom:env(safe-area-inset-bottom);right:env(safe-area-inset-right);';
+      document.body.appendChild(probe);
+      var r = probe.getBoundingClientRect();
+      var root = document.documentElement;
+      root.style.setProperty('--ios-safe-top', Math.max(0, Math.round(r.top)) + 'px');
+      root.style.setProperty('--ios-safe-right', Math.max(0, Math.round(window.innerWidth - r.right)) + 'px');
+      root.style.setProperty('--ios-safe-bottom', Math.max(0, Math.round(window.innerHeight - r.bottom)) + 'px');
+      root.style.setProperty('--ios-safe-left', Math.max(0, Math.round(r.left)) + 'px');
+      probe.remove();
+    } catch (e) {}
+  })();
+
   // Offline practice deck: high-frequency A1–B1 nouns with an unambiguous
   // der/die/das article. A host page can override it by setting
   // window._artikelRunnerWords = [{ noun, article }, ...] before this runs.
@@ -5257,6 +5262,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   var articleDeckLoading = false;
   var articleDeckLoadToken = 0;
   var articleNounDataPromise = null;
+  var nounMeaningLookup = null;
   var articleDeckCatalog = Object.create(null);
   var RUNNER_TIER_OPTIONS = [100, 200, 500, 1000, 2000, 5000, 10000, 15000, 25000];
   var RUNNER_DECK_DIRS = [
@@ -12584,7 +12590,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     mistakeTitle: document.getElementById('mistaketitle'),
     mistakeList: document.getElementById('mistakelist'),
     pretzels: document.getElementById('pretzelcount'),
-    distance: document.getElementById('distanceval'),
     flash: document.getElementById('flash'),
     stumble: document.getElementById('stumblemsg'),
     start: document.getElementById('start'),
@@ -12595,7 +12600,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     gameOver: document.getElementById('gameover'),
     finalWords: document.getElementById('finalwords'),
     finalCorrect: document.getElementById('finalcorrect'),
-    finalDistance: document.getElementById('finaldistance'),
     finalPretzels: document.getElementById('finalpretzels'),
     restart: document.getElementById('restartgame')
   };
@@ -12638,6 +12642,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
         });
         return { entries: entries, byId: byId, byWord: byWord };
       })());
+      loadNounMeanings();
       return articleNounDataPromise;
     }
     articleNounDataPromise = fetch('./data/nouns.json')
@@ -12648,8 +12653,12 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
       .then(function (payload) {
         var entries = (payload.nouns || []).filter(runnerNounIsSafe);
         var byId = Object.create(null), byWord = Object.create(null);
+        nounMeaningLookup = Object.create(null);
         entries.forEach(function (entry) {
           if (entry.id) byId[entry.id] = entry;
+          if (entry.english && !nounMeaningLookup[entry.word]) {
+            nounMeaningLookup[entry.word] = String(entry.english).trim();
+          }
           var previous = byWord[entry.word];
           var priority = entry.sensePriority === undefined ? 100 : entry.sensePriority;
           var previousPriority = previous && previous.sensePriority === undefined ? 100 :
@@ -12663,6 +12672,29 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
       });
     return articleNounDataPromise;
   }
+
+  // Translations for the word strip. Fetched from data/nouns.json on its own so
+  // the bundled-offline path (which carries no glosses) shows the same meaning
+  // under the word as the routed app path — one source of truth, both views.
+  function loadNounMeanings() {
+    if (nounMeaningLookup) return Promise.resolve(nounMeaningLookup);
+    nounMeaningLookup = Object.create(null);
+    return fetch('./data/nouns.json')
+      .then(function (response) {
+        if (!response.ok) throw new Error('nouns.json ' + response.status);
+        return response.json();
+      })
+      .then(function (payload) {
+        (payload.nouns || []).forEach(function (entry) {
+          if (entry && entry.english && !nounMeaningLookup[entry.word]) {
+            nounMeaningLookup[entry.word] = String(entry.english).trim();
+          }
+        });
+        return nounMeaningLookup;
+      })
+      .catch(function () { return nounMeaningLookup; });
+  }
+
 
   function dedupeArticleWords(words) {
     var seen = Object.create(null), out = [];
@@ -12861,6 +12893,10 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   } else {
     buildRunnerDeckCatalog();
   }
+  // Warm the noun meaning lookup in the background so translations show under
+  // the word identically on the deployed site, the embedded app view and a
+  // locally opened copy — one code path, one look.
+  loadNounMeanings();
 
   el.embeddedBack = document.getElementById('embedback');
   if (el.embeddedBack) {
@@ -12958,7 +12994,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     var token = ++gameOverToken;
     el.finalWords.textContent = String(quizMastered);
     el.finalCorrect.textContent = String(quizCorrect);
-    el.finalDistance.textContent = String(Math.round(distance));
     el.finalPretzels.textContent = String(pretzelCount);
     setTimeout(function () {
       if (gameOver && token === gameOverToken) el.gameOver.classList.add('show');
@@ -13193,7 +13228,9 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
 
     var runWords = getArticleWords().map(function (word) {
       var base = word.noun !== undefined ? word : { noun: word[0], article: word[1] };
-      return { noun: base.noun, article: base.article, meaning: base.meaning || "" };
+      var meaning = base.meaning || "";
+      if (!meaning && nounMeaningLookup && base.noun) meaning = nounMeaningLookup[base.noun] || "";
+      return { noun: base.noun, article: base.article, meaning: meaning };
     });
     runWords = dedupeArticleWords(runWords);
     quizWords = shuffledCopy(runWords).map(function (word) {
@@ -13496,7 +13533,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   }
 
   // ============================================================= visuals ====
-  var lastMetres = -1;
 
   function nudgeCharBone(name, x, y, z, weight) {
     var b = charBones[name];
@@ -14360,12 +14396,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     }
 
     updateEffects(dt, t);
-
-    var metres = Math.round(distance);
-    if (metres !== lastMetres) {
-      lastMetres = metres;
-      el.distance.innerHTML = metres + '<small>m</small>';
-    }
   }
 
   // ================================================================ loop ====
