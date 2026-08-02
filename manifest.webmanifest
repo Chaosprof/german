@@ -1,0 +1,17 @@
+{
+  "name": "Artikel Blitz — German Noun Trainer",
+  "short_name": "Artikel Blitz",
+  "description": "Practice German noun articles, plurals, translations and grammar. Includes the Berlin Runner arcade game.",
+  "id": ".",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f1ebe0",
+  "theme_color": "#b06239",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

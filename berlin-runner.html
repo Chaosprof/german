@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#10131c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Berlin Runner">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Artikel Express — Berlin Runner</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -401,6 +409,17 @@
                display:none; gap:9px; font-size:9.5px; font-weight:800; letter-spacing:.15em;
                text-transform:uppercase; color:#93a3c6; text-shadow:0 2px 8px rgba(0,0,0,.6); }
 
+  /* Embed (iframe inside Artikel Blitz): hide the in-page deck picker and
+     show a compact exit chip that posts a message back to the host page. */
+  body.embed #deckpicker { display:none; }
+  #embedback { position:fixed; bottom:calc(12px + env(safe-area-inset-bottom)); right:calc(12px + env(safe-area-inset-right));
+               z-index:60; width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
+               background:rgba(13,24,50,.86); color:#cfe3ff; font-size:18px; font-weight:800; line-height:1;
+               box-shadow:0 4px 14px rgba(0,0,0,.45), inset 0 0 0 1px rgba(190,222,255,.28);
+               display:none; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
+  body.embed #embedback { display:flex; }
+  #embedback:active { transform:scale(.92); }
+
   @media (max-width:1080px) {
     #quiz { width:min(420px, calc(100vw - 250px)); }
     body.running #quiz { width:min(500px,calc(100vw - 250px)); }
@@ -535,6 +554,7 @@
   </div>
 
   <div id="err"><div><b>Das Spiel konnte nicht starten.</b><br><span id="errmsg"></span></div></div>
+  <button id="embedback" type="button" aria-label="Zurück zur Artikel-Blitz-Übersicht">✕</button>
 </div>
 <script>// three.js r156 (MIT) - embedded so this file runs with no network access
 /**
@@ -12557,7 +12577,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     } else if (!preloadReady) {
       el.go.textContent = heroReady ? 'Berlin wird geladen' : 'Runner wird geladen';
     } else {
-      var count = (selectedArticleWords || ARTICLE_WORDS).length;
+      var count = getArticleWords().length;
       el.go.textContent = 'Lauf starten · ' + count + ' Wörter';
     }
   }
@@ -12792,7 +12812,29 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     el.deckPicker.addEventListener(eventName, function (event) { event.stopPropagation(); });
   });
   el.deckSelect.addEventListener('change', function () { loadSelectedArticleDeck(el.deckSelect.value); });
-  buildRunnerDeckCatalog();
+
+  // Embed mode: this page is running inside an iframe of the main app. The
+  // host routes a specific deck by setting window.parent._artikelRunnerWords,
+  // so the in-page deck picker is hidden and the "embedded" deck is forced.
+  var isEmbed = /[?&]embed=1/.test(window.location.search);
+  if (isEmbed) {
+    document.body.classList.add('embed');
+    el.deckSelect.value = 'embedded';
+    loadSelectedArticleDeck('embedded');
+    var routedCount = getArticleWords().length;
+    setDeckStatus('Deck aus Artikel Blitz · ' + routedCount + ' Wörter', false);
+  } else {
+    buildRunnerDeckCatalog();
+  }
+
+  el.embeddedBack = document.getElementById('embedback');
+  if (el.embeddedBack) {
+    el.embeddedBack.addEventListener('click', function () {
+      try {
+        if (window.parent && window.parent !== window) window.parent.postMessage('berlin-runner:exit', '*');
+      } catch (e) {}
+    });
+  }
 
   function streakMultiplier() { return 1 + Math.min(4, Math.floor(quizStreak / 5)); }
 
@@ -14471,6 +14513,13 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   reset();
   requestAnimationFrame(frame);
 })();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
 </script>
 </body>
 </html>

@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1">
+<meta name="theme-color" content="#b06239">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Artikel Blitz">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Artikel Blitz — German Noun Trainer</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,0,700;9..144,0,800;9..144,1,500;9..144,1,600&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -1329,6 +1337,7 @@ const GAME_MODES = [
   { id: "matching", name: "Matching", desc: "Pair words and meanings", icon: "🧩" },
   { id: "verb_forms", name: "Verb Forms", desc: "Irregular verb conjugation", icon: "📝" },
   { id: "verb_prepositions", name: "Verb + Preposition", desc: "Practice verb-preposition combos & case", icon: "🎯" },
+  { id: "runner", name: "Berlin Runner", desc: "Run through article gates", icon: "🏃" },
 ];
 const MAIN_GAME_MODES = GAME_MODES.filter(({ id }) => id !== "matching");
 const CASUAL_GAME_MODES = GAME_MODES.filter(({ id }) => id === "matching");
@@ -1830,6 +1839,36 @@ function GermanNounGame() {
       }
       return shuffleArray(items.filter(item => item && item[1] !== undefined));
     };
+
+    if (gMode === "runner") {
+      // Berlin Runner: route a noun deck (with unambiguous articles) into the
+      // embedded runner. Words are pushed to the host window before the iframe
+      // loads; berlin-runner.html reads them from window.parent.
+      let runnerNouns;
+      if (deckId === "__weakest__") {
+        const weakNames = getWeakestNouns(userData.nounStats, 30, "nouns");
+        runnerNouns = weakNames.flatMap(name => getDrillEntriesByName(name));
+      } else if (deckId) {
+        const deck = userData.decks.find(dk => dk.id === deckId) || BUILTIN_DECKS.find(dk => dk.id === deckId);
+        if (!deck) return;
+        runnerNouns = resolveDeckItems(deck, "classic", "nouns");
+      } else {
+        const tierNouns = getNounsForTier(t, tierMinVal);
+        const unique = (() => { const seen = new Set(); return tierNouns.filter(n => { if (seen.has(n[0])) return false; seen.add(n[0]); return true; }); })();
+        runnerNouns = unique.flatMap(noun => getDrillEntriesByName(noun[0]));
+      }
+      const words = runnerNouns
+        .filter(n => n && /^(der|die|das)$/.test(n[1]))
+        .map(n => ({ noun: n[0], article: n[1] }));
+      const seenKeys = new Set();
+      const deduped = words.filter(w => { const k = w.article + "\u0000" + w.noun; if (seenKeys.has(k)) return false; seenKeys.add(k); return true; });
+      if (!deduped.length) { alert("No nouns with a definite article available for this selection"); return; }
+      window._artikelRunnerWords = deduped;
+      setActiveDeck(deckId || null);
+      setLastStartArgs({ m, d, t, deckId, gm: "runner", wordType: "nouns", pStyle: "practice", tSecs: 0, tMin: tierMinVal, isRange: !!isRange });
+      setScreen("runner");
+      return;
+    }
 
     if (deckId === "__weakest__") {
       // Weakest words mode - filtered by effective word type
@@ -2400,6 +2439,9 @@ function GermanNounGame() {
   />;
   if(screen==="dashboard") return <ProgressDashboard userData={userData} onBack={()=>setScreen("menu")}/>;
   if(screen==="grammar") return <GrammarScreen onBack={()=>setScreen("menu")}/>;
+  if(screen==="runner") return <RunnerScreen
+    onExit={()=>{ window._artikelRunnerWords = null; setCampaignChallenge(null); setScreen("menu"); }}
+  />;
   if(screen==="menu") return <MenuScreen initialSelection={lastStartArgs} onStart={(m,d,t,dk,gm,wt,ps,ts,tMin,isRng) => { setCampaignChallenge(null); startGame(m,d,t,dk,gm,wt,ps,ts,tMin,isRng); }} userData={userData} syncStatus={syncStatus} onDeleteDeck={deleteDeck} onSaveDeck={saveDeck} onOpenCampaign={()=>setScreen("campaign")} onOpenDashboard={()=>setScreen("dashboard")} onOpenGrammar={()=>setScreen("grammar")} onSyncRefresh={()=>{
     if(!getPat()) return; setSyncStatus("loading");
     loadGistData().then(d=>{const m=sanitizePersistedData({...DEFAULT_DATA,...d,dailyStreak:{...DEFAULT_DATA.dailyStreak,...(d.dailyStreak||{})}});setUserData(m);setSyncStatus("synced");}).catch(()=>setSyncStatus("error"));
@@ -3725,32 +3767,34 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         )}
       </div>
 
-      <div style={S.menuSection}>
-        <label style={S.menuLabel}>Play Style</label>
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?UI.gold:UI.line,backgroundColor:playStyle==="practice"?UI.goldSoft:UI.panel}}>
-            <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>Practice</span>
-          </button>
-          <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?UI.gold:UI.line,backgroundColor:playStyle==="timed"?UI.goldSoft:UI.panel}}>
-            <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>Timed</span>
-          </button>
-          <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?UI.gold:UI.line,backgroundColor:playStyle==="survival"?UI.goldSoft:UI.panel}}>
-            <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>Survival</span>
-          </button>
-        </div>
-        {playStyle==="timed"&&(
-          <div style={{marginTop:8}}>
-            <label style={{fontSize:12,color:UI.muted,marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
-            <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-              {[5,8,10,15,20,30].map(s=>
-                <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?UI.gold:UI.line,backgroundColor:timedSeconds===s?UI.goldSoft:UI.panel}}>
-                  <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{s}s</span>
-                </button>
-              )}
-            </div>
+      {selectedGameMode!=="runner"&&(
+        <div style={S.menuSection}>
+          <label style={S.menuLabel}>Play Style</label>
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={()=>setPlayStyle("practice")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="practice"?UI.gold:UI.line,backgroundColor:playStyle==="practice"?UI.goldSoft:UI.panel}}>
+              <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>Practice</span>
+            </button>
+            <button onClick={()=>setPlayStyle("timed")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="timed"?UI.gold:UI.line,backgroundColor:playStyle==="timed"?UI.goldSoft:UI.panel}}>
+              <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>Timed</span>
+            </button>
+            <button onClick={()=>setPlayStyle("survival")} style={{...S.diffBtn,flex:1,borderColor:playStyle==="survival"?UI.gold:UI.line,backgroundColor:playStyle==="survival"?UI.goldSoft:UI.panel}}>
+              <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>Survival</span>
+            </button>
           </div>
-        )}
-      </div>
+          {playStyle==="timed"&&(
+            <div style={{marginTop:8}}>
+              <label style={{fontSize:12,color:UI.muted,marginBottom:4,display:"block"}}>Time per question: {timedSeconds}s</label>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                {[5,8,10,15,20,30].map(s=>
+                  <button key={s} onClick={()=>setTimedSeconds(s)} style={{...S.tierBtn,padding:"6px 12px",minWidth:44,borderColor:timedSeconds===s?UI.gold:UI.line,backgroundColor:timedSeconds===s?UI.goldSoft:UI.panel}}>
+                    <span style={{fontSize:14,fontWeight:700,color:UI.textStrong}}>{s}s</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={S.menuStickyFooter}>
         <button onClick={handleStart} disabled={!canStart} style={{...S.startBtn,width:"auto",minWidth:180,marginTop:0,opacity:canStart?1:0.45}}>Start Game</button>
@@ -3763,6 +3807,26 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
         <button onClick={openCasualModes} style={{...S.secondaryActionBtn,borderColor:showCasualModes?UI.gold:UI.line,background:showCasualModes?UI.goldSoft:UI.panel}}>Casual</button>
       </div>
     </div></div>
+  );
+}
+
+function RunnerScreen({ onExit }) {
+  const iframeRef = useRef(null);
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.data === "berlin-runner:exit") onExit();
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [onExit]);
+
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:50,background:"#10131c"}}>
+      <iframe ref={iframeRef} src="berlin-runner.html?embed=1"
+        style={{position:"absolute",inset:0,width:"100%",height:"100%",border:"none",display:"block"}}
+        title="Berlin Runner"
+        allow="accelerometer; autoplay; gyroscope; fullscreen" />
+    </div>
   );
 }
 
@@ -4863,5 +4927,12 @@ loadWordData(p => renderLoading(p))
 <!-- cc_ui_bridge: local-dev "Send to Claude" widget. Loads only when the
      git-ignored cc_ui_bridge/ folder is present; 404-removes itself in prod. -->
 <script src="cc_ui_bridge/widget.js" defer onerror="this.remove()"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
+</script>
 </body>
 </html>
