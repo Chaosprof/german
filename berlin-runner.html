@@ -145,7 +145,7 @@
   /* ------------------------------------------------------ the noun sign ---- */
   /* Berlin U-Bahn station sign: deep transit blue plate, chunky white noun,
      BVG-yellow rule underneath. Readable at a glance at full sprint. */
-  #quiz { top:15px; left:0; right:0; width:min(470px,calc(100vw - 300px));
+  #quiz { position:absolute; top:15px; left:0; right:0; width:min(470px,calc(100vw - 300px));
           min-width:260px; margin:0 auto; padding:0;
           border-radius:9px; overflow:hidden;
           background:linear-gradient(178deg,#12315e 0%,#0d2143 62%,#0a1a36 100%);
@@ -402,6 +402,13 @@
   #restartgame:active { transform:translateY(4px);
                         box-shadow:0 2px 0 rgba(150,86,4,.85), 0 6px 14px rgba(180,110,10,.3),
                                    inset 0 2px 0 rgba(255,255,255,.6); }
+  #exitgame { display:none; margin:12px auto 0; padding:11px 22px; border-radius:999px;
+              border:1px solid rgba(190,222,255,.4); background:rgba(23,42,80,.55);
+              font:800 11px/1 "Segoe UI",Arial,sans-serif; letter-spacing:.14em;
+              text-transform:uppercase; color:#bcd2f2; cursor:pointer;
+              transition:background .15s, color .15s; }
+  body.embed #exitgame { display:inline-block; }
+  #exitgame:active { background:rgba(40,66,116,.7); color:#fff; }
 
   /* --------------------------------------------------------- mobile taps -- */
   #touchhint { position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
@@ -411,16 +418,10 @@
      eat screen real estate, so drop them for the whole run. */
   body.running #touchhint { display:none !important; }
 
-  /* Embed (iframe inside Artikel Blitz): hide the in-page deck picker and
-     show a compact exit chip that posts a message back to the host page. */
+  /* Embed (iframe inside Artikel Blitz): hide the in-page deck picker. The
+     exit back to the host app lives on the game-over card (see #exitgame), so
+     no floating chip ever covers the brezel counter or other HUD elements. */
   body.embed #deckpicker { display:none; }
-  #embedback { position:fixed; bottom:calc(12px + env(safe-area-inset-bottom)); right:calc(12px + env(safe-area-inset-right));
-               z-index:60; width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
-               background:rgba(13,24,50,.86); color:#cfe3ff; font-size:18px; font-weight:800; line-height:1;
-               box-shadow:0 4px 14px rgba(0,0,0,.45), inset 0 0 0 1px rgba(190,222,255,.28);
-               display:none; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
-  body.embed #embedback { display:flex; }
-  #embedback:active { transform:scale(.92); }
 
   @media (max-width:1080px) {
     #quiz { width:min(420px, calc(100vw - 250px)); }
@@ -438,7 +439,7 @@
     #vig, #grain, #colorgrade, #colorgrade-night, #colorgrade-dawn,
     #halation, #halation-night, #halation-dawn, #speedveil { display:none; }
 
-    #quiz { top:calc(11px + var(--ios-safe-top, env(safe-area-inset-top, 0px))); left:11px; right:auto; width:min(340px, calc(100vw - 130px)); margin:0; }
+    #quiz { top:calc(max(54px, var(--ios-safe-top, env(safe-area-inset-top, 0px))) + 4px); left:11px; right:auto; width:min(340px, calc(100vw - 130px)); margin:0; }
     #noun { min-height:60px; padding:2px 12px 12px; }
     #nounword { font-size:clamp(32px,7.2vw,42px); }
     #nountrans { font-size:clamp(12px,3vw,15px); }
@@ -447,7 +448,7 @@
     #touchhint { display:flex; }
     #startcard { padding:26px 22px 22px; }
     .keys { font-size:11.5px; gap:8px 12px; }
-    body.running #quiz { top:calc(8px + var(--ios-safe-top, env(safe-area-inset-top, 0px))); left:8px; right:8px; width:auto;
+    body.running #quiz { top:calc(max(64px, var(--ios-safe-top, env(safe-area-inset-top, 0px))) + 6px); left:8px; right:8px; width:auto;
                          min-width:0; margin:0; grid-template-columns:24px auto auto; grid-template-rows:auto auto;
                          column-gap:8px; row-gap:3px; padding:7px 12px 10px; }
     body.running #ubadge { grid-column:1; grid-row:1; width:19px; height:19px; font-size:13px; line-height:19px; }
@@ -562,11 +563,11 @@
         <div class="gameoverstat"><strong id="finalpretzels">0</strong><span>Brezeln</span></div>
       </div>
       <button id="restartgame" type="button">Deck erneut laufen · R</button>
+      <button id="exitgame" type="button">Zurück zur Übersicht</button>
     </div>
   </div>
 
   <div id="err"><div><b>Das Spiel konnte nicht starten.</b><br><span id="errmsg"></span></div></div>
-  <button id="embedback" type="button" aria-label="Zurück zur Artikel-Blitz-Übersicht">✕</button>
 </div>
 <script>// three.js r156 (MIT) - embedded so this file runs with no network access
 /**
@@ -12898,9 +12899,10 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   // locally opened copy — one code path, one look.
   loadNounMeanings();
 
-  el.embeddedBack = document.getElementById('embedback');
-  if (el.embeddedBack) {
-    el.embeddedBack.addEventListener('click', function () {
+  // Exit back to the host app lives on the game-over card when embedded.
+  var exitGameBtn = document.getElementById('exitgame');
+  if (exitGameBtn) {
+    exitGameBtn.addEventListener('click', function () {
       try {
         if (window.parent && window.parent !== window) window.parent.postMessage('berlin-runner:exit', '*');
       } catch (e) {}
