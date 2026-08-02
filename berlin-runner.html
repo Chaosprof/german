@@ -177,11 +177,17 @@
              transform:skewX(-10deg); transition:background .2s, box-shadow .2s, transform .2s; }
   #lives i.pending { background:rgba(142,166,201,.28); box-shadow:none; transform:scale(.82) skewX(-10deg); }
   #lives i.lost { background:#ff5f67; box-shadow:0 0 8px rgba(255,64,75,.55); transform:scale(.7) skewX(-10deg); }
-  #noun { display:block; padding:1px 16px 13px; font-size:clamp(34px,3.1vw,45px); line-height:1.06;
-          font-weight:900; letter-spacing:.004em; text-align:center; color:#fff;
-          overflow-wrap:anywhere; text-shadow:0 2px 14px rgba(0,0,0,.5); }
-  #noun.long-word { font-size:clamp(28px,2.6vw,37px); }
-  #noun.very-long-word { font-size:clamp(23px,2.15vw,31px); letter-spacing:-.012em; }
+  #noun { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+          padding:1px 16px 12px; min-height:56px; }
+  #nounword { display:block; font-size:clamp(34px,3.1vw,45px); line-height:1.06;
+              font-weight:900; letter-spacing:.004em; text-align:center; color:#fff;
+              overflow-wrap:anywhere; text-shadow:0 2px 14px rgba(0,0,0,.5); }
+  #nountrans { display:block; font-size:clamp(11px,1.05vw,15px); line-height:1.15;
+               font-weight:600; letter-spacing:.02em; text-align:center; color:#bcd2f2;
+               overflow-wrap:anywhere; text-shadow:0 1px 6px rgba(0,0,0,.45); }
+  #nountrans.empty { display:none; }
+  #noun.long-word #nounword { font-size:clamp(28px,2.6vw,37px); }
+  #noun.very-long-word #nounword { font-size:clamp(23px,2.15vw,31px); letter-spacing:-.012em; }
 
   /* Countdown rule that drains as the gate closes in — pure peripheral pressure. */
   #quiztimer { position:absolute; left:0; bottom:5px; height:3px; width:100%;
@@ -306,10 +312,16 @@
   body.running #ubadge { grid-column:1; width:20px; height:20px; font-size:14px; line-height:20px; }
   body.running #quizhint { display:none; }
   body.running #noun { grid-column:2; grid-row:1; min-width:0; padding:0;
-                       font-size:clamp(22px,2.15vw,29px); line-height:1; text-align:left;
-                       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal; }
-  body.running #noun.long-word { font-size:clamp(20px,1.9vw,26px); }
-  body.running #noun.very-long-word { font-size:clamp(17px,1.7vw,23px); }
+                       display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+                       gap:0; text-align:left; }
+  body.running #nounword { font-size:clamp(26px,2.7vw,36px); line-height:1.02;
+                           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal;
+                           max-width:100%; }
+  body.running #nountrans { font-size:clamp(10px,1vw,14px); line-height:1.15; letter-spacing:.015em;
+                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                            max-width:100%; opacity:.92; }
+  body.running #noun.long-word #nounword { font-size:clamp(22px,2.25vw,30px); }
+  body.running #noun.very-long-word #nounword { font-size:clamp(18px,1.9vw,26px); letter-spacing:-.01em; }
   body.running #quizscore { grid-column:3; grid-row:1; margin:0; font-size:10px; opacity:.78; }
   body.running #lives { grid-column:4; grid-row:1; margin:0; gap:4px; }
   body.running #lives i { width:8px; height:8px; }
@@ -429,30 +441,47 @@
     #mistakehistory { display:none; }
     #pretzelhud { top:auto; bottom:12px; right:10px; transform:scale(.82); transform-origin:bottom right; }
     #distancehud { top:12px; right:10px; transform:scale(.86); transform-origin:top right; }
+
+    /* Mobile perf: drop the full-screen compositing layers that cost extra GPU
+       passes over a live WebGL canvas on iPhone. The in-engine grade already
+       carries the look; these CSS coats add only a few percent of sheen. */
+    #c { filter:none; }
+    #vig, #grain, #colorgrade, #colorgrade-night, #colorgrade-dawn,
+    #halation, #halation-night, #halation-dawn, #speedveil { display:none; }
+
     #quiz { top:11px; left:11px; right:auto; width:min(340px, calc(100vw - 130px)); margin:0; }
-    #noun { font-size:29px; padding:1px 12px 11px; }
-    #noun.long-word { font-size:24px; }
-    #noun.very-long-word { font-size:20px; }
+    #noun { min-height:60px; padding:2px 12px 12px; }
+    #nounword { font-size:clamp(32px,7.2vw,42px); }
+    #nountrans { font-size:clamp(12px,3vw,15px); }
+    #noun.long-word #nounword { font-size:clamp(27px,6vw,36px); }
+    #noun.very-long-word #nounword { font-size:clamp(23px,5vw,31px); }
     #touchhint { display:flex; }
     #startcard { padding:26px 22px 22px; }
     .keys { font-size:11.5px; gap:8px 12px; }
-    body.running #quiz { top:8px; left:8px; right:8px; width:auto; min-width:0; margin:0;
-                         grid-template-columns:22px minmax(80px,1fr) auto auto; column-gap:7px;
-                         padding:5px 9px 7px; }
-    body.running #noun { font-size:clamp(19px,5.3vw,25px); }
-    body.running #noun.long-word { font-size:clamp(17px,4.8vw,22px); }
-    body.running #noun.very-long-word { font-size:clamp(15px,4.2vw,19px); }
-    body.running #quizscore { font-size:9px; }
-    body.running #lives { gap:3px; }
+    body.running #quiz { top:calc(8px + env(safe-area-inset-top, 0px)); left:8px; right:8px; width:auto;
+                         min-width:0; margin:0; grid-template-columns:24px auto auto; grid-template-rows:auto auto;
+                         column-gap:8px; row-gap:3px; padding:7px 12px 10px; }
+    body.running #ubadge { grid-column:1; grid-row:1; width:19px; height:19px; font-size:13px; line-height:19px; }
+    body.running #quizscore { grid-column:2; grid-row:1; font-size:10px; }
+    body.running #lives { grid-column:3; grid-row:1; gap:3px; justify-self:end; }
     body.running #lives i { width:7px; height:7px; }
-    body.running #wordstats { top:57px; bottom:auto; left:8px; transform:none;
+    body.running #noun { grid-column:1 / -1; grid-row:2; padding:0; display:flex;
+                         flex-direction:column; align-items:center; justify-content:center; gap:1px;
+                         text-align:center; }
+    body.running #nounword { font-size:clamp(30px,8.4vw,46px); line-height:1.02;
+                             white-space:normal; overflow-wrap:anywhere; text-align:center; }
+    body.running #nountrans { font-size:clamp(12px,3.4vw,16px); line-height:1.15; text-align:center;
+                              white-space:normal; overflow-wrap:anywhere; max-width:100%; }
+    body.running #noun.long-word #nounword { font-size:clamp(26px,7.2vw,40px); }
+    body.running #noun.very-long-word #nounword { font-size:clamp(22px,6vw,34px); letter-spacing:-.01em; }
+    body.running #wordstats { top:auto; bottom:12px; left:8px; transform:none;
                               grid-template-columns:repeat(3,39px); padding:5px 5px 4px; }
     body.running .wordstat-num { font-size:14px; }
     body.running .wordstat-label { font-size:5.5px; }
-    body.running #pretzelhud { top:57px; bottom:auto; right:8px; transform:none; }
-    body.running #distancehud { top:92px; right:8px; transform:none; }
-    body.running #mistakehistory { display:block; top:98px; left:8px; }
-    body.running #mistakehistory.peek { width:min(264px,calc(100vw - 16px)); }
+    body.running #pretzelhud { top:auto; bottom:12px; right:8px; transform:none; }
+    body.running #distancehud { top:auto; bottom:52px; right:8px; transform:none; }
+    body.running #mistakehistory { display:none; }
+    body.running #mistakehistory.peek { display:block; width:min(264px,calc(100vw - 16px)); }
   }
 </style>
 </head>
@@ -501,7 +530,7 @@
 
   <div id="quiz">
     <div id="quizhead"><span id="ubadge">U</span><span id="quizhint">Renn durch den richtigen Artikel</span><span id="quizscore">000000</span><span id="lives" aria-label="Deck-Fortschritt"><i></i><i></i><i></i><i></i><i></i></span></div>
-    <div id="noun">&nbsp;</div>
+    <div id="noun"><span id="nounword">&nbsp;</span><span id="nountrans"></span></div>
     <div id="quiztimer"></div>
   </div>
 
@@ -5480,11 +5509,15 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   // A bounded internal resolution is much more valuable in motion than extra
   // sub-pixels. The old 2x ceiling could quadruple fragment work on common
   // laptop/phone displays and was the main source of intermittent GPU stalls.
-  var MAX_RENDER_DPR = (window.innerWidth * window.innerHeight > 1800000) ? 1.10 : 1.25;
+  // Phones compound DPR and thermal throttling, so the cap is tighter there.
+  var IS_EMBEDDED = /[?&]embed=1/.test(window.location.search);
+  var IS_MOBILE = window.innerWidth <= 820 || (navigator.maxTouchPoints || 0) > 1;
+  var MAX_RENDER_DPR = IS_MOBILE ? 1.10 : (window.innerWidth * window.innerHeight > 1800000 ? 1.10 : 1.25);
   // High-DPI displays start at the tier that proved stable in sustained play.
   // Standard-DPI screens still render 1:1, and the adaptive monitor can promote
   // a high-DPI device back to full scale after it demonstrates headroom.
   var renderScale = (window.devicePixelRatio || 1) > 1.05 ? 0.82 : 1;
+  if (IS_MOBILE) renderScale = Math.min(renderScale, 0.78);
   function applyRenderScale(scale) {
     // The 0.64 emergency tier still resolves to ~0.8 physical pixels per CSS
     // pixel under the capped 1.25 DPR, but gives fill-bound laptops a genuine
@@ -12528,6 +12561,8 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   var el = {
     quiz: document.getElementById('quiz'),
     noun: document.getElementById('noun'),
+    nounWord: document.getElementById('nounword'),
+    nounTrans: document.getElementById('nountrans'),
     timer: document.getElementById('quiztimer'),
     score: document.getElementById('quizscore'),
     lives: document.getElementById('lives'),
@@ -12972,9 +13007,11 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   function startQuestion() {
     var w = nextWord();
     if (!w) { endRun(); return; }
-    currentWord = (w.noun !== undefined) ? { noun: w.noun, article: w.article } : { noun: w[0], article: w[1] };
+    currentWord = (w.noun !== undefined) ? { noun: w.noun, article: w.article, meaning: w.meaning || "" } : { noun: w[0], article: w[1], meaning: w.meaning || "" };
     currentWord.src = w;
-    el.noun.textContent = currentWord.noun;
+    el.nounWord.textContent = currentWord.noun;
+    el.nounTrans.textContent = currentWord.meaning || "";
+    el.nounTrans.classList.toggle('empty', !currentWord.meaning);
     var n = currentWord.noun.length;
     el.noun.classList.toggle('long-word', n > 13 && n <= 20);
     el.noun.classList.toggle('very-long-word', n > 20);
@@ -13155,13 +13192,13 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     clearStumbleUI();
 
     var runWords = getArticleWords().map(function (word) {
-      return word.noun !== undefined ? { noun: word.noun, article: word.article } :
-        { noun: word[0], article: word[1] };
+      var base = word.noun !== undefined ? word : { noun: word[0], article: word[1] };
+      return { noun: base.noun, article: base.article, meaning: base.meaning || "" };
     });
     runWords = dedupeArticleWords(runWords);
     quizWords = shuffledCopy(runWords).map(function (word) {
-      return { noun: word.noun, article: word.article, remainingCorrect: 1,
-               mastered: false, queued: false };
+      return { noun: word.noun, article: word.article, meaning: word.meaning || "",
+               remainingCorrect: 1, mastered: false, queued: false };
     });
     quizDeckSize = quizWords.length;
     quizMastered = 0;

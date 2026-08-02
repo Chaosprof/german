@@ -1859,7 +1859,7 @@ function GermanNounGame() {
       }
       const words = runnerNouns
         .filter(n => n && /^(der|die|das)$/.test(n[1]))
-        .map(n => ({ noun: n[0], article: n[1] }));
+        .map(n => ({ noun: n[0], article: n[1], meaning: (n[3] && String(n[3]).trim()) || "" }));
       const seenKeys = new Set();
       const deduped = words.filter(w => { const k = w.article + "\u0000" + w.noun; if (seenKeys.has(k)) return false; seenKeys.add(k); return true; });
       if (!deduped.length) { alert("No nouns with a definite article available for this selection"); return; }
