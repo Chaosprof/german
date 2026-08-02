@@ -157,17 +157,6 @@
                  box-shadow:0 0 16px rgba(255,205,60,.55); }
   #quiz.overdrive { border-color:rgba(255,206,92,.62);
                     box-shadow:0 16px 46px rgba(255,150,30,.28), 0 2px 0 rgba(255,255,255,.14) inset; }
-  #quizhead { display:flex; align-items:center; gap:8px; padding:7px 14px 0; }
-  #ubadge { flex:0 0 auto; width:17px; height:17px; border-radius:3px; background:#f2b705;
-            color:#12315e; font:900 13px/17px "Segoe UI",Arial,sans-serif; text-align:center; }
-  #quizhint { font-size:8.5px; font-weight:800; letter-spacing:.21em;
-              text-transform:uppercase; color:#8fb3dd; }
-  #lives { display:flex; gap:4px; margin-left:4px; }
-  #lives i { display:block; width:7px; height:7px; border-radius:50%;
-             background:#6df0a0; box-shadow:0 0 8px rgba(94,245,148,.55);
-             transform:skewX(-10deg); transition:background .2s, box-shadow .2s, transform .2s; }
-  #lives i.pending { background:rgba(142,166,201,.28); box-shadow:none; transform:scale(.82) skewX(-10deg); }
-  #lives i.lost { background:#ff5f67; box-shadow:0 0 8px rgba(255,64,75,.55); transform:scale(.7) skewX(-10deg); }
   #noun { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
           padding:1px 16px 13px; min-height:58px; }
   #nounword { display:block; font-size:clamp(34px,3.1vw,45px); line-height:1.16;
@@ -181,28 +170,28 @@
   #noun.long-word #nounword { font-size:clamp(28px,2.6vw,37px); }
   #noun.very-long-word #nounword { font-size:clamp(23px,2.15vw,31px); letter-spacing:-.012em; }
 
-  /* Countdown rule that drains as the gate closes in — pure peripheral pressure. */
-  #quiztimer { position:absolute; left:0; bottom:5px; height:3px; width:100%;
-               background:linear-gradient(90deg,#7bf0a8,#ffd93d 62%,#ff6b6b);
-               transform-origin:left center; transform:scaleX(0); opacity:.9; }
-
   /* --------------------------------------------------------- feedback ------ */
-  /* Verdict feedback is a quick colour flash on the word sign itself — no
-     popup text, so the sign stays purely word + translation. */
-  @keyframes wordFlashCorrect {
-    0%   { color:#fff; text-shadow:0 2px 14px rgba(0,0,0,.5); }
-    25%  { color:#9dffc4; text-shadow:0 0 18px rgba(60,255,140,.85), 0 2px 14px rgba(0,0,0,.5); }
-    55%  { color:#7bf0a8; text-shadow:0 0 24px rgba(60,255,140,1), 0 2px 14px rgba(0,0,0,.5); }
-    100% { color:#fff; text-shadow:0 2px 14px rgba(0,0,0,.5); }
+  /* Verdict feedback flashes the whole word sign (background + border), no
+     popup text. The flash runs over the answered word, which stays displayed
+     until it has played; the next word swaps in only afterwards. */
+  @keyframes signFlashCorrect {
+    0%   { background:linear-gradient(100deg,#132f5e,#1a4788 62%,#102a55); border-color:rgba(190,222,255,.55); }
+    30%  { background:linear-gradient(100deg,#0e4a2c,#147a41 62%,#0b3520);
+           border-color:rgba(120,255,178,.95); box-shadow:0 4px 0 rgba(5,14,34,.6), 0 0 26px rgba(60,255,140,.55), inset 0 2px 0 rgba(255,255,255,.20); }
+    60%  { background:linear-gradient(100deg,#0b3a23,#0f6a37 62%,#092b1b);
+           border-color:rgba(120,255,178,1); box-shadow:0 4px 0 rgba(5,14,34,.6), 0 0 30px rgba(60,255,140,.7), inset 0 2px 0 rgba(255,255,255,.20); }
+    100% { background:linear-gradient(100deg,#132f5e,#1a4788 62%,#102a55); border-color:rgba(190,222,255,.55); }
   }
-  @keyframes wordFlashWrong {
-    0%   { color:#fff; text-shadow:0 2px 14px rgba(0,0,0,.5); }
-    25%  { color:#ffc4b8; text-shadow:0 0 18px rgba(255,90,70,.9), 0 2px 14px rgba(0,0,0,.5); }
-    55%  { color:#ff8b7a; text-shadow:0 0 24px rgba(255,70,50,1), 0 2px 14px rgba(0,0,0,.5); }
-    100% { color:#fff; text-shadow:0 2px 14px rgba(0,0,0,.5); }
+  @keyframes signFlashWrong {
+    0%   { background:linear-gradient(100deg,#132f5e,#1a4788 62%,#102a55); border-color:rgba(190,222,255,.55); }
+    30%  { background:linear-gradient(100deg,#5a1a12,#7a2a1c 62%,#451209);
+           border-color:rgba(255,150,130,.95); box-shadow:0 4px 0 rgba(5,14,34,.6), 0 0 26px rgba(255,80,55,.55), inset 0 2px 0 rgba(255,255,255,.20); }
+    60%  { background:linear-gradient(100deg,#48120c,#6a2416 62%,#380d07);
+           border-color:rgba(255,150,130,1); box-shadow:0 4px 0 rgba(5,14,34,.6), 0 0 30px rgba(255,80,55,.7), inset 0 2px 0 rgba(255,255,255,.20); }
+    100% { background:linear-gradient(100deg,#132f5e,#1a4788 62%,#102a55); border-color:rgba(190,222,255,.55); }
   }
-  #noun.feedback-correct #nounword { animation:wordFlashCorrect .52s ease; }
-  #noun.feedback-wrong #nounword { animation:wordFlashWrong .52s ease; }
+  #quiz.feedback-correct { animation:signFlashCorrect .55s ease; }
+  #quiz.feedback-wrong { animation:signFlashWrong .55s ease; }
 
   #flash { position:absolute; inset:0; opacity:0; transition:opacity .32s;
            background:radial-gradient(circle at 50% 58%, rgba(255,80,80,0) 32%, rgba(230,50,50,.5) 100%); }
@@ -276,8 +265,8 @@
                         -webkit-backdrop-filter:blur(4px) saturate(112%);
                         box-shadow:0 6px 20px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.06); }
   body.running #quiz { top:11px; width:min(540px,calc(100vw - 300px)); min-width:280px;
-                       display:grid; grid-template-columns:26px minmax(110px,1fr) auto;
-                       align-items:center; column-gap:10px; padding:7px 15px 9px;
+                       display:flex; align-items:center; justify-content:center;
+                       padding:8px 16px 10px;
                        border-radius:999px; overflow:hidden;
                        border:2px solid rgba(190,222,255,.55);
                        background:linear-gradient(100deg,#132f5e,#1a4788 62%,#102a55);
@@ -285,12 +274,9 @@
                                   inset 0 2px 0 rgba(255,255,255,.20); }
   body.running #quiz::after { height:3px; box-shadow:0 0 10px rgba(255,205,60,.35); }
   body.running #quiz.overdrive { box-shadow:0 8px 26px rgba(255,150,30,.20), inset 0 1px 0 rgba(255,255,255,.12); }
-  body.running #quizhead { display:contents; }
-  body.running #ubadge { grid-column:1; width:20px; height:20px; font-size:14px; line-height:20px; }
-  body.running #quizhint { display:none; }
-  body.running #noun { grid-column:2; grid-row:1; min-width:0; padding:0;
-                       display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
-                       gap:0; text-align:left; }
+  body.running #noun { width:100%; min-width:0; padding:0;
+                       display:flex; flex-direction:column; align-items:center; justify-content:center;
+                       gap:1px; text-align:center; }
   body.running #nounword { font-size:clamp(26px,2.7vw,36px); line-height:1.14;
                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal;
                            max-width:100%; padding-bottom:2px; }
@@ -299,9 +285,6 @@
                             max-width:100%; opacity:.92; }
   body.running #noun.long-word #nounword { font-size:clamp(22px,2.25vw,30px); }
   body.running #noun.very-long-word #nounword { font-size:clamp(18px,1.9vw,26px); letter-spacing:-.01em; }
-  body.running #lives { grid-column:3; grid-row:1; margin:0; gap:4px; }
-  body.running #lives i { width:8px; height:8px; }
-  body.running #quiztimer { bottom:3px; height:2px; opacity:.82; }
 
   /* Continuously blurring a live WebGL canvas beneath four compact HUD cards
      forces extra full-resolution compositor passes. Their existing translucent
@@ -431,12 +414,9 @@
     #startcard { padding:26px 22px 22px; }
     .keys { font-size:11.5px; gap:8px 12px; }
     body.running #quiz { top:calc(max(64px, var(--ios-safe-top, env(safe-area-inset-top, 0px))) + 6px); left:8px; right:8px; width:auto;
-                         min-width:0; margin:0; grid-template-columns:24px auto; grid-template-rows:auto auto;
-                         column-gap:8px; row-gap:3px; padding:7px 12px 10px; }
-    body.running #ubadge { grid-column:1; grid-row:1; width:19px; height:19px; font-size:13px; line-height:19px; }
-    body.running #lives { grid-column:2; grid-row:1; gap:3px; justify-self:end; }
-    body.running #lives i { width:7px; height:7px; }
-    body.running #noun { grid-column:1 / -1; grid-row:2; padding:2px 0 4px; display:flex;
+                         min-width:0; margin:0; display:flex; align-items:center; justify-content:center;
+                         padding:9px 12px 12px; }
+    body.running #noun { width:100%; padding:0; display:flex;
                          flex-direction:column; align-items:center; justify-content:center; gap:1px;
                          text-align:center; }
     body.running #nounword { font-size:clamp(30px,8.4vw,46px); line-height:1.14;
@@ -451,8 +431,16 @@
     body.running .wordstat-num { font-size:14px; }
     body.running .wordstat-label { font-size:5.5px; }
     body.running #pretzelhud { top:auto; bottom:12px; right:8px; transform:none; }
-    body.running #mistakehistory { display:none; }
-    body.running #mistakehistory.peek { display:block; width:min(264px,calc(100vw - 16px)); }
+    body.running #mistakehistory { display:block; top:auto; bottom:62px; left:50%; transform:translateX(-50%);
+                                   width:auto; max-width:min(300px,calc(100vw - 16px));
+                                   max-height:30px; overflow:hidden; padding:6px 14px;
+                                   opacity:.85; border-radius:999px;
+                                   background:rgba(10,15,29,.5);
+                                   transition:max-height .25s, width .25s, border-radius .22s, background .22s; }
+    body.running #mistakehistory.peek { width:min(300px,calc(100vw - 16px)); max-height:170px;
+                                        opacity:.96; border-radius:12px;
+                                        background:linear-gradient(160deg,rgba(20,24,40,.9),rgba(12,14,26,.84)); }
+    body.running #mistakehistory.peek #mistakelist { opacity:1; visibility:visible; max-height:130px; margin-top:6px; }
     body.running #touchhint { display:none; }
   }
 </style>
@@ -496,9 +484,7 @@
   </div>
 
   <div id="quiz">
-    <div id="quizhead"><span id="ubadge">U</span><span id="quizhint">Renn durch den richtigen Artikel</span><span id="lives" aria-label="Deck-Fortschritt"><i></i><i></i><i></i><i></i><i></i></span></div>
     <div id="noun"><span id="nounword">&nbsp;</span><span id="nountrans"></span></div>
-    <div id="quiztimer"></div>
   </div>
 
   <div id="flash"></div>
@@ -12542,7 +12528,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   var renderedMistakeCount = -1;
   var currentWord = null, activeGate = null;
   var quizCorrect = 0, quizWrong = 0, quizStreak = 0, quizScore = 0;
-  var quizFeedbackToken = 0, mistakePeekToken = 0;
+  var quizFeedbackToken = 0, mistakePeekToken = 0, startQuestionToken = 0;
   var lastObstacleZ = 0, prevZ = 0;
 
   var el = {
@@ -12550,8 +12536,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     noun: document.getElementById('noun'),
     nounWord: document.getElementById('nounword'),
     nounTrans: document.getElementById('nountrans'),
-    timer: document.getElementById('quiztimer'),
-    lives: document.getElementById('lives'),
     speedveil: document.getElementById('speedveil'),
     vig: document.getElementById('vig'),
     colorgrade: document.getElementById('colorgrade'),
@@ -12892,7 +12876,8 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     if (renderedMistakeCount === quizWrong) return;
     renderedMistakeCount = quizWrong;
     var list = el.mistakeList;
-    el.mistakeTitle.textContent = 'Fehler · ' + quizWrong;
+    var shown = Math.min(5, quizMistakes.length);
+    el.mistakeTitle.textContent = 'Fehler · ' + shown;
     while (list.firstChild) list.removeChild(list.firstChild);
     if (!quizMistakes.length) {
       var empty = document.createElement('li');
@@ -12928,27 +12913,23 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     el.quiz.classList.toggle('overdrive', overdriveTier > 0);
     var progressPips = quizDeckSize ? Math.floor((quizMastered / quizDeckSize) * 5 + 0.00001) : 0;
     if (quizDeckSize && quizMastered >= quizDeckSize) progressPips = 5;
-    for (var life = 0; life < el.lives.children.length; life++) {
-      el.lives.children[life].classList.remove('lost');
-      el.lives.children[life].classList.toggle('pending', life >= progressPips);
-    }
-    el.lives.setAttribute('aria-label', quizMastered + ' von ' + quizDeckSize + ' Wörtern gemeistert');
     el.wordstats.setAttribute('aria-label', quizMastered + ' gelernt, ' +
       Math.max(0, quizDeckSize - quizMastered) + ' offen, Serie ' + quizStreak);
     el.pretzels.textContent = String(quizScore);
     updateMistakeHistory();
   }
 
-  // Verdict feedback: a quick green/red flash on the word sign itself, no
-  // popup text. The word and translation stay the sole content of the sign.
+  // Verdict feedback: a quick green/red flash on the whole word sign, no
+  // popup text. The answered word stays displayed for the flash duration; the
+  // next word is only swapped in afterwards (see the delay in answerArticle).
   function showFeedback(correct) {
     var token = ++quizFeedbackToken;
-    el.noun.classList.remove('feedback-correct', 'feedback-wrong');
-    void el.noun.offsetWidth; // restart the flash animation
-    el.noun.classList.add(correct ? 'feedback-correct' : 'feedback-wrong');
+    el.quiz.classList.remove('feedback-correct', 'feedback-wrong');
+    void el.quiz.offsetWidth; // restart the flash animation
+    el.quiz.classList.add(correct ? 'feedback-correct' : 'feedback-wrong');
     setTimeout(function () {
-      if (token === quizFeedbackToken) el.noun.classList.remove('feedback-correct', 'feedback-wrong');
-    }, 520);
+      if (token === quizFeedbackToken) el.quiz.classList.remove('feedback-correct', 'feedback-wrong');
+    }, 560);
     if (!correct && document.body.classList.contains('running')) {
       var peekToken = ++mistakePeekToken;
       el.mistakeHistory.classList.add('peek');
@@ -13121,7 +13102,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
       }
     }
 
-    var full = currentWord.article + ' ' + currentWord.noun;
     showFeedback(correct);
 
     if (correct) fxGateCorrect(player.x, 1.4, player.z, earned, 1 + Math.min(0.9, (streakMultiplier() - 1) * 0.22));
@@ -13131,7 +13111,13 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
       endRun();
       return;
     }
-    startQuestion();
+    // Keep the answered word on screen while the verdict flash plays, then
+    // bring in the next word. The gate still spawns on schedule ahead of the
+    // player, so a ~0.55 s delay never affects gameplay timing.
+    var nextToken = ++startQuestionToken;
+    setTimeout(function () {
+      if (nextToken === startQuestionToken && !gameOver) startQuestion();
+    }, 560);
   }
 
   function stumble() {
@@ -13185,7 +13171,8 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     gameOverToken++;
     el.gameOver.classList.remove('show');
     quizFeedbackToken++;
-    el.noun.classList.remove('feedback-correct', 'feedback-wrong');
+    startQuestionToken++;
+    el.quiz.classList.remove('feedback-correct', 'feedback-wrong');
     mistakePeekToken++; el.mistakeHistory.classList.remove('peek');
     clearStumbleUI();
 
@@ -14217,7 +14204,6 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
   }
 
   var lastSpeedveilOpacity = -1;
-  var lastTimerScaleX = -1;
   function updateWorldVisuals(dt, t) {
     var od = overdriveIntensity;
     updateEnvironmentMood(od);
@@ -14288,15 +14274,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
     // Gate approach glow + the HUD countdown rule.
     if (activeGate && activeGate.userData.active && !activeGate.userData.resolved) {
       var ud = activeGate.userData;
-      var total = Math.max(1, ud.z - ud.spawnZ);
-      var progress = clamp((player.z - ud.spawnZ) / total, 0, 1);
-      // The scaleX value moves continuously, but the DOM style write itself is
-      // throttled to a change in the value; identical frames skip the write.
-      var timerScaleX = progress.toFixed(3);
-      if (timerScaleX !== lastTimerScaleX) {
-        lastTimerScaleX = timerScaleX;
-        el.timer.style.transform = 'scaleX(' + timerScaleX + ')';
-      }
+      var progress = clamp((player.z - ud.spawnZ) / Math.max(1, ud.z - ud.spawnZ), 0, 1);
       var pulse = 0.16 + Math.sin(t * 6) * 0.04 + progress * 0.14;
       for (var i = 0; i < ud.portals.length; i++) {
         var p = ud.portals[i];
@@ -14305,11 +14283,7 @@ window.ARTIKEL_EXPRESS_ASSETS={sky:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAA
         p.userData.sign.position.y = 4.5 + Math.sin(t * 3 + i) * 0.045;
       }
     } else {
-      // The scaleX(0) reset is only needed when a gate was on screen before.
-      if (lastTimerScaleX !== '0') {
-        lastTimerScaleX = '0';
-        el.timer.style.transform = 'scaleX(0)';
-      }
+      // (no DOM countdown bar to reset anymore)
     }
 
     // Pretzels spin and bob.
