@@ -4364,6 +4364,15 @@ THREE.GLTFLoader = GLTFLoader;
   // and post cost instead of only the final fullscreen composite.
   renderer.info.autoReset = false;
 
+  // PERF: three.js calls getProgramInfoLog() after every program link to
+  // report shader errors. That call blocks the main thread until the driver
+  // has finished linking, which on ANGLE/D3D11 defeats the driver's parallel
+  // shader compile entirely. Profiled on an AMD iGPU it was 47% of ALL
+  // main-thread time (28.4s of a 60s run) and was the direct cause of the
+  // 4-6 SECOND freezes whenever a material first appeared mid-run. Off by
+  // default; ?shaderdebug=1 puts it back for when shaders are being edited.
+  renderer.debug.checkShaderErrors = /[?&]shaderdebug=1/.test(location.search);
+
   var MathU = THREE.MathUtils;
   var clamp = MathU.clamp;
   var lerp = MathU.lerp;
@@ -4487,6 +4496,7 @@ THREE.GLTFLoader = GLTFLoader;
   var FOG_COLOR = new THREE.Color().copy(FOG_NEAR_COLOR);
 
   var scene = new THREE.Scene();
+  window.__dbgScene = scene;   // TEMP: draw-call attribution probe
   // The scene root never moves. Freezing its identity matrix prevents it from
   // forcing a full matrixWorld rebuild through every pooled object each frame;
   // animated descendants still mark and update their own matrices normally.
@@ -4653,12 +4663,63 @@ THREE.GLTFLoader = GLTFLoader;
   // cost of the second scene pass; the line itself is soft enough (~2px) that
   // the resolution drop is not visible in the composited edge.
   var outlineRT = null, outlineMat = null;
+  // outlineMat used to be the ONE material pushed through every object in the
+  // scene via scene.overrideMaterial. WebGLRenderer caches per-draw state
+  // (instancing / instancingColor / skinning flags) keyed by MATERIAL OBJECT
+  // IDENTITY (WebGLRenderer.properties, a WeakMap<material, ...>), not by
+  // object -- so one shared material bouncing between plain meshes, several
+  // InstancedMesh pool flavours (with/without instanceColor) and the skinned
+  // hero thrashed that cache on nearly every draw call, forcing a full
+  // getParameters/getProgramCacheKey recompute each time. Splitting by the
+  // exact axes WebGLRenderer's setProgram keys on gives each shape of draw
+  // its own stable cache entry; see outlineMaterialFor() below. This does NOT
+  // add compiled GL programs -- the program cache itself is keyed by
+  // parameters, not material identity, so the same program variants get
+  // reused across these four material objects.
+  var outlineMatInstanced = null, outlineMatInstancedColor = null, outlineMatSkinned = null;
+  // Cache of { obj, variant, saved } built once (see buildOutlineSwapList),
+  // covering every material-bearing object in the scene. Populated only once
+  // the whole scene graph (including the async-loaded hero) is known
+  // complete -- see the preloadReady handoff in maybeFinishPreload -- so
+  // renderPresent() below falls back to the old scene.overrideMaterial path
+  // (correct but slow) for the handful of loading-screen frames before that.
+  var outlineSwapList = null;
   // Resolution of the outline prepass relative to the scene buffer. 1 = full.
   // Kept as a named constant rather than an inline /2 so the trade-off is
   // visible and adjustable: this is the dial between crisp ink contours and
   // one extra full-resolution geometry pass per frame.
   var OUTLINE_RT_SCALE = 1;
   var outlineSize = new THREE.Vector2(1, 1);
+
+  // Which outline material variant an object's real draw call should use,
+  // matched exactly to the flags WebGLRenderer's setProgram keys its
+  // per-material cache on (see the comment on outlineMatInstanced above).
+  // Shared between the real render (renderPresent) and the compile warm-up
+  // (warmRemainingPrograms) so the two can never drift apart.
+  function outlineMaterialFor(obj) {
+    if (obj.isSkinnedMesh) return outlineMatSkinned;
+    if (obj.isInstancedMesh) return obj.instanceColor ? outlineMatInstancedColor : outlineMatInstanced;
+    return outlineMat;
+  }
+
+  // Built once, the first time the scene graph is known complete (see
+  // outlineSwapList above). Every material-bearing object gets a fixed
+  // { obj, variant } entry; array materials get a same-length array of the
+  // matching variant pre-built here so the per-frame swap never allocates.
+  function buildOutlineSwapList() {
+    var list = [];
+    scene.traverse(function (obj) {
+      if (!obj.material) return;
+      var variant = outlineMaterialFor(obj);
+      list.push({
+        obj: obj,
+        variant: Array.isArray(obj.material) ?
+          obj.material.map(function () { return variant; }) : variant,
+        saved: null
+      });
+    });
+    return list;
+  }
 
   function postMakeRT(w, h, opts) {
     opts = opts || {};
@@ -4739,6 +4800,14 @@ THREE.GLTFLoader = GLTFLoader;
     outlineRT.depthTexture.minFilter = THREE.NearestFilter;
     outlineRT.depthTexture.magFilter = THREE.NearestFilter;
     outlineMat = new THREE.MeshNormalMaterial();
+    // Same shader, four material identities -- see the comment on this var's
+    // declaration for why. Each is a completely default MeshNormalMaterial,
+    // so all four still compile down to the exact same GLSL per instancing/
+    // skinning combination; splitting them changes nothing about what gets
+    // drawn, only how WebGLRenderer's per-material draw-state cache behaves.
+    outlineMatInstanced = new THREE.MeshNormalMaterial();
+    outlineMatInstancedColor = new THREE.MeshNormalMaterial();
+    outlineMatSkinned = new THREE.MeshNormalMaterial();
 
     brightMat = new THREE.ShaderMaterial({
       uniforms: {
@@ -5283,10 +5352,28 @@ THREE.GLTFLoader = GLTFLoader;
         outlineTransparentWasVisible[otd] = outlineTransparentDetails[otd].visible ? 1 : 0;
         outlineTransparentDetails[otd].visible = false;
       }
-      scene.overrideMaterial = outlineMat;
-      renderer.setRenderTarget(outlineRT);
-      renderer.render(scene, camera);
-      scene.overrideMaterial = null;
+      // Per-category material swap instead of scene.overrideMaterial -- see
+      // outlineMatInstanced's declaration comment for why. outlineSwapList is
+      // null only for the handful of loading-screen frames before the scene
+      // (including the async hero) is known complete; that rare path falls
+      // back to the always-correct overrideMaterial approach.
+      if (outlineSwapList) {
+        for (var osi = 0; osi < outlineSwapList.length; osi++) {
+          var ose = outlineSwapList[osi];
+          ose.saved = ose.obj.material;
+          ose.obj.material = ose.variant;
+        }
+        renderer.setRenderTarget(outlineRT);
+        renderer.render(scene, camera);
+        for (var osr2 = 0; osr2 < outlineSwapList.length; osr2++) {
+          outlineSwapList[osr2].obj.material = outlineSwapList[osr2].saved;
+        }
+      } else {
+        scene.overrideMaterial = outlineMat;
+        renderer.setRenderTarget(outlineRT);
+        renderer.render(scene, camera);
+        scene.overrideMaterial = null;
+      }
       for (var ofr = 0; ofr < outlineFacadeDetails.length; ofr++) {
         outlineFacadeDetails[ofr].visible = !!outlineFacadeDetailWasVisible[ofr];
       }
@@ -7913,6 +8000,131 @@ THREE.GLTFLoader = GLTFLoader;
   scene.add(groundBounce);
   var rimFollow = new THREE.Vector3(0, 3.2, -2.5);
   var bounceFollow = new THREE.Vector3(0, 0.65, 1.8);
+
+  // Fixed pool of "sequence" point lights standing in for the station
+  // platform lamps and the tunnel headlight sweep. Those PointLights used to
+  // live directly inside the station/tunnel Group that makeChunk builds per
+  // chunk slot, and that Group's root.visible gets flipped constantly (every
+  // rollChunk recycle, every time a chunk crosses the applyChunkLOD dz
+  // window). three.js counts lights for the shader permutation via
+  // traverseVisible, so every one of those flips changed NUM_POINT_LIGHTS
+  // and relinked EVERY lit material in the scene at once -- the multi-second
+  // stalls this pool exists to remove.
+  //
+  // The fix: replace each real PointLight at its authoring site with a cheap
+  // Object3D "marker" at the identical local position (see
+  // registerSeqLightMarker, used by makeStationSequence/makeTunnelSequence),
+  // and drive a small fixed set of always-present, always-visible real
+  // PointLights from whichever markers are currently live each frame (see
+  // syncSeqLightPool, called once per frame from frame()). An idle pool
+  // light sits at intensity 0, which contributes nothing to the image but
+  // keeps NUM_POINT_LIGHTS constant, so nothing ever relinks.
+  //
+  // Pool size: MEASURED, not reasoned. An earlier pass argued from rollChunk's
+  // recurrence periods (station 320 m, tunnel 640 m, both wider than
+  // applyChunkLOD's ~248 m window) that at most one station and one tunnel
+  // could be live at once, giving 2 station lamps + 1 tunnel sweep lamp = 3.
+  // That argument is WRONG -- instrumenting the real frame loop shows a steady
+  // peak of 5 on-screen sequence lamps, reached within the first seconds of
+  // every run. Sizing to 3 silently dropped two lamps and left part of a
+  // sequence interior unlit, which is exactly the visual regression this whole
+  // change is supposed to avoid. Keep this at the measured peak; the
+  // console.warn in syncSeqLightPool fires if it is ever exceeded again.
+  var SEQ_LIGHT_POOL_SIZE = 5;
+  var seqLightMarkers = [];
+  var seqLightPool = [];
+  var seqLightLive = [];
+  var seqLightPoolWarned = false;
+  var seqLightPeak = 0;
+  var seqFrustum = new THREE.Frustum();
+  var seqFrustumM = new THREE.Matrix4();
+  var seqSphere = new THREE.Sphere();
+  for (var seqPoolI = 0; seqPoolI < SEQ_LIGHT_POOL_SIZE; seqPoolI++) {
+    var seqPoolLight = new THREE.PointLight(0xffffff, 0, 1, 2);
+    scene.add(seqPoolLight);
+    seqLightPool.push(seqPoolLight);
+  }
+  // Called by makeStationSequence/makeTunnelSequence in place of constructing
+  // a real THREE.PointLight. `parent` is the sequence-local group the light
+  // used to be added to (station root, or the tunnel's moving sweep group),
+  // and x/y/z are the exact original local position, so the marker inherits
+  // the same freeze/animation behaviour (freezeObjectTree, the sweep's own
+  // per-frame position update) that already moves that group correctly.
+  function registerSeqLightMarker(parent, x, y, z, color, intensity, distance, decay) {
+    var marker = new THREE.Object3D();
+    marker.position.set(x, y, z);
+    parent.add(marker);
+    seqLightMarkers.push({
+      marker: marker, color: color, intensity: intensity, distance: distance,
+      decay: decay, worldPos: new THREE.Vector3(), distSq: 0
+    });
+    return marker;
+  }
+  // Runs once per frame (see frame(), after updateWorldVisuals). Finds which
+  // markers are currently live -- i.e. every ancestor up to the scene is
+  // .visible, mirroring exactly the traverseVisible chain three.js used to
+  // walk when these were real lights -- and copies each live marker's
+  // current world position plus its original colour/intensity/distance/decay
+  // onto the fixed pool. marker.updateWorldMatrix(true, false) is called
+  // explicitly (rather than relying on this frame's already-happened
+  // scene.updateMatrixWorld() pass inside renderer.render) so this is
+  // correct regardless of frame ordering and independent of the
+  // matrixWorldAutoUpdate=false freezing applied to most of the chunk tree
+  // (see freezeObjectTree) -- it recomputes exactly the ancestor chain this
+  // marker needs, ignoring those flags entirely, without disturbing them.
+  function syncSeqLightPool() {
+    seqFrustumM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+    seqFrustum.setFromProjectionMatrix(seqFrustumM);
+    seqLightLive.length = 0;
+    for (var i = 0; i < seqLightMarkers.length; i++) {
+      var entry = seqLightMarkers[i];
+      var o = entry.marker, visible = true;
+      while (o) { if (!o.visible) { visible = false; break; } o = o.parent; }
+      if (!visible) continue;
+      entry.marker.updateWorldMatrix(true, false);
+      entry.marker.getWorldPosition(entry.worldPos);
+      // A PointLight contributes nothing beyond its `distance` falloff, so a
+      // live marker only deserves a scarce pool slot if its sphere of
+      // influence actually reaches the visible frustum. Ranking by
+      // distance-to-camera instead (the first cut of this) is wrong: these
+      // lamps light the station/tunnel interior around them, which can be
+      // well down the corridor and plainly on screen while the lamp itself
+      // is far from the camera. That mistake dropped real lamps and left
+      // sequence interiors unlit.
+      seqSphere.center.copy(entry.worldPos);
+      seqSphere.radius = entry.distance;
+      if (!seqFrustum.intersectsSphere(seqSphere)) continue;
+      seqLightLive.push(entry);
+    }
+    if (seqLightLive.length > seqLightPeak) {
+      seqLightPeak = seqLightLive.length;
+      window.__seqLightPeak = seqLightPeak;   // read by the perf harness
+      if (seqLightPeak > seqLightPool.length && !seqLightPoolWarned) {
+        console.warn('[perf] sequence-light pool undersized: ' + seqLightPeak +
+          ' on-screen sequence lights vs pool size ' + seqLightPool.length +
+          ' -- the farthest ' + (seqLightPeak - seqLightPool.length) +
+          ' will render unlit until this is raised.');
+        seqLightPoolWarned = true;
+      }
+    }
+    if (seqLightLive.length > seqLightPool.length) {
+      for (var j = 0; j < seqLightLive.length; j++) {
+        seqLightLive[j].distSq = seqLightLive[j].worldPos.distanceToSquared(camera.position);
+      }
+      // Nearest to camera wins a pool slot; the rest fall back to zero.
+      seqLightLive.sort(function (a, b) { return a.distSq - b.distSq; });
+    }
+    var used = Math.min(seqLightLive.length, seqLightPool.length);
+    for (var p = 0; p < used; p++) {
+      var e = seqLightLive[p], pl = seqLightPool[p];
+      pl.position.copy(e.worldPos);
+      pl.color.setHex(e.color);
+      pl.intensity = e.intensity;
+      pl.distance = e.distance;
+      pl.decay = e.decay;
+    }
+    for (var q = used; q < seqLightPool.length; q++) seqLightPool[q].intensity = 0;
+  }
 
   // Three authored long-run treatments share the same geometry and textures.
   // The brief for all three is the same: high key, saturated, no murk. The run
@@ -11189,7 +11401,7 @@ THREE.GLTFLoader = GLTFLoader;
   // everything else is alpha=0. That's invisible in the MAIN render (a
   // correctly alpha-blended MeshBasicMaterial), but the ink-outline/AO/DOF
   // prepass (see outlineMat/renderPresent) renders the WHOLE scene a second
-  // time with scene.overrideMaterial = a single shared MeshNormalMaterial —
+  // time with every material swapped for a shared MeshNormalMaterial —
   // opaque, no alpha map, no idea this mesh's texture is mostly transparent.
   // That prepass wrote real, near-camera depth across the FULL rectangle,
   // versus the sky dome's depth (2000 units) everywhere outside the plane —
@@ -11945,6 +12157,17 @@ THREE.GLTFLoader = GLTFLoader;
 
   function makeStationSequence() {
     var root = new THREE.Group();
+    // PERF: this whole function fires once per chunk slot at boot (not per
+    // reroll -- see rollChunk, which only flips root.visible). The side steel
+    // posts and frame ribs below are fixed decoration added straight to
+    // `root` that nothing ever repositions or individually re-toggles
+    // afterward, which makes them a safe one-time mergedPart() batch instead
+    // of 20 separate draws per live station. The portal arches/posts stay
+    // OUT of this batch and merge (at most) within their own portalRoot --
+    // see the NOTE further down at the portal loop for why: each portal is
+    // hidden independently on final approach, which a root-level merge would
+    // break.
+    var stationSteelSpecs = [];
     // Shared by both wall-lamp pools below; cached so the two sides (and
     // every other chunk slot's copy of this function) reuse one buffer.
     var stationGlowGeo = cached('station_lamp_glow', function () { return new THREE.PlaneGeometry(2.6, 3.1); });
@@ -11982,10 +12205,10 @@ THREE.GLTFLoader = GLTFLoader;
       // Four paired bays retain the structure and end supports with fewer
       // meshes/triangles and clearer views through to the city.
       for (var z = -15; z <= 15; z += 10) {
-        root.add(roundedBox(0.38, 5.70, 0.28, 0.07, STATION_MAT.steel,
-          side * 14.70, 2.85, z, 0.018));
-        root.add(roundedBox(0.22, 6.88, 0.22, 0.055, STATION_MAT.steel,
-          side * 7.78, 3.44, z, 0.016));
+        stationSteelSpecs.push({ geo: roundedBoxGeo(0.38, 5.70, 0.28, 0.07, 0.018),
+          x: side * 14.70, y: 2.85, z: z });
+        stationSteelSpecs.push({ geo: roundedBoxGeo(0.22, 6.88, 0.22, 0.055, 0.016),
+          x: side * 7.78, y: 3.44, z: z });
       }
       // Platform furniture and repeated station-name boards.
       [-9.2, 9.2].forEach(function (z) {
@@ -12038,14 +12261,17 @@ THREE.GLTFLoader = GLTFLoader;
     // Eight heavy ribs turned the close view into a navy cage. Four retain
     // the station rhythm and paired light bars with half the submissions.
     for (var frameZ = -12; frameZ <= 12; frameZ += 8) {
-      root.add(roundedBox(29.5, 0.14, 0.14, 0.045, STATION_MAT.steel,
-        0, 7.05, frameZ, 0.016));
+      stationSteelSpecs.push({ geo: roundedBoxGeo(29.5, 0.14, 0.14, 0.045, 0.016),
+        x: 0, y: 7.05, z: frameZ });
       root.add(roundedBox(12.6, 0.075, 0.14, 0.025, STATION_MAT.light,
         0, 6.82, frameZ + 0.12, 0.01));
     }
     [-7.2, 7.2].forEach(function (lightZ) {
-      var stationLight = new THREE.PointLight(0xffc77f, 1.85, 19, 2);
-      stationLight.position.set(0, 5.65, lightZ); root.add(stationLight);
+      // Was a real THREE.PointLight added straight into this per-chunk
+      // station root; now a marker driven through the fixed seqLightPool
+      // (see registerSeqLightMarker) so NUM_POINT_LIGHTS stays constant
+      // however many station roots exist across the chunk pool.
+      registerSeqLightMarker(root, 0, 5.65, lightZ, 0xffc77f, 1.85, 19, 2);
     });
 
     // Paired arch portals create a legible entrance, interior and daylight exit.
@@ -12057,11 +12283,19 @@ THREE.GLTFLoader = GLTFLoader;
       var portalRoot = new THREE.Group();
       portalRoot.userData.portalZ = portalZ;
       root.add(portalRoot); portals.push(portalRoot);
+      // NOTE: arch + these side posts stay individual per-portal meshes (not
+      // folded into the stationSteelSpecs/stationArchSpecs root-level merge
+      // above) because updateChunks below toggles portalRoot.visible per
+      // portal independently (hiding just the near arch inside its final
+      // 20 m approach so it can't wrap the chase camera as a dark vignette)
+      // — merging across portals, or lifting these out of portalRoot into
+      // root, would defeat that per-portal visibility switch.
       var arch = new THREE.Mesh(portalArchGeo, STATION_MAT.steel);
       arch.position.set(0, 0.72, portalZ); arch.castShadow = true; portalRoot.add(arch);
+      portalRoot.add(mergedPart([-1, 1].map(function (side) {
+        return { geo: roundedBoxGeo(0.48, 6.15, 0.54, 0.09, 0.025), x: side * 8.28, y: 3.18, z: portalZ };
+      }), STATION_MAT.steel, false));
       [-1, 1].forEach(function (side) {
-        portalRoot.add(roundedBox(0.48, 6.15, 0.54, 0.09, STATION_MAT.steel,
-          side * 8.28, 3.18, portalZ, 0.025));
         portalRoot.add(roundedBox(0.94, 0.22, 1.10, 0.07, MAT.stone,
           side * 8.28, 0.11, portalZ, 0.018));
       });
@@ -12130,6 +12364,11 @@ THREE.GLTFLoader = GLTFLoader;
       pipe.rotation.x = Math.PI / 2; pipe.position.set(p[0], 6.92, 0);
       pipe.castShadow = true; root.add(pipe);
     });
+
+    // Emit the batched steel structure collected above (side posts + frame
+    // ribs) as one mesh -- see the PERF comment at the top of this function.
+    var stationSteel = mergedPart(stationSteelSpecs, STATION_MAT.steel, false);
+    if (stationSteel) root.add(stationSteel);
 
     var train = makeStationTrain();
     train.position.set(-13.05, 0.18, 46);
@@ -12273,6 +12512,14 @@ THREE.GLTFLoader = GLTFLoader;
 
   function makeSpreeBridgeSequence() {
     var root = new THREE.Group();
+    // PERF: fires once per chunk slot at boot, not per reroll (rollChunk only
+    // flips root.visible/vessels — see setMoverLive). Every BRIDGE_MAT.steel
+    // piece collected into bridgeSteelSpecs below (deck, parapet rails, the
+    // 38 parapet posts, the lamp poles) is fixed decoration added straight to
+    // `root`, never repositioned or individually re-toggled afterward (unlike
+    // the station's per-portal arches, nothing here has its own visibility
+    // switch), so batching them into one mergedPart() draw is safe.
+    var bridgeSteelSpecs = [];
     var water = new THREE.Mesh(cached('spree_water_plane', function () {
       return scaleUV(new THREE.PlaneGeometry(160, 52), 10, 5);
     }), BRIDGE_MAT.water);
@@ -12280,19 +12527,19 @@ THREE.GLTFLoader = GLTFLoader;
     water.receiveShadow = true; root.add(water);
 
     // Road deck and pedestrian ledges preserve the exact lane plane above water.
-    root.add(roundedBox(18.0, 0.72, 40.0, 0.12, BRIDGE_MAT.steel, 0, -0.38, 0, 0.03));
+    bridgeSteelSpecs.push({ geo: roundedBoxGeo(18.0, 0.72, 40.0, 0.12, 0.03), x: 0, y: -0.38, z: 0 });
     [-1, 1].forEach(function (side) {
       root.add(roundedBox(2.30, 0.22, 39.2, 0.08, BRIDGE_MAT.stone,
         side * 8.35, 0.25, 0, 0.022));
       root.add(roundedBox(0.32, 0.58, 39.2, 0.07, BRIDGE_MAT.brick,
         side * 9.55, 0.55, 0, 0.018));
-      root.add(roundedBox(0.14, 0.14, 39.0, 0.04, BRIDGE_MAT.steel,
-        side * 9.55, 1.28, 0, 0.014));
+      bridgeSteelSpecs.push({ geo: roundedBoxGeo(0.14, 0.14, 39.0, 0.04, 0.014),
+        x: side * 9.55, y: 1.28, z: 0 });
       root.add(roundedBox(0.11, 0.11, 39.0, 0.035, MAT.chrome,
         side * 9.55, 1.78, 0, 0.012));
       for (var postZ = -18; postZ <= 18; postZ += 2) {
-        root.add(roundedBox(0.14, 1.28, 0.14, 0.045, BRIDGE_MAT.steel,
-          side * 9.55, 1.18, postZ, 0.016));
+        bridgeSteelSpecs.push({ geo: roundedBoxGeo(0.14, 1.28, 0.14, 0.045, 0.016),
+          x: side * 9.55, y: 1.18, z: postZ });
       }
     });
 
@@ -12424,8 +12671,8 @@ THREE.GLTFLoader = GLTFLoader;
     cables.frustumCulled = false; root.add(cables);
     for (var lampZ = -13; lampZ <= 13; lampZ += 6.5) {
       [-1, 1].forEach(function (side) {
-        var pole = new THREE.Mesh(cylGeo(0.065, 0.085, 3.35, 10), BRIDGE_MAT.steel);
-        pole.position.set(side * 8.72, 1.80, lampZ); root.add(pole);
+        bridgeSteelSpecs.push({ geo: cylGeo(0.065, 0.085, 3.35, 10),
+          x: side * 8.72, y: 1.80, z: lampZ });
         root.add(roundedBox(0.40, 0.30, 0.40, 0.13, MAT.metalDark,
           side * 8.72, 3.45, lampZ, 0.025));
         root.add(roundedBox(0.24, 0.20, 0.24, 0.09, MAT.bulb,
@@ -12461,6 +12708,12 @@ THREE.GLTFLoader = GLTFLoader;
           sx, sh * 0.66, bank * (26.55), 0.012));
       }
     });
+
+    // Emit the batched steel structure collected above (deck, rails, the 38
+    // parapet posts, lamp poles) as one mesh -- see the PERF comment at the
+    // top of this function.
+    var bridgeSteel = mergedPart(bridgeSteelSpecs, BRIDGE_MAT.steel, false);
+    if (bridgeSteel) root.add(bridgeSteel);
 
     var vessels = makeSpreeVessels();
     vessels.position.x = -58; root.add(vessels);
@@ -12807,6 +13060,12 @@ THREE.GLTFLoader = GLTFLoader;
 
   function makeTunnelSequence() {
     var root = new THREE.Group();
+    // PERF: fires once per chunk slot at boot, not per reroll -- same
+    // reasoning as the station/bridge steel batches above. Ribs and pillars
+    // below are collected and emitted as mergedPart() batches (kept as two
+    // groups since they don't share a castShadow flag) once the whole
+    // function body has run.
+    var tunnelRibSpecs = [], tunnelPillarSteelSpecs = [];
 
     // Faceted tile courses approximate a broad masonry barrel vault. The inner
     // radius stays above 7 m across every article portal and lane.
@@ -12823,8 +13082,7 @@ THREE.GLTFLoader = GLTFLoader;
       return new THREE.TorusGeometry(8.32, 0.14, 7, 30, Math.PI);
     });
     for (var ribZ = -18; ribZ <= 18; ribZ += 6) {
-      var rib = new THREE.Mesh(ribGeo, TUNNEL_MAT.steel);
-      rib.position.set(0, 0.66, ribZ); rib.castShadow = true; root.add(rib);
+      tunnelRibSpecs.push({ geo: ribGeo, x: 0, y: 0.66, z: ribZ });
     }
 
     // Right service wall, left train gallery and road-edge kerbs all stay beyond
@@ -12842,11 +13100,15 @@ THREE.GLTFLoader = GLTFLoader;
         side * 7.42, 0.15, 0, 0.016));
     });
     for (var pillarZ = -16; pillarZ <= 16; pillarZ += 5.4) {
-      root.add(roundedBox(0.34, 4.72, 0.34, 0.08, TUNNEL_MAT.steel,
-        -8.18, 2.36, pillarZ, 0.02));
+      tunnelPillarSteelSpecs.push({ geo: roundedBoxGeo(0.34, 4.72, 0.34, 0.08, 0.02),
+        x: -8.18, y: 2.36, z: pillarZ });
       root.add(roundedBox(0.58, 0.16, 0.58, 0.05, MAT.stone,
         -8.18, 0.08, pillarZ, 0.014));
     }
+    var tunnelRibs = mergedPart(tunnelRibSpecs, TUNNEL_MAT.steel, true);
+    if (tunnelRibs) root.add(tunnelRibs);
+    var tunnelPillarSteel = mergedPart(tunnelPillarSteelSpecs, TUNNEL_MAT.steel, false);
+    if (tunnelPillarSteel) root.add(tunnelPillarSteel);
 
     // Dedicated parallel track and its sleepers are isolated behind the pillars.
     root.add(roundedBox(3.70, 0.14, 38.0, 0.04, STREET_MAT.railGrime,
@@ -12997,8 +13259,13 @@ THREE.GLTFLoader = GLTFLoader;
     var sweep = new THREE.Group();
     sweep.add(roundedBox(11.6, 0.06, 0.16, 0.025, TUNNEL_MAT.sweep,
       0, 8.16, 0, 0.01));
-    var sweepLight = new THREE.PointLight(0xaedfff, 1.65, 18, 2);
-    sweepLight.position.set(0, 6.45, 0); sweep.add(sweepLight);
+    // Was a real THREE.PointLight added into the moving sweep group; now a
+    // marker driven through the fixed seqLightPool (see
+    // registerSeqLightMarker at its definition). sweep keeps its own
+    // matrixAutoUpdate=true (see freezeChunkStaticMatrices's dynamicNodes),
+    // so this marker's world position still tracks the sweep's per-frame
+    // animation exactly as the real light used to.
+    registerSeqLightMarker(sweep, 0, 6.45, 0, 0xaedfff, 1.65, 18, 2);
     sweep.position.z = -18; root.add(sweep);
 
     var train = makeTunnelTrain();
@@ -13294,6 +13561,13 @@ THREE.GLTFLoader = GLTFLoader;
     // here on.
     if (opts.withColor) mesh.setColorAt(0, poolScratchColor.setHex(0xffffff));
     mesh.count = 0;
+    // Position (if any, via opts.posY) is set once above and never touched
+    // again -- every per-chunk offset lives in the instance matrices instead
+    // (see poolView). Freeze the mesh's own transform so it doesn't get
+    // recomposed and re-walked by updateMatrixWorld every frame like the
+    // other ~20 scene-wide pools sitting directly under worldRoot.
+    mesh.updateMatrix();
+    mesh.matrixAutoUpdate = false;
     worldRoot.add(mesh);
     ALL_POOLS.push(pool);
     return pool;
@@ -13391,8 +13665,27 @@ THREE.GLTFLoader = GLTFLoader;
       }
     }
     mesh.count = w;
-    mesh.instanceMatrix.needsUpdate = true;
-    if (col) mesh.instanceColor.needsUpdate = true;
+    // Only the packed [0, w) prefix was just rewritten — the rest of the
+    // buffer is stale leftovers from previous rolls that mesh.count already
+    // excludes from the draw. Without an explicit updateRange, three's
+    // WebGLAttributes.update() re-uploads the ENTIRE capacity array
+    // (perChunkCap * CHUNK_COUNT instances) via bufferSubData on every dirty
+    // repack, even though only a handful of instances are ever live at once
+    // (windowBayPool alone is 252*13 = 3276 instances -> ~205KB reuploaded
+    // for what's usually a few KB of real data). Scoping updateRange to the
+    // live prefix makes bufferSubData copy only what changed; three resets
+    // .count back to -1 (full range) right after each upload, so this must
+    // be set fresh every repack.
+    if (w > 0) {
+      mesh.instanceMatrix.updateRange.offset = 0;
+      mesh.instanceMatrix.updateRange.count = w * 16;
+      mesh.instanceMatrix.needsUpdate = true;
+      if (col) {
+        mesh.instanceColor.updateRange.offset = 0;
+        mesh.instanceColor.updateRange.count = w * 3;
+        mesh.instanceColor.needsUpdate = true;
+      }
+    }
     pool.dirty = false;
   }
 
@@ -13643,27 +13936,42 @@ THREE.GLTFLoader = GLTFLoader;
     road.receiveShadow = false;
     g.add(road);
 
-    [-1, 1].forEach(function (side) {
-      var walk = new THREE.Mesh(walkGeo, MAT.walk);
-      walk.position.set(side * (ROAD_HALF + (WALK_OUT - ROAD_HALF) / 2), 0.16, 0);
-      walk.receiveShadow = true;
-      g.add(walk);
-      // GROUND ART PASS: raised from 0.18 to 0.24m and pushed up so its top
-      // now sits ~6cm proud of the pavement (was flush) — cosmetic only,
-      // still centred on side*ROAD_HALF so it never intrudes into a lane
-      // hitbox. At the chase camera's grazing angle the old 0.18m riser
-      // compressed to a couple of screen pixels, which is why the kerbTex
-      // bright-lip/dark-base bands (see the ground-texture block above)
-      // never actually resolved into a visible step in a live capture — a
-      // few extra centimetres of real riser is what makes a texture-only
-      // contrast fix have anything to work with.
-      var kerb = box(0.34, 0.24, CHUNK_LEN, MAT.kerb, side * ROAD_HALF, 0.10, 0);
-      g.add(kerb);
-      // gutter cobble strip
-      var cob = new THREE.Mesh(cobbleGeo, MAT.cobble);
-      cob.position.set(side * (ROAD_HALF - 0.9), 0.012, 0);
-      g.add(cob);
-    });
+    // PERF: the two sidewalk/kerb/gutter strips (one per side) never move or
+    // toggle independently after this point -- no code anywhere stores `walk`,
+    // `kerb` or `cob` on `ud`, so nothing can reposition or hide just one side
+    // later. That makes the left+right pair of each a safe one-time
+    // mergeBoxes() per chunk instead of two separate draws: same shared
+    // geometry, same material, same shadow flags on both sides, only the x
+    // translation differs, which is exactly what mergeBoxes bakes in. Saves 3
+    // draw calls per chunk (6 meshes -> 3) with pixel-identical output.
+    // GROUND ART PASS: the sidewalk riser is 0.16m, raised from the old 0.18m
+    // kerb baseline so its top sits ~6cm proud of the pavement (was flush) —
+    // cosmetic only, still centred on side*ROAD_HALF so it never intrudes into
+    // a lane hitbox. At the chase camera's grazing angle the old 0.18m riser
+    // compressed to a couple of screen pixels, which is why the kerbTex
+    // bright-lip/dark-base bands (see the ground-texture block above) never
+    // actually resolved into a visible step in a live capture — a few extra
+    // centimetres of real riser is what makes a texture-only contrast fix have
+    // anything to work with.
+    var walkMerged = new THREE.Mesh(mergeBoxes([-1, 1].map(function (side) {
+      return { geo: walkGeo, x: side * (ROAD_HALF + (WALK_OUT - ROAD_HALF) / 2), y: 0.16, z: 0 };
+    })), MAT.walk);
+    walkMerged.receiveShadow = true;
+    g.add(walkMerged);
+
+    var kerbMerged = new THREE.Mesh(mergeBoxes([-1, 1].map(function (side) {
+      return { w: 0.34, h: 0.24, d: CHUNK_LEN, x: side * ROAD_HALF, y: 0.10, z: 0 };
+    })), MAT.kerb);
+    g.add(kerbMerged);
+
+    // gutter cobble strip (both sides; tramBed below shares this material too
+    // but keeps its own receiveShadow=true flag so it stays a separate draw —
+    // merging it in would flip these gutter strips' receiveShadow from false
+    // to true, a real (if subtle) shading change this pass must not make).
+    var cobMerged = new THREE.Mesh(mergeBoxes([-1, 1].map(function (side) {
+      return { geo: cobbleGeo, x: side * (ROAD_HALF - 0.9), y: 0.012, z: 0 };
+    })), MAT.cobble);
+    g.add(cobMerged);
 
     // Grounded shadows for this chunk's lamps, trees and sidewalk props. All of
     // them stand on the 0.16 m pavement, so one shared height clears it without
@@ -13684,9 +13992,14 @@ THREE.GLTFLoader = GLTFLoader;
     tramBed.position.y = 0.012;
     tramBed.receiveShadow = true;
     g.add(tramBed);
-    [-0.72, 0.72].forEach(function (x) {
-      g.add(box(0.11, 0.05, CHUNK_LEN, MAT.streetRail, x, 0.03, 0));
-    });
+    // PERF: same reasoning as the walk/kerb/cob merge above -- both rails are
+    // static once placed (position set once here, never touched again), same
+    // material, same (default false/false) shadow flags, only x differs.
+    // Merges 2 draws into 1 per chunk.
+    var railMerged = new THREE.Mesh(mergeBoxes([-0.72, 0.72].map(function (x) {
+      return { w: 0.11, h: 0.05, d: CHUNK_LEN, x: x, y: 0.03, z: 0 };
+    })), MAT.streetRail);
+    g.add(railMerged);
     // Wooden sleeper ties under the rails (see tramTieGeo/MAT.tie above) — one
     // merged static mesh, same shared-geometry idiom as road/cob just above,
     // so this costs one extra draw call per chunk, not one per tie.
@@ -13954,6 +14267,33 @@ THREE.GLTFLoader = GLTFLoader;
     sandwichboard: 1, hazardbarrier: 1
   };
 
+  // freezeChunkStaticMatrices (below) permanently keeps the five authored
+  // transit movers (transit train, station train, bridge vessels, tunnel
+  // train, tunnel sweep) unfrozen -- matrixWorldAutoUpdate stays true -- on
+  // EVERY chunk slot forever, because it runs once at chunk construction and
+  // has no way to know which spectacle a future reroll will pick. But only
+  // one motif in four (hasCross), one in eight (hasStation) or one in
+  // sixteen (hasBridge/hasTunnel) actually activates a given mover on any
+  // one reroll; the rest of the time its root is invisible and nothing reads
+  // its matrixWorld, yet the render walk was still recomposing its whole
+  // multi-car/vessel subtree (tens of meshes) every single frame regardless.
+  // setMoverLive, called from rollChunk below with that reroll's actual
+  // hasStation/hasBridge/hasTunnel/hasCross, keeps only the CURRENTLY active
+  // movers walked: matrixWorldAutoUpdate=false stops the parent recursion
+  // from reaching an inactive mover at all (see freezeObjectTree's comment
+  // for why that flag, not matrixAutoUpdate, gates the walk itself), and
+  // matrixAutoUpdate=false alongside it just means whatever pose is left
+  // behind is stale -- harmless, since its root.visible is false. Flipping
+  // both back to true on a later reroll that reactivates it needs no special
+  // resync: the very next frame's ordinary walk (and updateTransitSpectacles'
+  // own per-frame position write) picks it up exactly as if it had never
+  // been frozen.
+  function setMoverLive(mover, active) {
+    if (mover.matrixAutoUpdate === active) return;
+    mover.matrixAutoUpdate = active;
+    mover.matrixWorldAutoUpdate = active;
+  }
+
   function rollChunk(g, chunkZ) {
     var ud = g.userData;
     g.position.z = chunkZ;
@@ -13984,6 +14324,10 @@ THREE.GLTFLoader = GLTFLoader;
     ud.station.root.visible = hasStation;
     ud.bridge.root.visible = hasBridge;
     ud.tunnel.root.visible = hasTunnel;
+    setMoverLive(ud.station.train, hasStation);
+    setMoverLive(ud.bridge.vessels, hasBridge);
+    setMoverLive(ud.tunnel.train, hasTunnel);
+    setMoverLive(ud.tunnel.sweep, hasTunnel);
     if (hasStation) {
       ud.station.z = 46 - cycleIndex * 1.75;
       ud.station.speed = -16.0 - (worldChunkIndex % 3) * 0.65;
@@ -14018,6 +14362,7 @@ THREE.GLTFLoader = GLTFLoader;
       ud.landmark.rotation.y = rand(-0.5, 0.5) + (lmSide < 0 ? 0.4 : -0.4);
     }
     ud.transit.root.visible = hasCross;
+    setMoverLive(ud.transit.train, hasCross);
     if (hasCross) {
       // Five metres before the plaza centre: the train clears the camera before
       // the first article gate becomes the decision focus farther up the road.
@@ -14609,8 +14954,35 @@ THREE.GLTFLoader = GLTFLoader;
     ud.spectacleNear = null;
   }
 
+  // matrixAutoUpdate=false (above) only stops an object recomposing its own
+  // LOCAL matrix -- Object3D.updateMatrixWorld still recurses into every
+  // child whose matrixWorldAutoUpdate isn't exactly false, so a frozen
+  // subtree with thousands of nodes was still getting a full function-call
+  // traversal every single frame for no benefit (this is the bulk of
+  // updateMatrixWorld's measured per-frame cost: the walk itself, not the
+  // matrix math, since the math was already being skipped by the flags
+  // above). Setting matrixWorldAutoUpdate=false on everything in the tree
+  // except `root` and the path down to each authored mover (dynamicNodes and
+  // their ancestors) makes Three skip descending into the frozen part
+  // entirely. `root` is deliberately left on its default (true) so every
+  // existing "reposition, then updateMatrix() because matrixAutoUpdate is
+  // false" call site (spawnGate, spawnObstacle, applyRouteFrame's traffic
+  // cars) keeps working unmodified: the normal per-frame render walk still
+  // reaches `root` every frame, and root.matrixWorldNeedsUpdate correctly
+  // forces one full recompute -- reaching every frozen descendant regardless
+  // of its own matrixWorldAutoUpdate -- on exactly the frame something under
+  // it actually moved.
   function freezeObjectTree(root, dynamicNodes, keepRootDynamic) {
     dynamicNodes = dynamicNodes || [];
+    var protectedNodes = [];
+    for (var d = 0; d < dynamicNodes.length; d++) {
+      var o = dynamicNodes[d];
+      while (o) {
+        if (protectedNodes.indexOf(o) < 0) protectedNodes.push(o);
+        if (o === root) break;
+        o = o.parent;
+      }
+    }
     root.traverse(function (object) {
       if (keepRootDynamic && object === root) return;
       object.updateMatrix();
@@ -14619,6 +14991,15 @@ THREE.GLTFLoader = GLTFLoader;
     for (var i = 0; i < dynamicNodes.length; i++) {
       if (dynamicNodes[i]) dynamicNodes[i].matrixAutoUpdate = true;
     }
+    root.traverse(function (object) {
+      if (object === root) return;
+      if (protectedNodes.indexOf(object) < 0) object.matrixWorldAutoUpdate = false;
+    });
+    // Every position/rotation this call just froze is captured into
+    // matrixWorld right now, once, since the nodes newly marked
+    // matrixWorldAutoUpdate=false above will no longer be visited by the
+    // normal per-frame walk at all.
+    root.updateMatrixWorld(true);
   }
 
   // Chunk scenery only changes when its pooled chunk is recycled. Freeze local
@@ -17865,6 +18246,12 @@ THREE.GLTFLoader = GLTFLoader;
       var m = new THREE.SpriteMaterial({
         transparent: true, depthWrite: false, depthTest: false, fog: false, opacity: 0
       });
+      // Pre-bind a real (throwaway) map so this material's compiled shape
+      // already includes USE_MAP before the loading-screen program warm-up
+      // runs. Left with map:null, the warm-up would link the map-less
+      // variant and the first real fxPopup() call mid-run would still force
+      // a fresh link -- exactly the "SpriteMaterial first at t=20.3s" gap.
+      m.map = fxPopTexture(' ', '#ffffff');
       var s = new THREE.Sprite(m);
       s.visible = false;
       s.renderOrder = 950;
@@ -17876,8 +18263,13 @@ THREE.GLTFLoader = GLTFLoader;
   var fxPopHead = 0;
   function fxPopup(lx, ly, lz, text, css, scale) {
     var p = fxPops[fxPopHead]; fxPopHead = (fxPopHead + 1) % FX_POP_N;
+    // The map slot is already non-null (see buildPops above), so swapping in
+    // a different texture here never changes the compiled program shape --
+    // only a null->non-null (or the reverse) transition would. needsUpdate
+    // would otherwise force a full getParameters/getProgramCacheKey walk on
+    // every single popup for no shader change (this alone was ~1.5s of
+    // profiled self time in getParameters over a run).
     p.mat.map = fxPopTexture(text, css);
-    p.mat.needsUpdate = true;
     sampleRoutePoint(lx, ly, lz);
     p.x = routePointX; p.y = routePointY; p.z = routePointZ;
     p.life = 0.78; p.max = 0.78;
@@ -19080,6 +19472,147 @@ THREE.GLTFLoader = GLTFLoader;
     if (go) go.textContent = 'Runner konnte nicht geladen werden · Neu laden';
   }
 
+  // Every shader program the game will ever need must link during this
+  // screen, never mid-run. Three reasons a program that already exists in
+  // the scene graph at this point can still relink the first time it is
+  // actually drawn:
+  //  1. renderBufferDirect picks linearToOutputTexel(LinearToSRGB) or
+  //     (LinearToLinear) from the CURRENT render target's colour space.
+  //     renderPresent() always draws the beauty pass into sceneRT (tagged
+  //     NoColorSpace), never straight to the canvas -- so a compile() done
+  //     against the default (canvas/sRGB) target bakes the wrong branch into
+  //     every single material and is silently discarded on first real use.
+  //     This was the dominant source of the mid-run relinks.
+  //  2. Programs that key off the CURRENT active light count (the station
+  //     platform lamps, the tunnel headlight sweep -- the only two
+  //     conditionally-visible THREE.PointLights in the game) only get
+  //     compiled for whatever light combination happens to be active at
+  //     warm-up time, not every combination gameplay can reach.
+  //  3. The screen-space outline prepass renders the whole frame a second
+  //     time with every object's real material swapped for a per-category
+  //     outline variant (see outlineMaterialFor/buildOutlineSwapList); a
+  //     bare compile() only ever looks at each object's OWN .material and
+  //     has no idea that swap happens, so it never warms that pass at all.
+  // Shadow-map depth materials (MeshDepthMaterial) are generated internally
+  // by WebGLShadowMap and aren't reachable through the public material API
+  // at all -- only an actual render triggers them.
+  function warmRemainingPrograms(done) {
+    // Station platform lamps and the tunnel headlight sweep used to be real
+    // THREE.PointLights nested inside per-chunk station/tunnel roots, so
+    // NUM_POINT_LIGHTS (and therefore every lit material's compiled variant)
+    // changed with which chunks/roots happened to be visible -- that's what
+    // the old version of this function swept with a light-combination cross
+    // product. They are now driven through a fixed-size, always-visible pool
+    // (see seqLightPool / syncSeqLightPool above chunks/worldRoot), so
+    // NUM_POINT_LIGHTS is constant for the entire run and there is no light
+    // permutation left to sweep here.
+    //
+    // renderer.compile()'s own material pass is `scene.traverse` (not
+    // traverseVisible -- confirmed by reading the embedded three.js source),
+    // so it visits every material in the scene graph regardless of which
+    // chunks are currently visible; only its LIGHT pass uses traverseVisible,
+    // and our pool lights are permanently visible. So a single compile() now
+    // covers every station/tunnel/chunk-visibility state at once, and this
+    // step no longer needs to touch chunk/station/tunnel .visible at all.
+    var ud0 = chunks[0].userData;
+    var stationRoot0 = ud0.station && ud0.station.root;
+    var tunnelRoot0 = ud0.tunnel && ud0.tunnel.root;
+    var savedStation0 = stationRoot0 && stationRoot0.visible;
+    var savedTunnel0 = tunnelRoot0 && tunnelRoot0.visible;
+    var savedChunkVisible = chunks.map(function (c) { return c.visible; });
+
+    var savedTarget = renderer.getRenderTarget();
+    var steps = [];
+
+    // sun.castShadow is flipped off by applyQualityTier (see monitorFrameBudget
+    // / TIER_SHADOW_OFF) the moment sustained frame pressure crosses a
+    // threshold -- measured directly: every material's run-phase relink was
+    // its boot variant with USE_SHADOWMAP removed, i.e. this exact toggle
+    // landing mid-run and silently relinking every lit material at once. Both
+    // states are cheap to warm now (2 full-scene compiles instead of the old
+    // 5), so just cover both rather than only reporting a recommendation.
+    var savedSunCastShadow = sun.castShadow;
+    [true, false].forEach(function (castShadow) {
+      steps.push(function () {
+        sun.castShadow = castShadow;
+        if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+        try { renderer.compile(scene, camera); } catch (e) {}
+      });
+    });
+
+    // Outline prepass: build the permanent per-object swap list now (the
+    // scene, including the async-loaded hero, is known complete at this
+    // point -- see maybeFinishPreload/preloadReady), swap every object's real
+    // material for its outline variant (mirroring what scene.overrideMaterial
+    // used to do at render time, but per-category -- see outlineMaterialFor),
+    // compile, then put the real materials straight back. compile() never
+    // renders, so this is invisible regardless of how many objects it
+    // touches. Building the swap list here rather than lazily on first real
+    // outline draw guarantees renderPresent() never has to fall back to the
+    // slow scene.overrideMaterial path once gameplay actually starts.
+    // Measured directly (dumpkeys): the live outline draw always resolves
+    // USE_SHADOWMAP absent for outlineMat, unlike the beauty pass, so only
+    // that one state needs compiling here (a second pass with shadows on
+    // would just link a variant the outline draw never actually requests).
+    steps.push(function () {
+      outlineSwapList = buildOutlineSwapList();
+      for (var wi = 0; wi < outlineSwapList.length; wi++) {
+        var we = outlineSwapList[wi];
+        we.saved = we.obj.material;
+        we.obj.material = we.variant;
+      }
+      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+      var savedShadowEnabled = renderer.shadowMap.enabled;
+      try {
+        renderer.shadowMap.enabled = false;
+        renderer.compile(scene, camera);
+      } catch (e) {}
+      renderer.shadowMap.enabled = savedShadowEnabled;
+      for (var wr = 0; wr < outlineSwapList.length; wr++) {
+        outlineSwapList[wr].obj.material = outlineSwapList[wr].saved;
+      }
+    });
+
+    // Shadow-depth materials only get generated by a real render, and (unlike
+    // compile()) a real render skips anything with an invisible ancestor --
+    // so every pooled chunk is forced visible here, off-screen, purely to
+    // walk every shadow-caster's map/instancing combination at least once.
+    // Unlike the beauty pass, shadow-depth variants don't key off light
+    // count at all (they only ever output depth), so forcing every chunk
+    // visible here carries no inflated-variant risk the way the old
+    // light-combination sweep above did.
+    steps.push(function () {
+      for (var cf = 0; cf < chunks.length; cf++) chunks[cf].visible = true;
+      if (stationRoot0) stationRoot0.visible = true;
+      if (tunnelRoot0) tunnelRoot0.visible = true;
+      sun.castShadow = true;
+      renderer.shadowMap.needsUpdate = true;
+      if (sceneRT) {
+        renderer.setRenderTarget(sceneRT);
+        try { renderer.render(scene, camera); } catch (e) {}
+      }
+    });
+
+    steps.push(function () {
+      if (stationRoot0) stationRoot0.visible = savedStation0;
+      if (tunnelRoot0) tunnelRoot0.visible = savedTunnel0;
+      for (var cr = 0; cr < chunks.length; cr++) chunks[cr].visible = savedChunkVisible[cr];
+      sun.castShadow = savedSunCastShadow;
+      renderer.shadowMap.needsUpdate = true;
+      renderer.setRenderTarget(savedTarget);
+    });
+
+    // Spread across frames rather than one long synchronous block, so the
+    // loading spinner keeps animating instead of appearing hung.
+    var idx = 0;
+    function runNext() {
+      if (idx >= steps.length) { done(); return; }
+      try { steps[idx++](); } catch (e) {}
+      requestAnimationFrame(runNext);
+    }
+    runNext();
+  }
+
   function maybeFinishPreload() {
     if (preloadReady || preloadCompileScheduled || heroLoadFailed || !heroReady || !worldAssetsReady) return;
     preloadCompileScheduled = true;
@@ -19094,18 +19627,26 @@ THREE.GLTFLoader = GLTFLoader;
       var trafficWasVisible = trafficRoot.visible;
       worldRoot.visible = false;
       trafficRoot.visible = false;
+      // renderPresent() always draws the beauty pass into sceneRT, never the
+      // default (canvas) target, so compile against the same target -- see
+      // warmRemainingPrograms above for why that match matters.
+      var warmTarget = renderer.getRenderTarget();
+      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
       try { renderer.compile(scene, camera); } catch (heroCompileErr) {}
+      renderer.setRenderTarget(warmTarget);
       worldRoot.visible = worldWasVisible;
       trafficRoot.visible = trafficWasVisible;
       // Allow one ordinary painted title frame after compilation, so the start
       // handoff always begins with a confirmed rendered character.
       requestAnimationFrame(function () {
-        preloadReady = true;
-        preloadCompileScheduled = false;
-        el.start.classList.remove('loading');
-        el.start.setAttribute('aria-busy', 'false');
-        refreshStartCta();
-        if (startRequested) setTimeout(begin, 0);
+        warmRemainingPrograms(function () {
+          preloadReady = true;
+          preloadCompileScheduled = false;
+          el.start.classList.remove('loading');
+          el.start.setAttribute('aria-busy', 'false');
+          refreshStartCta();
+          if (startRequested) setTimeout(begin, 0);
+        });
       });
     });
   }
@@ -20548,6 +21089,10 @@ THREE.GLTFLoader = GLTFLoader;
       deferredTrafficDt = 0;
     }
     updateWorldVisuals(raw, t);
+    // After chunk visibility/position updates for this frame (updateChunks
+    // via simulate(), updateTransitSpectacles's sweep motion above) so the
+    // pool always reflects this frame's state, never last frame's.
+    syncSeqLightPool();
     updateParticles(raw);
     updateAmbientAudio(speed);
 
