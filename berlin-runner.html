@@ -282,10 +282,7 @@
                        background:linear-gradient(100deg,#112d58,#174278 62%,#0c2349);
                        box-shadow:0 3px 0 rgba(5,14,34,.56), 0 10px 24px rgba(4,10,26,.36),
                                   inset 0 1px 0 rgba(255,255,255,.18); }
-  body.running #quiz::after { content:""; position:absolute; left:12px; right:12px; bottom:2px;
-                              height:2px; border-radius:2px; background:#f7c928;
-                              box-shadow:0 0 8px rgba(247,201,40,.25); }
-  body.running #quiz.overdrive { box-shadow:0 8px 26px rgba(255,150,30,.20), inset 0 1px 0 rgba(255,255,255,.12); }
+   body.running #quiz.overdrive { box-shadow:0 8px 26px rgba(255,150,30,.20), inset 0 1px 0 rgba(255,255,255,.12); }
   body.running #noun { width:100%; min-width:0; padding:0;
                        display:flex; flex-direction:column; align-items:center; justify-content:center;
                        gap:0; text-align:center; }
@@ -20655,7 +20652,8 @@ THREE.GLTFLoader = GLTFLoader;
     if (Math.abs(overdriveTier - overdriveIntensity) < 0.001) overdriveIntensity = overdriveTier;
 
     // ---- forward speed
-    var target = BASE_SPEED + Math.min(11, distance / 260) + overdriveIntensity * 2.6;
+    var streakBoost = Math.min(14, quizStreak * 0.7);
+    var target = BASE_SPEED + Math.min(11, distance / 260) + overdriveIntensity * 2.6 + streakBoost;
     if (stumbleTimer > 0) target *= 0.55;
     speed += (Math.min(MAX_SPEED, target) - speed) * damp(stumbleTimer > 0 ? 5 : 1.1, dt);
     player.z += speed * dt;
