@@ -152,9 +152,6 @@
           border:1px solid rgba(150,190,240,.30);
           box-shadow:0 16px 40px rgba(4,10,26,.55), 0 2px 0 rgba(255,255,255,.10) inset;
           transition:box-shadow .25s, border-color .25s; }
-  #quiz::after { content:""; position:absolute; left:0; right:0; bottom:0; height:5px;
-                 background:linear-gradient(90deg,#f2b705,#ffd93d 45%,#f2b705);
-                 box-shadow:0 0 16px rgba(255,205,60,.55); }
   #quiz.overdrive { border-color:rgba(255,206,92,.62);
                     box-shadow:0 16px 46px rgba(255,150,30,.28), 0 2px 0 rgba(255,255,255,.14) inset; }
   #noun { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
@@ -277,20 +274,22 @@
      untouched — that read is the core gameplay signal and outranks
      composition — only the pill's own top/bottom breathing room and line
      leading shrink, which does not make either line any harder to read. */
-  body.running #quiz { top:4px; width:min(540px,calc(100vw - 300px)); min-width:280px;
+  body.running #quiz { top:8px; width:min(410px,calc(100vw - 300px)); min-width:270px;
                        display:flex; align-items:center; justify-content:center;
-                       padding:3px 16px 4px;
-                       border-radius:999px; overflow:hidden;
-                       border:2px solid rgba(190,222,255,.55);
-                       background:linear-gradient(100deg,#132f5e,#1a4788 62%,#102a55);
-                       box-shadow:0 4px 0 rgba(5,14,34,.6), 0 13px 28px rgba(4,10,26,.42),
-                                  inset 0 2px 0 rgba(255,255,255,.20); }
-  body.running #quiz::after { height:3px; box-shadow:0 0 10px rgba(255,205,60,.35); }
+                       padding:3px 14px 6px;
+                       border-radius:10px; overflow:hidden;
+                       border:1px solid rgba(190,222,255,.46);
+                       background:linear-gradient(100deg,#112d58,#174278 62%,#0c2349);
+                       box-shadow:0 3px 0 rgba(5,14,34,.56), 0 10px 24px rgba(4,10,26,.36),
+                                  inset 0 1px 0 rgba(255,255,255,.18); }
+  body.running #quiz::after { content:""; position:absolute; left:12px; right:12px; bottom:2px;
+                              height:2px; border-radius:2px; background:#f7c928;
+                              box-shadow:0 0 8px rgba(247,201,40,.25); }
   body.running #quiz.overdrive { box-shadow:0 8px 26px rgba(255,150,30,.20), inset 0 1px 0 rgba(255,255,255,.12); }
   body.running #noun { width:100%; min-width:0; padding:0;
                        display:flex; flex-direction:column; align-items:center; justify-content:center;
                        gap:0; text-align:center; }
-  body.running #nounword { font-size:clamp(26px,2.7vw,36px); line-height:1.06;
+  body.running #nounword { font-size:clamp(25px,2.45vw,32px); line-height:1.06;
                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal;
                            max-width:100%; padding-bottom:1px; }
   body.running #nountrans { font-size:clamp(10px,1vw,14px); line-height:1.08; letter-spacing:.015em;
@@ -412,7 +411,7 @@
 
   @media (max-width:1080px) {
     #quiz { width:min(420px, calc(100vw - 250px)); }
-    body.running #quiz { width:min(500px,calc(100vw - 250px)); }
+    body.running #quiz { width:min(420px,calc(100vw - 250px)); }
   }
   @media (max-width:820px) {
     #wordstats { top:auto; bottom:12px; left:10px; transform:scale(.76); transform-origin:bottom left; }
@@ -4149,39 +4148,24 @@ THREE.GLTFLoader = GLTFLoader;
   // double-click. Data URIs are same-origin and always load.
   var ASSETS = window.ARTIKEL_EXPRESS_ASSETS || {
     sky: '', road: '', sidewalk: '', cobble: '', pretzel: '',
-    facades: [], shopfronts: [], character: '', props: {},
+    streetArt: 'assets/img/berlin-street-art-atlas-v1-1024.png',
+    facades: [], shopfronts: [],
+    character: 'assets/models/berlin-runner-hero-v1.glb?rev=4', props: {},
     // True when the sky panorama already contains the city silhouette; the
     // procedural skyline ring and Fernsehturm then switch off so the horizon
     // is not drawn twice.
     skyHasSkyline: false
   };
-  // The bundled text-to-3D donor GLB is OFF. It was the only imported asset in
-  // a game whose buildings, trams, Fernsehturm, pretzel and street furniture
-  // are all authored procedurally in the flat-cel + ink-outline language, and
-  // every defect it had was a consequence of that mismatch:
-  //   * "Janus" head — the donor carries real eye-socket/nose/mouth geometry on
-  //     the BACK of the skull, which is the only side the chase camera ever
-  //     sees. It could only ever be occluded (an added shell mesh), never
-  //     fixed, which is why the head degenerated into a featureless dome.
-  //   * No ink outline between limbs. The screen-space outline pass is a
-  //     depth+normal edge detect; one continuous smooth skinned surface has no
-  //     depth step at a shoulder or a hip, so the pass never fired and a fake
-  //     seam had to be faked with fwidth() on a per-vertex costume colour.
-  //   * A photo-derived atlas painting a generic character, needing a per-bone
-  //     costume tint AND a hard shader brightness floor just to arrive bright.
-  // The replacement below is built from the same roundedBox/cel-material
-  // vocabulary as the rest of the city, out of SEPARATE solids with real air
-  // between them, so the existing outline pass draws its lines for free. It is
-  // also far cheaper: measured 44k fewer triangles per frame in-game.
-  //
-  // FOLLOW-UP, deliberately not done here: with this flag false, all three
-  // reads of ASSETS.character are dead, so the donor GLB's base64 payload in
-  // the ARTIKEL_EXPRESS_ASSETS line is now unreferenced. It is 1.29 MB of a
-  // 6.26 MB file — deleting the `character:"data:model/gltf-binary;base64,..."`
-  // entry is a ~21% load-time win. It was left in only because removing it
-  // means rewriting that single 5 MB line, and this file had two other agents
-  // editing other regions of it at the time.
-  var USE_GENERATED_HERO = false;
+  // External asset manifests pre-date the bundled street-art pass. Preserve an
+  // explicitly empty slot as an opt-out, but make older manifests inherit the
+  // shipped atlas instead of silently losing the new environmental storytelling.
+  if (ASSETS.streetArt === undefined) {
+    ASSETS.streetArt = 'assets/img/berlin-street-art-atlas-v1-1024.png';
+  }
+  // The shipped BerlinRunnerHero GLB is authored in Blender for the same cel +
+  // ink language as the city. Its complete marker disables every legacy donor
+  // repair layer; the procedural rig remains a load-safe fallback only.
+  var USE_GENERATED_HERO = true;
 
   // ------------------------------------------------------------- audio -----
   // Everything is synthesized so the file stays self-contained. The context is
@@ -4355,7 +4339,12 @@ THREE.GLTFLoader = GLTFLoader;
   var canvas = document.getElementById('c');
   var renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' });
+    // The beauty pass renders into its own multisampled target and the default
+    // framebuffer only ever receives one fullscreen composite triangle pair.
+    // Context antialiasing therefore stores/resolves a second MSAA buffer with
+    // no geometric edges in it. Keep AA where it matters (sceneRT) and make the
+    // presentation framebuffer single-sampled.
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: 'high-performance' });
   } catch (e) {
     fail('WebGL ist in diesem Browser nicht verfügbar. ' + e.message); return;
   }
@@ -4446,6 +4435,15 @@ THREE.GLTFLoader = GLTFLoader;
   // budget it would double-charge the same device for the same constraint —
   // the budget already decides what a phone can afford.
   var renderScale = 1;
+  // The ordinary ladder never drops below one backing pixel per CSS pixel.
+  // If that has already shed every expensive effect and the focal-outline rung
+  // still cannot meet budget, allow one deliberately small emergency step. A
+  // 0.92 linear scale removes 15.4% of all scene/outline/composite fragments,
+  // while the DOM HUD stays native-resolution and the game's broad cel bands +
+  // 3px ink hide the subpixel upscale in motion. Kept separate from renderScale
+  // so every promotion immediately restores the exact native-resolution floor.
+  var EMERGENCY_RENDER_SCALE = 0.92;
+  var emergencyResolutionActive = false;
   // The adaptive floor exists so a fill-bound device can claw its way back to
   // 60 Hz. It used to be 0.64, and that quietly re-created the very defect the
   // pixel-budget cap above was written to remove: 0.64 x a 1.25 cap resolves to
@@ -4464,7 +4462,8 @@ THREE.GLTFLoader = GLTFLoader;
   var MIN_RENDER_SCALE = Math.min(1,
     1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
   function applyRenderScale(scale) {
-    renderScale = clamp(scale, MIN_RENDER_SCALE, 1);
+    var scaleFloor = MIN_RENDER_SCALE * (emergencyResolutionActive ? EMERGENCY_RENDER_SCALE : 1);
+    renderScale = clamp(scale, scaleFloor, 1);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR) * renderScale);
     renderer.setSize(window.innerWidth, window.innerHeight, false);
     // The post targets have to track the drawing buffer, including the adaptive
@@ -4496,7 +4495,6 @@ THREE.GLTFLoader = GLTFLoader;
   var FOG_COLOR = new THREE.Color().copy(FOG_NEAR_COLOR);
 
   var scene = new THREE.Scene();
-  window.__dbgScene = scene;   // TEMP: draw-call attribution probe
   // The scene root never moves. Freezing its identity matrix prevents it from
   // forcing a full matrixWorld rebuild through every pooled object each frame;
   // animated descendants still mark and update their own matrices normally.
@@ -4656,6 +4654,7 @@ THREE.GLTFLoader = GLTFLoader;
 
   var postScene = null, postCam = null, postQuad = null;
   var sceneRT = null, bloomA = null, bloomB = null;
+  var sceneRTBaseSamples = 0;
   var brightMat = null, blurMat = null, compositeMat = null;
   var postSize = new THREE.Vector2(1, 1);
   // Outline prepass: a half-res normal+depth render used only to build the
@@ -4684,6 +4683,34 @@ THREE.GLTFLoader = GLTFLoader;
   // renderPresent() below falls back to the old scene.overrideMaterial path
   // (correct but slow) for the handful of loading-screen frames before that.
   var outlineSwapList = null;
+  // The permanent list above is still needed by the loading-screen shader
+  // warm-up, which deliberately compiles every pooled visibility state. The
+  // live prepass must not, however, swap all ~11k pooled descendants twice per
+  // frame when most sit below invisible chunk/obstacle roots. Build a WeakMap
+  // once, then gather only the exact objects Three can submit this frame:
+  // visible ancestry, current camera layer and the same frustum test used by
+  // WebGLRenderer.projectObject(). This changes no draw or outline result; it
+  // removes thousands of property writes from the steady-state hot path.
+  var outlineEntryMap = null;
+  var visibleOutlineSwapList = [];
+  var visibleOutlineSwapCount = 0;
+  var outlineCullMatrix = new THREE.Matrix4();
+  var outlineCullFrustum = new THREE.Frustum();
+  // The final adaptive rung keeps the game's focal ink instead of dropping the
+  // art style altogether. Meshes on this extra layer still remain on layer 0,
+  // so beauty rendering is unchanged; only the emergency outline prepass can
+  // ask the camera to see this much smaller hero/gate/hazard subset.
+  var FOCAL_OUTLINE_LAYER = 7;
+  function enableFocalOutline(root) {
+    root.traverse(function (obj) {
+      if (!obj.material) return;
+      var mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      // Additive curtains, floor pads, glows and contact-shadow planes must not
+      // become opaque rectangles when the normal-material override is active.
+      for (var i = 0; i < mats.length; i++) if (mats[i] && mats[i].transparent) return;
+      obj.layers.enable(FOCAL_OUTLINE_LAYER);
+    });
+  }
   // Resolution of the outline prepass relative to the scene buffer. 1 = full.
   // Kept as a named constant rather than an inline /2 so the trade-off is
   // visible and adjustable: this is the dial between crisp ink contours and
@@ -4702,22 +4729,44 @@ THREE.GLTFLoader = GLTFLoader;
     return outlineMat;
   }
 
+  function swapVisibleOutlineObject(obj) {
+    if (!obj.material || !obj.layers.test(camera.layers)) return;
+    if (!(obj.isMesh || obj.isLine || obj.isPoints || obj.isSprite)) return;
+    if (obj.frustumCulled) {
+      if (obj.isSprite) {
+        if (!outlineCullFrustum.intersectsSprite(obj)) return;
+      } else if (!outlineCullFrustum.intersectsObject(obj)) return;
+    }
+    var entry = outlineEntryMap.get(obj);
+    if (!entry) return;
+    entry.saved = obj.material;
+    obj.material = entry.variant;
+    visibleOutlineSwapList[visibleOutlineSwapCount++] = entry;
+  }
+
   // Built once, the first time the scene graph is known complete (see
   // outlineSwapList above). Every material-bearing object gets a fixed
   // { obj, variant } entry; array materials get a same-length array of the
   // matching variant pre-built here so the per-frame swap never allocates.
   function buildOutlineSwapList() {
     var list = [];
+    outlineEntryMap = new WeakMap();
     scene.traverse(function (obj) {
       if (!obj.material) return;
       var variant = outlineMaterialFor(obj);
-      list.push({
+      var entry = {
         obj: obj,
-        variant: Array.isArray(obj.material) ?
-          obj.material.map(function () { return variant; }) : variant,
+        // The override carries one normal/depth material for every geometry
+        // group. Supplying it as an array makes Three submit one identical draw
+        // per original facade/mass/trim/shop group; supplying the same material
+        // once renders the complete grouped geometry in one pass.
+        variant: variant,
         saved: null
-      });
+      };
+      list.push(entry);
+      outlineEntryMap.set(obj, entry);
     });
+    visibleOutlineSwapList = new Array(list.length);
     return list;
   }
 
@@ -4761,6 +4810,7 @@ THREE.GLTFLoader = GLTFLoader;
     // High-DPI displays already supply near-1:1 internal pixels at the smooth
     // tier; a second multisample resolve there adds bandwidth with little gain.
     var msaa = caps.isWebGL2 && renderScale >= 0.99 ? 2 : 0;
+    sceneRTBaseSamples = msaa;
 
     postScene = new THREE.Scene();
     postScene.matrixAutoUpdate = false;
@@ -4890,6 +4940,7 @@ THREE.GLTFLoader = GLTFLoader;
         uOutlineCreaseWidth: { value: POST.outlineCreaseWidth },
         uOutlineFeatureRadius: { value: POST.outlineFeatureRadius },
         uOutlineEnable: { value: 1 },
+        uOutlineFocalOnly: { value: 0 },
         uCamNear: { value: camera.near },
         uCamFar: { value: camera.far },
         // Reused for AO's view-space reconstruction/reprojection; updated
@@ -4919,6 +4970,7 @@ THREE.GLTFLoader = GLTFLoader;
         'uniform vec3 uLift, uGain, uGamma, uShadowTint, uHighTint;',
         'uniform vec2 uOutlineTexel;',
         'uniform float uOutlineStrength, uOutlineWidth, uOutlineFalloff, uOutlineMix, uOutlineEnable;',
+        'uniform float uOutlineFocalOnly;',
         'uniform float uOutlineFarFloor;',
         'uniform float uOutlineCreaseWeight, uOutlineCreaseWidth;',
         'uniform float uOutlineFeatureRadius;',
@@ -4936,27 +4988,30 @@ THREE.GLTFLoader = GLTFLoader;
         // depth step); normals catch interior creases (window reveals, panel
         // seams) where depth barely moves. Distance fade keeps the far skyline
         // from turning into a black lattice, matching the ref art.
-        'float outlineEdge(vec2 uv){',
+        // uOutlineEnable is a frame-coherent 0/1 quality-tier uniform. The old
+        // code multiplied by it only at the return, so the last-resort outline-
+        // off tier still paid for all fourteen normal/depth samples per pixel
+        // before producing a guaranteed zero. Branching here is visually exact
+        // and lets the whole warp skip the dormant prepass reads together.
+        'float outlineEdge(vec2 uv, float dC, vec3 nC){',
+        '  if (uOutlineEnable <= 0.0) return 0.0;',
+        // The emergency focal buffer clears all non-focal pixels to camera-far
+        // depth. Reject those pixels before the 14 neighbour reads; contours
+        // remain on the inside edge of hero/gate/hazard silhouettes while the
+        // vast majority of the screen pays only the shared centre sample.
+        '  if (uOutlineFocalOnly > 0.5 && dC >= uCamFar * 0.995) return 0.0;',
         '  vec2 o = uOutlineTexel * uOutlineWidth;',
         // Interior creases sample a narrower radius than the silhouette does —
         // a thinner net thickness on top of the weight cut below — so panel
         // seams and window reveals draw as fine detail lines, never as thick
         // as the contour that defines the object against its background.
         '  vec2 oc = o * uOutlineCreaseWidth;',
-        '  float dC = outlineLinearDepth(texture2D(tOutlineD, uv).r);',
         '  float dL = outlineLinearDepth(texture2D(tOutlineD, uv - vec2(o.x, 0.0)).r);',
         '  float dR = outlineLinearDepth(texture2D(tOutlineD, uv + vec2(o.x, 0.0)).r);',
         '  float dU = outlineLinearDepth(texture2D(tOutlineD, uv + vec2(0.0, o.y)).r);',
         '  float dD = outlineLinearDepth(texture2D(tOutlineD, uv - vec2(0.0, o.y)).r);',
         '  float depthEdge = (abs(dL - dR) + abs(dU - dD)) / max(dC, 1.0);',
         '  depthEdge = smoothstep(0.010, 0.045, depthEdge);',
-        '  vec3 nC = outlineNormal(uv);',
-        '  vec3 nL = outlineNormal(uv - vec2(oc.x, 0.0));',
-        '  vec3 nR = outlineNormal(uv + vec2(oc.x, 0.0));',
-        '  vec3 nU = outlineNormal(uv + vec2(0.0, oc.y));',
-        '  vec3 nD = outlineNormal(uv - vec2(0.0, oc.y));',
-        '  float normalEdge = (1.0 - dot(nC, nL)) + (1.0 - dot(nC, nR)) + (1.0 - dot(nC, nU)) + (1.0 - dot(nC, nD));',
-        '  normalEdge = smoothstep(0.12, 0.55, normalEdge);',
         // Feature-scale gate: a second depth sample taken several times wider
         // than the silhouette radius above. A true silhouette (building
         // against sky, the arch's outer edge, the character against the
@@ -4974,12 +5029,19 @@ THREE.GLTFLoader = GLTFLoader;
         // edge-detect filter is missing today (currently every depth step
         // past the 0.045 threshold draws at the identical full weight,
         // silhouette or grout line alike).
-        '  vec2 ow = o * uOutlineFeatureRadius;',
-        '  float dLw = outlineLinearDepth(texture2D(tOutlineD, uv - vec2(ow.x, 0.0)).r);',
-        '  float dRw = outlineLinearDepth(texture2D(tOutlineD, uv + vec2(ow.x, 0.0)).r);',
-        '  float dUw = outlineLinearDepth(texture2D(tOutlineD, uv + vec2(0.0, ow.y)).r);',
-        '  float dDw = outlineLinearDepth(texture2D(tOutlineD, uv - vec2(0.0, ow.y)).r);',
-        '  float depthEdgeWide = (abs(dLw - dRw) + abs(dUw - dDw)) / max(dC, 1.0);',
+        // The wide feature probe can only change depthWeight, which is then
+        // multiplied by depthEdge. On the flat majority of the frame smoothstep
+        // above returns an exact zero, so those four full-resolution depth reads
+        // were guaranteed dead work. Keep the old default weight and only pay
+        // for the wide probe when its result can reach the final expression.
+        '  float featureScale = 0.0;',
+        '  if (depthEdge > 0.0) {',
+        '    vec2 ow = o * uOutlineFeatureRadius;',
+        '    float dLw = outlineLinearDepth(texture2D(tOutlineD, uv - vec2(ow.x, 0.0)).r);',
+        '    float dRw = outlineLinearDepth(texture2D(tOutlineD, uv + vec2(ow.x, 0.0)).r);',
+        '    float dUw = outlineLinearDepth(texture2D(tOutlineD, uv + vec2(0.0, ow.y)).r);',
+        '    float dDw = outlineLinearDepth(texture2D(tOutlineD, uv - vec2(0.0, ow.y)).r);',
+        '    float depthEdgeWide = (abs(dLw - dRw) + abs(dUw - dDw)) / max(dC, 1.0);',
         // The symmetric L-vs-R / U-vs-D test above assumes the wide probe still
         // straddles the same edge the narrow probe found. That breaks for any
         // object narrower on screen than the wide offset itself — the runner's
@@ -4997,9 +5059,10 @@ THREE.GLTFLoader = GLTFLoader;
         // flat surface never does. Union the two tests (max, not replace) so
         // genuinely large silhouettes the symmetric test already catches keep
         // catching it exactly as before.
-        '  float centerDelta = max(max(abs(dLw - dC), abs(dRw - dC)), max(abs(dUw - dC), abs(dDw - dC)));',
-        '  float isolatedEdge = smoothstep(0.010, 0.045, centerDelta / max(dC, 1.0));',
-        '  float featureScale = max(smoothstep(0.010, 0.045, depthEdgeWide), isolatedEdge);',
+        '    float centerDelta = max(max(abs(dLw - dC), abs(dRw - dC)), max(abs(dUw - dC), abs(dDw - dC)));',
+        '    float isolatedEdge = smoothstep(0.010, 0.045, centerDelta / max(dC, 1.0));',
+        '    featureScale = max(smoothstep(0.010, 0.045, depthEdgeWide), isolatedEdge);',
+        '  }',
         // depthEdge (silhouette) is left at full weight only where the wide
         // probe agrees it is a large-scale feature; where it disagrees
         // (small/thin detail) depthEdge is pulled down to the same lighter
@@ -5009,7 +5072,20 @@ THREE.GLTFLoader = GLTFLoader;
         // normalEdge (interior crease) is unaffected — it is already the
         // lighter line by design.
         '  float depthWeight = mix(uOutlineCreaseWeight, 1.0, featureScale);',
-        '  float edge = max(depthEdge * depthWeight, normalEdge * uOutlineCreaseWeight);',
+        '  float depthTerm = depthEdge * depthWeight;',
+        // normalEdge is clamped to [0,1], so it cannot beat a depth term that
+        // already reaches uOutlineCreaseWeight. Defer its four normal-map reads
+        // until that secondary crease signal can actually affect max().
+        '  float normalTerm = 0.0;',
+        '  if (depthTerm < uOutlineCreaseWeight) {',
+        '    vec3 nL = outlineNormal(uv - vec2(oc.x, 0.0));',
+        '    vec3 nR = outlineNormal(uv + vec2(oc.x, 0.0));',
+        '    vec3 nU = outlineNormal(uv + vec2(0.0, oc.y));',
+        '    vec3 nD = outlineNormal(uv - vec2(0.0, oc.y));',
+        '    float normalEdge = (1.0 - dot(nC, nL)) + (1.0 - dot(nC, nR)) + (1.0 - dot(nC, nU)) + (1.0 - dot(nC, nD));',
+        '    normalTerm = smoothstep(0.12, 0.55, normalEdge) * uOutlineCreaseWeight;',
+        '  }',
+        '  float edge = max(depthTerm, normalTerm);',
         // Fades to uOutlineFarFloor, not all the way to 0 — a receding line
         // the reference keeps on distant blocks/traffic instead of a hard
         // cutoff into unlined silhouettes. See the outlineFarFloor comment
@@ -5075,9 +5151,12 @@ THREE.GLTFLoader = GLTFLoader;
         // Cheap few-tap disk blur used only past dofNear; amount folds in the
         // depth-driven blend factor so callers can just mix(sharp, blurred,
         // amount) without a second lerp.
-        'vec3 dofBlur(vec2 uv, float amount){',
+        // The centre scene texel has already been fetched into `mid` for the
+        // base colour. Pass it in instead of sampling the same UV a fourth time
+        // on every far-field DoF pixel.
+        'vec3 dofBlur(vec2 uv, float amount, vec3 center){',
         '  vec2 texel = uOutlineTexel * uDofRadiusTexels * amount;',
-        '  vec3 c = texture2D(tScene, uv).rgb;',
+        '  vec3 c = center;',
         '  c += texture2D(tScene, uv + vec2(-0.613,-0.386) * texel).rgb;',
         '  c += texture2D(tScene, uv + vec2(-0.850, 0.246) * texel).rgb;',
         '  c += texture2D(tScene, uv + vec2(-0.190, 0.795) * texel).rgb;',
@@ -5133,14 +5212,24 @@ THREE.GLTFLoader = GLTFLoader;
         '  vec2 off = d * r2 * uAberration;',
         '  vec4 mid = texture2D(tScene, vUv);',
         '  vec3 col = vec3(texture2D(tScene, vUv + off).r, mid.g, texture2D(tScene, vUv - off).b);',
-        '  float centerDist = outlineLinearDepth(texture2D(tOutlineD, vUv).r);',
+        // Depth is shared by outline, AO and DoF; the centre normal is shared
+        // by outline and AO. Previously each helper fetched its own identical
+        // copy. Sample each once only when at least one consumer is enabled.
+        '  float centerDist = 0.0;',
+        '  vec3 centerNormal = vec3(0.0, 0.0, 1.0);',
+        '  if (max(max(uOutlineEnable, uAoEnable), uDofEnable) > 0.0) {',
+        '    centerDist = outlineLinearDepth(texture2D(tOutlineD, vUv).r);',
+        '  }',
+        '  if (max(uOutlineEnable, uAoEnable) > 0.0) {',
+        '    centerNormal = outlineNormal(vUv);',
+        '  }',
         // Depth of field: sharp through the whole gameplay reaction band,
         // blended toward a small disk blur only past uDofNear. The per-pixel
         // amount>0.003 branch means the (majority) near/mid-band pixels never
         // pay for the extra taps at all.
         '  if (uDofEnable > 0.5) {',
         '    float dofAmount = smoothstep(uDofNear, uDofFar, centerDist);',
-        '    if (dofAmount > 0.003) { col = mix(col, dofBlur(vUv, dofAmount), dofAmount); }',
+        '    if (dofAmount > 0.003) { col = mix(col, dofBlur(vUv, dofAmount, mid.rgb), dofAmount); }',
         '  }',
         // Soft-compress the bloom energy itself before it is added, rather than
         // adding it raw and letting the tonemap below absorb the overshoot. A
@@ -5165,23 +5254,28 @@ THREE.GLTFLoader = GLTFLoader;
         // energetic field can dump onto everything behind it, so the halo
         // around a genuine bright sign still reads, but it can no longer flood
         // an entire frame toward one shared clip colour.
-        '  vec3 bloomAdd = texture2D(tBloom, vUv).rgb * uBloom;',
-        '  bloomAdd = bloomAdd / (1.0 + 0.6 * bloomAdd);',
-        '  col += bloomAdd;',
+        // bloomActive already skips the three producer passes, but the
+        // composite used to keep sampling the stale target even when its
+        // multiplier was exactly zero. This coherent branch removes that last
+        // dormant texture read without touching the live bloom equation.
+        '  if (uBloom > 0.0) {',
+        '    vec3 bloomAdd = texture2D(tBloom, vUv).rgb * uBloom;',
+        '    bloomAdd = bloomAdd / (1.0 + 0.6 * bloomAdd);',
+        '    col += bloomAdd;',
+        '  }',
         // Contact AO multiplies the base surface colour here, before the ink
         // outline is drawn on top — so the outline itself stays a clean full-
         // strength line instead of getting darkened a second time where it
         // coincides with a contact junction.
         '  if (uAoEnable > 0.5 && centerDist < uAoMaxDist) {',
-        '    vec3 aoN = outlineNormal(vUv);',
         '    vec3 aoP = aoViewPos(vUv, centerDist);',
-        '    float occ = computeAO(vUv, aoN, aoP, centerDist);',
+        '    float occ = computeAO(vUv, centerNormal, aoP, centerDist);',
         '    col *= 1.0 - clamp(occ * uAoStrength, 0.0, 1.0);',
         '  }',
         // Ink line applied post-bloom so a bright glow does not wash the line
         // out where it crosses a lit sign or window; still pre-tonemap so the
         // darkened line gets graded with everything else, per spec.
-        '  float edge = outlineEdge(vUv);',
+        '  float edge = outlineEdge(vUv, centerDist, centerNormal);',
         // Straight `col * mix` inherits hue, which is what we want — but on a
         // hemisphere-lit facade the darkened result lands on the sky tint and
         // the line reads as a blue edge glow rather than ink. Real ink in the
@@ -5294,6 +5388,19 @@ THREE.GLTFLoader = GLTFLoader;
     compositeMat.uniforms.uOutlineTexel.value.set(1 / outlineSize.x, 1 / outlineSize.y);
   }
 
+  // Once the quality ladder has reached its resolution rungs the device is
+  // already demonstrably fill-bound. Keep the exact HDR grade, but shed the
+  // scene target's multisample attachments at that tier. Changing `samples`
+  // requires one render-target reinitialisation; tier changes are rare and the
+  // next render recreates the same texture at the current postSize.
+  function setSceneRTLeanMode(lean) {
+    if (!sceneRT) return;
+    var wanted = lean ? 0 : sceneRTBaseSamples;
+    if (sceneRT.samples === wanted) return;
+    sceneRT.samples = wanted;
+    sceneRT.dispose();
+  }
+
   function postPass(mat, target) {
     postQuad.material = mat;
     renderer.setRenderTarget(target);
@@ -5312,81 +5419,112 @@ THREE.GLTFLoader = GLTFLoader;
     renderer.setRenderTarget(sceneRT);
     renderer.render(scene, camera);
 
-    // Outline prepass: same slow-tier gate as bloom below. When skipped the
-    // outline RT holds a stale frame, but uOutlineEnable zeroes the edge mask
-    // in the shader so the stale content never reaches the screen — cheaper
-    // than a shader permutation, and avoids a second full geometry pass on
-    // hardware already under frame-budget pressure.
+    // At the emergency tier, render only hero/gates/hazards into the outline
+    // target. This preserves the gameplay silhouettes and the inked identity
+    // for a few dozen draws instead of paying a second pass over the whole city.
     var doOutline = outlineActive;
     if (doOutline) {
       // Pickups are tiny luminous breadcrumbs, not collision silhouettes. Keep
       // their shared solid out of the normal/depth pass so the screen-space
       // crease filter cannot turn them into heavy lane-blocking rings.
-      var pretzelOutlineVisible = pretzelSolidInst && pretzelSolidInst.visible;
-      if (pretzelOutlineVisible) pretzelSolidInst.visible = false;
-      // Facade micro-depth still renders in the beauty pass, but its repeated
-      // bay/shop/balcony geometry must not compete with gameplay silhouettes
-      // in the normal/depth ink pass. The solid facade cores remain present,
-      // so AO/DoF retain valid building depth instead of seeing sky holes.
-      for (var ofd = 0; ofd < outlineFacadeDetails.length; ofd++) {
-        outlineFacadeDetailWasVisible[ofd] = outlineFacadeDetails[ofd].visible ? 1 : 0;
-        outlineFacadeDetails[ofd].visible = false;
-      }
-      for (var owd = 0; owd < outlineWireDetails.length; owd++) {
-        outlineWireWasVisible[owd] = outlineWireDetails[owd].visible ? 1 : 0;
-        outlineWireDetails[owd].visible = false;
-      }
-      // Parked kerb traffic is background dressing, not a collision target.
-      // Keep its full cel-shaded beauty pass, but reserve the heavy silhouette
-      // prepass for moving traffic, hazards, gates and the runner. The root
-      // list/state buffer are populated once at startup, so this allocates
-      // nothing in the frame loop.
-      for (var opd = 0; opd < outlineParkedDetails.length; opd++) {
-        outlineParkedWasVisible[opd] = outlineParkedDetails[opd].visible ? 1 : 0;
-        outlineParkedDetails[opd].visible = false;
-      }
-      // Transparent station glazing belongs in beauty only. Rendering it with
-      // the opaque normal override creates a solid depth slab and heavy black
-      // perimeter that contradict its alpha, so omit those fixed canopy meshes.
-      for (var otd = 0; otd < outlineTransparentDetails.length; otd++) {
-        outlineTransparentWasVisible[otd] = outlineTransparentDetails[otd].visible ? 1 : 0;
-        outlineTransparentDetails[otd].visible = false;
-      }
-      // Per-category material swap instead of scene.overrideMaterial -- see
-      // outlineMatInstanced's declaration comment for why. outlineSwapList is
-      // null only for the handful of loading-screen frames before the scene
-      // (including the async hero) is known complete; that rare path falls
-      // back to the always-correct overrideMaterial approach.
-      if (outlineSwapList) {
-        for (var osi = 0; osi < outlineSwapList.length; osi++) {
-          var ose = outlineSwapList[osi];
-          ose.saved = ose.obj.material;
-          ose.obj.material = ose.variant;
+      var pretzelOutlineVisible = !outlineFocalOnly && pretzelSolidInst && pretzelSolidInst.visible;
+      var savedOutlineLayerMask = camera.layers.mask;
+      var outlineWorldWasVisible = false, outlineTrafficWasVisible = false;
+      var activeOutlineSwapList = null;
+      var swappedOutlineCount = 0;
+      try {
+        if (outlineFocalOnly) {
+          // The environment and kerb traffic contain no focal-layer meshes.
+          // Hide their roots so Three never traverses those large subtrees at
+          // this tier; gates, hazards and the runner are direct scene children.
+          outlineWorldWasVisible = worldRoot.visible;
+          outlineTrafficWasVisible = trafficRoot.visible;
+          worldRoot.visible = false;
+          trafficRoot.visible = false;
+          camera.layers.set(FOCAL_OUTLINE_LAYER);
+        } else {
+          if (pretzelOutlineVisible) pretzelSolidInst.visible = false;
+          // Facade micro-depth still renders in the beauty pass, but its repeated
+          // bay/shop/balcony geometry must not compete with gameplay silhouettes
+          // in the normal/depth ink pass. The solid facade cores remain present,
+          // so AO/DoF retain valid building depth instead of seeing sky holes.
+          for (var ofd = 0; ofd < outlineFacadeDetails.length; ofd++) {
+            outlineFacadeDetailWasVisible[ofd] = outlineFacadeDetails[ofd].visible ? 1 : 0;
+            outlineFacadeDetails[ofd].visible = false;
+          }
+          for (var owd = 0; owd < outlineWireDetails.length; owd++) {
+            outlineWireWasVisible[owd] = outlineWireDetails[owd].visible ? 1 : 0;
+            outlineWireDetails[owd].visible = false;
+          }
+          // Parked kerb traffic is background dressing, not a collision target.
+          // Keep its full cel-shaded beauty pass, but reserve the heavy silhouette
+          // prepass for moving traffic, hazards, gates and the runner. The root
+          // list/state buffer are populated once at startup, so this allocates
+          // nothing in the frame loop.
+          for (var opd = 0; opd < outlineParkedDetails.length; opd++) {
+            outlineParkedWasVisible[opd] = outlineParkedDetails[opd].visible ? 1 : 0;
+            outlineParkedDetails[opd].visible = false;
+          }
+          // Transparent station glazing belongs in beauty only. Rendering it with
+          // the opaque normal override creates a solid depth slab and heavy black
+          // perimeter that contradict its alpha, so omit those fixed canopy meshes.
+          for (var otd = 0; otd < outlineTransparentDetails.length; otd++) {
+            outlineTransparentWasVisible[otd] = outlineTransparentDetails[otd].visible ? 1 : 0;
+            outlineTransparentDetails[otd].visible = false;
+          }
+        }
+        // Per-category material swap instead of scene.overrideMaterial -- see
+        // outlineMatInstanced's declaration comment for why. outlineSwapList is
+        // null only for the handful of loading-screen frames before the scene
+        // (including the async hero) is known complete; that rare path falls
+        // back to the always-correct overrideMaterial approach.
+        if (outlineSwapList && outlineEntryMap) {
+          // The beauty render immediately above has already updated every
+          // world matrix, so this is the renderer's current camera frustum.
+          // traverseVisible also stops at the same hidden parent roots as
+          // WebGLRenderer; the callback applies the object's current layer and
+          // frustum tests before touching its material.
+          outlineCullMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+          outlineCullFrustum.setFromProjectionMatrix(outlineCullMatrix);
+          visibleOutlineSwapCount = 0;
+          activeOutlineSwapList = visibleOutlineSwapList;
+          scene.traverseVisible(swapVisibleOutlineObject);
+          swappedOutlineCount = visibleOutlineSwapCount;
+        } else {
+          scene.overrideMaterial = outlineMat;
         }
         renderer.setRenderTarget(outlineRT);
         renderer.render(scene, camera);
-        for (var osr2 = 0; osr2 < outlineSwapList.length; osr2++) {
-          outlineSwapList[osr2].obj.material = outlineSwapList[osr2].saved;
+      } finally {
+        // If traversal itself ever throws after swapping a prefix, restore that
+        // prefix as well; visibleOutlineSwapCount advances with every write.
+        if (activeOutlineSwapList === visibleOutlineSwapList) {
+          swappedOutlineCount = visibleOutlineSwapCount;
         }
-      } else {
-        scene.overrideMaterial = outlineMat;
-        renderer.setRenderTarget(outlineRT);
-        renderer.render(scene, camera);
+        for (var osr2 = 0; osr2 < swappedOutlineCount; osr2++) {
+          activeOutlineSwapList[osr2].obj.material = activeOutlineSwapList[osr2].saved;
+        }
         scene.overrideMaterial = null;
+        camera.layers.mask = savedOutlineLayerMask;
+        if (outlineFocalOnly) {
+          worldRoot.visible = outlineWorldWasVisible;
+          trafficRoot.visible = outlineTrafficWasVisible;
+        } else {
+          for (var ofr = 0; ofr < outlineFacadeDetails.length; ofr++) {
+            outlineFacadeDetails[ofr].visible = !!outlineFacadeDetailWasVisible[ofr];
+          }
+          for (var owr = 0; owr < outlineWireDetails.length; owr++) {
+            outlineWireDetails[owr].visible = !!outlineWireWasVisible[owr];
+          }
+          for (var opr = 0; opr < outlineParkedDetails.length; opr++) {
+            outlineParkedDetails[opr].visible = !!outlineParkedWasVisible[opr];
+          }
+          for (var otr = 0; otr < outlineTransparentDetails.length; otr++) {
+            outlineTransparentDetails[otr].visible = !!outlineTransparentWasVisible[otr];
+          }
+          if (pretzelOutlineVisible) pretzelSolidInst.visible = true;
+        }
       }
-      for (var ofr = 0; ofr < outlineFacadeDetails.length; ofr++) {
-        outlineFacadeDetails[ofr].visible = !!outlineFacadeDetailWasVisible[ofr];
-      }
-      for (var owr = 0; owr < outlineWireDetails.length; owr++) {
-        outlineWireDetails[owr].visible = !!outlineWireWasVisible[owr];
-      }
-      for (var opr = 0; opr < outlineParkedDetails.length; opr++) {
-        outlineParkedDetails[opr].visible = !!outlineParkedWasVisible[opr];
-      }
-      for (var otr = 0; otr < outlineTransparentDetails.length; otr++) {
-        outlineTransparentDetails[otr].visible = !!outlineTransparentWasVisible[otr];
-      }
-      if (pretzelOutlineVisible) pretzelSolidInst.visible = true;
     }
 
     var bw = Math.max(1, Math.floor(postSize.x / 4));
@@ -5449,6 +5587,7 @@ THREE.GLTFLoader = GLTFLoader;
     // independent of gradeDirty so a mid-run quality demotion takes effect
     // immediately instead of waiting on the next grade change.
     cu.uOutlineEnable.value = doOutline ? 1 : 0;
+    cu.uOutlineFocalOnly.value = outlineFocalOnly ? 1 : 0;
     // AO and DoF both read the outline prepass buffer, so they can only be on
     // when that prepass actually rendered this frame — the same doOutline
     // condition above (slow-tier gate, and covers outlineOn being off for any
@@ -5472,7 +5611,7 @@ THREE.GLTFLoader = GLTFLoader;
   // fire onLoad. Mark that zero-request configuration ready immediately while
   // retaining the normal preload gate for optional injected props/hero art.
   var hasConfiguredGroundAsset = !!(ASSETS.road || ASSETS.sidewalk || ASSETS.cobble);
-  var worldAssetsReady = !(hasConfiguredGroundAsset || ASSETS.pretzel ||
+  var worldAssetsReady = !(hasConfiguredGroundAsset || ASSETS.pretzel || ASSETS.streetArt ||
     (USE_GENERATED_HERO && ASSETS.character && THREE.GLTFLoader));
   var heroReady = !(USE_GENERATED_HERO && ASSETS.character && THREE.GLTFLoader);
   var heroLoadFailed = false;
@@ -5518,6 +5657,16 @@ THREE.GLTFLoader = GLTFLoader;
     }, undefined, function () {});
     return tex;
   }
+
+  // A transparent placeholder keeps file:// and missing-asset fallbacks clean;
+  // the LoadingManager swaps in the bundled atlas before gameplay is released.
+  // One decoded texture is shared by every mural below, with each PlaneGeometry
+  // selecting a single 4x4 cell through its UVs.
+  var streetArtTexture = canvasTexture(4, 4, function (g, w, h) {
+    g.clearRect(0, 0, w, h);
+  }, { wrap: false });
+  streetArtTexture.wrapS = streetArtTexture.wrapT = THREE.ClampToEdgeWrapping;
+  upgradeTexture(ASSETS.streetArt, streetArtTexture);
 
   // ------------------------------------------------- derived surface maps ---
   // A photograph on a flat plane renders flat: every pixel gets the same normal,
@@ -6921,6 +7070,22 @@ THREE.GLTFLoader = GLTFLoader;
   // the every-frame YELLOW/RED flanking pair only ~60° apart on the wheel.
   var HUE_YELLOW = 0, HUE_BLUE = 1, HUE_ORANGE = 2, HUE_TEAL = 3, HUE_RED = 4, HUE_GREEN = 5;
   var HUE_FAMILY_COUNT = 6;
+  // District-scale colour scripts: Berlin ochre, terracotta, cream and brick
+  // carry each block, while one or two cooler facades provide a controlled
+  // accent. This preserves the full texture library without forcing a six-hue
+  // rainbow into every single screenful.
+  var MACRO_HUE_PALETTES = [
+    [HUE_YELLOW, HUE_ORANGE, HUE_TEAL,   HUE_RED,    HUE_YELLOW, HUE_ORANGE],
+    [HUE_ORANGE, HUE_YELLOW, HUE_RED,    HUE_BLUE,   HUE_ORANGE, HUE_YELLOW],
+    [HUE_RED,    HUE_ORANGE, HUE_YELLOW, HUE_GREEN,  HUE_RED,    HUE_YELLOW],
+    [HUE_YELLOW, HUE_BLUE,   HUE_ORANGE, HUE_RED,    HUE_YELLOW, HUE_TEAL]
+  ];
+  function macroHueFamily(worldChunkIndex, motif, buildingSlot) {
+    var district = Math.floor(worldChunkIndex / 2) + motif;
+    var pi = ((district % MACRO_HUE_PALETTES.length) + MACRO_HUE_PALETTES.length) % MACRO_HUE_PALETTES.length;
+    var shift = (((worldChunkIndex % 3) + 3) % 3) * 2;
+    return MACRO_HUE_PALETTES[pi][(buildingSlot + shift) % 6];
+  }
   // CITY.facades index -> hue family (ochre, mint, terracotta, slate blue,
   // rose, marigold, pistachio, lilac, cream stone, brick, sage, indigo).
   var ALTBAU_HUE_FAMILY = [
@@ -6958,7 +7123,7 @@ THREE.GLTFLoader = GLTFLoader;
   // ---- ground-floor shopfronts --------------------------------------------
   // A separate strip so every building reads as "street level" up close: lit
   // signage, awnings, glowing glass. This is what sells the city at speed.
-  // [name, sign band, lettering, stall colour, awning stripe, glass tint]
+  // [name, sign band, lettering, stall colour, awning stripe, practical-light tint]
   // Contrast fix: this used to pick bandCol/stallCol independently, so a
   // critic caught SPÄTI's red-orange band ('#e03a2e', a near-twin of the
   // terracotta/brick facade families over in CITY.facades) reading as
@@ -6995,6 +7160,14 @@ THREE.GLTFLoader = GLTFLoader;
     ['BÜCHER-ECKE',  '#274b6b', '#eef4ff', '#d9c9a3', '#274b6b', '#cfe6ff'],
     ['DREI LÖWEN',   '#7a1f1f', '#ffe6a0', '#e8c07a', '#7a1f1f', '#ffcf6e']
   ];
+  // Storefront glass is the lower-value anchor beneath the bright masonry.
+  // The previous sheet used each shop's warm practical-light colour as the
+  // glass itself and then made the entire pane emissive, producing the pale
+  // card strip visible across ordinary city frames. Keep those warm colours
+  // for sparse ceiling/shelf lights, but put every shop behind a deep Berlin
+  // blue/teal recess. This is baked albedo/emissive work: no new mesh, draw,
+  // shader branch or texture is introduced.
+  var SHOP_GLASS_DEEP = ['#102f3f', '#123945', '#16304a', '#153d39', '#1a3042'];
   // Was 8 while SHOP_SIGNS carried 12 entries — BUCHLADEN, U-BAHN and EIS were
   // fully authored and never baked. Raised to bake every defined sign.
   var SHOP_TEX_W = 640, SHOP_TEX_H = 320, SHOP_TEX_COUNT = SHOP_SIGNS.length;
@@ -7163,7 +7336,8 @@ THREE.GLTFLoader = GLTFLoader;
   function makeShopfront(i) {
     var s = SHOP_SIGNS[i % SHOP_SIGNS.length];
     var name = s[0], bandCol = s[1], inkCol = s[2], stallCol = s[3];
-    var awningCol = s[4], glassCol = s[5];
+    var awningCol = s[4], lightCol = s[5];
+    var glassCol = SHOP_GLASS_DEEP[i % SHOP_GLASS_DEEP.length];
     var glowRects = [];                          // fed to the emissive pass
 
     var map = canvasTexture(SHOP_TEX_W, SHOP_TEX_H, function (g, w, h) {
@@ -7180,7 +7354,6 @@ THREE.GLTFLoader = GLTFLoader;
       var gx = w * 0.075, gy = h * 0.400, gw = w * 0.620, gh = h * 0.480;
       fillRR(g, gx - 10, gy - 10, gw + 20, gh + 20, 10, CITY.metalNavy);
       fillRR(g, gx, gy, gw, gh, 6, glassCol);
-      glowRects.push([gx, gy, gw, gh, glassCol]);
       // Stock and shelf silhouettes behind the glass. Use a few broad,
       // organized shapes rather than tiny random marks so the interior read
       // survives mip distance and the panes retain depth at running speed.
@@ -7204,6 +7377,33 @@ THREE.GLTFLoader = GLTFLoader;
         g.fillStyle = stockCols[(st + i) % stockCols.length];
         fillRR(g, bx, baseY - bh, bw, bh, 3, g.fillStyle);
       }
+      // Sparse warm practicals, not an emissive pane. Two ceiling bars and
+      // one shelf-edge reflection make the interior feel occupied while the
+      // majority of the glazing remains a genuine dark recess in daylight.
+      g.globalAlpha = 0.72;
+      fillRR(g, gx + gw * 0.08, gy + gh * 0.08, gw * 0.30, gh * 0.055, 3, lightCol);
+      fillRR(g, gx + gw * 0.59, gy + gh * 0.08, gw * 0.25, gh * 0.055, 3, lightCol);
+      g.globalAlpha = 0.34;
+      g.fillStyle = lightCol;
+      g.fillRect(gx + gw * 0.08, gy + gh * 0.69, gw * 0.76, gh * 0.032);
+      g.globalAlpha = 1;
+      glowRects.push([gx + gw * 0.08, gy + gh * 0.08, gw * 0.30, gh * 0.055, lightCol]);
+      glowRects.push([gx + gw * 0.59, gy + gh * 0.08, gw * 0.25, gh * 0.055, lightCol]);
+      // Deepen the lower interior and the two reveal returns. These gradients
+      // survive mip distance as one coherent value step instead of dissolving
+      // into the stock silhouettes.
+      var glassDepth = g.createLinearGradient(0, gy, 0, gy + gh);
+      glassDepth.addColorStop(0, 'rgba(3,10,15,0.02)');
+      glassDepth.addColorStop(0.58, 'rgba(3,10,15,0.13)');
+      glassDepth.addColorStop(1, 'rgba(3,10,15,0.46)');
+      g.fillStyle = glassDepth; g.fillRect(gx, gy, gw, gh);
+      var revealW = gw * 0.055;
+      var revealL = g.createLinearGradient(gx, 0, gx + revealW, 0);
+      revealL.addColorStop(0, 'rgba(2,7,11,0.58)'); revealL.addColorStop(1, 'rgba(2,7,11,0)');
+      g.fillStyle = revealL; g.fillRect(gx, gy, revealW, gh);
+      var revealR = g.createLinearGradient(gx + gw - revealW, 0, gx + gw, 0);
+      revealR.addColorStop(0, 'rgba(2,7,11,0)'); revealR.addColorStop(1, 'rgba(2,7,11,0.50)');
+      g.fillStyle = revealR; g.fillRect(gx + gw - revealW, gy, revealW, gh);
       // A narrow reflection glint preserves glass without bleaching the whole
       // window into one pale yellow/mint card.
       g.fillStyle = 'rgba(255,255,255,0.14)';
@@ -7221,7 +7421,10 @@ THREE.GLTFLoader = GLTFLoader;
       fillRR(g, dx - 9, dy - 9, dw + 18, dh + 18, 8, CITY.trimCream);
       fillRR(g, dx, dy, dw, dh, 6, bandCol);
       fillRR(g, dx + dw * 0.14, dy + dh * 0.08, dw * 0.72, dh * 0.42, 5, glassCol);
-      glowRects.push([dx + dw * 0.14, dy + dh * 0.08, dw * 0.72, dh * 0.42, glassCol]);
+      g.globalAlpha = 0.70;
+      fillRR(g, dx + dw * 0.22, dy + dh * 0.13, dw * 0.56, dh * 0.055, 2, lightCol);
+      g.globalAlpha = 1;
+      glowRects.push([dx + dw * 0.22, dy + dh * 0.13, dw * 0.56, dh * 0.055, lightCol]);
       g.fillStyle = CITY.chrome;
       g.fillRect(dx + dw * 0.80, dy + dh * 0.55, dw * 0.09, dh * 0.16);
 
@@ -7229,8 +7432,12 @@ THREE.GLTFLoader = GLTFLoader;
       // The awning itself is now a real projecting 3D mesh added at building
       // level (see awningGeo / d.awning) using this same awningCol, so the
       // canvas only needs to sell the contact shadow it throws on the glass.
-      var ay = h * 0.355, ah = h * 0.032;
-      g.fillStyle = 'rgba(40,26,14,0.30)';
+      var ay = h * 0.355, ah = h * 0.072;
+      var awShadow = g.createLinearGradient(0, ay, 0, ay + ah);
+      awShadow.addColorStop(0, 'rgba(20,12,8,0.58)');
+      awShadow.addColorStop(0.42, 'rgba(20,12,8,0.30)');
+      awShadow.addColorStop(1, 'rgba(20,12,8,0)');
+      g.fillStyle = awShadow;
       g.fillRect(gx - 12, ay, gw + 24, ah);
       g.fillStyle = awningCol; g.globalAlpha = 0.55;
       g.fillRect(gx - 12, ay - h * 0.014, gw + 24, h * 0.014);
@@ -9035,13 +9242,19 @@ THREE.GLTFLoader = GLTFLoader;
         var scale = h > 0.001 ? (PROP_TARGET_H[kind] || h) / h : 1;
         for (var i = 0; i < targets.length; i++) {
           var g = targets[i];
+          var keepFocalOutline = false;
+          g.traverse(function (o) {
+            if (o.material && o.layers.isEnabled(FOCAL_OUTLINE_LAYER)) keepFocalOutline = true;
+          });
           for (var c = g.children.length - 1; c >= 0; c--) g.remove(g.children[c]);
           var clone = src.clone(true);
           clone.scale.setScalar(scale);
           clone.position.y = -bbox.min.y * scale;      // stand it on the ground
           clone.traverse(function (o) { if (o.isMesh) o.castShadow = true; });
+          if (keepFocalOutline) enableFocalOutline(clone);
           g.add(clone);
           g.userData.swapped = true;
+          delete g.userData.localVisualBounds;
         }
       }, undefined, function () {});
       } catch (e) { scheduled--; }
@@ -9849,8 +10062,8 @@ THREE.GLTFLoader = GLTFLoader;
     // shop), so per-building hue/atlas-cell variety works exactly as before;
     // only the .visible-per-part toggle is gone, replaced by which cached
     // geometry variant is selected (see rollBuilding).
-    var core = new THREE.Mesh(getBuildingCoreGeo(13.5, 6, 0, true, true),
-      [facadeMats[0], massMats[0], MAT.stone, shopMats[0]]);
+    var coreFullMaterials = [facadeMats[0], massMats[0], MAT.stone, shopMats[0]];
+    var core = new THREE.Mesh(getBuildingCoreGeo(13.5, 6, 0, true, true), coreFullMaterials);
     // Was facade.receiveShadow only. mass already cast+received; trim
     // received only; shop had neither set. A merged mesh has one shadow
     // setting for every group, so this is the union of all four prior
@@ -9969,7 +10182,8 @@ THREE.GLTFLoader = GLTFLoader;
     g.add(core, awning,
           hangingPanel, roofShell, erker,
           balconyPanel, gable, ghostAd);
-    g.userData = { core: core,
+    g.userData = { core: core, coreFullMaterials: coreFullMaterials,
+                   coreFarMaterial: facadeMats[0], coreFar: false,
                    awning: awning,
                    hangingBracket: hangingBracket, hangingPanel: hangingPanel,
                    roofBlock: roofBlock, roofShell: roofShell, roofDormers: roofDormers,
@@ -10101,13 +10315,14 @@ THREE.GLTFLoader = GLTFLoader;
 
   function applyBuildingSurfaceMaterials(d) {
     var facadeMaterial = facadeMats[d.fallbackFacadeIndex];
-    // core.material is the 4-slot array [facade, mass, trim, shop] backing
-    // the merged mesh (see getBuildingCoreGeo) — slot 2 (trim) is always
-    // MAT.stone and never changes, so it is left alone here exactly as it
-    // was on the old standalone trim Mesh.
-    d.core.material[0] = facadeMaterial;
-    d.core.material[1] = getMassVolumeMaterial(facadeMaterial);
-    d.core.material[3] = shopMats[d.fallbackShopIndex];
+    // coreFullMaterials is the authored [facade, mass, trim, shop] array.
+    // The live mesh may temporarily use coreFarMaterial in the fog-band LOD,
+    // so update the stable full array and let applyChunkLOD choose the view.
+    d.coreFullMaterials[0] = facadeMaterial;
+    d.coreFullMaterials[1] = getMassVolumeMaterial(facadeMaterial);
+    d.coreFullMaterials[3] = shopMats[d.fallbackShopIndex];
+    d.coreFarMaterial = facadeMaterial;
+    d.core.material = d.coreFar ? d.coreFarMaterial : d.coreFullMaterials;
     // Erker, balcony panel and gable all share the facade sheet.
     d.erker.material = facadeMaterial;
     d.balconyPanel.material = facadeMaterial;
@@ -11055,6 +11270,13 @@ THREE.GLTFLoader = GLTFLoader;
     g.add(roundedBox(3.0, 0.50, 0.12, 0.10, PROP_KIOSK_SIGN, 0, 2.88, 1.20, 0.025));
     g.add(roundedBox(3.42, 0.18, 2.56, 0.10, MAT.metalDark, 0, 2.67, -0.02, 0.03));
     g.add(roundedBox(3.6, 0.16, 2.8, 0.08, MAT.concrete, 0, 0.08, 0.2, 0.025));
+    // Two side-wall paste-ups turn the guaranteed kiosk anchor into a piece of
+    // lived-in Berlin street furniture. Both cells share one batched draw and
+    // remain well inside the kiosk's existing visual footprint.
+    addStreetArtBatch(g, [
+      { cell: 8,  w: 1.28, h: 1.28, x: -1.612, y: 1.24, z: -0.30, ry: -Math.PI / 2 },
+      { cell: 15, w: 1.28, h: 1.28, x:  1.612, y: 1.24, z: -0.30, ry:  Math.PI / 2 }
+    ]);
     return registerProp('kiosk', g);
   }
 
@@ -11279,6 +11501,144 @@ THREE.GLTFLoader = GLTFLoader;
       g.add(wheel);
     });
     return registerProp('wheeliebin', g);
+  }
+
+  // Authored street story: a complete BVG stop rather than another handful
+  // of unrelated pavement props. The plaza beat already reserves a parked
+  // yellow bus; this shelter lives on the opposite kerb, so the two silhouettes
+  // read together as one small terminus scene (bus -> stop -> waiting shelter)
+  // instead of as procedural scatter. It is visual-only: rollChunk never adds
+  // it to an obstacle list, and its conservative local footprint is kept well
+  // outside ROAD_HALF when placed below.
+  //
+  // The authored pieces compact to exactly eight rigid material batches
+  // (concrete, green steel, lit glass, dark glass, BVG yellow, wood, dark metal,
+  // street-art atlas). The only curved pieces are the stop roundel and two bike
+  // wheels. That gives the cluster a broad 7.2 m street-level read without a
+  // micro-mesh tax or a new texture/material.
+  function makeBvgStopStory() {
+    var g = new THREE.Group();
+    g.name = 'Street story - BVG stop';
+
+    // Pavement island and shelter shell. Local -X always faces the road; the
+    // whole root turns 180 degrees when it is allocated to the left kerb.
+    g.add(roundedBox(2.75, 0.12, 7.20, 0.10, MAT.concrete,
+      0, 0.06, 0, 0.025));
+    g.add(roundedBox(2.15, 0.16, 5.30, 0.10, MAT.poleGreen,
+      0.15, 2.58, 0, 0.025));
+    g.add(roundedBox(2.00, 0.055, 5.08, 0.025, MAT.glassLit,
+      0.16, 2.47, 0, 0.012));
+    g.add(roundedBox(0.10, 2.22, 4.78, 0.045, MAT.glassDark,
+      0.98, 1.35, 0, 0.018));
+
+    // Strong steel rhythm: four corners, a centre mullion and two low rails.
+    [[-0.82, -2.42], [-0.82, 2.42], [0.96, -2.42], [0.96, 0], [0.96, 2.42]].forEach(function (p) {
+      g.add(box(0.11, 2.50, 0.11, MAT.poleGreen,
+        p[0], 1.28, p[1]));
+    });
+    [-2.42, 2.42].forEach(function (z) {
+      g.add(box(1.88, 0.11, 0.11, MAT.poleGreen,
+        0.07, 0.23, z));
+    });
+    g.add(box(0.10, 0.10, 4.66, MAT.poleGreen,
+      0.925, 0.40, 0));
+
+    // Berlin's yellow rule turns the shelter into a transit read even before
+    // the stop roundel resolves. The two atlas posters make the enclosure feel
+    // used and local while staying one alpha-cut beauty draw.
+    g.add(roundedBox(0.16, 0.30, 5.24, 0.055, MAT.bvgYellow,
+      -0.95, 2.48, 0, 0.018));
+    addStreetArtBatch(g, [
+      { cell: 1, w: 1.32, h: 1.62, x: 0.922, y: 1.42, z: -1.05, ry: -Math.PI / 2 },
+      { cell: 11, w: 1.32, h: 1.62, x: 0.920, y: 1.42, z:  1.05, ry: -Math.PI / 2 }
+    ]);
+
+    // Proper waiting furniture: a long timber bench, back slats and steel feet.
+    g.add(roundedBox(0.60, 0.13, 2.42, 0.045, PROP_WOOD,
+      0.43, 0.66, -0.28, 0.018));
+    [0.83, 1.06].forEach(function (y) {
+      g.add(roundedBox(0.12, 0.14, 2.42, 0.04, PROP_WOOD,
+        0.82, y, -0.28, 0.015));
+    });
+    [-0.82, 0.30].forEach(function (z) {
+      g.add(box(0.10, 0.60, 0.46, MAT.poleGreen,
+        0.43, 0.34, z));
+    });
+
+    // Ticket machine, timetable inset and a large official-style H roundel.
+    g.add(roundedBox(0.58, 1.42, 0.50, 0.08, MAT.bvgYellow,
+      -0.50, 0.87, 1.78, 0.025));
+    g.add(roundedBox(0.045, 0.46, 0.30, 0.035, MAT.glassDark,
+      -0.808, 1.08, 1.78, 0.012));
+    var stopPole = new THREE.Mesh(cylGeo(0.055, 0.075, 2.90, 10), MAT.poleGreen);
+    stopPole.position.set(-1.25, 1.47, -3.00); g.add(stopPole);
+    var roundel = new THREE.Mesh(cylGeo(0.40, 0.40, 0.12, 18), MAT.bvgYellow);
+    roundel.rotation.z = Math.PI / 2;
+    roundel.position.set(-1.25, 3.18, -3.00); g.add(roundel);
+    // The roundel faces -X; these three green bars form the Berlin H mark.
+    [-0.13, 0.13].forEach(function (z) {
+      g.add(box(0.035, 0.42, 0.075, MAT.poleGreen,
+        -1.318, 3.18, -3.00 + z));
+    });
+    g.add(box(0.035, 0.075, 0.32, MAT.poleGreen,
+      -1.318, 3.18, -3.00));
+
+    // A cargo bike left at the far end supplies the human story. Its wheels,
+    // frame and kickstand all share the existing dark-metal batch; the box is
+    // part of the same yellow batch as the shelter fascia and ticket machine.
+    [2.46, 3.34].forEach(function (z) {
+      var wheel = new THREE.Mesh(cylGeo(0.30, 0.30, 0.07, 14), MAT.metalDark);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(0.38, 0.32, z); g.add(wheel);
+    });
+    g.add(box(0.07, 0.08, 0.82, MAT.metalDark,
+      0.38, 0.49, 2.90));
+    var bikeSeatStay = box(0.07, 0.64, 0.07, MAT.metalDark,
+      0.38, 0.70, 3.18);
+    bikeSeatStay.rotation.x = -0.22; g.add(bikeSeatStay);
+    g.add(box(0.46, 0.055, 0.07, MAT.metalDark,
+      0.38, 1.04, 3.38));
+    var kickstand = box(0.055, 0.46, 0.055, MAT.metalDark,
+      0.38, 0.24, 3.02);
+    kickstand.rotation.x = 0.42; g.add(kickstand);
+    g.add(roundedBox(0.70, 0.50, 0.72, 0.07, MAT.bvgYellow,
+      0.38, 0.55, 2.05, 0.020));
+    g.add(roundedBox(0.22, 0.09, 0.34, 0.035, PROP_WOOD,
+      0.38, 1.01, 3.12, 0.012));
+
+    compactStaticPropGroup(g);
+    // Auditable invariant used by the performance pass: local bounds are
+    // complete (including the roundel) and placement supplies >=0.82 m road
+    // clearance. visualCost is filled from the final compacted geometry, not
+    // from a hand-maintained estimate.
+    g.userData.localBounds = {
+      minX: -1.375, maxX: 1.375, minY: 0, maxY: 3.58,
+      minZ: -3.60, maxZ: 3.64
+    };
+    var draws = 0, triangles = 0, nodes = 0;
+    g.traverse(function (o) {
+      nodes++;
+      if (!o.isMesh) return;
+      draws++;
+      var pos = o.geometry && o.geometry.attributes && o.geometry.attributes.position;
+      if (pos) triangles += o.geometry.index ? o.geometry.index.count / 3 : pos.count / 3;
+    });
+    g.userData.visualCost = { draws: draws, triangles: triangles, nodes: nodes };
+    var measured = new THREE.Box3().setFromObject(g, true);
+    g.userData.measuredBounds = {
+      min: measured.min.toArray(), max: measured.max.toArray()
+    };
+    // Fold this one-time production metric into the existing canvas telemetry
+    // surface. It is inert at runtime and lets future visual passes verify the
+    // authored cost/bounds without reopening this closure or adding a harness.
+    if (!canvas.dataset.streetStoryDraws) {
+      canvas.dataset.streetStoryDraws = String(draws);
+      canvas.dataset.streetStoryTriangles = String(Math.round(triangles));
+      canvas.dataset.streetStoryNodes = String(nodes);
+      canvas.dataset.streetStoryBounds = measured.min.toArray().concat(measured.max.toArray())
+        .map(function (n) { return n.toFixed(3); }).join(',');
+    }
+    return g;
   }
 
   // ------------------------------------------------------- the Fernsehturm --
@@ -13256,6 +13616,18 @@ THREE.GLTFLoader = GLTFLoader;
       root.add(roundedBox(11.8, 0.075, 0.14, 0.025, STATION_MAT.light,
         0, 8.35, lightZ, 0.01));
     }
+    // Large, authored paste-ups occupy otherwise blank tile runs. They sit just
+    // proud of the existing right service wall (x=8.18) and never approach the
+    // ROAD_HALF boundary at x=7.2. Four cells merge into one beauty draw.
+    addStreetArtBatch(root, [
+      { cell: 0,  w: 2.35, h: 2.35, x: 7.815, y: 1.55, z: -8.0, ry: -Math.PI / 2 },
+      { cell: 14, w: 2.75, h: 2.25, x: 7.812, y: 1.48, z:  6.4, ry: -Math.PI / 2 },
+      { cell: 4,  w: 2.20, h: 1.85, x: 7.810, y: 1.42, z: 14.2, ry: -Math.PI / 2 }
+    ]);
+    // Everything added so far is rigid tunnel architecture. Collapse matching
+    // material/render-state pieces now, before the animated sweep and train are
+    // attached, so their motion hierarchy remains completely independent.
+    compactStaticPropGroup(root);
     var sweep = new THREE.Group();
     sweep.add(roundedBox(11.6, 0.06, 0.16, 0.025, TUNNEL_MAT.sweep,
       0, 8.16, 0, 0.01));
@@ -13480,6 +13852,56 @@ THREE.GLTFLoader = GLTFLoader;
     map: constructionHoardTex, roughness: 0.91, envMapIntensity: 0.08
   });
 
+  // Authored 4x4 Berlin icon/graffiti atlas generated for this production pass.
+  // Murals are alpha-cut planes: they inherit the scene grade, never cast a
+  // shadow, and are hidden from the normal/depth outline prepass so their clear
+  // pixels cannot become rectangular ink silhouettes.
+  var STREET_ART_MAT = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    map: streetArtTexture,
+    transparent: true,
+    alphaTest: 0.08,
+    depthWrite: true,
+    side: THREE.DoubleSide,
+    toneMapped: true,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    polygonOffsetUnits: -2
+  });
+  STREET_ART_MAT.name = 'Berlin street-art atlas';
+
+  function streetArtCellGeo(cell, w, h) {
+    cell = ((cell | 0) % 16 + 16) % 16;
+    var col = cell % 4, row = Math.floor(cell / 4);
+    var geo = new THREE.PlaneGeometry(w, h);
+    var uv = geo.attributes.uv;
+    for (var i = 0; i < uv.count; i++) {
+      uv.setXY(i, (col + uv.getX(i)) * 0.25,
+                  (3 - row + uv.getY(i)) * 0.25);
+    }
+    uv.needsUpdate = true;
+    return geo;
+  }
+
+  function addStreetArtBatch(root, specs) {
+    if (!ASSETS.streetArt || !specs || !specs.length) return null;
+    var pieces = specs.map(function (s) {
+      var geo = streetArtCellGeo(s.cell, s.w, s.h);
+      if (s.rx) geo.rotateX(s.rx);
+      if (s.ry) geo.rotateY(s.ry);
+      if (s.rz) geo.rotateZ(s.rz);
+      geo.translate(s.x || 0, s.y || 0, s.z || 0);
+      return { geo: geo };
+    });
+    var mural = new THREE.Mesh(mergeBoxes(pieces), STREET_ART_MAT);
+    pieces.forEach(function (p) { p.geo.dispose(); });
+    mural.renderOrder = 2;
+    mural.userData.streetArt = true;
+    root.add(mural);
+    outlineTransparentDetails.push(mural);
+    return mural;
+  }
+
   var chunks = [];
   var outlineParkedDetails = [];
   var outlineParkedWasVisible = new Uint8Array(CHUNK_COUNT * 8);
@@ -13595,16 +14017,22 @@ THREE.GLTFLoader = GLTFLoader;
         poolScratchMat.copy(m);
         poolScratchMat.elements[14] += chunkGroup.position.z;
         pool.shadowMatrix.set(poolScratchMat.elements, (base + i) * 16);
-        // Any authoring write can change which instances survive the repack
-        // (a slot going to/from collapsed), so the packed buffer is stale even
-        // when no chunk changed visibility this frame — contacts are rewritten
-        // every frame without ever touching applyChunkLOD.
-        pool.dirty = true;
+        // A write can only change the packed output if this chunk's slot is
+        // one repackPool actually walks right now (slotVisible[chunkSlot]).
+        // rollChunk always writes a chunk while it is still off-screen (see
+        // the block comment above) — slotVisible[chunkSlot] is 0 through the
+        // whole reroll, repackPool would `continue` past this slot exactly as
+        // before the write, so marking dirty here would only force a repack
+        // that reproduces byte-identical output. Skipping it is safe even in
+        // the pathological case where a chunk somehow rerolls while still
+        // flagged visible: slotVisible is read fresh, so a stale 1 here still
+        // marks dirty and repacks with this write's data.
+        if (pool.slotVisible[chunkSlot]) pool.dirty = true;
       },
       setColorAt: function (i, c) {
         var off = (base + i) * 3;
         pool.shadowColor[off] = c.r; pool.shadowColor[off + 1] = c.g; pool.shadowColor[off + 2] = c.b;
-        pool.dirty = true;
+        if (pool.slotVisible[chunkSlot]) pool.dirty = true;
       },
       needsUpdate: function () {} // no-op: repackDirtyPools owns the live GPU buffer
     };
@@ -13614,8 +14042,24 @@ THREE.GLTFLoader = GLTFLoader;
   // here — repackDirtyPools() rebuilds it once per frame instead, so a frame in
   // which several chunks flip costs one repack per pool rather than one memcpy
   // per chunk per pool.
+  //
+  // Only marks dirty on an ACTUAL flip. applyChunkLOD also forces this call
+  // every reroll even when the visible/nearEff value it computed didn't
+  // change (ud.justRolled) — belt-and-suspenders for a chunk that could in
+  // principle reroll while still on-screen. In the overwhelming common case
+  // (a chunk only rerolls once it has scrolled behind the -38m cull, per
+  // poolView's comment above) that forced call is a same-value no-op: the
+  // slot was excluded from the packed buffer before and stays excluded after,
+  // so repacking would produce byte-identical output. Every one of those
+  // no-op calls used to still set pool.dirty = true unconditionally, which is
+  // exactly what turned one chunk reroll into a full-buffer repack + upload
+  // storm across every NEAR_GATED_POOLS member (~40 pools) each time — the
+  // measured 21x buffer-bytes spike on slow frames. A genuine flip (a chunk
+  // actually entering/leaving view) still always sets dirty below.
   function syncPoolRange(pool, chunkSlot, visible) {
-    pool.slotVisible[chunkSlot] = visible ? 1 : 0;
+    var v = visible ? 1 : 0;
+    if (pool.slotVisible[chunkSlot] === v) return;
+    pool.slotVisible[chunkSlot] = v;
     pool.dirty = true;
   }
   function syncPoolGroup(pools, chunkSlot, visible) {
@@ -13665,6 +14109,13 @@ THREE.GLTFLoader = GLTFLoader;
       }
     }
     mesh.count = w;
+    // A material-variant pool can legitimately be empty for the current set
+    // of visible chunks (roof colours are the common case). A zero instance
+    // count still leaves the InstancedMesh in Three's projection/render lists;
+    // hide it outright so empty variants cost neither traversal nor a vacuous
+    // draw submission. The next repack restores visibility before the fresh
+    // packed prefix is presented, so this changes no authored appearance.
+    mesh.visible = w > 0;
     // Only the packed [0, w) prefix was just rewritten — the rest of the
     // buffer is stale leftovers from previous rolls that mesh.count already
     // excludes from the draw. Without an explicit updateRange, three's
@@ -13689,21 +14140,81 @@ THREE.GLTFLoader = GLTFLoader;
     pool.dirty = false;
   }
 
+  // A single near/far-band transition (see applyChunkLOD) dirties every pool
+  // in NEAR_GATED_POOLS/WHOLE_CHUNK_POOLS together (~46 pools) — a real
+  // content change, not the redundant no-op syncPoolRange now filters out
+  // above, so it can't just be skipped. Spreading that batch's repack+upload
+  // cost across a few frames instead of one is safe here specifically
+  // because both bands' entry edges sit in fog: nearDetailLimit (100m) is
+  // past fog.near (85m+, see applyChunkLOD) and farLimit (148-210m) is
+  // deep in it, so newly-visible instances are already hazy/small when they
+  // first appear. At MAX_SPEED (54 m/s) even a generous stall of every pool
+  // in the batch needing its own frame is well under the ~15m fog margin.
+  // Uncapped for the very first drain (game start, before any frame has
+  // rendered) so the initial 13 chunks are fully populated pop-in-free
+  // exactly like before this change — only kicks in once steady state.
+  //
+  // The budget is consumed from a per-RENDERED-frame allowance
+  // (repackBudgetRemaining, reset once at the top of frame() below) rather
+  // than a per-call allowance: the fixed-timestep loop can run this via
+  // updateChunks() up to MAX_SIM_STEPS (5) times inside a single rAF when
+  // catching up, and a per-call budget would let all 5 sub-steps each spend
+  // a full budget in the same visual frame -- defeating the point on
+  // exactly the already-slow frames this exists to help.
+  var repackCursor = 0;
+  var REPACK_BUDGET_PER_FRAME = 12;
+  var repackBudgetRemaining = Infinity;
+  var repackBudgetActive = false;
   function repackDirtyPools() {
-    for (var i = 0; i < ALL_POOLS.length; i++) {
-      if (ALL_POOLS[i].dirty) repackPool(ALL_POOLS[i]);
+    if (!repackBudgetActive) {
+      var anyDirty = false;
+      for (var i = 0; i < ALL_POOLS.length; i++) {
+        if (ALL_POOLS[i].dirty) { repackPool(ALL_POOLS[i]); anyDirty = true; }
+      }
+      if (!anyDirty) repackBudgetActive = true;
+      return;
+    }
+    var n = ALL_POOLS.length, scanned = 0;
+    while (repackBudgetRemaining > 0 && scanned < n) {
+      var pool = ALL_POOLS[repackCursor];
+      if (pool.dirty) { repackPool(pool); repackBudgetRemaining--; }
+      repackCursor = (repackCursor + 1) % n;
+      scanned++;
     }
   }
 
   // One real InstancedMesh per type, for the whole world (see block comment
   // above). Replaces what used to be built fresh inside makeChunk().
-  // GROUND ART PASS round 2: widened 0.16->0.22m and lengthened 2.6->3.0m —
-  // a live capture showed these reading as short, thin dark ticks rather
-  // than confident lane markings; the dark-rail-on-bright-road colour
-  // language from the previous round is untouched (still CITY.laneWhite /
-  // MAT.paint), only the geometry gets more presence. Spacing (rollLaneDashes,
-  // 5m centre-to-centre) is unchanged, so the gap just tightens from 2.4m to
-  // 2.0m rather than the dashes moving or the lane count changing.
+  // Six invariant ground surfaces used to be six Meshes in every chunk. Their
+  // local transforms, materials and shadow flags never change; only their
+  // parent chunk's Z changes on recycle. Keep the exact geometry/material
+  // split, but submit each surface as one scene-wide instanced draw. The slow
+  // tier's 4-5 visible chunks lose 18-24 beauty draws (30-36 with 6-7 chunks
+  // at full distance), plus 72 scene nodes.
+  var chunkWalkGeo = mergeBoxes([-1, 1].map(function (side) {
+    return { geo: walkGeo, x: side * (ROAD_HALF + (WALK_OUT - ROAD_HALF) / 2), y: 0.16, z: 0 };
+  }));
+  var chunkKerbGeo = mergeBoxes([-1, 1].map(function (side) {
+    return { w: 0.34, h: 0.24, d: CHUNK_LEN, x: side * ROAD_HALF, y: 0.10, z: 0 };
+  }));
+  var chunkCobGeo = mergeBoxes([-1, 1].map(function (side) {
+    return { geo: cobbleGeo, x: side * (ROAD_HALF - 0.9), y: 0.012, z: 0 };
+  }));
+  var chunkRailGeo = mergeBoxes([-0.72, 0.72].map(function (x) {
+    return { w: 0.11, h: 0.05, d: CHUNK_LEN, x: x, y: 0.03, z: 0 };
+  }));
+  var chunkRoadPool = makeSharedPool(roadGeo, MAT.road, 1, {});
+  var chunkWalkPool = makeSharedPool(chunkWalkGeo, MAT.walk, 1, { receiveShadow: true });
+  var chunkKerbPool = makeSharedPool(chunkKerbGeo, MAT.kerb, 1, {});
+  var chunkCobPool = makeSharedPool(chunkCobGeo, MAT.cobble, 1, {});
+  var chunkTramBedPool = makeSharedPool(tramBedGeo, MAT.cobble, 1, { receiveShadow: true, posY: 0.012 });
+  var chunkRailPool = makeSharedPool(chunkRailGeo, MAT.streetRail, 1, {});
+  var GROUND_CHUNK_POOLS = [chunkRoadPool, chunkWalkPool, chunkKerbPool,
+                            chunkCobPool, chunkTramBedPool, chunkRailPool];
+  var groundChunkIdentity = new THREE.Matrix4();
+
+  // Lane geometry and spacing remain authored exactly as before; only its
+  // existing scene-wide submission path is shared across chunks.
   var laneDashPool = makeSharedPool(boxGeo(0.16, 0.02, 2.50), MAT.paint, 16, {});
   var bollardPool = makeSharedPool(cylGeo(0.085, 0.115, 0.80, 8), MAT.metalDark, 16, {});
   var contactPool = makeSharedPool(contactGeo, CONTACT_MAT, CONTACT_MAX, { posY: 0.178, renderOrder: -1 });
@@ -13801,11 +14312,11 @@ THREE.GLTFLoader = GLTFLoader;
   var buildingPartScratchA = new THREE.Matrix4();
   var buildingPartScratchB = new THREE.Matrix4();
 
-  // Bollards/dashes only ever depend on whole-chunk visibility; contacts and
-  // the building-driven pools (crate stacks, window bays, shopDepth, and the
+  // Ground, bollards and dashes only ever depend on whole-chunk visibility;
+  // contacts and the building-driven pools (crate stacks, window bays, shopDepth, and the
   // new roof/erker dressing above) also depend on the tighter near-detail
   // band, exactly like ud.detailNodes did — see applyChunkLOD.
-  var WHOLE_CHUNK_POOLS = [bollardPool, laneDashPool, hangingBracketPool];
+  var WHOLE_CHUNK_POOLS = GROUND_CHUNK_POOLS.concat([bollardPool, laneDashPool, hangingBracketPool]);
   var NEAR_GATED_POOLS = [contactPool, windowBayPool, crateSolidPool]
     .concat(crateBvgPools)
     .concat(BUILD_WIDTHS.map(function (w) { return shopDepthPools[w]; }))
@@ -13924,54 +14435,21 @@ THREE.GLTFLoader = GLTFLoader;
     var g = new THREE.Group();
     var ud = { lamps: [], trees: [], props: [], cars: [], buildings: [],
                manholes: [], puddles: [], crossStreet: null, landmark: null,
-               construction: null, transit: null, station: null, bridge: null,
+               construction: null, streetStory: null,
+               transit: null, station: null, bridge: null,
                tunnel: null, catenary: null,
                motif: 0, chunkSlot: chunkSlot };
 
-    var road = new THREE.Mesh(roadGeo, MAT.road);
-    // Keep the carriageway one quiet material plane. Tall facade rows cast a
-    // near-vertical shadow boundary down its centre, which reads as two
-    // different asphalt colors from the chase camera; local pooled contact
-    // shadows still ground vehicles, props and the runner.
-    road.receiveShadow = false;
-    g.add(road);
+    // These six invariant surfaces are scene-wide pools, so this chunk owns
+    // only views into its six one-instance slot ranges. Geometry, materials,
+    // shadow flags and local transforms match the former per-chunk Meshes.
+    ud.groundViews = GROUND_CHUNK_POOLS.map(function (pool) {
+      return poolView(pool, chunkSlot, g);
+    });
 
-    // PERF: the two sidewalk/kerb/gutter strips (one per side) never move or
-    // toggle independently after this point -- no code anywhere stores `walk`,
-    // `kerb` or `cob` on `ud`, so nothing can reposition or hide just one side
-    // later. That makes the left+right pair of each a safe one-time
-    // mergeBoxes() per chunk instead of two separate draws: same shared
-    // geometry, same material, same shadow flags on both sides, only the x
-    // translation differs, which is exactly what mergeBoxes bakes in. Saves 3
-    // draw calls per chunk (6 meshes -> 3) with pixel-identical output.
-    // GROUND ART PASS: the sidewalk riser is 0.16m, raised from the old 0.18m
-    // kerb baseline so its top sits ~6cm proud of the pavement (was flush) —
-    // cosmetic only, still centred on side*ROAD_HALF so it never intrudes into
-    // a lane hitbox. At the chase camera's grazing angle the old 0.18m riser
-    // compressed to a couple of screen pixels, which is why the kerbTex
-    // bright-lip/dark-base bands (see the ground-texture block above) never
-    // actually resolved into a visible step in a live capture — a few extra
-    // centimetres of real riser is what makes a texture-only contrast fix have
-    // anything to work with.
-    var walkMerged = new THREE.Mesh(mergeBoxes([-1, 1].map(function (side) {
-      return { geo: walkGeo, x: side * (ROAD_HALF + (WALK_OUT - ROAD_HALF) / 2), y: 0.16, z: 0 };
-    })), MAT.walk);
-    walkMerged.receiveShadow = true;
-    g.add(walkMerged);
-
-    var kerbMerged = new THREE.Mesh(mergeBoxes([-1, 1].map(function (side) {
-      return { w: 0.34, h: 0.24, d: CHUNK_LEN, x: side * ROAD_HALF, y: 0.10, z: 0 };
-    })), MAT.kerb);
-    g.add(kerbMerged);
-
-    // gutter cobble strip (both sides; tramBed below shares this material too
-    // but keeps its own receiveShadow=true flag so it stays a separate draw —
-    // merging it in would flip these gutter strips' receiveShadow from false
-    // to true, a real (if subtle) shading change this pass must not make).
-    var cobMerged = new THREE.Mesh(mergeBoxes([-1, 1].map(function (side) {
-      return { geo: cobbleGeo, x: side * (ROAD_HALF - 0.9), y: 0.012, z: 0 };
-    })), MAT.cobble);
-    g.add(cobMerged);
+    // Left/right sidewalk, kerb and gutter pairs remain baked into the same
+    // merged geometries. The tram bed stays in its own pool because it receives
+    // shadows while the same-material gutter does not.
 
     // Grounded shadows for this chunk's lamps, trees and sidewalk props. All of
     // them stand on the 0.16 m pavement, so one shared height clears it without
@@ -13987,19 +14465,8 @@ THREE.GLTFLoader = GLTFLoader;
     // rollChunk) since the shared pool has no parent chunk Group to inherit
     // this chunk's world Z from for free the way the old per-chunk mesh did.
     ud.dashView = poolView(laneDashPool, chunkSlot, g);
-    // Flush Berlin street-running tram bed and the two retained steel rails.
-    var tramBed = new THREE.Mesh(tramBedGeo, MAT.cobble);
-    tramBed.position.y = 0.012;
-    tramBed.receiveShadow = true;
-    g.add(tramBed);
-    // PERF: same reasoning as the walk/kerb/cob merge above -- both rails are
-    // static once placed (position set once here, never touched again), same
-    // material, same (default false/false) shadow flags, only x differs.
-    // Merges 2 draws into 1 per chunk.
-    var railMerged = new THREE.Mesh(mergeBoxes([-0.72, 0.72].map(function (x) {
-      return { w: 0.11, h: 0.05, d: CHUNK_LEN, x: x, y: 0.03, z: 0 };
-    })), MAT.streetRail);
-    g.add(railMerged);
+    // Flush Berlin street-running tram bed and the two retained steel rails
+    // are the last two members of the same scene-wide ground pool set.
     // Wooden sleeper ties under the rails (see tramTieGeo/MAT.tie above) — one
     // merged static mesh, same shared-geometry idiom as road/cob just above,
     // so this costs one extra draw call per chunk, not one per tie.
@@ -14149,6 +14616,14 @@ THREE.GLTFLoader = GLTFLoader;
       }
       ud.props.push(prop);
     }
+
+    // One prebuilt, heavily batched narrative cluster per recyclable chunk.
+    // It stays hidden except on the authored terminus beats selected in
+    // rollChunk; prebuilding preserves the no-runtime-allocation world loop.
+    var streetStory = makeBvgStopStory();
+    streetStory.visible = false;
+    g.add(streetStory);
+    ud.streetStory = streetStory;
     // Dedicated crate stacks pinned near the building line — the cheapest,
     // most reference-relevant clutter, guaranteed present independent of
     // which sidewalk fixtures rolled into the pool above. Instanced: one
@@ -14205,6 +14680,21 @@ THREE.GLTFLoader = GLTFLoader;
                                  chevron % 4 ? MAT.barrierWhite : MAT.barrierRed,
                                  hx - side * 0.13, 1.36, chevron));
       }
+      // Replace anonymous hoarding repetition with two large Berlin paste-ups.
+      // The road-facing plane stays on the facade side of the unchanged
+      // ROAD_HALF boundary; the pair is a single alpha-cut draw per live side.
+      addStreetArtBatch(constructionSide, [
+        { cell: side < 0 ? 10 : 3, w: 3.05, h: 1.72,
+          x: hx - side * 0.112, y: 1.31, z: -4.55, ry: -side * Math.PI / 2 },
+        { cell: side < 0 ? 13 : 6, w: 2.70, h: 1.68,
+          x: hx - side * 0.114, y: 1.29, z:  4.25, ry: -side * Math.PI / 2 }
+      ]);
+      // Rendering-only: this rigid frontage never changes below this root.
+      // Bake the nine white rail/chevron pieces and seven scaffold rails into
+      // one mesh per existing material/shadow state. Hoarding and street art
+      // remain their own materials, so the visible side drops 18 -> 4 draws
+      // with byte-identical source geometry, UVs and world transforms.
+      compactStaticPropGroup(constructionSide);
       construction.add(constructionSide);
       constructionSides.push({ side: side, root: constructionSide });
     });
@@ -14267,6 +14757,48 @@ THREE.GLTFLoader = GLTFLoader;
     sandwichboard: 1, hazardbarrier: 1
   };
 
+  // Exact rigid-prop bounds, cached on first placement after registerProp has
+  // finished batching. This is deliberately geometry-derived rather than a
+  // per-kind hand estimate: generated GLB swaps can change a prop's width,
+  // and the wall anchor still needs to put its outermost rotated vertex just
+  // in front of the live facade plane. loadPropModels invalidates this cache.
+  var propBoundsRootInv = new THREE.Matrix4();
+  var propBoundsRelative = new THREE.Matrix4();
+  var propBoundsPiece = new THREE.Box3();
+  function rigidPropLocalBounds(root) {
+    if (root.userData.localVisualBounds) return root.userData.localVisualBounds;
+    root.updateMatrixWorld(true);
+    propBoundsRootInv.copy(root.matrixWorld).invert();
+    var bounds = new THREE.Box3().makeEmpty();
+    root.traverse(function (o) {
+      if (!o.isMesh || !o.geometry) return;
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+      propBoundsPiece.copy(o.geometry.boundingBox);
+      propBoundsRelative.multiplyMatrices(propBoundsRootInv, o.matrixWorld);
+      propBoundsPiece.applyMatrix4(propBoundsRelative);
+      bounds.union(propBoundsPiece);
+    });
+    return root.userData.localVisualBounds = {
+      minX: bounds.min.x, maxX: bounds.max.x,
+      minZ: bounds.min.z, maxZ: bounds.max.z
+    };
+  }
+
+  // Maximum local X excursion toward this side's facade after the selected
+  // yaw. rollChunk subtracts this exact extent plus 8-18 cm from facadeX;
+  // therefore even an asymmetric cargo bike or swapped mesh cannot bury its
+  // rear half in the shopfront.
+  function propExtentTowardFacade(root, yaw, side) {
+    var b = rigidPropLocalBounds(root);
+    var c = Math.cos(yaw), s = Math.sin(yaw), extent = 0;
+    [b.minX, b.maxX].forEach(function (x) {
+      [b.minZ, b.maxZ].forEach(function (z) {
+        extent = Math.max(extent, side * (c * x + s * z));
+      });
+    });
+    return extent;
+  }
+
   // freezeChunkStaticMatrices (below) permanently keeps the five authored
   // transit movers (transit train, station train, bridge vessels, tunnel
   // train, tunnel sweep) unfrozen -- matrixWorldAutoUpdate stays true -- on
@@ -14303,6 +14835,12 @@ THREE.GLTFLoader = GLTFLoader;
     // even if `visible`/`nearEff` themselves didn't change across the reroll,
     // which is in fact the common case (see poolView's comment).
     ud.justRolled = true;
+    // Scene-wide ground meshes do not inherit this chunk Group's Z. Their
+    // local transform is invariant, and poolView adds this freshly rolled
+    // chunk offset to the identity matrix for each surface.
+    for (var gp = 0; gp < ud.groundViews.length; gp++) {
+      ud.groundViews[gp].setMatrixAt(0, groundChunkIdentity);
+    }
 
     // The world-wide chunk index survives recycling, so the first 160 m and
     // every loop after it always read as a deliberate four-beat composition:
@@ -14350,6 +14888,54 @@ THREE.GLTFLoader = GLTFLoader;
     var hasCross = motif === 1;
     ud.crossStreet.visible = hasCross;
     ud.landmark.visible = false;
+
+    // VISUAL HIERARCHY: every district beat gets one large, unmistakable
+    // kerbside read before the small clutter is scattered around it. Nothing
+    // new is constructed here: canyon blocks reserve their pooled kiosk,
+    // boulevard blocks reserve one pooled bus, and construction blocks already
+    // own their full-height hoarding/scaffold frontage. The open cross-street
+    // beat also reserves a bus just beyond the plaza: its moving tram can be
+    // laterally outside the graded frame, which otherwise leaves the broad
+    // crossing as an empty asphalt band. Stations, bridges and tunnels remain
+    // authored spectacles and provide their own anchor. Every reserved mass
+    // stays beyond ROAD_HALF and never enters obstacle/collision bookkeeping.
+    var hierarchyOrdinary = !hasCross && !hasStation && !hasBridge && !hasTunnel;
+    var hierarchyPlazaAnchor = hasCross;
+    var hierarchyAnchorKind = hierarchyPlazaAnchor ? 'bus' : (hierarchyOrdinary ?
+      (motif === 0 ? 'kiosk' : motif === 2 ? 'bus' : motif === 3 ? 'construction' : null) : null);
+    // Canyon districts alternate two unmistakably Berlin vertical silhouettes
+    // as a SECONDARY node: a full U-Bahn stair/sign on one block, a Litfass
+    // advertising column on the next. Both already exist exactly once in each
+    // prop pool; rollChunk only reallocates them out of the micro-clutter draw.
+    var hierarchyDistrictKind = hierarchyOrdinary && motif === 0 ?
+      (cycleIndex === 0 ? 'ubahn' : 'litfass') : null;
+    // Every plaza index is odd (1 mod 4), so worldChunkIndex parity alone would
+    // pin every terminus bus to the same kerb. Flip it once per four-beat cycle
+    // while leaving the established ordinary-district composition untouched.
+    var hierarchyPlazaSidePhase = ((Math.floor(worldChunkIndex / 4) % 2) + 2) % 2;
+    var hierarchyAnchorSide = hierarchyPlazaAnchor ?
+      (hierarchyPlazaSidePhase ? 1 : -1) : (worldChunkIndex % 2 ? 1 : -1);
+    // Hold the focal mass in the forward half of its block so it reads in the
+    // midground for several seconds rather than flashing past at chunk entry.
+    // The plaza bus is tangent to neither the 13 m cross-street slab nor the
+    // chunk seam: centre 13.8 with a conservative 5.8 m half-length leaves its
+    // complete z footprint at [8.0, 19.6]. Other anchors keep their gentle
+    // world-index variation.
+    var hierarchyAnchorZ = hierarchyPlazaAnchor ? 13.8 :
+      12 + (((worldChunkIndex % 3) + 3) % 3);
+    var hierarchyDistrictSide = -hierarchyAnchorSide;
+    // Pair the plaza's reserved yellow bus with a real stop environment on
+    // the opposite kerb. The rare ordinary boulevard beat gets the same story
+    // instead of four independent micro props; station/bridge/tunnel chunks
+    // retain their bespoke sequences and never show this root.
+    var hierarchyStoryOn = hierarchyPlazaAnchor ||
+      (hierarchyOrdinary && motif === 2);
+    var hierarchyStorySide = -hierarchyAnchorSide;
+    var hierarchyStoryZ = hierarchyPlazaAnchor ? 14.0 : -6.8;
+    // Normal chunks reveal the district node soon after entry, then the main
+    // kiosk deeper in the block. Chunk zero starts at its centre rather than at
+    // -20 m, so its node moves forward to preserve that same visible approach.
+    var hierarchyDistrictZ = worldChunkIndex === 0 ? 17 : -7;
 
     var crossZ = 0;
     if (hasCross) {
@@ -14437,10 +15023,12 @@ THREE.GLTFLoader = GLTFLoader;
     // sign rolled below is checked against it, so nothing repeats anywhere in
     // the same screenful of frontage (see rollBuilding's usedShopIndices).
     var chunkUsedShopIdx = [];
-    // Building bay centres captured per side as they're rolled, so the prop
-    // and crate-stack clusters below can anchor to an actual shopfront
-    // instead of scattering independently across the whole sidewalk length.
-    var buildingCentresBySide = { '-1': [], '1': [] };
+    // Visible building anchors captured per side as they're rolled. Keeping
+    // both z and the actual facade plane is essential: motif/asymmetry
+    // setbacks move that plane from the old fixed WALK_OUT band, so a z-only
+    // anchor made wall dressing float in plazas or disappear inside canyon
+    // facades. Hidden crossing/sequence buildings do not contribute anchors.
+    var buildingAnchorsBySide = { '-1': [], '1': [] };
     // Running write cursors into this chunk's instanced window-bay and
     // shopDepth pools (see makeChunk) — filled sequentially as buildings roll
     // below, then the unused tail is collapsed to zero scale once the whole
@@ -14467,25 +15055,27 @@ THREE.GLTFLoader = GLTFLoader;
           writeBuildingPartPools(ud, bld, buildingSlot, false);
           continue;
         }
-        // colorSlot: the six building slots in one chunk (3 per side) take
-        // the six values sideIdx*3+b2 = 0..5 — one per hue family, so both
-        // sides of the street are considered together and a single chunk
-        // always shows all six families rather than the same pairing twice.
-        // worldChunkIndex rotates which family lands in which slot chunk to
-        // chunk while staying stable for a given world position on recycle.
+        // The six slots share one district palette: warm masonry dominates and
+        // the cooler library entries become deliberate accents, not a rainbow.
+        // The choice remains deterministic for a recycled world position.
         rollBuilding(bld, widths[b2], heightBandBySide[side],
-          worldChunkIndex * 19 + sideIdx * 7 + b2 * 3, worldChunkIndex + sideIdx * 3 + b2, chunkUsedShopIdx,
+          worldChunkIndex * 19 + sideIdx * 7 + b2 * 3,
+          macroHueFamily(worldChunkIndex, motif, buildingSlot), chunkUsedShopIdx,
           dressBiasBySide[side]);
         bld.position.x = side * setbackBySide[side];
         var centre = cursor + widths[b2] / 2;
         cursor += widths[b2] + gap;
         bld.position.z = centre;
-        buildingCentresBySide[String(side)].push(centre);
         var clearsViaductSeam = (macroCycleIndex === 5 && b2 === 2) ||
                                 (macroCycleIndex === 7 && b2 === 0);
         bld.visible = !hasStation && !hasBridge && !hasTunnel &&
           !clearsViaductSeam &&
           !(hasCross && Math.abs(centre - crossZ) < 9 + widths[b2] / 2);
+        if (bld.visible) {
+          buildingAnchorsBySide[String(side)].push({
+            z: centre, facadeX: bld.position.x
+          });
+        }
         // Window-bay and shopDepth instances for this building slot: written
         // here (not in rollBuilding) because both need the building's FINAL
         // world transform, which is only settled once position.x/z and this
@@ -14587,6 +15177,19 @@ THREE.GLTFLoader = GLTFLoader;
     // was actually rolled.
     var contactCount = 0;
 
+    // Street-story placement. Authored local x extent is [-1.375, 1.375]; at
+    // ROAD_HALF + 2.20 the closest visible vertex is therefore x=8.025,
+    // leaving 0.825 m of real clearance outside the 7.2 m asphalt boundary.
+    // No obstacle/collision registration exists for this decorative root.
+    ud.streetStory.visible = hierarchyStoryOn;
+    if (hierarchyStoryOn) {
+      ud.streetStory.position.set(
+        hierarchyStorySide * (ROAD_HALF + 2.20), 0.16, hierarchyStoryZ);
+      ud.streetStory.rotation.y = hierarchyStorySide < 0 ? Math.PI : 0;
+      contactCount = pushContact(ud.contactView, contactCount,
+        ud.streetStory.position.x, hierarchyStoryZ, 1.50, 3.58, 3.65);
+    }
+
     // Lamps.
     //
     // LAYOUT FIX: base offset nudged out from ROAD_HALF+1.1 and jittered per
@@ -14622,16 +15225,32 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Trees.
     ud.trees.forEach(function (tree, i) {
-      var side = i < 2 ? -1 : 1;
       var boulevard = motif === 2;
-      tree.position.set(side * (boulevard ? ROAD_HALF + 2.05 : rand(ROAD_HALF + 1.4, ROAD_HALF + 2.6)),
-                        0.16, boulevard ? (-12 + (i % 2) * 24) :
-                        -CHUNK_LEN / 2 + rand(3, CHUNK_LEN - 3));
+      var side = i < 2 ? -1 : 1;
+      var treeZ;
+      if (boulevard) {
+        // Reallocate the existing 2+2 mirrored boulevard cadence into a 3+1
+        // composition. Three crowns form one continuous midground grove on the
+        // side opposite the parked-bus anchor; the fourth sits alone, earlier
+        // in depth, so neither pavement reads as an empty parallel strip. This
+        // is the same four pooled tree Groups and therefore exactly draw- and
+        // triangle-neutral. The 2.70 m trunk offset also encloses the largest
+        // scaled 2.05 m canopy radius outside ROAD_HALF with >0.35 m clearance.
+        side = i < 3 ? -hierarchyAnchorSide : hierarchyAnchorSide;
+        treeZ = i < 3 ? (-12 + i * 12) : -3;
+        tree.position.set(side * (ROAD_HALF + 2.70 + (i % 2) * 0.12), 0.16, treeZ);
+        tree.scale.setScalar(i < 3 ? [1.02, 1.12, 0.96][i] : 0.94);
+      } else {
+        tree.position.set(side * rand(ROAD_HALF + 1.4, ROAD_HALF + 2.6),
+                          0.16, -CHUNK_LEN / 2 + rand(3, CHUNK_LEN - 3));
+        tree.scale.setScalar(rand(0.82, 1.05));
+      }
       tree.rotation.y = Math.random() * 6.283;
-      tree.scale.setScalar(boulevard ? 0.98 + (i % 2) * 0.06 : rand(0.82, 1.05));
       var treeChance = [0.24, 0.52, 1.0, 0.14][motif];
+      var clearsStreetStory = !hierarchyStoryOn || side !== hierarchyStorySide ||
+        Math.abs(tree.position.z - hierarchyStoryZ) >= 5.2;
       tree.visible = !hasStation && !hasBridge && !hasTunnel && Math.random() < treeChance &&
-        !(hasCross && Math.abs(tree.position.z - crossZ) < 8);
+        clearsStreetStory && !(hasCross && Math.abs(tree.position.z - crossZ) < 8);
       // Preserve the authored roll independently from the per-frame camera
       // cull below, exactly like parkedActive does for kerb vehicles.
       tree.userData.rolledActive = tree.visible;
@@ -14654,11 +15273,82 @@ THREE.GLTFLoader = GLTFLoader;
     // a picket-fence layout lacks.
     ud.props.forEach(function (prop) { prop.variants.forEach(function (v) { v.visible = false; }); });
     var usedClusterAnchors = [];
+    var hierarchyFixture = null;
+    var hierarchyDistrictFixture = null;
+    var hierarchyLargePropSlots = [];
+    // makeChunk's shuffled pool contains every authored fixture family, so the
+    // kiosk and alternating district node can be reserved without allocating a
+    // thirteenth prop slot. Remove every macro-fixture-carrying slot from the
+    // later small-clutter shuffle as well: large silhouettes then appear only
+    // where composition asks for them, replacing micro detail rather than
+    // stacking more material batches onto it.
+    for (var hierarchyPropI = 0; hierarchyPropI < ud.props.length; hierarchyPropI++) {
+      var hierarchyPropSlot = ud.props[hierarchyPropI];
+      var hierarchySlotHasMacro = false;
+      for (var hierarchyVariantI = 0; hierarchyVariantI < hierarchyPropSlot.variants.length; hierarchyVariantI++) {
+        var hierarchyVariant = hierarchyPropSlot.variants[hierarchyVariantI];
+        var hierarchyVariantKind = hierarchyVariant.userData.propKind;
+        var hierarchyVariantIsMacro = hierarchyVariantKind === 'kiosk' ||
+          hierarchyVariantKind === 'ubahn' || hierarchyVariantKind === 'litfass';
+        if (!hierarchyVariantIsMacro) continue;
+        hierarchySlotHasMacro = true;
+        if (!hierarchyFixture && hierarchyAnchorKind === 'kiosk' && hierarchyVariantKind === 'kiosk') {
+          hierarchyFixture = hierarchyVariant;
+        }
+        if (!hierarchyDistrictFixture && hierarchyDistrictKind === hierarchyVariantKind) {
+          hierarchyDistrictFixture = hierarchyVariant;
+        }
+      }
+      if (hierarchySlotHasMacro) hierarchyLargePropSlots.push(hierarchyPropSlot);
+    }
+    if (hierarchyFixture) {
+      hierarchyFixture.visible = true;
+      hierarchyFixture.scale.setScalar(1);
+      // A rotated kiosk occupies 1.4 m laterally from its centre. The 1.70 m
+      // offset therefore leaves a positive 0.30 m visual safety gap outside
+      // ROAD_HALF even at its closest awning/roof edge.
+      hierarchyFixture.position.set(hierarchyAnchorSide * (ROAD_HALF + 1.70),
+                                    0.16, hierarchyAnchorZ);
+      hierarchyFixture.rotation.y = hierarchyAnchorSide < 0 ? Math.PI / 2 : -Math.PI / 2;
+      usedClusterAnchors.push({
+        side: hierarchyAnchorSide, z: hierarchyAnchorZ,
+        facadeX: hierarchyAnchorSide * setbackBySide[hierarchyAnchorSide]
+      });
+      contactCount = pushContact(ud.contactView, contactCount,
+        hierarchyFixture.position.x, hierarchyAnchorZ, 1.56, 2.90, 1.40);
+    }
+    if (hierarchyDistrictFixture) {
+      var hierarchyDistrictIsUBahn = hierarchyDistrictKind === 'ubahn';
+      hierarchyDistrictFixture.visible = true;
+      hierarchyDistrictFixture.scale.setScalar(1);
+      // The rotated U-Bahn entrance is 4.6 m across the pavement; centring it
+      // 2.60 m beyond the asphalt leaves its closest coping edge at x=7.50.
+      // The narrower Litfass column needs only 1.35 m, leaving x=7.52. Both
+      // therefore remain positive visual masses wholly outside ROAD_HALF.
+      var hierarchyDistrictOffset = hierarchyDistrictIsUBahn ? 2.60 : 1.35;
+      hierarchyDistrictFixture.position.set(
+        hierarchyDistrictSide * (ROAD_HALF + hierarchyDistrictOffset),
+        0.16, hierarchyDistrictZ);
+      hierarchyDistrictFixture.rotation.y = hierarchyDistrictIsUBahn ?
+        (hierarchyDistrictSide < 0 ? Math.PI / 2 : -Math.PI / 2) : 0;
+      usedClusterAnchors.push({
+        side: hierarchyDistrictSide, z: hierarchyDistrictZ,
+        facadeX: hierarchyDistrictSide * setbackBySide[hierarchyDistrictSide]
+      });
+      contactCount = pushContact(ud.contactView, contactCount,
+        hierarchyDistrictFixture.position.x, hierarchyDistrictZ,
+        hierarchyDistrictIsUBahn ? 1.78 : 1.08,
+        hierarchyDistrictIsUBahn ? 3.40 : 4.13,
+        hierarchyDistrictIsUBahn ? 1.82 : 1.08);
+    }
     if (!hasStation && !hasBridge && !hasTunnel) {
       var propAnchors = [];
       [-1, 1].forEach(function (side) {
-        buildingCentresBySide[String(side)].forEach(function (z) {
-          propAnchors.push({ side: side, z: z });
+        buildingAnchorsBySide[String(side)].forEach(function (buildingAnchor) {
+          propAnchors.push({
+            side: side, z: buildingAnchor.z,
+            facadeX: buildingAnchor.facadeX
+          });
         });
       });
       propAnchors = shuffledCopy(propAnchors);
@@ -14674,18 +15364,40 @@ THREE.GLTFLoader = GLTFLoader;
       var targetRoll = Math.random();
       var clusterTarget = targetRoll < 0.08 ? 1 : targetRoll < 0.30 ? 2 :
         targetRoll < 0.68 ? 3 : 4;
-      var propSlots = shuffledCopy(ud.props);
+      // One fewer scatter cluster creates a readable big/medium/small hierarchy.
+      // A canyon's second macro node pays for itself by replacing the remaining
+      // four Group-based micro fixtures entirely: its dedicated instanced crate
+      // stacks, bollards, lamps and parked vehicles still supply small detail,
+      // while the visible prop-root maximum falls from kiosk + 4 to exactly
+      // kiosk + district node. U-Bahn/Litfass-scale silhouettes occupy far more
+      // screen area for fewer material submissions than the removed scatter.
+      // Pay for the plaza's coach-scale silhouette explicitly: no Group-based
+      // micro fixtures are submitted on that beat. Its scene-wide instanced
+      // crates/bollards still provide small texture at their unchanged draw
+      // cost. Canyon keeps the same zero-budget rule when it owns two anchors.
+      var hierarchyClutterBudget = hierarchyStoryOn ? 0 : (hierarchyAnchorKind ?
+        (hierarchyDistrictFixture ? 0 : 4) : ud.props.length);
+      if (hierarchyPlazaAnchor) clusterTarget = 0;
+      else if (hierarchyAnchorKind) clusterTarget = Math.max(1, clusterTarget - 1);
+      var propSlots = shuffledCopy(ud.props.filter(function (prop) {
+        return hierarchyLargePropSlots.indexOf(prop) < 0;
+      }));
       var slotCursor = 0;
+      var hierarchyClutterUsed = 0;
       for (var ci = 0; ci < clusterTarget && slotCursor < propSlots.length; ci++) {
         if (Math.random() > clusterChance) continue;
         var anchor = propAnchors.length ? propAnchors[ci % propAnchors.length] :
-          { side: Math.random() < 0.5 ? -1 : 1, z: rand(-CHUNK_LEN / 2 + 5, CHUNK_LEN / 2 - 5) };
+          { side: Math.random() < 0.5 ? -1 : 1,
+            z: rand(-CHUNK_LEN / 2 + 5, CHUNK_LEN / 2 - 5) };
+        if (anchor.facadeX === undefined) {
+          anchor.facadeX = anchor.side * setbackBySide[anchor.side];
+        }
         usedClusterAnchors.push(anchor);
         // Group size drawn from the same skewed clumpSize distribution as the
         // bollards: a lone item and a pair are the common case, a tight
         // 4-heap the rare one — not a near-uniform 2-4 roll.
         var clusterSize = clumpSize(propSlots.length - slotCursor);
-        for (var m = 0; m < clusterSize; m++) {
+        for (var m = 0; m < clusterSize && hierarchyClutterUsed < hierarchyClutterBudget; m++) {
           var prop = propSlots[slotCursor++];
           var v = prop.variants[randInt(0, prop.variants.length - 1)];
           var pz = anchor.z + (m - (clusterSize - 1) / 2) * rand(0.55, 0.95);
@@ -14708,15 +15420,29 @@ THREE.GLTFLoader = GLTFLoader;
           // 0.35m worst case needs only ~0.56m of height to reach the wall,
           // which every wall-hug prop in this pool clears.
           var isRecyclingContainer = v.userData.propKind === 'container';
-          var px = hug ?
-            anchor.side * (WALK_OUT - rand(0.10, 0.35)) :
-            anchor.side * (isRecyclingContainer ?
-              rand(WALK_OUT - 2.65, WALK_OUT - 2.05) :
-              rand(ROAD_HALF + 1.8, WALK_OUT - 2.1));
+          // Preserve the old visual RNG call order/count while replacing its
+          // fixed WALK_OUT assumption. Wall pieces consume gap -> jitter ->
+          // yaw exactly where the old x-gap -> jitter -> yaw calls occurred.
+          var wallGap = hug ? rand(0.08, 0.18) : 0;
+          var px = hug ? 0 : anchor.side * (isRecyclingContainer ?
+            rand(WALK_OUT - 2.65, WALK_OUT - 2.05) :
+            rand(ROAD_HALF + 1.8, WALK_OUT - 2.1));
+          var propJitter = rand(-0.18, 0.18);
+          var propYaw = anchor.side < 0 ? rand(1.2, 1.9) : rand(-1.9, -1.2);
+          if (hug) {
+            var facadeExtent = propExtentTowardFacade(v, propYaw, anchor.side);
+            px = anchor.facadeX - anchor.side * (facadeExtent + wallGap);
+            // Keep the old jitter as along-frontage imperfection; applying it
+            // laterally could erase the guaranteed wall clearance.
+            pz += propJitter;
+          } else {
+            px += propJitter;
+          }
           v.visible = true;
+          hierarchyClutterUsed++;
           if (isRecyclingContainer) v.scale.setScalar(0.80);
-          v.position.set(px + rand(-0.18, 0.18), 0.16, pz);
-          v.rotation.y = anchor.side < 0 ? rand(1.2, 1.9) : rand(-1.9, -1.2);
+          v.position.set(px, 0.16, pz);
+          v.rotation.y = propYaw;
           contactCount = pushContact(ud.contactView, contactCount,
             v.position.x, v.position.z,
             isRecyclingContainer ? 0.76 : 0.94,
@@ -14754,31 +15480,55 @@ THREE.GLTFLoader = GLTFLoader;
       var authoredBigSide = worldChunkIndex % 2 ? 1 : -1;
       var stackBig = stackSide === authoredBigSide && sideStackIndex === authoredBigIndex;
       var sameSideAnchors = usedClusterAnchors.filter(function (a) { return a.side === stackSide; });
-      var stackAnchors = buildingCentresBySide[String(stackSide)];
+      var stackAnchors = buildingAnchorsBySide[String(stackSide)];
       var baseStackAnchor = stackAnchors.length ? stackAnchors[sideStackIndex % stackAnchors.length] :
-        rand(-CHUNK_LEN / 2 + 4, CHUNK_LEN / 2 - 4);
-      var stackAnchorZ = (!stackBig && sameSideAnchors.length && Math.random() < 0.48) ?
-        pick(sameSideAnchors).z + rand(-0.8, 0.8) :
-        baseStackAnchor + rand(-1.15, 1.15);
+        { z: rand(-CHUNK_LEN / 2 + 4, CHUNK_LEN / 2 - 4),
+          facadeX: stackSide * setbackBySide[stackSide] };
+      var stackAnchor = baseStackAnchor;
+      var stackAnchorZ;
+      if (!stackBig && sameSideAnchors.length && Math.random() < 0.48) {
+        stackAnchor = pick(sameSideAnchors);
+        stackAnchorZ = stackAnchor.z + rand(-0.8, 0.8);
+      } else {
+        stackAnchorZ = baseStackAnchor.z + rand(-1.15, 1.15);
+      }
       if (stackBig) stackAnchorZ = Math.max(stackAnchorZ, 5.5);
       // Same wall-reach fix as the WALL_HUG_PROPS gap above. Big stacks pull
       // forward off the wall toward the kerb instead — still well clear of
       // ROAD_HALF (7.2) and out of every lane, just occupying the same
       // mid-pavement band the freestanding fixtures use so the sidewalk
       // reads as layered (wall crates, mid containers) rather than one strip.
-      var stackX = stackBig ?
-        stackSide * rand(ROAD_HALF + 3.15, ROAD_HALF + 4.00) :
-        stackSide * (WALK_OUT - rand(0.10, 0.35));
+      var stackWallGap = 0;
+      var stackX = 0;
+      if (stackBig) {
+        stackX = stackSide * rand(ROAD_HALF + 3.15, ROAD_HALF + 4.00);
+      } else {
+        stackWallGap = rand(0.08, 0.16);
+      }
       var stackY = 0.16;
       var stackZ = stackAnchorZ;
       var stackRotY = rand(0, 6.283);
       if (hasCross && Math.abs(stackZ - crossZ) < 8) continue;
+      var stackBoxes = crateStackLayout(stackBig);
+      if (!stackBig) {
+        var stackCos = Math.cos(stackRotY), stackSin = Math.sin(stackRotY);
+        var stackFacadeExtent = 0;
+        stackBoxes.forEach(function (b) {
+          var rotatedX = stackCos * b.x + stackSin * b.z;
+          var rotatedHalfX = Math.abs(stackCos) * b.w * 0.5 +
+            Math.abs(stackSin) * b.d * 0.5;
+          stackFacadeExtent = Math.max(stackFacadeExtent,
+            stackSide * rotatedX + rotatedHalfX);
+        });
+        stackX = stackAnchor.facadeX -
+          stackSide * (stackFacadeExtent + stackWallGap);
+      }
       contactCount = pushContact(ud.contactView, contactCount, stackX, stackZ,
         stackBig ? 0.88 : 0.55, stackBig ? 1.15 : 0.9, stackBig ? 1.05 : undefined);
       crateInstDummy.position.set(stackX, stackY, stackZ);
       crateInstDummy.rotation.set(0, stackRotY, 0);
       crateInstDummy.updateMatrix();
-      crateStackLayout(stackBig).forEach(function (b) {
+      stackBoxes.forEach(function (b) {
         var worldPos = crateInstPos.set(b.x, b.y, b.z).applyMatrix4(crateInstDummy.matrix);
         crateInstScale.set(b.w, b.h, b.d);
         crateInstMatrix.compose(worldPos, crateInstDummy.quaternion, crateInstScale);
@@ -14829,11 +15579,38 @@ THREE.GLTFLoader = GLTFLoader;
       }
       return null;
     }
+    // Clear all four dual-purpose slots first so slot zero can be reserved as
+    // the boulevard/plaza focal mass without changing the pool size or allowing
+    // the ordinary random-placement loop to overwrite it.
     ud.cars.forEach(function (slot) {
       slot.car.visible = false;
       slot.bus.visible = false;
       slot.car.userData.parkedActive = false;
       slot.bus.userData.parkedActive = false;
+    });
+    if (hierarchyAnchorKind === 'bus') {
+      var hierarchyBus = ud.cars[0].bus;
+      parkedBySide[String(hierarchyAnchorSide)].push({ z: hierarchyAnchorZ, halfLength: 5.5 });
+      hierarchyBus.visible = true;
+      hierarchyBus.userData.parkedActive = true;
+      // Bus wheel/hub geometry reaches 1.398 m from its root. A 1.60 m centre
+      // offset therefore leaves at least 0.20 m of real visual clearance beyond
+      // ROAD_HALF (0.12 m even against the conservative 1.48 m shadow extent).
+      hierarchyBus.position.set(hierarchyAnchorSide * (ROAD_HALF + 1.60),
+                                 0.16, hierarchyAnchorZ);
+      hierarchyBus.rotation.y = hierarchyAnchorSide < 0 ? Math.PI : 0;
+      busPlaced = true;
+      contactCount = pushContact(ud.contactView, contactCount,
+        hierarchyBus.position.x, hierarchyAnchorZ, 1.48, 1.1, 5.5);
+    }
+    ud.cars.forEach(function (slot, parkedSlotIndex) {
+      if (hierarchyAnchorKind === 'bus' && parkedSlotIndex === 0) return;
+      // The plaza terminus now spends its secondary silhouette budget on the
+      // opposite-kerb BVG shelter. Keep only the reserved bus here: the former
+      // optional supporting car was a disconnected prop and costs about the
+      // same material submissions as the authored eight-batch story cluster.
+      // Cars remain unchanged on every non-plaza beat.
+      if (hierarchyPlazaAnchor && parkedSlotIndex > 0) return;
       var roll = Math.random();
       // Bus fraction cut hard: a parked double-decker costs roughly twice a
       // parked car in draw calls for the same one "kerb slot", and the
@@ -14846,7 +15623,10 @@ THREE.GLTFLoader = GLTFLoader;
       // with four slots per chunk now (was three) this still self-limits via
       // findParkedZ's spacing check rather than ever overlapping.
       var vehicleChance = [0.90, 0.50, 0.68, 0.82][motif];
-      if (busEligibleChunk && !busPlaced &&
+      // A composed block already has a kiosk, bus or construction frontage as
+      // its dominant mass. Additional buses are reserved for unanchored beats,
+      // avoiding two competing coach-scale silhouettes.
+      if (!hierarchyAnchorKind && busEligibleChunk && !busPlaced &&
           !hasStation && !hasBridge && !hasTunnel && roll < vehicleChance * 0.35) {
         var side = Math.random() < 0.5 ? -1 : 1;
         var busZ = findParkedZ(side, 5.5);
@@ -14858,7 +15638,7 @@ THREE.GLTFLoader = GLTFLoader;
           busPlaced = true;
           // Parked scenery sits beyond the kerb; the independent traffic lane
           // is inside it, so moving cars no longer pass through buses.
-          slot.bus.position.set(side * (ROAD_HALF + 1.35), 0.16, busZ);
+          slot.bus.position.set(side * (ROAD_HALF + 1.60), 0.16, busZ);
           slot.bus.rotation.y = side < 0 ? Math.PI : 0;
           // A vehicle's shadow is the strongest grounding cue on the street —
           // it is wide, unbroken and sits right at the kerb the player tracks.
@@ -14908,6 +15688,7 @@ THREE.GLTFLoader = GLTFLoader;
       // reproduces the exact same near/far gate at the slot-range level
       // instead (see syncPoolRange/syncPoolGroup).
       ud.cars.forEach(function (slot) { add(slot.car); add(slot.bus); });
+      add(ud.streetStory);
       ud.buildings.forEach(function (building) {
         var b = building.userData;
         // Ground-floor colour and signage must be present from the first far
@@ -15081,6 +15862,20 @@ THREE.GLTFLoader = GLTFLoader;
       ud.detailNear = near;
       for (var i = 0; i < ud.detailNodes.length; i++) {
         ud.detailNodes[i].visible = near && ud.detailBase[i];
+      }
+    }
+    // Past the fog boundary a building core occupies only a few pixels, but its
+    // four geometry groups still submit four beauty/shadow draws. A single
+    // facade material renders the same full geometry in one call there; every
+    // authored facade/mass/stone/shop material is restored before the building
+    // reaches clear air. This is a rendering LOD only, never a geometry cull.
+    for (var bm = 0; bm < ud.buildings.length; bm++) {
+      var lodBuilding = ud.buildings[bm];
+      var lodData = lodBuilding.userData;
+      var farSurface = dz + lodBuilding.position.z > 92;
+      if (lodData.coreFar !== farSurface) {
+        lodData.coreFar = farSurface;
+        lodData.core.material = farSurface ? lodData.coreFarMaterial : lodData.coreFullMaterials;
       }
     }
     // Parked scenery is authored and pooled by the chunk exactly as before,
@@ -15423,10 +16218,12 @@ THREE.GLTFLoader = GLTFLoader;
   // metal: the gantry is the one structure the player must parse instantly, so
   // it gets a deliberately darker body than anything around it plus a BVG
   // yellow service stripe to tie it back to Berlin.
-  var gateBeamMat = new THREE.MeshStandardMaterial({ color: 0x263553, roughness: 0.52, metalness: 0.18 });
-  var gateAccentMat = new THREE.MeshStandardMaterial({ color: 0xffc61e, roughness: 0.44, metalness: 0.10,
-                                                       emissive: 0x4a3200, emissiveIntensity: 0.45 });
-  var gatePostMat = new THREE.MeshStandardMaterial({ color: 0xb8c6ce, roughness: 0.58, metalness: 0.12 });
+  // The quiz gate is the most repeated hero-scale set piece in the game. Give
+  // it the same cel-banded BVG steel/yellow language as the city instead of a
+  // smooth grey debug-rig material.
+  var gateBeamMat = mat(0x17345d, { roughness: 0.62, metalness: 0.24, envMapIntensity: 0.34 });
+  var gateAccentMat = mat(0xffc61e, { roughness: 0.48, metalness: 0.10,
+                                     emissive: 0x4a3200, emissiveIntensity: 0.45 });
   var gateSignFaceGeo = new THREE.PlaneGeometry(2.48, 1.18);
 
   // ---------------------------------------------------- gate frame variants -
@@ -15459,12 +16256,74 @@ THREE.GLTFLoader = GLTFLoader;
       brace.rotateZ(s * 0.72);
       specs.push({ geo: brace, x: x - s * 0.62, y: 5.05, z: 0 });
     });
+    // Four unique lane jambs replace the six per-portal meshes (the two inner
+    // boundaries were previously drawn twice at identical transforms). Sign
+    // brackets live in this same static steel batch as well. Geometry and lane
+    // openings stay byte-for-byte in place; the gate submits them once.
+    [-1.5, -0.5, 0.5, 1.5].forEach(function (laneEdge) {
+      specs.push({ geo: roundedBoxGeo(0.26, 4.7, 0.26, 0.09),
+        x: laneEdge * LANE_W, y: 2.35, z: 0 });
+    });
+    LANES.forEach(function (laneX) {
+      [-1, 1].forEach(function (s) {
+        specs.push({ geo: roundedBoxGeo(0.16, 0.62, 0.16, 0.06),
+          x: laneX + s * 0.9, y: 5.18, z: 0 });
+      });
+      // Deep enamel housing behind each coloured article plate. Baked into the
+      // shared frame batch, it turns a floating school-button sign into transit
+      // hardware while leaving the existing plate/label transforms untouched.
+      specs.push({ geo: roundedBoxGeo(3.02, 1.58, 0.18, 0.10),
+        x: laneX, y: 4.50, z: 0.16 });
+
+      // Platform-canopy roof modules sit just above the signs. The centre unit
+      // keeps the same tower sightline notch as every header variant; side units
+      // remain separate so the span reads as three built bays, not one blocker.
+      var canopySpan = LANE_W * 0.84;
+      if (laneX === 0) {
+        var canopyGap = GATE_LINTEL_GAP;
+        var canopySeg = (canopySpan - canopyGap) * 0.5;
+        [-1, 1].forEach(function (s) {
+          specs.push({ geo: roundedBoxGeo(canopySeg, 0.24, 1.32, 0.09),
+            x: s * (canopyGap * 0.5 + canopySeg * 0.5), y: 5.48, z: 0.18 });
+        });
+      } else {
+        specs.push({ geo: roundedBoxGeo(canopySpan, 0.24, 1.32, 0.09),
+          x: laneX, y: 5.48, z: 0.18 });
+      }
+    });
     return specs;
   }
   function gateUnderstructureAccentSpecs() {
     var specs = [];
     [-1, 1].forEach(function (s) {
       specs.push({ geo: roundedBoxGeo(0.86, 0.34, 0.86, 0.10), x: s * gatePostX, y: 0.30, z: 0 });
+    });
+    // Yellow caps and foot collars make the four lane jambs read as authored
+    // transit hardware, merged into the frame's existing accent submission.
+    [-1.5, -0.5, 0.5, 1.5].forEach(function (laneEdge) {
+      var x = laneEdge * LANE_W;
+      specs.push({ geo: roundedBoxGeo(0.34, 0.22, 0.34, 0.08), x: x, y: 4.78, z: 0 });
+      specs.push({ geo: roundedBoxGeo(0.40, 0.16, 0.40, 0.07), x: x, y: 0.12, z: 0 });
+    });
+    LANES.forEach(function (laneX) {
+      // BVG-yellow canopy fascia and two integrated practical-light pods. They
+      // share the existing emissive accent submission: no new mesh or pass.
+      var fasciaSpan = LANE_W * 0.78;
+      if (laneX === 0) {
+        var fasciaGap = GATE_LINTEL_GAP + 0.10;
+        var fasciaSeg = (fasciaSpan - fasciaGap) * 0.5;
+        [-1, 1].forEach(function (s) {
+          specs.push({ geo: roundedBoxGeo(fasciaSeg, 0.10, 0.18, 0.04),
+            x: s * (fasciaGap * 0.5 + fasciaSeg * 0.5), y: 5.38, z: -0.47 });
+        });
+      } else {
+        specs.push({ geo: roundedBoxGeo(fasciaSpan, 0.10, 0.18, 0.04),
+          x: laneX, y: 5.38, z: -0.47 });
+      }
+      [-1, 1].forEach(function (s) {
+        specs.push({ geo: roundedBoxGeo(0.38, 0.16, 0.28, 0.06),
+          x: laneX + s * 1.18, y: 5.20, z: -0.58 });
+      });
     });
     return specs;
   }
@@ -15657,10 +16516,6 @@ THREE.GLTFLoader = GLTFLoader;
       p.add(sign);
 
       // Bracket pair mounting the sign to the lintel.
-      [-1, 1].forEach(function (s) {
-        p.add(roundedBox(0.16, 0.62, 0.16, 0.06, gateBeamMat, s * 0.9, 5.18, 0));
-      });
-
       // Light curtain the runner passes through.
       var curtainMat = new THREE.MeshBasicMaterial({
         color: ARTICLE_HEX.der, map: gateCurtainTex, transparent: true, opacity: 0.34,
@@ -15693,11 +16548,6 @@ THREE.GLTFLoader = GLTFLoader;
 
       // Side rails framing each lane opening — thick enough to catch the key
       // light and read as a doorway rather than a wire.
-      [-1, 1].forEach(function (s) {
-        p.add(roundedBox(0.26, 4.7, 0.26, 0.09, gatePostMat, s * LANE_W * 0.5, 2.35, 0));
-        p.add(roundedBox(0.34, 0.22, 0.34, 0.08, gateAccentMat, s * LANE_W * 0.5, 4.78, 0));
-      });
-
       p.userData = {
         sign: sign, signMat: signMat, signPlateMat: signPlateMat,
         curtain: curtain, curtainMat: curtainMat,
@@ -15709,6 +16559,7 @@ THREE.GLTFLoader = GLTFLoader;
 
     g.userData = { portals: portals, active: false, resolved: true, z: 0, spawnZ: 0,
                    frameBeamMesh: frameBeamMesh, frameAccentMesh: frameAccentMesh, frameVariant: 'classic' };
+    enableFocalOutline(g);
     freezeObjectTree(g, portals.map(function (portal) { return portal.userData.sign; }), false);
     g.visible = false;
     scene.add(g);
@@ -15725,12 +16576,12 @@ THREE.GLTFLoader = GLTFLoader;
     p.userData.padMat.color.setHex(hex);
     p.userData.haloMat.color.setHex(hex);
     p.userData.chevMat.color.setHex(state === 'idle' ? 0xffffff : hex);
-    p.userData.curtainMat.opacity = state === 'idle' ? 0.34 : (state === 'right' ? 0.78 : 0.16);
-    p.userData.padMat.opacity = state === 'idle' ? 0.34 : (state === 'right' ? 0.62 : 0.14);
+    p.userData.curtainMat.opacity = state === 'idle' ? 0.18 : (state === 'right' ? 0.48 : 0.11);
+    p.userData.padMat.opacity = state === 'idle' ? 0.27 : (state === 'right' ? 0.58 : 0.11);
     // The halo carries the verdict furthest — it is the only element still
     // legible once the gate is behind the player and out of focus.
-    p.userData.haloMat.opacity = state === 'idle' ? 0.5 : (state === 'right' ? 1 : 0.28);
-    p.userData.chevMat.opacity = state === 'idle' ? 0.28 : (state === 'right' ? 0.55 : 0.08);
+    p.userData.haloMat.opacity = state === 'idle' ? 0.24 : (state === 'right' ? 0.58 : 0.16);
+    p.userData.chevMat.opacity = state === 'idle' ? 0.22 : (state === 'right' ? 0.50 : 0.06);
   }
 
   function spawnGate(z) {
@@ -16083,6 +16934,7 @@ THREE.GLTFLoader = GLTFLoader;
       });
     });
     holder.visible = false;
+    enableFocalOutline(holder);
     freezeObjectTree(holder, [], false);
     scene.add(holder);
     return { holder: holder, variants: variants, active: false, spec: null,
@@ -16248,7 +17100,7 @@ THREE.GLTFLoader = GLTFLoader;
   var rig = new THREE.Group();
   // The start card remains up until the generated hero is decoded and compiled,
   // so the fallback never flashes behind it during a successful load.
-  rig.visible = !USE_GENERATED_HERO;
+  rig.visible = !(USE_GENERATED_HERO && ASSETS.character && THREE.GLTFLoader);
   scene.add(rig);
   var body = new THREE.Group();
   rig.add(body);
@@ -16343,62 +17195,87 @@ THREE.GLTFLoader = GLTFLoader;
   // (it is player.x/y/z against STAND_H / SLIDE_H / HALF_W).
   var torso = new THREE.Group();
   hips.add(torso);
+  // Ring loft for the focal hoodie. Each ring controls width, depth and rear
+  // bias independently, so cloth can taper at the ribs and roll into the neck
+  // instead of ending on a rounded-box lid. Fourteen sides keep it lightweight;
+  // shared normals and the existing cel material supply the sculpted finish.
+  function heroLoftGeo(rings, sides) {
+    var pos = [], uv = [], idx = [];
+    var ringCount = rings.length;
+    for (var r = 0; r < ringCount; r++) {
+      var ring = rings[r]; // [y, x radius, z radius, z centre]
+      for (var s = 0; s < sides; s++) {
+        var angle = s / sides * Math.PI * 2;
+        pos.push(Math.cos(angle) * ring[1], ring[0], ring[3] + Math.sin(angle) * ring[2]);
+        uv.push(s / sides, r / Math.max(1, ringCount - 1));
+      }
+    }
+    for (var rr = 0; rr < ringCount - 1; rr++) {
+      for (var ss = 0; ss < sides; ss++) {
+        var next = (ss + 1) % sides;
+        var a0 = rr * sides + ss, a1 = rr * sides + next;
+        var b0 = (rr + 1) * sides + ss, b1 = (rr + 1) * sides + next;
+        idx.push(a0, b0, a1, a1, b0, b1);
+      }
+    }
+    var bottom = pos.length / 3;
+    pos.push(0, rings[0][0], rings[0][3]); uv.push(0.5, 0.5);
+    var top = pos.length / 3;
+    pos.push(0, rings[ringCount - 1][0], rings[ringCount - 1][3]); uv.push(0.5, 0.5);
+    var topStart = (ringCount - 1) * sides;
+    for (var cs = 0; cs < sides; cs++) {
+      var cn = (cs + 1) % sides;
+      idx.push(bottom, cs, cn);
+      idx.push(top, topStart + cn, topStart + cs);
+    }
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    geo.computeBoundingSphere();
+    return geo;
+  }
+  function heroEllipsoidGeo(rx, ry, rz, widthSegments, heightSegments) {
+    var geo = new THREE.SphereGeometry(1, widthSegments || 12, heightSegments || 7);
+    geo.scale(rx, ry, rz);
+    return geo;
+  }
   // --- hoodie ---------------------------------------------------------------
-  // Half-width 0.29 against shoulders at x = +-0.40: that 0.04 m of air on each
-  // side is deliberate and is the whole point of building the character from
-  // separate solids. The outline pass is a depth+normal edge detect, so an arm
-  // only gets an ink line where there is a real depth step to detect. The donor
-  // mesh had one continuous surface there and no line ever appeared.
-  // Proportions are set against the reference stills, not against anatomy:
-  // legs 41% of standing height, torso 31%, head-and-cap 31%. A head that size
-  // is what makes the character read at fifteen metres, and it is the single
-  // biggest structural difference from a realistic donor scan.
-  // Vertical layout is measured off the reference stills as fractions of
-  // standing height: legs (hoodie hem to sole) 44%, torso (hem to shoulder)
-  // 31%, head and cap 24%. The leg chain below is fixed at 0.92 m by
-  // poseRunner, so those three numbers determine everything else.
-  // Chest and shoulder yoke, merged: the yoke is wider than the body and
-  // leaves a hard horizontal crease across the upper back, which is the first
-  // thing that reads from the chase camera.
-  // Tier 2 (the yoke) used to be a flat-topped box wider than tier 1 with a
-  // tight radius on both — from behind that read as a shelf/ledge stacked on
-  // a slab, the single biggest "LEGO torso" tell. Both radii are opened up
-  // (tier 2's height grew from 0.20 to 0.27 specifically to afford a bigger
-  // radius: a rounded box's corner is capped at half its shortest side) and
-  // the overlap between them widened, so the two tiers blend into one
-  // barrel-chested taper instead of meeting on a hard edge. The hood lobe
-  // below sits right over the remaining seam and finishes the job.
-  // APPEAL PASS: torso lengthened and narrowed. Tier 1's bottom edge is held
-  // at the same y=0.22 it always sat at (so the waist/hem overlap below is
-  // untouched) but its height grew 0.50->0.62, pushing everything above it
-  // — yoke, neck, head, shoulder pivot — up with it. That reads as a longer
-  // ribcage instead of a taller head, which is what a squat torso needs.
-  // Both tiers narrowed too (0.55/0.56 -> 0.48/0.50): the old width matched
-  // the shoulder pivot almost exactly, so the chest itself was doing the
-  // "wide shoulders" job the arms should own, and the torso read as a slab
-  // the same width all the way down instead of tapering under narrower
-  // shoulders.
-  // APPEAL PASS 2: torso lengthened again (0.62->0.70 tier1 height, bottom
-  // still held at y=0.22) and both tiers narrowed a second time (0.48/0.50 ->
-  // 0.43/0.45) — against the flare-corrected arms the torso still read short
-  // and square. The extra 0.04m of height pushes the yoke top from 0.84 to
-  // 0.88; everything stacked on that edge (shoulder pivot, neck, head) is
-  // shifted up by the same 0.04 below so the neck/hood/hair relationships
-  // tuned earlier stay byte-identical, just carried higher.
-  var chest = heroPart(HOOD, [
-    rbSpec(0.40, 0.70, 0.36, 0.16, 0, 0.57, 0, 0.035),
-    rbSpec(0.48, 0.27, 0.40, 0.13, 0, 0.94, 0, 0.032)
-  ]);
+  // One continuous shoulder-to-waist shell replaces the old stacked yoke and
+  // chest boxes. Upper rings widen into the arm pivots, then roll inward at
+  // the neck; a subtle rear bias gives the back a shoulder-blade cloth swell.
+  var chest = new THREE.Mesh(heroLoftGeo([
+    [0.10, 0.215, 0.175, 0.005],
+    [0.22, 0.205, 0.172, 0.004],
+    [0.42, 0.208, 0.180, -0.002],
+    [0.68, 0.224, 0.195, -0.008],
+    [0.86, 0.242, 0.207, -0.012],
+    [0.96, 0.235, 0.198, -0.004],
+    [1.025, 0.205, 0.180, 0.008],
+    [1.075, 0.175, 0.160, 0.018]
+  ], 14), HOOD);
   torso.add(chest);
-  // Waist block and hem band. The hem is wider than the waist on purpose so
-  // the hoodie ends on a ledge rather than fading into the jeans.
-  torso.add(roundedBox(0.42, 0.23, 0.35, 0.11, HOOD_MID, 0, 0.185, 0, 0.03));
-  torso.add(roundedBox(0.45, 0.12, 0.38, 0.055, HOOD_DARK, 0, 0.07, 0, 0.025));
+  // Shallow over-shells keep the existing costume value bands while shaping a
+  // gathered waist and a small cloth flare above the jeans. Their overlap with
+  // the main shell keeps the animated torso watertight through every pose.
+  torso.add(new THREE.Mesh(heroLoftGeo([
+    [0.055, 0.225, 0.190, 0.004],
+    [0.12, 0.228, 0.193, 0.000],
+    [0.21, 0.218, 0.184, 0.000],
+    [0.31, 0.205, 0.175, 0.002]
+  ], 14), HOOD_MID));
+  torso.add(new THREE.Mesh(heroLoftGeo([
+    [0.01, 0.232, 0.198, 0.004],
+    [0.045, 0.240, 0.205, 0.000],
+    [0.095, 0.238, 0.202, 0.000],
+    [0.145, 0.222, 0.188, 0.002]
+  ], 14), HOOD_DARK));
   // No panel seams on the back. A pair of thin raglan strips was tried here to
   // give the outline pass something to draw inside the silhouette; at this
   // screen size they aliased into a dotted stipple against the chest behind
   // them. The reference art's hoodie back is a plain red field too — the hood,
-  // the yoke crease and the arms are what break it up.
+  // rolled shoulder silhouette and arms are what break it up.
   // No separate camera-facing neck puck: jaw/ear skin already bridges the
   // head, while the hoodie collar below keeps the back silhouette continuous.
 
@@ -16521,7 +17398,14 @@ THREE.GLTFLoader = GLTFLoader;
   // higher leaves the skull's hair rim showing all the way round the base,
   // including a band underneath that the two new corner tufts (see skull,
   // above) now poke up past.
-  cap.add(roundedBox(0.36, 0.16, 0.34, 0.13, CAP, 0, 0.375, -0.01, 0.032));
+  // A shallow spherical crown reads as fabric stretched over a head instead
+  // of a rounded packing crate while preserving the brim and hair silhouette.
+  var capCrown = new THREE.Mesh(
+    new THREE.SphereGeometry(0.24, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.60), CAP
+  );
+  capCrown.position.set(0, 0.335, -0.01);
+  capCrown.scale.set(0.84, 0.60, 0.78);
+  cap.add(capCrown);
   // Peak/brim, snapback strap and crown button. The peak used to be sized
   // (0.37 wide) NARROWER than the skull itself (0.46-0.48 wide) — since it
   // points forward, straight into the screen and away from a camera that
@@ -16550,7 +17434,8 @@ THREE.GLTFLoader = GLTFLoader;
   // looked-at object in the frame. The animation that used to sway the pack
   // now sways the HOOD, which is the correct thing for it to have been doing.
   var pack = new THREE.Object3D();
-  pack.position.set(0, 0.47, -0.28);
+  // The old backpack anchor is now a hood anchor, so keep it at the neck yoke.
+  pack.position.set(0, 0.82, -0.25);
   torso.add(pack);
   // Kept small, dark and tucked into the shoulders. A larger, lighter version
   // of this sat proud of the back with its own ink outline all the way round
@@ -16574,29 +17459,27 @@ THREE.GLTFLoader = GLTFLoader;
     // occupies a good ~0.10-0.12m either side of that pivot itself, so the
     // straight-hanging forearm read as pegged on with open air between it
     // and the now-narrower torso. Narrowing the pivot alone would have
-    // buried the deltoid inside the chest mesh, so the deltoid/cylinder
-    // girth below is thinned to match (see next comment) rather than just
+    // buried the deltoid inside the chest mesh, so the sleeve loft's
+    // girth is thinned to match rather than just
     // sliding the same fat arm inward.
     // APPEAL PASS 2: pivot narrowed again (0.30 -> 0.27) and raised +0.04 to
     // track the second chest-height increase (see chest comment above) — same
     // "narrow the pivot, thin the girth would still be needed if it looked
     // hollow" logic as the first pass, just one more notch in.
     shoulder.position.set(sign * 0.27, 0.88, 0);
-    // The upper sleeve used to be three stacked rounded boxes of similar
-    // radius (deltoid / mid-sleeve / elbow-approach) — beads on a string,
-    // each with its own visible waist, which is what read as a segmented
-    // robot arm rather than a limb. It is now a deltoid bump feeding a single
-    // smoothly tapered cylinder down to the elbow: one continuous surface,
-    // still merged into one mesh/draw call, but with no interior "joint"
-    // pinches for the eye to catch.
-    // Thinned (0.24/0.108/0.084 -> 0.205/0.093/0.073) and nudged inward on X
-    // (-sign*0.02, i.e. toward the ribs) to match the narrower pivot above —
-    // a slimmer arm reads as a kid's arm instead of a stuffed sleeve, and
-    // still leaves a real depth step against the torso for the outline pass.
-    shoulder.add(heroPart(HOOD, [
-      rbSpec(0.205, 0.22, 0.22, 0.095, -sign * 0.02, -0.02, 0, 0.030),
-      { geo: cylGeo(0.093, 0.073, 0.42, 16), x: -sign * 0.02, y: -0.24, z: 0 }
-    ]));
+    // A single cloth loft carries the sleeve from a rounded deltoid into the
+    // elbow taper, eliminating the old mid-arm curvature break and tube end.
+    var upperSleeve = new THREE.Mesh(heroLoftGeo([
+      [0.075, 0.060, 0.070, 0.002],
+      [0.035, 0.100, 0.108, -0.002],
+      [-0.060, 0.108, 0.112, -0.006],
+      [-0.180, 0.094, 0.101, -0.002],
+      [-0.310, 0.080, 0.087, 0.004],
+      [-0.405, 0.073, 0.080, 0.006],
+      [-0.445, 0.069, 0.076, 0.007]
+    ], 12), HOOD);
+    upperSleeve.position.x = -sign * 0.02;
+    shoulder.add(upperSleeve);
     var elbow = new THREE.Group();
     elbow.position.y = -0.40;
     // Elbow (and everything hanging off it: forearm, cuff, fist) pulled
@@ -16610,12 +17493,18 @@ THREE.GLTFLoader = GLTFLoader;
     // unchanged.
     elbow.position.x = -sign * 0.045;
     shoulder.add(elbow);
-    // Forearm: same taper treatment as the upper arm, continuing the cone
-    // down from the elbow instead of a single straight-walled box. Top
-    // radius matches the thinned upper-arm's new bottom radius (0.073) so
-    // the taper stays continuous instead of stepping back out.
-    var forearm = new THREE.Mesh(cylGeo(0.073, 0.060, 0.30, 16), HOOD);
-    forearm.position.set(0, -0.155, 0);
+    // Lower sleeve and elbow cap share one mesh because they move as one bone.
+    var forearm = heroPart(HOOD, [
+      { geo: heroLoftGeo([
+        [0.055, 0.060, 0.067, -0.002],
+        [0.020, 0.076, 0.082, -0.004],
+        [-0.055, 0.078, 0.083, -0.004],
+        [-0.145, 0.071, 0.076, -0.001],
+        [-0.245, 0.063, 0.068, 0.004],
+        [-0.315, 0.059, 0.064, 0.006]
+      ], 12) },
+      { geo: heroEllipsoidGeo(0.078, 0.082, 0.084, 12, 7) }
+    ]);
     elbow.add(forearm);
     // Ribbed cuff, then a real fist past it. Bare skin ending the red sleeve is
     // the reference character's single most legible hand cue. The cuff used
@@ -16635,13 +17524,18 @@ THREE.GLTFLoader = GLTFLoader;
     // both sides. Widened and heightened slightly too (0.155x0.075 ->
     // 0.185x0.105) so it survives being shrunk by the outline stroke at this
     // render scale instead of aliasing away to a hairline.
-    elbow.add(roundedBox(0.185, 0.105, 0.185, 0.035, CAP_DARK, 0, -0.335, 0, 0.02));
-    // Fist bulked up further past the cuff (0.235 -> 0.26) and the thumb
-    // bump enlarged and pushed further out, so the hand reads as a knuckly
-    // mitt with a separate thumb break rather than a plain puck.
+    elbow.add(new THREE.Mesh(heroLoftGeo([
+      [-0.285, 0.066, 0.070, 0.006],
+      [-0.305, 0.089, 0.093, 0.010],
+      [-0.360, 0.092, 0.096, 0.012],
+      [-0.395, 0.080, 0.084, 0.014]
+    ], 10), CAP_DARK));
+    // Compact knuckles still clear the cuff, while the separate thumb supplies
+    // the hand read without the old paddle-like mitt silhouette. Low-poly
+    // ellipsoids replace the last hand boxes without moving their local centres.
     elbow.add(heroPart(SKIN, [
-      rbSpec(0.215, 0.20, 0.19, 0.09, 0, -0.48, 0.02, 0.042),
-      rbSpec(0.083, 0.124, 0.095, 0.037, sign * -0.095, -0.44, 0.095, 0.020)
+      { geo: heroEllipsoidGeo(0.10, 0.095, 0.088, 12, 7), x: 0, y: -0.47, z: 0.02 },
+      { geo: heroEllipsoidGeo(0.035, 0.055, 0.040, 10, 6), x: sign * -0.083, y: -0.435, z: 0.084 }
     ]));
     torso.add(shoulder);
     return { shoulder: shoulder, elbow: elbow };
@@ -16651,33 +17545,45 @@ THREE.GLTFLoader = GLTFLoader;
   function makeLeg(sign) {
     var hip = new THREE.Group();
     hip.position.set(sign * 0.15, 0, 0);
-    var thigh = new THREE.Mesh(cylGeo(0.14, 0.115, 0.50, 16), JEANS);
-    thigh.position.y = -0.23;
+    // Denim loft widens softly into the hips, carries fullness high on the
+    // thigh, then narrows into the unchanged knee pivot instead of reading as
+    // a truncated cone.
+    var thigh = new THREE.Mesh(heroLoftGeo([
+      [0.045, 0.125, 0.130, -0.004],
+      [0.005, 0.145, 0.145, -0.010],
+      [-0.120, 0.148, 0.145, -0.012],
+      [-0.260, 0.135, 0.132, -0.004],
+      [-0.390, 0.119, 0.120, 0.004],
+      [-0.490, 0.109, 0.112, 0.008]
+    ], 12), JEANS);
     hip.add(thigh);
     var knee = new THREE.Group();
     knee.position.y = -0.46;
     hip.add(knee);
-    var shin = new THREE.Mesh(cylGeo(0.115, 0.10, 0.46, 16), JEANS);
-    shin.position.y = -0.20;
+    // A compact rounded knee cap is merged into the shaped calf. It remains
+    // centred on the protected knee pivot, covering the upper/lower overlap
+    // throughout flexion while retaining the original draw count.
+    var shin = heroPart(JEANS, [
+      { geo: heroLoftGeo([
+        [0.045, 0.103, 0.111, -0.002],
+        [0.005, 0.118, 0.122, -0.006],
+        [-0.095, 0.116, 0.119, -0.005],
+        [-0.220, 0.108, 0.112, 0.000],
+        [-0.340, 0.100, 0.106, 0.005],
+        [-0.430, 0.094, 0.101, 0.008]
+      ], 12) },
+      { geo: heroEllipsoidGeo(0.121, 0.098, 0.125, 12, 7) }
+    ]);
     knee.add(shin);
-    // Turn-up at the ankle: darker denim, wider than the shin, so the leg
-    // terminates on an edge instead of dissolving into the top of the shoe.
-    // Widened further past the shin (0.235) and pushed to a deeper indigo —
-    // a captured close-up showed JEANS_DARK sitting too close in value to
-    // JEANS above it, so the "turn-up" read as a soft shading gradient
-    // rather than a hard cuff edge. The bigger width delta plus the deeper
-    // colour gives the outline pass a real step to draw on both faces.
-    // Two failed passes before this one, both re-deriving world Y instead of
-    // depth: the shin (world 0.04-0.48) and the heel collar (world
-    // 0.02-0.18) already overlap almost completely, so there is no clean Y
-    // gap between "leg" and "shoe" for a cuff to occupy — any box placed in
-    // that band sits fully inside one or the other's own footprint no matter
-    // how it's colour-graded. Fixed the same way the neck was fixed: pushed
-    // proud in Z instead of chasing Y. Front face now lands at world z~-0.28,
-    // a real 0.08m past the heel collar's own front face (-0.20) and 0.15m
-    // past the shin's (-0.125), so it reads as a rim wrapping the back of
-    // the ankle regardless of the Y overlap underneath it.
-    knee.add(roundedBox(0.24, 0.14, 0.27, 0.05, JEANS_CUFF, 0, -0.365, -0.11, 0.025));
+    // The indigo turn-up is a rear-biased cloth loft rather than a box. It
+    // widens around the calf, rolls proud at the heel, then narrows into the
+    // unchanged ankle pivot so the denim-to-trainer break stays legible.
+    knee.add(new THREE.Mesh(heroLoftGeo([
+      [-0.305, 0.104, 0.111, -0.030],
+      [-0.335, 0.122, 0.135, -0.060],
+      [-0.390, 0.123, 0.142, -0.072],
+      [-0.435, 0.106, 0.124, -0.058]
+    ], 12), JEANS_CUFF));
     var ankle = new THREE.Group();
     ankle.position.y = -0.42;
     knee.add(ankle);
@@ -16685,17 +17591,17 @@ THREE.GLTFLoader = GLTFLoader;
     // is behind the runner, so the HEEL is the only part of a shoe it ever
     // sees: the white upper wraps all the way round the back and the red is
     // held to a thin flash on the sole, or the feet read as red socks.
-    ankle.add(roundedBox(0.235, 0.155, 0.37, 0.065, SHOE, 0, 0.005, 0.03, 0.025));
+    ankle.add(roundedBox(0.27, 0.16, 0.40, 0.07, SHOE, 0, 0.005, 0.035, 0.025));
     // Red flash sits between upper and midsole as a thin rim. It used to be
     // wider and deeper than the sole below it, which framed the sole plate in
     // red and made it read as a separate object rather than part of the shoe.
-    ankle.add(roundedBox(0.238, 0.035, 0.355, 0.03, SHOE_RED, 0, -0.075, 0.032, 0.014));
-    ankle.add(roundedBox(0.228, 0.055, 0.345, 0.055, SHOE_SOLE, 0, -0.11, 0.032, 0.02));
+    ankle.add(roundedBox(0.273, 0.035, 0.385, 0.03, SHOE_RED, 0, -0.075, 0.036, 0.014));
+    ankle.add(roundedBox(0.263, 0.055, 0.375, 0.055, SHOE_SOLE, 0, -0.11, 0.036, 0.02));
     // Outsole bar under the ball of the foot: the one dark shape on the sole,
     // and the thing that keeps the face-on plate from being a blank rectangle.
-    ankle.add(roundedBox(0.19, 0.03, 0.13, 0.045, SHOE_TREAD, 0, -0.135, 0.11, 0.012));
+    ankle.add(roundedBox(0.215, 0.03, 0.14, 0.045, SHOE_TREAD, 0, -0.135, 0.12, 0.012));
     // Heel collar in white, with the tongue-tab peeking above the denim cuff.
-    ankle.add(roundedBox(0.20, 0.16, 0.10, 0.05, SHOE, 0, 0.06, -0.15, 0.02));
+    ankle.add(roundedBox(0.225, 0.16, 0.11, 0.05, SHOE, 0, 0.06, -0.16, 0.02));
     hips.add(hip);
     return { hip: hip, knee: knee, ankle: ankle };
   }
@@ -16705,6 +17611,7 @@ THREE.GLTFLoader = GLTFLoader;
   // the donor mesh had castShadow off), and the banded contact blob below IS
   // the runner's shadow. Skipping it keeps ~30 meshes out of the depth pass.
   rig.traverse(function (o) { if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; } });
+  enableFocalOutline(rig);
 
   // Contact shadow blob. The hero's own GLTF mesh deliberately does not enter
   // the shadow pass (see the loader below — it is a 91k-triangle skinned mesh
@@ -16927,6 +17834,13 @@ THREE.GLTFLoader = GLTFLoader;
   // The mixer lays down its pose first; poseRunner adds small, state-specific
   // offsets afterwards, so jump/slide/stumble no longer look like a rigid statue.
   var charBones = Object.create(null);
+  // Complete authored GLBs opt out of the old text-to-3D donor repair stack by
+  // exporting a root Empty/node named `BerlinRunnerHero` (or the equivalent
+  // glTF extra `artikelExpressHero: "complete"`). The gameplay-facing body
+  // hierarchy and additive action poses remain identical; this flag only stops
+  // runtime geometry/recolouring/proportion fixes from covering or distorting a
+  // character whose cap, hair, costume and cartoon proportions are in the GLB.
+  var charAssetComplete = false;
   var charAuthoredReady = false;
   var charJumpAction = null, charLandAction = null, charSlideAction = null;
   var charStumbleAction = null, charVictoryActionL = null, charVictoryActionR = null;
@@ -17090,8 +18004,13 @@ THREE.GLTFLoader = GLTFLoader;
     var isSliding = slideTimer > 0 && grounded;
     var slideClipTime = isSliding ? (!slideWasActive ? 0 : Math.min(slideActionAge, 0.30)) :
       (slideWasActive ? 0.42 : 0.42 + clamp(slideExitAge / 0.22, 0, 1) * 0.20);
+    // The compact BerlinRunnerHero has already-authored chunky costume masses;
+    // the donor-era full-strength clip folds those volumes through one another
+    // and reads as a forward tumble. A lighter additive layer leaves the shared
+    // body recline/crouch in charge while retaining the one-leg baseball shape.
+    var slideClipWeight = charAssetComplete ? 0.42 : 1;
     setAuthoredAction(charSlideAction, slideClipTime,
-      (isSliding || slideWasActive || slideExitAge < 0.22) ? 1 : 0);
+      (isSliding || slideWasActive || slideExitAge < 0.22) ? slideClipWeight : 0);
     setAuthoredAction(charStumbleAction, stumbleActionAge,
       stumbleActionAge < 0.84 ? 1 : 0);
     var victoryWeight = victoryActionAge < 0.68 ? Math.min(1.15, celebratePower) : 0;
@@ -17732,11 +18651,54 @@ THREE.GLTFLoader = GLTFLoader;
     heroScaleBone('RightFoot', HERO_FOOT_SCALE);
   }
 
+  function isCompleteAuthoredHero(model) {
+    if (!model) return false;
+    if (model.getObjectByName('BerlinRunnerHero')) return true;
+    var complete = false;
+    model.traverse(function (o) {
+      if (o.userData && o.userData.artikelExpressHero === 'complete') complete = true;
+    });
+    return complete;
+  }
+
+  // Blender does not guarantee NLA/action export order. Prefer the explicit
+  // base-cycle name while retaining animation[0] as a backwards-compatible
+  // fallback for the bundled donor and any older manifest.
+  function findHeroRunClip(clips) {
+    if (!clips || !clips.length) return null;
+    var fallback = null;
+    for (var i = 0; i < clips.length; i++) {
+      var name = (clips[i].name || '').toLowerCase().replace(/[\s_.-]/g, '');
+      if (name === 'run' || name === 'running' || name === 'runcycle') return clips[i];
+      if (!fallback && (name.indexOf('run') >= 0 || name.indexOf('sprint') >= 0)) fallback = clips[i];
+    }
+    return fallback || clips[0];
+  }
+
+  function activateProceduralHeroFallback() {
+    // A missing optional art file must never remove a game feature. Keep the
+    // authored asset as the shipped path, but release preload with the complete
+    // procedural runner if a copied HTML, external manifest or interrupted
+    // request cannot provide it. Physics/controller state is independent of both.
+    charModel = null;
+    charMixer = null;
+    charAction = null;
+    charAssetComplete = false;
+    charAuthoredReady = false;
+    hips.visible = true;
+    heroFinish.visible = true;
+    rig.visible = true;
+    heroLoadFailed = false;
+    heroReady = true;
+    maybeFinishPreload();
+  }
+
   if (USE_GENERATED_HERO && ASSETS.character && THREE.GLTFLoader) {
     try {
       new THREE.GLTFLoader(assetManager).load(ASSETS.character, function (gltf) {
         var model = gltf.scene;
         var heroSkin = null;
+        charAssetComplete = isCompleteAuthoredHero(model);
         model.visible = false;
         model.traverse(function (o) {
           if (o.isBone && o.name) charBones[o.name] = o;
@@ -17796,11 +18758,16 @@ THREE.GLTFLoader = GLTFLoader;
           // geometry, so there is nothing that can end up floating on a GLB
           // revision with different bones: an unmatched bone name just leaves
           // that vertex untinted.
-          if (o === heroSkin) {
+          if (!charAssetComplete && o === heroSkin) {
             var heroCostumeReady = buildHeroCostume(o);
             var heroMats = Array.isArray(o.material) ? o.material : [o.material];
             heroMats.forEach(function (mm) {
               heroShaderPatch(mm, 'heroBody', 0.62, heroCostumeReady);
+            });
+          } else if (charAssetComplete && o.isSkinnedMesh) {
+            var authoredMats = Array.isArray(o.material) ? o.material : [o.material];
+            authoredMats.forEach(function (mm) {
+              heroShaderPatch(mm, 'heroAuthored', 0.46, false);
             });
           }
         });
@@ -17812,8 +18779,12 @@ THREE.GLTFLoader = GLTFLoader;
         // so an unmatched bone name just leaves them skipped, not floating —
         // safe to wire in. Both need charBones/heroPartBox fully populated,
         // which the traverse above just finished doing.
-        buildHeroCap();
-        buildHeroAmplifier();
+        // Complete authored assets already own this silhouette and motion; only
+        // the legacy donor needs the measured skull/cap cover and amplifier.
+        if (!charAssetComplete) {
+          buildHeroCap();
+          buildHeroAmplifier();
+        }
         // Box3 on a SkinnedMesh measures the BIND-pose geometry through the mesh
         // node's matrix, which ignores both the skinning and the armature's own
         // scale — here that read 1.78 m for a figure rendering three times that.
@@ -17848,6 +18819,7 @@ THREE.GLTFLoader = GLTFLoader;
         model.position.y = isFinite(footY) ? -footY + 0.02 : 0;   // soles on the road
         charBaseY = model.position.y;
         hips.visible = false;
+        enableFocalOutline(model);
         body.add(model);
         charModel = model;
         // The GLB is the complete character. Keeping the finishing group hidden
@@ -17855,7 +18827,7 @@ THREE.GLTFLoader = GLTFLoader;
         heroFinish.visible = false;
         if (gltf.animations && gltf.animations.length) {
           charMixer = new THREE.AnimationMixer(model);
-          charAction = charMixer.clipAction(gltf.animations[0]);
+          charAction = charMixer.clipAction(findHeroRunClip(gltf.animations));
           charAction.play();
           // The source run clip already animates all 24 joints. Six additional
           // additive mixer actions are worthwhile only on the full-quality
@@ -17868,13 +18840,9 @@ THREE.GLTFLoader = GLTFLoader;
         rig.visible = true;
         heroReady = true;
         maybeFinishPreload();
-      }, undefined, function () {
-        heroLoadFailed = true;
-        showHeroLoadError();
-      });
+      }, undefined, activateProceduralHeroFallback);
     } catch (e) {
-      heroLoadFailed = true;
-      showHeroLoadError();
+      activateProceduralHeroFallback();
     }
   }
 
@@ -18740,7 +19708,7 @@ THREE.GLTFLoader = GLTFLoader;
   var stumbleTimer = 0, graceTimer = 0;
   var runPhase = 0, stepFlip = false;
   var leanRoll = 0, camShake = 0, answerKick = 0;
-  var slideVisual = 0, takeoffPulse = 0, landingPulse = 0, landingFx = 0;
+  var slideVisual = 0, airVisual = 0, takeoffPulse = 0, landingPulse = 0, landingFx = 0;
   var celebrateTimer = 0, celebratePower = 1, celebrateSide = 1;
   var jumpActionAge = 9, landingActionAge = 9, slideActionAge = 9, slideExitAge = 9;
   var stumbleActionAge = 9, victoryActionAge = 9, slideWasActive = false;
@@ -19396,7 +20364,7 @@ THREE.GLTFLoader = GLTFLoader;
     grounded = true; slideTimer = 0; coyote = 0;
     stumbleTimer = 0; graceTimer = 0;
     runPhase = 0; leanRoll = 0; camShake = 0; answerKick = 0;
-    slideVisual = 0; takeoffPulse = 0; landingPulse = 0; landingFx = 0;
+    slideVisual = 0; airVisual = 0; takeoffPulse = 0; landingPulse = 0; landingFx = 0;
     celebrateTimer = 0; celebratePower = 1; celebrateSide = 1;
     jumpActionAge = landingActionAge = slideActionAge = slideExitAge = 9;
     stumbleActionAge = victoryActionAge = 9; slideWasActive = false;
@@ -19930,6 +20898,9 @@ THREE.GLTFLoader = GLTFLoader;
     var slideExit = phaseWindow(slideExitAge, 0.00, 0.045, 0.12, 0.22);
     var slideTarget = clamp(slideAnticipation * 0.22 + slideEntry + slideHold + slideExit * 0.72, 0, 1);
     slideVisual += (slideTarget - slideVisual) * damp(slideTarget > slideVisual ? 20 : 14, dt_);
+    // Physics stays binary; the display rig eases across takeoff and landing so
+    // knees and ankles never snap between the run and air silhouettes.
+    airVisual += ((air ? 1 : 0) - airVisual) * damp(air ? 22 : 16, dt_);
 
     var stumbleImpact = phaseWindow(stumbleActionAge, 0.00, 0.025, 0.10, 0.17);
     var stumbleFlail = phaseWindow(stumbleActionAge, 0.08, 0.15, 0.29, 0.40);
@@ -19965,8 +20936,11 @@ THREE.GLTFLoader = GLTFLoader;
     }
 
     var pitch = 0.20 + clamp((speed - BASE_SPEED) / 40, 0, 1) * 0.22;
-    // Reclined, not folded: the baseball slide carries its weight behind the hips.
-    pitch = lerp(pitch, -0.52, slideVisual);
+    // Reclined, not folded: the baseball slide carries its weight behind the
+    // hips. The authored runner already adds a pelvis recline in its clip, so a
+    // shallower parent pitch keeps the cap, backpack and extended leg readable
+    // instead of presenting the circular top of the head straight to camera.
+    pitch = lerp(pitch, charAssetComplete ? -0.28 : -0.52, slideVisual);
     pitch += jumpAnticipation * 0.16 - jumpTakeoff * 0.10 + jumpApex * 0.07 +
              jumpDescent * 0.14 + landContact * 0.20 - landRebound * 0.08;
     if (attractPose) pitch = -0.015 + Math.sin(t * 1.35) * 0.008;
@@ -19976,6 +20950,7 @@ THREE.GLTFLoader = GLTFLoader;
       body.rotation.y += Math.sin(stumbleProgress * Math.PI) * 0.16;
     }
     body.rotation.x = pitch;
+    if (charAssetComplete) body.rotation.z += slideVisual * 0.10;
     body.position.y = -0.54 * slideVisual - landContact * 0.14 + landRebound * 0.045 +
                       jumpAnticipation * -0.075 + jumpTakeoff * 0.075 +
                       celebratePose * 0.055 + attractPose * Math.sin(t * 1.35) * 0.012;
@@ -19992,11 +20967,29 @@ THREE.GLTFLoader = GLTFLoader;
 
     var swing = Math.sin(runPhase);
     var swing2 = Math.sin(runPhase + Math.PI);
+    // Preserve the exact stride phase and peak angles, but ease flex velocity
+    // into and out of each positive lobe so knees/elbows no longer start and
+    // stop at the hard corner produced by max(0, sine).
+    var kneeCycleL = phaseEase(Math.max(0, -Math.sin(runPhase - 0.7)));
+    var kneeCycleR = phaseEase(Math.max(0, -Math.sin(runPhase + Math.PI - 0.7)));
+    var armCurlL = phaseEase(Math.max(0, -swing2));
+    var armCurlR = phaseEase(Math.max(0, -swing));
+    // Narrow support windows at the vertical leg crossings. The phase is
+    // unchanged; these weights only let the visual knee extend and the ankle
+    // counter-rotate briefly enough for a readable planted trainer.
+    var plantL = Math.pow(Math.max(0, Math.cos(runPhase)), 4);
+    var plantR = Math.pow(Math.max(0, -Math.cos(runPhase)), 4);
     // Grounded running keys lateral elbow separation below. Reset before the
     // action branches so jump/slide/idle never inherit that run-cycle bend.
     armL.elbow.rotation.z = 0; armR.elbow.rotation.z = 0;
     armL.shoulder.position.y = 0.88; armR.shoulder.position.y = 0.88;
     armL.elbow.position.y = -0.40; armR.elbow.position.y = -0.40;
+    // Subtle footwear splay and pelvis roll break the marionette-straight rear
+    // stance. These are display-bone rotations only; pivots and foot contact
+    // calculations remain on the unchanged player/controller values.
+    legL.ankle.rotation.y = -0.045; legR.ankle.rotation.y = 0.045;
+    legL.ankle.rotation.z = -0.018; legR.ankle.rotation.z = 0.018;
+    hips.rotation.z = 0;
 
     if (attractPose) {
       // Relaxed asymmetric stance for the title screen, clearly separate from
@@ -20007,34 +21000,77 @@ THREE.GLTFLoader = GLTFLoader;
       armL.elbow.rotation.x = 0.24; armR.elbow.rotation.x = 0.30;
       armL.shoulder.rotation.z = -0.08; armR.shoulder.rotation.z = 0.08;
       legL.hip.rotation.z = 0; legR.hip.rotation.z = 0;
+      legL.ankle.rotation.x = 0.10; legR.ankle.rotation.x = 0.10;
       hips.position.y = 0.92 + Math.sin(t * 1.35) * 0.012;
-      torso.rotation.y = 0; hips.rotation.y = 0;
-    } else if (air) {
-      // tuck: knees up, arms out for balance
+      torso.rotation.y = 0; hips.rotation.y = 0; hips.rotation.z = 0.020;
+    } else if ((air || airVisual > 0.002) && !sliding) {
+      // Tuck with an eased visual hand-off at takeoff and landing. Every joint,
+      // including both ankles, receives a target each frame.
+      var av = airVisual;
       var rise = clamp(player.vy / JUMP_V, -1, 1);
-      legL.hip.rotation.x = -1.15 + rise * 0.22;
-      legR.hip.rotation.x = 0.25 - rise * 0.18;
-      legL.knee.rotation.x = 1.55;
-      legR.knee.rotation.x = 0.35;
-      armL.shoulder.rotation.x = -0.82;
-      armR.shoulder.rotation.x = -0.30;
-      armL.elbow.rotation.x = 0.88; armR.elbow.rotation.x = 1.02;
-      armL.shoulder.rotation.z = -0.72; armR.shoulder.rotation.z = 0.18;
-      legL.hip.rotation.z = -0.24; legR.hip.rotation.z = 0.06;
-      hips.position.y = 0.92;
-      torso.rotation.y = 0; hips.rotation.y = 0;
-    } else if (sliding) {
+      var airKneeL = kneeCycleL * 1.7;
+      var airKneeR = kneeCycleR * 1.7;
+      // Compact asymmetric tuck: one knee leads, the trailing leg still bends,
+      // and descent reaches both feet down instead of holding a frozen X pose.
+      var airHipTargetL = -1.03 - jumpAscent * 0.10 - jumpApex * 0.18 + jumpDescent * 0.28;
+      var airHipTargetR = 0.15 - jumpApex * 0.10 + jumpDescent * 0.08;
+      var airKneeTargetL = 1.48 + jumpApex * 0.22 - jumpDescent * 0.50;
+      var airKneeTargetR = 0.65 + jumpApex * 0.18 - jumpDescent * 0.30;
+      legL.hip.rotation.x = lerp(swing * 1.05, airHipTargetL - Math.max(0, rise) * 0.06, av);
+      legR.hip.rotation.x = lerp(swing2 * 1.05, airHipTargetR, av);
+      legL.knee.rotation.x = lerp(airKneeL, airKneeTargetL, av);
+      legR.knee.rotation.x = lerp(airKneeR, airKneeTargetR, av);
+      legL.ankle.rotation.x = lerp(-airKneeL * 0.35 + 0.15,
+                                  -0.14 + jumpDescent * 0.24, av);
+      legR.ankle.rotation.x = lerp(-airKneeR * 0.35 + 0.15,
+                                  0.08 + jumpDescent * 0.18, av);
+      armL.shoulder.rotation.x = lerp(swing2 * 1.05 - 0.30,
+                                     -0.88 - jumpTakeoff * 0.10 + jumpDescent * 0.18, av);
+      armR.shoulder.rotation.x = lerp(swing * 1.05 - 0.30,
+                                     -0.48 - jumpTakeoff * 0.08 + jumpDescent * 0.14, av);
+      armL.elbow.rotation.x = lerp(0.36 + armCurlL * 0.46,
+                                  1.08 + jumpApex * 0.12, av);
+      armR.elbow.rotation.x = lerp(0.36 + armCurlR * 0.46,
+                                  0.88 + jumpApex * 0.10, av);
+      // Lateral spread is deliberately restrained; elbow bend now creates the
+      // readable arm shape instead of throwing one whole arm forty degrees out.
+      armL.shoulder.rotation.z = lerp(-0.11 - swing2 * 0.075, -0.26, av);
+      armR.shoulder.rotation.z = lerp(0.11 + swing * 0.075, 0.20, av);
+      armL.elbow.rotation.z = lerp(0, -0.20, av);
+      armR.elbow.rotation.z = lerp(0, 0.16, av);
+      legL.hip.rotation.z = lerp(-0.045 - airKneeL * 0.035, -0.10, av);
+      legR.hip.rotation.z = lerp(0.045 + airKneeR * 0.035, 0.04, av);
+      legL.ankle.rotation.y = lerp(-0.045, -0.075, av);
+      legR.ankle.rotation.y = lerp(0.045, 0.060, av);
+      hips.position.y = lerp(0.92 - Math.abs(Math.cos(runPhase)) * 0.08, 0.92, av);
+      torso.rotation.y = lerp(swing * 0.30, -0.13, av);
+      hips.rotation.y = lerp(-swing * 0.14, 0.08, av);
+      hips.rotation.z = lerp(-swing * 0.055, -0.035, av);
+    } else if (sliding || slideVisual > 0.002) {
       // Low baseball-slide silhouette: one leg shoots forward, one folds
       // under, and both hands stay below the head instead of reading as an
       // inverted overhead pose. Visual only; collider/timer remain unchanged.
-      legL.hip.rotation.x = -0.92; legR.hip.rotation.x = -1.34;
-      legL.knee.rotation.x = 0.18; legR.knee.rotation.x = 1.85;
-      armL.shoulder.rotation.x = -0.72; armR.shoulder.rotation.x = -0.96;
-      armL.elbow.rotation.x = 1.08; armR.elbow.rotation.x = 0.86;
-      armL.shoulder.rotation.z = -0.34; armR.shoulder.rotation.z = 0.34;
-      legL.hip.rotation.z = -0.18; legR.hip.rotation.z = 0.05;
-      hips.position.y = 0.92;
-      torso.rotation.y = 0; hips.rotation.y = 0;
+      var sv = slideVisual;
+      var slideKneeL = kneeCycleL * 1.7;
+      var slideKneeR = kneeCycleR * 1.7;
+      legL.hip.rotation.x = lerp(swing * 1.05, -0.92, sv);
+      legR.hip.rotation.x = lerp(swing2 * 1.05, -1.34, sv);
+      legL.knee.rotation.x = lerp(slideKneeL, 0.18, sv);
+      legR.knee.rotation.x = lerp(slideKneeR, 1.85, sv);
+      legL.ankle.rotation.x = lerp(-slideKneeL * 0.35 + 0.15, -0.18, sv);
+      legR.ankle.rotation.x = lerp(-slideKneeR * 0.35 + 0.15, 0.32, sv);
+      armL.shoulder.rotation.x = lerp(swing2 * 1.05 - 0.30, -0.72, sv);
+      armR.shoulder.rotation.x = lerp(swing * 1.05 - 0.30, -0.96, sv);
+      armL.elbow.rotation.x = lerp(0.36 + armCurlL * 0.46, 1.08, sv);
+      armR.elbow.rotation.x = lerp(0.36 + armCurlR * 0.46, 0.86, sv);
+      armL.shoulder.rotation.z = lerp(-0.11 - swing2 * 0.075, -0.34, sv);
+      armR.shoulder.rotation.z = lerp(0.11 + swing * 0.075, 0.34, sv);
+      legL.hip.rotation.z = lerp(-0.045 - slideKneeL * 0.035, -0.18, sv);
+      legR.hip.rotation.z = lerp(0.045 + slideKneeR * 0.035, 0.05, sv);
+      hips.position.y = lerp(0.92 - Math.abs(Math.cos(runPhase)) * 0.08, 0.92, sv);
+      torso.rotation.y = lerp(swing * 0.16, 0, sv);
+      hips.rotation.y = lerp(-swing * 0.10, 0, sv);
+      hips.rotation.z = lerp(-swing * 0.045, -0.080, sv);
     } else {
       // grounded run cycle: hips bob twice per stride, knees only bend one way.
       // legL/legR and armL/armR share the swing/swing2 pair but each arm is
@@ -20043,14 +21079,20 @@ THREE.GLTFLoader = GLTFLoader;
       // correct; deepened here for a clearer stride.
       legL.hip.rotation.x = swing * 1.05;
       legR.hip.rotation.x = swing2 * 1.05;
-      legL.knee.rotation.x = Math.max(0, -Math.sin(runPhase - 0.7)) * 1.7;
-      legR.knee.rotation.x = Math.max(0, -Math.sin(runPhase + Math.PI - 0.7)) * 1.7;
+      legL.knee.rotation.x = lerp(kneeCycleL * 1.7, 0.12, plantL * 0.88);
+      legR.knee.rotation.x = lerp(kneeCycleR * 1.7, 0.12, plantR * 0.88);
       // Let the flexed leg clear the torso silhouette by a few degrees. This
       // only poses the visual rig; the swept collider remains independent.
       legL.hip.rotation.z = -0.045 - legL.knee.rotation.x * 0.035;
       legR.hip.rotation.z = 0.045 + legR.knee.rotation.x * 0.035;
-      legL.ankle.rotation.x = -legL.knee.rotation.x * 0.35 + 0.15;
-      legR.ankle.rotation.x = -legR.knee.rotation.x * 0.35 + 0.15;
+      var ankleRunL = -legL.knee.rotation.x * 0.35 + 0.15;
+      var ankleRunR = -legR.knee.rotation.x * 0.35 + 0.15;
+      var anklePlantL = -pitch - legL.hip.rotation.x - legL.knee.rotation.x + 0.02;
+      var anklePlantR = -pitch - legR.hip.rotation.x - legR.knee.rotation.x + 0.02;
+      legL.ankle.rotation.x = lerp(ankleRunL, anklePlantL, plantL * 0.86);
+      legR.ankle.rotation.x = lerp(ankleRunR, anklePlantR, plantR * 0.86);
+      legL.ankle.rotation.z = -0.018 - swing * 0.012;
+      legR.ankle.rotation.z = 0.018 + swing2 * 0.012;
       // Shoulder pendulum: bigger amplitude so the fore/aft swing is
       // unmistakable from the chase camera instead of reading as a slide.
       armL.shoulder.rotation.x = swing2 * 1.05 - 0.30;
@@ -20064,8 +21106,8 @@ THREE.GLTFLoader = GLTFLoader;
       // max(0, -drv) to 1, curling the hand up towards the chest the way a
       // real running arm pump does, while the trailing stroke keeps a
       // smaller but still clearly bent elbow instead of straightening out.
-      armL.elbow.rotation.x = 0.36 + Math.max(0, -swing2) * 0.46;
-      armR.elbow.rotation.x = 0.36 + Math.max(0, -swing) * 0.46;
+      armL.elbow.rotation.x = 0.36 + armCurlL * 0.46;
+      armR.elbow.rotation.x = 0.36 + armCurlR * 0.46;
       // A little lateral crossing: each arm draws in toward the midline on
       // its forward stroke and flares back out on the backswing, replacing
       // the old static outward bow that never changed frame to frame.
@@ -20080,29 +21122,29 @@ THREE.GLTFLoader = GLTFLoader;
       // wide.
       armL.shoulder.rotation.z = -0.11 - swing2 * 0.075;
       armR.shoulder.rotation.z = 0.11 + swing * 0.075;
-      // Chase-camera-readable elbow flex. Forearms clear the torso silhouette,
-      // while the opposite gait drivers exchange which arm owns the tighter
-      // bend (0.55..0.75 rad / 32..43deg). The depth-axis curl above supplies
-      // the rest of the joint angle while these wrists stay close to the hips.
-      var elbowFlexL = 0.65 - swing * 0.10;
-      var elbowFlexR = 0.65 + swing * 0.10;
+      // Restrained lateral elbow flex keeps the fists close to the hips; the
+      // fore/aft shoulder/elbow curl above now carries the readable arm pump.
+      var elbowFlexL = 0.27 - swing * 0.055;
+      var elbowFlexR = 0.27 + swing * 0.055;
       armL.elbow.rotation.z = -elbowFlexL;
       armR.elbow.rotation.z = elbowFlexR;
       // Screen-space arm pump: keep one elbow/hand clearly higher while the
       // opposite trails, then exchange sides through the gait phase. This is
       // joint presentation only; root motion and collider remain independent.
-      var armPumpSide = Math.tanh(swing * 4.5);
-      armL.shoulder.position.y = 0.88 + armPumpSide * 0.025;
-      armR.shoulder.position.y = 0.88 - armPumpSide * 0.025;
-      armL.elbow.position.y = -0.40 + armPumpSide * 0.09;
-      armR.elbow.position.y = -0.40 - armPumpSide * 0.09;
+      var armPumpSide = swing * (1.18 - 0.18 * swing * swing);
+      armL.shoulder.position.y = 0.88 + armPumpSide * 0.045;
+      armR.shoulder.position.y = 0.88 - armPumpSide * 0.045;
       hips.position.y = 0.92 - Math.abs(Math.cos(runPhase)) * 0.08;
       // Torso counter-rotation against the leg drive, with a smaller matching
       // hip twist the other way — real gait mechanics, shoulders and pelvis
       // rotate opposite each other — so the cycle carries some weight instead
       // of staying perfectly square to the direction of travel.
-      torso.rotation.y = swing * 0.16;
-      hips.rotation.y = -swing * 0.10;
+      // Torso is parented under hips, so the old +0.16/-0.10 pair yielded only
+      // 0.06 rad of shoulder travel in world space. This pair retains the
+      // opposite pelvis action but leaves a visible 0.16-rad shoulder twist.
+      torso.rotation.y = swing * 0.30;
+      hips.rotation.y = -swing * 0.14;
+      hips.rotation.z = -swing * 0.055;
     }
 
     // Additive action shapes for the imported single-clip character. The run
@@ -20112,11 +21154,12 @@ THREE.GLTFLoader = GLTFLoader;
       // Exaggeration first, on the clean mixer output, so the additive action
       // offsets below stay the size they were authored at.
       heroAmplify(dt_, (1 - attractPose * 0.6) * (1 - slideVisual * 0.55));
-      heroScaleBones();
+      if (!charAssetComplete) heroScaleBones();
       var airPose = clamp(jumpAscent + jumpApex + jumpDescent, 0, 1);
       var rise = clamp(player.vy / JUMP_V, -1, 1);
       charModel.position.y = charBaseY + celebratePose * 0.025 +
-                             Math.sin(t * 1.35) * 0.008 * attractPose;
+                             Math.sin(t * 1.35) * 0.008 * attractPose +
+                             (charAssetComplete ? slideVisual * 0.22 : 0);
 
       // Baseline running silhouette: a light torso counter-twist opposite the
       // leg swing — real gait mechanics, shoulders rotate against the hips —
@@ -20282,14 +21325,76 @@ THREE.GLTFLoader = GLTFLoader;
         nudgeCharBone('LeftHand', 0.035, -0.045, -0.10, slideEntry + stumbleFlail * 0.55);
         nudgeCharBone('RightHand', 0.035, 0.045, 0.10, slideEntry + stumbleFlail * 0.55);
       }
+
+      // The complete Blender hero has broad cuffs and trainers, so the two
+      // crossing frames of an otherwise healthy run cycle can merge into one
+      // vertical blue/white column from the chase camera. Open only those
+      // crossing frames and turn the shoes outward a few degrees; full stride,
+      // contact/recovery knee motion and the procedural fallback stay untouched.
+      if (charAssetComplete) {
+        var completeRunWeight = runCounter *
+          (1 - clamp(landContact + landRebound, 0, 1));
+        var runClip = charAction && charAction.getClip ? charAction.getClip() : null;
+        var runAngle = runClip && runClip.duration > 0.001 ?
+          charAction.time / runClip.duration * Math.PI * 2 : runPhase;
+        var runCross = 1 - Math.abs(Math.cos(runAngle));
+        runCross *= runCross;
+        var runHipOpen = 0.035 + runCross * 0.055;
+        var runShoeTurn = 0.035 + runCross * 0.045;
+        nudgeCharBone('LeftUpLeg', 0, 0, -runHipOpen, completeRunWeight);
+        nudgeCharBone('RightUpLeg', 0, 0, runHipOpen, completeRunWeight);
+        nudgeCharBone('LeftFoot', 0, runShoeTurn, 0, completeRunWeight);
+        nudgeCharBone('RightFoot', 0, -runShoeTurn, 0, completeRunWeight);
+
+        // Preserve the clip's strong take-off, then make its apex unmistakably
+        // one-knee-led from the rear. During descent the other leg catches up,
+        // avoiding a frozen bunny-hop silhouette while every existing action
+        // window and the physical jump arc remain exactly as authored.
+        var completeAirOpen = clamp(jumpAscent + jumpApex + jumpDescent, 0, 1);
+        nudgeCharBone('LeftUpLeg', 0, 0, -0.055, completeAirOpen);
+        nudgeCharBone('RightUpLeg', 0, 0, 0.055, completeAirOpen);
+        nudgeCharBone('LeftUpLeg', -0.18, 0, -0.025, jumpApex);
+        nudgeCharBone('RightUpLeg', 0.16, 0, 0.025, jumpApex);
+        nudgeCharBone('LeftLeg', 0.20, 0, 0, jumpApex);
+        nudgeCharBone('RightLeg', -0.10, 0, 0, jumpApex);
+        nudgeCharBone('LeftFoot', -0.08, 0.035, -0.02, jumpApex);
+        nudgeCharBone('RightFoot', 0.08, -0.035, 0.02, jumpApex);
+        nudgeCharBone('LeftUpLeg', 0.09, 0, -0.015, jumpDescent);
+        nudgeCharBone('RightUpLeg', -0.14, 0, 0.025, jumpDescent);
+        nudgeCharBone('LeftLeg', -0.06, 0, 0, jumpDescent);
+        nudgeCharBone('RightLeg', 0.16, 0, 0, jumpDescent);
+        nudgeCharBone('LeftFoot', 0.07, 0.025, 0, jumpDescent);
+        nudgeCharBone('RightFoot', -0.06, -0.025, 0, jumpDescent);
+
+        // Keep the low baseball slide readable from directly behind. The broad
+        // cap/backpack otherwise stack into a circular top-down blob while the
+        // forward trainer disappears exactly behind the torso. Counter-present
+        // the head and open the legs/arms laterally without changing the shared
+        // body translation, slide timer or collider height.
+        nudgeCharBone('neck', 0.10, 0, -0.03, slideVisual);
+        nudgeCharBone('Head', 0.22, 0, -0.04, slideVisual);
+        nudgeCharBone('LeftUpLeg', -0.10, 0, -0.38, slideVisual);
+        nudgeCharBone('RightUpLeg', 0.08, 0, 0.28, slideVisual);
+        nudgeCharBone('LeftFoot', -0.08, 0.05, -0.13, slideVisual);
+        nudgeCharBone('RightFoot', 0.08, -0.04, 0.11, slideVisual);
+        nudgeCharBone('LeftArm', 0, 0, -0.15, slideVisual);
+        nudgeCharBone('RightArm', 0, 0, 0.12, slideVisual);
+      }
     }
 
-    // Head keeps looking down the street regardless of body pitch.
-    head.rotation.x = -pitch * 0.7;
+    // Head keeps looking down the street regardless of body pitch. Preserve the
+    // authored +0.10 crown presentation tilt from construction: the old absolute
+    // assignment erased it on frame one, flattening the new spherical cap back
+    // into a narrow band from the elevated chase camera. A small lane-attention
+    // yaw and counter-roll let the face/cap lead a dodge while the torso carries
+    // the larger lean. These touch only the procedural display hierarchy.
+    head.rotation.x = 0.10 - pitch * 0.7;
+    head.rotation.y = laneVel * 0.08;
+    head.rotation.z = -heroLean * 0.22 - heroWhip * 0.30;
     bobble.position.x = Math.sin(runPhase * 0.5) * 0.05 + celebrateSide * celebratePose * 0.055;
     bobble.position.z = -Math.abs(Math.cos(runPhase * 0.5)) * 0.05 - landingPulse * 0.035;
-    pack.position.y = 0.42 + Math.sin(runPhase + 0.8) * 0.018 + celebratePose * 0.045;
-    pack.position.z = -0.28 - landingPulse * 0.045 + celebratePose * 0.025;
+    pack.position.y = 0.82 + Math.sin(runPhase + 0.8) * 0.018 + celebratePose * 0.045;
+    pack.position.z = -0.25 - landingPulse * 0.045 + celebratePose * 0.025;
 
     // Accessory secondary motion. Scalar spring-dampers only: no vectors, no
     // allocation, and they run on bone children so they inherit the pose for free.
@@ -20815,11 +21920,14 @@ THREE.GLTFLoader = GLTFLoader;
     if (activeGate && activeGate.userData.active && !activeGate.userData.resolved) {
       var ud = activeGate.userData;
       var progress = clamp((player.z - ud.spawnZ) / Math.max(1, ud.z - ud.spawnZ), 0, 1);
-      var pulse = 0.16 + Math.sin(t * 6) * 0.04 + progress * 0.14;
+      // Let the enamel signs own the choice. The old near-gate ramp rebuilt
+      // three opaque-looking colour walls after setPortalState had deliberately
+      // softened them, flattening the street precisely at the decision point.
+      var pulse = 0.09 + Math.sin(t * 6) * 0.025 + progress * 0.07;
       for (var i = 0; i < ud.portals.length; i++) {
         var p = ud.portals[i];
         p.userData.curtainMat.opacity = pulse;
-        p.userData.padMat.opacity = 0.30 + progress * 0.28;
+        p.userData.padMat.opacity = 0.20 + progress * 0.16;
         p.userData.sign.position.y = 4.5 + Math.sin(t * 3 + i) * 0.045;
       }
     } else {
@@ -20910,28 +22018,32 @@ THREE.GLTFLoader = GLTFLoader;
   // first, ink outline last:
   //   0            full quality
   //   1            depth of field off (barely noticeable)
-  //   2            SSAO off (subtle)
-  //   3            bloom off (moderate)
-  //   4            shadow map refresh rate halved
-  //   5            shadows off entirely
-  //   6..6+N-1     resolution steps down toward MIN_RENDER_SCALE
-  //   6+N          ink outline off (last resort only; this is the look)
+  //   2..4         shed supersampling down to one backing pixel per CSS pixel
+  //   5            shadow map refresh rate halved
+  //   6            SSAO off
+  //   7            bloom off
+  //   8            shadows off entirely
+  //   9            full-city outline -> focal hero/gate/hazard ink only
+  // Resolution now precedes lighting cuts: on a DPR>1 display the first three
+  // rungs only remove expensive oversampling, while AO/bloom/shadows continue
+  // to shape the city at the panel's actual pixel resolution.
   var TIER_DOF_OFF = 1;
-  var TIER_AO_OFF = 2;
-  var TIER_BLOOM_OFF = 3;
-  var TIER_SHADOW_SLOW = 4;
-  var TIER_SHADOW_OFF = 5;
+  var TIER_RES_START = 2;
   var RES_TIER_COUNT = 3;
-  var TIER_RES_START = TIER_SHADOW_OFF + 1;
   var TIER_RES_END = TIER_RES_START + RES_TIER_COUNT - 1;
-  var TIER_OUTLINE_OFF = TIER_RES_END + 1;
-  var QUALITY_TIER_MAX = TIER_OUTLINE_OFF;
+  var TIER_SHADOW_SLOW = TIER_RES_END + 1;
+  var TIER_AO_OFF = TIER_SHADOW_SLOW + 1;
+  var TIER_BLOOM_OFF = TIER_AO_OFF + 1;
+  var TIER_SHADOW_OFF = TIER_BLOOM_OFF + 1;
+  var TIER_FOCAL_OUTLINE = TIER_SHADOW_OFF + 1;
+  var QUALITY_TIER_MAX = TIER_FOCAL_OUTLINE;
 
   var qualityTier = 0;
   var dofActive = POST.dofOn;
   var aoActive = POST.aoOn;
   var bloomActive = POST.bloomOn;
   var outlineActive = POST.outlineOn;
+  var outlineFocalOnly = false;
   // Shadow refresh cadence; kept separate from the fully-off step so the rate
   // halves once before shadows disappear rather than jumping straight to none.
   var shadowSlow = false;
@@ -20958,14 +22070,22 @@ THREE.GLTFLoader = GLTFLoader;
       sun.castShadow = shadowsWanted;
       renderer.shadowMap.needsUpdate = true;
     }
-    outlineActive = POST.outlineOn && qualityTier < TIER_OUTLINE_OFF;
-    var resSteps = clamp(qualityTier - TIER_SHADOW_OFF, 0, RES_TIER_COUNT);
+    // Never erase the defining ink entirely. The last rung switches the
+    // prepass to its pre-tagged focal layer, preserving only the silhouettes
+    // the player reads moment to moment at a fraction of the city-wide cost.
+    outlineActive = POST.outlineOn;
+    outlineFocalOnly = qualityTier >= TIER_FOCAL_OUTLINE;
+    var resSteps = clamp(qualityTier - TIER_RES_START + 1, 0, RES_TIER_COUNT);
     // Old code stepped renderScale through hardcoded 0.82/0.72/0.64 rungs,
     // which predates MIN_RENDER_SCALE and could clamp straight past several
     // rungs at once on a high-DPR device. Interpolate against the real floor
     // instead so every device gets RES_TIER_COUNT evenly spaced steps down to
     // its own 1:1 limit, never below it.
-    applyRenderScale(lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT));
+    emergencyResolutionActive = qualityTier >= TIER_FOCAL_OUTLINE;
+    var qualityRenderScale = lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT);
+    if (emergencyResolutionActive) qualityRenderScale *= EMERGENCY_RENDER_SCALE;
+    applyRenderScale(qualityRenderScale);
+    setSceneRTLeanMode(qualityTier >= TIER_RES_START);
     adaptiveSlowMode = qualityTier >= TIER_SHADOW_OFF;
   }
 
@@ -21033,6 +22153,10 @@ THREE.GLTFLoader = GLTFLoader;
   function frame(now) {
     requestAnimationFrame(frame);
     frameNumber++;
+    // One repack budget per rendered frame -- see repackDirtyPools -- however
+    // many times updateChunks() runs inside it via the fixed-timestep catch-up
+    // loop below.
+    repackBudgetRemaining = REPACK_BUDGET_PER_FRAME;
     var raw = (now - last) / 1000;
     last = now;
     // The first rAF timestamp can predate the performance.now() captured at
@@ -21152,21 +22276,6 @@ THREE.GLTFLoader = GLTFLoader;
   reset();
   requestAnimationFrame(frame);
 
-  /* TEMP DEBUG HOOK - REMOVE BEFORE SHIP */
-  window.__DBG = {
-    frame: frame, begin: begin, reset: reset, pressAction: pressAction,
-    renderer: renderer, scene: scene, camera: camera, canvas: canvas,
-    player: player, MOOD_TREATMENTS: MOOD_TREATMENTS, POST: POST,
-    sceneRT: function () { return sceneRT; }, bloomA: function () { return bloomA; },
-    setMood: function (i, mix) { moodFromIndex = i; moodToIndex = i; moodMix = mix === undefined ? 0 : mix; },
-    state: function () { return { started: started, gameOver: gameOver, grounded: grounded, vy: player.vy, py: player.y, mood: [moodFromIndex, moodToIndex, moodMix] }; },
-    pump: function (n, dtMs) {
-      dtMs = dtMs || 16.7;
-      var t = performance.now();
-      for (var i = 0; i < n; i++) { t += dtMs; frame(t); }
-    }
-  };
-  /* END TEMP DEBUG HOOK */
 })();
 </script>
 <script>
