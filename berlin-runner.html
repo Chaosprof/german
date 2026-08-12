@@ -4498,11 +4498,52 @@ THREE.GLTFLoader = GLTFLoader;
   scene.updateMatrix();
   scene.matrixAutoUpdate = false;
   scene.background = new THREE.Color(0x3ea8ee);
+  // ---------------------------------------------- depth budget (draw + haze) -
+  // Draw distance and haze are ONE system, not two independently tuned ones.
+  // Anything that switches on at distance D only switches on INVISIBLY if the
+  // air at D is already opaque. These two were tuned apart for a long time: the
+  // street's chunk cull sat at 210 m (see CHUNK_CULL_FAR / applyChunkLOD) while
+  // fog.far sat at 470-520 m, which puts the haze at the cull edge at only
+  // ~24%. So every 40 m of travel a whole 40 m block of city — facades, roofs,
+  // kerbs, the lot — switched on at the vanishing point at three-quarters
+  // opacity. That is the mechanical pop-in an endless runner must never show;
+  // the reference (Subway Surfers) hides the identical event by making the far
+  // end of its corridor genuinely opaque before anything is spawned into it.
+  //
+  // WORLD_EMERGE is the distance at which the nearest surface of a freshly
+  // shown chunk appears. FOG_FAR_MAX pins the haze to finish a margin BEFORE
+  // that, so the switch always happens behind a solid wall of air, and every
+  // other distance gate in the file (chunk cull, near-detail band, building
+  // core LOD) is expressed against these two rather than hand-picked.
+  // 190 puts CHUNK_CULL_FAR back on the 210 m the street was already drawn to
+  // before this pass, so the number of chunks submitted per frame is unchanged
+  // and the whole fix costs draw distance nowhere. Pushing it further (250 was
+  // measured) buys a crisper mid-ground but costs ~8% of the frame for city
+  // that is, by construction, behind an opaque wall of air.
+  var WORLD_EMERGE = 190;
+  var FOG_FAR_MAX = WORLD_EMERGE - 12;
+
+  // Stock linear fog is smoothstep(fogNear, fogFar, depth), which spends most
+  // of its range across the mid-ground — exactly where this art style wants
+  // clean saturated facades — and only reaches full opacity at the very end.
+  // Raising it to a power keeps both endpoints (still 0 at fogNear and 1 at
+  // fogFar, so FOG_FAR_MAX above still guarantees an opaque far edge) while
+  // pushing the bulk of the density into the last third of the range: the
+  // street stays crisp out to ~160 m and then hazes out hard, rather than a
+  // flat grey wash starting at 100 m. Patched into the shared ShaderChunk
+  // before the first material compiles, so every fogged material in the scene
+  // inherits it with no per-material uniform plumbing. If a three.js bump ever
+  // changes this chunk's text, the replace matches nothing and the stock curve
+  // is used unchanged — same defensive shape as celLightsFragmentBegin below.
+  THREE.ShaderChunk.fog_fragment = THREE.ShaderChunk.fog_fragment.replace(
+    'smoothstep( fogNear, fogFar, vFogDepth )',
+    'pow( smoothstep( fogNear, fogFar, vFogDepth ), 1.9 )');
+
   // Haze starts just past the reaction zone so the mid-ground (station gates,
   // arches, skyline blocks) visibly recedes into air instead of staying pin-
   // sharp out to the horizon. Still well beyond the ~40-50 m an obstacle needs
   // to read clearly at top speed, so this is pure atmosphere, not a spawn cue.
-  scene.fog = new THREE.Fog(FOG_COLOR, 95, 520);
+  scene.fog = new THREE.Fog(FOG_COLOR, 95, FOG_FAR_MAX);
 
   var camera = new THREE.PerspectiveCamera(69, window.innerWidth / window.innerHeight, 0.4, 4000);
   scene.add(camera);
@@ -8010,7 +8051,11 @@ THREE.GLTFLoader = GLTFLoader;
       mapA: { value: skyTextures[0] },
       mapB: { value: skyTextures[1] },
       uMix: { value: 0 },
-      uTint: { value: new THREE.Vector3(1, 1, 1) }
+      uTint: { value: new THREE.Vector3(1, 1, 1) },
+      // The live FOG_COLOR, and how far up the dome it reaches. See the
+      // fragment shader below for why the dome has to know about the fog.
+      uHaze: { value: new THREE.Vector3(1, 1, 1) },
+      uHazeSpan: { value: 0.14 }
     },
     vertexShader: [
       'varying vec2 vSkyUv;',
@@ -8026,10 +8071,27 @@ THREE.GLTFLoader = GLTFLoader;
       'uniform sampler2D mapB;',
       'uniform float uMix;',
       'uniform vec3 uTint;',
+      'uniform vec3 uHaze;',
+      'uniform float uHazeSpan;',
       'void main(){',
       '  vec2 uv = vec2(vSkyUv.x, clamp(vSkyUv.y, 0.0, 1.0));',
       '  vec3 c = mix(texture2D(mapA, uv).rgb, texture2D(mapB, uv).rgb, uMix);',
-      '  gl_FragColor = vec4(c * uTint, 1.0);',
+      '  vec3 sky = c * uTint;',
+      // uv.y is elevation: 0 at the horizon, 1 at the zenith. Everything the
+      // scene fog swallows resolves to exactly fogColor, so a rooftop crossing
+      // the chunk cull arrives as a fog-coloured silhouette — invisible against
+      // fog-coloured air, but NOT against a blue sky, and a building at the far
+      // plane still stands a few degrees above the horizon line. That was the
+      // last visible arrival cue left in the frame once every LOD boundary had
+      // been moved behind the haze. Painting the bottom few degrees of the dome
+      // in the live fog colour closes it: the air and the sky are the same
+      // value exactly where the city dissolves into them, so a silhouette
+      // emerging there has nothing to be a silhouette against. It is also
+      // simply what a hazy horizon looks like — the painted domes already carry
+      // a haze band down there (see makeSkyTexture), this just pins its colour
+      // to whatever the fog actually is this frame instead of a fixed tint.
+      '  float hz = 1.0 - smoothstep(0.0, uHazeSpan, uv.y);',
+      '  gl_FragColor = vec4(mix(sky, uHaze, hz), 1.0);',
       '}'
     ].join('\n'),
     side: THREE.BackSide,
@@ -8347,7 +8409,13 @@ THREE.GLTFLoader = GLTFLoader;
   var MOOD_TREATMENTS = [
     {
       // 0 — Berlin midday. Where every run starts.
-      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 95, fogFar: 520,
+      // fogFar used to be 520 — more than twice the distance at which the
+      // street actually switches on, i.e. haze that never finished before the
+      // pop it was supposed to hide. Every mood's far plane now lands at or
+      // under FOG_FAR_MAX (see the depth-budget block by scene.fog), which
+      // clamps it in any case; the day treatment keeps the clearest air of the
+      // three, same ordering as the 520/480/470 set it replaces.
+      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 95, fogFar: 178,
       skyTint: new THREE.Color(1.03, 1.03, 1.05), exposure: 1.06,
       // Colour-temperature pass: measured via console (sample the actual light
       // objects, not the eye) that the sun-facing facade row and the fill-lit
@@ -8437,7 +8505,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 1 — magenta/teal sunset. Warm key, hard teal fill; the split-tone does
       // the rest so the shadows stay cyan instead of sliding to brown.
-      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 85, fogFar: 480,
+      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 85, fogFar: 170,
       skyTint: new THREE.Color(1.03, 1.01, 1.02), exposure: 1.07,
       // Same colour-temperature pass as mood 0: deepened the teal fill and the
       // salmon sun a notch so the warm/cool split survives the wall albedo
@@ -8469,7 +8537,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 2 — neon dusk. The sky is still an electric blue, the shopfronts and
       // station signage carry the frame, and bloom is at its widest here.
-      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 90, fogFar: 470,
+      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 90, fogFar: 166,
       skyTint: new THREE.Color(1.01, 1.02, 1.06), exposure: 1.10,
       // This mood's brief is deliberately a uniform electric blue (no warm key
       // — warmth here comes from bulb/shop/station emissive, not the sun), so
@@ -8548,6 +8616,24 @@ THREE.GLTFLoader = GLTFLoader;
   var CHUNK_LEN = 40;
   var CHUNK_COUNT = 13;         // 520 m of street alive at once
   var WORLD_LEN = CHUNK_LEN * CHUNK_COUNT;
+  // applyChunkLOD measures a chunk by its CENTRE, so a chunk switching on at
+  // this distance puts its nearest surface at WORLD_EMERGE — the distance the
+  // whole haze budget is built around (see the depth-budget block by
+  // scene.fog). Change WORLD_EMERGE, not this.
+  var CHUNK_CULL_FAR = WORLD_EMERGE + CHUNK_LEN / 2;
+  // Where sidewalk props, roof furniture, parked vehicles and the transit /
+  // station / bridge set pieces switch on. Not fog-hidden the way the chunk
+  // cull is — no playable amount of haze reaches this close — but far enough
+  // out that everything arriving here is a handful of pixels tall, already
+  // inside the depth-of-field's full-blur range, and carrying the first ~10%
+  // of the haze ramp. Kept identical across quality tiers on purpose: shedding
+  // draw distance under load just trades a frame or two for the exact pop-in
+  // this whole block exists to remove.
+  var NEAR_DETAIL_FAR = 135;
+  // Where a building core collapses from its four authored materials to the
+  // single facade one (see applyChunkLOD). Past the near-detail band so the two
+  // switches never land on the same building in the same stretch of road.
+  var CORE_LOD_FAR = 165;
 
   // Multiply a geometry's UVs so one shared texture can tile at any size
   // without per-object texture clones.
@@ -11928,7 +12014,17 @@ THREE.GLTFLoader = GLTFLoader;
   // jitter in buildSkyline — kept modest even on the farthest ring so the
   // authored value-stepped layering (the actual "depth reads as layers" cue)
   // stays legible instead of bleaching out into the fog colour.
-  var SKYLINE_HAZE_LEAN = [0.10, 0.20, 0.32];
+  // Raised from 0.10/0.20/0.32 once the street's haze was made genuinely
+  // opaque by FOG_FAR_MAX. These rings sit at 560-1240 m, i.e. several times
+  // past the far plane, so physically they are 100% air — and the frame now
+  // agrees everywhere except on them. Two things went wrong at the old values:
+  // the rings read as a crisp cut-out pasted onto a dissolved horizon, and
+  // because the fogged street IS pure fog colour out there, a building
+  // crossing the chunk cull would blank a ring block behind a flat pale wall
+  // in one step. Leaning the rings most of the way into the fog colour makes
+  // both harmless — that occlusion now swaps near-identical values — while the
+  // residual spread keeps the authored near-dark / far-pale layering readable.
+  var SKYLINE_HAZE_LEAN = [0.50, 0.64, 0.78];
   (function buildSkyline() {
     var geo = new THREE.BoxGeometry(1, 1, 1);
     // The nearer two rings are large enough on screen that a plain box reads
@@ -15793,19 +15889,23 @@ THREE.GLTFLoader = GLTFLoader;
 
   function applyChunkLOD(chunk, playerZ) {
     var dz = chunk.position.z - playerZ;
-    // The camera sits only ~5 m behind the runner and the fog has already
-    // flattened the far street. Submitting pooled chunks behind the camera or
-    // beyond ~220 m added hundreds of draw calls without contributing pixels.
-    // A chunk is 40 m deep, so the slow-tier leading edge appears at ~148 m,
-    // exactly where the atmospheric fog begins. This masks recycling without
-    // paying to shade another full city block outside useful screen detail.
-    var farLimit = adaptiveSlowMode ? 148 : 210;
+    // The camera sits only ~5 m behind the runner, so chunks behind it are
+    // pure waste. The FAR edge is not a free parameter though: it is whatever
+    // distance the haze can be made opaque at, and nothing else — see the
+    // depth-budget block by scene.fog for why. It used to be a hand-picked 210
+    // (148 under load) chosen against "where the fog begins", which is not the
+    // same thing as where the fog finishes, and that mismatch was the visible
+    // block-of-city-appearing-at-the-vanishing-point pop.
+    //
+    // The slow-tier variant is gone with it. Dropping 210 -> 148 the instant
+    // the quality ladder demoted made a 60 m band of city wink out and back in
+    // as a single event — the most conspicuous pop in the game, produced by
+    // the mechanism meant to hide pops. Same reasoning as the near-detail band
+    // below and as the prop-distance shed already removed from the ladder.
+    var farLimit = CHUNK_CULL_FAR;
     var visible = dz > -38 && dz < farLimit;
     var ud = chunk.userData;
-    // Keep the existing fog-safe near-detail band stable across quality tiers.
-    // Because dz measures the chunk centre, shortening this below 100 m can
-    // pop the near edge of a 40 m chunk before the minimum fog boundary.
-    var nearDetailLimit = 100;
+    var nearDetailLimit = NEAR_DETAIL_FAR;
 
     // Bollards and lane dashes lived under this chunk's own Group, so
     // chunk.visible=false used to hide them for free. Their pools are
@@ -15843,17 +15943,15 @@ THREE.GLTFLoader = GLTFLoader;
     if (ud.catenaryFrame) ud.catenaryFrame.visible = ud.catenary.visible && dz > 7;
     // Atlas facades carry the mid/far read; roof furniture, parked vehicles and
     // sidewalk props switch on separately. That switch used to happen at 46m —
-    // fully inside clear air, since fog.near sits at 85-95m depending on mood —
-    // so a lamp or tree would visibly blink into existence in plain view mid-run.
-    // The fix is to never let that switch happen anywhere the player can see it:
-    // push the far edge out past the lowest fog.near across all moods (85m, see
-    // updateEnvironmentMood) so detail is always already inside the haze, and
-    // shrinking with perspective, by the time it appears. This roughly doubles
-    // the props submitted per frame in the near band; real frame pressure is now
-    // absorbed by the quality ladder below (DoF/SSAO/bloom/shadows/resolution)
-    // instead of by narrowing this band, so it no longer varies with
-    // adaptiveSlowMode -- narrowing it under pressure would just reintroduce the
-    // same visible pop-in this fix removes.
+    // fully inside clear air — so a lamp or tree would visibly blink into
+    // existence in plain view mid-run. It then moved to 100m, which was chosen
+    // against fog.near, i.e. the distance where haze is still exactly zero.
+    // NEAR_DETAIL_FAR moves it to where the ramp has actually started AND the
+    // depth of field is at full blur, so a prop arrives as a soft few-pixel
+    // smudge instead of a crisp object. Nothing here narrows under load: real
+    // frame pressure is absorbed by the quality ladder below (DoF/SSAO/bloom/
+    // shadows/resolution), because shedding draw distance instead would just
+    // reintroduce the pop-in this whole band exists to remove.
     var near = dz > -16 && dz < nearDetailLimit;
     if (ud.detailNear !== near) {
       ud.detailNear = near;
@@ -15861,15 +15959,23 @@ THREE.GLTFLoader = GLTFLoader;
         ud.detailNodes[i].visible = near && ud.detailBase[i];
       }
     }
-    // Past the fog boundary a building core occupies only a few pixels, but its
-    // four geometry groups still submit four beauty/shadow draws. A single
-    // facade material renders the same full geometry in one call there; every
-    // authored facade/mass/stone/shop material is restored before the building
-    // reaches clear air. This is a rendering LOD only, never a geometry cull.
+    // Deep in the haze a building core occupies only a few pixels, but its four
+    // geometry groups still submit four beauty/shadow draws. A single facade
+    // material renders the same full geometry in one call there; every authored
+    // facade/mass/stone/shop material is restored before the building reaches
+    // clear air. This is a rendering LOD only, never a geometry cull.
+    //
+    // The threshold was 92 m, i.e. just INSIDE fog.near — so the swap fired in
+    // completely clear air and the ground-floor shopfront band visibly changed
+    // colour to facade cream as each building crossed it. CORE_LOD_FAR puts it
+    // where the haze is already ~30% and the depth of field is at full blur, so
+    // the same swap costs nothing visible. It sits below NEAR_DETAIL_FAR + a
+    // margin so a building never swaps materials while its own sidewalk props
+    // are still switching on beside it.
     for (var bm = 0; bm < ud.buildings.length; bm++) {
       var lodBuilding = ud.buildings[bm];
       var lodData = lodBuilding.userData;
-      var farSurface = dz + lodBuilding.position.z > 92;
+      var farSurface = dz + lodBuilding.position.z > CORE_LOD_FAR;
       if (lodData.coreFar !== farSurface) {
         lodData.coreFar = farSurface;
         lodData.core.material = farSurface ? lodData.coreFarMaterial : lodData.coreFullMaterials;
@@ -15901,10 +16007,23 @@ THREE.GLTFLoader = GLTFLoader;
     // mass used to have its own >88m cull here (farMasses/massNear); it is
     // now baked into the core mesh alongside facade (see getBuildingCoreGeo)
     // and follows the chunk-level cull above instead.
-    // Same reasoning as the detail band above: transit/station/bridge/tunnel/
-    // landmark set pieces are larger than sidewalk props, so popping in used to
-    // be even more visible at the old 55m edge. Match the same fog-safe bound.
-    var spectacleNear = dz > -20 && dz < 100;
+    // Transit / station / bridge / tunnel / landmark set pieces are the one
+    // category that CANNOT share the props' band. A lamp arriving at
+    // NEAR_DETAIL_FAR is three pixels of blurred smudge; a station canopy or a
+    // bridge arriving there is 20-40 m of structure — measured at ~90x130 px,
+    // 1.5% of the whole horizon band, switching on at ~7% haze. That single
+    // event was by far the largest remaining pop in the frame: a building-sized
+    // silhouette materialising in near-clear air every time one came up.
+    //
+    // Because they are that big, the only bound that can hide them is the one
+    // the haze is actually built to hide — the chunk cull itself. So they now
+    // ride farLimit: a set piece is submitted for exactly as long as its chunk
+    // is, and its arrival happens inside the same opaque wall of air that the
+    // street, the kerbs and the facades arrive through. The near cutoff stays
+    // (see the station-portal cull below for the same reasoning at the other
+    // end): a 16 m arch wrapping around the chase camera is not depth, it is a
+    // dark vignette.
+    var spectacleNear = dz > -20 && dz < farLimit;
     if (ud.spectacleNear !== spectacleNear) {
       ud.spectacleNear = spectacleNear;
       for (var s = 0; s < ud.spectacleNodes.length; s++) {
@@ -21706,8 +21825,19 @@ THREE.GLTFLoader = GLTFLoader;
     FOG_COLOR.copy(moodA.fog).lerp(moodB.fog, moodMix);
     FOG_COLOR.lerp(MOOD_OVERDRIVE_FOG, clamp(od / 4, 0, 1) * 0.18);
     scene.fog.color.copy(FOG_COLOR);
-    scene.fog.near = lerp(moodA.fogNear, moodB.fogNear, moodMix) + od * 18;
-    scene.fog.far = lerp(moodA.fogFar, moodB.fogFar, moodMix) + od * 62;
+    // Overdrive still clears the air, but it can no longer clear it past the
+    // distance at which the world switches on: od used to add +62 to a far
+    // plane that was already 2x the cull distance, so at full streak the haze
+    // was doing nothing at all where it mattered most. Far is clamped to
+    // FOG_FAR_MAX and near is held far enough back from it that the gradient
+    // still reads as air rather than as a wall the runner is driving into.
+    // (See the depth-budget block by scene.fog.)
+    // THREE.Color stores linear-sRGB, which is what the dome's shader wants.
+    skyMat.uniforms.uHaze.value.set(FOG_COLOR.r, FOG_COLOR.g, FOG_COLOR.b);
+    var fogFar = Math.min(lerp(moodA.fogFar, moodB.fogFar, moodMix) + od * 18, FOG_FAR_MAX);
+    scene.fog.far = fogFar;
+    scene.fog.near = Math.min(lerp(moodA.fogNear, moodB.fogNear, moodMix) + od * 12,
+                              fogFar - 60);
 
     // Exposure now lives on the composite pass. The renderer value is kept in
     // step purely so the no-post fallback path still reacts to the route.
