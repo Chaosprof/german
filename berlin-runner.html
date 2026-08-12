@@ -4520,7 +4520,7 @@ THREE.GLTFLoader = GLTFLoader;
   // and the whole fix costs draw distance nowhere. Pushing it further (250 was
   // measured) buys a crisper mid-ground but costs ~8% of the frame for city
   // that is, by construction, behind an opaque wall of air.
-  var WORLD_EMERGE = 190;
+  var WORLD_EMERGE = 145;
   var FOG_FAR_MAX = WORLD_EMERGE - 12;
 
   // Stock linear fog is smoothstep(fogNear, fogFar, depth), which spends most
@@ -5510,6 +5510,24 @@ THREE.GLTFLoader = GLTFLoader;
             outlineTransparentWasVisible[otd] = outlineTransparentDetails[otd].visible ? 1 : 0;
             outlineTransparentDetails[otd].visible = false;
           }
+          // Transit/station/bridge/tunnel/landmark roots past NEAR_DETAIL_FAR.
+          // They are in the beauty pass so they can emerge through the haze
+          // instead of popping (see spectacleNear in applyChunkLOD), but out
+          // there they are deep enough in the fog that an ink line costs a
+          // second full draw of a large set piece to change almost no pixels.
+          // Hiding the root removes the whole subtree from the traversal, not
+          // just its draws. Flag is refreshed every frame by applyChunkLOD.
+          outlineSpectacleFarCount = 0;
+          for (var osc = 0; osc < chunks.length; osc++) {
+            var outlineChunkUd = chunks[osc].userData;
+            if (!outlineChunkUd.spectacleOutlineFar || !outlineChunkUd.spectacleNodes) continue;
+            for (var osn = 0; osn < outlineChunkUd.spectacleNodes.length; osn++) {
+              var outlineSpectacle = outlineChunkUd.spectacleNodes[osn];
+              if (!outlineSpectacle || !outlineSpectacle.visible) continue;
+              outlineSpectacleFar[outlineSpectacleFarCount++] = outlineSpectacle;
+              outlineSpectacle.visible = false;
+            }
+          }
         }
         // Per-category material swap instead of scene.overrideMaterial -- see
         // outlineMatInstanced's declaration comment for why. outlineSwapList is
@@ -5560,6 +5578,12 @@ THREE.GLTFLoader = GLTFLoader;
           for (var otr = 0; otr < outlineTransparentDetails.length; otr++) {
             outlineTransparentDetails[otr].visible = !!outlineTransparentWasVisible[otr];
           }
+          // Only ever contains roots this function set to false, so restoring
+          // unconditionally cannot resurrect something applyChunkLOD had culled.
+          for (var osr3 = 0; osr3 < outlineSpectacleFarCount; osr3++) {
+            outlineSpectacleFar[osr3].visible = true;
+          }
+          outlineSpectacleFarCount = 0;
           if (pretzelOutlineVisible) pretzelSolidInst.visible = true;
         }
       }
@@ -8415,7 +8439,7 @@ THREE.GLTFLoader = GLTFLoader;
       // under FOG_FAR_MAX (see the depth-budget block by scene.fog), which
       // clamps it in any case; the day treatment keeps the clearest air of the
       // three, same ordering as the 520/480/470 set it replaces.
-      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 95, fogFar: 178,
+      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 72, fogFar: 133,
       skyTint: new THREE.Color(1.03, 1.03, 1.05), exposure: 1.06,
       // Colour-temperature pass: measured via console (sample the actual light
       // objects, not the eye) that the sun-facing facade row and the fill-lit
@@ -8505,7 +8529,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 1 — magenta/teal sunset. Warm key, hard teal fill; the split-tone does
       // the rest so the shadows stay cyan instead of sliding to brown.
-      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 85, fogFar: 170,
+      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 64, fogFar: 127,
       skyTint: new THREE.Color(1.03, 1.01, 1.02), exposure: 1.07,
       // Same colour-temperature pass as mood 0: deepened the teal fill and the
       // salmon sun a notch so the warm/cool split survives the wall albedo
@@ -8537,7 +8561,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 2 — neon dusk. The sky is still an electric blue, the shopfronts and
       // station signage carry the frame, and bloom is at its widest here.
-      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 90, fogFar: 166,
+      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 68, fogFar: 124,
       skyTint: new THREE.Color(1.01, 1.02, 1.06), exposure: 1.10,
       // This mood's brief is deliberately a uniform electric blue (no warm key
       // — warmth here comes from bulb/shop/station emissive, not the sun), so
@@ -8629,11 +8653,11 @@ THREE.GLTFLoader = GLTFLoader;
   // of the haze ramp. Kept identical across quality tiers on purpose: shedding
   // draw distance under load just trades a frame or two for the exact pop-in
   // this whole block exists to remove.
-  var NEAR_DETAIL_FAR = 135;
+  var NEAR_DETAIL_FAR = 108;
   // Where a building core collapses from its four authored materials to the
   // single facade one (see applyChunkLOD). Past the near-detail band so the two
   // switches never land on the same building in the same stretch of road.
-  var CORE_LOD_FAR = 165;
+  var CORE_LOD_FAR = 128;
 
   // Multiply a geometry's UVs so one shared texture can tile at any size
   // without per-object texture clones.
@@ -13998,6 +14022,11 @@ THREE.GLTFLoader = GLTFLoader;
   var chunks = [];
   var outlineParkedDetails = [];
   var outlineParkedWasVisible = new Uint8Array(CHUNK_COUNT * 8);
+  // Scratch list of set-piece roots renderPresent hid for the ink prepass this
+  // frame (see spectacleOutlineFar in applyChunkLOD). Fixed capacity — one
+  // entry per spectacle slot per chunk — so the frame loop never allocates.
+  var outlineSpectacleFar = new Array(CHUNK_COUNT * 8);
+  var outlineSpectacleFarCount = 0;
   var worldRoot = new THREE.Group();
   scene.add(worldRoot);
   worldRoot.updateMatrix();
@@ -15937,7 +15966,12 @@ THREE.GLTFLoader = GLTFLoader;
     }
     ud.justRolled = false;
 
-    if (!chunk.visible) return;
+    if (!chunk.visible) {
+      // Cleared here too, so renderPresent never walks the set pieces of a
+      // chunk that is off-screen anyway on the strength of a stale flag.
+      ud.spectacleOutlineFar = false;
+      return;
+    }
     // The paired supports become intrusive at the chase camera. Retain the
     // continuous wires, but stop submitting the poles inside the final 7m.
     if (ud.catenaryFrame) ud.catenaryFrame.visible = ud.catenary.visible && dz > 7;
@@ -16024,6 +16058,15 @@ THREE.GLTFLoader = GLTFLoader;
     // end): a 16 m arch wrapping around the chase camera is not depth, it is a
     // dark vignette.
     var spectacleNear = dz > -20 && dz < farLimit;
+    // ...but only the NEAR ones earn a place in the ink prepass. Submitting a
+    // set piece out to farLimit is what removes the pop (above); submitting it
+    // to the outline pass as well would be paying a second full draw for an ink
+    // line on a surface the haze has already half-erased. Before this pass those
+    // set pieces were not drawn AT ALL past 100 m, so skipping their outline out
+    // there gives up nothing that was ever on screen — it just declines to spend
+    // the frame time the pop fix would otherwise have cost twice over.
+    // Read by renderPresent; see outlineSpectacleFar there.
+    ud.spectacleOutlineFar = spectacleNear && dz >= NEAR_DETAIL_FAR;
     if (ud.spectacleNear !== spectacleNear) {
       ud.spectacleNear = spectacleNear;
       for (var s = 0; s < ud.spectacleNodes.length; s++) {
@@ -20493,6 +20536,9 @@ THREE.GLTFLoader = GLTFLoader;
     prevZ = player.z; lastObstacleZ = player.z;
     perfWarmup = 0; perfEmaMs = 16.7; perfPressure = perfHeadroom = 0;
     perfWorstMs = 0; droppedCatchups = 0;
+    // A fresh run re-measures the device from scratch, including the verdict on
+    // how far down the ladder is worth walking.
+    ladderCeiling = QUALITY_TIER_MAX; ladderProbeUntil = 0;
 
     gameOver = false;
     gameOverToken++;
@@ -22131,6 +22177,12 @@ THREE.GLTFLoader = GLTFLoader;
   var perfPressure = 0;
   var perfHeadroom = 0;
   var perfWorstMs = 0;
+  // Closed-loop guard on the quality ladder — see monitorFrameBudget. The
+  // ceiling is the deepest rung that has been shown to actually help; the probe
+  // fields hold the pending "did that demotion work?" measurement.
+  var ladderCeiling = QUALITY_TIER_MAX;
+  var ladderProbeUntil = 0;
+  var ladderProbeEmaBefore = 0;
   var droppedCatchups = 0;
   var deferredTrafficDt = 0;
   var perfWarmup = 0;
@@ -22252,15 +22304,51 @@ THREE.GLTFLoader = GLTFLoader;
       perfHeadroom = Math.max(0, perfHeadroom - budgetRaw * 0.25);
     }
 
-    if (perfPressure > 1.1 && qualityTier < QUALITY_TIER_MAX) {
+    // Did the LAST demotion actually buy anything? Measured on a machine that
+    // cannot hold 60 Hz, the whole ladder (tier 0 -> 9) was worth about 10% of
+    // the frame, because ~95% of it is the two scene submissions in
+    // renderPresent and no rung here touches those. So the old open loop just
+    // walked to the bottom rung and stayed: nine visible quality drops during a
+    // single run — depth of field, resolution, AO, bloom, shadows, then the ink
+    // itself — none of which restored 60 Hz, and none of which could ever be
+    // undone, because recovery needs an EMA under 17.8 ms and a device stuck at
+    // 30 Hz averages 33. That progressive degradation IS visible unsmoothness,
+    // produced by the mechanism meant to prevent it.
+    //
+    // Closing the loop: remember the EMA at each demotion, and once the new
+    // tier has had time to settle, check it. If shedding that rung did not
+    // measurably help, the bottleneck is not on the ladder — so give the rung
+    // back and stop descending. ladderCeiling holds that verdict for the rest
+    // of the run, which is what keeps the frame stable to look at even when it
+    // cannot be made fast.
+    if (ladderProbeUntil > 0) {
+      ladderProbeUntil -= budgetRaw;
+      if (ladderProbeUntil <= 0) {
+        // 3% is comfortably outside the EMA's own drift over the settle window.
+        if (perfEmaMs > ladderProbeEmaBefore * 0.97) {
+          ladderCeiling = Math.max(0, qualityTier - 1);
+          applyQualityTier(ladderCeiling);
+        }
+        perfPressure = 0;
+        perfHeadroom = 0;
+      }
+      return;
+    }
+
+    if (perfPressure > 1.1 && qualityTier < Math.min(QUALITY_TIER_MAX, ladderCeiling)) {
       // One rung per demotion, least-visible effect first (see the ladder
       // above). Each rung is small, so a single crossing should not read as
       // the game changing; only sustained pressure walks further down, and
       // perfPressure/perfHeadroom must reaccumulate before the next step.
+      ladderProbeEmaBefore = perfEmaMs;
+      ladderProbeUntil = 1.6;
       applyQualityTier(qualityTier + 1);
       perfPressure = 0;
       perfHeadroom = 0;
     } else if (perfHeadroom > 8 && qualityTier > 0) {
+      // Recovering proves the pressure was transient, so let the ceiling rise
+      // again with it — a hitch during loading must not cap the whole run.
+      ladderCeiling = Math.min(QUALITY_TIER_MAX, Math.max(ladderCeiling, qualityTier));
       applyQualityTier(qualityTier - 1);
       perfPressure = 0;
       perfHeadroom = 0;
