@@ -192,6 +192,20 @@
 
   #flash { position:absolute; inset:0; opacity:0; transition:opacity .32s;
            background:radial-gradient(circle at 50% 58%, rgba(255,80,80,0) 32%, rgba(230,50,50,.5) 100%); }
+  /* Music toggle. Bottom-right is the one corner the HUD leaves empty (score
+     top-right, mistakes top-left, deck stats bottom-left). */
+  #musicbtn { position:absolute; right:16px; bottom:18px; width:40px; height:40px;
+              border-radius:50%; border:2px solid rgba(255,255,255,.30);
+              background:rgba(14,20,34,.62); color:#fff; font-size:19px; line-height:1;
+              cursor:pointer; z-index:6; padding:0; backdrop-filter:blur(3px);
+              transition:opacity .18s, border-color .18s, color .18s, transform .12s; }
+  #musicbtn:hover { transform:scale(1.08); border-color:rgba(255,255,255,.55); }
+  #musicbtn.off { color:rgba(255,255,255,.34); border-color:rgba(255,255,255,.14); }
+  /* A slash across the note when muted, so the state reads without colour. */
+  #musicbtn.off::after { content:''; position:absolute; left:8px; right:8px; top:50%;
+                         height:2px; background:currentColor; transform:rotate(-45deg); }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
   #stumblemsg { position:absolute; top:27%; left:18%; transform:translate(-50%,-50%) scale(.86);
                 font-size:30px; font-weight:900; letter-spacing:.09em; color:#fff; opacity:0;
                 text-shadow:0 4px 22px rgba(190,20,20,.85); transition:opacity .2s, transform .2s; }
@@ -507,6 +521,10 @@
 
   <div id="flash"></div>
   <div id="stumblemsg">AUA!</div>
+
+  <button id="musicbtn" type="button" aria-pressed="true" title="Musik aus (M)">
+    <span aria-hidden="true">♪</span><span class="sr">Musik</span>
+  </button>
 
   <div id="touchhint">
     <span>◀ Wischen ▶ · Spur</span><span>▲ Sprung</span><span>▼ Rutschen</span>
@@ -4169,11 +4187,39 @@ THREE.GLTFLoader = GLTFLoader;
   // only created from the start gesture, and the continuous beds (city hum,
   // footfalls, overdrive stack) idle at near-silence so a tier change can swell
   // instantly without an allocation hitch mid-run.
-  var gameAudio = null, masterGain = null;
+  //
+  // MIX: every voice lands on one of two buses, and both buses go through a
+  // limiter before the speakers:
+  //
+  //   sfx voices ──► sfxBus   ─┐
+  //                            ├─► masterGain ─► limiter ─► destination
+  //   music voices ► musicBus ─┘
+  //
+  // The limiter is the fix for the harshness this used to have. Every source
+  // previously summed straight into one gain and out; a footfall landing on
+  // top of a verdict chord, the overdrive stack and the city bed would push
+  // the sum past full scale, and the resulting hard clipping is what read as
+  // a screech. Nothing else about the voices can prevent that, because the
+  // clip happens after they are mixed.
+  var gameAudio = null, masterGain = null, limiter = null;
+  var sfxBus = null, musicBus = null;
   var cityGain = null, cityFilter = null;
   var rumbleOsc = null, rumbleGain = null;
   var odOsc = [], odGains = [];
   var lastAmbientAudioUpdate = -1;
+  // One noise table, reused by every burst. playNoise used to allocate and
+  // fill a fresh AudioBuffer per call — i.e. per footfall, several times a
+  // second — which is pure garbage for a sound nobody can tell apart from a
+  // slice of a shared table.
+  var noiseBuf = null;
+  function getNoiseBuffer() {
+    if (!noiseBuf) {
+      noiseBuf = gameAudio.createBuffer(1, gameAudio.sampleRate * 2, gameAudio.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    return noiseBuf;
+  }
 
   function unlockGameAudio() {
     var AudioCtor = window.AudioContext || window.webkitAudioContext;
@@ -4181,23 +4227,49 @@ THREE.GLTFLoader = GLTFLoader;
     try {
       if (!gameAudio) {
         gameAudio = new AudioCtor();
+        // Catches the sum, not the individual voices — see the MIX note above.
+        // Soft knee and a slow-ish release so it ducks the peak rather than
+        // pumping audibly on every footstep.
+        limiter = gameAudio.createDynamicsCompressor();
+        limiter.threshold.value = -9;
+        limiter.knee.value = 8;
+        limiter.ratio.value = 12;
+        limiter.attack.value = 0.004;
+        limiter.release.value = 0.20;
+        limiter.connect(gameAudio.destination);
+
         masterGain = gameAudio.createGain();
-        masterGain.gain.value = 0.26;
-        masterGain.connect(gameAudio.destination);
+        masterGain.gain.value = 0.42;
+        masterGain.connect(limiter);
+
+        sfxBus = gameAudio.createGain();
+        sfxBus.gain.value = 0.62;
+        sfxBus.connect(masterGain);
+
+        musicBus = gameAudio.createGain();
+        musicBus.gain.value = musicEnabled ? MUSIC_LEVEL : 0;
+        musicBus.connect(masterGain);
 
         // City bed: filtered noise standing in for traffic and wind past the ears.
-        var nb = gameAudio.createBuffer(1, gameAudio.sampleRate * 2, gameAudio.sampleRate);
-        var nd = nb.getChannelData(0);
-        for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
         var noise = gameAudio.createBufferSource();
-        noise.buffer = nb; noise.loop = true;
+        noise.buffer = getNoiseBuffer(); noise.loop = true;
         cityFilter = gameAudio.createBiquadFilter();
         cityFilter.type = 'bandpass';
         cityFilter.frequency.value = 620;
         cityFilter.Q.value = 0.5;
+        // The bed used to run straight out of the bandpass, and updateAmbientAudio
+        // sweeps that centre up past 1 kHz with speed — which is squarely in the
+        // ear's most sensitive band, so at pace the "wind" turned into a hiss
+        // sitting on top of everything. A fixed shelf above it keeps the movement
+        // audible without letting the top end climb with it.
+        var cityTop = gameAudio.createBiquadFilter();
+        cityTop.type = 'lowpass';
+        cityTop.frequency.value = 1500;
+        cityTop.Q.value = 0.4;
         cityGain = gameAudio.createGain();
         cityGain.gain.value = 0.03;
-        noise.connect(cityFilter); cityFilter.connect(cityGain); cityGain.connect(masterGain);
+        noise.connect(cityFilter); cityFilter.connect(cityTop);
+        cityTop.connect(cityGain); cityGain.connect(sfxBus);
         noise.start();
 
         // Low U-Bahn rumble under everything.
@@ -4206,7 +4278,7 @@ THREE.GLTFLoader = GLTFLoader;
         rumbleOsc.frequency.value = 46;
         rumbleGain = gameAudio.createGain();
         rumbleGain.gain.value = 0.010;
-        rumbleOsc.connect(rumbleGain); rumbleGain.connect(masterGain);
+        rumbleOsc.connect(rumbleGain); rumbleGain.connect(sfxBus);
         rumbleOsc.start();
 
         // Overdrive harmony stack — one layer lights per streak tier.
@@ -4216,7 +4288,7 @@ THREE.GLTFLoader = GLTFLoader;
           o.type = li < 2 ? 'sine' : 'triangle';
           o.frequency.value = freqs[li];
           g.gain.value = 0.0001;
-          o.connect(g); g.connect(masterGain); o.start();
+          o.connect(g); g.connect(sfxBus); o.start();
           odOsc.push(o); odGains.push(g);
         }
       }
@@ -4225,8 +4297,11 @@ THREE.GLTFLoader = GLTFLoader;
         if (r && r.catch) r.catch(function () {});
       }
     } catch (e) {
-      gameAudio = masterGain = cityGain = cityFilter = null;
+      musicStop();
+      gameAudio = masterGain = limiter = cityGain = cityFilter = null;
+      sfxBus = musicBus = null;
       rumbleOsc = rumbleGain = null;
+      noiseBuf = null;
       odOsc.length = odGains.length = 0;
     }
   }
@@ -4250,7 +4325,7 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function playTone(freq, start, length, volume, type, endFreq) {
-    if (!gameAudio || !masterGain) return;
+    if (!gameAudio || !sfxBus) return;
     var osc = gameAudio.createOscillator(), gain = gameAudio.createGain();
     osc.type = type || 'sine';
     osc.frequency.setValueAtTime(freq, start);
@@ -4258,25 +4333,52 @@ THREE.GLTFLoader = GLTFLoader;
     gain.gain.setValueAtTime(0.0001, start);
     gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + length);
-    osc.connect(gain); gain.connect(masterGain);
+    // A raw sawtooth or square carries harmonics all the way to Nyquist, and
+    // at these volumes the ones above ~4 kHz are the bite that reads as a
+    // screech. Rolling each voice off a fixed number of harmonics above its
+    // own fundamental keeps the waveform's CHARACTER (a square still sounds
+    // square) while removing the part of it that is only ever painful.
+    var top = gameAudio.createBiquadFilter();
+    top.type = 'lowpass';
+    top.Q.value = 0.6;
+    top.frequency.setValueAtTime(Math.min(5200, Math.max(900, freq * 7)), start);
+    if (endFreq) {
+      top.frequency.exponentialRampToValueAtTime(
+        Math.min(5200, Math.max(900, endFreq * 7)), start + length);
+    }
+    osc.connect(top); top.connect(gain); gain.connect(sfxBus);
     osc.start(start); osc.stop(start + length + 0.02);
   }
 
   // Short filtered-noise burst — footfalls, slide scrape, stumble impact.
+  // Reads a window out of the shared noise table (see getNoiseBuffer) instead
+  // of building a buffer per call.
   function playNoise(start, length, volume, freq, Q, type) {
-    if (!gameAudio || !masterGain) return;
-    var len = Math.max(1, Math.floor(gameAudio.sampleRate * length));
-    var buf = gameAudio.createBuffer(1, len, gameAudio.sampleRate);
-    var d = buf.getChannelData(0);
-    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
-    var src = gameAudio.createBufferSource(); src.buffer = buf;
+    if (!gameAudio || !sfxBus) return;
+    var buf = getNoiseBuffer();
+    var src = gameAudio.createBufferSource();
+    src.buffer = buf;
+    // Random window into the table, so repeated footfalls are not identical.
+    var offset = Math.random() * Math.max(0.01, buf.duration - length - 0.01);
     var f = gameAudio.createBiquadFilter();
-    f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = Q || 1;
+    // Q was passed as high as 1.4 on a bandpass, which rings — a resonant
+    // whistle on a sound that is meant to be a scuff. Capped well below that.
+    f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = Math.min(0.9, Q || 0.7);
+    // Second-stage ceiling so no burst, whatever its centre frequency, throws
+    // energy into the harsh band.
+    var top = gameAudio.createBiquadFilter();
+    top.type = 'lowpass';
+    top.frequency.value = Math.min(3800, freq * 2.6 + 400);
+    top.Q.value = 0.4;
     var g = gameAudio.createGain();
-    g.gain.setValueAtTime(volume, start);
+    // Was an instantaneous setValueAtTime(volume) from silence — a step
+    // discontinuity, i.e. an audible click on every single footfall. A 5 ms
+    // ramp is inaudible as an attack and removes the click entirely.
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.linearRampToValueAtTime(volume, start + 0.005);
     g.gain.exponentialRampToValueAtTime(0.0001, start + length);
-    src.connect(f); f.connect(g); g.connect(masterGain);
-    src.start(start); src.stop(start + length + 0.02);
+    src.connect(f); f.connect(top); top.connect(g); g.connect(sfxBus);
+    src.start(start, offset, length + 0.02); src.stop(start + length + 0.02);
   }
 
   function playCorrectSound(streak) {
@@ -4290,31 +4392,43 @@ THREE.GLTFLoader = GLTFLoader;
     if (streak > 0 && streak % 5 === 0) playTone(root * 2, now + 0.14, 0.44, 0.21, 'sine');
   }
 
+  // Was three stacked sawtooth/square voices at 196/147/98 Hz — the single
+  // harshest thing in the game. A saw at 196 Hz puts strong partials right
+  // through the 2-5 kHz band, three of them overlapped, at volumes that pushed
+  // the old un-limited master into clipping. Same falling-minor-third shape,
+  // but voiced as triangles (far fewer partials, all of them now rolled off by
+  // playTone's per-voice ceiling) over a soft low thud that carries the weight
+  // the buzz used to fake.
   function playWrongSound() {
     if (!gameAudio) return;
     var now = gameAudio.currentTime;
-    playTone(196, now, 0.24, 0.28, 'sawtooth');
-    playTone(147, now + 0.05, 0.30, 0.24, 'sawtooth');
-    playTone(98, now + 0.12, 0.36, 0.18, 'square');
+    playNoise(now, 0.20, 0.16, 150, 0.5, 'lowpass');
+    playTone(174, now, 0.26, 0.22, 'triangle');
+    playTone(138, now + 0.055, 0.30, 0.19, 'triangle');
+    playTone(87, now + 0.12, 0.40, 0.17, 'triangle', 69);
   }
 
   function playJumpSound() {
     if (!gameAudio) return;
     var now = gameAudio.currentTime;
     playTone(300, now, 0.16, 0.16, 'triangle', 620);
-    playNoise(now, 0.09, 0.10, 1500, 0.8);
+    playNoise(now, 0.09, 0.09, 950, 0.7);
   }
   function playLandSound() {
     if (!gameAudio) return;
     playNoise(gameAudio.currentTime, 0.13, 0.20, 190, 0.9, 'lowpass');
   }
+  // 2100 Hz for 0.42 s was a long, bright hiss sitting in the ear's most
+  // sensitive band, and the slide is one of the most frequently used moves in
+  // the game. Dropped to a grittier low-mid scrape, which also reads more like
+  // a boot on gravel than like tape hiss.
   function playSlideSound() {
     if (!gameAudio) return;
-    playNoise(gameAudio.currentTime, 0.42, 0.15, 2100, 0.7);
+    playNoise(gameAudio.currentTime, 0.36, 0.13, 780, 0.6);
   }
   function playLaneSound() {
     if (!gameAudio) return;
-    playNoise(gameAudio.currentTime, 0.11, 0.07, 900, 1.4);
+    playNoise(gameAudio.currentTime, 0.11, 0.07, 700, 0.8);
   }
   function playStepSound() {
     if (!gameAudio) return;
@@ -4325,11 +4439,168 @@ THREE.GLTFLoader = GLTFLoader;
     var now = gameAudio.currentTime;
     playTone(880 * Math.pow(2, Math.min(7, n % 8) / 12), now, 0.10, 0.15, 'sine');
   }
+  // ------------------------------------------------------------- music -----
+  // A Berlin motorik loop, synthesized like everything else so the page stays
+  // offline and self-contained. Four voices on a 16th grid: four-on-the-floor
+  // kick, off-beat hat, a driving 16th bass arpeggio, and a slow pad holding
+  // the chord. The progression is i - VI - III - VII in A minor, one bar each.
+  //
+  // It is not a fixed backing track: tempo rises with ground speed, the hats
+  // and the octave-up arp only enter once the player is moving or on a streak,
+  // and the pad voicing follows the same day / sunset / neon-dusk mood cycle
+  // the lighting uses, so the track moves through the run with the picture.
+  //
+  // Scheduling is the standard WebAudio lookahead: a timer wakes every 25 ms
+  // and queues every step that falls inside the next 120 ms. rAF cannot be
+  // used for this — a dropped frame would drop a beat, and the whole point of
+  // scheduling against AudioContext.currentTime is that the groove is immune
+  // to whatever the renderer is doing.
+  var MUSIC_LEVEL = 0.85;
+  var musicEnabled = true;
+  try {
+    var savedMusic = localStorage.getItem('artikel-express-music');
+    if (savedMusic === '0') musicEnabled = false;
+  } catch (e) {}
+  var musicTimer = null, musicStep = 0, musicNextTime = 0;
+  var musicPadUntil = 0;
+  // A minor: i(Am) VI(F) III(C) VII(G). Root frequencies and chord thirds.
+  var MUSIC_BARS = [
+    { root: 55.00, chord: [220.00, 261.63, 329.63] },   // Am
+    { root: 43.65, chord: [174.61, 220.00, 261.63] },   // F
+    { root: 65.41, chord: [196.00, 261.63, 329.63] },   // C
+    { root: 49.00, chord: [196.00, 246.94, 293.66] }    // G
+  ];
+
+  function musicVoice(type, freq, start, length, volume, cutoff, target) {
+    var osc = gameAudio.createOscillator();
+    var flt = gameAudio.createBiquadFilter();
+    var g = gameAudio.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    flt.type = 'lowpass';
+    flt.Q.value = 0.8;
+    flt.frequency.setValueAtTime(cutoff, start);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.linearRampToValueAtTime(volume, start + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + length);
+    osc.connect(flt); flt.connect(g); g.connect(target || musicBus);
+    osc.start(start); osc.stop(start + length + 0.02);
+  }
+
+  function musicKick(start) {
+    var osc = gameAudio.createOscillator(), g = gameAudio.createGain();
+    osc.type = 'sine';
+    // The pitch drop IS the kick; without it a sine is just a low bloop.
+    osc.frequency.setValueAtTime(118, start);
+    osc.frequency.exponentialRampToValueAtTime(42, start + 0.09);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.linearRampToValueAtTime(0.72, start + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + 0.20);
+    osc.connect(g); g.connect(musicBus);
+    osc.start(start); osc.stop(start + 0.24);
+  }
+
+  function musicHat(start, volume) {
+    var src = gameAudio.createBufferSource();
+    src.buffer = getNoiseBuffer();
+    var hp = gameAudio.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 6500; hp.Q.value = 0.7;
+    // Ceiling as well as a floor: an open-ended highpass on white noise is
+    // exactly the sizzle this whole audio pass exists to remove.
+    var lp = gameAudio.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 11000; lp.Q.value = 0.4;
+    var g = gameAudio.createGain();
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.linearRampToValueAtTime(volume, start + 0.003);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + 0.055);
+    src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(musicBus);
+    src.start(start, Math.random() * 1.5, 0.09); src.stop(start + 0.09);
+  }
+
+  function musicSchedule() {
+    if (!gameAudio || !musicBus) return;
+    var now = gameAudio.currentTime;
+    // Tempo follows the run. BASE_SPEED-ish is 124 BPM; full pelt is ~146.
+    var drive = clamp((speed - BASE_SPEED) / 26, 0, 1);
+    var bpm = 124 + drive * 22 + overdriveIntensity * 1.6;
+    var stepDur = 60 / bpm / 4;                       // one 16th
+    var energy = clamp(drive * 0.85 + overdriveIntensity * 0.22, 0, 1);
+    var moodTone = moodFromIndex || 0;
+
+    while (musicNextTime < now + 0.12) {
+      if (musicNextTime < now) musicNextTime = now + 0.02;
+      var t = musicNextTime;
+      var step = musicStep & 15;
+      var bar = MUSIC_BARS[(musicStep >> 4) & 3];
+
+      if ((step & 3) === 0) musicKick(t);
+      // Off-beat hats come in with speed, doubling up at full tilt.
+      if (energy > 0.10 && (step & 3) === 2) musicHat(t, 0.10 + energy * 0.10);
+      if (energy > 0.62 && (step & 1) === 1 && (step & 3) !== 2) musicHat(t, 0.045);
+
+      // 16th bass arpeggio: root, root, fifth, octave — the motorik engine.
+      var arp = [1, 1, 1.5, 2, 1, 1, 1.5, 3, 1, 1, 2, 1.5, 1, 2, 1.5, 1];
+      var bassCut = 260 + energy * 900 + (moodTone === 2 ? 420 : 0);
+      musicVoice(moodTone === 2 ? 'sawtooth' : 'triangle',
+        bar.root * arp[step], t, stepDur * 1.7,
+        0.30 + energy * 0.10, bassCut);
+
+      // Pad: one long chord per bar, retriggered on the downbeat.
+      if (step === 0 && t >= musicPadUntil - 0.05) {
+        var padLen = stepDur * 16;
+        musicPadUntil = t + padLen;
+        for (var c = 0; c < bar.chord.length; c++) {
+          // Neon dusk gets the full stack; day stays sparse and open.
+          if (moodTone === 0 && c === 1) continue;
+          musicVoice('triangle', bar.chord[c], t, padLen * 0.98,
+            0.055 + (moodTone === 2 ? 0.03 : 0), 1300 + moodTone * 400);
+        }
+      }
+      // Octave-up counter-arp, streak reward only.
+      if (overdriveIntensity > 0.9 && (step === 6 || step === 14)) {
+        musicVoice('square', bar.chord[2] * 2, t, stepDur * 1.2, 0.05, 2600);
+      }
+
+      musicNextTime += stepDur;
+      musicStep = (musicStep + 1) & 63;
+    }
+  }
+
+  function musicStart() {
+    if (!gameAudio || !musicBus || musicTimer) return;
+    musicStep = 0;
+    musicNextTime = gameAudio.currentTime + 0.06;
+    musicPadUntil = 0;
+    musicTimer = setInterval(musicSchedule, 25);
+  }
+
+  function musicStop() {
+    if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+  }
+
+  function setMusicEnabled(on) {
+    musicEnabled = !!on;
+    try { localStorage.setItem('artikel-express-music', musicEnabled ? '1' : '0'); } catch (e) {}
+    if (musicBus && gameAudio) {
+      // Ramp rather than snap, or toggling clicks as loudly as the old sfx did.
+      musicBus.gain.cancelScheduledValues(gameAudio.currentTime);
+      musicBus.gain.setTargetAtTime(musicEnabled ? MUSIC_LEVEL : 0,
+                                    gameAudio.currentTime, 0.08);
+    }
+    var btn = document.getElementById('musicbtn');
+    if (btn) {
+      btn.classList.toggle('off', !musicEnabled);
+      btn.setAttribute('aria-pressed', musicEnabled ? 'true' : 'false');
+      btn.title = musicEnabled ? 'Musik aus (M)' : 'Musik an (M)';
+    }
+  }
+
   function playStumbleSound() {
     if (!gameAudio) return;
     var now = gameAudio.currentTime;
-    playNoise(now, 0.28, 0.30, 240, 0.6, 'lowpass');
-    playTone(130, now, 0.24, 0.20, 'square', 70);
+    playNoise(now, 0.28, 0.28, 240, 0.6, 'lowpass');
+    // 'square' here was buzzing under the impact rather than thudding.
+    playTone(130, now, 0.26, 0.22, 'triangle', 62);
   }
 
   // ---------------------------------------------------------- renderer -----
@@ -4520,7 +4791,7 @@ THREE.GLTFLoader = GLTFLoader;
   // and the whole fix costs draw distance nowhere. Pushing it further (250 was
   // measured) buys a crisper mid-ground but costs ~8% of the frame for city
   // that is, by construction, behind an opaque wall of air.
-  var WORLD_EMERGE = 145;
+  var WORLD_EMERGE = 120;
   var FOG_FAR_MAX = WORLD_EMERGE - 12;
 
   // Stock linear fog is smoothstep(fogNear, fogFar, depth), which spends most
@@ -5517,6 +5788,27 @@ THREE.GLTFLoader = GLTFLoader;
           // second full draw of a large set piece to change almost no pixels.
           // Hiding the root removes the whole subtree from the traversal, not
           // just its draws. Flag is refreshed every frame by applyChunkLOD.
+          // Gates and hazards deep in the haze. They have to be in the beauty
+          // pass from the fog wall inward so their arrival is hidden (see
+          // PLAY_RENDER_FAR), but an ink outline on a barrier that is 60% fog
+          // is a second full draw for a line nobody can resolve.
+          outlinePlayFarCount = 0;
+          var outlineInkZ = player.z + OUTLINE_PLAY_FAR;
+          for (var ogi = 0; ogi < gates.length; ogi++) {
+            var outlineGate = gates[ogi];
+            if (outlineGate.visible && outlineGate.userData.z > outlineInkZ) {
+              outlinePlayFar[outlinePlayFarCount++] = outlineGate;
+              outlineGate.visible = false;
+            }
+          }
+          for (var ooi = 0; ooi < obstacles.length; ooi++) {
+            var outlineOb = obstacles[ooi];
+            if (outlineOb.active && outlineOb.holder.visible && outlineOb.z > outlineInkZ) {
+              outlinePlayFar[outlinePlayFarCount++] = outlineOb.holder;
+              outlineOb.holder.visible = false;
+            }
+          }
+
           outlineSpectacleFarCount = 0;
           for (var osc = 0; osc < chunks.length; osc++) {
             var outlineChunkUd = chunks[osc].userData;
@@ -5584,6 +5876,10 @@ THREE.GLTFLoader = GLTFLoader;
             outlineSpectacleFar[osr3].visible = true;
           }
           outlineSpectacleFarCount = 0;
+          for (var opf = 0; opf < outlinePlayFarCount; opf++) {
+            outlinePlayFar[opf].visible = true;
+          }
+          outlinePlayFarCount = 0;
           if (pretzelOutlineVisible) pretzelSolidInst.visible = true;
         }
       }
@@ -8439,7 +8735,7 @@ THREE.GLTFLoader = GLTFLoader;
       // under FOG_FAR_MAX (see the depth-budget block by scene.fog), which
       // clamps it in any case; the day treatment keeps the clearest air of the
       // three, same ordering as the 520/480/470 set it replaces.
-      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 72, fogFar: 133,
+      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 58, fogFar: 108,
       skyTint: new THREE.Color(1.03, 1.03, 1.05), exposure: 1.06,
       // Colour-temperature pass: measured via console (sample the actual light
       // objects, not the eye) that the sun-facing facade row and the fill-lit
@@ -8529,7 +8825,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 1 — magenta/teal sunset. Warm key, hard teal fill; the split-tone does
       // the rest so the shadows stay cyan instead of sliding to brown.
-      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 64, fogFar: 127,
+      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 52, fogFar: 103,
       skyTint: new THREE.Color(1.03, 1.01, 1.02), exposure: 1.07,
       // Same colour-temperature pass as mood 0: deepened the teal fill and the
       // salmon sun a notch so the warm/cool split survives the wall albedo
@@ -8561,7 +8857,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 2 — neon dusk. The sky is still an electric blue, the shopfronts and
       // station signage carry the frame, and bloom is at its widest here.
-      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 68, fogFar: 124,
+      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 55, fogFar: 100,
       skyTint: new THREE.Color(1.01, 1.02, 1.06), exposure: 1.10,
       // This mood's brief is deliberately a uniform electric blue (no warm key
       // — warmth here comes from bulb/shop/station emissive, not the sun), so
@@ -8653,11 +8949,19 @@ THREE.GLTFLoader = GLTFLoader;
   // of the haze ramp. Kept identical across quality tiers on purpose: shedding
   // draw distance under load just trades a frame or two for the exact pop-in
   // this whole block exists to remove.
-  var NEAR_DETAIL_FAR = 108;
+  var NEAR_DETAIL_FAR = 90;
   // Where a building core collapses from its four authored materials to the
   // single facade one (see applyChunkLOD). Past the near-detail band so the two
   // switches never land on the same building in the same stretch of road.
-  var CORE_LOD_FAR = 128;
+  var CORE_LOD_FAR = 104;
+  // Street trees and parked cars/buses are the two prop families big enough to
+  // be caught arriving: a 5 m canopy or a 10 m bus is tens of pixels at
+  // NEAR_DETAIL_FAR, where the haze is only ~39% and hides nothing. They are
+  // also few per chunk, so pushing just these two past the fog's far plane
+  // costs a fraction of what widening the whole prop band would, and buys a
+  // switch that happens in air the player cannot see through at all. Must stay
+  // under CHUNK_CULL_FAR — beyond that their chunk is not submitted anyway.
+  var NEAR_BULK_FAR = 126;
 
   // Multiply a geometry's UVs so one shared texture can tile at any size
   // without per-object texture clones.
@@ -14027,6 +14331,12 @@ THREE.GLTFLoader = GLTFLoader;
   // entry per spectacle slot per chunk — so the frame loop never allocates.
   var outlineSpectacleFar = new Array(CHUNK_COUNT * 8);
   var outlineSpectacleFarCount = 0;
+  // Same, for gates and hazards past OUTLINE_PLAY_FAR — far enough into the
+  // haze that the ink cannot resolve, near enough that the gate a player is
+  // actually reading keeps its outline.
+  var OUTLINE_PLAY_FAR = 100;
+  var outlinePlayFar = new Array(64);
+  var outlinePlayFarCount = 0;
   var worldRoot = new THREE.Group();
   scene.add(worldRoot);
   worldRoot.updateMatrix();
@@ -16021,11 +16331,13 @@ THREE.GLTFLoader = GLTFLoader;
     // the chase camera. Apply this render-only cutoff every frame after the
     // ordinary near-detail gate; rollChunk's parkedActive flags remain the
     // source of truth for which car/bus slots were actually populated.
+    // NEAR_BULK_FAR rather than the ordinary prop band: see its declaration.
+    var bulkNear = dz > -16 && dz < NEAR_BULK_FAR;
     for (var pv = 0; pv < ud.cars.length; pv++) {
       var parkedSlot = ud.cars[pv];
-      parkedSlot.car.visible = near && parkedSlot.car.userData.parkedActive &&
+      parkedSlot.car.visible = bulkNear && parkedSlot.car.userData.parkedActive &&
         chunk.position.z + parkedSlot.car.position.z - 2.10 > playerZ - 0.75;
-      parkedSlot.bus.visible = near && parkedSlot.bus.userData.parkedActive &&
+      parkedSlot.bus.visible = bulkNear && parkedSlot.bus.userData.parkedActive &&
         chunk.position.z + parkedSlot.bus.position.z - 5.50 > playerZ - 0.75;
     }
     // A tree root can remain ahead after its broad crown has already wrapped
@@ -16035,7 +16347,7 @@ THREE.GLTFLoader = GLTFLoader;
     for (var tv = 0; tv < ud.trees.length; tv++) {
       var tree = ud.trees[tv];
       var canopyExtent = (tree.userData.canopyRadius || 2.05) * tree.scale.z;
-      tree.visible = near && tree.userData.rolledActive &&
+      tree.visible = bulkNear && tree.userData.rolledActive &&
         chunk.position.z + tree.position.z - canopyExtent > playerZ - 0.75;
     }
     // mass used to have its own >88m cull here (farMasses/massNear); it is
@@ -16338,7 +16650,12 @@ THREE.GLTFLoader = GLTFLoader;
   // An article gate is a three-portal BVG-style sign truss spanning the street.
   // The article→lane mapping is reshuffled every question, so the player has to
   // read the sign rather than memorise a position.
-  var GATE_POOL = 3;
+  // Was 3, which was exactly enough when a gate was created at question start
+  // and so only one could ever be pending. ensureGatesAhead now lays them down
+  // a haze-depth in front of the runner, which keeps 3-4 alive at once — and
+  // spawnGate falls back to stealing gates[0] when the pool is dry, which
+  // would teleport a gate the player had not reached yet.
+  var GATE_POOL = 6;
   var gates = [];
 
   // Runway chevrons streaming toward the player. Scrolling this one texture is
@@ -16787,7 +17104,11 @@ THREE.GLTFLoader = GLTFLoader;
   //   high  → slide under it (scaffold beam, awning bar)
   //   block → change lane    (parked car, skip, ad column)
   // Only `block` restricts lanes, and it never fills all three.
-  var OB_POOL = 28;
+  // Raised with GATE_POOL: hazard corridors are now scheduled out to the gate
+  // horizon rather than the next 80 m, so roughly three times as many are
+  // alive. Running dry is not a crash — freeObstacleSlots() guards the spawn
+  // rolls — but it silently thins the course, which is worse than the memory.
+  var OB_POOL = 48;
   var obstacles = [];
 
   function makeBarrier() {
@@ -17132,7 +17453,7 @@ THREE.GLTFLoader = GLTFLoader;
   // ========================================================= collectibles ===
   // Brezel arcs: mostly straight lines in a lane, sometimes lifted into a jump
   // arc so the reward and the hazard read as the same beat.
-  var PRETZEL_POOL = 48;
+  var PRETZEL_POOL = 80;
   var pretzels = [];
   var pretzelSolidInst = null;
   var pretzelSolidMatrix = new THREE.Matrix4();
@@ -19242,6 +19563,7 @@ THREE.GLTFLoader = GLTFLoader;
     }
     for (var p = 0; p < FX_POP_N; p++) { fxPops[p].life = 0; fxPops[p].sprite.visible = false; }
     fxHitStop = 0; fxPulseAmt = 0; fxKickAmp = 0; fxFovPunch = 0;
+    fxFlashAmt = 0; fxSpokeAmt = 0; fxRingT = 1; fxRingAmt = 0; fxAberrKick = 0;
     fxChain = 0; fxChainClock = 9; fxLaneVel = 0; fxBank = 0;
     fxTrailFilled = 0; fxTrailFade = 0; fxTrail.visible = false;
     fxOverlaySpeed = 0; fxOverlay.visible = false;
@@ -19295,12 +19617,18 @@ THREE.GLTFLoader = GLTFLoader;
     blending: THREE.AdditiveBlending,
     uniforms: {
       uSpeed: { value: 0 }, uTime: { value: 0 },
-      uPulse: { value: 0 }, uPulseCol: { value: new THREE.Color(1, 0.3, 0.25) }
+      uPulse: { value: 0 }, uPulseCol: { value: new THREE.Color(1, 0.3, 0.25) },
+      // Verdict impact, layered on top of the vignette body — see fxVerdict.
+      uFlash: { value: 0 },      // broad wash, fastest decay: the "hit"
+      uRingR: { value: 0 },      // shockwave radius, 0 -> ~1.7
+      uRingA: { value: 0 },      // shockwave brightness
+      uSpokes: { value: 0 }      // radial burst lines, correct answers only
     },
     vertexShader:
       'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader:
-      'varying vec2 vUv; uniform float uSpeed, uTime, uPulse; uniform vec3 uPulseCol;' +
+      'varying vec2 vUv; uniform float uSpeed, uTime, uPulse, uFlash, uRingR, uRingA, uSpokes;' +
+      'uniform vec3 uPulseCol;' +
       'float h11(float n){ return fract(sin(n * 12.9898) * 43758.5453); }' +
       'void main(){' +
       ' vec2 p = vUv * 2.0 - 1.0;' +
@@ -19322,7 +19650,29 @@ THREE.GLTFLoader = GLTFLoader;
       '  float smear = smoothstep(0.62, 1.30, r) * uSpeed * uSpeed * 0.22;' +
       '  c += vec3(0.80, 0.72, 1.0) * smear;' +
       ' }' +
+      // Body of the verdict: the edge-weighted vignette this always had.
       ' c += uPulseCol * (smoothstep(0.30, 1.20, r) * uPulse);' +
+      // Impact wash. Reaches the middle of the screen, unlike the vignette, so
+      // the first frames of a verdict actually land instead of only tinting the
+      // corners — and decays several times faster so it reads as a hit rather
+      // than a fade.
+      ' c += uPulseCol * (uFlash * (0.42 + 0.58 * smoothstep(0.0, 1.35, r)));' +
+      // Shockwave: a thin ring driven outward past the corners. This is the
+      // part that makes it read as an event with a direction rather than the
+      // screen simply changing colour.
+      ' if (uRingA > 0.001) {' +
+      '  float d = abs(r - uRingR);' +
+      '  float ring = exp(-d * d * 62.0);' +
+      '  c += uPulseCol * (ring * uRingA);' +
+      ' }' +
+      // Radial burst lines behind the ring, on correct answers only. Same
+      // angular trick as the speed streaks above, so it costs almost nothing.
+      ' if (uSpokes > 0.001) {' +
+      '  float sa = atan(p.y, p.x) / 6.2831853 + 0.5;' +
+      '  float sw = abs(fract(sa * 24.0) - 0.5) * 2.0;' +
+      '  sw = pow(max(0.0, 1.0 - sw), 5.0);' +
+      '  c += uPulseCol * (sw * smoothstep(0.12, 0.95, r) * uSpokes);' +
+      ' }' +
       ' gl_FragColor = vec4(c, 1.0); }'
   });
   var fxOverlay = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), fxOverlayMat);
@@ -19338,6 +19688,33 @@ THREE.GLTFLoader = GLTFLoader;
     fxPulseCol.setRGB(r, g, b);
     fxPulseAmt = amount;
     fxPulseDecay = decay || 3.2;
+  }
+
+  // A verdict is not a tint, it is an impact: a hot wash that is gone in about
+  // a tenth of a second, a shockwave leaving the centre, and only then the
+  // coloured vignette settling behind them. Driving all three off one call
+  // keeps their timing locked together — they have to feel like one event.
+  var fxFlashAmt = 0, fxFlashDecay = 11;
+  var fxRingT = 1, fxRingAmt = 0, fxRingRate = 3.4;
+  var fxSpokeAmt = 0, fxSpokeDecay = 6;
+  // Wrong answers only: a brief lens-splitting jolt on the composite pass.
+  // Read by updateEnvironmentMood, which owns POST.aberration.
+  var fxAberrKick = 0;
+  function fxVerdict(r, g, b, power, correct) {
+    fxScreenPulse(r, g, b, correct ? 0.34 * power : 0.66, correct ? 4.2 : 2.6);
+    // The wash opens WHITE-hot and the colour arrives as it falls away, which
+    // is what separates a game hit from a coloured overlay. uPulseCol is shared,
+    // so the white comes from overshooting the amount rather than the hue.
+    // Clamped: power runs up to ~1.9 on a long streak, and an unclamped wash
+    // at that end whites out the gate labels the player is still reading.
+    fxFlashAmt = Math.max(fxFlashAmt, correct ? Math.min(0.98, 0.72 * power) : 1.15);
+    fxFlashDecay = correct ? 13 : 9;
+    fxRingT = 0;
+    fxRingAmt = correct ? 0.85 * power : 1.0;
+    fxRingRate = correct ? 3.2 : 2.4;
+    fxSpokeAmt = correct ? 0.42 * power : 0;
+    fxSpokeDecay = 7;
+    if (!correct) fxAberrKick = 0.012;
   }
 
   // ---- score popups -----------------------------------------------------
@@ -19616,15 +19993,19 @@ THREE.GLTFLoader = GLTFLoader;
       fxSpawn(fxAdd, rand(-1.6, 1.6), rand(0.8, 2.8), rand(-0.6, 0.6));
     }
     if (earned) fxPopup(lx, ly + 1.9, lz, '+' + earned, '#9dffc0', 1.05 * power);
-    fxScreenPulse(0.30, 1.0, 0.52, 0.24 * power, 5.0);
+    fxVerdict(0.34, 1.0, 0.56, power, true);
+    // A correct answer had no hit-stop at all, so the reward landed softer than
+    // the punishment. Two frames is under conscious notice but the hand feels
+    // the beat land — it is what makes a hit read as connecting.
+    fxHitStop = Math.max(fxHitStop, 0.035);
     fxFovPunch = Math.max(fxFovPunch, 4.0 * power);
-    fxCamKick(0, 0.06, -0.10, 0.006, 0.35, 7.0);
+    fxCamKick(0, 0.09, -0.14, 0.008, 0.42, 7.0);
   }
 
   function fxGateWrong(lx, ly, lz) {
-    fxHitStop = Math.max(fxHitStop, 0.09);
-    fxScreenPulse(1.0, 0.20, 0.16, 0.62, 2.6);
-    fxCamKick(rand(-1, 1) * 0.34, -0.20, -0.34, rand(-1, 1) * 0.035, 1.0, 3.4);
+    fxHitStop = Math.max(fxHitStop, 0.11);
+    fxVerdict(1.0, 0.22, 0.17, 1, false);
+    fxCamKick(rand(-1, 1) * 0.40, -0.24, -0.40, rand(-1, 1) * 0.042, 1.0, 3.4);
     fxReset();
     fxAnchor(lx, ly, lz);
     SP.tex = FX_TEX.GLOW; SP.grav = 0; SP.bounce = 0; SP.fin = 0; SP.fade = 1.4;
@@ -19769,6 +20150,14 @@ THREE.GLTFLoader = GLTFLoader;
   function updateEffects(dt, t) {
     fxChainClock += dt;
     fxPulseAmt = Math.max(0, fxPulseAmt - dt * fxPulseDecay * Math.max(0.35, fxPulseAmt + 0.2));
+    fxFlashAmt = Math.max(0, fxFlashAmt - dt * fxFlashDecay);
+    fxSpokeAmt = Math.max(0, fxSpokeAmt - dt * fxSpokeDecay);
+    fxAberrKick = Math.max(0, fxAberrKick - dt * 0.055);
+    if (fxRingT < 1) {
+      fxRingT = Math.min(1, fxRingT + dt * fxRingRate);
+      // Fades as it expands, and is gone by the time it clears the corners.
+      fxRingAmt *= Math.max(0, 1 - dt * 3.1);
+    }
     fxKickAmp = Math.max(0, fxKickAmp - dt * fxKickDecay);
     fxFovPunch = Math.max(0, fxFovPunch - dt * 13);
 
@@ -19786,11 +20175,18 @@ THREE.GLTFLoader = GLTFLoader;
     // pulses remain available through the same quad.
     if (adaptiveSlowMode) wantSpeed = 0;
     fxOverlaySpeed += (wantSpeed - fxOverlaySpeed) * damp(3.2, dt);
-    var showOverlay = fxOverlaySpeed > 0.012 || fxPulseAmt > 0.004;
+    var showOverlay = fxOverlaySpeed > 0.012 || fxPulseAmt > 0.004 ||
+                      fxFlashAmt > 0.004 || (fxRingT < 1 && fxRingAmt > 0.004);
     fxOverlay.visible = showOverlay;
     if (showOverlay) {
       fxOverlayMat.uniforms.uSpeed.value = fxOverlaySpeed;
       fxOverlayMat.uniforms.uPulse.value = fxPulseAmt;
+      fxOverlayMat.uniforms.uFlash.value = fxFlashAmt;
+      fxOverlayMat.uniforms.uSpokes.value = fxSpokeAmt;
+      // Eases out, so the wave leaves fast and slows as it goes — a constant
+      // rate reads as a mechanical wipe.
+      fxOverlayMat.uniforms.uRingR.value = (1 - (1 - fxRingT) * (1 - fxRingT)) * 1.7;
+      fxOverlayMat.uniforms.uRingA.value = fxRingT < 1 ? fxRingAmt : 0;
       fxOverlayMat.uniforms.uTime.value = t;
       // Keep the quad exactly frustum-filling as the FOV punches.
       var h = 2 * Math.tan(camera.fov * 0.5 * Math.PI / 180) * 0.62;
@@ -19819,9 +20215,33 @@ THREE.GLTFLoader = GLTFLoader;
     else if (a === 'slide') bufSlide = BUFFER;
   }
 
+  (function wireMusicButton() {
+    var btn = document.getElementById('musicbtn');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      // The button is the player's first gesture if they press it on the start
+      // card, so it has to be able to create the context itself.
+      unlockGameAudio();
+      setMusicEnabled(!musicEnabled);
+      if (musicEnabled) musicStart();
+      btn.blur();
+    });
+    setMusicEnabled(musicEnabled);
+  })();
+
   window.addEventListener('keydown', function (e) {
     var targetTag = e.target && e.target.tagName;
     if (!started && (targetTag === 'SELECT' || targetTag === 'OPTION' || targetTag === 'INPUT' || targetTag === 'BUTTON')) return;
+    // Before the CODES lookup and its begin() fallthrough, so M toggles music
+    // instead of starting the run.
+    if (e.code === 'KeyM') {
+      e.preventDefault();
+      unlockGameAudio();
+      setMusicEnabled(!musicEnabled);
+      if (musicEnabled) musicStart();
+      return;
+    }
     var a = CODES[e.code];
     if (a) e.preventDefault();
     if (!started) { begin(); return; }
@@ -20313,6 +20733,11 @@ THREE.GLTFLoader = GLTFLoader;
     if (gameOver) return;
     gameOver = true;
     document.body.classList.remove('running');
+    // Let the last bar ring out under the summary rather than cutting mid-beat.
+    if (musicBus && gameAudio) {
+      musicBus.gain.setTargetAtTime(0, gameAudio.currentTime, 0.5);
+    }
+    setTimeout(musicStop, 2200);
     var token = ++gameOverToken;
     el.finalWords.textContent = String(quizMastered);
     el.finalCorrect.textContent = String(quizCorrect);
@@ -20373,9 +20798,33 @@ THREE.GLTFLoader = GLTFLoader;
     el.noun.classList.toggle('long-word', n > 13 && n <= 20);
     el.noun.classList.toggle('very-long-word', n > 20);
 
-    var gz = player.z + gateDistance();
-    activeGate = spawnGate(gz);
-    scheduleCorridor(gz);
+    // The gate for this question is NOT spawned here any more — see
+    // ensureGatesAhead. Placing it at question start put a 14 m truss into
+    // existence 58-100 m in front of the player, in air the haze does not
+    // reach until 133 m, which is the single most visible thing that still
+    // popped after the scenery pass. Gates carry no word-specific state (the
+    // three portals are a fixed der/die/das and the noun lives in the HUD), so
+    // nothing stops them being placed long before the question they answer.
+  }
+
+  // Gates are laid down a full haze-depth ahead and simply become current as
+  // the player reaches them. Spacing is still gateDistance(), so the interval
+  // between questions is unchanged — only the moment of CREATION moves, from
+  // "in clear view" to "behind the fog wall". scheduleCorridor rides along, so
+  // the hazards leading to a gate arrive out of the same haze.
+  var nextGateZ = 0;
+  function ensureGatesAhead() {
+    if (!started || gameOver) return;
+    // Beyond FOG_FAR_MAX (see the depth-budget block by scene.fog) plus a
+    // margin, so a gate is already fully fog-coloured on the frame it appears.
+    var horizon = player.z + FOG_FAR_MAX + 45;
+    // Bounded so a pathological speed spike cannot place a whole run's worth
+    // of gates (and their corridors) in one frame.
+    for (var guard = 0; guard < 4 && nextGateZ < horizon; guard++) {
+      nextGateZ = Math.max(nextGateZ + gateDistance(), player.z + 40);
+      spawnGate(nextGateZ);
+      scheduleCorridor(nextGateZ);
+    }
   }
 
   // Fill the run-up to the gate with hazards and pretzels, leaving a clean
@@ -20570,6 +21019,9 @@ THREE.GLTFLoader = GLTFLoader;
     currentWord = null; activeGate = null;
 
     for (var i = 0; i < gates.length; i++) { gates[i].userData.active = false; gates[i].visible = false; }
+    // Lay the first gates down from the runner's start line, so the opening
+    // question's gate is already in place rather than appearing mid-approach.
+    nextGateZ = player.z;
     for (var o = 0; o < obstacles.length; o++) { obstacles[o].active = false; obstacles[o].holder.visible = false; }
     for (var p = 0; p < pretzels.length; p++) { pretzels[p].active = false; pretzels[p].sprite.visible = false; }
     if (pretzelSolidInst) { pretzelSolidInst.count = 0; pretzelSolidInst.instanceMatrix.needsUpdate = true; }
@@ -20587,8 +21039,19 @@ THREE.GLTFLoader = GLTFLoader;
     camera.lookAt(camLook);
     resetMovingTraffic(player.z);
 
+    // endRun faded the bus out and stopped the loop; a restart brings both back.
+    if (musicBus && gameAudio) {
+      musicBus.gain.setTargetAtTime(musicEnabled ? MUSIC_LEVEL : 0,
+                                    gameAudio.currentTime, 0.15);
+    }
+    musicStart();
+
     updateQuizHUD();
     startQuestion();
+    // Lay the opening gates and their corridor before the first frame renders,
+    // so the run does not begin with a gate blinking into an empty street.
+    // `started` is already true by the time reset() runs from the start card.
+    ensureGatesAhead();
   }
 
   function showHeroLoadError() {
@@ -20787,6 +21250,10 @@ THREE.GLTFLoader = GLTFLoader;
       return;
     }
     unlockGameAudio();
+    // Sync the bus and the button to the stored preference now that the graph
+    // exists, then run the loop for as long as the player is running.
+    setMusicEnabled(musicEnabled);
+    musicStart();
     if (started) return;
     if (!preloadReady || articleDeckLoading) {
       if (!heroLoadFailed) {
@@ -20924,6 +21391,9 @@ THREE.GLTFLoader = GLTFLoader;
 
     collide();
     resolveGates();
+    // After resolveGates, so a gate freed by being crossed this step is
+    // available to the pool before the next one is laid down.
+    ensureGatesAhead();
     collectPretzels();
     recycle();
     updateChunks(player.z);
@@ -20968,6 +21438,10 @@ THREE.GLTFLoader = GLTFLoader;
       if (!ud.active) continue;
       if (!ud.resolved && player.z >= ud.z) {
         ud.resolved = true;
+        // Several gates are alive at once now (see ensureGatesAhead), so the
+        // one being crossed is the one the verdict must light — it can no
+        // longer be whichever gate startQuestion happened to spawn last.
+        activeGate = g;
         var idx = laneOf(player.x);
         var portal = ud.portals[idx];
         answerArticle(portal.userData.article, portal);
@@ -20978,6 +21452,9 @@ THREE.GLTFLoader = GLTFLoader;
       // from lingering as a near-camera arch vignette and removes their draws;
       // answer timing, feedback, pooling and cleanup state stay unchanged.
       if (ud.resolved && ud.z < player.z - 0.75) g.visible = false;
+      // Same split as the obstacles below (see PLAY_RENDER_FAR): a gate three
+      // haze-depths away is a logical placement, not something to draw.
+      else g.visible = ud.z - player.z < PLAY_RENDER_FAR;
       if (ud.z < player.z - 30) { ud.active = false; g.visible = false; }
     }
   }
@@ -21002,14 +21479,25 @@ THREE.GLTFLoader = GLTFLoader;
     }
   }
 
+  // Gameplay objects now EXIST far further ahead than they are worth drawing
+  // (see ensureGatesAhead). Those two distances are not the same thing: they
+  // are laid down beyond the haze so that nothing is ever seen appearing, but
+  // between there and the fog's far plane they are, by construction, solid fog
+  // colour — so submitting them is paying for pixels that cannot differ from
+  // the air in front of them. Rendering them only inside PLAY_RENDER_FAR keeps
+  // the draw count where it was before they were pre-placed while the arrival
+  // stays invisible, because the moment they switch on is still fully hazed.
+  var PLAY_RENDER_FAR = FOG_FAR_MAX + 6;
   function recycle() {
     for (var i = 0; i < obstacles.length; i++) {
       var o = obstacles[i];
       if (o.active && o.z < player.z - 26) { o.active = false; o.holder.visible = false; }
+      else if (o.active) o.holder.visible = o.z - player.z < PLAY_RENDER_FAR;
     }
     for (var p = 0; p < pretzels.length; p++) {
       var pr = pretzels[p];
       if (pr.active && pr.z < player.z - 12) { pr.active = false; pr.sprite.visible = false; }
+      else if (pr.active) pr.sprite.visible = pr.z - player.z < PLAY_RENDER_FAR;
     }
   }
 
@@ -21908,7 +22396,8 @@ THREE.GLTFLoader = GLTFLoader;
     POST.sat = lerp(moodA.grdSat, moodB.grdSat, moodMix) + answerKick * 0.06;
     POST.vib = lerp(moodA.grdVib, moodB.grdVib, moodMix);
     POST.vignette = lerp(moodA.grdVignette, moodB.grdVignette, moodMix);
-    POST.aberration = lerp(moodA.grdAberration, moodB.grdAberration, moodMix) + od * 0.002;
+    POST.aberration = lerp(moodA.grdAberration, moodB.grdAberration, moodMix) +
+                      od * 0.002 + fxAberrKick;
     POST.lift.copy(moodA.grdLift).lerp(moodB.grdLift, moodMix);
     POST.gain.copy(moodA.grdGain).lerp(moodB.grdGain, moodMix);
     POST.gamma.copy(moodA.grdGamma).lerp(moodB.grdGamma, moodMix);
