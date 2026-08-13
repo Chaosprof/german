@@ -4164,6 +4164,10 @@ THREE.GLTFLoader = GLTFLoader;
   var ASSETS = window.ARTIKEL_EXPRESS_ASSETS || {
     sky: '', road: '', sidewalk: '', cobble: '', pretzel: '',
     streetArt: 'assets/img/berlin-street-art-atlas-v1-1024.png',
+    // Painted skyline band composited into the horizon of the sky dome — see
+    // the uSkyline uniforms on skyMat. Buildings only, on transparency, and it
+    // must tile horizontally: it wraps the full 360 degrees SKYLINE_TILES times.
+    skylineStrip: 'assets/img/berlin-skyline-strip.png',
     facades: [], shopfronts: [],
     character: 'assets/models/berlin-runner-hero-v1.glb?rev=4', props: {},
     // True when the sky panorama already contains the city silhouette; the
@@ -8375,7 +8379,41 @@ THREE.GLTFLoader = GLTFLoader;
       // The live FOG_COLOR, and how far up the dome it reaches. See the
       // fragment shader below for why the dome has to know about the fog.
       uHaze: { value: new THREE.Vector3(1, 1, 1) },
-      uHazeSpan: { value: 0.14 }
+      uHazeSpan: { value: 0.14 },
+      // Painted skyline band. uv.y on this dome is elevation, 0 at the horizon
+      // and 1 at the zenith over 90 degrees, so uSkylineTop is the band's
+      // height as a fraction of that: 0.167 == 15 degrees of sky.
+      //
+      // The strip is 8:1 and wraps 360 degrees uSkylineTiles times, which is
+      // what keeps it undistorted: (360 / tiles) / aspect == band degrees, so
+      // 3 tiles of an 8:1 strip is exactly 15 degrees. Three tiles also means
+      // the ~95 degree field of view never contains a full repeat.
+      uSkyline: { value: null },
+      uSkylineOn: { value: 0 },
+      uSkylineTop: { value: 0.167 },
+      uSkylineTiles: { value: 3.0 },
+      // Applied in the shader, NOT via texture.offset: a raw ShaderMaterial
+      // gets no uvTransform from three, which is the same reason projectSky's
+      // V remap is redone in the vertex shader above.
+      //
+      // Parks the strip's Fernsehturm at the street's vanishing point.
+      // SphereGeometry puts +Z (the way the runner faces) at u = 0.25 and the
+      // strip's tower sits at u = 0.537 of the image, so this is
+      // frac(0.537 - 0.25 * tiles). It also brings the Dom and the Oberbaum
+      // bridge into frame either side, instead of leaving the landmarks
+      // permanently behind the player.
+      uSkylineOffset: { value: 0.7871 },
+      // Per-mood grade, and how much of the horizon haze eats the band. It sits
+      // far beyond the fog's far plane, so it SHOULD be mostly haze near its
+      // base — that is what melts it into the fogged street instead of leaving
+      // a cut-out floating above it.
+      uSkylineTint: { value: new THREE.Vector3(1, 1, 1) },
+      // Deliberately well under 1: the band's own painted foreground sits at
+      // its BASE, which is exactly where the horizon haze is strongest, so a
+      // physically-honest amount erased the richest part of the strip and left
+      // only its palest distant blocks showing. Enough to tie the base into the
+      // fog, not enough to bleach the city out of it.
+      uSkylineHaze: { value: 0.30 }
     },
     vertexShader: [
       'varying vec2 vSkyUv;',
@@ -8393,10 +8431,30 @@ THREE.GLTFLoader = GLTFLoader;
       'uniform vec3 uTint;',
       'uniform vec3 uHaze;',
       'uniform float uHazeSpan;',
+      'uniform sampler2D uSkyline;',
+      'uniform float uSkylineOn, uSkylineTop, uSkylineTiles, uSkylineHaze, uSkylineOffset;',
+      'uniform vec3 uSkylineTint;',
       'void main(){',
       '  vec2 uv = vec2(vSkyUv.x, clamp(vSkyUv.y, 0.0, 1.0));',
       '  vec3 c = mix(texture2D(mapA, uv).rgb, texture2D(mapB, uv).rgb, uMix);',
       '  vec3 sky = c * uTint;',
+      // Skyline sits in front of the painted sky but behind the haze, so the
+      // same horizon fade that ties the street to the sky ties the skyline to
+      // both. Sampling only inside the band keeps it off the rest of the dome.
+      '  float hazeF = 1.0 - smoothstep(0.0, uHazeSpan, uv.y);',
+      '  if (uSkylineOn > 0.5 && uv.y < uSkylineTop) {',
+      '    vec2 suv = vec2(uv.x * uSkylineTiles + uSkylineOffset, uv.y / uSkylineTop);',
+      '    vec4 sk = texture2D(uSkyline, suv);',
+      // Fade the band out over its last 12% so the tallest towers dissolve
+      // into sky instead of ending on a horizontal cut.
+      '    float topFade = smoothstep(1.0, 0.88, suv.y);',
+      '    float a = sk.a * topFade;',
+      '    vec3 skl = sk.rgb * uSkylineTint;',
+      // Haze it before compositing, at uSkylineHaze strength, so its base is
+      // already fog by the time it meets the street's own fog wall.
+      '    skl = mix(skl, uHaze, hazeF * uSkylineHaze);',
+      '    sky = mix(sky, skl, a);',
+      '  }',
       // uv.y is elevation: 0 at the horizon, 1 at the zenith. Everything the
       // scene fog swallows resolves to exactly fogColor, so a rooftop crossing
       // the chunk cull arrives as a fog-coloured silhouette — invisible against
@@ -8410,8 +8468,7 @@ THREE.GLTFLoader = GLTFLoader;
       // simply what a hazy horizon looks like — the painted domes already carry
       // a haze band down there (see makeSkyTexture), this just pins its colour
       // to whatever the fog actually is this frame instead of a fixed tint.
-      '  float hz = 1.0 - smoothstep(0.0, uHazeSpan, uv.y);',
-      '  gl_FragColor = vec4(mix(sky, uHaze, hz), 1.0);',
+      '  gl_FragColor = vec4(mix(sky, uHaze, hazeF), 1.0);',
       '}'
     ].join('\n'),
     side: THREE.BackSide,
@@ -8422,6 +8479,30 @@ THREE.GLTFLoader = GLTFLoader;
   var skyDome = new THREE.Mesh(new THREE.SphereGeometry(2000, 48, 32), skyMat);
   skyDome.renderOrder = -1000;
   scene.add(skyDome);
+
+  // Painted skyline band. Loads asynchronously and only switches itself on once
+  // decoded, so a missing or broken file leaves the procedural ring layers
+  // exactly as they were rather than emptying the horizon.
+  var skylineStripActive = false;
+  if (ASSETS.skylineStrip) {
+    texLoader.load(ASSETS.skylineStrip, function (t) {
+      t.colorSpace = THREE.SRGBColorSpace;
+      // Repeat across, clamp vertically: the band is sampled once top to bottom.
+      t.wrapS = THREE.RepeatWrapping;
+      t.wrapT = THREE.ClampToEdgeWrapping;
+      // The band is minified hard — a 4096-wide strip compressed into ~15
+      // degrees of screen. Without mipmaps and anisotropy its window rows
+      // alias into a shimmering moire the moment the camera moves, which is
+      // the same class of artefact as geometry pop.
+      t.generateMipmaps = true;
+      t.minFilter = THREE.LinearMipmapLinearFilter;
+      t.magFilter = THREE.LinearFilter;
+      t.anisotropy = Math.min(8, MAX_ANISO);
+      skyMat.uniforms.uSkyline.value = t;
+      skyMat.uniforms.uSkylineOn.value = 1;
+      skylineStripActive = true;
+    }, undefined, function () { /* keep the procedural rings */ });
+  }
   // NOTE: ASSETS.sky (the baked photographic panorama) is deliberately not
   // loaded any more. It is a dull orange golden-hour plate and it was the main
   // reason the frame read as sepia; the painted domes above replace it outright.
@@ -22463,9 +22544,25 @@ THREE.GLTFLoader = GLTFLoader;
     // palettes hoping to agree, without touching scene.fog itself or the
     // rings' own value-stepped layering.
     for (var msi = 0; msi < skylineLayers.length; msi++) {
+      // The painted band replaces these outright — drawing both would stack two
+      // skylines on the same horizon. Kept in the scene, just not submitted, so
+      // a failed texture load still has them to fall back on.
+      skylineLayers[msi].visible = !skylineStripActive;
+      if (skylineStripActive) continue;
       _skylineHazeTmp.copy(moodA.skyline[msi]).lerp(moodB.skyline[msi], moodMix);
       _skylineHazeTmp.lerp(FOG_COLOR, SKYLINE_HAZE_LEAN[msi]);
       skylineLayers[msi].material.color.copy(_skylineHazeTmp);
+    }
+    // Grade the painted band per mood: the strip is drawn in daylight colour,
+    // so sunset warms and darkens it and neon dusk takes it down to a near
+    // silhouette, the same value order the ring palette used.
+    if (skylineStripActive) {
+      _skylineHazeTmp.copy(moodA.skyline[0]).lerp(moodB.skyline[0], moodMix);
+      // Ratio against the day ring colour, so mood 0 lands at ~neutral.
+      skyMat.uniforms.uSkylineTint.value.set(
+        clamp(_skylineHazeTmp.r / 0.0684, 0.35, 1.25),
+        clamp(_skylineHazeTmp.g / 0.1845, 0.35, 1.25),
+        clamp(_skylineHazeTmp.b / 0.3250, 0.35, 1.25));
     }
 
     // Fixed CSS layers avoid rebuilding gradient strings in the frame loop.
@@ -22521,7 +22618,12 @@ THREE.GLTFLoader = GLTFLoader;
     // and the procedural skyline rings already ignore it unconditionally, so
     // the tower does too: always on, the one Berlin-specific silhouette the
     // painted gradient sky and generic ring boxes don't provide on their own.
-    fernsehturm.visible = true;
+    // ...unless the painted skyline band is up, which carries its own tower
+    // aligned to this exact vanishing point (see the offset in the strip's
+    // loader). Drawing both put two Fernsehtürme of different sizes on one
+    // horizon. This is what ASSETS.skyHasSkyline always meant, just driven by
+    // whether the strip actually loaded rather than by a hand-set flag.
+    fernsehturm.visible = !skylineStripActive;
 
     // Pinned close to the road's centreline (LANES straddles it and the route
     // is straight, so the centreline never moves) so it still closes the
