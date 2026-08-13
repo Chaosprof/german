@@ -16696,7 +16696,12 @@ THREE.GLTFLoader = GLTFLoader;
     car.userData.trafficLogicalZ = anchorZ + 72 + sideSlot * 104;
     applyRouteFrame(car, car.userData.trafficBaseX, 0, car.userData.trafficLogicalZ,
                     car.userData.trafficHeading, 0, 0);
-    if (car.userData.bodyMat) car.userData.bodyMat.color.setHex(pick(CAR_COLORS));
+    // Body colour is now per-INSTANCE, not per-material: the fleet shares one
+    // white body material and syncTrafficInstances writes this through
+    // setColorAt. Recolouring the holder's own material would do nothing (it
+    // is never drawn) and, if the material were shared, would repaint every
+    // car at once.
+    car.userData.instColor = pick(CAR_COLORS);
   }
 
   function resetMovingTraffic(anchorZ) {
@@ -16717,15 +16722,80 @@ THREE.GLTFLoader = GLTFLoader;
       applyRouteFrame(car, car.userData.trafficBaseX, 0, car.userData.trafficLogicalZ,
                       car.userData.trafficHeading, 0, 0);
     }
+    syncTrafficInstances();
   }
 
-  for (var ti = 0; ti < 6; ti++) {
+  // INSTANCED TRAFFIC. Six cars that differ only by transform and body colour
+  // is the textbook instancing case, and as plain Groups it was the single
+  // most expensive thing per object in the frame: measured at ~10 draw calls
+  // EACH (compactStaticPropGroup has already merged each car down to one mesh
+  // per material, so ten is the material count, not a mesh count). Sixty draws
+  // for six background cars.
+  //
+  // As instanced meshes the whole fleet costs one draw per material bucket no
+  // matter how many cars there are. The six Groups stay in the graph as
+  // invisible transform holders, so resetTrafficCar / updateMovingTraffic /
+  // applyRouteFrame keep working on real Object3Ds exactly as before — only
+  // the rendering moves.
+  var TRAFFIC_N = 6;
+  // The template's body material is WHITE on purpose: three multiplies diffuse
+  // by instanceColor, so a white base makes the per-instance colour the true
+  // body hue. Everything else the car uses (chrome, glass, tyre...) is already
+  // a shared singleton material, so those buckets need no colour at all.
+  var trafficTemplate = makeCar(0xffffff);
+  var trafficBodyMat = trafficTemplate.userData.bodyMat;
+  var trafficInst = [];
+  trafficTemplate.traverse(function (m) {
+    if (!m.isMesh || !m.geometry) return;
+    var inst = new THREE.InstancedMesh(m.geometry, m.material, TRAFFIC_N);
+    inst.castShadow = m.castShadow;
+    inst.receiveShadow = m.receiveShadow;
+    inst.frustumCulled = false;          // spans the whole traffic band
+    inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    // compactStaticPropGroup only merges buckets with 2+ meshes; a lone mesh
+    // keeps its own local transform, which has to be folded into every
+    // instance matrix rather than assumed to be identity.
+    m.updateMatrix();
+    inst.userData.local = m.matrix.clone();
+    if (m.material === trafficBodyMat) {
+      inst.setColorAt(0, poolScratchColor.setHex(0xffffff));
+      inst.userData.tinted = true;
+    }
+    trafficRoot.add(inst);
+    trafficInst.push(inst);
+  });
+
+  var trafficScratchMat = new THREE.Matrix4();
+  function syncTrafficInstances() {
+    for (var i = 0; i < movingTraffic.length; i++) {
+      var car = movingTraffic[i];
+      car.updateMatrix();
+      for (var b = 0; b < trafficInst.length; b++) {
+        var inst = trafficInst[b];
+        trafficScratchMat.multiplyMatrices(car.matrix, inst.userData.local);
+        inst.setMatrixAt(i, trafficScratchMat);
+        if (inst.userData.tinted) {
+          inst.setColorAt(i, poolScratchColor.setHex(car.userData.instColor || 0xffffff));
+        }
+      }
+    }
+    for (var k = 0; k < trafficInst.length; k++) {
+      trafficInst[k].count = movingTraffic.length;
+      trafficInst[k].instanceMatrix.needsUpdate = true;
+      if (trafficInst[k].instanceColor) trafficInst[k].instanceColor.needsUpdate = true;
+    }
+  }
+
+  for (var ti = 0; ti < TRAFFIC_N; ti++) {
     var trafficCar = makeCar(CAR_COLORS[ti % CAR_COLORS.length]);
     trafficCar.scale.setScalar(0.94 + (ti % 3) * 0.035);
+    // Transform holder only — the instanced meshes above do the drawing.
+    trafficCar.visible = false;
     trafficRoot.add(trafficCar);
     movingTraffic.push(trafficCar);
     resetTrafficCar(trafficCar, 0, ti);
   }
+  syncTrafficInstances();
 
   // ============================================================== gates =====
   // An article gate is a three-portal BVG-style sign truss spanning the street.
