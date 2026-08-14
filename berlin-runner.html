@@ -11,6 +11,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
+<!-- Start the four critical Runner transfers while the browser is still
+     parsing the embedded engine. They are consumed later by the deck script,
+     GLTFLoader and texture loader, but no longer sit behind 1.8 MB of HTML. -->
+<link rel="preload" href="assets/models/berlin-runner-hero-v1.glb?rev=4" as="fetch" crossorigin="anonymous">
+<link rel="preload" href="assets/img/berlin-street-art-atlas-v1-1024.png" as="image">
+<link rel="preload" href="assets/img/berlin-skyline-strip.png" as="image">
 <title>Artikel Express — Berlin Runner</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -24,6 +30,11 @@
        filter:saturate(1.09) contrast(1.035); }
 
   #hud { position:fixed; inset:0; pointer-events:none; z-index:2; }
+  /* Launch and result cards own their screens. Live telemetry is initialized
+     behind them for an instant handoff, but must not read as stacked debug UI. */
+  body:not(.running) #quiz, body:not(.running) #wordstats,
+  body:not(.running) #pretzelhud, body:not(.running) #mistakehistory,
+  body:not(.running) #powerups { opacity:0; visibility:hidden; }
 
   /* Corner falloff only. The heavy cinematic vignette that used to live here
      fought the in-engine grade and dragged the whole frame toward mud — a
@@ -197,7 +208,7 @@
   #musicbtn { position:absolute; right:16px; bottom:18px; width:40px; height:40px;
               border-radius:50%; border:2px solid rgba(255,255,255,.30);
               background:rgba(14,20,34,.62); color:#fff; font-size:19px; line-height:1;
-              cursor:pointer; z-index:6; padding:0; backdrop-filter:blur(3px);
+              cursor:pointer; z-index:6; padding:0; backdrop-filter:blur(3px); pointer-events:auto;
               transition:opacity .18s, border-color .18s, color .18s, transform .12s; }
   #musicbtn:hover { transform:scale(1.08); border-color:rgba(255,255,255,.55); }
   #musicbtn.off { color:rgba(255,255,255,.34); border-color:rgba(255,255,255,.14); }
@@ -415,6 +426,32 @@
      eat screen real estate, so drop them for the whole run. */
   body.running #touchhint { display:none !important; }
 
+  /* Power-up rail: dormant slots occupy no visual space; an active pickup
+     arrives as a compact arcade chip with a deterministic duration/charge
+     read. DOM rendering keeps the text and meter crisp even when WebGL drops
+     resolution under thermal pressure. */
+  #powerups { position:absolute; right:16px; top:88px; display:flex;
+              flex-direction:column; align-items:flex-end; gap:7px; }
+  .powerchip { --fill:0%; display:flex; align-items:center; gap:8px; width:132px;
+               padding:7px 9px 7px 7px; border-radius:13px;
+               border:2px solid rgba(195,224,255,.58);
+               background:linear-gradient(155deg,rgba(22,42,82,.96),rgba(9,20,46,.94));
+               box-shadow:0 4px 0 rgba(5,12,30,.5),0 9px 22px rgba(4,10,25,.30);
+               opacity:0; visibility:hidden; transform:translateX(18px) scale(.94);
+               transition:opacity .18s,transform .22s,visibility .18s; }
+  .powerchip.active { opacity:1; visibility:visible; transform:none; }
+  .powericon { width:28px; height:28px; flex:0 0 auto; display:grid; place-items:center;
+               border-radius:9px; color:#0c1c3e; background:linear-gradient(#fff4a8,#ffc62f);
+               box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 2px 0 #9c5d00;
+               font:950 14px/1 "Segoe UI",Arial,sans-serif; }
+  .powermeta { min-width:0; flex:1; }
+  .powername { display:block; font-size:8px; font-weight:900; letter-spacing:.14em;
+               text-transform:uppercase; color:#edf5ff; white-space:nowrap; }
+  .powerbar { display:block; height:4px; margin-top:5px; overflow:hidden;
+              border-radius:4px; background:rgba(255,255,255,.14); }
+  .powerbar::after { content:""; display:block; width:var(--fill); height:100%; border-radius:inherit;
+                     background:linear-gradient(90deg,#35d9ff,#ffe253); transition:width .08s linear; }
+
   /* Embed (iframe inside Artikel Blitz): hide the in-page deck picker. The
      exit back to the host app lives on the game-over card (see #exitgame), so
      no floating chip ever covers the brezel counter or other HUD elements. */
@@ -425,9 +462,15 @@
     body.running #quiz { width:min(420px,calc(100vw - 250px)); }
   }
   @media (max-width:820px) {
-    #wordstats { top:auto; bottom:12px; left:10px; transform:scale(.76); transform-origin:bottom left; }
+    #wordstats { top:auto; bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px));
+                 left:max(10px,calc(var(--ios-safe-left, 0px) + 8px));
+                 transform:scale(.76); transform-origin:bottom left; }
     #mistakehistory { display:none; }
-    #pretzelhud { top:auto; bottom:12px; right:10px; transform:scale(.82); transform-origin:bottom right; }
+    #pretzelhud { top:auto; bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px));
+                  right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
+                  transform:scale(.82); transform-origin:bottom right; }
+    #musicbtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
+                bottom:max(68px,calc(var(--ios-safe-bottom, 0px) + 64px)); }
 
     /* Mobile perf: drop the full-screen compositing layers that cost extra GPU
        passes over a live WebGL canvas on iPhone. The in-engine grade already
@@ -443,37 +486,72 @@
     #noun.long-word #nounword { font-size:clamp(27px,6vw,36px); }
     #noun.very-long-word #nounword { font-size:clamp(23px,5vw,31px); }
     #touchhint { display:flex; }
-    #startcard { padding:26px 22px 22px; }
-    .keys { font-size:11.5px; gap:8px 12px; }
-    body.running #quiz { top:calc(max(64px, var(--ios-safe-top, env(safe-area-inset-top, 0px))) + 6px); left:8px; right:8px; width:auto;
+    /* Portrait iPhones used to let the intrinsic width of the two-column key
+       legend widen the start card beyond the viewport, clipping both the
+       instructions and deck picker. Give every grid track an explicit shrink
+       path and keep the whole launch surface inside the safe viewport. */
+    #start { align-items:flex-start; overflow-y:auto; overflow-x:hidden;
+             padding:calc(max(132px, env(safe-area-inset-top, 0px) + 112px)) 10px
+                     calc(env(safe-area-inset-bottom, 0px) + 94px); }
+    #startcard { width:100%; max-width:600px; min-width:0; padding:26px 18px 22px; }
+    .keys { width:100%; min-width:0; grid-template-columns:minmax(76px,auto) minmax(0,1fr);
+            font-size:11.5px; gap:8px 12px; }
+    .keys > * { min-width:0; }
+    #deckpicker, #deckselect { min-width:0; max-width:100%; }
+    body.running #quiz { top:calc(max(56px, var(--ios-safe-top, env(safe-area-inset-top, 0px))) + 5px); left:8px; right:8px; width:auto;
                          min-width:0; margin:0; display:flex; align-items:center; justify-content:center;
-                         padding:9px 12px 12px; }
-    body.running #noun { width:100%; padding:0; display:flex;
-                         flex-direction:column; align-items:center; justify-content:center; gap:1px;
+                         padding:4px 10px 5px; }
+    body.running #noun { width:100%; min-height:0; padding:0; display:flex;
+                         flex-direction:column; align-items:center; justify-content:center; gap:0;
                          text-align:center; }
-    body.running #nounword { font-size:clamp(30px,8.4vw,46px); line-height:1.14;
-                             white-space:normal; overflow-wrap:anywhere; text-align:center;
-                             padding-bottom:2px; }
-    body.running #nountrans { font-size:clamp(12px,3.4vw,16px); line-height:1.25; text-align:center;
-                              white-space:normal; overflow-wrap:anywhere; max-width:100%; }
-    body.running #noun.long-word #nounword { font-size:clamp(26px,7.2vw,40px); }
-    body.running #noun.very-long-word #nounword { font-size:clamp(22px,6vw,34px); letter-spacing:-.01em; }
-    body.running #wordstats { top:auto; bottom:12px; left:8px; transform:none;
+    body.running #nounword { font-size:clamp(25px,7vw,35px); line-height:1.05;
+                             white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                             overflow-wrap:normal; text-align:center; padding-bottom:0; }
+    body.running #nountrans { font-size:clamp(10px,2.8vw,13px); line-height:1.12; text-align:center;
+                              white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+    body.running #noun.long-word #nounword { font-size:clamp(22px,6.2vw,31px); }
+    body.running #noun.very-long-word #nounword { font-size:clamp(18px,5.1vw,27px); letter-spacing:-.01em; }
+    body.running #wordstats { top:auto; bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px));
+                              left:max(8px,calc(var(--ios-safe-left, 0px) + 6px)); transform:none;
                               grid-template-columns:repeat(3,39px); padding:5px 5px 4px; }
     body.running .wordstat-num { font-size:14px; }
     body.running .wordstat-label { font-size:5.5px; }
-    body.running #pretzelhud { top:auto; bottom:12px; right:8px; transform:none; }
-    body.running #mistakehistory { display:block; top:auto; bottom:62px; left:50%; transform:translateX(-50%);
-                                   width:auto; max-width:min(300px,calc(100vw - 16px));
+    body.running #pretzelhud { top:auto; bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px));
+                               right:max(8px,calc(var(--ios-safe-right, 0px) + 6px)); transform:none; }
+    body.running #mistakehistory { display:block;
+                                   top:calc(max(56px,var(--ios-safe-top,env(safe-area-inset-top,0px))) + 67px);
+                                   bottom:auto; left:max(8px,calc(var(--ios-safe-left,0px) + 6px)); transform:none;
+                                   width:auto; max-width:min(176px,calc(100vw - 16px));
                                    max-height:30px; overflow:hidden; padding:6px 14px;
                                    opacity:.85; border-radius:999px;
                                    background:rgba(10,15,29,.5);
                                    transition:max-height .25s, width .25s, border-radius .22s, background .22s; }
-    body.running #mistakehistory.peek { width:min(300px,calc(100vw - 16px)); max-height:170px;
-                                        opacity:.96; border-radius:12px;
-                                        background:linear-gradient(160deg,rgba(20,24,40,.9),rgba(12,14,26,.84)); }
-    body.running #mistakehistory.peek #mistakelist { opacity:1; visibility:visible; max-height:130px; margin-top:6px; }
+    body.running #mistakehistory.peek { width:min(176px,calc(100vw - 16px)); max-height:63px;
+                                         opacity:.96; border-radius:12px;
+                                         background:linear-gradient(160deg,rgba(20,24,40,.9),rgba(12,14,26,.84)); }
+    body.running #mistakehistory.peek #mistakelist { opacity:1; visibility:visible; max-height:24px; margin-top:5px; }
+    body.running #mistakelist li { display:none; }
+    body.running #mistakelist li:first-child { display:flex; }
     body.running #touchhint { display:none; }
+    #powerups { top:calc(max(56px,var(--ios-safe-top,env(safe-area-inset-top,0px))) + 62px);
+                right:auto; left:50%; transform:translateX(-50%); flex-direction:row;
+                align-items:center; gap:5px; }
+    .powerchip { position:relative; width:34px; padding:4px; gap:0; border-width:1px;
+                 border-radius:10px; overflow:hidden; }
+    .powericon { width:24px; height:24px; font-size:12px; }
+    .powermeta { position:absolute; left:4px; right:4px; bottom:2px; }
+    .powername { display:none; }
+    .powerbar { height:3px; margin:0; background:rgba(5,14,36,.42); }
+  }
+  /* Modern iPhones are wider than 820 CSS px in landscape, but remain coarse
+     pointer, thermally constrained devices. Keep the same zero-cost CSS grade
+     path without forcing the portrait HUD layout onto a short landscape view. */
+  @media (any-pointer:coarse) and (max-height:500px) {
+    #c { filter:none; }
+    #vig, #grain, #colorgrade, #colorgrade-night, #colorgrade-dawn,
+    #halation, #halation-night, #halation-dawn, #speedveil { display:none; }
+    #musicbtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
+                bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px)); }
   }
 </style>
 </head>
@@ -530,6 +608,12 @@
     <span>◀ Wischen ▶ · Spur</span><span>▲ Sprung</span><span>▼ Rutschen</span>
   </div>
 
+  <div id="powerups" aria-label="Aktive Power-ups" aria-live="polite">
+    <div id="power-magnet" class="powerchip"><span class="powericon">M</span><span class="powermeta"><span class="powername">Kiez-Magnet</span><span class="powerbar"></span></span></div>
+    <div id="power-shield" class="powerchip"><span class="powericon">B</span><span class="powermeta"><span class="powername">Bärenschild</span><span class="powerbar"></span></span></div>
+    <div id="power-spring" class="powerchip"><span class="powericon">2</span><span class="powermeta"><span class="powername">Doppelsprung</span><span class="powerbar"></span></span></div>
+  </div>
+
   <div id="start" class="loading" aria-busy="true">
     <div id="startcard" class="panel">
       <h1>ARTIKEL EXPRESS</h1>
@@ -546,6 +630,7 @@
       <div id="deckpicker">
         <label for="deckselect">Wortdeck aus Artikel Blitz</label>
         <select id="deckselect" aria-describedby="deckstatus">
+          <option value="catalog">Weitere Decks laden ...</option>
           <option value="embedded">Offline-Häufigkeitsdeck</option>
         </select>
         <div id="deckstatus" role="status">Offline-Deck · sofort spielbereit</div>
@@ -4063,10 +4148,10 @@ THREE.GLTFLoader = GLTFLoader;
 
 <script>/* generated art, inlined so file:// loads it */
 </script>
-<script src="data/berlin-runner-decks.js"></script>
 <script>
 (function () {
   'use strict';
+  var startupBootAt = performance.now();
 
   // ---------------------------------------------------------------- boot ----
   var errBox = document.getElementById('err');
@@ -4082,7 +4167,7 @@ THREE.GLTFLoader = GLTFLoader;
   // from the embedded page's own viewport, so derive the real insets with a
   // probe element and expose them as CSS custom properties. Everything that
   // must clear the Dynamic Island / notch uses these variables.
-  (function measureSafeArea() {
+  function measureSafeArea() {
     try {
       var probe = document.createElement('div');
       probe.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;' +
@@ -4097,7 +4182,8 @@ THREE.GLTFLoader = GLTFLoader;
       root.style.setProperty('--ios-safe-left', Math.max(0, Math.round(r.left)) + 'px');
       probe.remove();
     } catch (e) {}
-  })();
+  }
+  measureSafeArea();
 
   // Offline practice deck: high-frequency A1–B1 nouns with an unambiguous
   // der/die/das article. A host page can override it by setting
@@ -4112,8 +4198,14 @@ THREE.GLTFLoader = GLTFLoader;
   var articleDeckLoading = false;
   var articleDeckLoadToken = 0;
   var articleNounDataPromise = null;
-  var nounMeaningLookup = null;
+  // Compact launch-time glosses for the shipped 756-word deck. This preserves
+  // every opening translation without fetching and parsing the 7.6 MB master
+  // noun catalog. The complete table is loaded only when another deck is chosen.
+  var BUNDLED_NOUN_MEANINGS = {"Jahr":"year","Kind":"child","Mensch":"person/human/human being","Zeit":"time","Tag":"day","Thema":"topic/subject","Euro":"euro","Stadt":"city/town","Frage":"question","Bereich":"area/field","Arbeit":"work/job","Prozent":"per cent","Schule":"school","MÃ¶glichkeit":"possibility/opportunity","Projekt":"project","Information":"information","Uhr":"clock/watch","Frau":"woman/wife","Datum":"date","Beispiel":"example","Land":"country/land","Seite":"page/side","Angebot":"offer/selection","SchÃ¼ler":"pupil/school student","Teil":"part/piece/part (concrete: ein Ersatzteil)","Kunde":"customer/client","Ziel":"goal/destination","Leben":"life","Entwicklung":"development","Weg":"way/path","Ende":"end","Woche":"week","Mitarbeiter":"employee/colleague","Ort":"place/location","Welt":"world","Familie":"family","Fall":"case/fall","Aufgabe":"task/assignment","Person":"person","Ergebnis":"result/outcome","Produkt":"product","Monat":"month","Problem":"problem","Art":"kind/type/species","Bild":"picture/image","Platz":"place/square/seat","Veranstaltung":"event","Programm":"programme","Grund":"reason/ground","Million":"million","Jugendliche":"young person/teenager","Region":"region","Team":"team","Geschichte":"history/story","Einsatz":"use/deployment/commitment","Zukunft":"future","Preis":"price/prize","Regel":"rule","Haus":"house/home","Stelle":"position/place/job","Erfahrung":"experience","Hilfe":"help","Mitglied":"member","Gruppe":"group","Mann":"man/husband","Raum":"room/space","September":"September","SchÃ¼lerin":"female student/pupil","Studium":"studies","Leistung":"performance/achievement","UniversitÃ¤t":"university","Patient":"patient","Stunde":"hour/lesson","Blick":"look/glance/view","Idee":"idea","Ausbildung":"training/education","GerÃ¤t":"device/appliance","Beitrag":"contribution/article","Mal":"time/occasion","Inhalt":"content/contents","Internet":"internet","LÃ¶sung":"solution/answer","System":"system","Rolle":"role/part","UnterstÃ¼tzung":"support","Geld":"money","Hochschule":"university/college","Interesse":"interest","Gesellschaft":"society/company","Wasser":"water","Einrichtung":"facility/institution","Buch":"book","Partner":"partner","Gast":"guest/visitor","Hand":"hand","StraÃŸe":"street/road","Form":"form/shape","HÃ¶he":"height/altitude","Schritt":"step","Betrieb":"business/operation","Spiel":"game/play","Wert":"value/worth","Zahl":"number","Arzt":"doctor/physician","Teilnehmer":"participant","Besucher":"visitor","Oktober":"October","Film":"film/movie","Zusammenarbeit":"cooperation/collaboration","Anfang":"beginning/start","Gemeinde":"municipality","Markt":"market","Klasse":"class/grade","Entscheidung":"decision","Mai":"May","Herausforderung":"challenge","Folge":"consequence/episode","Verein":"club/association","Juni":"June","Kirche":"church","Minute":"minute","Punkt":"point/dot","Chance":"chance/opportunity","Bedeutung":"meaning/importance","Tier":"animal","Modell":"model","Wirtschaft":"economy/business","Anspruch":"claim/entitlement","Artikel":"article/commodity","Erfolg":"success","FÃ¶rderung":"support/promotion","Kontakt":"contact","Voraussetzung":"prerequisite/requirement","App":"app","Musik":"music","November":"November","Recht":"right/law","Januar":"January","Sinn":"meaning/sense","Antrag":"application/request","Vorteil":"advantage","Sicherheit":"safety/security","MÃ¤rz":"March","April":"April","Auto":"car","Hotel":"hotel","Situation":"situation","QualitÃ¤t":"quality","Vergleich":"comparison","GesprÃ¤ch":"conversation/talk","Webseite":"web page/website","Weise":"way/manner","Praxis":"practice/surgery (doctor\u0027s)","Freund":"friend/boyfriend","Jahrhundert":"century","Sprache":"language/speech","Besuch":"visit","Angabe":"information/detail","Beratung":"advice/counselling","Anbieter":"provider/supplier","Organisation":"organisation","Wort":"word","Technik":"technology/technique","Netzwerk":"network","Energie":"energy","Firma":"company/firm","Wahl":"election/choice","Wohnung":"flat","Auswahl":"selection/choice","Material":"material","Kultur":"culture","Juli":"July","Natur":"nature","Forschung":"research","Prozess":"process/trial","Beginn":"beginning/start","Konzept":"concept/draft","Ausstellung":"exhibition","Herr":"Mr/gentleman","Anlage":"facility/investment/attachment","Lage":"situation/location","Engagement":"commitment/engagement","BÃ¼rger":"citizen","Alter":"age","Richtung":"direction","Fahrzeug":"vehicle","Aktion":"campaign/action","Text":"text","GebÃ¤ude":"building","Wald":"forest/woods","Politik":"politics/policy","Foto":"photo","Hinweis":"hint/note/reference","Schutz":"protection","August":"August","Experte":"expert","Antwort":"answer","Dezember":"December","Beruf":"profession/job","SpaÃŸ":"fun","Video":"video","Tipp":"tip/hint","Dienst":"service/duty","Smartphone":"smartphone","Mutter":"mother","Alltag":"everyday life","Wissen":"knowledge","Abschluss":"degree/conclusion/completion","Service":"service","Verbindung":"connection/link","Hersteller":"manufacturer","Grenze":"border/limit","Meter":"metre","Zusammenhang":"connection/context","Sache":"thing/matter","Museum":"museum","Wunsch":"wish/desire","TÃ¤tigkeit":"activity/work","Methode":"method","Auge":"eye","Februar":"February","Kraft":"force/strength","Gebiet":"area/field/territory","Gesetz":"law","Vortrag":"lecture/presentation","Menge":"amount/quantity","PrÃ¼fung":"exam/examination","Ã„nderung":"change/modification","Lehrer":"teacher","Mittel":"means/resources","Studie":"study","Ding":"thing","Unterricht":"lessons/instruction","Zentrum":"centre","Termin":"appointment/deadline","Abend":"evening","Umgebung":"surroundings/area","Bank":"bank/bench","Bedarf":"need","Kunst":"art","Mitte":"middle/centre","Untersuchung":"investigation/examination","Verwaltung":"administration","Arbeitgeber":"employer","KÃ¶rper":"body","Technologie":"technology","Titel":"title","Zugang":"access/entrance","Workshop":"workshop","Satz":"sentence/set/rate","NÃ¤he":"proximity/vicinity","Farbe":"colour/paint","Kollege":"colleague","Sommer":"summer","Sport":"sport","Digitalisierung":"digitisation","Diskussion":"discussion","FlÃ¤che":"area/surface","Netz":"net","Wissenschaft":"science","Gesundheit":"health","Staat":"state/country","Wettbewerb":"competition","Gefahr":"danger","Institut":"institute","Polizei":"police","Austausch":"exchange","Herz":"heart","Kommunikation":"communication","VerÃ¤nderung":"change","GrÃ¶ÃŸe":"size","Ausgabe":"edition/expenditure","Planung":"planning","Hintergrund":"background","Sonntag":"Sunday","Vertrag":"contract/agreement","Bund":"federation/federal government/alliance","Teilnahme":"participation","Vater":"father","Freitag":"Friday","Anmeldung":"registration","AktivitÃ¤t":"activity","Test":"test","Anzahl":"number","Kompetenz":"competence","Kreis":"circle/district","Werk":"work/factory/plant","Garten":"garden","Reihe":"row/series","Boden":"floor/ground","Auftrag":"order/assignment","Verantwortung":"responsibility","Unterschied":"difference","Milliarde":"billion","Karte":"card/map/ticket","BehÃ¶rde":"authority/agency","Integration":"integration","Partei":"party","Zeitpunkt":"moment","Nachricht":"message/news","Job":"job","Plattform":"platform","Krankenhaus":"hospital","MÃ¤dchen":"girl","Umwelt":"environment","Kopf":"head","Marke":"brand/mark","Zeitraum":"period/time span","Bewegung":"movement/exercise","Bundesland":"federal state","Gott":"God/god","Wirkung":"effect/impact","Ausland":"abroad/foreign countries","Reise":"trip/journey/travel","Generation":"generation","Kenntnis":"knowledge","Gericht":"court/dish","Verband":"association/bandage","Samstag":"Saturday","Schaden":"damage/harm","Urlaub":"holiday/vacation","Motto":"motto","FÃ¼hrung":"leadership/guided tour","Klinik":"clinic/hospital","Lernen":"learning","Vertreter":"representative","Bericht":"report","Band":"ribbon/tape","Kilometer":"kilometre","Erwachsene":"adult","Liste":"list","Versorgung":"supply/care","Praktikum":"internship","Betreuung":"care","Linie":"line","FÃ¤higkeit":"ability/skill","Bedingung":"condition/requirement","Bewerbung":"application","BevÃ¶lkerung":"population","GefÃ¼hl":"feeling/emotion","Nacht":"night","Einfluss":"influence","Amt":"office","Behinderung":"disability","Industrie":"industry","Start":"start","Produktion":"production","Seminar":"seminar","EinfÃ¼hrung":"introduction","Autor":"author","Wochenende":"weekend","Pflanze":"plant","Kauf":"purchase","Stimme":"voice/vote","Feld":"field","Eindruck":"impression","Angst":"fear/anxiety","Design":"design","HÃ¤lfte":"half","Lebensmittel":"food/groceries","KÃ¼nstler":"artist","Regierung":"government","Zimmer":"room","Liebe":"love","Gelegenheit":"opportunity/occasion","Aufnahme":"recording/admission","Fehler":"mistake/error","Montag":"Monday","Baum":"tree","Trend":"trend","Bestellung":"order","Restaurant":"restaurant","Meinung":"opinion","Position":"position","Verwendung":"use/usage","Licht":"light","Strom":"electricity/current","Krankheit":"illness/disease","Fahrt":"journey/ride","Dienstleistung":"service","AngehÃ¶rige":"relative/family member","ErnÃ¤hrung":"nutrition/diet","Plan":"plan","Deutsche":"German","Instrument":"instrument","GeschÃ¤ft":"shop/business","Dokument":"document","Haushalt":"household/budget","Wissenschaftler":"scientist","Arbeitsplatz":"workplace/job","Luft":"air","Schloss":"castle/lock","Gymnasium":"grammar school/high school","Sitz":"seat/headquarters","Station":"station/ward","Detail":"detail","Freude":"joy/pleasure","Ã–ffentlichkeit":"public","Spieler":"player","Maschine":"machine","Tod":"death","FuÃŸ":"foot","Rat":"advice/council","KÃ¼che":"kitchen/cuisine","Vorschlag":"suggestion/proposal","Vorbereitung":"preparation","Leitung":"management/line/pipe","Mittwoch":"Wednesday","Kurs":"course/rate","Landschaft":"landscape","Jugend":"youth","Tour":"tour","Handel":"trade/commerce","Ware":"goods/product","Vorstellung":"idea/performance","See":"lake","Interview":"interview","Gewalt":"violence/power","Erlebnis":"experience","Runde":"round","Donnerstag":"Thursday","Bau":"construction/building","Beziehung":"relationship","Computer":"computer","Strategie":"strategy","Risiko":"risk","Link":"link","Forum":"forum","Empfehlung":"recommendation","Kombination":"combination","Abteilung":"department","Anschluss":"connection","Bus":"bus","Vergangenheit":"past","Zustand":"condition/state","Rechnung":"bill/invoice","Insel":"island","Student":"student","Mitarbeiterin":"female employee/colleague","Herbst":"autumn","Flughafen":"airport","GlÃ¼ck":"luck/happiness","Kontrolle":"control/check","Name":"name","Professor":"professor","Hund":"dog","Kamera":"camera","Moment":"moment","Messe":"trade fair/mass","Erde":"earth/ground","Winter":"winter","Publikum":"audience/public","Therapie":"therapy","Nummer":"number","Temperatur":"temperature","Weiterbildung":"further education","Ursache":"cause","Infrastruktur":"infrastructure","Theater":"theatre","Haut":"skin","VerhÃ¤ltnis":"relationship/ratio","Bibliothek":"library","Modul":"module","Strecke":"route/distance/stretch","BÃ¼ro":"office","Personal":"staff/personnel","Mannschaft":"team/crew","Konzert":"concert/concerto","Bewohner":"resident/inhabitant","Leiter":"leader/director","Versicherung":"insurance","Landwirtschaft":"agriculture/farming","Saison":"season","Faktor":"factor","MaÃŸ":"measure/degree","Sorge":"worry/concern","Verhalten":"behaviour","Urteil":"judgement/verdict","Aussage":"statement","Bahn":"train/railway","Jahrzehnt":"decade","Krankenkasse":"health insurer/statutory health insurance fund","Krieg":"war","Essen":"food/meal","Tradition":"tradition","Werbung":"advertising","Grad":"degree","AtmosphÃ¤re":"atmosphere","Grundschule":"primary school/elementary school","Druck":"pressure/print","Heimat":"home/homeland","Ausnahme":"exception","Darstellung":"representation/depiction","Adresse":"address","Dienstag":"Tuesday","Dauer":"duration","Serie":"series","Anzeige":"advertisement/display","Fenster":"window","Medikament":"medication/medicine","VerstÃ¤ndnis":"understanding","Wetter":"weather","Lehre":"teaching/apprenticeship","Zeichen":"sign/symbol","BÃ¼hne":"stage","Ausflug":"excursion/outing","Datei":"file","Pflicht":"duty","BÃ¼rgermeister":"mayor","Download":"download","Sohn":"son","BÃ¼rgerin":"female citizen","Forderung":"demand/claim","Verlag":"publishing company","Dank":"thanks/gratitude","Nachfrage":"demand; enquiry/follow-up question","Handy":"mobile phone","Zweck":"purpose","Gegenstand":"object/subject","Dialog":"dialogue","Einwohner":"inhabitant","Sonne":"sun","HÃ¤ndler":"dealer/trader","Meer":"sea/ocean","Ressource":"resource","Gesicht":"face","Ruhe":"peace/quiet","Holz":"wood","Stoff":"material/fabric","Demokratie":"democracy","Vertrauen":"trust/confidence","Verkehr":"traffic/transport","Zeitung":"newspaper","Ereignis":"event/occurrence","Wand":"wall","Tochter":"daughter","Phase":"phase","Gewinn":"profit/gain","Sekunde":"second","Fortbildung":"further education","Opfer":"victim/sacrifice","Erinnerung":"memory/reminder","Fan":"fan","Feuerwehr":"fire brigade","Unfall":"accident","Zug":"train/move","Lust":"desire/pleasure","Gegensatz":"contrast/opposite","Vorschrift":"regulation","Tisch":"table","Semester":"semester","Mathematik":"mathematics","Park":"park","Aufenthalt":"stay","Schreiben":"letter/writing","Papier":"paper","Agentur":"agency","Sammlung":"collection","GebÃ¼hr":"fee","Kommentar":"comment","Info":"info","Tor":"goal/gate","Innenstadt":"city centre/downtown","Fahrrad":"bicycle","Baby":"baby/infant","Drittel":"third","Rathaus":"town hall/city hall","Zuschauer":"spectator/viewer","Training":"training","Ãœbung":"exercise/practice","Auszubildende":"apprentice/trainee","Senior":"senior citizen","TÃ¼r":"door","Kaffee":"coffee","Kritik":"criticism/critique","Freiheit":"freedom/liberty","FrÃ¼hjahr":"spring","Gemeinschaft":"community","GrundstÃ¼ck":"property/plot","Kampf":"fight/battle","PrÃ¤sentation":"presentation","Versuch":"attempt/experiment","Vordergrund":"foreground","Dorf":"village","Geburt":"birth","Sieg":"victory","Parkplatz":"parking lot/car park","Klimawandel":"climate change","Steuer":"tax","BroschÃ¼re":"brochure","Leser":"reader","Verlust":"loss","Format":"format","Post":"post/post office","Unternehmer":"businessman/entrepreneur","Gewicht":"weight","Event":"event","Strand":"beach","Betrag":"amount","Konferenz":"conference","Spur":"trace/track/lane","Norden":"north","ErklÃ¤rung":"explanation","Auskunft":"information","Tarif":"rate/tariff","Homepage":"homepage","Karriere":"career","Zahlung":"payment","Bundestag":"German federal parliament (the Bundestag)","Formular":"form","Geschenk":"gift/present","Fahrer":"driver","Trainer":"coach","Profil":"profile","Medizin":"medicine","Bett":"bed","Konflikt":"clash/conflict","Mehrheit":"majority","Note":"grade/mark","Dach":"roof","Szene":"scene","Traum":"dream","Konto":"account","Fach":"subject/compartment","Haar":"hair","Zeitschrift":"journal/magazine","Ordnung":"order","Mieter":"tenant","GetrÃ¤nk":"drink/beverage","Klima":"climate","Englisch":"English","Figur":"figure","Geschmack":"taste","Umfrage":"poll/survey","Einladung":"invitation","Klick":"click","Beamte":"civil servant/official","Nachteil":"disadvantage","Vermieter":"landlord","Abschnitt":"section","Reaktion":"reaction","Einkauf":"purchase/shopping","Hauptstadt":"capital city","Sendung":"broadcast/shipment","Telefon":"phone/telephone","Ausdruck":"expression","Werkzeug":"tool","Geburtstag":"birthday/day of birth","Operation":"operation/surgery","Lehrerin":"female teacher","Nachmittag":"afternoon","Tonne":"tonne (metric)/bin","Kontext":"context","Parlament":"parliament","Frist":"deadline","Rede":"speech","Osten":"east","Tablet":"tablet","SÃ¼den":"south","Einkommen":"income","Fernsehen":"TV/television","BrÃ¼cke":"bridge","FrÃ¼hstÃ¼ck":"breakfast","Kindergarten":"kindergarten","Glas":"glass","Kleidung":"clothing/clothes","Hoffnung":"hope","Bahnhof":"train station","Blog":"blog/weblog","Kapitel":"chapter","Rezept":"recipe/prescription","Stufe":"step/level","Zoo":"zoo","GemÃ¼se":"vegetables","Morgen":"morning","BeschÃ¤ftigung":"employment/occupation","LÃ¤nge":"length","Laden":"shop/store","Passwort":"password","Zuhause":"home","Berg":"mountain","Rad":"wheel/bicycle","Verletzung":"injury","Stern":"star","Ankunft":"arrival","Hobby":"hobby","Fett":"fat/grease","Schlafzimmer":"bedroom","GepÃ¤ck":"luggage","Label":"label","Pass":"passport/pass","Treppe":"flight of stairs/staircase/stairway","Arm":"arm","Schauspielerin":"actor/actress","AuslÃ¤nder":"foreigner","Schreibtisch":"desk/writing desk","Reiseziel":"destination","KÃ¤se":"cheese/curd","Wohnort":"residence","Zufall":"chance/coincidence/fortuity","Anweisung":"directive/instruction/statement","Ausweis":"ID/identification document; reserve â€œidentity cardâ€ specifically for Personalausweis.","Hausaufgabe":"homework","Ausgang":"exit/outcome","Bitte":"request/plea","Erdgeschoss":"ground floor","Stadion":"stadium","Hals":"neck/throat","Regal":"shelf/shelving","Schrank":"cupboard/wardrobe/cabinet","Tasse":"cup","Stock":"floor/level/stick","Koffer":"suitcase","Sofa":"sofa/settee/couch","Zahnarzt":"dentist","Ã„uÃŸerung":"statement/utterance","Wolke":"cloud","Deckel":"lid","Lampe":"lamp","Flur":"corridor/hall/hallway","Lokal":"bar/pub/restaurant","Waschmaschine":"washing machine","Schmuck":"jewellery","Aufforderung":"request/prompt","Messer":"knife","Teller":"plate","Honig":"honey","Butter":"butter","Weihnachtsmarkt":"Christmas fair/Christmas market","Erfindung":"invention","Fantasie":"fantasy/imagination","Saft":"juice","Bogen":"arc/arch/bow","Bleistift":"pencil","Bahnsteig":"platform","Pommes":"fries/chips (informal)","TÃ¼rke":"Turk","Entschuldigung":"apology/excuse","Doktor":"doctor/physician","Durst":"thirst","Abflug":"departure/takeoff","Disco":"disco","Vorwahl":"area code/primary election","Ansage":"announcement","Einzelzimmer":"single room","Geburtsort":"birthplace","Schinken":"ham","Anrede":"address/form of address/salutation","Familienname":"family name/last name/surname","Hausfrau":"housewife","HÃ¤hnchen":"chicken","Finne":"Finn","Kugelschreiber":"ballpoint pen","Halbpension":"half board","Familienstand":"marital status","Mexikaner":"Mexican"};
+  var nounMeaningLookup = BUNDLED_NOUN_MEANINGS;
+  var nounMeaningsComplete = false, nounMeaningPromise = null;
   var articleDeckCatalog = Object.create(null);
+  var runnerDeckCatalogPromise = null, runnerDeckCatalogBuilt = false;
   var RUNNER_TIER_OPTIONS = [100, 200, 500, 1000, 2000, 5000, 10000, 15000, 25000];
   var RUNNER_DECK_DIRS = [
     './data/goethe-a1/', './data/goethe-a2/', './data/goethe-b1/',
@@ -4465,7 +4557,7 @@ THREE.GLTFLoader = GLTFLoader;
     var savedMusic = localStorage.getItem('artikel-express-music');
     if (savedMusic === '0') musicEnabled = false;
   } catch (e) {}
-  var musicTimer = null, musicStep = 0, musicNextTime = 0;
+  var musicTimer = null, musicStopTimer = null, musicStep = 0, musicNextTime = 0;
   var musicPadUntil = 0;
   // A minor: i(Am) VI(F) III(C) VII(G). Root frequencies and chord thirds.
   var MUSIC_BARS = [
@@ -4572,6 +4664,7 @@ THREE.GLTFLoader = GLTFLoader;
 
   function musicStart() {
     if (!gameAudio || !musicBus || musicTimer) return;
+    if (musicStopTimer) { clearTimeout(musicStopTimer); musicStopTimer = null; }
     musicStep = 0;
     musicNextTime = gameAudio.currentTime + 0.06;
     musicPadUntil = 0;
@@ -4968,6 +5061,15 @@ THREE.GLTFLoader = GLTFLoader;
   var postScene = null, postCam = null, postQuad = null;
   var sceneRT = null, bloomA = null, bloomB = null;
   var sceneRTBaseSamples = 0;
+  // On WebGL2/mobile the beauty target is non-MSAA. In that exact case the
+  // opaque geometry can emit beauty, view normal and packed depth together,
+  // removing the duplicate full-city outline submission. The legacy prepass
+  // remains live as an automatic fallback and as a deterministic QA switch.
+  var mrtOutlineActive = false, mrtOutlineFailed = false;
+  var mrtSceneColor = null, mrtOutlineNormal = null, mrtOutlineDepth = null;
+  var MRT_OUTLINE_LAYER = 8, MRT_BEAUTY_LAYER = 9, MRT_RESIDUAL_LAYER = 10;
+  var mrtPatchedMaterials = new WeakSet();
+  var mrtResidualEntries = [], mrtResidualVisible = [], mrtResidualCount = 0;
   var brightMat = null, blurMat = null, compositeMat = null;
   var postSize = new THREE.Vector2(1, 1);
   // Outline prepass: a half-res normal+depth render used only to build the
@@ -5064,8 +5166,33 @@ THREE.GLTFLoader = GLTFLoader;
   function buildOutlineSwapList() {
     var list = [];
     outlineEntryMap = new WeakMap();
+    var transparentOutlineSet = new WeakSet();
+    for (var ti = 0; ti < outlineTransparentDetails.length; ti++) {
+      transparentOutlineSet.add(outlineTransparentDetails[ti]);
+    }
     scene.traverse(function (obj) {
       if (!obj.material) return;
+      var sourceMats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      var beautyOnly = false;
+      for (var smi = 0; smi < sourceMats.length; smi++) {
+        var sourceMat = sourceMats[smi];
+        if (sourceMat && (sourceMat.transparent || sourceMat.depthWrite === false ||
+            (sourceMat.blending !== undefined && sourceMat.blending !== THREE.NormalBlending))) {
+          beautyOnly = true; break;
+        }
+      }
+      // Glows, curtains, contact decals, particles and sprites become opaque
+      // slabs under a normal-material swap and waste submissions. Hide them as
+      // one prebuilt list during the outline pass. The horizon tower is the one
+      // intentional transparent silhouette and keeps its ink contribution.
+      if (beautyOnly && obj !== fernsehturm) {
+        if (!transparentOutlineSet.has(obj)) {
+          transparentOutlineSet.add(obj);
+          outlineTransparentDetails.push(obj);
+          outlineTransparentWasVisible.push(0);
+        }
+        return;
+      }
       var variant = outlineMaterialFor(obj);
       var entry = {
         obj: obj,
@@ -5726,11 +5853,21 @@ THREE.GLTFLoader = GLTFLoader;
     postPass(blurMat, dst);
   }
 
+  var passBeautyCalls = 0, passOutlineCalls = 0, passPostCalls = 0;
+  var passBeautyTriangles = 0, passOutlineTriangles = 0, passPostTriangles = 0;
   // Called in place of renderer.render(scene, camera) at the end of frame().
   function renderPresent() {
-    if (!POST.on) { renderer.render(scene, camera); return; }
+    if (!POST.on) {
+      renderer.render(scene, camera);
+      passBeautyCalls = renderer.info.render.calls;
+      passBeautyTriangles = renderer.info.render.triangles;
+      passOutlineCalls = passPostCalls = passOutlineTriangles = passPostTriangles = 0;
+      return;
+    }
     renderer.setRenderTarget(sceneRT);
     renderer.render(scene, camera);
+    passBeautyCalls = renderer.info.render.calls;
+    passBeautyTriangles = renderer.info.render.triangles;
 
     // At the emergency tier, render only hero/gates/hazards into the outline
     // target. This preserves the gameplay silhouettes and the inked identity
@@ -5824,6 +5961,19 @@ THREE.GLTFLoader = GLTFLoader;
               outlineSpectacle.visible = false;
             }
           }
+          // A chunk whose nearest surface is beyond fog.far is already exactly
+          // the fog colour in the beauty buffer. Its normal/depth submission can
+          // no longer change a visible contour, AO or focus pixel, so omit the
+          // authored root only from this second scene pass.
+          outlineFogChunkCount = 0;
+          var outlineFogZ = player.z + scene.fog.far;
+          for (var ofc = 0; ofc < chunks.length; ofc++) {
+            var fogChunk = chunks[ofc];
+            if (fogChunk.visible && fogChunk.position.z - CHUNK_LEN * 0.5 >= outlineFogZ) {
+              outlineFogChunks[outlineFogChunkCount++] = fogChunk;
+              fogChunk.visible = false;
+            }
+          }
         }
         // Per-category material swap instead of scene.overrideMaterial -- see
         // outlineMatInstanced's declaration comment for why. outlineSwapList is
@@ -5880,6 +6030,10 @@ THREE.GLTFLoader = GLTFLoader;
             outlineSpectacleFar[osr3].visible = true;
           }
           outlineSpectacleFarCount = 0;
+          for (var ofcr = 0; ofcr < outlineFogChunkCount; ofcr++) {
+            outlineFogChunks[ofcr].visible = true;
+          }
+          outlineFogChunkCount = 0;
           for (var opf = 0; opf < outlinePlayFarCount; opf++) {
             outlinePlayFar[opf].visible = true;
           }
@@ -5889,6 +6043,8 @@ THREE.GLTFLoader = GLTFLoader;
       }
     }
 
+    passOutlineCalls = renderer.info.render.calls - passBeautyCalls;
+    passOutlineTriangles = renderer.info.render.triangles - passBeautyTriangles;
     var bw = Math.max(1, Math.floor(postSize.x / 4));
     var bh = Math.max(1, Math.floor(postSize.y / 4));
     var strength = POST.bloomStrength;
@@ -5961,6 +6117,8 @@ THREE.GLTFLoader = GLTFLoader;
     cu.uCamTanFov.value = Math.tan(camera.fov * 0.5 * Math.PI / 180);
     cu.uCamAspect.value = camera.aspect;
     postPass(compositeMat, null);
+    passPostCalls = renderer.info.render.calls - passBeautyCalls - passOutlineCalls;
+    passPostTriangles = renderer.info.render.triangles - passBeautyTriangles - passOutlineTriangles;
   }
 
   // All decoded textures and GLBs share one loading manager. Gameplay stays
@@ -9015,7 +9173,12 @@ THREE.GLTFLoader = GLTFLoader;
   var ROAD_HALF = 7.2;          // asphalt edge
   var WALK_OUT = 12.4;          // sidewalk outer edge / building line
   var CHUNK_LEN = 40;
-  var CHUNK_COUNT = 13;         // 520 m of street alive at once
+  // Seven 40 m slots cover the complete -38..140 m render envelope and still
+  // leave 76 m between a recycled slot (+216 m) and the far visibility edge.
+  // The old 13-slot ring built 240 m of city that could never be submitted,
+  // roughly doubling boot construction and pooled GPU capacity for no pixels.
+  var CHUNK_COUNT = 7;          // 280 m ring; identical visible street coverage
+  var INITIAL_CHUNK_COUNT = 5;  // complete -20..180 m title/play envelope
   var WORLD_LEN = CHUNK_LEN * CHUNK_COUNT;
   // applyChunkLOD measures a chunk by its CENTRE, so a chunk switching on at
   // this distance puts its nearest surface at WORLD_EMERGE — the distance the
@@ -10055,7 +10218,14 @@ THREE.GLTFLoader = GLTFLoader;
   // render/shadow state agree, so the result is pixel-equivalent while turning
   // dozens of tiny boxes/wheels into a handful of material batches. Dynamic
   // roots still translate/rotate normally; no logical position or hitbox moves.
-  function compactStaticPropGroup(root) {
+  // Identical rigid props recur hundreds of times across the thirteen pooled
+  // chunks. Their source geometry and root-relative transforms are identical,
+  // so baking the same vertices again is pure startup work. Cache only the
+  // immutable merged BufferGeometry; every caller still receives its own Mesh
+  // and keeps its material/render/shadow state.
+  var staticMergeGeometryCache = new Map();
+  function compactStaticPropGroup(root, opts) {
+    opts = opts || {};
     root.updateMatrixWorld(true);
     var rootInv = new THREE.Matrix4().copy(root.matrixWorld).invert();
     var rel = new THREE.Matrix4();
@@ -10065,7 +10235,9 @@ THREE.GLTFLoader = GLTFLoader;
       if (!mesh.isMesh || mesh.isSkinnedMesh || Array.isArray(mesh.material) ||
           !mesh.geometry || !mesh.geometry.attributes.position ||
           !mesh.geometry.attributes.normal || !mesh.geometry.attributes.uv ||
-          mesh.morphTargetInfluences || mesh.userData.noStaticMerge) return;
+          mesh.morphTargetInfluences || mesh.userData.noStaticMerge ||
+          (opts.skipTransparent && (mesh.material.transparent ||
+           mesh.material.blending !== THREE.NormalBlending))) return;
       var bucket = null;
       for (var i = 0; i < buckets.length; i++) {
         var b = buckets[i];
@@ -10086,14 +10258,29 @@ THREE.GLTFLoader = GLTFLoader;
 
     buckets.forEach(function (bucket) {
       if (bucket.meshes.length < 2) return;
-      var baked = bucket.meshes.map(function (mesh) {
-        var geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
-        rel.multiplyMatrices(rootInv, mesh.matrixWorld);
-        geo.applyMatrix4(rel);
-        return geo;
-      });
-      var merged = mergeBoxes(baked.map(function (geo) { return { geo: geo }; }));
-      baked.forEach(function (geo) { geo.dispose(); });
+      var relMatrices = [], keyParts = [];
+      for (var km = 0; km < bucket.meshes.length; km++) {
+        var keyMesh = bucket.meshes[km];
+        rel.multiplyMatrices(rootInv, keyMesh.matrixWorld);
+        var relCopy = rel.clone(); relMatrices.push(relCopy);
+        var elems = relCopy.elements;
+        var matrixKey = '';
+        for (var ke = 0; ke < 16; ke++) matrixKey += Math.round(elems[ke] * 100000) + ',';
+        keyParts.push(keyMesh.geometry.id + ':' + keyMesh.geometry.attributes.position.count + ':' +
+                      (keyMesh.geometry.index ? 1 : 0) + ':' + matrixKey);
+      }
+      var mergeKey = keyParts.join('|');
+      var merged = staticMergeGeometryCache.get(mergeKey);
+      if (!merged) {
+        var baked = bucket.meshes.map(function (mesh, meshIndex) {
+          var geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
+          geo.applyMatrix4(relMatrices[meshIndex]);
+          return geo;
+        });
+        merged = mergeBoxes(baked.map(function (geo) { return { geo: geo }; }));
+        baked.forEach(function (geo) { geo.dispose(); });
+        staticMergeGeometryCache.set(mergeKey, merged);
+      }
       bucket.meshes.forEach(function (mesh) {
         if (mesh.parent) mesh.parent.remove(mesh);
       });
@@ -12831,6 +13018,8 @@ THREE.GLTFLoader = GLTFLoader;
       });
       train.add(car);
     }
+    compactStaticPropGroup(root, { skipTransparent:true });
+    compactStaticPropGroup(train, { skipTransparent:true });
     root.add(train);
     root.visible = false;
     return { root: root, train: train, x: -28, speed: 9.4 };
@@ -13014,6 +13203,7 @@ THREE.GLTFLoader = GLTFLoader;
       });
       train.add(car);
     }
+    compactStaticPropGroup(train, { skipTransparent:true });
     return train;
   }
 
@@ -13173,6 +13363,7 @@ THREE.GLTFLoader = GLTFLoader;
         portalRoot.add(roundedBox(0.24, 0.24, 0.16, 0.08, STATION_MAT.light,
           x, 6.55, portalZ + (portalIndex ? -0.40 : 0.40), 0.016));
       });
+      compactStaticPropGroup(portalRoot, { skipTransparent:true });
     });
 
     // Posters, bins and platform benches keep the station from reading as a shell.
@@ -13232,6 +13423,15 @@ THREE.GLTFLoader = GLTFLoader;
     var stationSteel = mergedPart(stationSteelSpecs, STATION_MAT.steel, false);
     if (stationSteel) root.add(stationSteel);
 
+    // Portals retain independent approach culling. Temporarily detach their
+    // roots while the remaining rigid station architecture is consolidated.
+    for (var stationPortalIndex = 0; stationPortalIndex < portals.length; stationPortalIndex++) {
+      root.remove(portals[stationPortalIndex]);
+    }
+    compactStaticPropGroup(root, { skipTransparent:true });
+    for (var stationPortalRestore = 0; stationPortalRestore < portals.length; stationPortalRestore++) {
+      root.add(portals[stationPortalRestore]);
+    }
     var train = makeStationTrain();
     train.position.set(-13.05, 0.18, 46);
     root.add(train);
@@ -13369,6 +13569,7 @@ THREE.GLTFLoader = GLTFLoader;
     });
     barge.add(roundedBox(14.0, 0.018, 2.20, 0.08, BRIDGE_MAT.reflection, 0, -2.39, 0, 0.008));
     vessels.add(barge);
+    compactStaticPropGroup(vessels, { skipTransparent:true });
     return vessels;
   }
 
@@ -13577,6 +13778,7 @@ THREE.GLTFLoader = GLTFLoader;
     var bridgeSteel = mergedPart(bridgeSteelSpecs, BRIDGE_MAT.steel, false);
     if (bridgeSteel) root.add(bridgeSteel);
 
+    compactStaticPropGroup(root, { skipTransparent:true });
     var vessels = makeSpreeVessels();
     vessels.position.x = -58; root.add(vessels);
     root.visible = false;
@@ -13917,6 +14119,7 @@ THREE.GLTFLoader = GLTFLoader;
       });
       train.add(car);
     }
+    compactStaticPropGroup(train, { skipTransparent:true });
     return train;
   }
 
@@ -14406,12 +14609,14 @@ THREE.GLTFLoader = GLTFLoader;
 
   var chunks = [];
   var outlineParkedDetails = [];
-  var outlineParkedWasVisible = new Uint8Array(CHUNK_COUNT * 8);
+  var outlineParkedWasVisible = [];
   // Scratch list of set-piece roots renderPresent hid for the ink prepass this
   // frame (see spectacleOutlineFar in applyChunkLOD). Fixed capacity — one
   // entry per spectacle slot per chunk — so the frame loop never allocates.
   var outlineSpectacleFar = new Array(CHUNK_COUNT * 8);
   var outlineSpectacleFarCount = 0;
+  var outlineFogChunks = new Array(CHUNK_COUNT);
+  var outlineFogChunkCount = 0;
   // Same, for gates and hazards past OUTLINE_PLAY_FAR — far enough into the
   // haze that the ink cannot resolve, near enough that the gate a player is
   // actually reading keeps its outline.
@@ -14422,6 +14627,89 @@ THREE.GLTFLoader = GLTFLoader;
   scene.add(worldRoot);
   worldRoot.updateMatrix();
   worldRoot.matrixAutoUpdate = false;
+
+  // Parked cars and buses used to prebuild eight complete vehicle hierarchies
+  // per chunk (104 detailed vehicles) even though only a few kerb slots are ever
+  // visible. Preserve optional external prop replacements with the legacy path;
+  // the shipped procedural path uses lightweight holders plus one instanced draw
+  // per material bucket for the entire city.
+  var PARKED_PER_CHUNK = 4;
+  var PARKED_INSTANCE_CAP = CHUNK_COUNT * PARKED_PER_CHUNK;
+  var parkedInstancingEnabled = !(ASSETS.props && (ASSETS.props.trabant || ASSETS.props.bus));
+  var parkedCarInst = [], parkedBusInst = [], parkedInstancesDirty = true;
+  var parkedWorldMat = new THREE.Matrix4(), parkedFinalMat = new THREE.Matrix4();
+  var parkedInstColor = new THREE.Color();
+  function buildParkedInstanceBuckets(template, tintMaterial) {
+    var buckets = [];
+    template.traverse(function (mesh) {
+      if (!mesh.isMesh || !mesh.geometry) return;
+      var inst = new THREE.InstancedMesh(mesh.geometry, mesh.material, PARKED_INSTANCE_CAP);
+      inst.castShadow = mesh.castShadow;
+      inst.receiveShadow = mesh.receiveShadow;
+      inst.frustumCulled = false;
+      inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      mesh.updateMatrix();
+      inst.userData.local = mesh.matrix.clone();
+      inst.userData.tinted = mesh.material === tintMaterial;
+      if (inst.userData.tinted) inst.setColorAt(0, parkedInstColor.setHex(0xffffff));
+      inst.count = 0;
+      inst.updateMatrix(); inst.matrixAutoUpdate = false;
+      worldRoot.add(inst);
+      outlineParkedDetails.push(inst);
+      outlineParkedWasVisible.push(0);
+      buckets.push(inst);
+    });
+    return buckets;
+  }
+  if (parkedInstancingEnabled) {
+    var parkedCarTemplate = makeCar(0xffffff);
+    var parkedCarTintMat = parkedCarTemplate.userData.bodyMat;
+    parkedCarInst = buildParkedInstanceBuckets(parkedCarTemplate, parkedCarTintMat);
+    var parkedBusTemplate = makeBus();
+    parkedBusInst = buildParkedInstanceBuckets(parkedBusTemplate, null);
+  }
+  function syncParkedInstances() {
+    if (!parkedInstancingEnabled || !parkedInstancesDirty) return;
+    parkedInstancesDirty = false;
+    var carCount = 0, busCount = 0;
+    for (var ci = 0; ci < chunks.length; ci++) {
+      var chunk = chunks[ci];
+      chunk.updateMatrix();
+      for (var si = 0; si < chunk.userData.cars.length; si++) {
+        var slot = chunk.userData.cars[si];
+        var holder = slot.car, buckets = parkedCarInst, outIndex = carCount;
+        if (holder.userData.parkedRenderVisible) {
+          holder.updateMatrix(); parkedWorldMat.multiplyMatrices(chunk.matrix, holder.matrix);
+          for (var cb = 0; cb < buckets.length; cb++) {
+            parkedFinalMat.multiplyMatrices(parkedWorldMat, buckets[cb].userData.local);
+            buckets[cb].setMatrixAt(outIndex, parkedFinalMat);
+            if (buckets[cb].userData.tinted) {
+              buckets[cb].setColorAt(outIndex, parkedInstColor.setHex(holder.userData.parkedColor || 0xffffff));
+            }
+          }
+          carCount++;
+        }
+        holder = slot.bus; buckets = parkedBusInst; outIndex = busCount;
+        if (holder.userData.parkedRenderVisible) {
+          holder.updateMatrix(); parkedWorldMat.multiplyMatrices(chunk.matrix, holder.matrix);
+          for (var bb = 0; bb < buckets.length; bb++) {
+            parkedFinalMat.multiplyMatrices(parkedWorldMat, buckets[bb].userData.local);
+            buckets[bb].setMatrixAt(outIndex, parkedFinalMat);
+          }
+          busCount++;
+        }
+      }
+    }
+    function finishParkedBuckets(buckets, count) {
+      for (var i = 0; i < buckets.length; i++) {
+        buckets[i].count = count;
+        buckets[i].instanceMatrix.needsUpdate = true;
+        if (buckets[i].instanceColor) buckets[i].instanceColor.needsUpdate = true;
+      }
+    }
+    finishParkedBuckets(parkedCarInst, carCount);
+    finishParkedBuckets(parkedBusInst, busCount);
+  }
 
   // -------------------------------------------------- scene-wide instancing --
   // Every instanced prop pool below used to be built per chunk (one
@@ -15162,12 +15450,18 @@ THREE.GLTFLoader = GLTFLoader;
     // instanced pool, and why that keeps this number modest rather than
     // matching the crate-stack pool's much cheaper headroom.
     for (var c = 0; c < 4; c++) {
-      var car = makeCar(CAR_COLORS[0]);
+      var car = parkedInstancingEnabled ? new THREE.Object3D() : makeCar(CAR_COLORS[0]);
+      car.userData.parkedColor = CAR_COLORS[0];
+      car.userData.parkedRenderVisible = false;
       car.visible = false; g.add(car);
-      var bus = makeBus();
+      var bus = parkedInstancingEnabled ? new THREE.Object3D() : makeBus();
+      bus.userData.parkedRenderVisible = false;
       bus.visible = false; g.add(bus);
       ud.cars.push({ car: car, bus: bus });
-      outlineParkedDetails.push(car, bus);
+      if (!parkedInstancingEnabled) {
+        outlineParkedDetails.push(car, bus);
+        outlineParkedWasVisible.push(0, 0);
+      }
     }
 
     // A complete construction frontage is pooled with every chunk and only
@@ -15249,6 +15543,7 @@ THREE.GLTFLoader = GLTFLoader;
     // four show up often enough without paying for four copies each.
     var landmarkHolder = new THREE.Group();
     landmarkHolder.add(pick(LANDMARK_BUILDERS)());
+    compactStaticPropGroup(landmarkHolder, { skipTransparent:true });
     landmarkHolder.visible = false;
     g.add(landmarkHolder);
     ud.landmark = landmarkHolder;
@@ -15342,6 +15637,7 @@ THREE.GLTFLoader = GLTFLoader;
   function rollChunk(g, chunkZ) {
     var ud = g.userData;
     g.position.z = chunkZ;
+    if (parkedInstancingEnabled) parkedInstancesDirty = true;
     // Every scene-wide pool write below lands in its shadow buffer only (see
     // poolView) — this flag forces applyChunkLOD's very next call for this
     // chunk to mirror that fresh data into the live GPU buffer (or zero it)
@@ -16166,7 +16462,9 @@ THREE.GLTFLoader = GLTFLoader;
           parkedBySide[String(s2)].push({ z: carZ, halfLength: 2.1 });
           slot.car.visible = true;
           slot.car.userData.parkedActive = true;
-          if (slot.car.userData.bodyMat) slot.car.userData.bodyMat.color.setHex(pick(CAR_COLORS));
+          var parkedColor = pick(CAR_COLORS);
+          slot.car.userData.parkedColor = parkedColor;
+          if (slot.car.userData.bodyMat) slot.car.userData.bodyMat.color.setHex(parkedColor);
           slot.car.scale.setScalar(0.84);
           slot.car.position.set(s2 * (ROAD_HALF + 1.25), 0.16, carZ);
           slot.car.rotation.y = (s2 < 0 ? Math.PI : 0) + rand(-0.04, 0.04);
@@ -16241,11 +16539,19 @@ THREE.GLTFLoader = GLTFLoader;
       ud.spectacleNodes = [ud.transit.root, ud.station.root, ud.bridge.root,
                            ud.tunnel.root, ud.landmark];
       ud.spectacleBase = new Array(ud.spectacleNodes.length);
+      // Preserve authored caster flags once. The shadow camera follows only the
+      // runner's near field, so applyChunkLOD can stop submitting distant city
+      // casters without touching beauty, receivers or graphic contact decals.
+      ud.shadowCasters = [];
+      chunk.traverse(function (obj) {
+        if (obj.isMesh && obj.castShadow) ud.shadowCasters.push(obj);
+      });
     }
     for (var i = 0; i < ud.detailNodes.length; i++) ud.detailBase[i] = ud.detailNodes[i].visible;
     for (var s = 0; s < ud.spectacleNodes.length; s++) ud.spectacleBase[s] = ud.spectacleNodes[s].visible;
     ud.detailNear = null;
     ud.spectacleNear = null;
+    ud.shadowNear = null;
   }
 
   // matrixAutoUpdate=false (above) only stops an object recomposing its own
@@ -16326,6 +16632,19 @@ THREE.GLTFLoader = GLTFLoader;
     var visible = dz > -38 && dz < farLimit;
     var ud = chunk.userData;
     var nearDetailLimit = NEAR_DETAIL_FAR;
+
+    // The 92 m shadow camera is centred fourteen metres ahead of the runner;
+    // geometry outside this conservative -24..70 m caster band cannot project a
+    // shadow into its useful near field. Toggle only on band transitions. Large
+    // authored contact decals remain visible at every existing distance, and
+    // beauty/outline visibility is completely independent of this flag.
+    var shadowNear = visible && dz > -24 && dz < 70;
+    if (ud.shadowNear !== shadowNear) {
+      ud.shadowNear = shadowNear;
+      for (var sc = 0; sc < ud.shadowCasters.length; sc++) {
+        ud.shadowCasters[sc].castShadow = shadowNear;
+      }
+    }
 
     // Bollards and lane dashes lived under this chunk's own Group, so
     // chunk.visible=false used to hide them for free. Their pools are
@@ -16416,10 +16735,20 @@ THREE.GLTFLoader = GLTFLoader;
     var bulkNear = dz > -16 && dz < NEAR_BULK_FAR;
     for (var pv = 0; pv < ud.cars.length; pv++) {
       var parkedSlot = ud.cars[pv];
-      parkedSlot.car.visible = bulkNear && parkedSlot.car.userData.parkedActive &&
+      var carWanted = bulkNear && parkedSlot.car.userData.parkedActive &&
         chunk.position.z + parkedSlot.car.position.z - 2.10 > playerZ - 0.75;
-      parkedSlot.bus.visible = bulkNear && parkedSlot.bus.userData.parkedActive &&
+      var busWanted = bulkNear && parkedSlot.bus.userData.parkedActive &&
         chunk.position.z + parkedSlot.bus.position.z - 5.50 > playerZ - 0.75;
+      if (parkedInstancingEnabled) {
+        if (parkedSlot.car.userData.parkedRenderVisible !== carWanted ||
+            parkedSlot.bus.userData.parkedRenderVisible !== busWanted) parkedInstancesDirty = true;
+        parkedSlot.car.userData.parkedRenderVisible = carWanted;
+        parkedSlot.bus.userData.parkedRenderVisible = busWanted;
+        parkedSlot.car.visible = parkedSlot.bus.visible = false;
+      } else {
+        parkedSlot.car.visible = carWanted;
+        parkedSlot.bus.visible = busWanted;
+      }
     }
     // A tree root can remain ahead after its broad crown has already wrapped
     // around the chase camera, producing a faceted green screen-edge wall.
@@ -16478,10 +16807,42 @@ THREE.GLTFLoader = GLTFLoader;
     }
   }
 
-  for (var ci = 0; ci < CHUNK_COUNT; ci++) {
+  var chunkBuildStartedAt = performance.now();
+  for (var ci = 0; ci < INITIAL_CHUNK_COUNT; ci++) {
     var ch = makeChunk(ci);
     rollChunk(ch, ci * CHUNK_LEN);
     chunks.push(ch);
+  }
+  canvas.dataset.chunkBuildMs = (performance.now() - chunkBuildStartedAt).toFixed(1);
+
+  // The two reserve chunks live beyond the 140 m beauty envelope. Constructing
+  // them before the CTA spent roughly a third of chunk-build time on geometry
+  // the player cannot see. Add one per idle slice after readiness; even when a
+  // player taps immediately, the five ready chunks cover 2.5 s at base speed,
+  // while the bounded timeout completes both reserves within 1.4 s.
+  var deferredChunkSlot = INITIAL_CHUNK_COUNT;
+  var deferredChunkScheduled = false;
+  function buildDeferredChunk(deadline) {
+    deferredChunkScheduled = false;
+    if (deferredChunkSlot >= CHUNK_COUNT) return;
+    if (started && deadline && deadline.timeRemaining() < 8 && !deadline.didTimeout) {
+      scheduleDeferredChunks();
+      return;
+    }
+    var deferredChunk = makeChunk(deferredChunkSlot);
+    rollChunk(deferredChunk, deferredChunkSlot * CHUNK_LEN);
+    chunks.push(deferredChunk);
+    deferredChunkSlot++;
+    if (deferredChunkSlot < CHUNK_COUNT) scheduleDeferredChunks();
+  }
+  function scheduleDeferredChunks() {
+    if (deferredChunkScheduled || deferredChunkSlot >= CHUNK_COUNT) return;
+    deferredChunkScheduled = true;
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(buildDeferredChunk, { timeout:700 });
+    } else {
+      setTimeout(function () { buildDeferredChunk(null); }, 120);
+    }
   }
 
   // Recycle any chunk that has fallen a full chunk behind the camera.
@@ -16496,6 +16857,7 @@ THREE.GLTFLoader = GLTFLoader;
     // Every chunk has settled its visibility for this frame, so rebuild the
     // packed instance buffers once rather than per chunk.
     repackDirtyPools();
+    syncParkedInstances();
   }
 
   // Collision stays in simple lane/+Z coordinates while every rendered road
@@ -17554,11 +17916,32 @@ THREE.GLTFLoader = GLTFLoader;
     [OB_KINDS[4].build, makeMaintenanceCluster]
   ];
 
-  function makeObstacleSlot() {
+  // Building all ten detailed appearances inside every one of 48 pooled slots
+  // repeated the same factory/merge work 480 times before the CTA. Four source
+  // templates per appearance retain the stochastic rubble, crate and vehicle
+  // layouts; clones share their already-batched geometry/materials while each
+  // pooled root keeps independent visibility, placement and GLB swap state.
+  var OB_TEMPLATE_VARIANTS = 4;
+  var OB_VISUAL_TEMPLATES = OB_VISUAL_BUILDERS.map(function (builders) {
+    return builders.map(function (build) {
+      var templates = [];
+      for (var ti = 0; ti < OB_TEMPLATE_VARIANTS; ti++) templates.push(build());
+      return templates;
+    });
+  });
+
+  function registerObstacleTemplateClone(root) {
+    var kind = root.userData && root.userData.propKind;
+    if (kind) (propSwapTargets[kind] = propSwapTargets[kind] || []).push(root);
+    return root;
+  }
+
+  function makeObstacleSlot(slotIndex) {
     var holder = new THREE.Group();
-    var variants = OB_VISUAL_BUILDERS.map(function (builders) {
-      return builders.map(function (build) {
-        var m = build();
+    var variants = OB_VISUAL_TEMPLATES.map(function (builderTemplates) {
+      return builderTemplates.map(function (templates, appearanceIndex) {
+        var templateIndex = (slotIndex + appearanceIndex * 3) % OB_TEMPLATE_VARIANTS;
+        var m = registerObstacleTemplateClone(templates[templateIndex].clone(true));
         m.visible = false;
         holder.add(m);
         return m;
@@ -17571,7 +17954,7 @@ THREE.GLTFLoader = GLTFLoader;
     return { holder: holder, variants: variants, active: false, spec: null,
              visualVariant: 0, lane: 1, z: 0, hit: false };
   }
-  for (var oi = 0; oi < OB_POOL; oi++) obstacles.push(makeObstacleSlot());
+  for (var oi = 0; oi < OB_POOL; oi++) obstacles.push(makeObstacleSlot(oi));
 
   // A full-width wall must be all-or-nothing: three slots or none, otherwise a
   // pool shortfall would leave an invisible hole in a wall the player reads as
@@ -17582,7 +17965,7 @@ THREE.GLTFLoader = GLTFLoader;
     return n;
   }
 
-  function spawnObstacle(specIdx, lane, z) {
+  function spawnObstacle(specIdx, lane, z, visualVariantOverride) {
     var slot = null;
     for (var i = 0; i < obstacles.length; i++) if (!obstacles[i].active) { slot = obstacles[i]; break; }
     if (!slot) return null;
@@ -17593,7 +17976,9 @@ THREE.GLTFLoader = GLTFLoader;
     }
     var visualSet = slot.variants[specIdx];
     // Stable across restarts and coherent across a three-lane wall at the same Z.
-    slot.visualVariant = Math.abs(Math.floor(z * 0.25) * 17 + specIdx * 13) % visualSet.length;
+    slot.visualVariant = visualVariantOverride === undefined ?
+      Math.abs(Math.floor(z * 0.25) * 17 + specIdx * 13) % visualSet.length :
+      clamp(visualVariantOverride | 0, 0, visualSet.length - 1);
     visualSet[slot.visualVariant].visible = true;
     slot.holder.visible = true;
     slot.holder.position.set(LANES[lane], 0.02, z);
@@ -17700,7 +18085,7 @@ THREE.GLTFLoader = GLTFLoader;
 
       holder.visible = false;
       scene.add(holder);
-      pretzels.push({ sprite: holder, mesh: spin, active: false, z: 0, lane: 1, y: 1 });
+      pretzels.push({ sprite: holder, mesh: spin, active: false, z: 0, lane: 1, x: LANES[1], y: 1 });
     }
   })();
 
@@ -17714,6 +18099,7 @@ THREE.GLTFLoader = GLTFLoader;
       var t = placed / Math.max(1, count - 1);
       p.active = true;
       p.lane = lane;
+      p.x = LANES[lane];
       p.z = z + placed * spacing;
       if (arc) p.y = 1.0 + Math.sin(t * Math.PI) * 2.0;
       else if (formation === 1) p.y = 1.10 + Math.sin(t * Math.PI * 2) * 0.30;
@@ -17723,6 +18109,323 @@ THREE.GLTFLoader = GLTFLoader;
       p.sprite.position.set(LANES[lane], p.y, p.z);
       placed++;
     }
+  }
+
+  // A diagonal reward trail is both navigation arrow and collectible line. It
+  // extends the existing pooled slot coordinates rather than adding route
+  // physics, so magnet, scoring and all ordinary straight/arc runs stay intact.
+  function spawnPretzelTransfer(fromLane, toLane, z0, z1, count) {
+    var placed = 0;
+    for (var i = 0; i < pretzels.length && placed < count; i++) {
+      var p = pretzels[i];
+      if (p.active) continue;
+      var t = placed / Math.max(1, count - 1);
+      p.active = true; p.lane = toLane;
+      p.x = lerp(LANES[fromLane], LANES[toLane], t);
+      p.z = lerp(z0, z1, t); p.y = 1.15;
+      p.sprite.visible = true;
+      p.sprite.position.set(p.x, p.y, p.z);
+      placed++;
+    }
+  }
+
+  // =========================================================== power-ups ====
+  // Three rare, readable pickups add a reward layer without replacing any
+  // existing obstacle, gate or pretzel rule: magnet bends collectible trails,
+  // the bear badge absorbs one physical crash, and spring shoes unlock one
+  // extra airborne jump. Six pooled holders keep the feature allocation-free.
+  var POWERUP_TYPES = ['magnet', 'shield', 'spring'];
+  var POWERUP_POOL = 6, powerups = [];
+  var magnetTimer = 0, springTimer = 0, shieldCharges = 0, airJumps = 0;
+  var MAGNET_TIME = 9, SPRING_TIME = 10;
+  var powerupHaloTex = canvasTexture(96, 96, function (g, w, h) {
+    var glow = g.createRadialGradient(w / 2, h / 2, 2, w / 2, h / 2, w / 2);
+    glow.addColorStop(0, 'rgba(255,244,160,.78)');
+    glow.addColorStop(.34, 'rgba(65,210,255,.34)');
+    glow.addColorStop(1, 'rgba(35,120,255,0)');
+    g.fillStyle = glow; g.fillRect(0, 0, w, h);
+  }, { wrap:false });
+  var powerupHaloMat = new THREE.SpriteMaterial({ map:powerupHaloTex, transparent:true,
+    depthWrite:false, blending:THREE.AdditiveBlending, fog:true, opacity:.72 });
+  var POWER_MAT = {
+    red: mat(0xff4058, { roughness:.32, metalness:.16, emissive:0x7a0918, emissiveIntensity:.55 }),
+    blue: mat(0x35c9ff, { roughness:.28, metalness:.22, emissive:0x075b91, emissiveIntensity:.72 }),
+    yellow: mat(0xffd83d, { roughness:.30, metalness:.18, emissive:0xa45b00, emissiveIntensity:.62 }),
+    ink: mat(0x132b58, { roughness:.42, metalness:.12 })
+  };
+  function makePowerupVisual(type) {
+    var root = new THREE.Group();
+    var spin = new THREE.Group(); root.add(spin);
+    if (type === 'magnet') {
+      var arc = new THREE.Mesh(new THREE.TorusGeometry(.34, .105, 8, 24, Math.PI * 1.42), POWER_MAT.red);
+      arc.rotation.z = Math.PI * .79; spin.add(arc);
+      spin.add(roundedBox(.18,.28,.18,.045,POWER_MAT.blue,-.30,-.23,0,.018));
+      spin.add(roundedBox(.18,.28,.18,.045,POWER_MAT.blue,.30,-.23,0,.018));
+    } else if (type === 'shield') {
+      var badge = new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.16,6), POWER_MAT.yellow);
+      badge.rotation.x = Math.PI / 2; spin.add(badge);
+      var boss = new THREE.Mesh(icoGeo(.24), POWER_MAT.ink); boss.scale.z = .42; boss.position.z = -.11; spin.add(boss);
+    } else {
+      var boltShape = new THREE.Shape();
+      boltShape.moveTo(-.10,.48); boltShape.lineTo(.22,.48); boltShape.lineTo(.04,.10);
+      boltShape.lineTo(.30,.10); boltShape.lineTo(-.18,-.50); boltShape.lineTo(-.04,-.08);
+      boltShape.lineTo(-.29,-.08); boltShape.closePath();
+      var bolt = new THREE.Mesh(new THREE.ExtrudeGeometry(boltShape,
+        { depth:.14, bevelEnabled:true, bevelSize:.025, bevelThickness:.025, bevelSegments:1 }), POWER_MAT.yellow);
+      bolt.position.z = -.07; spin.add(bolt);
+      var sole = roundedBox(.62,.12,.28,.05,POWER_MAT.blue,0,-.48,.02,.02); spin.add(sole);
+    }
+    var halo = new THREE.Sprite(powerupHaloMat.clone()); halo.scale.set(1.45,1.45,1); root.add(halo);
+    root.userData.spin = spin;
+    root.scale.setScalar(1.18);
+    return root;
+  }
+  (function buildPowerupPool() {
+    for (var i = 0; i < POWERUP_POOL; i++) {
+      var holder = new THREE.Group(), variants = {};
+      for (var t = 0; t < POWERUP_TYPES.length; t++) {
+        var visual = makePowerupVisual(POWERUP_TYPES[t]); visual.visible = false;
+        variants[POWERUP_TYPES[t]] = visual; holder.add(visual);
+      }
+      holder.visible = false; scene.add(holder);
+      powerups.push({ holder:holder, variants:variants, active:false, type:'magnet', lane:1, z:0, y:1.55 });
+    }
+  })();
+  function spawnPowerup(type, lane, z) {
+    for (var i = 0; i < powerups.length; i++) {
+      var p = powerups[i]; if (p.active) continue;
+      p.active = true; p.type = type; p.lane = lane; p.z = z; p.y = 1.55;
+      for (var t = 0; t < POWERUP_TYPES.length; t++) p.variants[POWERUP_TYPES[t]].visible = false;
+      p.variants[type].visible = true; p.holder.visible = true;
+      return p;
+    }
+    return null;
+  }
+
+  // ====================================================== tram roof route ====
+  // A self-contained vertical traversal module avoids the scene-wide chunk
+  // transform assumption used by the heavily instanced city. Physics remains
+  // in the same lane/+Z space; this surface height is presentation-only and is
+  // applied equally to the runner, hazards, rewards, gates, FX and camera.
+  // Modules are separated by at least four gates (>300 m), so one pooled root
+  // always recycles long before the next can enter the 154 m route envelope.
+  var ROOF_ROUTE_POOL = 1, roofRoutes = [];
+  var ROOF_ROUTE_LENGTH = 154, ROOF_UP_RAMP = 18, ROOF_DOWN_RAMP = 12, ROOF_HEIGHT = 2.48;
+  var ROOF_FLAT = ROOF_ROUTE_LENGTH - ROOF_UP_RAMP - ROOF_DOWN_RAMP;
+  var ROOF_GAP_LOCAL_Z = 100.667, ROOF_GAP_HALF = 3.0;
+  var roofRouteSequence = 0, routeLevel = -1, activePlayerRoofRoute = null, roofCameraReveal = 0;
+  var roofGapCrossing = false;
+  function makeRoofRamp(root, laneX, startZ, length, rising) {
+    var slopeLen = Math.sqrt(length * length + ROOF_HEIGHT * ROOF_HEIGHT);
+    var ramp = roundedBox(2.72, 0.18, slopeLen, 0.055, MAT.signBlue,
+                          laneX, ROOF_HEIGHT * 0.5, startZ + length * 0.5, 0.018);
+    ramp.rotation.x = rising ? -Math.atan(ROOF_HEIGHT / length) : Math.atan(ROOF_HEIGHT / length);
+    ramp.receiveShadow = true; root.add(ramp);
+    // Yellow edge paint makes the climb legible through fog and at phone size.
+    [-1, 1].forEach(function (side) {
+      var edge = roundedBox(0.10, 0.08, slopeLen, 0.025, MAT.bvgYellow,
+                            laneX + side * 1.30, ROOF_HEIGHT * 0.5 + 0.11,
+                            startZ + length * 0.5, 0.012);
+      edge.rotation.x = ramp.rotation.x; root.add(edge);
+    });
+  }
+  function makeRoofRouteSlot() {
+    var root = new THREE.Group();
+    // Lane 0 (+X / screen-left) deliberately remains street-level and readable
+    // as the safe route. Only centre/right become the elevated risk/reward path.
+    for (var laneIndex = 1; laneIndex < 3; laneIndex++) {
+      var laneX = LANES[laneIndex];
+      makeRoofRamp(root, laneX, 0, ROOF_UP_RAMP, true);
+      makeRoofRamp(root, laneX, ROOF_UP_RAMP + ROOF_FLAT, ROOF_DOWN_RAMP, false);
+      // Six individually readable cars: a 1.10 m pitch gap leaves a 0.90 m dark
+      // roof seam at phone scale. Each lane is one coherent consist rather than
+      // alternating body colours that read as stripes on a single blue slab.
+      var roofCarCount = 6, roofCarPitch = ROOF_FLAT / roofCarCount;
+      var roofCarLen = roofCarPitch - 1.10;
+      for (var carIndex = 0; carIndex < roofCarCount; carIndex++) {
+        var carZ = ROOF_UP_RAMP + roofCarPitch * (carIndex + 0.5);
+        var thisCarLen = roofCarLen;
+        // Pull the two adjoining lane-1 cars back from the fourth joint. This
+        // creates a real six-metre opening instead of a sub-second dark seam;
+        // lane 2 keeps its continuous consist as the recoverable bypass.
+        if (laneIndex === 1 && (carIndex === 3 || carIndex === 4)) thisCarLen -= 2.45;
+        var bodyMat = laneIndex === 1 ? MAT.bvgYellow : MAT.tramRed;
+        var body = roundedBox(2.64, 2.16, thisCarLen, 0.22, bodyMat,
+                              laneX, 1.20, carZ, 0.045);
+        root.add(body);
+        root.add(roundedBox(2.72, 0.25, thisCarLen + 0.20, 0.10, MAT.roof,
+                            laneX, ROOF_HEIGHT - 0.15, carZ, 0.026));
+        [-1, 1].forEach(function (side) {
+          root.add(roundedBox(0.055, 0.66, thisCarLen * 0.86, 0.06, MAT.glassDark,
+                              laneX + side * 1.335, 1.44, carZ, 0.018));
+          root.add(roundedBox(0.065, 0.14, thisCarLen * 0.91, 0.04, MAT.signBlue,
+                              laneX + side * 1.345, 0.91, carZ, 0.014));
+        });
+      }
+      // Dark articulated bellows/end masses make every joint visible from the
+      // chase camera. The flush roof bridge keeps the continuous logical
+      // surface honest; no decorative object protrudes into a playable lane.
+      for (var jointIndex = 1; jointIndex < roofCarCount; jointIndex++) {
+        var jointZ = ROOF_UP_RAMP + roofCarPitch * jointIndex;
+        var jumpGapJoint = laneIndex === 1 && jointIndex === 4;
+        // The jump joint is open all the way down to the street. Do not leave
+        // bellows, a top strip or decorative housings masquerading as support.
+        if (jumpGapJoint) continue;
+        root.add(roundedBox(2.42, 1.70, 0.56, 0.08, MAT.metalDark,
+                            laneX, 1.25, jointZ, 0.026));
+        // Expose a high-contrast top seam instead of covering the articulation
+        // with another full-width roof slab. A narrow central service bridge
+        // communicates the continuous walkable line while the dark shoulders
+        // make the individual cars unmistakable from the chase camera.
+        root.add(roundedBox(2.54, 0.065, 0.56, 0.018, MAT.metalDark,
+                            laneX, ROOF_HEIGHT + 0.005, jointZ, 0.012));
+        root.add(roundedBox(0.82, 0.08, 1.18, 0.022, MAT.roof,
+                            laneX, ROOF_HEIGHT + 0.035, jointZ, 0.014));
+        // Low side-edge service housings add roof rhythm without becoming an
+        // uncollidable obstacle in the runner's central footpath.
+        root.add(roundedBox(0.30, 0.13, 1.15, 0.035, MAT.metalDark,
+                            laneX + (jointIndex % 2 ? 1.08 : -1.08),
+                            ROOF_HEIGHT + 0.045, jointZ - 2.1, 0.016));
+      }
+    }
+    // Cross-lane service plates support both authored pickup diagonals. The
+    // first pair aligns to articulated joints; the third sits at local z=114
+    // under the return trail while leaving lane 1's z=100.667 jump gap open.
+    var serviceJoints = [ROOF_UP_RAMP + ROOF_FLAT / 3,
+                         ROOF_UP_RAMP + ROOF_FLAT / 2,
+                         114];
+    for (var bridgeIndex = 0; bridgeIndex < serviceJoints.length; bridgeIndex++) {
+      root.add(roundedBox(5.72, 0.13, 1.7, 0.04, MAT.metalDark,
+                          -1.5, ROOF_HEIGHT - 0.08, serviceJoints[bridgeIndex], 0.018));
+      root.add(roundedBox(5.30, 0.045, 0.16, 0.018, MAT.bvgYellow,
+                          -1.5, ROOF_HEIGHT + 0.005, serviceJoints[bridgeIndex], 0.01));
+    }
+    // Entry gantry gives the route an authored, Berlin-transit silhouette.
+    [-1, 1].forEach(function (side) {
+      root.add(roundedBox(0.16, 3.0, 0.16, 0.05, MAT.metalDark,
+                          side * 4.75, 4.45, ROOF_UP_RAMP + 2.2, 0.018));
+    });
+    root.add(roundedBox(9.7, 0.18, 0.18, 0.05, MAT.metalDark,
+                        0, 5.92, ROOF_UP_RAMP + 2.2, 0.018));
+    root.add(roundedBox(3.4, 0.66, 0.16, 0.08, MAT.signBlue,
+                        0, 5.55, ROOF_UP_RAMP + 2.08, 0.022));
+    root.add(roundedBox(2.72, 0.10, 0.18, 0.025, MAT.bvgYellow,
+                        0, 5.55, ROOF_UP_RAMP + 1.97, 0.012));
+    compactStaticPropGroup(root);
+    root.visible = false; scene.add(root);
+    return { root:root, active:false, startZ:0, endZ:0 };
+  }
+  for (var roofPoolIndex = 0; roofPoolIndex < ROOF_ROUTE_POOL; roofPoolIndex++) {
+    roofRoutes.push(makeRoofRouteSlot());
+  }
+  function spawnRoofRoute(startZ) {
+    for (var i = 0; i < roofRoutes.length; i++) {
+      var route = roofRoutes[i];
+      if (route.active) continue;
+      route.active = true; route.startZ = startZ; route.endZ = startZ + ROOF_ROUTE_LENGTH;
+      route.root.position.set(0, 0, startZ); route.root.visible = false;
+      route.root.updateMatrix();
+      return route;
+    }
+    return null;
+  }
+  function roofSurfaceY(z) {
+    for (var i = 0; i < roofRoutes.length; i++) {
+      var route = roofRoutes[i];
+      if (!route.active || z <= route.startZ || z >= route.endZ) continue;
+      var localZ = z - route.startZ;
+      if (localZ < ROOF_UP_RAMP) return ROOF_HEIGHT * (localZ / ROOF_UP_RAMP);
+      if (localZ > ROOF_UP_RAMP + ROOF_FLAT) {
+        return ROOF_HEIGHT * (1 - (localZ - ROOF_UP_RAMP - ROOF_FLAT) / ROOF_DOWN_RAMP);
+      }
+      return ROOF_HEIGHT;
+    }
+    return 0;
+  }
+  function roofGapRouteAt(z, logicalX) {
+    if (Math.abs(logicalX - LANES[1]) >= LANE_W * 0.45) return null;
+    for (var i = 0; i < roofRoutes.length; i++) {
+      var route = roofRoutes[i];
+      if (!route.active) continue;
+      var localZ = z - route.startZ;
+      if (localZ > ROOF_GAP_LOCAL_Z - ROOF_GAP_HALF &&
+          localZ < ROOF_GAP_LOCAL_Z + ROOF_GAP_HALF) return route;
+    }
+    return null;
+  }
+  function roofLaneSurfaceY(z, logicalX) {
+    return roofGapRouteAt(z, logicalX) ? 0 : roofSurfaceY(z);
+  }
+  function playSurfaceY(z, logicalX) {
+    // Lane 0 is the ground branch. Render objects in centre/right on the roof;
+    // the player uses the committed routeLevel so lane-glide interpolation can
+    // never make the hero float diagonally between the two elevations.
+    if (logicalX !== undefined && logicalX > LANE_W * 0.5) return 0;
+    return roofLaneSurfaceY(z, logicalX);
+  }
+  function playerSurfaceY(z, logicalX) {
+    var px = logicalX === undefined ? player.x : logicalX;
+    return routeLevel === 1 ? roofLaneSurfaceY(z, px) : 0;
+  }
+  function applyPlayFrame(object, logicalX, logicalY, logicalZ, baseYaw, basePitch, baseRoll) {
+    applyRouteFrame(object, logicalX, logicalY + playSurfaceY(logicalZ, logicalX), logicalZ,
+                    baseYaw, basePitch, baseRoll);
+  }
+  function applyPlayerFrame(object, logicalX, logicalY, logicalZ, baseYaw, basePitch, baseRoll) {
+    applyRouteFrame(object, logicalX, logicalY + playerSurfaceY(logicalZ, logicalX), logicalZ,
+                    baseYaw, basePitch, baseRoll);
+  }
+  function updateRoofRoutes(playerZ) {
+    for (var i = 0; i < roofRoutes.length; i++) {
+      var route = roofRoutes[i];
+      if (!route.active) continue;
+      if (route.endZ < playerZ - 22) {
+        route.active = false; route.root.visible = false; continue;
+      }
+      route.root.visible = route.startZ - playerZ < FOG_FAR_MAX + 12;
+    }
+    // Gameplay roots must share the exact same deck profile. The authoritative
+    // hit tests continue to read their unchanged logical lane/y/z values.
+    for (var gi = 0; gi < gates.length; gi++) {
+      var gate = gates[gi];
+      if (gate.userData.active) applyPlayFrame(gate, 0, 0, gate.userData.z, 0, 0, 0);
+    }
+    for (var oi = 0; oi < obstacles.length; oi++) {
+      var obstacle = obstacles[oi];
+      if (obstacle.active) applyPlayFrame(obstacle.holder, LANES[obstacle.lane], 0.02,
+                                           obstacle.z, 0, 0, 0);
+    }
+  }
+  function updatePlayerRouteLevel() {
+    var current = null;
+    for (var i = 0; i < roofRoutes.length; i++) {
+      var route = roofRoutes[i];
+      // Commit on a six-metre neutral apron before the ramp. At maximum speed
+      // this is still ~110 ms—enough for the existing lane spring to settle—so
+      // the surface never lifts a hero who is visually between street and roof.
+      if (route.active && player.z >= route.startZ - 6 && player.z < route.endZ) { current = route; break; }
+    }
+    if (!current) {
+      routeLevel = -1; activePlayerRoofRoute = null; return;
+    }
+    if (activePlayerRoofRoute !== current) {
+      activePlayerRoofRoute = current;
+      routeLevel = targetLane === 0 ? 0 : 1;
+      if (routeLevel === 0) {
+        targetLane = lane = 0;
+        // The branch decision happens before the physical ramp. Finish the lane
+        // change on that flat apron, eliminating the only possible diagonal
+        // street/roof crossing without changing any in-route movement timing.
+        if (player.z < current.startZ) player.x = LANES[0];
+      } else {
+        if (targetLane < 1) targetLane = lane = 1;
+        if (player.z < current.startZ) player.x = LANES[targetLane];
+      }
+      interpPrevX = player.x;
+      playRoofRouteSound(routeLevel === 1);
+    }
+    if (routeLevel === 0) targetLane = lane = 0;
+    else if (targetLane < 1) targetLane = lane = 1;
   }
 
   // ============================================================= runner =====
@@ -19621,7 +20324,7 @@ THREE.GLTFLoader = GLTFLoader;
   var fxM10 = 0, fxM11 = 1, fxM12 = 0;
   var fxM20 = 0, fxM21 = 0, fxM22 = 1;
   function fxAnchor(lx, ly, lz) {
-    sampleRoutePoint(lx, ly, lz);
+    sampleRoutePoint(lx, ly + playSurfaceY(lz, lx), lz);
     fxOX = routePointX; fxOY = routePointY; fxOZ = routePointZ;
     var a = Math.cos(routeFramePitch), b = Math.sin(routeFramePitch);
     var c = Math.cos(routeFrameYaw), d = Math.sin(routeFrameYaw);
@@ -19629,7 +20332,7 @@ THREE.GLTFLoader = GLTFLoader;
     fxM00 = c * e; fxM01 = -c * f; fxM02 = d;
     fxM10 = a * f + b * e * d; fxM11 = a * e - b * f * d; fxM12 = -b * c;
     fxM20 = b * f - a * e * d; fxM21 = b * e + a * f * d; fxM22 = a * c;
-    fxGroundY = routePathY(lz) + 0.05;
+    fxGroundY = routePathY(lz) + playSurfaceY(lz, lx) + 0.05;
   }
 
   function fxSpawn(L, dx, dy, dz) {
@@ -19925,7 +20628,7 @@ THREE.GLTFLoader = GLTFLoader;
     // every single popup for no shader change (this alone was ~1.5s of
     // profiled self time in getParameters over a run).
     p.mat.map = fxPopTexture(text, css);
-    sampleRoutePoint(lx, ly, lz);
+    sampleRoutePoint(lx, ly + playSurfaceY(lz, lx), lz);
     p.x = routePointX; p.y = routePointY; p.z = routePointZ;
     p.life = 0.78; p.max = 0.78;
     p.vy = 2.9;
@@ -19984,7 +20687,7 @@ THREE.GLTFLoader = GLTFLoader;
     fxTrailFade += (want - fxTrailFade) * damp(6.5, dt);
     if (fxTrailFade < 0.012) { fxTrail.visible = false; }
 
-    sampleRoutePoint(player.x, player.y + 0.78, player.z);
+    sampleRoutePoint(player.x, player.y + 0.78 + playerSurfaceY(player.z), player.z);
     var hx = routePointX, hy = routePointY, hz = routePointZ;
     fxTrailAccum += Math.abs(speed) * dt;
     if (fxTrailFilled === 0) {
@@ -20407,30 +21110,81 @@ THREE.GLTFLoader = GLTFLoader;
     if (a) { e.preventDefault(); keys[a] = false; }
   }, { passive: false });
   window.addEventListener('blur', function () { for (var k in keys) keys[k] = false; });
+  // Safari may suspend a tab or show an OS sheet without a useful blur delta.
+  // Discard the stale accumulator on either edge so resuming cannot teleport
+  // the runner several metres or replay a held gesture into an obstacle.
+  document.addEventListener('visibilitychange', function () {
+    for (var k in keys) keys[k] = false;
+    touchLive = false; touchCommitted = false; touchId = -1;
+    accum = 0;
+    last = performance.now();
+    if (document.hidden) {
+      musicStop();
+      if (gameAudio && gameAudio.state === 'running') gameAudio.suspend().catch(function () {});
+    } else if (gameAudio) {
+      gameAudio.resume().catch(function () {});
+      if (started && !gameOver && musicEnabled) musicStart();
+    }
+  });
 
-  // Touch: swipe in any of four directions, with a tap fallback for jump.
+  // Touch: commit as soon as a swipe crosses the threshold. Waiting for
+  // touchend added the entire finger-down dwell (often 100-200 ms) to every
+  // dodge on iPhone. One tracked identifier prevents a second finger from
+  // stealing the gesture; touchend still owns the tap-to-jump fallback.
   var touchX = 0, touchY = 0, touchT = 0, touchLive = false;
+  var touchId = -1, touchCommitted = false;
   var SWIPE_MIN = 26;
+  function trackedTouch(list) {
+    for (var i = 0; i < list.length; i++) if (list[i].identifier === touchId) return list[i];
+    return null;
+  }
   canvas.addEventListener('touchstart', function (e) {
     if (!started) { begin(); return; }
     var t = e.changedTouches[0];
-    touchX = t.clientX; touchY = t.clientY; touchT = performance.now(); touchLive = true;
+    touchX = t.clientX; touchY = t.clientY; touchT = performance.now();
+    touchId = t.identifier; touchLive = true; touchCommitted = false;
+  }, { passive: true });
+  canvas.addEventListener('touchmove', function (e) {
+    if (!touchLive || touchCommitted || gameOver) return;
+    var t = trackedTouch(e.changedTouches);
+    if (!t) return;
+    var dx = t.clientX - touchX, dy = t.clientY - touchY;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_MIN) return;
+    // A modest axis lock avoids diagonal thumb motion changing its mind after
+    // the action has fired, without making diagonal swipes feel unresponsive.
+    touchCommitted = true;
+    if (Math.abs(dx) > Math.abs(dy) * 1.08) pressAction(dx > 0 ? 'right' : 'left');
+    else pressAction(dy > 0 ? 'slide' : 'jump');
   }, { passive: true });
   canvas.addEventListener('touchend', function (e) {
-    if (!touchLive || gameOver) { touchLive = false; return; }
-    touchLive = false;
-    var t = e.changedTouches[0];
+    if (!touchLive || gameOver) { touchLive = false; touchId = -1; return; }
+    var t = trackedTouch(e.changedTouches);
+    if (!t) return;
+    touchLive = false; touchId = -1;
     var dx = t.clientX - touchX, dy = t.clientY - touchY;
-    if (Math.abs(dx) < SWIPE_MIN && Math.abs(dy) < SWIPE_MIN) {
+    if (!touchCommitted && Math.abs(dx) < SWIPE_MIN && Math.abs(dy) < SWIPE_MIN) {
       if (performance.now() - touchT < 260) pressAction('jump');
       return;
     }
-    if (Math.abs(dx) > Math.abs(dy)) pressAction(dx > 0 ? 'right' : 'left');
-    else pressAction(dy > 0 ? 'slide' : 'jump');
+    // Very fast flicks can cross the threshold between the browser's final
+    // move sample and touchend. Preserve them without double-firing gestures
+    // already committed by touchmove.
+    if (!touchCommitted) {
+      if (Math.abs(dx) > Math.abs(dy) * 1.08) pressAction(dx > 0 ? 'right' : 'left');
+      else pressAction(dy > 0 ? 'slide' : 'jump');
+    }
+  }, { passive: true });
+  canvas.addEventListener('touchcancel', function () {
+    touchLive = false; touchCommitted = false; touchId = -1;
   }, { passive: true });
 
   // ========================================================== game state ====
   var player = { x: 0, y: 0, z: 0, vy: 0 };
+  // Authoritative physics remains fixed at 60 Hz. visualPlayer is the
+  // interpolated presentation snapshot consumed by the rig/camera on faster
+  // displays, preventing ProMotion's old 0px/2px alternating cadence.
+  var visualPlayer = { x: 0, y: 0, z: 0 };
+  var interpPrevX = 0, interpPrevY = 0, interpPrevZ = 0;
   var lane = 1, targetLane = 1;
   var speed = 26;
   var grounded = true, slideTimer = 0, coyote = 0;
@@ -20493,6 +21247,9 @@ THREE.GLTFLoader = GLTFLoader;
     mistakeTitle: document.getElementById('mistaketitle'),
     mistakeList: document.getElementById('mistakelist'),
     pretzels: document.getElementById('pretzelcount'),
+    powerMagnet: document.getElementById('power-magnet'),
+    powerShield: document.getElementById('power-shield'),
+    powerSpring: document.getElementById('power-spring'),
     flash: document.getElementById('flash'),
     stumble: document.getElementById('stumblemsg'),
     start: document.getElementById('start'),
@@ -20506,6 +21263,27 @@ THREE.GLTFLoader = GLTFLoader;
     finalPretzels: document.getElementById('finalpretzels'),
     restart: document.getElementById('restartgame')
   };
+  // The lightweight offline option is the launch default even though the
+  // following sentinel offers the full catalog on demand.
+  el.deckSelect.value = 'embedded';
+
+  var lastPowerHudMagnet = -1, lastPowerHudShield = -1, lastPowerHudSpring = -1;
+  function updatePowerupHUD(force) {
+    var magnetFill = clamp(magnetTimer / MAGNET_TIME, 0, 1);
+    var shieldFill = shieldCharges > 0 ? 1 : 0;
+    var springFill = clamp(springTimer / SPRING_TIME, 0, 1);
+    function writePowerChip(node, fill, last) {
+      var quantized = Math.round(fill * 100);
+      if (force || quantized !== last) {
+        node.classList.toggle('active', fill > 0);
+        node.style.setProperty('--fill', quantized + '%');
+      }
+      return quantized;
+    }
+    lastPowerHudMagnet = writePowerChip(el.powerMagnet, magnetFill, lastPowerHudMagnet);
+    lastPowerHudShield = writePowerChip(el.powerShield, shieldFill, lastPowerHudShield);
+    lastPowerHudSpring = writePowerChip(el.powerSpring, springFill, lastPowerHudSpring);
+  }
 
   function setDeckStatus(message, isError) {
     el.deckStatus.textContent = message;
@@ -20580,9 +21358,9 @@ THREE.GLTFLoader = GLTFLoader;
   // the bundled-offline path (which carries no glosses) shows the same meaning
   // under the word as the routed app path — one source of truth, both views.
   function loadNounMeanings() {
-    if (nounMeaningLookup) return Promise.resolve(nounMeaningLookup);
-    nounMeaningLookup = Object.create(null);
-    return fetch('./data/nouns.json')
+    if (nounMeaningsComplete) return Promise.resolve(nounMeaningLookup);
+    if (nounMeaningPromise) return nounMeaningPromise;
+    nounMeaningPromise = fetch('./data/nouns.json')
       .then(function (response) {
         if (!response.ok) throw new Error('nouns.json ' + response.status);
         return response.json();
@@ -20593,9 +21371,11 @@ THREE.GLTFLoader = GLTFLoader;
             nounMeaningLookup[entry.word] = String(entry.english).trim();
           }
         });
+        nounMeaningsComplete = true;
         return nounMeaningLookup;
       })
       .catch(function () { return nounMeaningLookup; });
+    return nounMeaningPromise;
   }
 
 
@@ -20737,6 +21517,36 @@ THREE.GLTFLoader = GLTFLoader;
     });
   }
 
+  function ensureRunnerDeckCatalog() {
+    if (runnerDeckCatalogBuilt) return Promise.resolve();
+    if (runnerDeckCatalogPromise) return runnerDeckCatalogPromise;
+    setDeckStatus('Weitere Decks werden geladen ...', false);
+    runnerDeckCatalogPromise = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = './data/berlin-runner-decks.js';
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = function () { reject(new Error('Deck-Katalog konnte nicht geladen werden')); };
+      document.head.appendChild(script);
+    }).then(function () {
+      BUNDLED_DECK_DATA = window.ARTIKEL_EXPRESS_DECK_DATA || null;
+      if (!BUNDLED_DECK_DATA) throw new Error('Deck-Katalog ist leer');
+      var sentinel = el.deckSelect.querySelector('option[value="catalog"]');
+      if (sentinel) sentinel.remove();
+      return buildRunnerDeckCatalog();
+    }).then(function () {
+      runnerDeckCatalogBuilt = true;
+      el.deckSelect.disabled = false;
+    }).catch(function (error) {
+      runnerDeckCatalogPromise = null;
+      el.deckSelect.disabled = false;
+      el.deckSelect.value = 'embedded';
+      setDeckStatus('Offline-Deck bereit · weitere Decks konnten nicht geladen werden', true);
+      throw error;
+    });
+    return runnerDeckCatalogPromise;
+  }
+
   function loadSelectedArticleDeck(value) {
     var token = ++articleDeckLoadToken;
     if (value === 'embedded') {
@@ -20754,7 +21564,13 @@ THREE.GLTFLoader = GLTFLoader;
     el.deckSelect.disabled = true;
     setDeckStatus(spec.label + ' wird geladen …', false);
     refreshStartCta();
-    wordsForDeckSpec(spec).then(function (words) {
+    // Alternate decks may contain nouns outside the compact launch table.
+    // Load the complete catalog only after the player deliberately chooses one.
+    Promise.all([wordsForDeckSpec(spec), loadNounMeanings()]).then(function (loaded) {
+      var words = loaded[0], meanings = loaded[1];
+      for (var mi = 0; mi < words.length; mi++) {
+        if (!words[mi].meaning) words[mi].meaning = meanings[words[mi].noun] || '';
+      }
       if (token !== articleDeckLoadToken) return;
       if (words.length < 3) throw new Error('Zu wenige Nomen mit eindeutigem Artikel');
       selectedArticleWords = words;
@@ -20781,7 +21597,16 @@ THREE.GLTFLoader = GLTFLoader;
   ['click', 'touchstart', 'pointerdown'].forEach(function (eventName) {
     el.deckPicker.addEventListener(eventName, function (event) { event.stopPropagation(); });
   });
-  el.deckSelect.addEventListener('change', function () { loadSelectedArticleDeck(el.deckSelect.value); });
+  el.deckPicker.addEventListener('pointerenter', function () { ensureRunnerDeckCatalog().catch(function () {}); }, { once: true });
+  el.deckSelect.addEventListener('focus', function () { ensureRunnerDeckCatalog().catch(function () {}); }, { once: true });
+  el.deckSelect.addEventListener('change', function () {
+    if (el.deckSelect.value === 'catalog') {
+      el.deckSelect.value = 'embedded';
+      ensureRunnerDeckCatalog().catch(function () {});
+      return;
+    }
+    loadSelectedArticleDeck(el.deckSelect.value);
+  });
 
   // Embed mode: this page is running inside an iframe of the main app. The
   // host routes a specific deck by setting window.parent._artikelRunnerWords,
@@ -20794,12 +21619,18 @@ THREE.GLTFLoader = GLTFLoader;
     var routedCount = getArticleWords().length;
     setDeckStatus('Deck aus Artikel Blitz · ' + routedCount + ' Wörter', false);
   } else {
-    buildRunnerDeckCatalog();
+    var savedRunnerDeck = '';
+    try { savedRunnerDeck = localStorage.getItem('artikel-express-deck') || ''; } catch (e) {}
+    if (savedRunnerDeck && savedRunnerDeck !== 'embedded') {
+      ensureRunnerDeckCatalog().catch(function () {});
+    } else {
+      setDeckStatus('Offline-Deck · sofort spielbereit', false);
+    }
   }
   // Warm the noun meaning lookup in the background so translations show under
   // the word identically on the deployed site, the embedded app view and a
   // locally opened copy — one code path, one look.
-  loadNounMeanings();
+  // Full noun meanings are loaded on demand when an alternate deck is chosen.
 
   // Exit back to the host app lives on the game-over card when embedded.
   var exitGameBtn = document.getElementById('exitgame');
@@ -20888,7 +21719,12 @@ THREE.GLTFLoader = GLTFLoader;
     if (musicBus && gameAudio) {
       musicBus.gain.setTargetAtTime(0, gameAudio.currentTime, 0.5);
     }
-    setTimeout(musicStop, 2200);
+    if (musicStopTimer) clearTimeout(musicStopTimer);
+    var musicStopToken = gameOverToken + 1;
+    musicStopTimer = setTimeout(function () {
+      musicStopTimer = null;
+      if (gameOver && musicStopToken === gameOverToken) musicStop();
+    }, 2200);
     var token = ++gameOverToken;
     el.finalWords.textContent = String(quizMastered);
     el.finalCorrect.textContent = String(quizCorrect);
@@ -20972,9 +21808,11 @@ THREE.GLTFLoader = GLTFLoader;
     // Bounded so a pathological speed spike cannot place a whole run's worth
     // of gates (and their corridors) in one frame.
     for (var guard = 0; guard < 4 && nextGateZ < horizon; guard++) {
-      nextGateZ = Math.max(nextGateZ + gateDistance(), player.z + 40);
+      var roofRouteBeat = (++roofRouteSequence % 4) === 0;
+      var spacing = roofRouteBeat ? 180 : gateDistance();
+      nextGateZ = Math.max(nextGateZ + spacing, player.z + 40);
       spawnGate(nextGateZ);
-      scheduleCorridor(nextGateZ);
+      scheduleCorridor(nextGateZ, roofRouteBeat);
     }
   }
 
@@ -20982,36 +21820,101 @@ THREE.GLTFLoader = GLTFLoader;
   // approach window so a lane choice is never contested by an obstacle.
   var GATE_CLEAR_BEFORE = 17;
   var GATE_CLEAR_AFTER = 9;
-  function scheduleCorridor(gateZ) {
+  var powerupCorridorIndex = 0;
+  function scheduleCorridor(gateZ, roofRouteBeat) {
     var z = Math.max(lastObstacleZ, player.z + 34);
     var difficulty = clamp((distance / 1400) + overdriveTier * 0.18, 0, 1);
+    var lastVerb = 'free';
+    var wantsPowerup = (++powerupCorridorIndex % 2) === 0;
+    var powerupPlaced = false;
+    if (roofRouteBeat) {
+      // The widened gate interval reserves a complete authored traversal beat:
+      // clean entry, three parallel tram roofs, a risk/reward centre jump, a
+      // late slide read, then a clean descent before the unchanged article gate.
+      var routeStart = gateZ - 171;
+      if (routeStart > player.z + 32 &&
+          spawnRoofRoute(routeStart)) {
+        // White/gold pickup paths telegraph the topology without borrowing the
+        // article gate's blue/pink/green language. Ground is safe but modest;
+        // roof rewards are denser and teach the two action beats in advance.
+        spawnPretzelRun(0, routeStart + 44, 5, false);
+        spawnObstacle(0, 0, routeStart + 61);
+        spawnPretzelRun(0, routeStart + 82, 5, false);
+        spawnObstacle(2, 0, routeStart + 112);
+        spawnPretzelRun(0, routeStart + 121, 4, false);
+
+        spawnPretzelRun(1, routeStart + 5, 6, true);
+        spawnPretzelRun(1, routeStart + 36, 6, true);
+        spawnObstacle(0, 1, routeStart + 42);
+        spawnPretzelRun(2, routeStart + 44, 7, false);
+        // The first gold diagonal is a literal navigation arrow across the
+        // central service plate. Players who stay on lane 1 instead meet the
+        // six-metre fourth articulation as a real surface gap.
+        spawnPretzelTransfer(1, 2, routeStart + 73, routeStart + 87, 7);
+        // A return diagonal over the next service plate rejoins the fast line.
+        // The maintenance cabinet closes lane 2 after the arrow, so following
+        // the transfer is a readable decision rather than optional decoration.
+        spawnPretzelTransfer(2, 1, routeStart + 108, routeStart + 120, 7);
+        spawnObstacle(4, 2, routeStart + 125, 1);
+        spawnPretzelRun(1, routeStart + 128, 5, false);
+        spawnObstacle(2, 1, routeStart + 136);
+        spawnPowerup(POWERUP_TYPES[((roofRouteSequence / 4) | 0) % POWERUP_TYPES.length],
+                     1, routeStart + 129);
+        spawnPretzelRun(1, routeStart + ROOF_ROUTE_LENGTH + 3, 4, false);
+        lastObstacleZ = Math.max(lastObstacleZ, gateZ + GATE_CLEAR_AFTER);
+        return;
+      }
+    }
     while (z < gateZ - GATE_CLEAR_BEFORE) {
-      var gap = rand(26, 38) - difficulty * 8;
+      // Space by recovery time, not just metres. The old 18-30 m late-game
+      // range compressed to 0.33-0.56 s at 54 m/s—shorter than either the
+      // 0.67 s jump or 0.62 s slide—so random legal beats became animation-
+      // locked guesses. Keep the pressure ramp, but guarantee that the verb
+      // from the previous beat can finish before the next decision arrives.
+      var recoverySeconds = lastVerb === 'block' ? lerp(0.70, 0.58, difficulty) :
+                            lastVerb === 'free' ? 0.62 : lerp(1.00, 0.76, difficulty);
+      var gap = Math.max(rand(24, 35) - difficulty * 5, speed * recoverySeconds);
       z += gap;
       if (z > gateZ - GATE_CLEAR_BEFORE) break;
 
       var roll = Math.random();
+      var rewardLane = randInt(0, 2);
       if (roll < 0.34 && freeObstacleSlots() >= 3) {
         // full-width jump or slide — pure reflex, lane stays free
         var full = Math.random() < 0.5 ? 0 : 2;   // barrier or scaffold
         for (var l = 0; l < 3; l++) spawnObstacle(full, l, z);
-        if (Math.random() < 0.6) spawnPretzelRun(randInt(0, 2), z - 1, 5, full === 0);
+        rewardLane = randInt(0, 2);
+        if (Math.random() < 0.6) spawnPretzelRun(rewardLane, z - 1, 5, full === 0);
+        lastVerb = full === 0 ? 'jump' : 'slide';
       } else if (roll < 0.62) {
         // single-lane low/high hazard
         var laneA = randInt(0, 2);
         spawnObstacle(Math.random() < 0.55 ? 0 : 2, laneA, z);
         var other = (laneA + 1 + randInt(0, 1)) % 3;
+        rewardLane = other;
         if (Math.random() < 0.55) spawnPretzelRun(other, z - 2, 4, false);
+        lastVerb = 'dodge';
       } else {
         // one or two blocked lanes — force a lane change
         var blocked = randInt(0, 2);
         spawnObstacle(randInt(3, 4), blocked, z);
         var free = (blocked + 1) % 3;
+        rewardLane = free;
         if (Math.random() < 0.35 && difficulty > 0.3) {
           spawnObstacle(randInt(3, 4), (blocked + 2) % 3, z + rand(-1.5, 1.5));
         } else if (Math.random() < 0.6) {
           spawnPretzelRun(free, z - 2, 5, false);
         }
+        lastVerb = 'block';
+      }
+      // One deliberately placed pickup every second corridor. It sits in the
+      // readable recovery space before a beat, in the lane the beat itself
+      // already teaches as rewarding, so collecting it never asks the player
+      // to trade away a fair obstacle response.
+      if (wantsPowerup && !powerupPlaced && z - player.z > 26) {
+        spawnPowerup(POWERUP_TYPES[(powerupCorridorIndex / 2 | 0) % POWERUP_TYPES.length],
+                     rewardLane, z - Math.max(9, speed * 0.22));
+        powerupPlaced = true;
       }
       lastObstacleZ = z;
     }
@@ -21107,6 +22010,24 @@ THREE.GLTFLoader = GLTFLoader;
     fxStumble(player.x, 0.8, player.z);
   }
 
+  function missRoofGap() {
+    if (gameOver || graceTimer > 0 || stumbleTimer > 0) return;
+    if (shieldCharges > 0) {
+      shieldCharges--;
+      graceTimer = 0.16;
+      playPowerupSound('shield');
+      fxPopup(player.x + (player.x >= 0 ? -0.9 : 0.9), player.y + 1.25, player.z,
+              'GERETTET!', '#ffe45c', 0.62);
+      fxScreenPulse(1.0, 0.78, 0.22, 0.18, 6.4);
+      fxCamKick(0, 0.10, -0.14, 0.014, 0.48, 7.4);
+      updatePowerupHUD(true);
+      return;
+    }
+    fxPopup(player.x + (player.x >= 0 ? -0.9 : 0.9), player.y + 1.15, player.z,
+            'KANTE!', '#ff8b70', 0.58);
+    stumble();
+  }
+
   function clearStumbleUI() {
     el.flash.style.opacity = 0;
     el.stumble.style.opacity = 0;
@@ -21116,7 +22037,12 @@ THREE.GLTFLoader = GLTFLoader;
   // The run starts wherever the attract camera happens to be, so nothing has to
   // teleport when the player presses a key — the street simply keeps rolling.
   function reset() {
+    if (started) document.body.classList.add('running');
+    if (musicStopTimer) { clearTimeout(musicStopTimer); musicStopTimer = null; }
     player.x = 0; player.y = 0; player.vy = 0;
+    visualPlayer.x = interpPrevX = player.x;
+    visualPlayer.y = interpPrevY = player.y;
+    visualPlayer.z = interpPrevZ = player.z;
     startZ = player.z;
     lane = targetLane = 1;
     speed = BASE_SPEED;
@@ -21131,6 +22057,10 @@ THREE.GLTFLoader = GLTFLoader;
     resetRouteIllusion();
     distance = 0; pretzelCount = 0;
     overdriveTier = 0; overdriveIntensity = 0;
+    magnetTimer = springTimer = 0; shieldCharges = airJumps = 0;
+    powerupCorridorIndex = 0; roofRouteSequence = 0;
+    routeLevel = -1; activePlayerRoofRoute = null; roofCameraReveal = 0;
+    roofGapCrossing = false;
     bufLeft = bufRight = bufJump = bufSlide = 0;
     fastFalling = false; slideHeld = 0;
     prevZ = player.z; lastObstacleZ = player.z;
@@ -21139,6 +22069,7 @@ THREE.GLTFLoader = GLTFLoader;
     // A fresh run re-measures the device from scratch, including the verdict on
     // how far down the ladder is worth walking.
     ladderCeiling = QUALITY_TIER_MAX; ladderProbeUntil = 0;
+    applyQualityTier(0);
 
     gameOver = false;
     gameOverToken++;
@@ -21175,8 +22106,12 @@ THREE.GLTFLoader = GLTFLoader;
     nextGateZ = player.z;
     for (var o = 0; o < obstacles.length; o++) { obstacles[o].active = false; obstacles[o].holder.visible = false; }
     for (var p = 0; p < pretzels.length; p++) { pretzels[p].active = false; pretzels[p].sprite.visible = false; }
+    for (var pu = 0; pu < powerups.length; pu++) { powerups[pu].active = false; powerups[pu].holder.visible = false; }
+    for (var rr = 0; rr < roofRoutes.length; rr++) { roofRoutes[rr].active = false; roofRoutes[rr].root.visible = false; }
+    updatePowerupHUD(true);
     if (pretzelSolidInst) { pretzelSolidInst.count = 0; pretzelSolidInst.instanceMatrix.needsUpdate = true; }
     clearParticles();
+    fxPrevPlayerX = player.x;
 
     rig.position.set(0, 0, player.z);
     rig.rotation.set(0, 0, 0);
@@ -21258,92 +22193,130 @@ THREE.GLTFLoader = GLTFLoader;
     // and our pool lights are permanently visible. So a single compile() now
     // covers every station/tunnel/chunk-visibility state at once, and this
     // step no longer needs to touch chunk/station/tunnel .visible at all.
-    var ud0 = chunks[0].userData;
-    var stationRoot0 = ud0.station && ud0.station.root;
-    var tunnelRoot0 = ud0.tunnel && ud0.tunnel.root;
-    var savedStation0 = stationRoot0 && stationRoot0.visible;
-    var savedTunnel0 = tunnelRoot0 && tunnelRoot0.visible;
-    var savedChunkVisible = chunks.map(function (c) { return c.visible; });
-
     var savedTarget = renderer.getRenderTarget();
     var steps = [];
+
+    // Compile the exact material/object program shapes without walking every
+    // facade, prop and pooled holder in the city twice. Material identity is
+    // deliberately part of the key: custom onBeforeCompile hooks and defines
+    // remain covered even when two materials look superficially identical.
+    var programWarmScene = new THREE.Scene();
+    programWarmScene.fog = scene.fog;
+    programWarmScene.environment = scene.environment;
+    var programWarmGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+    var programWarmKeys = Object.create(null);
+    var programWarmSun = null;
+    scene.traverseVisible(function (obj) {
+      if (obj.isLight) {
+        var lightCopy = obj.clone(false);
+        lightCopy.position.copy(obj.getWorldPosition(new THREE.Vector3()));
+        lightCopy.castShadow = obj.castShadow;
+        programWarmScene.add(lightCopy);
+        if (obj === sun) programWarmSun = lightCopy;
+        return;
+      }
+      if (!(obj.isMesh || obj.isLine || obj.isPoints || obj.isSprite) || !obj.material) return;
+      var mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      for (var wm = 0; wm < mats.length; wm++) {
+        var warmMat = mats[wm];
+        if (!warmMat) continue;
+        var warmShape = obj.isSkinnedMesh ? 'skin' :
+                        obj.isInstancedMesh ? (obj.instanceColor ? 'instColor' : 'inst') :
+                        obj.isSprite ? 'sprite' : obj.isPoints ? 'points' :
+                        obj.isLineSegments ? 'lineSeg' : obj.isLine ? 'line' : 'mesh';
+        var hasMorph = !!(obj.geometry && obj.geometry.morphAttributes &&
+                          Object.keys(obj.geometry.morphAttributes).length);
+        var warmKey = warmMat.id + '|' + warmShape + '|' + (hasMorph ? 1 : 0) +
+                      '|' + (obj.receiveShadow ? 1 : 0);
+        if (programWarmKeys[warmKey]) continue;
+        programWarmKeys[warmKey] = 1;
+        var warmObj;
+        if (obj.isSkinnedMesh) {
+          warmObj = new THREE.SkinnedMesh(obj.geometry, warmMat);
+          if (obj.skeleton) warmObj.bind(obj.skeleton, obj.bindMatrix);
+        } else if (obj.isInstancedMesh) {
+          warmObj = new THREE.InstancedMesh(hasMorph ? obj.geometry : programWarmGeo, warmMat, 1);
+          warmObj.setMatrixAt(0, new THREE.Matrix4());
+          if (obj.instanceColor) warmObj.setColorAt(0, new THREE.Color(0xffffff));
+        } else if (obj.isSprite) {
+          warmObj = new THREE.Sprite(warmMat);
+        } else if (obj.isPoints) {
+          warmObj = new THREE.Points(hasMorph ? obj.geometry : programWarmGeo, warmMat);
+        } else if (obj.isLineSegments) {
+          warmObj = new THREE.LineSegments(hasMorph ? obj.geometry : programWarmGeo, warmMat);
+        } else if (obj.isLine) {
+          warmObj = new THREE.Line(hasMorph ? obj.geometry : programWarmGeo, warmMat);
+        } else {
+          warmObj = new THREE.Mesh(hasMorph ? obj.geometry : programWarmGeo, warmMat);
+        }
+        warmObj.receiveShadow = obj.receiveShadow;
+        warmObj.castShadow = obj.castShadow;
+        programWarmScene.add(warmObj);
+      }
+    });
 
     // sun.castShadow is flipped off by applyQualityTier (see monitorFrameBudget
     // / TIER_SHADOW_OFF) the moment sustained frame pressure crosses a
     // threshold -- measured directly: every material's run-phase relink was
     // its boot variant with USE_SHADOWMAP removed, i.e. this exact toggle
     // landing mid-run and silently relinking every lit material at once. Both
-    // states are cheap to warm now (2 full-scene compiles instead of the old
-    // 5), so just cover both rather than only reporting a recommendation.
+    // states are warmed against the representative scene, so every program
+    // shape remains ready without two complete city graph traversals.
     var savedSunCastShadow = sun.castShadow;
     [true, false].forEach(function (castShadow) {
       steps.push(function () {
         sun.castShadow = castShadow;
+        if (programWarmSun) programWarmSun.castShadow = castShadow;
         if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
-        try { renderer.compile(scene, camera); } catch (e) {}
+        try { renderer.compile(programWarmScene, camera); } catch (e) {}
       });
     });
 
-    // Outline prepass: build the permanent per-object swap list now (the
-    // scene, including the async-loaded hero, is known complete at this
-    // point -- see maybeFinishPreload/preloadReady), swap every object's real
-    // material for its outline variant (mirroring what scene.overrideMaterial
-    // used to do at render time, but per-category -- see outlineMaterialFor),
-    // compile, then put the real materials straight back. compile() never
-    // renders, so this is invisible regardless of how many objects it
-    // touches. Building the swap list here rather than lazily on first real
-    // outline draw guarantees renderPresent() never has to fall back to the
-    // slow scene.overrideMaterial path once gameplay actually starts.
-    // Measured directly (dumpkeys): the live outline draw always resolves
-    // USE_SHADOWMAP absent for outlineMat, unlike the beauty pass, so only
-    // that one state needs compiling here (a second pass with shadows on
-    // would just link a variant the outline draw never actually requests).
+    // Build the permanent per-object lookup, then warm the four actual outline
+    // program shapes in a tiny representative scene. The old path swapped and
+    // compiled every object in the entire city even though all of them resolve
+    // to regular, instanced, instance-coloured or skinned MeshNormalMaterial.
+    // This preserves exact first-use coverage without a third full graph walk.
     steps.push(function () {
       outlineSwapList = buildOutlineSwapList();
-      for (var wi = 0; wi < outlineSwapList.length; wi++) {
-        var we = outlineSwapList[wi];
-        we.saved = we.obj.material;
-        we.obj.material = we.variant;
+      var warmScene = new THREE.Scene(); warmScene.fog = scene.fog;
+      var warmGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+      warmScene.add(new THREE.Mesh(warmGeo, outlineMat));
+      var warmInst = new THREE.InstancedMesh(warmGeo, outlineMatInstanced, 1);
+      warmInst.setMatrixAt(0, new THREE.Matrix4()); warmScene.add(warmInst);
+      var warmInstColor = new THREE.InstancedMesh(warmGeo, outlineMatInstancedColor, 1);
+      warmInstColor.setMatrixAt(0, new THREE.Matrix4());
+      warmInstColor.setColorAt(0, new THREE.Color(0xffffff)); warmScene.add(warmInstColor);
+      var warmSkinSource = null;
+      scene.traverse(function (obj) { if (!warmSkinSource && obj.isSkinnedMesh) warmSkinSource = obj; });
+      if (warmSkinSource) {
+        var warmSkin = new THREE.SkinnedMesh(warmSkinSource.geometry, outlineMatSkinned);
+        warmSkin.bind(warmSkinSource.skeleton, warmSkinSource.bindMatrix);
+        warmScene.add(warmSkin);
       }
-      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+      if (POST.on && outlineRT) renderer.setRenderTarget(outlineRT);
       var savedShadowEnabled = renderer.shadowMap.enabled;
       try {
         renderer.shadowMap.enabled = false;
-        renderer.compile(scene, camera);
+        renderer.compile(warmScene, camera);
       } catch (e) {}
       renderer.shadowMap.enabled = savedShadowEnabled;
-      for (var wr = 0; wr < outlineSwapList.length; wr++) {
-        outlineSwapList[wr].obj.material = outlineSwapList[wr].saved;
-      }
+      warmGeo.dispose();
     });
 
-    // Shadow-depth materials only get generated by a real render, and (unlike
-    // compile()) a real render skips anything with an invisible ancestor --
-    // so every pooled chunk is forced visible here, off-screen, purely to
-    // walk every shadow-caster's map/instancing combination at least once.
-    // Unlike the beauty pass, shadow-depth variants don't key off light
-    // count at all (they only ever output depth), so forcing every chunk
-    // visible here carries no inflated-variant risk the way the old
-    // light-combination sweep above did.
+    // The title scene is already rendered continuously with the sun shadow on,
+    // so it has produced the representative static, instanced and skinned depth
+    // programs before Start can become available. The old extra pass forced all
+    // thirteen city chunks visible simultaneously just to repeat that work. On
+    // phone-class GPUs that single synthetic frame cost several seconds and
+    // created hundreds of needless submissions. Keep shader compilation, but
+    // let ordinary title rendering warm depth variants from the real visibility
+    // set; later chunks reuse those same program shapes.
     steps.push(function () {
-      for (var cf = 0; cf < chunks.length; cf++) chunks[cf].visible = true;
-      if (stationRoot0) stationRoot0.visible = true;
-      if (tunnelRoot0) tunnelRoot0.visible = true;
-      sun.castShadow = true;
-      renderer.shadowMap.needsUpdate = true;
-      if (sceneRT) {
-        renderer.setRenderTarget(sceneRT);
-        try { renderer.render(scene, camera); } catch (e) {}
-      }
-    });
-
-    steps.push(function () {
-      if (stationRoot0) stationRoot0.visible = savedStation0;
-      if (tunnelRoot0) tunnelRoot0.visible = savedTunnel0;
-      for (var cr = 0; cr < chunks.length; cr++) chunks[cr].visible = savedChunkVisible[cr];
       sun.castShadow = savedSunCastShadow;
       renderer.shadowMap.needsUpdate = true;
       renderer.setRenderTarget(savedTarget);
+      programWarmGeo.dispose();
     });
 
     // Spread across frames rather than one long synchronous block, so the
@@ -21362,33 +22335,22 @@ THREE.GLTFLoader = GLTFLoader;
     preloadCompileScheduled = true;
     if (el.go && !articleDeckLoading) el.go.textContent = 'Szene wird vorbereitet';
 
-    // Compile the visible hero with the real scene lights before enabling Start.
-    // The pooled city and traffic are hidden only during this synchronous walk,
-    // avoiding both the old whole-world compile freeze and the several blank
-    // gameplay frames caused by first-use skin/material compilation.
+    // warmRemainingPrograms' first step compiles the complete graph with the
+    // exact scene target, lights and shadow-on state, including the skinned
+    // hero. A separate purported hero-only compile used to hide worldRoot here,
+    // but r156 renderer.compile() traverses invisible descendants for materials;
+    // it therefore repeated the same full-world walk and program links. Keep one
+    // authoritative warm-up, then require an ordinary painted title frame before
+    // releasing Start so the handoff still begins from a confirmed hero render.
     requestAnimationFrame(function () {
-      var worldWasVisible = worldRoot.visible;
-      var trafficWasVisible = trafficRoot.visible;
-      worldRoot.visible = false;
-      trafficRoot.visible = false;
-      // renderPresent() always draws the beauty pass into sceneRT, never the
-      // default (canvas) target, so compile against the same target -- see
-      // warmRemainingPrograms above for why that match matters.
-      var warmTarget = renderer.getRenderTarget();
-      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
-      try { renderer.compile(scene, camera); } catch (heroCompileErr) {}
-      renderer.setRenderTarget(warmTarget);
-      worldRoot.visible = worldWasVisible;
-      trafficRoot.visible = trafficWasVisible;
-      // Allow one ordinary painted title frame after compilation, so the start
-      // handoff always begins with a confirmed rendered character.
-      requestAnimationFrame(function () {
-        warmRemainingPrograms(function () {
+      warmRemainingPrograms(function () {
+        requestAnimationFrame(function () {
           preloadReady = true;
           preloadCompileScheduled = false;
           el.start.classList.remove('loading');
           el.start.setAttribute('aria-busy', 'false');
           refreshStartCta();
+          scheduleDeferredChunks();
           if (startRequested) setTimeout(begin, 0);
         });
       });
@@ -21427,6 +22389,7 @@ THREE.GLTFLoader = GLTFLoader;
 
   // ============================================================= physics ====
   function simulate(dt) {
+    interpPrevX = player.x; interpPrevY = player.y; interpPrevZ = player.z;
     prevZ = player.z;
 
     // ---- overdrive ramp
@@ -21441,6 +22404,7 @@ THREE.GLTFLoader = GLTFLoader;
     speed += (Math.min(MAX_SPEED, target) - speed) * damp(stumbleTimer > 0 ? 5 : 1.1, dt);
     player.z += speed * dt;
     distance = player.z - startZ;
+    updatePlayerRouteLevel();
 
     // ---- input buffers
     bufLeft = Math.max(0, bufLeft - dt);
@@ -21449,8 +22413,14 @@ THREE.GLTFLoader = GLTFLoader;
     bufSlide = Math.max(0, bufSlide - dt);
 
     if (stumbleTimer <= 0) {
-      if (bufLeft > 0 && targetLane > 0) { targetLane--; bufLeft = 0; playLaneSound(); }
-      else if (bufRight > 0 && targetLane < 2) { targetLane++; bufRight = 0; playLaneSound(); }
+      var minPlayableLane = routeLevel === 1 ? 1 : 0;
+      if (routeLevel === 0) {
+        targetLane = 0; bufLeft = bufRight = 0;
+      } else if (bufLeft > 0 && targetLane > minPlayableLane) {
+        targetLane--; bufLeft = 0; playLaneSound();
+      } else if (bufRight > 0 && targetLane < 2) {
+        targetLane++; bufRight = 0; playLaneSound();
+      }
     }
 
     // ---- lane glide
@@ -21460,17 +22430,45 @@ THREE.GLTFLoader = GLTFLoader;
     if (Math.abs(dx) < 0.02) player.x = laneX;
     lane = targetLane;
 
+    // Lane 1's articulated opening is a real discontinuity, not an invisible
+    // roof with a low obstacle on it. Convert the local-clearance coordinate
+    // only at the two hard edges so the runner's WORLD height is continuous:
+    // entering adds the removed roof height and begins a fall toward street;
+    // leaving subtracts it and tests whether the far lip was actually cleared.
+    var insideRoofGap = routeLevel === 1 && !!roofGapRouteAt(player.z, player.x);
+    if (!roofGapCrossing && insideRoofGap) {
+      roofGapCrossing = true;
+      player.y += ROOF_HEIGHT;
+      grounded = false;
+      coyote = Math.max(coyote, 0.11);
+    } else if (roofGapCrossing && !insideRoofGap) {
+      var clearedRoofLip = player.y > ROOF_HEIGHT + 0.08;
+      player.y -= ROOF_HEIGHT;
+      roofGapCrossing = false;
+      if (player.y <= 0) {
+        player.y = 0; player.vy = 0; grounded = true;
+      }
+      if (!clearedRoofLip) missRoofGap();
+    }
+
     // ---- jump / slide
     coyote = grounded ? 0.11 : Math.max(0, coyote - dt);
-    if (bufJump > 0 && (grounded || coyote > 0) && stumbleTimer <= 0) {
-      player.vy = JUMP_V;
+    var springJump = !grounded && springTimer > 0 && airJumps > 0;
+    if (bufJump > 0 && (grounded || coyote > 0 || springJump) && stumbleTimer <= 0) {
+      player.vy = springJump ? JUMP_V * 0.86 : JUMP_V;
+      if (springJump) airJumps--;
       grounded = false; coyote = 0;
       slideTimer = 0; fastFalling = false;
       takeoffPulse = 1;
       jumpActionAge = 0;
       bufJump = 0;
-      playJumpSound();
+      if (springJump) playPowerupSound('spring'); else playJumpSound();
       fxTakeoff(player.x, player.z);
+      if (springJump) {
+        fxPopup(player.x + (player.x >= 0 ? -0.9 : 0.9), player.y + 1.2, player.z,
+                'DOPPEL!', '#6ee8ff', 0.56);
+        fxScreenPulse(0.25, 0.82, 1.0, 0.10, 7.5);
+      }
     }
     if (bufSlide > 0 && stumbleTimer <= 0) {
       if (!grounded) {
@@ -21502,6 +22500,7 @@ THREE.GLTFLoader = GLTFLoader;
         player.y = 0; player.vy = 0;
         if (!grounded) {
           grounded = true;
+          if (springTimer > 0) airJumps = 1;
           if (fastFalling) {
             fastFalling = false;
             slideTimer = SLIDE_TIME; slideHeld = 0;
@@ -21537,6 +22536,10 @@ THREE.GLTFLoader = GLTFLoader;
       if (stumbleTimer <= 0) clearStumbleUI();
     }
     if (graceTimer > 0) graceTimer -= dt;
+    magnetTimer = Math.max(0, magnetTimer - dt);
+    springTimer = Math.max(0, springTimer - dt);
+    if (springTimer <= 0) airJumps = 0;
+    updatePowerupHUD(false);
     camShake = Math.max(0, camShake - dt * 2.2);
     answerKick = Math.max(0, answerKick - dt * 2.6);
 
@@ -21546,8 +22549,10 @@ THREE.GLTFLoader = GLTFLoader;
     // available to the pool before the next one is laid down.
     ensureGatesAhead();
     collectPretzels();
+    collectPowerups();
     recycle();
     updateChunks(player.z);
+    updateRoofRoutes(player.z);
   }
 
   function playerHeight() { return (slideTimer > 0 && grounded) ? SLIDE_H : STAND_H; }
@@ -21566,7 +22571,20 @@ THREE.GLTFLoader = GLTFLoader;
       if (Math.abs(player.x - LANES[o.lane]) > spec.halfW + HALF_W) continue;
       if (pTop <= spec.yMin || pBot >= spec.yMax) continue;
       o.hit = true;
-      if (graceTimer <= 0 && stumbleTimer <= 0) stumble();
+      if (graceTimer <= 0 && stumbleTimer <= 0) {
+        if (shieldCharges > 0) {
+          shieldCharges--;
+          // Enough to prevent the same compound prop from double-reporting on
+          // adjacent fixed steps, but not a hidden post-shield invulnerability.
+          graceTimer = 0.16;
+          playPowerupSound('shield');
+          fxPopup(player.x + (player.x >= 0 ? -0.9 : 0.9), player.y + 1.25, player.z,
+                  'BLOCK!', '#ffe45c', 0.62);
+          fxScreenPulse(1.0, 0.78, 0.22, 0.18, 6.4);
+          fxCamKick(0, 0.08, -0.10, 0.012, 0.44, 7.0);
+          updatePowerupHUD(true);
+        } else stumble();
+      }
     }
   }
 
@@ -21614,9 +22632,11 @@ THREE.GLTFLoader = GLTFLoader;
     for (var i = 0; i < pretzels.length; i++) {
       var p = pretzels[i];
       if (!p.active) continue;
-      if (p.z > prevZ - 0.6 && p.z <= player.z + 0.6 &&
-          Math.abs(player.x - LANES[p.lane]) < 1.05 &&
-          Math.abs((player.y + playerHeight() * 0.5) - p.y) < 1.35) {
+      var magnetic = magnetTimer > 0 && p.z > player.z - 0.8 && p.z <= player.z + 4.2;
+      var direct = p.z > prevZ - 0.6 && p.z <= player.z + 0.6 &&
+                   Math.abs(player.x - p.x) < 1.05 &&
+                   Math.abs((player.y + playerHeight() * 0.5) - p.y) < 1.35;
+      if (magnetic || direct) {
         p.active = false; p.sprite.visible = false;
         pretzelCount++;
         quizScore += 10;
@@ -21625,8 +22645,61 @@ THREE.GLTFLoader = GLTFLoader;
         var pretzelHud = el.pretzels.parentElement;
         pretzelHud.classList.remove('punch');
         requestAnimationFrame(function () { pretzelHud.classList.add('punch'); });
-        fxPretzelPop(LANES[p.lane], p.y, p.z);
+        fxPretzelPop(p.x, p.y, p.z);
       }
+    }
+  }
+
+  function playPowerupSound(type) {
+    if (!gameAudio) return;
+    var now = gameAudio.currentTime;
+    if (type === 'shield') {
+      playTone(176, now, 0.18, 0.18, 'triangle');
+      playTone(352, now + 0.035, 0.28, 0.14, 'sine');
+    } else if (type === 'spring') {
+      playTone(392, now, 0.14, 0.15, 'triangle', 720);
+      playTone(659, now + 0.055, 0.20, 0.13, 'sine');
+    } else {
+      playTone(330, now, 0.14, 0.15, 'triangle');
+      playTone(494, now + 0.045, 0.18, 0.13, 'sine');
+      playTone(659, now + 0.090, 0.23, 0.11, 'sine');
+    }
+  }
+
+  function playRoofRouteSound(boarded) {
+    if (!gameAudio) return;
+    var now = gameAudio.currentTime;
+    if (boarded) {
+      playTone(330, now, 0.13, 0.12, 'triangle');
+      playTone(494, now + 0.075, 0.18, 0.11, 'sine');
+      playNoise(now, 0.12, 0.045, 1100, 0.55);
+    } else {
+      playTone(220, now, 0.16, 0.09, 'triangle');
+      playTone(277, now + 0.07, 0.16, 0.08, 'sine');
+    }
+  }
+
+  function collectPowerups() {
+    for (var i = 0; i < powerups.length; i++) {
+      var p = powerups[i];
+      if (!p.active || p.z <= prevZ - 0.8 || p.z > player.z + 0.8) continue;
+      if (Math.abs(player.x - LANES[p.lane]) > 1.12) continue;
+      p.active = false; p.holder.visible = false;
+      if (p.type === 'magnet') magnetTimer = Math.max(magnetTimer, MAGNET_TIME);
+      else if (p.type === 'shield') shieldCharges = 1;
+      else { springTimer = Math.max(springTimer, SPRING_TIME); airJumps = 1; }
+      quizScore += 50;
+      el.pretzels.textContent = String(quizScore);
+      playPowerupSound(p.type);
+      var label = p.type === 'magnet' ? 'KIEZ-MAGNET' :
+                  p.type === 'shield' ? 'BÄRENSCHILD' : 'DOPPELSPRUNG';
+      var colour = p.type === 'shield' ? '#ffe45c' : p.type === 'spring' ? '#6ee8ff' : '#ff7182';
+      fxPopup(LANES[p.lane] + (p.lane === 2 ? -0.8 : 0.8), p.y + 0.55, p.z,
+              label, colour, 0.60);
+      fxScreenPulse(p.type === 'shield' ? 1.0 : 0.25, 0.82,
+                    p.type === 'magnet' ? 0.45 : 1.0, 0.12, 6.5);
+      fxFovPunch = Math.max(fxFovPunch, 2.2);
+      updatePowerupHUD(true);
     }
   }
 
@@ -21649,6 +22722,11 @@ THREE.GLTFLoader = GLTFLoader;
       var pr = pretzels[p];
       if (pr.active && pr.z < player.z - 12) { pr.active = false; pr.sprite.visible = false; }
       else if (pr.active) pr.sprite.visible = pr.z - player.z < PLAY_RENDER_FAR;
+    }
+    for (var u = 0; u < powerups.length; u++) {
+      var pu = powerups[u];
+      if (pu.active && pu.z < player.z - 12) { pu.active = false; pu.holder.visible = false; }
+      else if (pu.active) pu.holder.visible = pu.z - player.z < PLAY_RENDER_FAR;
     }
   }
 
@@ -21722,7 +22800,7 @@ THREE.GLTFLoader = GLTFLoader;
     var attractPose = !started ? 1 : 0;
 
     // Body carriage: lean into the lane change, forward at speed, low in a slide.
-    var laneVel = clamp((LANES[targetLane] - player.x) * 0.9, -1, 1);
+    var laneVel = clamp((LANES[targetLane] - visualPlayer.x) * 0.9, -1, 1);
     leanRoll += (-laneVel * 0.42 - leanRoll) * damp(9, dt_);
     // A second, harder lean drives the mesh only — leanRoll still feeds the
     // camera roll and the existing bone offsets, so the chase framing is
@@ -22249,21 +23327,21 @@ THREE.GLTFLoader = GLTFLoader;
       coatTailR.rotation.z = leanRoll * -0.18 + stumbleFlail * 0.10;
     }
 
-    applyRouteFrame(rig, player.x, player.y, player.z, 0, 0, 0);
+    applyPlayerFrame(rig, visualPlayer.x, visualPlayer.y, visualPlayer.z, 0, 0, 0);
 
     // Offset along the sun's ground direction (CONTACT_DIR_*, the same constant
     // the pooled prop shadows use) so the dark core clears the runner's own
     // silhouette instead of hiding directly behind it. The lean grows as the
     // runner rises, which is how a jump reads as a jump rather than a shrink.
-    var lift = clamp(1 - player.y / 3.2, 0.25, 1);
+    var lift = clamp(1 - visualPlayer.y / 3.2, 0.25, 1);
     // Lean cut roughly in half alongside the geometry shrink below: the old
     // 0.78 offset was already ~34% of the old 2.3m-wide plane, so keeping it
     // unscaled against the new 1.35m plane would have shoved the shadow
     // almost entirely out from under the runner instead of just clearing his
     // silhouette. Same proportion, smaller shadow.
-    var blobLean = 0.36 + player.y * 0.16;
-    applyRouteFrame(blob, player.x + CONTACT_DIR_X * blobLean, 0.035,
-                    player.z + 0.1 + CONTACT_DIR_Z * blobLean, 0, -Math.PI / 2, 0);
+    var blobLean = 0.36 + visualPlayer.y * 0.16;
+    applyPlayerFrame(blob, visualPlayer.x + CONTACT_DIR_X * blobLean, 0.035,
+                   visualPlayer.z + 0.1 + CONTACT_DIR_Z * blobLean, 0, -Math.PI / 2, 0);
     // Multiply blending has no opacity term, so height is carried entirely by
     // footprint: a smaller, tighter shadow reads as further off the ground.
     // GROUND ART PASS: this was measuring ~2.5m wide and up to 4.8m long —
@@ -22276,7 +23354,7 @@ THREE.GLTFLoader = GLTFLoader;
     blob.scale.set(lift * (0.92 + landingPulse * 0.20),
                    lift * lerp(1.00, 1.30, slideVisual), 1);
 
-    applyRouteFrame(runnerFootAO, player.x, 0.042, player.z + 0.05, 0, -Math.PI / 2, 0);
+    applyPlayerFrame(runnerFootAO, visualPlayer.x, 0.042, visualPlayer.z + 0.05, 0, -Math.PI / 2, 0);
     runnerFootAO.scale.set(lift * lift * (1.0 + landingPulse * 0.18),
                            lift * lift * lerp(1.0, 1.34, slideVisual), 1);
 
@@ -22296,13 +23374,16 @@ THREE.GLTFLoader = GLTFLoader;
     // instead of projecting past the shoulders and framing the head. At the
     // hero's ~2.15 m height the old 2.70-tall sprite spanned roughly -0.2..2.5,
     // i.e. taller than the character it was meant to sit behind.
-    applyRouteFrame(runnerAura, player.x, player.y + 0.95, player.z + 0.22, 0, 0, 0);
+    applyPlayerFrame(runnerAura, visualPlayer.x, visualPlayer.y + 0.95, visualPlayer.z + 0.22, 0, 0, 0);
     // Keep feedback as a halo, not an opaque bullseye on the hoodie back.
     // The word sign and particles already carry the answer punch.
-    var auraPower = overdriveIntensity * 0.035 + answerKick * 0.04 +
+    var shieldAura = shieldCharges > 0 ? 0.10 + Math.sin(t * 7) * 0.018 : 0;
+    var auraPower = overdriveIntensity * 0.035 + answerKick * 0.04 + shieldAura +
                     landingPulse * 0.025 + takeoffPulse * 0.015;
-    runnerAura.material.opacity = clamp(auraPower, 0, 0.18);
-    var auraScale = 1 + overdriveIntensity * 0.055 + answerKick * 0.10;
+    runnerAura.material.color.setHex(shieldCharges > 0 ? 0xffec78 : 0xffd08a);
+    runnerAura.material.opacity = clamp(auraPower, 0, shieldCharges > 0 ? 0.24 : 0.18);
+    var auraScale = 1 + overdriveIntensity * 0.055 + answerKick * 0.10 +
+                    (shieldCharges > 0 ? 0.13 : 0);
     runnerAura.scale.set(1.55 * auraScale, 1.95 * auraScale, 1);
 
     // Contact cues now follow the actual extremities. One reused matrix update and
@@ -22319,13 +23400,13 @@ THREE.GLTFLoader = GLTFLoader;
       if (charBones.LeftHand) charBones.LeftHand.getWorldPosition(cueHandL);
       if (charBones.RightHand) charBones.RightHand.getWorldPosition(cueHandR);
     } else {
-      sampleRoutePoint(player.x - 0.20, player.y + 0.12, player.z + 0.10);
+      sampleRoutePoint(visualPlayer.x - 0.20, visualPlayer.y + 0.12 + playerSurfaceY(visualPlayer.z + 0.10), visualPlayer.z + 0.10);
       cueWorldL.set(routePointX, routePointY, routePointZ);
-      sampleRoutePoint(player.x + 0.20, player.y + 0.12, player.z - 0.02);
+      sampleRoutePoint(visualPlayer.x + 0.20, visualPlayer.y + 0.12 + playerSurfaceY(visualPlayer.z - 0.02), visualPlayer.z - 0.02);
       cueWorldR.set(routePointX, routePointY, routePointZ);
-      sampleRoutePoint(player.x - 0.64, player.y + 1.72, player.z + 0.03);
+      sampleRoutePoint(visualPlayer.x - 0.64, visualPlayer.y + 1.72 + playerSurfaceY(visualPlayer.z + 0.03), visualPlayer.z + 0.03);
       cueHandL.set(routePointX, routePointY, routePointZ);
-      sampleRoutePoint(player.x + 0.64, player.y + 1.72, player.z + 0.03);
+      sampleRoutePoint(visualPlayer.x + 0.64, visualPlayer.y + 1.72 + playerSurfaceY(visualPlayer.z + 0.03), visualPlayer.z + 0.03);
       cueHandR.set(routePointX, routePointY, routePointZ);
     }
     footCueL.visible = footPowerL > 0.015; footCueR.visible = footPowerR > 0.015;
@@ -22348,14 +23429,14 @@ THREE.GLTFLoader = GLTFLoader;
     footRingL.visible = ringPowerL > 0.012; footRingR.visible = ringPowerR > 0.012;
     footRingL.material.opacity = ringPowerL * 0.58;
     footRingR.material.opacity = ringPowerR * 0.58;
-    applyRouteFrame(footRingL, player.x - 0.20, 0.046, player.z + 0.10, 0, -Math.PI / 2, 0);
-    applyRouteFrame(footRingR, player.x + 0.20, 0.046, player.z - 0.02, 0, -Math.PI / 2, 0);
+    applyPlayerFrame(footRingL, visualPlayer.x - 0.20, 0.046, visualPlayer.z + 0.10, 0, -Math.PI / 2, 0);
+    applyPlayerFrame(footRingR, visualPlayer.x + 0.20, 0.046, visualPlayer.z - 0.02, 0, -Math.PI / 2, 0);
     footRingL.scale.setScalar(0.72 + ringPowerL * 1.55);
     footRingR.scale.setScalar(0.72 + ringPowerR * 1.55);
 
     landingRing.visible = landingFx > 0.001;
     if (landingRing.visible) {
-      applyRouteFrame(landingRing, landingRingX, 0.055, landingRingZ, 0, -Math.PI / 2, 0);
+      applyPlayerFrame(landingRing, landingRingX, 0.055, landingRingZ, 0, -Math.PI / 2, 0);
       var ringT = 1 - landingFx;
       var ringScale = lerp(0.70, 4.2, ringT);
       landingRing.scale.setScalar(ringScale);
@@ -22374,7 +23455,7 @@ THREE.GLTFLoader = GLTFLoader;
       var bridgeChunk = chunks[bridgeIndex];
       var bridgeData = bridgeChunk.userData.bridge;
       if (!bridgeData.root.visible) continue;
-      var bridgeDistance = player.z - bridgeChunk.position.z;
+      var bridgeDistance = visualPlayer.z - bridgeChunk.position.z;
       var revealStrength = 1 - clamp(Math.abs(bridgeDistance) / 29, 0, 1);
       revealStrength *= revealStrength;
       if (Math.abs(revealStrength) > Math.abs(bridgeRevealTarget)) {
@@ -22384,40 +23465,58 @@ THREE.GLTFLoader = GLTFLoader;
     bridgeReveal += (bridgeRevealTarget - bridgeReveal) * damp(2.4, dt);
     var bridgeRevealAmount = Math.abs(bridgeReveal);
     var routeCameraMix = routeCameraBend * (1 - bridgeRevealAmount * 0.65);
+    var roofRevealTarget = 0;
+    for (var roofRevealIndex = 0; roofRevealIndex < roofRoutes.length; roofRevealIndex++) {
+      var revealRoute = roofRoutes[roofRevealIndex];
+      if (!revealRoute.active) continue;
+      var toRoof = revealRoute.startZ - visualPlayer.z;
+      if (toRoof > 0 && toRoof < 90) roofRevealTarget = Math.max(roofRevealTarget, 1 - toRoof / 90);
+      else if (visualPlayer.z >= revealRoute.startZ && visualPlayer.z <= revealRoute.endZ) roofRevealTarget = 1;
+      else if (visualPlayer.z > revealRoute.endZ && visualPlayer.z < revealRoute.endZ + 24) {
+        roofRevealTarget = Math.max(roofRevealTarget, 1 - (visualPlayer.z - revealRoute.endZ) / 24);
+      }
+    }
+    roofCameraReveal += (roofRevealTarget - roofCameraReveal) * damp(3.2, dt);
 
     // Lateral rate of the hero, smoothed. It drives three separate things: how
     // far the rig lags behind a lane change (so the world swings), how hard the
     // camera banks into it, and how strongly the trail ribbon fans out.
-    var laneRate = dt > 0.00001 ? (player.x - fxPrevPlayerX) / dt : 0;
-    fxPrevPlayerX = player.x;
+    var laneRate = dt > 0.00001 ? (visualPlayer.x - fxPrevPlayerX) / dt : 0;
+    fxPrevPlayerX = visualPlayer.x;
     fxLaneVel += (laneRate - fxLaneVel) * damp(11, dt);
 
     // Close enough to read the hero's outfit and pose, with a measured speed
     // pull preserving the lane read. The look target anticipates lane changes
     // while the camera body lags behind, creating stronger parallax.
     var speedMix = clamp((speed - BASE_SPEED) / 26, 0, 1);
+    // Preserve the desktop composition while restoring horizontal gameplay
+    // coverage on narrow portrait screens. A dolly is preferable to a huge
+    // vertical FOV here: the hero stays expressive and all three lanes remain
+    // readable without fisheye distortion.
+    var portraitView = clamp((0.72 - camera.aspect) / 0.30, 0, 1);
+    var roofRevealScale = roofCameraReveal * lerp(1, 0.55, portraitView);
     // Dolly in over a slide, ease out over a jump — both purely framing.
-    var dolly = -slideVisual * 0.58 + clamp(player.y, 0, 3.2) * 0.15;
+    var dolly = -slideVisual * 0.58 + clamp(visualPlayer.y, 0, 3.2) * 0.15;
     var backOff = 3.35 + speedMix * 0.90 + bridgeRevealAmount * 0.22 +
-                  Math.abs(routeCameraMix) * 0.06 + dolly;
+                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 2.15 + roofRevealScale * 0.65;
     var height = 2.20 + speedMix * 0.28 + bridgeRevealAmount * 0.24 + routeCameraCrest * 0.08 -
-                 slideVisual * 0.30;
-    var laneDelta = LANES[targetLane] - player.x;
+                 slideVisual * 0.30 + portraitView * 0.52 + roofRevealScale * 0.35;
+    var laneDelta = LANES[targetLane] - visualPlayer.x;
     // Trailing the lateral move, not leading it, is what makes the street swing
     // past on a lane change instead of sliding rigidly sideways.
     var lateralLag = clamp(fxLaneVel * 0.0115, -0.42, 0.42);
-    var targetX = player.x * 0.64 - laneDelta * 0.08 - lateralLag -
+    var targetX = visualPlayer.x * (0.64 + portraitView * 0.22) - laneDelta * 0.08 - lateralLag -
                   bridgeReveal * 0.24 - routeCameraMix * 0.06;
     var gaitWeight = grounded ? (1 - slideVisual) : 0;
     var strideBob = Math.sin(runPhase * 2) * 0.025 * gaitWeight;
-    var targetY = height + player.y * 0.34 + strideBob - landingPulse * 0.075;
-    var targetZ = player.z - backOff;
-    sampleRoutePoint(targetX, targetY, targetZ);
+    var targetY = height + visualPlayer.y * 0.34 + strideBob - landingPulse * 0.075;
+    var targetZ = visualPlayer.z - backOff;
+    sampleRoutePoint(targetX, targetY + playerSurfaceY(targetZ), targetZ);
     var desiredCamX = routePointX, desiredCamY = routePointY, desiredCamZ = routePointZ;
-    var lookLogicalX = player.x * 0.80 + laneDelta * 0.11 + bridgeReveal * 1.22;
-    var lookLogicalY = 1.46 + player.y * 0.48 - slideVisual * 0.20;
-    var lookLogicalZ = player.z + 12.8 + speedMix * 1.6;
-    sampleRoutePoint(lookLogicalX, lookLogicalY, lookLogicalZ);
+    var lookLogicalX = visualPlayer.x * (0.80 + portraitView * 0.12) + laneDelta * 0.11 + bridgeReveal * 1.22;
+    var lookLogicalY = 1.46 + visualPlayer.y * 0.48 - slideVisual * 0.20;
+    var lookLogicalZ = visualPlayer.z + 12.8 + speedMix * 1.6 + roofRevealScale * 3.2;
+    sampleRoutePoint(lookLogicalX, lookLogicalY + playerSurfaceY(lookLogicalZ), lookLogicalZ);
     var desiredLookX = routePointX, desiredLookY = routePointY, desiredLookZ = routePointZ;
 
     // Softer lateral tracking than vertical/longitudinal: the rig is allowed to
@@ -22448,11 +23547,11 @@ THREE.GLTFLoader = GLTFLoader;
     // Bank into the lane change.
     fxBank += (clamp(-fxLaneVel * 0.0032, -0.085, 0.085) - fxBank) * damp(9.5, dt);
     camera.rotation.z += leanRoll * 0.17 + fxBank + sx * shake * 0.014 +
-                         fxKickRoll * kick + routePathBank(player.z) * 0.78;
+                         fxKickRoll * kick + routePathBank(visualPlayer.z) * 0.78;
 
     // Keep the runner framed from frame one, then widen gently at full speed.
     var fov = 69 + speedMix * 5.5 + od * 1.15 + answerKick * 2.6 + fxFovPunch -
-              slideVisual * 1.6;
+              slideVisual * 1.6 + roofRevealScale * 2.4;
     if (fov > 80) fov = 80;
     fovVisual += (fov - fovVisual) * damp(fxFovPunch > 0.05 ? 16 : 5.5, dt);
     if (Math.abs(camera.fov - fovVisual) > 0.01) {
@@ -22728,24 +23827,24 @@ THREE.GLTFLoader = GLTFLoader;
     // Point/rim lights still follow every frame, preserving the live lighting.
     if ((!shadowSlow && frameNumber % 6 === 0) ||
         (shadowSlow && frameNumber % 8 === 0)) {
-      sampleRoutePoint(player.x, 0, player.z);
+      sampleRoutePoint(player.x, playerSurfaceY(player.z), player.z);
       // Keep in sync with the init-time offset above (-45/72/48) — this is
       // the per-frame re-anchor as the sun follows the route curve.
       sun.position.set(routePointX - 45, routePointY + 72, routePointZ + 48);
-      sampleRoutePoint(player.x, 0, player.z + 14);
+      sampleRoutePoint(player.x, playerSurfaceY(player.z + 14), player.z + 14);
       sun.target.position.set(routePointX, routePointY, routePointZ);
       sun.target.updateMatrixWorld();
     }
 
     var rimBlend = damp(13, dt);
-    sampleRoutePoint(player.x, 3.2 + player.y, player.z - 2.5);
+    sampleRoutePoint(player.x, 3.2 + player.y + playerSurfaceY(player.z - 2.5), player.z - 2.5);
     rimFollow.x += (routePointX - rimFollow.x) * rimBlend;
     rimFollow.y += (routePointY - rimFollow.y) * rimBlend;
     rimFollow.z += (routePointZ - rimFollow.z) * rimBlend;
     rim.position.copy(rimFollow);
 
     var bounceBlend = damp(10, dt);
-    sampleRoutePoint(player.x, 0.65 + player.y * 0.12, player.z + 1.8);
+    sampleRoutePoint(player.x, 0.65 + player.y * 0.12 + playerSurfaceY(player.z + 1.8), player.z + 1.8);
     bounceFollow.x += (routePointX - bounceFollow.x) * bounceBlend;
     bounceFollow.y += (routePointY - bounceFollow.y) * bounceBlend;
     bounceFollow.z += (routePointZ - bounceFollow.z) * bounceBlend;
@@ -22776,7 +23875,11 @@ THREE.GLTFLoader = GLTFLoader;
       var pr = pretzels[pi2];
       if (!pr.active) continue;
       var pretzelBobY = pr.y + Math.sin(t * 3 + pr.z * 0.3) * 0.1;
-      applyRouteFrame(pr.sprite, LANES[pr.lane], pretzelBobY, pr.z, 0, 0, 0);
+      var magnetPull = magnetTimer > 0 ? clamp(1 - (pr.z - visualPlayer.z) / 16, 0, 1) : 0;
+      magnetPull *= magnetPull;
+      applyPlayFrame(pr.sprite,
+        lerp(pr.x, visualPlayer.x, magnetPull),
+        lerp(pretzelBobY, visualPlayer.y + 1.05, magnetPull), pr.z, 0, 0, 0);
       pr.mesh.rotation.y = t * 2.6 + pr.z;
       pr.mesh.rotation.z = Math.sin(t * 2 + pr.z) * .16;
       var s = 1.0 + Math.sin(t * 4 + pr.z) * 0.07;
@@ -22788,6 +23891,21 @@ THREE.GLTFLoader = GLTFLoader;
     }
     pretzelSolidInst.count = pretzelSolidCount;
     pretzelSolidInst.instanceMatrix.needsUpdate = true;
+
+    // Power-ups use only six pooled roots and are animated in world space. A
+    // counter-rotating halo keeps the silhouette readable against bright sky;
+    // the centre icon carries the distinct mechanic at peripheral-glance size.
+    for (var pui = 0; pui < powerups.length; pui++) {
+      var pup = powerups[pui];
+      if (!pup.active) continue;
+      var powerBob = pup.y + Math.sin(t * 3.4 + pup.z * 0.17) * 0.16;
+      applyPlayFrame(pup.holder, LANES[pup.lane], powerBob, pup.z, 0, 0, 0);
+      var powerVisual = pup.variants[pup.type];
+      powerVisual.userData.spin.rotation.y = t * 2.2 + pup.z * 0.08;
+      powerVisual.userData.spin.rotation.z = Math.sin(t * 2.6 + pup.z) * 0.10;
+      var powerPulse = 1.12 + Math.sin(t * 5 + pup.z) * 0.06;
+      powerVisual.scale.setScalar(powerPulse);
+    }
 
     // Speed streaks — they fade in above a speed threshold and keep growing
     // with overdrive. Density and length both ride on how fast the run is, and
@@ -22987,8 +24105,22 @@ THREE.GLTFLoader = GLTFLoader;
       if (ladderProbeUntil <= 0) {
         // 3% is comfortably outside the EMA's own drift over the settle window.
         if (perfEmaMs > ladderProbeEmaBefore * 0.97) {
-          ladderCeiling = Math.max(0, qualityTier - 1);
-          applyQualityTier(ladderCeiling);
+          // A cheap cosmetic rung (especially DoF) says nothing about a
+          // submission-bound device. The old controller treated that miss as
+          // proof that *every deeper cost domain* was useless, restored tier 0
+          // and permanently blocked shadows/outline from ever being tested.
+          // Keep walking until the coherent final domain has been measured;
+          // only then is a failed probe evidence that descending further cannot
+          // help, because there is nowhere further to descend.
+          // At >30 ms the device is still missing an entire 60 Hz frame; keep
+          // the focal pass even if a noisy short EMA window cannot attribute a
+          // clean 3% win. It removes hundreds of duplicate submissions and is
+          // also the thermally safer steady state. Near-budget devices retain
+          // the conservative restore behaviour.
+          if (qualityTier >= QUALITY_TIER_MAX && perfEmaMs < 30) {
+            ladderCeiling = Math.max(0, qualityTier - 1);
+            applyQualityTier(ladderCeiling);
+          }
         }
         perfPressure = 0;
         perfHeadroom = 0;
@@ -22996,14 +24128,18 @@ THREE.GLTFLoader = GLTFLoader;
       return;
     }
 
-    if (perfPressure > 1.1 && qualityTier < Math.min(QUALITY_TIER_MAX, ladderCeiling)) {
-      // One rung per demotion, least-visible effect first (see the ladder
-      // above). Each rung is small, so a single crossing should not read as
-      // the game changing; only sustained pressure walks further down, and
-      // perfPressure/perfHeadroom must reaccumulate before the next step.
+    var severePressure = perfEmaMs > 30;
+    if (perfPressure > (severePressure ? 0.55 : 1.1) &&
+        qualityTier < Math.min(QUALITY_TIER_MAX, ladderCeiling)) {
+      // Walk least-visible effects first (see the ladder above). Ordinary
+      // pressure moves one small rung; severe pressure moves a two-rung bundle.
+      // perfPressure/perfHeadroom must still reaccumulate between transitions.
       ladderProbeEmaBefore = perfEmaMs;
-      ladderProbeUntil = 1.6;
-      applyQualityTier(qualityTier + 1);
+      ladderProbeUntil = severePressure ? 0.9 : 1.6;
+      // On a device missing budget by nearly an entire frame, two-rung bundles
+      // reach the next meaningful cost domain quickly instead of spending half
+      // a minute proving nine microscopic transitions one by one.
+      applyQualityTier(Math.min(QUALITY_TIER_MAX, qualityTier + (severePressure ? 2 : 1)));
       perfPressure = 0;
       perfHeadroom = 0;
     } else if (perfHeadroom > 8 && qualityTier > 0) {
@@ -23023,6 +24159,12 @@ THREE.GLTFLoader = GLTFLoader;
       canvas.dataset.renderScale = renderScale.toFixed(2);
       canvas.dataset.qualityTier = String(qualityTier);
       canvas.dataset.catchupsDropped = String(droppedCatchups);
+      canvas.dataset.beautyCalls = String(passBeautyCalls);
+      canvas.dataset.outlineCalls = String(passOutlineCalls);
+      canvas.dataset.postCalls = String(passPostCalls);
+      canvas.dataset.beautyTriangles = String(passBeautyTriangles);
+      canvas.dataset.outlineTriangles = String(passOutlineTriangles);
+      canvas.dataset.postTriangles = String(passPostTriangles);
       perfWorstMs = 0;
     }
   }
@@ -23063,6 +24205,11 @@ THREE.GLTFLoader = GLTFLoader;
       updateChunks(player.z);
     }
 
+    var renderAlpha = (started && !gameOver) ? clamp(accum / STEP, 0, 1) : 1;
+    visualPlayer.x = lerp(interpPrevX, player.x, renderAlpha);
+    visualPlayer.y = lerp(interpPrevY, player.y, renderAlpha);
+    visualPlayer.z = lerp(interpPrevZ, player.z, renderAlpha);
+
     // Drive the run cycle off ground speed so the feet do not skate, hold it
     // near-frozen in the air, and stop it entirely during a slide.
     if (charMixer) {
@@ -23081,7 +24228,7 @@ THREE.GLTFLoader = GLTFLoader;
       }
     }
     poseRunner(t);
-    updateRouteIllusion(player.z, distance, raw);
+    updateRouteIllusion(visualPlayer.z, distance, raw);
     updateCamera(raw);
     deferredTrafficDt += raw;
     if (!adaptiveSlowMode || (frameNumber & 1) === 0) {
@@ -23115,20 +24262,39 @@ THREE.GLTFLoader = GLTFLoader;
     }
   }
 
-  window.addEventListener('resize', function () {
-    camera.aspect = window.innerWidth / window.innerHeight;
+  var viewportResizeTimer = 0;
+  var lastViewportW = window.innerWidth, lastViewportH = window.innerHeight;
+  var lastViewportDpr = window.devicePixelRatio || 1;
+  function commitViewportResize() {
+    viewportResizeTimer = 0;
+    var vw = Math.max(1, window.innerWidth), vh = Math.max(1, window.innerHeight);
+    var vdpr = window.devicePixelRatio || 1;
+    if (vw === lastViewportW && vh === lastViewportH && vdpr === lastViewportDpr) return;
+    lastViewportW = vw; lastViewportH = vh; lastViewportDpr = vdpr;
+    measureSafeArea();
+    camera.aspect = vw / vh;
     camera.updateProjectionMatrix();
     // Preserve the same total-pixel budget used at startup. The old hardcoded
     // resize cap penalised small/high-DPR screens and could silently soften a
     // previously sharp frame after an orientation or window-size change.
-    CSS_PIXELS = Math.max(1, window.innerWidth * window.innerHeight);
+    CSS_PIXELS = Math.max(1, vw * vh);
     MAX_RENDER_DPR = Math.max(1, Math.min(
       Math.sqrt(PIXEL_BUDGET / CSS_PIXELS), IS_MOBILE ? 2.5 : 2.0));
     MIN_RENDER_SCALE = Math.min(1,
       1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
     applyRenderScale(renderScale);
-    pMat.uniforms.uScale.value = window.innerHeight * 0.5;
-  });
+    pMat.uniforms.uScale.value = vh * 0.5;
+  }
+  function queueViewportResize() {
+    // iOS animates its browser chrome through a burst of resize events. Each
+    // old callback synchronously reallocated four GPU targets; one settled
+    // commit keeps the canvas responsive via CSS while avoiding that hitch
+    // storm. Rotation and DPR changes flow through the same guarded path.
+    if (viewportResizeTimer) clearTimeout(viewportResizeTimer);
+    viewportResizeTimer = setTimeout(commitViewportResize, 100);
+  }
+  window.addEventListener('resize', queueViewportResize, { passive:true });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', queueViewportResize, { passive:true });
 
   // Grain pattern is generated once and handed to CSS as a data URI.
   (function seedGrain() {
@@ -23151,6 +24317,7 @@ THREE.GLTFLoader = GLTFLoader;
   // preload explicitly; optional injected assets still use onLoad above.
   if (worldAssetsReady) maybeFinishPreload();
   reset();
+  canvas.dataset.startupScriptMs = (performance.now() - startupBootAt).toFixed(1);
   requestAnimationFrame(frame);
 
 })();

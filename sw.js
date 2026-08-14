@@ -1,10 +1,14 @@
 /* Artikel Blitz service worker: precache the app shell, then runtime-cache
    everything the app requests (data JSON, deck manifests, runner assets). */
-const CACHE_NAME = "artikel-blitz-v1";
+const CACHE_NAME = "artikel-blitz-v6";
 const PRECACHE_URLS = [
   "./",
   "./index.html",
   "./berlin-runner.html",
+  "./data/berlin-runner-decks.js",
+  "./assets/models/berlin-runner-hero-v1.glb?rev=4",
+  "./assets/img/berlin-street-art-atlas-v1-1024.png",
+  "./assets/img/berlin-skyline-strip.png",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -13,7 +17,11 @@ const PRECACHE_URLS = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
+    // Cache entries independently: one optional image failing must not discard
+    // the already-fetched app shell and prevent the worker from installing.
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.all(PRECACHE_URLS.map((url) => cache.add(url).catch(() => null)))
+    )
       .then(() => self.skipWaiting())
   );
 });
@@ -36,11 +44,16 @@ self.addEventListener("fetch", (event) => {
   // while still loading instantly from cache when offline).
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
+      // Do not leave an offline launch staring at a pending network socket.
+      // Race the update against a short timeout, then fall back to the shell.
+      Promise.race([
+        fetch(request),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("navigation timeout")), 2500))
+      ])
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return response;
+          return caches.open(CACHE_NAME).then((cache) => cache.put(request, copy))
+            .then(() => response, () => response);
         })
         .catch(() => caches.match(request).then((hit) => hit || caches.match("./index.html")))
     );
@@ -49,18 +62,13 @@ self.addEventListener("fetch", (event) => {
 
   // Everything else: stale-while-revalidate so repeated runs are instant and
   // updates land silently in the background.
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      const fetched = fetch(request)
-        .then((response) => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || fetched;
-    })
-  );
+  const fetched = fetch(request).then((response) => {
+    if (!response || !response.ok) return response;
+    const copy = response.clone();
+    return caches.open(CACHE_NAME).then((cache) => cache.put(request, copy))
+      .then(() => response, () => response);
+  });
+  // Keep stale-while-revalidate alive after a cached response returns.
+  event.waitUntil(fetched.then(() => undefined, () => undefined));
+  event.respondWith(caches.match(request).then((cached) => cached || fetched));
 });
