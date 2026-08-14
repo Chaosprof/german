@@ -18012,42 +18012,106 @@ THREE.GLTFLoader = GLTFLoader;
     [-0.02, 0.20, 0.085], [-0.20, 0.00, 0.085], [-0.32, -0.24, 0.085]
   ];
   (function buildPretzels() {
+    // The halo used to be a filled radial glow the size of the pretzel, sitting
+    // on a camera-facing plane through its centre. Additive and depth-tested,
+    // that washed every part of the rope behind the plane to pale orange — the
+    // near belly stayed saturated while the top loops bleached out, which is
+    // exactly what read as "pale and see-through". It is a *ring* now: fully
+    // transparent across the token's own silhouette, brightest just outside it,
+    // so it back-lights the shape instead of fogging it. A baked star was tried
+    // here and rejected: full-width spikes on a camera-facing quad smeared a
+    // bright horizontal bar across the lane the token was sitting in.
     var haloTex = canvasTexture(96, 96, function (g, w, h) {
-      var glow = g.createRadialGradient(w / 2, h / 2, 2, w / 2, h / 2, w / 2);
-      glow.addColorStop(0, 'rgba(255,235,150,.62)');
-      glow.addColorStop(.34, 'rgba(255,181,48,.24)');
-      glow.addColorStop(1, 'rgba(255,128,20,0)');
+      var cx = w / 2, cy = h / 2;
+      var glow = g.createRadialGradient(cx, cy, w * 0.28, cx, cy, w / 2);
+      glow.addColorStop(0, 'rgba(255,222,138,0)');
+      glow.addColorStop(.28, 'rgba(255,210,104,.54)');
+      glow.addColorStop(.52, 'rgba(255,160,42,.30)');
+      glow.addColorStop(1, 'rgba(255,122,16,0)');
       g.fillStyle = glow; g.fillRect(0, 0, w, h);
     }, { wrap: false });
     var haloMat = new THREE.SpriteMaterial({ map: haloTex, transparent: true, depthWrite: false,
-      blending: THREE.AdditiveBlending, fog: true, opacity: .58 });
+      blending: THREE.AdditiveBlending, fog: true, opacity: .72 });
 
     var pts = PRETZEL_PATH.map(function (p) { return new THREE.Vector3(p[0], p[1], p[2]); });
     var curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
     // 88 segments is the point where the crossing stops faceting on a 1 m
     // object at gate distance; 8 radial sides is enough for a rope this thin.
     var pretzelGeo = new THREE.TubeGeometry(curve, 88, 0.090, 8, false);
+    // TubeGeometry lays u along the rope and v around its circumference, so a
+    // vertical gradient here paints lengthwise stripes on the rope, not bands
+    // across it. The previous three-stop ramp spent the whole circumference on
+    // one washed-out fade; this one keeps the crust a single saturated amber and
+    // spends the range on the two things that give a rope volume — one narrow
+    // lacquer sheen and one deep chestnut underside. That contrast is doing the
+    // job an ink outline would: pickups are deliberately excluded from the
+    // outline pass (see renderPresent) so the silhouette has to be earned here.
     var pretzelDoughTex = canvasTexture(128, 48, function (g, w, h) {
       var dough = g.createLinearGradient(0, 0, 0, h);
-      dough.addColorStop(0, '#f4b448'); dough.addColorStop(0.46, '#dc791f');
-      dough.addColorStop(1, '#a94714');
+      dough.addColorStop(0.00, '#d96c1c');
+      dough.addColorStop(0.16, '#f5951f');
+      dough.addColorStop(0.31, '#ffcd66');   // lacquer sheen — the glazed top
+      dough.addColorStop(0.38, '#ffe3a0');
+      dough.addColorStop(0.48, '#f5951f');
+      dough.addColorStop(0.68, '#e06a14');
+      dough.addColorStop(0.87, '#bd5119');
+      dough.addColorStop(1.00, '#9c4224');   // shadowed underside, kept warm
       g.fillStyle = dough; g.fillRect(0, 0, w, h);
+      // A cool plum note only in the last sliver of the underside. Enough to
+      // break the single-hue plastic-tube read; any more and the crust muddies.
+      g.globalCompositeOperation = 'overlay';
+      var blush = g.createLinearGradient(0, 0, 0, h);
+      blush.addColorStop(0.00, 'rgba(120,36,64,0)');
+      blush.addColorStop(0.74, 'rgba(120,36,64,0)');
+      blush.addColorStop(1.00, 'rgba(126,42,74,0.40)');
+      g.fillStyle = blush; g.fillRect(0, 0, w, h);
+      g.globalCompositeOperation = 'source-over';
+      // Re-lay the specular streak on top of the blush, unmodulated: this is the
+      // one band that has to stay near-white for the glaze to read as glaze. Keep
+      // it narrow — widen it and the whole rope reads pale rather than glazed,
+      // which is the exact failure the previous crust already had.
+      var sheen = g.createLinearGradient(0, h * 0.29, 0, h * 0.39);
+      sheen.addColorStop(0, 'rgba(255,244,205,0)');
+      sheen.addColorStop(.45, 'rgba(255,249,226,0.62)');
+      sheen.addColorStop(1, 'rgba(255,238,190,0)');
+      g.fillStyle = sheen; g.fillRect(0, h * 0.29, w, h * 0.10);
       // Coarse salt marks are deliberately larger than realism: at runner
       // distance these collapse into the pale baked highlights a pretzel needs.
-      g.fillStyle = 'rgba(255,239,188,0.92)';
-      for (var salt = 0; salt < 26; salt++) {
-        var sx = (salt * 47 + 13) % w, sy = (salt * 29 + 7) % h;
+      // Each grain gets a caramel seat under it so it reads as a crystal sitting
+      // on the crust rather than a bleached hole punched through it.
+      for (var salt = 0; salt < 30; salt++) {
+        var sx = (salt * 47 + 13) % w;
+        // Inset from the top and bottom edges: a grain straddling them is
+        // clipped by the canvas, not wrapped, so it renders as a half crystal
+        // sliced along the tube's seam.
+        var sy = 4 + ((salt * 29 + 7) % (h - 8));
         g.save(); g.translate(sx, sy); g.rotate((salt % 5 - 2) * 0.22);
-        fillRR(g, -2.4, -1.1, 4.8, 2.2, 1.0, 'rgba(255,239,188,0.92)');
+        fillRR(g, -2.9, -1.5, 5.8, 3.0, 1.3, 'rgba(96,42,10,0.45)');
+        fillRR(g, -2.6, -1.3, 5.0, 2.4, 1.1, 'rgba(255,251,236,0.97)');
         g.restore();
       }
     });
     pretzelDoughTex.repeat.set(3, 1);
-    // Warm baked dough, not polished orange metal. The retained halo owns
-    // pickup visibility; the solid can keep broad rough highlights and salt.
-    var pretzelMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff, map: pretzelDoughTex, roughness: 0.50, metalness: 0.04,
-      emissive: 0xe86f16, emissiveIntensity: 0.44
+    // Built through mat() so the pickup is cel-shaded like every other prop in
+    // the city. Bypassing it left the pretzel the one object in frame with a
+    // smooth PBR falloff — soft, low-contrast, foreign.
+    //
+    // envMapIntensity is deliberately *low* for a glossy material. A rope this
+    // thin shows the camera almost nothing but grazing angles, so Schlick drives
+    // the whole silhouette to full sky reflection: at 1.25 the crust bleached to
+    // pale beige, which is the same Fresnel blowout the signage hit. The gloss
+    // that reads as glaze comes from the sun's own specular lobe instead, which
+    // is a moving highlight on the top curve rather than a flat wash.
+    //
+    // The emissive is the visibility floor under the bridges and canopies, where
+    // no direct light reaches the token at all and the gloss has nothing to
+    // catch. It has to carry those stretches on its own, but it is the channel
+    // that bleaches the crust from the inside if overdriven — at the old 0.44 it
+    // pushed a lighter map into the ACES shoulder. 0.34 against this deeper crust
+    // stays golden in shadow without flattening the sunlit banding.
+    var pretzelMat = mat(0xffffff, {
+      map: pretzelDoughTex, roughness: 0.30, metalness: 0.04,
+      envMapIntensity: 0.42, emissive: 0xffa63c, emissiveIntensity: 0.34
     });
     // Bake the display scale and both rounded tips into one shared solid. The
     // compact token footprint leaves the lane and upcoming hazards readable;
@@ -18074,7 +18138,8 @@ THREE.GLTFLoader = GLTFLoader;
     for (var i = 0; i < PRETZEL_POOL; i++) {
       var holder = new THREE.Group();
       var halo = new THREE.Sprite(haloMat.clone());
-      halo.scale.set(1.02, 1.02, 1);
+      // Sized so the ring's bright band clears the token's own silhouette.
+      halo.scale.set(1.42, 1.42, 1);
       holder.add(halo);
 
       // The empty spin group preserves the exact old parent/child transform;
