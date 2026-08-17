@@ -11,10 +11,16 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
-<!-- Start the four critical Runner transfers while the browser is still
-     parsing the embedded engine. They are consumed later by the deck script,
-     GLTFLoader and texture loader, but no longer sit behind 1.8 MB of HTML. -->
-<link rel="preload" href="assets/models/berlin-runner-hero-v1.glb?rev=4" as="fetch" crossorigin="anonymous">
+<!-- A directly double-clicked file:// page cannot fetch a neighbouring GLB.
+     Load a generated data-URI companion only in that mode; served builds keep
+     the smaller, cacheable binary preload and pay no duplicate transfer. -->
+<script>
+  if (location.protocol === 'file:') {
+    document.write('<script src="assets/models/berlin-runner-hero-v9.inline.js"><\/script>');
+  } else {
+    document.write('<link rel="preload" href="assets/models/berlin-runner-hero-v9.glb?rev=1" as="fetch" crossorigin="anonymous">');
+  }
+</script>
 <link rel="preload" href="assets/img/berlin-street-art-atlas-v1-1024.png" as="image">
 <link rel="preload" href="assets/img/berlin-skyline-strip.png" as="image">
 <title>Artikel Express — Berlin Runner</title>
@@ -4261,7 +4267,10 @@ THREE.GLTFLoader = GLTFLoader;
     // must tile horizontally: it wraps the full 360 degrees SKYLINE_TILES times.
     skylineStrip: 'assets/img/berlin-skyline-strip.png',
     facades: [], shopfronts: [],
-    character: 'assets/models/berlin-runner-hero-v1.glb?rev=4', props: {},
+    // The data URI is present only when this HTML was opened directly from
+    // disk. GLTFLoader decodes it locally, avoiding file:// fetch restrictions.
+    character: globalThis.BERLIN_RUNNER_HERO_V9_DATA_URI ||
+               'assets/models/berlin-runner-hero-v9.glb?rev=1', props: {},
     // True when the sky panorama already contains the city silhouette; the
     // procedural skyline ring and Fernsehturm then switch off so the horizon
     // is not drawn twice.
@@ -8793,6 +8802,38 @@ THREE.GLTFLoader = GLTFLoader;
   sun.shadow.radius = 1.6;
   scene.add(sun);
   scene.add(sun.target);
+
+  // sun.castShadow is now set once, here, and NEVER changed again. The quality
+  // ladder used to clear it at its shadows-off rung, and that single boolean is
+  // a shader-graph change: it removes the light from the renderer's shadow
+  // list, so NUM_DIR_LIGHT_SHADOWS drops, so the program cache key of every lit
+  // material in the game changes at once and all of them relink. On the devices
+  // that actually reach that rung — the slow ones — each link is a few hundred
+  // milliseconds of blocked main thread, so the rung meant to recover frame
+  // time instead spent several seconds of it, at the worst possible moment.
+  //
+  // Shrinking the shadow camera achieves the same saving with no shader change
+  // at all: the ortho box is what decides how many casters survive the shadow
+  // pass's frustum test, and the pass's cost is those submissions. The focused
+  // box keeps a crisp contact shadow under the runner (the only shadow that
+  // reads at speed) and drops the street-wide ones. It also means the warm-up
+  // no longer has to compile a second copy of every lit program for a
+  // shadow-less state that can no longer occur — worth ~10 s of loading.
+  var SHADOW_BOX_FULL = 46, SHADOW_BOX_FOCUS = 15;
+  var SHADOW_FAR_FULL = 220, SHADOW_FAR_FOCUS = 110;
+  var shadowFocused = false;
+  function applyShadowScope(focused) {
+    if (shadowFocused === focused) return;
+    shadowFocused = focused;
+    var box = focused ? SHADOW_BOX_FOCUS : SHADOW_BOX_FULL;
+    sun.shadow.camera.left = -box;
+    sun.shadow.camera.right = box;
+    sun.shadow.camera.top = box;
+    sun.shadow.camera.bottom = -box;
+    sun.shadow.camera.far = focused ? SHADOW_FAR_FOCUS : SHADOW_FAR_FULL;
+    sun.shadow.camera.updateProjectionMatrix();
+    renderer.shadowMap.needsUpdate = true;
+  }
 
   // Cool bounce from the shaded side of the street so the runner never
   // silhouettes into a black blob when the sun is behind a building. Nudged up
@@ -19227,12 +19268,27 @@ THREE.GLTFLoader = GLTFLoader;
   // every procedural part while leaving those transforms live.
   // Visual height only. The collider stays at STAND_H/SLIDE_H so every obstacle
   // clearance keeps the margins it was tuned with.
-  var CHAR_DISPLAY_H = 2.15;
+  // The hero is the player's permanent focal point, not another street prop.
+  // At 2.15 m of display height the authored model occupied only ~21% of a
+  // 16:9 gameplay frame; its back graphic, hand shapes and foot contacts
+  // all disappeared beside the deliberately chunky city art. 2.55 lands at
+  // roughly 25-27% in the chase camera while retaining clear hazard sightlines.
+  var CHAR_DISPLAY_H = 2.55;
   var charMixer = null, charAction = null, charModel = null, charBaseY = 0;
   // Named bones let the single bundled run clip carry richer action silhouettes.
   // The mixer lays down its pose first; poseRunner adds small, state-specific
   // offsets afterwards, so jump/slide/stumble no longer look like a rigid statue.
   var charBones = Object.create(null);
+  // Raw GLB bind-pose Euler per bone, captured once at load before any clip
+  // plays. See its use in the attract-idle sway in poseRunner: measured live,
+  // repeatedly nudging a bone via rotation.x += while relying on the mixer to
+  // have freshly re-applied the clip's own pose first did not hold a stable
+  // frame during attract -- RightArm.rotation.x climbed by a fixed amount
+  // every single call and wrapped past a full turn within seconds, which only
+  // a genuine unreset accumulation (not any bounded blend/interpolation) can
+  // produce. Building the idle sway as an absolute set from this fixed
+  // reference sidesteps the question of why entirely.
+  var heroBindRot = Object.create(null);
   // Complete authored GLBs opt out of the old text-to-3D donor repair stack by
   // exporting a root Empty/node named `BerlinRunnerHero` (or the equivalent
   // glTF extra `artikelExpressHero: "complete"`). The gameplay-facing body
@@ -19321,16 +19377,22 @@ THREE.GLTFLoader = GLTFLoader;
       ['RightArm',   [0,0,0, -.48,0,.34, .14,0,.12, 0,0,0]]
     ]);
 
-    // A baseball slide, not a shrunken run. The front leg shoots straight out and
-    // stays there, the trailing leg folds under the hip, the torso reclines and
-    // the trailing arm is thrown back — a shape that reads in one frame at speed.
+    // A forward duck, not a baseball recline. The front leg still shoots
+    // straight out and the trailing leg folds under the hip, but the torso
+    // ducks FORWARD over the lead leg instead of tipping backward — the
+    // chase camera sits above and behind the hero, and a backward recline
+    // here (the old Hips/Head targets below were both negative, i.e.
+    // pitching back) rotates the crown of the head straight at the lens.
+    // Hips/Head now add only a small additional forward pitch on top of the
+    // bigger forward-duck the parent body rotation already carries, so the
+    // back plane — and its flag graphic — stays presented to camera.
     var slt = [0, 0.07, 0.18, 0.42, 0.62];
     var slideClip = makeAuthoredClip('hero_slide', 0.62, slt, [
-      ['Hips',       [0,0,0, -.30,0,0, -.86,0,-.10, -.84,0,-.08, 0,0,0]],
+      ['Hips',       [0,0,0, -.10,0,0, .20,0,-.10, .18,0,-.08, 0,0,0]],
       ['Spine',      [0,0,0, .10,0,0, .30,0,-.10, .28,0,-.08, 0,0,0]],
       ['Spine01',    [0,0,0, .08,0,0, .22,0,-.06, .20,0,-.05, 0,0,0]],
       ['Spine02',    [0,0,0, .05,0,0, .14,0,0, .12,0,0, 0,0,0]],
-      ['Head',       [0,0,0, -.14,0,0, -.44,0,.06, -.42,0,.05, 0,0,0]],
+      ['Head',       [0,0,0, .10,0,0, .30,0,.06, .28,0,.05, 0,0,0]],
       ['LeftUpLeg',  [0,0,0, -.46,0,-.06, -1.02,0,-.14, -1.00,0,-.13, 0,0,0]],
       ['RightUpLeg', [0,0,0, -.20,0,.06, -.30,0,.20, -.28,0,.19, 0,0,0]],
       ['LeftLeg',    [0,0,0, .18,0,0, .10,0,0, .12,0,0, 0,0,0]],
@@ -19338,7 +19400,10 @@ THREE.GLTFLoader = GLTFLoader;
       ['LeftFoot',   [0,0,0, -.20,0,0, -.56,0,-.06, -.54,0,-.06, 0,0,0]],
       ['RightFoot',  [0,0,0, .12,0,0, .38,0,.08, .35,0,.08, 0,0,0]],
       ['LeftArm',    [0,0,0, .18,0,-.10, -.34,0,-.62, -.32,0,-.58, 0,0,0]],
-      ['RightArm',   [0,0,0, .30,0,.10, 1.02,0,.34, 1.00,0,.32, 0,0,0]],
+      // Keep the trailing arm below shoulder height. The old +1.02 rad target
+      // stacked with some run-cycle entry phases into a near-vertical arm,
+      // reading as a trip/flail rather than a committed low slide.
+      ['RightArm',   [0,0,0, .18,0,.10, .34,0,.28, .32,0,.26, 0,0,0]],
       ['LeftForeArm',[0,0,0, -.22,0,0, -.94,0,0, -.90,0,0, 0,0,0]],
       ['RightForeArm',[0,0,0,-.10,0,0, -.24,0,0, -.22,0,0, 0,0,0]],
       ['LeftHand',   [0,0,0, .04,0,-.10, .10,0,-.26, .09,0,-.24, 0,0,0]],
@@ -19403,11 +19468,17 @@ THREE.GLTFLoader = GLTFLoader;
     var isSliding = slideTimer > 0 && grounded;
     var slideClipTime = isSliding ? (!slideWasActive ? 0 : Math.min(slideActionAge, 0.30)) :
       (slideWasActive ? 0.42 : 0.42 + clamp(slideExitAge / 0.22, 0, 1) * 0.20);
-    // The compact BerlinRunnerHero has already-authored chunky costume masses;
-    // the donor-era full-strength clip folds those volumes through one another
-    // and reads as a forward tumble. A lighter additive layer leaves the shared
-    // body recline/crouch in charge while retaining the one-leg baseball shape.
-    var slideClipWeight = charAssetComplete ? 0.42 : 1;
+    // This used to run at 0.42 strength on the complete asset: reasoning was
+    // that the donor-era full-strength clip folded its chunky costume volumes
+    // through one another under the old BACKWARD baseball recline. Now that
+    // the parent body rotation carries a forward duck instead (see the pitch
+    // comment in poseRunner), that self-intersection risk is gone, and 0.42
+    // was instead just quietly erasing most of the one-leg-forward extension
+    // that makes a slide read as a slide from the chase camera -- a side-by-
+    // side of a slide frame and a run frame at 0.42 was hard to tell apart.
+    // Close to full strength lets the authored front-leg shoot/back-leg-fold
+    // pose actually reach the screen.
+    var slideClipWeight = charAssetComplete ? 0.85 : 1;
     setAuthoredAction(charSlideAction, slideClipTime,
       (isSliding || slideWasActive || slideExitAge < 0.22) ? slideClipWeight : 0);
     setAuthoredAction(charStumbleAction, stumbleActionAge,
@@ -19670,6 +19741,11 @@ THREE.GLTFLoader = GLTFLoader;
   // light on top of the shadow — actually erases geometric shading detail
   // rather than just diluting it.
   var HERO_GLOW_STRENGTH = 0.55;
+  // Minimum authored-colour presence for every hero material. This is not an
+  // unlit wash: normals and cel bands still shape the result, but dark trim
+  // or red sleeve can no longer collapse to black when the route crosses a
+  // shadowed station. sqrt supplies a restrained perceptual lift to dark hues.
+  var HERO_FILL_STRENGTH = 0.38;
   function heroShaderPatch(m, key, rimStrength, costume) {
     // Chain rather than clobber: trim materials arrive from mat() already
     // carrying the cel-shading onBeforeCompile/customProgramCacheKey (see
@@ -19682,6 +19758,7 @@ THREE.GLTFLoader = GLTFLoader;
       if (prevCompile) prevCompile(shader);
       shader.uniforms.heroRimColor = { value: HERO_RIM_COLOR };
       shader.uniforms.heroRimStrength = { value: rimStrength };
+      shader.uniforms.heroFillStrength = { value: HERO_FILL_STRENGTH };
       if (costume) shader.uniforms.heroGlowStrength = { value: HERO_GLOW_STRENGTH };
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>',
@@ -19699,6 +19776,7 @@ THREE.GLTFLoader = GLTFLoader;
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>',
           '#include <common>\nuniform vec3 heroRimColor;\nuniform float heroRimStrength;\n' +
+          'uniform float heroFillStrength;\n' +
           'varying vec3 vRimN;\nvarying vec3 vRimV;' +
           (costume ? '\nuniform float heroGlowStrength;\nvarying vec3 vCostume;\nvarying float vCostumeAmt;' : ''))
         .replace('#include <dithering_fragment>',
@@ -19706,6 +19784,8 @@ THREE.GLTFLoader = GLTFLoader;
           '  float hrf = 1.0 - abs(dot(normalize(vRimN), normalize(vRimV)));\n' +
           '  hrf = hrf * hrf * hrf;\n' +
           '  gl_FragColor.rgb += heroRimColor * (hrf * heroRimStrength);\n' +
+          '  gl_FragColor.rgb = max(gl_FragColor.rgb,' +
+          ' sqrt(max(diffuseColor.rgb, vec3(0.0))) * heroFillStrength);\n' +
           // Colour-preserving brightness FLOOR, injected in the same post-
           // tonemap output space as the rim above (see that comment for why
           // this chunk is safe there). diffuseColor.rgb alone cannot
@@ -20100,7 +20180,14 @@ THREE.GLTFLoader = GLTFLoader;
         charAssetComplete = isCompleteAuthoredHero(model);
         model.visible = false;
         model.traverse(function (o) {
-          if (o.isBone && o.name) charBones[o.name] = o;
+          if (o.isBone && o.name) {
+            charBones[o.name] = o;
+            // Captured before any clip ever plays, so this is the raw GLB
+            // bind pose -- the one fixed reference the attract-idle sway
+            // below can be built from without depending on the mixer having
+            // freshly re-applied the run clip's own pose to this bone first.
+            heroBindRot[o.name] = { x: o.rotation.x, y: o.rotation.y, z: o.rotation.z };
+          }
           if (!o.isMesh) return;
           if (o.isSkinnedMesh && !heroSkin) heroSkin = o;
           // The 91k-triangle skinned hero already has a soft contact anchor;
@@ -20173,13 +20260,30 @@ THREE.GLTFLoader = GLTFLoader;
         // The pack/scarf accessory overlays and the graphic face rig stay off —
         // they added extra startup work and risked floating shapes on a GLB
         // revision with different bones, and neither is part of the reference
-        // character. The cap and the run-cycle amplifier are both authored
-        // directly off this asset's measured bone boxes (see buildHeroCostume),
-        // so an unmatched bone name just leaves them skipped, not floating —
-        // safe to wire in. Both need charBones/heroPartBox fully populated,
-        // which the traverse above just finished doing.
-        // Complete authored assets already own this silhouette and motion; only
-        // the legacy donor needs the measured skull/cap cover and amplifier.
+        // character. The cap is authored directly off the legacy donor's
+        // measured bone boxes (see buildHeroCostume) and would double up on a
+        // complete asset that models its own cap, so that one stays gated.
+        //
+        // buildHeroAmplifier() was briefly wired up for the complete asset too
+        // (the run cycle reads as barely-moving from the chase camera, and
+        // "complete authored assets already own this motion" is exactly the
+        // assumption that observation falsifies) but measurement here found
+        // heroAmplify itself is a divergent feedback loop, not a bounded
+        // boost: it extrapolates the bone's quaternion past its own trailing
+        // average by slerp(avg, current, 1+gain*power), then lets that same
+        // average chase the now-larger value. Linearising that update for
+        // RightArm's gain (0.58) and averaging rate (damp(5.5, dt) at 60 fps)
+        // gives a dominant eigenvalue of ~1.127 — every frame amplifies
+        // whatever deviation already exists by ~12.7%, with nothing to damp
+        // it back down, oscillating clip or not. On a quaternion that shows up
+        // as slow, continuous multi-revolution spin rather than a bounded
+        // swing: small frame-to-frame delta (reads as "barely moving"), large
+        // total range over a few seconds (confirmed live: RightArm.rotation.x
+        // ranged over 3+ rad in 4 seconds while visually just standing still).
+        // That may be latent on the procedural donor too, but this file only
+        // owns the complete-asset path, so the fix here is to leave the
+        // existing gate as it was rather than newly expose a divergence this
+        // pass cannot also make stable.
         if (!charAssetComplete) {
           buildHeroCap();
           buildHeroAmplifier();
@@ -20228,11 +20332,13 @@ THREE.GLTFLoader = GLTFLoader;
           charMixer = new THREE.AnimationMixer(model);
           charAction = charMixer.clipAction(findHeroRunClip(gltf.animations));
           charAction.play();
-          // The source run clip already animates all 24 joints. Six additional
-          // additive mixer actions are worthwhile only on the full-quality
-          // tier; poseRunner supplies the same jump/slide readability on the
-          // smooth tier without evaluating another six clips every frame.
-          if (renderScale >= 0.99) buildAuthoredActions();
+          // The source run clip already animates all 24 joints. The six
+          // additive mixer clips built here are a one-time cost (created
+          // once, not evaluated per render tier), so gate this on renderScale
+          // is exactly the `sun.castShadow >= 0.99` trap documented above:
+          // a quality-tier check on a setup call that isn't a per-frame cost,
+          // silently stranding a feature whenever the tier isn't pinned to 1.
+          buildAuthoredActions();
           charMixer.update(0);
         }
         model.visible = true;
@@ -21251,6 +21357,10 @@ THREE.GLTFLoader = GLTFLoader;
   var visualPlayer = { x: 0, y: 0, z: 0 };
   var interpPrevX = 0, interpPrevY = 0, interpPrevZ = 0;
   var lane = 1, targetLane = 1;
+  // Velocity state for a critically damped lane spring. The old one-pole
+  // position lerp changed velocity instantaneously on every key press, which
+  // made an otherwise fluid character visibly snap into and out of a lane.
+  var laneGlideVelocity = 0;
   var speed = 26;
   var grounded = true, slideTimer = 0, coyote = 0;
   var fastFalling = false, slideHeld = 0;
@@ -22110,6 +22220,7 @@ THREE.GLTFLoader = GLTFLoader;
     visualPlayer.z = interpPrevZ = player.z;
     startZ = player.z;
     lane = targetLane = 1;
+    laneGlideVelocity = 0;
     speed = BASE_SPEED;
     grounded = true; slideTimer = 0; coyote = 0;
     stumbleTimer = 0; graceTimer = 0;
@@ -22268,73 +22379,141 @@ THREE.GLTFLoader = GLTFLoader;
     var programWarmScene = new THREE.Scene();
     programWarmScene.fog = scene.fog;
     programWarmScene.environment = scene.environment;
-    var programWarmGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
     var programWarmKeys = Object.create(null);
     var programWarmSun = null;
+
+    // LIGHTS are gathered from the visible set, because that is what the
+    // renderer itself does (its light pass is traverseVisible) and the light
+    // count is what fixes NUM_*_LIGHTS in every lit program.
     scene.traverseVisible(function (obj) {
-      if (obj.isLight) {
-        var lightCopy = obj.clone(false);
-        lightCopy.position.copy(obj.getWorldPosition(new THREE.Vector3()));
-        lightCopy.castShadow = obj.castShadow;
-        programWarmScene.add(lightCopy);
-        if (obj === sun) programWarmSun = lightCopy;
-        return;
+      if (!obj.isLight) return;
+      var lightCopy = obj.clone(false);
+      lightCopy.position.copy(obj.getWorldPosition(new THREE.Vector3()));
+      lightCopy.castShadow = obj.castShadow;
+      programWarmScene.add(lightCopy);
+      if (obj === sun) programWarmSun = lightCopy;
+    });
+
+    // MATERIALS, by contrast, must come from the WHOLE graph, not the visible
+    // set. Everything a runner reveals over the next few minutes -- pooled
+    // hazards, powerup badges, roof-route surfaces, particle layers, the far
+    // set pieces -- sits in the scene with visible=false while the title card
+    // is up. Warming only what was on screen at that instant left thirteen
+    // program variants to be compiled *during play*, and a first-use link is
+    // a hard synchronous stall: measured at 1.2-1.8 s per run in total, with
+    // single freezes of 430/460/605 ms. Those are the game's largest
+    // smoothness defects and they are entirely avoidable here, where a stall
+    // is hidden behind the loading card.
+    //
+    // The warm object also has to carry the object's REAL geometry rather than
+    // a stand-in box, because getParameters() reads the geometry: vertex
+    // colours (USE_COLOR/USE_COLOR_ALPHA), extra UV sets, tangents and morph
+    // targets all change the compiled program. A stand-in box silently warmed
+    // the wrong variant for every vertex-coloured mesh in the game. This costs
+    // nothing: renderer.compile() only resolves programs, it never draws, so
+    // geometry size is irrelevant to warm-up time.
+    function warmGeoSignature(geo) {
+      if (!geo || !geo.attributes) return 'g0';
+      var a = geo.attributes, sig = 'g';
+      if (a.color) sig += 'c' + a.color.itemSize;
+      if (a.tangent) sig += 't';
+      if (a.uv1) sig += '1';
+      if (a.uv2) sig += '2';
+      if (a.uv3) sig += '3';
+      if (geo.morphAttributes) {
+        var mk = Object.keys(geo.morphAttributes);
+        if (mk.length) sig += 'm' + mk.join('') + (geo.morphAttributes[mk[0]] || []).length;
       }
+      return sig;
+    }
+    function addWarmObject(obj, warmMat, forceInstanceColor) {
+      var warmObj;
+      if (obj.isSkinnedMesh) {
+        warmObj = new THREE.SkinnedMesh(obj.geometry, warmMat);
+        if (obj.skeleton) warmObj.bind(obj.skeleton, obj.bindMatrix);
+      } else if (obj.isInstancedMesh) {
+        warmObj = new THREE.InstancedMesh(obj.geometry, warmMat, 1);
+        warmObj.setMatrixAt(0, new THREE.Matrix4());
+        if (forceInstanceColor) warmObj.setColorAt(0, new THREE.Color(0xffffff));
+      } else if (obj.isSprite) {
+        warmObj = new THREE.Sprite(warmMat);
+      } else if (obj.isPoints) {
+        warmObj = new THREE.Points(obj.geometry, warmMat);
+      } else if (obj.isLineSegments) {
+        warmObj = new THREE.LineSegments(obj.geometry, warmMat);
+      } else if (obj.isLine) {
+        warmObj = new THREE.Line(obj.geometry, warmMat);
+      } else {
+        warmObj = new THREE.Mesh(obj.geometry, warmMat);
+      }
+      warmObj.receiveShadow = obj.receiveShadow;
+      // Always a caster, whatever the source object currently is: applyChunkLOD
+      // switches castShadow on and off by distance, so copying the flag would
+      // warm the depth pass for only whichever objects happened to be inside
+      // the caster band while the title card was up.
+      warmObj.castShadow = true;
+      // Everything sits at the origin, which is behind/beside the gameplay
+      // camera. The warm passes below must still submit each one, or the
+      // program it exists to compile is never requested.
+      warmObj.frustumCulled = false;
+      programWarmScene.add(warmObj);
+    }
+    scene.traverse(function (obj) {
+      if (obj.isLight) return;
       if (!(obj.isMesh || obj.isLine || obj.isPoints || obj.isSprite) || !obj.material) return;
       var mats = Array.isArray(obj.material) ? obj.material : [obj.material];
       for (var wm = 0; wm < mats.length; wm++) {
         var warmMat = mats[wm];
         if (!warmMat) continue;
-        var warmShape = obj.isSkinnedMesh ? 'skin' :
-                        obj.isInstancedMesh ? (obj.instanceColor ? 'instColor' : 'inst') :
+        // Piggy-backed on the one traversal that visits every material after
+        // the graph is complete. A transparent DoubleSide material takes
+        // three's two-pass path in renderObject: it flips side to BackSide,
+        // sets needsUpdate, draws, flips to FrontSide, sets needsUpdate, draws
+        // again. Each of those needsUpdate bumps the material version, so the
+        // renderer re-resolves the program (getParameters + getProgramCacheKey)
+        // twice per object per frame on top of paying two draw calls.
+        // Measured on the street-art atlas and three sibling decals: ~20 of the
+        // 63 per-frame program re-resolutions in the whole game, plus their
+        // duplicate submissions. Every one of these is flat, single-layer
+        // signage, where back-then-front ordering buys nothing that one
+        // DoubleSide pass does not already give.
+        if (warmMat.transparent === true && warmMat.side === THREE.DoubleSide &&
+            warmMat.forceSinglePass === false) {
+          warmMat.forceSinglePass = true;
+        }
+        var baseShape = obj.isSkinnedMesh ? 'skin' :
+                        obj.isInstancedMesh ? 'inst' :
                         obj.isSprite ? 'sprite' : obj.isPoints ? 'points' :
                         obj.isLineSegments ? 'lineSeg' : obj.isLine ? 'line' : 'mesh';
-        var hasMorph = !!(obj.geometry && obj.geometry.morphAttributes &&
-                          Object.keys(obj.geometry.morphAttributes).length);
-        var warmKey = warmMat.id + '|' + warmShape + '|' + (hasMorph ? 1 : 0) +
-                      '|' + (obj.receiveShadow ? 1 : 0);
-        if (programWarmKeys[warmKey]) continue;
-        programWarmKeys[warmKey] = 1;
-        var warmObj;
-        if (obj.isSkinnedMesh) {
-          warmObj = new THREE.SkinnedMesh(obj.geometry, warmMat);
-          if (obj.skeleton) warmObj.bind(obj.skeleton, obj.bindMatrix);
-        } else if (obj.isInstancedMesh) {
-          warmObj = new THREE.InstancedMesh(hasMorph ? obj.geometry : programWarmGeo, warmMat, 1);
-          warmObj.setMatrixAt(0, new THREE.Matrix4());
-          if (obj.instanceColor) warmObj.setColorAt(0, new THREE.Color(0xffffff));
-        } else if (obj.isSprite) {
-          warmObj = new THREE.Sprite(warmMat);
-        } else if (obj.isPoints) {
-          warmObj = new THREE.Points(hasMorph ? obj.geometry : programWarmGeo, warmMat);
-        } else if (obj.isLineSegments) {
-          warmObj = new THREE.LineSegments(hasMorph ? obj.geometry : programWarmGeo, warmMat);
-        } else if (obj.isLine) {
-          warmObj = new THREE.Line(hasMorph ? obj.geometry : programWarmGeo, warmMat);
-        } else {
-          warmObj = new THREE.Mesh(hasMorph ? obj.geometry : programWarmGeo, warmMat);
+        var geoSig = obj.isSprite ? 'g0' : warmGeoSignature(obj.geometry);
+        // An instanced pool that has not had setColorAt() called on it yet
+        // reports instanceColor === null at warm-up time and grows the
+        // attribute later, on its first tinted spawn -- a fresh link mid-run.
+        // Warm both shapes for every instanced mesh; the pair is cheap and the
+        // pool's eventual state stops mattering.
+        var shapes = obj.isInstancedMesh ? ['inst', 'instColor'] : [baseShape];
+        for (var si = 0; si < shapes.length; si++) {
+          var warmKey = warmMat.id + '|' + shapes[si] + '|' + geoSig +
+                        '|' + (obj.receiveShadow ? 1 : 0);
+          if (programWarmKeys[warmKey]) continue;
+          programWarmKeys[warmKey] = 1;
+          addWarmObject(obj, warmMat, shapes[si] === 'instColor');
         }
-        warmObj.receiveShadow = obj.receiveShadow;
-        warmObj.castShadow = obj.castShadow;
-        programWarmScene.add(warmObj);
       }
     });
 
-    // sun.castShadow is flipped off by applyQualityTier (see monitorFrameBudget
-    // / TIER_SHADOW_OFF) the moment sustained frame pressure crosses a
-    // threshold -- measured directly: every material's run-phase relink was
-    // its boot variant with USE_SHADOWMAP removed, i.e. this exact toggle
-    // landing mid-run and silently relinking every lit material at once. Both
-    // states are warmed against the representative scene, so every program
-    // shape remains ready without two complete city graph traversals.
-    var savedSunCastShadow = sun.castShadow;
-    [true, false].forEach(function (castShadow) {
-      steps.push(function () {
-        sun.castShadow = castShadow;
-        if (programWarmSun) programWarmSun.castShadow = castShadow;
-        if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
-        try { renderer.compile(programWarmScene, camera); } catch (e) {}
-      });
+    // One shadow state, not two. This step used to run twice -- once with
+    // sun.castShadow on and once with it off -- because the quality ladder
+    // could clear that flag mid-run and relink every lit material at once.
+    // applyShadowScope removes the flag change entirely (see its comment by
+    // the sun), so NUM_DIR_LIGHT_SHADOWS is now constant for the whole session
+    // and the second copy of every lit program is dead weight: it was ~10 s of
+    // link time on the loading screen, measured, for programs that could never
+    // be reached.
+    steps.push(function () {
+      if (programWarmSun) programWarmSun.castShadow = sun.castShadow;
+      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+      try { renderer.compile(programWarmScene, camera); } catch (e) {}
     });
 
     // Build the permanent per-object lookup, then warm the four actual outline
@@ -22369,19 +22548,35 @@ THREE.GLTFLoader = GLTFLoader;
       warmGeo.dispose();
     });
 
-    // The title scene is already rendered continuously with the sun shadow on,
-    // so it has produced the representative static, instanced and skinned depth
-    // programs before Start can become available. The old extra pass forced all
-    // thirteen city chunks visible simultaneously just to repeat that work. On
-    // phone-class GPUs that single synthetic frame cost several seconds and
-    // created hundreds of needless submissions. Keep shader compilation, but
-    // let ordinary title rendering warm depth variants from the real visibility
-    // set; later chunks reuse those same program shapes.
+    // renderer.compile() resolves BEAUTY programs only -- it never runs the
+    // shadow pass, so the MeshDepthMaterial variants a caster needs (plain,
+    // instanced, instance-coloured, alpha-mapped, skinned) stay uncompiled
+    // until something of that shape first casts a shadow. Measured: four such
+    // depth links still landed in the first 1.5 s of play after the material
+    // warm-up above was made exhaustive. One real render of the warm scene
+    // with the shadow map forced costs a single off-screen frame here and
+    // compiles all of them behind the loading card instead.
     steps.push(function () {
-      sun.castShadow = savedSunCastShadow;
+      if (programWarmSun) programWarmSun.castShadow = sun.castShadow;
+      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+      try {
+        renderer.shadowMap.needsUpdate = true;
+        renderer.render(programWarmScene, camera);
+      } catch (e) {}
+    });
+
+    steps.push(function () {
       renderer.shadowMap.needsUpdate = true;
       renderer.setRenderTarget(savedTarget);
-      programWarmGeo.dispose();
+      // The warm scene's cloned lights were given their own shadow render
+      // targets by the depth pass above. Nothing references them afterwards and
+      // GPU resources are not reclaimed by GC, so a 2048² map would simply leak.
+      programWarmScene.traverse(function (warmLight) {
+        if (warmLight.isLight && warmLight.shadow && warmLight.shadow.map) {
+          warmLight.shadow.map.dispose();
+          warmLight.shadow.map = null;
+        }
+      });
     });
 
     // Spread across frames rather than one long synchronous block, so the
@@ -22408,6 +22603,15 @@ THREE.GLTFLoader = GLTFLoader;
     // authoritative warm-up, then require an ordinary painted title frame before
     // releasing Start so the handoff still begins from a confirmed hero render.
     requestAnimationFrame(function () {
+      // The warm-up's whole guarantee is "every program this session can ever
+      // need is linked before Start is released", and it derives that set by
+      // walking the scene graph. So the graph has to be COMPLETE first. The two
+      // reserve chunks used to be built on idle callbacks *after* the warm-up
+      // (they live beyond the beauty envelope, so deferring them released the
+      // CTA sooner), which left their materials outside the walk and produced
+      // first-use depth links 30-45 s into a run. Building them here costs a
+      // few hundred milliseconds against a warm-up measured in seconds.
+      while (deferredChunkSlot < CHUNK_COUNT) buildDeferredChunk(null);
       warmRemainingPrograms(function () {
         requestAnimationFrame(function () {
           preloadReady = true;
@@ -22489,10 +22693,25 @@ THREE.GLTFLoader = GLTFLoader;
     }
 
     // ---- lane glide
+    // Exact critically damped spring integration: continuous velocity at both
+    // ends of the move, stable under catch-up substeps, and naturally able to
+    // redirect if the player double-taps before reaching the adjacent lane.
+    // Collision still consumes this authoritative position, so presentation
+    // and gameplay never disagree about which lane the runner occupies.
     var laneX = LANES[targetLane];
     var dx = laneX - player.x;
-    player.x += dx * damp(13, dt);
-    if (Math.abs(dx) < 0.02) player.x = laneX;
+    var laneOmega = 16;
+    var laneStep = laneOmega * dt;
+    var laneDecay = 1 / (1 + laneStep + 0.48 * laneStep * laneStep +
+                         0.235 * laneStep * laneStep * laneStep);
+    var laneChange = player.x - laneX;
+    var laneTemp = (laneGlideVelocity + laneOmega * laneChange) * dt;
+    laneGlideVelocity = (laneGlideVelocity - laneOmega * laneTemp) * laneDecay;
+    player.x = laneX + (laneChange + laneTemp) * laneDecay;
+    if (Math.abs(dx) < 0.012 && Math.abs(laneGlideVelocity) < 0.04) {
+      player.x = laneX;
+      laneGlideVelocity = 0;
+    }
     lane = targetLane;
 
     // Lane 1's articulated opening is a real discontinuity, not an invisible
@@ -22804,6 +23023,18 @@ THREE.GLTFLoader = GLTFLoader;
     b.rotation.y += y * weight;
     b.rotation.z += z * weight;
   }
+  // Absolute counterpart to nudgeCharBone, for poses that must hold a fixed
+  // frame forever rather than blend with a moving clip: builds the rotation
+  // from the captured bind pose (heroBindRot) plus this frame's offset,
+  // instead of adding onto whatever the bone already holds. Use this where
+  // a nudge would otherwise run every frame at a constant weight (the
+  // attract-idle sway is the one case that does) — see heroBindRot's comment
+  // for why relying on += there drifted without bound.
+  function setCharBoneFromBind(name, x, y, z, weight) {
+    var b = charBones[name], base = heroBindRot[name];
+    if (!b || !base || weight <= 0) return;
+    b.rotation.set(base.x + x * weight, base.y + y * weight, base.z + z * weight);
+  }
   function phaseEase(v) {
     v = clamp(v, 0, 1);
     return v * v * (3 - 2 * v);
@@ -22880,12 +23111,19 @@ THREE.GLTFLoader = GLTFLoader;
       body.rotation.y = -0.10 + Math.sin(t * 0.47) * 0.055;
     }
 
-    var pitch = 0.20 + clamp((speed - BASE_SPEED) / 40, 0, 1) * 0.22;
-    // Reclined, not folded: the baseball slide carries its weight behind the
-    // hips. The authored runner already adds a pelvis recline in its clip, so a
-    // shallower parent pitch keeps the cap, backpack and extended leg readable
-    // instead of presenting the circular top of the head straight to camera.
-    pitch = lerp(pitch, charAssetComplete ? -0.28 : -0.52, slideVisual);
+    // Athletic forward drive without folding the backpack toward the road.
+    // The clip already contributes pelvis/spine pitch, so the former 0.20
+    // parent lean double-counted the bend and hid the hero's strongest back graphic.
+    var pitch = 0.14 + clamp((speed - BASE_SPEED) / 40, 0, 1) * 0.16;
+    // Forward duck, not a baseball recline: the chase camera sits above and
+    // behind the hero, so a backward pitch here tips the crown of the head
+    // straight into the lens (seven prior tuning passes on a negative target
+    // never fixed this — the sign was wrong, not the magnitude). Running
+    // already leans forward for the same camera-geometry reason (see the
+    // shoulder-pendulum comment below); the slide just leans harder and drops,
+    // which keeps the back plane — and its flag graphic — presented to camera
+    // the whole way through instead of rotating it away.
+    pitch = lerp(pitch, charAssetComplete ? 0.68 : 0.74, slideVisual);
     pitch += jumpAnticipation * 0.16 - jumpTakeoff * 0.10 + jumpApex * 0.07 +
              jumpDescent * 0.14 + landContact * 0.20 - landRebound * 0.08;
     if (attractPose) pitch = -0.015 + Math.sin(t * 1.35) * 0.008;
@@ -22896,7 +23134,7 @@ THREE.GLTFLoader = GLTFLoader;
     }
     body.rotation.x = pitch;
     if (charAssetComplete) body.rotation.z += slideVisual * 0.10;
-    body.position.y = -0.54 * slideVisual - landContact * 0.14 + landRebound * 0.045 +
+    body.position.y = -0.72 * slideVisual - landContact * 0.14 + landRebound * 0.045 +
                       jumpAnticipation * -0.075 + jumpTakeoff * 0.075 +
                       celebratePose * 0.055 + attractPose * Math.sin(t * 1.35) * 0.012;
     body.position.z = -0.36 * slideVisual;
@@ -23104,7 +23342,7 @@ THREE.GLTFLoader = GLTFLoader;
       var rise = clamp(player.vy / JUMP_V, -1, 1);
       charModel.position.y = charBaseY + celebratePose * 0.025 +
                              Math.sin(t * 1.35) * 0.008 * attractPose +
-                             (charAssetComplete ? slideVisual * 0.22 : 0);
+                             (charAssetComplete ? slideVisual * 0.30 : 0);
 
       // Baseline running silhouette: a light torso counter-twist opposite the
       // leg swing — real gait mechanics, shoulders rotate against the hips —
@@ -23119,17 +23357,23 @@ THREE.GLTFLoader = GLTFLoader;
       nudgeCharBone('Hips', 0, swing * 0.10, 0, runCounter);
 
       // Title-screen idle: weight on one foot, loose shoulders, slow breathing.
-      nudgeCharBone('Hips', 0.035, -0.08, -0.045, attractPose);
-      nudgeCharBone('Spine', -0.045, 0.035, 0.025, attractPose);
-      nudgeCharBone('Spine01', 0.025 + Math.sin(t * 1.35) * 0.012, 0, -0.018, attractPose);
-      nudgeCharBone('Head', -0.025 + Math.sin(t * 0.72) * 0.018, 0.075, 0.025, attractPose);
-      nudgeCharBone('LeftUpLeg', -0.12, 0, -0.035, attractPose);
-      nudgeCharBone('RightUpLeg', 0.08, 0, 0.035, attractPose);
-      nudgeCharBone('LeftLeg', 0.20, 0, 0, attractPose);
-      nudgeCharBone('LeftArm', -0.10, 0, -0.10, attractPose);
-      nudgeCharBone('RightArm', 0.12, 0, 0.08, attractPose);
-      nudgeCharBone('LeftForeArm', -0.20, 0, 0, attractPose);
-      nudgeCharBone('RightForeArm', -0.28, 0, 0, attractPose);
+      // Built from the fixed bind pose (setCharBoneFromBind), not nudged onto
+      // whatever the bone currently holds — attractPose stays at a constant 1
+      // for as long as the title card is up, and nudgeCharBone's += here
+      // measured out as an unbounded per-frame drift with nothing resetting
+      // it (see heroBindRot's comment). An absolute pose has no such state to
+      // drift.
+      setCharBoneFromBind('Hips', 0.035, -0.08, -0.045, attractPose);
+      setCharBoneFromBind('Spine', -0.045, 0.035, 0.025, attractPose);
+      setCharBoneFromBind('Spine01', 0.025 + Math.sin(t * 1.35) * 0.012, 0, -0.018, attractPose);
+      setCharBoneFromBind('Head', -0.025 + Math.sin(t * 0.72) * 0.018, 0.075, 0.025, attractPose);
+      setCharBoneFromBind('LeftUpLeg', -0.12, 0, -0.035, attractPose);
+      setCharBoneFromBind('RightUpLeg', 0.08, 0, 0.035, attractPose);
+      setCharBoneFromBind('LeftLeg', 0.20, 0, 0, attractPose);
+      setCharBoneFromBind('LeftArm', -0.10, 0, -0.10, attractPose);
+      setCharBoneFromBind('RightArm', 0.12, 0, 0.08, attractPose);
+      setCharBoneFromBind('LeftForeArm', -0.20, 0, 0, attractPose);
+      setCharBoneFromBind('RightForeArm', -0.28, 0, 0, attractPose);
 
       // Keyed clips own action anatomy when every required clip was built. This
       // branch remains a safe overlay for partial or differently named rigs.
@@ -23261,8 +23505,12 @@ THREE.GLTFLoader = GLTFLoader;
         // Finish the extremity silhouettes after the keyed clips: planted toes
         // roll into the road, landing feet spread, and hands lead emergency and
         // celebratory gestures. These are small enough not to rewrite the action.
-        var plantL = grounded && !sliding ? Math.pow(Math.max(0, Math.cos(runPhase)), 7) : 0;
-        var plantR = grounded && !sliding ? Math.pow(Math.max(0, -Math.cos(runPhase)), 7) : 0;
+        // The Blender clip defines p=0 as RIGHT-foot contact (Left is offset by
+        // half a cycle). These cues used the procedural rig's opposite naming,
+        // so toe roll landed on the airborne shoe once the two phases were
+        // synchronized below.
+        var plantL = grounded && !sliding ? Math.pow(Math.max(0, -Math.cos(runPhase)), 7) : 0;
+        var plantR = grounded && !sliding ? Math.pow(Math.max(0, Math.cos(runPhase)), 7) : 0;
         nudgeCharBone('LeftFoot', 0.11, 0, -0.025, plantL);
         nudgeCharBone('RightFoot', 0.11, 0, 0.025, plantR);
         nudgeCharBone('LeftFoot', 0.09, 0, -0.075, landContact);
@@ -23566,6 +23814,13 @@ THREE.GLTFLoader = GLTFLoader;
                   Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 2.15 + roofRevealScale * 0.65;
     var height = 2.20 + speedMix * 0.28 + bridgeRevealAmount * 0.24 + routeCameraCrest * 0.08 -
                  slideVisual * 0.30 + portraitView * 0.52 + roofRevealScale * 0.35;
+    // Extra vertical follow while airborne only (airVisual, not visualPlayer.y
+    // alone, so grounded rooftop sections keep their own already-tuned
+    // framing). The base 0.34 below only tracked a third of the hero's actual
+    // rise, so a full jump (peak height ~2.58 at JUMP_V=15.4/GRAV=46) let the
+    // head climb ~1.7 world units above the camera's own rise — enough to
+    // carry it past the top edge at apex. This does not touch FOV or backOff
+    // zoom; it keeps the existing framing and just has the rig track the jump.
     var laneDelta = LANES[targetLane] - visualPlayer.x;
     // Trailing the lateral move, not leading it, is what makes the street swing
     // past on a lane change instead of sliding rigidly sideways.
@@ -23574,7 +23829,8 @@ THREE.GLTFLoader = GLTFLoader;
                   bridgeReveal * 0.24 - routeCameraMix * 0.06;
     var gaitWeight = grounded ? (1 - slideVisual) : 0;
     var strideBob = Math.sin(runPhase * 2) * 0.025 * gaitWeight;
-    var targetY = height + visualPlayer.y * 0.34 + strideBob - landingPulse * 0.075;
+    var airLift = airVisual * clamp(visualPlayer.y, 0, 3.2);
+    var targetY = height + visualPlayer.y * 0.34 + airLift * 0.32 + strideBob - landingPulse * 0.075;
     var targetZ = visualPlayer.z - backOff;
     sampleRoutePoint(targetX, targetY + playerSurfaceY(targetZ), targetZ);
     var desiredCamX = routePointX, desiredCamY = routePointY, desiredCamZ = routePointZ;
@@ -23890,8 +24146,7 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Shadow frustum only needs to move when the shadow map will be refreshed.
     // Point/rim lights still follow every frame, preserving the live lighting.
-    if ((!shadowSlow && frameNumber % 6 === 0) ||
-        (shadowSlow && frameNumber % 8 === 0)) {
+    if (frameNumber % shadowRefreshPeriod() === 0) {
       sampleRoutePoint(player.x, playerSurfaceY(player.z), player.z);
       // Keep in sync with the init-time offset above (-45/72/48) — this is
       // the per-frame re-anchor as the sun follows the route curve.
@@ -24046,7 +24301,7 @@ THREE.GLTFLoader = GLTFLoader;
   //   5            shadow map refresh rate halved
   //   6            SSAO off
   //   7            bloom off
-  //   8            shadows off entirely
+  //   8            shadow camera shrunk to a focused box around the runner
   //   9            full-city outline -> focal hero/gate/hazard ink only
   // Resolution now precedes lighting cuts: on a DPR>1 display the first three
   // rungs only remove expensive oversampling, while AO/bloom/shadows continue
@@ -24068,9 +24323,12 @@ THREE.GLTFLoader = GLTFLoader;
   var bloomActive = POST.bloomOn;
   var outlineActive = POST.outlineOn;
   var outlineFocalOnly = false;
-  // Shadow refresh cadence; kept separate from the fully-off step so the rate
-  // halves once before shadows disappear rather than jumping straight to none.
+  // Shadow refresh cadence; kept separate from the focused-box step so the rate
+  // halves once before the shadow scope narrows rather than doing both at once.
   var shadowSlow = false;
+  function shadowRefreshPeriod() {
+    return shadowFocused ? 12 : (shadowSlow ? 8 : 6);
+  }
   // Broader load-shedding (prop draw distance used to live here too, but that
   // just reintroduced Problem 1's pop-in under pressure -- see applyChunkLOD.
   // What is left here is genuine CPU/fill work: particle counts, the slide
@@ -24089,11 +24347,8 @@ THREE.GLTFLoader = GLTFLoader;
     aoActive = POST.aoOn && qualityTier < TIER_AO_OFF;
     bloomActive = POST.bloomOn && qualityTier < TIER_BLOOM_OFF;
     shadowSlow = qualityTier >= TIER_SHADOW_SLOW;
-    var shadowsWanted = qualityTier < TIER_SHADOW_OFF;
-    if (sun.castShadow !== shadowsWanted) {
-      sun.castShadow = shadowsWanted;
-      renderer.shadowMap.needsUpdate = true;
-    }
+    // NOT sun.castShadow -- see applyShadowScope for why that flag is frozen.
+    applyShadowScope(qualityTier >= TIER_SHADOW_OFF);
     // Never erase the defining ink entirely. The last rung switches the
     // prepass to its pre-tagged focal layer, preserving only the silhouettes
     // the player reads moment to moment at a fraction of the city-wide cost.
@@ -24282,14 +24537,38 @@ THREE.GLTFLoader = GLTFLoader;
       if (!started && charAction) {
         // Pin one balanced frame of the run clip; poseRunner turns it into a
         // breathing asymmetric idle without needing a second animation asset.
+        // Pausing the action and re-pinning .time every frame (rather than
+        // scrubbing time backward on an active action, which is what this
+        // used to do) keeps every OTHER bone the sway below doesn't touch
+        // sitting on this one held frame instead of whatever the clip's
+        // playhead last landed on. The idle sway itself no longer depends on
+        // this at all — see setCharBoneFromBind / heroBindRot just below and
+        // in poseRunner for why: measured live, the equivalent nudgeCharBone
+        // (+=) version drifted by a fixed amount every single frame with
+        // nothing observed to reset it, wrapping RightArm past a full turn
+        // within seconds behind the start panel, regardless of what was fed
+        // to update() here. Rather than keep re-guessing which exact mixer
+        // timing edge case caused that, the sway now builds its pose from a
+        // fixed captured reference instead of accumulating onto a live bone.
+        charAction.paused = true;
         charAction.time = 0.18;
-        charMixer.update(0);
+        charMixer.update(raw > 0 ? raw : 0.001);
       } else {
-        var slidingNow = slideTimer > 0 && grounded;
-        // A tiny rate during slides keeps the mixer evaluating its base pose each
-        // frame, so the additive bone offsets in poseRunner never accumulate.
-        var rate = !grounded ? 0.18 : (slidingNow ? 0.055 : clamp(speed / 24, 0.7, 2.1));
-        charMixer.update(raw * rate);
+        // One master gait clock. The baked clip previously advanced from raw
+        // render delta at speed/24 while foot plants, torso counter-motion,
+        // contact FX and accessory inertia advanced from runPhase in the fixed
+        // simulation. Their rates diverged by 20% at base speed and much more
+        // in overdrive, so feet slowly slid out of their own contact accents.
+        // Scrubbing the clip from runPhase keeps every layer phase-locked and
+        // also removes render-rate-dependent animation cadence on 60/120 Hz.
+        charAction.paused = true;
+        var syncedRunClip = charAction.getClip ? charAction.getClip() : null;
+        if (syncedRunClip && syncedRunClip.duration > 0.001) {
+          var syncedCycle = runPhase / (Math.PI * 2);
+          syncedCycle -= Math.floor(syncedCycle);
+          charAction.time = syncedCycle * syncedRunClip.duration;
+        }
+        charMixer.update(0);
       }
     }
     poseRunner(t);
@@ -24309,11 +24588,13 @@ THREE.GLTFLoader = GLTFLoader;
     updateParticles(raw);
     updateAmbientAudio(speed);
 
-    // Refresh the moving shadow frustum at 10 Hz normally and 7.5 Hz under
-    // pressure. Camera motion masks the small temporal offset while avoiding a
-    // full extra scene pass on every rendered frame.
-    if (sun.castShadow && ((!shadowSlow && frameNumber % 6 === 0) ||
-        (shadowSlow && frameNumber % 8 === 0))) {
+    // Refresh the moving shadow frustum at 10 Hz normally, 7.5 Hz under
+    // pressure and 5 Hz once the ladder has focused the shadow box. Camera
+    // motion masks the small temporal offset while avoiding a full extra scene
+    // pass on every rendered frame. The frustum itself is re-anchored on
+    // exactly these frames -- see updateWorldVisuals -- so the two must share
+    // shadowRefreshPeriod() rather than repeating the cadence.
+    if (frameNumber % shadowRefreshPeriod() === 0) {
       renderer.shadowMap.needsUpdate = true;
     }
 

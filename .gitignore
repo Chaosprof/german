@@ -18,6 +18,10 @@ __pycache__/
 # Retired Godot prototype and its generated exports/import cache.
 godot-runner/
 
+# Third-party art references (commercial game screenshots, generated concept
+# stills). Useful locally when matching a look; not ours to redistribute.
+audit/ref/
+
 # Regenerable visual/OCR artifacts; textual audit reports remain tracked.
 audit/game-shots/
 audit/game-video/
