@@ -5883,10 +5883,27 @@ THREE.GLTFLoader = GLTFLoader;
     // for a few dozen draws instead of paying a second pass over the whole city.
     var doOutline = outlineActive;
     if (doOutline) {
-      // Pickups are tiny luminous breadcrumbs, not collision silhouettes. Keep
-      // their shared solid out of the normal/depth pass so the screen-space
-      // crease filter cannot turn them into heavy lane-blocking rings.
-      var pretzelOutlineVisible = !outlineFocalOnly && pretzelSolidInst && pretzelSolidInst.visible;
+      // Pickups were previously held out of this pass entirely, on the theory
+      // that a tiny luminous breadcrumb needs no collision silhouette and that
+      // the screen-space crease filter would turn one into a heavy lane-blocking
+      // ring. Holding them out is worse, and for a reason that is not about ink
+      // at all: the composite reads depth ONLY from this target. Every pixel a
+      // brezel covers therefore reports the depth and normal of whatever is
+      // *behind* it, so outlineEdge (and AO, and the DoF blend) evaluate the
+      // shopfront, tram, kerb or rail back there and then apply the result to
+      // the brezel's own colour. Against a busy backdrop the token ends up with
+      // a foreign contour net painted across its body — which is exactly what
+      // reads as "pale, see-through, not really an object" — while the same
+      // token against clean sky or open road keeps its glaze. Measured at
+      // 1280x800 on one frozen frame: submitting the solid here lifted the
+      // saturated-orange area of a near cluster from 6.1% to 9.2% of the crop.
+      //
+      // Only the tokens inside OUTLINE_PLAY_FAR are submitted — the same band
+      // gates and hazards use above — because they are the ones large enough on
+      // screen for foreign ink to matter. The compaction in updateWorldVisuals
+      // writes those first, so this is a prefix of the instance buffer: one
+      // extra draw and a handful of instances, not the whole 60-deep trail.
+      var pretzelOutlineCount = -1;
       var savedOutlineLayerMask = camera.layers.mask;
       var outlineWorldWasVisible = false, outlineTrafficWasVisible = false;
       var activeOutlineSwapList = null;
@@ -5902,7 +5919,10 @@ THREE.GLTFLoader = GLTFLoader;
           trafficRoot.visible = false;
           camera.layers.set(FOCAL_OUTLINE_LAYER);
         } else {
-          if (pretzelOutlineVisible) pretzelSolidInst.visible = false;
+          if (pretzelSolidInst && pretzelSolidInst.visible) {
+            pretzelOutlineCount = pretzelSolidInst.count;
+            pretzelSolidInst.count = pretzelSolidInkCount;
+          }
           // Facade micro-depth still renders in the beauty pass, but its repeated
           // bay/shop/balcony geometry must not compete with gameplay silhouettes
           // in the normal/depth ink pass. The solid facade cores remain present,
@@ -6047,7 +6067,7 @@ THREE.GLTFLoader = GLTFLoader;
             outlinePlayFar[opf].visible = true;
           }
           outlinePlayFarCount = 0;
-          if (pretzelOutlineVisible) pretzelSolidInst.visible = true;
+          if (pretzelOutlineCount >= 0) pretzelSolidInst.count = pretzelOutlineCount;
         }
       }
     }
@@ -14662,6 +14682,13 @@ THREE.GLTFLoader = GLTFLoader;
   // haze that the ink cannot resolve, near enough that the gate a player is
   // actually reading keeps its outline.
   var OUTLINE_PLAY_FAR = 100;
+  // Pickups get a much shorter ink band than gates and hazards. A gate has to be
+  // read and decided on from far out; a brezel only has to look like a solid
+  // object, and the foreign-contour problem it is being submitted to fix (see
+  // renderPresent) only shows up while the token is still big enough on screen
+  // to have a body for that contour to land on. Past this the token is a few
+  // pixels of glow and the submission is pure triangles.
+  var PICKUP_INK_FAR = 40;
   var outlinePlayFar = new Array(64);
   var outlinePlayFarCount = 0;
   var worldRoot = new THREE.Group();
@@ -18034,6 +18061,11 @@ THREE.GLTFLoader = GLTFLoader;
   var pretzels = [];
   var pretzelSolidInst = null;
   var pretzelSolidMatrix = new THREE.Matrix4();
+  // How many of the compacted instances sit inside OUTLINE_PLAY_FAR. The
+  // per-frame compaction below writes those first precisely so the outline
+  // prepass can submit a prefix of the trail instead of all 60 tokens; see the
+  // pickup-depth comment in renderPresent for why they must be submitted at all.
+  var pretzelSolidInkCount = 0;
   // The pickup used to be a flat billboard with a decorative torus behind it.
   // A billboard cannot spin, so the reward read as a sticker pasted on the
   // street rather than an object lying in it. This is a real lathed rope
@@ -19299,24 +19331,129 @@ THREE.GLTFLoader = GLTFLoader;
   var charAuthoredReady = false;
   var charJumpAction = null, charLandAction = null, charSlideAction = null;
   var charStumbleAction = null, charVictoryActionL = null, charVictoryActionR = null;
+  // Bones the mixer provably never writes back to, plus the pose it left them
+  // in. See captureHeroStaticPose for why this list has to exist at all.
+  var heroStaticBones = null;
+
+  // three.js only pushes a mixed value into the scene graph when it CHANGED:
+  // PropertyMixer.apply compares this frame's accumulation against the previous
+  // frame's and returns without calling binding.setValue when they match. A
+  // bone whose only track is constant therefore gets written exactly once, on
+  // the first update, and never again — so anything that poses it with `+=`
+  // afterwards (nudgeCharBone) accumulates with nothing to reset it.
+  //
+  // That is not hypothetical: `neck` is keyed to a constant (0.02, 0, 0) in
+  // tools/build_hero.py, and poseRunner's live attention layer nudges it by
+  // -0.025 rad every frame at constant weight. Measured in-game, neck.rotation.x
+  // walked -0.045 -> -0.795 -> -1.545 -> -2.295 -> -3.795 over ten seconds —
+  // a clean -0.025/frame ramp — which folds the head down through the chest and
+  // out the front of the torso. That is the "head falls off during the run"
+  // defect, and it is the same failure the attract-idle sway hit earlier (see
+  // heroBindRot); that pass worked around it for one pose instead of naming it.
+  //
+  // Collect every bone that is (a) unkeyed or constant in the base run clip and
+  // (b) not targeted by any additive action — those two conditions are exactly
+  // when the mixer's change check can stay false forever — and restore their
+  // captured pose at the top of every frame, before any nudge runs.
+  function captureHeroStaticPose(runClip, additiveClips) {
+    heroStaticBones = null;
+    if (!runClip) return;
+    var moving = Object.create(null);
+    for (var i = 0; i < runClip.tracks.length; i++) {
+      var track = runClip.tracks[i];
+      var bone = track.name.split('.')[0];
+      var v = track.values, constant = true;
+      for (var j = track.valueSize; j < v.length; j++) {
+        if (Math.abs(v[j] - v[j % track.valueSize]) > 1e-6) { constant = false; break; }
+      }
+      if (!constant) moving[bone] = true;
+    }
+    for (var a = 0; a < additiveClips.length; a++) {
+      var clip = additiveClips[a];
+      if (!clip) continue;
+      for (var k = 0; k < clip.tracks.length; k++) moving[clip.tracks[k].name.split('.')[0]] = true;
+    }
+    var stat = [];
+    for (var name in charBones) {
+      if (moving[name]) continue;
+      stat.push({ bone: charBones[name], quat: charBones[name].quaternion.clone() });
+    }
+    heroStaticBones = stat.length ? stat : null;
+  }
+
+  function restoreHeroStaticPose() {
+    if (!heroStaticBones) return;
+    for (var i = 0; i < heroStaticBones.length; i++) {
+      heroStaticBones[i].bone.quaternion.copy(heroStaticBones[i].quat);
+    }
+  }
 
 
   // Authored clips use identity-relative quaternion keys, so they can layer over
   // any frame of the bundled run cycle. All arrays and tracks are built once.
+  //
+  // The poses below are authored at storytelling density — jump is six keys
+  // across 0.76 s, land four across 0.30 s — and a quaternion track interpolates
+  // LINEARLY (slerp) between its keys. Straight-line motion between keys that far
+  // apart makes a limb travel in segments and visibly change direction at every
+  // one, which is the same defect the baked run cycle had at 15 keys per stride.
+  // So resample each authored curve onto a ~120 Hz grid with a Catmull-Rom spline
+  // through the authored keys: the original poses are preserved exactly (the
+  // spline passes through its control points) and only the path between them
+  // becomes curved instead of kinked.
+  //
+  // The interpolated value is clamped to the range of the two keys it sits
+  // between. Catmull-Rom overshoots on purpose, which usually reads as pleasant
+  // anticipation/follow-through — but these are ADDITIVE poses stacked on a run
+  // cycle, and the slide's targets are already extreme (RightLeg reaches 1.98
+  // rad), so an overshoot there could fold a limb through the torso. Clamping
+  // keeps every frame inside poses that were actually authored.
+  var ACTION_RESAMPLE_HZ = 120;
+
+  function catmullRom(p0, p1, p2, p3, t) {
+    var t2 = t * t, t3 = t2 * t;
+    var v = 0.5 * ((2 * p1) + (-p0 + p2) * t +
+                   (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+                   (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+    var lo = Math.min(p1, p2), hi = Math.max(p1, p2);
+    return v < lo ? lo : (v > hi ? hi : v);
+  }
+
   function makeActionTrack(boneName, times, xyz) {
     var bone = charBones[boneName];
     if (!bone || xyz.length !== times.length * 3) return null;
-    var values = new Float32Array(times.length * 4);
+    var n = times.length;
+    var duration = times[n - 1] - times[0];
+    var steps = Math.max(n - 1, Math.ceil(duration * ACTION_RESAMPLE_HZ));
+    var outTimes = new Float32Array(steps + 1);
+    var values = new Float32Array((steps + 1) * 4);
     var euler = new THREE.Euler();
     var quat = new THREE.Quaternion();
-    for (var i = 0; i < times.length; i++) {
-      var p = i * 3, q = i * 4;
-      euler.set(xyz[p], xyz[p + 1], xyz[p + 2], 'XYZ');
+    var axis = [0, 0, 0];
+    for (var s = 0; s <= steps; s++) {
+      var time = times[0] + duration * (s / steps);
+      // Locate the authored segment this sample falls in.
+      var k = 0;
+      while (k < n - 2 && times[k + 1] < time) k++;
+      var span = times[k + 1] - times[k];
+      var u = span > 1e-6 ? (time - times[k]) / span : 0;
+      for (var c = 0; c < 3; c++) {
+        // Clamped end tangents: the authored curves all start and end at rest,
+        // so duplicating the end keys is the correct boundary condition.
+        var i0 = (k > 0 ? k - 1 : 0) * 3 + c;
+        var i1 = k * 3 + c;
+        var i2 = (k + 1) * 3 + c;
+        var i3 = (k + 2 < n ? k + 2 : n - 1) * 3 + c;
+        axis[c] = catmullRom(xyz[i0], xyz[i1], xyz[i2], xyz[i3], u);
+      }
+      euler.set(axis[0], axis[1], axis[2], 'XYZ');
       quat.setFromEuler(euler);
+      outTimes[s] = time;
+      var q = s * 4;
       values[q] = quat.x; values[q + 1] = quat.y;
       values[q + 2] = quat.z; values[q + 3] = quat.w;
     }
-    return new THREE.QuaternionKeyframeTrack(bone.name + '.quaternion', times, values);
+    return new THREE.QuaternionKeyframeTrack(bone.name + '.quaternion', outTimes, values);
   }
 
   function makeAuthoredClip(name, duration, times, poses) {
@@ -19445,14 +19582,16 @@ THREE.GLTFLoader = GLTFLoader;
       ]);
     }
 
+    var victoryL = victoryClip(-1), victoryR = victoryClip(1);
     charJumpAction = startAuthoredAction(jumpClip);
     charLandAction = startAuthoredAction(landClip);
     charSlideAction = startAuthoredAction(slideClip);
     charStumbleAction = startAuthoredAction(stumbleClip);
-    charVictoryActionL = startAuthoredAction(victoryClip(-1));
-    charVictoryActionR = startAuthoredAction(victoryClip(1));
+    charVictoryActionL = startAuthoredAction(victoryL);
+    charVictoryActionR = startAuthoredAction(victoryR);
     charAuthoredReady = !!(charJumpAction && charLandAction && charSlideAction &&
                            charStumbleAction && charVictoryActionL && charVictoryActionR);
+    return [jumpClip, landClip, slideClip, stumbleClip, victoryL, victoryR];
   }
 
   function setAuthoredAction(action, time, weight) {
@@ -20330,7 +20469,8 @@ THREE.GLTFLoader = GLTFLoader;
         heroFinish.visible = false;
         if (gltf.animations && gltf.animations.length) {
           charMixer = new THREE.AnimationMixer(model);
-          charAction = charMixer.clipAction(findHeroRunClip(gltf.animations));
+          var heroRunClip = findHeroRunClip(gltf.animations);
+          charAction = charMixer.clipAction(heroRunClip);
           charAction.play();
           // The source run clip already animates all 24 joints. The six
           // additive mixer clips built here are a one-time cost (created
@@ -20338,8 +20478,11 @@ THREE.GLTFLoader = GLTFLoader;
           // is exactly the `sun.castShadow >= 0.99` trap documented above:
           // a quality-tier check on a setup call that isn't a per-frame cost,
           // silently stranding a feature whenever the tier isn't pinned to 1.
-          buildAuthoredActions();
+          var authoredClips = buildAuthoredActions();
           charMixer.update(0);
+          // After the first update, so the captured pose is the one the mixer
+          // itself put these bones in rather than the raw GLB bind pose.
+          captureHeroStaticPose(heroRunClip, authoredClips);
         }
         model.visible = true;
         rig.visible = true;
@@ -21356,6 +21499,16 @@ THREE.GLTFLoader = GLTFLoader;
   // displays, preventing ProMotion's old 0px/2px alternating cadence.
   var visualPlayer = { x: 0, y: 0, z: 0 };
   var interpPrevX = 0, interpPrevY = 0, interpPrevZ = 0;
+  // The gait clock needs the same treatment as the position above, and for the
+  // same reason. runPhase only advances inside simulate() at a fixed 60 Hz,
+  // but every presentation layer that reads it — the run clip's playhead, the
+  // limb swing terms, the hip bob, the foot plant windows — runs once per
+  // rendered frame. On any display that is not exactly locked to the
+  // accumulator the body therefore glides while the legs step: the pose
+  // repeats on some frames and skips on others, which is precisely the
+  // "movement is not smooth" read. Interpolating the phase the same way the
+  // position is interpolated puts the whole character back on one clock.
+  var interpPrevRunPhase = 0, visualRunPhase = 0;
   var lane = 1, targetLane = 1;
   // Velocity state for a critically damped lane spring. The old one-pole
   // position lerp changed velocity instantaneously on every key press, which
@@ -22224,7 +22377,8 @@ THREE.GLTFLoader = GLTFLoader;
     speed = BASE_SPEED;
     grounded = true; slideTimer = 0; coyote = 0;
     stumbleTimer = 0; graceTimer = 0;
-    runPhase = 0; leanRoll = 0; camShake = 0; answerKick = 0;
+    runPhase = interpPrevRunPhase = visualRunPhase = 0;
+    leanRoll = 0; camShake = 0; answerKick = 0;
     slideVisual = 0; airVisual = 0; takeoffPulse = 0; landingPulse = 0; landingFx = 0;
     celebrateTimer = 0; celebratePower = 1; celebrateSide = 1;
     jumpActionAge = landingActionAge = slideActionAge = slideExitAge = 9;
@@ -22285,7 +22439,11 @@ THREE.GLTFLoader = GLTFLoader;
     for (var pu = 0; pu < powerups.length; pu++) { powerups[pu].active = false; powerups[pu].holder.visible = false; }
     for (var rr = 0; rr < roofRoutes.length; rr++) { roofRoutes[rr].active = false; roofRoutes[rr].root.visible = false; }
     updatePowerupHUD(true);
-    if (pretzelSolidInst) { pretzelSolidInst.count = 0; pretzelSolidInst.instanceMatrix.needsUpdate = true; }
+    if (pretzelSolidInst) {
+      pretzelSolidInst.count = 0;
+      pretzelSolidInkCount = 0;
+      pretzelSolidInst.instanceMatrix.needsUpdate = true;
+    }
     clearParticles();
     fxPrevPlayerX = player.x;
 
@@ -22659,6 +22817,7 @@ THREE.GLTFLoader = GLTFLoader;
   // ============================================================= physics ====
   function simulate(dt) {
     interpPrevX = player.x; interpPrevY = player.y; interpPrevZ = player.z;
+    interpPrevRunPhase = runPhase;
     prevZ = player.z;
 
     // ---- overdrive ramp
@@ -23046,6 +23205,13 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function poseRunner(t) {
+    // Everything in here is presentation, so it reads the render-interpolated
+    // gait clock rather than the 60 Hz simulation one (see interpPrevRunPhase).
+    // Deliberately shadows the outer name: this function only ever READS the
+    // phase, so one binding here keeps the swing terms, the hip bob, the foot
+    // plant windows and the accessory springs on exactly the same clock as the
+    // run clip's playhead, with no call site left behind on the stepped value.
+    var runPhase = visualRunPhase;
     var sliding = slideTimer > 0 && grounded;
     var air = !grounded;
 
@@ -23334,6 +23500,11 @@ THREE.GLTFLoader = GLTFLoader;
     // animation remains the base, while these offsets make each action readable
     // from the chase camera. Subtle asymmetry keeps the pose from feeling robotic.
     if (charModel && charMixer) {
+      // Undo the previous frame's nudges on every bone the mixer has stopped
+      // writing to (see captureHeroStaticPose). Must run before anything below
+      // reads or adds to a bone rotation, or the additive layers compound onto
+      // last frame's result instead of onto this frame's clip pose.
+      restoreHeroStaticPose();
       // Exaggeration first, on the clean mixer output, so the additive action
       // offsets below stay the size they were authored at.
       heroAmplify(dt_, (1 - attractPose * 0.6) * (1 - slideVisual * 0.55));
@@ -24190,24 +24361,35 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Pretzels spin and bob. Logical slots keep their original identity for
     // collision; only active solid transforms are compacted into the renderer.
+    //
+    // Two passes over the pool so the compacted instances come out sorted into
+    // "inside the ink band" then "beyond it", rather than in pool order. Each
+    // active token is still animated exactly once — it matches exactly one pass
+    // — and the split lets the outline prepass draw instances [0, inkCount)
+    // instead of the whole trail. Nothing else depends on instance order.
     var pretzelSolidCount = 0;
-    for (var pi2 = 0; pi2 < pretzels.length; pi2++) {
-      var pr = pretzels[pi2];
-      if (!pr.active) continue;
-      var pretzelBobY = pr.y + Math.sin(t * 3 + pr.z * 0.3) * 0.1;
-      var magnetPull = magnetTimer > 0 ? clamp(1 - (pr.z - visualPlayer.z) / 16, 0, 1) : 0;
-      magnetPull *= magnetPull;
-      applyPlayFrame(pr.sprite,
-        lerp(pr.x, visualPlayer.x, magnetPull),
-        lerp(pretzelBobY, visualPlayer.y + 1.05, magnetPull), pr.z, 0, 0, 0);
-      pr.mesh.rotation.y = t * 2.6 + pr.z;
-      pr.mesh.rotation.z = Math.sin(t * 2 + pr.z) * .16;
-      var s = 1.0 + Math.sin(t * 4 + pr.z) * 0.07;
-      pr.sprite.scale.set(s, s, s);
-      pr.sprite.updateMatrix();
-      pr.mesh.updateMatrix();
-      pretzelSolidMatrix.multiplyMatrices(pr.sprite.matrix, pr.mesh.matrix);
-      pretzelSolidInst.setMatrixAt(pretzelSolidCount++, pretzelSolidMatrix);
+    var pretzelInkZ = player.z + PICKUP_INK_FAR;
+    for (var pretzelPass = 0; pretzelPass < 2; pretzelPass++) {
+      for (var pi2 = 0; pi2 < pretzels.length; pi2++) {
+        var pr = pretzels[pi2];
+        if (!pr.active) continue;
+        if ((pr.z <= pretzelInkZ) !== (pretzelPass === 0)) continue;
+        var pretzelBobY = pr.y + Math.sin(t * 3 + pr.z * 0.3) * 0.1;
+        var magnetPull = magnetTimer > 0 ? clamp(1 - (pr.z - visualPlayer.z) / 16, 0, 1) : 0;
+        magnetPull *= magnetPull;
+        applyPlayFrame(pr.sprite,
+          lerp(pr.x, visualPlayer.x, magnetPull),
+          lerp(pretzelBobY, visualPlayer.y + 1.05, magnetPull), pr.z, 0, 0, 0);
+        pr.mesh.rotation.y = t * 2.6 + pr.z;
+        pr.mesh.rotation.z = Math.sin(t * 2 + pr.z) * .16;
+        var s = 1.0 + Math.sin(t * 4 + pr.z) * 0.07;
+        pr.sprite.scale.set(s, s, s);
+        pr.sprite.updateMatrix();
+        pr.mesh.updateMatrix();
+        pretzelSolidMatrix.multiplyMatrices(pr.sprite.matrix, pr.mesh.matrix);
+        pretzelSolidInst.setMatrixAt(pretzelSolidCount++, pretzelSolidMatrix);
+      }
+      if (pretzelPass === 0) pretzelSolidInkCount = pretzelSolidCount;
     }
     pretzelSolidInst.count = pretzelSolidCount;
     pretzelSolidInst.instanceMatrix.needsUpdate = true;
@@ -24521,6 +24703,9 @@ THREE.GLTFLoader = GLTFLoader;
       // Hold a composed title-screen stance while traffic and the skyline keep
       // the city alive around the hero.
       prevZ = player.z;
+      // Attract already advances once per rendered frame, so there is nothing
+      // to interpolate — renderAlpha is 1 here and the two stay equal.
+      interpPrevRunPhase = runPhase;
       runPhase += raw * 0.65;
       updateChunks(player.z);
     }
@@ -24529,6 +24714,7 @@ THREE.GLTFLoader = GLTFLoader;
     visualPlayer.x = lerp(interpPrevX, player.x, renderAlpha);
     visualPlayer.y = lerp(interpPrevY, player.y, renderAlpha);
     visualPlayer.z = lerp(interpPrevZ, player.z, renderAlpha);
+    visualRunPhase = lerp(interpPrevRunPhase, runPhase, renderAlpha);
 
     // Drive the run cycle off ground speed so the feet do not skate, hold it
     // near-frozen in the air, and stop it entirely during a slide.
@@ -24564,7 +24750,7 @@ THREE.GLTFLoader = GLTFLoader;
         charAction.paused = true;
         var syncedRunClip = charAction.getClip ? charAction.getClip() : null;
         if (syncedRunClip && syncedRunClip.duration > 0.001) {
-          var syncedCycle = runPhase / (Math.PI * 2);
+          var syncedCycle = visualRunPhase / (Math.PI * 2);
           syncedCycle -= Math.floor(syncedCycle);
           charAction.time = syncedCycle * syncedRunClip.duration;
         }
