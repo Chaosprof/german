@@ -258,8 +258,18 @@ function hydrateWordData(payload) {
     NOUN_SENSES.get(noun[0]).push(noun);
   }
   NOUN_INDEX = new Map();
+  // Bucket the source rows by word in a single pass. Re-scanning nounEntries
+  // for every distinct word was O(n^2) — ~670M comparisons on the 26k-entry
+  // bank, which froze the loading screen at 100% for ~18s before the first
+  // card could render.
+  const SOURCE_ROWS_BY_WORD = new Map();
+  for (const entry of nounEntries) {
+    const bucket = SOURCE_ROWS_BY_WORD.get(entry.word);
+    if (bucket) bucket.push(entry);
+    else SOURCE_ROWS_BY_WORD.set(entry.word, [entry]);
+  }
   for (const [word, senses] of NOUN_SENSES) {
-    const sourceRows = nounEntries.filter(entry => entry.word === word);
+    const sourceRows = SOURCE_ROWS_BY_WORD.get(word) || [];
     const sorted = senses.map((noun, index) => ({ noun, source: sourceRows[index] || {} }))
       .sort((a, b) => ((a.source.sensePriority ?? 100) - (b.source.sensePriority ?? 100)) || (a.noun[4] - b.noun[4]));
     NOUN_INDEX.set(word, sorted[0].noun);
