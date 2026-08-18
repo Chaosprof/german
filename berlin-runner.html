@@ -9917,7 +9917,7 @@ THREE.GLTFLoader = GLTFLoader;
   var PROP_TARGET_H = {
     trabant: 1.45, bus: 3.50, litfass: 3.90, kiosk: 2.90, lamp: 6.50,
     bench: 0.95, tree: 5.50, ubahn: 3.40, container: 1.90, ampel: 4.00,
-    barrier: 1.00, scaffold: 3.40, skip: 1.85, crate: 1.35,
+    scaffold: 3.40, skip: 1.85, crate: 1.35,
     trench: 1.00, handcart: 1.05, cafeCanopy: 3.40, luggage: 1.85, maintenance: 1.95,
     bikerack: 0.80, cargobike: 1.10, cafeset: 1.55, cratestackdecor: 0.85,
     sandwichboard: 0.90, hazardbarrier: 0.66, planter: 0.77, wheeliebin: 0.86
@@ -17681,7 +17681,7 @@ THREE.GLTFLoader = GLTFLoader;
 
   // ========================================================== obstacles =====
   // Three honest verbs, never ambiguous:
-  //   low   → jump it        (construction barrier, kerbside crate)
+  //   low   → jump it        (open road trench)
   //   high  → slide under it (scaffold beam, awning bar)
   //   block → change lane    (parked car, skip, ad column)
   // Only `block` restricts lanes, and it never fills all three.
@@ -17692,33 +17692,6 @@ THREE.GLTFLoader = GLTFLoader;
   var OB_POOL = 48;
   var obstacles = [];
 
-  function makeBarrier() {
-    // Red/white Baustellen-Absperrgitter, one lane wide.
-    var g = new THREE.Group();
-    g.add(roundedBox(LANE_W * 0.92, 0.14, 0.18, 0.06, MAT.barrierRed, 0, 0.84, 0, 0.022));
-    g.add(roundedBox(LANE_W * 0.92, 0.14, 0.18, 0.06, MAT.barrierRed, 0, 0.48, 0, 0.022));
-    var stripes = 6;
-    for (var i = 0; i < stripes; i++) {
-      var w = LANE_W * 0.92 / stripes;
-      g.add(roundedBox(w * 0.94, 0.30, 0.11, 0.045,
-                       i % 2 ? MAT.barrierWhite : MAT.barrierRed,
-                       -LANE_W * 0.46 + w * (i + 0.5), 0.66, 0.055, 0.014));
-    }
-    [-1, 1].forEach(function (s) {
-      g.add(roundedBox(0.13, 0.90, 0.13, 0.05, MAT.metalDark,
-                       s * LANE_W * 0.44, 0.45, 0, 0.018));
-      g.add(roundedBox(0.58, 0.10, 0.52, 0.08, MAT.metalDark,
-                       s * LANE_W * 0.44, 0.05, 0, 0.022));
-      g.add(roundedBox(0.22, 0.12, 0.22, 0.06, MAT.chrome,
-                       s * LANE_W * 0.44, 0.94, 0, 0.018));
-    });
-    // Amber blinker in a separate dark housing and chrome rim.
-    g.add(roundedBox(0.28, 0.24, 0.20, 0.09, MAT.metalDark, LANE_W * 0.44, 1.05, 0, 0.025));
-    g.add(roundedBox(0.22, 0.18, 0.215, 0.08, MAT.chrome, LANE_W * 0.44, 1.05, 0, 0.018));
-    g.add(roundedBox(0.16, 0.13, 0.225, 0.06, PROP_AMBER, LANE_W * 0.44, 1.05, 0, 0.014));
-    g.traverse(function (o) { if (o.isMesh) o.castShadow = true; });
-    return registerProp('barrier', g);
-  }
 
   function makeScaffold() {
     // Gerüst crossbar with a hanging banner — duck under it.
@@ -17968,7 +17941,7 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   var OB_KINDS = [
-    { name: 'barrier',  kind: 'low',   build: makeBarrier,      halfW: LANE_W * 0.5, halfD: 0.35, yMin: 0,    yMax: 1.02 },
+    { name: 'trench',   kind: 'low',   build: makeTrenchFrame,  halfW: LANE_W * 0.5, halfD: 0.35, yMin: 0,    yMax: 1.02 },
     { name: 'crate',    kind: 'low',   build: makeCrate,        halfW: 0.85,         halfD: 0.62, yMin: 0,    yMax: 1.05 },
     { name: 'scaffold', kind: 'high',  build: makeScaffold,     halfW: LANE_W * 0.5, halfD: 0.30, yMin: 1.28, yMax: 4.0 },
     { name: 'skip',     kind: 'block', build: makeSkip,         halfW: 1.20,         halfD: 1.75, yMin: 0,    yMax: 1.85 },
@@ -17977,7 +17950,13 @@ THREE.GLTFLoader = GLTFLoader;
   // Visual breadth is deliberately parallel to OB_KINDS: physics continues to
   // read the immutable spec above, while every pooled slot owns both appearances.
   var OB_VISUAL_BUILDERS = [
-    [OB_KINDS[0].build, makeTrenchFrame],
+    // Deliberately single-appearance. The jump beat used to alternate between
+    // a red/white Absperrgitter and this trench, but the Absperrgitter is a
+    // lane-wide striped board — the same silhouette the café canopy and the
+    // scaffold banner present overhead, only lower. At speed the height was
+    // the sole cue separating "jump" from "slide", and it read as a coin
+    // flip. The trench is a hole in the road: it can only mean jump.
+    [makeTrenchFrame],
     [OB_KINDS[1].build, makeDeliveryHandcart],
     [OB_KINDS[2].build, makeCafeCanopy],
     [OB_KINDS[3].build, makeLuggageTrolley],
@@ -22201,20 +22180,31 @@ THREE.GLTFLoader = GLTFLoader;
       // from the previous beat can finish before the next decision arrives.
       var recoverySeconds = lastVerb === 'block' ? lerp(0.70, 0.58, difficulty) :
                             lastVerb === 'free' ? 0.62 : lerp(1.00, 0.76, difficulty);
-      var gap = Math.max(rand(24, 35) - difficulty * 5, speed * recoverySeconds);
+      var gap = Math.max(rand(36, 50) - difficulty * 6, speed * recoverySeconds);
       z += gap;
       if (z > gateZ - GATE_CLEAR_BEFORE) break;
 
       var roll = Math.random();
       var rewardLane = randInt(0, 2);
-      if (roll < 0.34 && freeObstacleSlots() >= 3) {
+      if (roll < 0.16) {
+        // Breather. An empty corridor with a brezel line through it, so the
+        // course has somewhere to put the reading of the next gate word.
+        // 'free' is the shortest recovery constant above, so the following
+        // beat still arrives promptly — this thins the wall of verbs, it
+        // does not stall the run.
+        spawnPretzelRun(rewardLane, z - 2, 6, false);
+        lastVerb = 'free';
+        lastObstacleZ = z;
+        continue;
+      }
+      if (roll < 0.44 && freeObstacleSlots() >= 3) {
         // full-width jump or slide — pure reflex, lane stays free
-        var full = Math.random() < 0.5 ? 0 : 2;   // barrier or scaffold
+        var full = Math.random() < 0.5 ? 0 : 2;   // trench (jump) or scaffold (slide)
         for (var l = 0; l < 3; l++) spawnObstacle(full, l, z);
         rewardLane = randInt(0, 2);
         if (Math.random() < 0.6) spawnPretzelRun(rewardLane, z - 1, 5, full === 0);
         lastVerb = full === 0 ? 'jump' : 'slide';
-      } else if (roll < 0.62) {
+      } else if (roll < 0.70) {
         // single-lane low/high hazard
         var laneA = randInt(0, 2);
         spawnObstacle(Math.random() < 0.55 ? 0 : 2, laneA, z);
@@ -22272,6 +22262,12 @@ THREE.GLTFLoader = GLTFLoader;
       overdriveTier = newTier;
       earned = 100 * streakMultiplier();
       quizScore += earned;
+      // Step the speed itself, not just its target. The ramp above still does
+      // the sustained work, but a discrete shove on the frame the gate is
+      // cleared is what makes the streak legible as speed — and every
+      // downstream cue (speed streaks, veil, FOV push, music tempo) keys off
+      // `speed`, so they all punch with it for free.
+      speed = Math.min(MAX_SPEED, speed + (tierUp ? 2.6 : 1.1));
       answerKick = Math.max(answerKick, 0.5 + Math.min(0.3, (streakMultiplier() - 1) * 0.07));
       celebrateTimer = 0.68;
       celebratePower = tierUp ? 1.30 : 1;
@@ -22826,10 +22822,18 @@ THREE.GLTFLoader = GLTFLoader;
     if (Math.abs(overdriveTier - overdriveIntensity) < 0.001) overdriveIntensity = overdriveTier;
 
     // ---- forward speed
-    var streakBoost = Math.min(14, quizStreak * 0.7);
+    // The streak used to add 0.7 m/s per correct answer and ease it in at
+    // damp(1.1) — a ~0.9 s time constant, so a single step took about three
+    // seconds to arrive and landed as under 1 m/s on a 26 m/s run. It was
+    // below the threshold of noticing. Two changes: each answer is worth
+    // more, and the run accelerates toward a raised target far harder than
+    // it coasts back down to a lowered one, so winning reads as a shove and
+    // losing a streak reads as a glide rather than a handbrake.
+    var streakBoost = Math.min(15, quizStreak * 1.15);
     var target = BASE_SPEED + Math.min(11, distance / 260) + overdriveIntensity * 2.6 + streakBoost;
     if (stumbleTimer > 0) target *= 0.55;
-    speed += (Math.min(MAX_SPEED, target) - speed) * damp(stumbleTimer > 0 ? 5 : 1.1, dt);
+    var approach = stumbleTimer > 0 ? 5 : (target > speed ? 2.9 : 0.85);
+    speed += (Math.min(MAX_SPEED, target) - speed) * damp(approach, dt);
     player.z += speed * dt;
     distance = player.z - startZ;
     updatePlayerRouteLevel();
