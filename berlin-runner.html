@@ -9917,8 +9917,8 @@ THREE.GLTFLoader = GLTFLoader;
   var PROP_TARGET_H = {
     trabant: 1.45, bus: 3.50, litfass: 3.90, kiosk: 2.90, lamp: 6.50,
     bench: 0.95, tree: 5.50, ubahn: 3.40, container: 1.90, ampel: 4.00,
-    scaffold: 3.40, skip: 1.85, crate: 1.35,
-    trench: 1.00, handcart: 1.05, cafeCanopy: 3.40, luggage: 1.85, maintenance: 1.95,
+    scaffold: 3.40, skip: 1.85,
+    cafeCanopy: 3.40, luggage: 1.85, maintenance: 1.95,
     bikerack: 0.80, cargobike: 1.10, cafeset: 1.55, cratestackdecor: 0.85,
     sandwichboard: 0.90, hazardbarrier: 0.66, planter: 0.77, wheeliebin: 0.86
   };
@@ -11345,8 +11345,8 @@ THREE.GLTFLoader = GLTFLoader;
   // block reads as "some crate", not specifically Berlin transit. Baked as a
   // full replacement face (colour fill + wordmark) rather than a text
   // overlay so it still reads as one painted crate, not a decal floating on
-  // a bare box. Used by makeCrateStackDecor only — the jumpable obstacle
-  // crate (makeCrate) is untouched.
+  // a bare box. Used by makeCrateStackDecor only; the jumpable obstacle crate
+  // it once contrasted with is gone along with the rest of the jump hazards.
   var PROP_CRATE_BVG_MATS = [
     [0xd8452f, '#d8452f'], [0x2f6ba8, '#2f6ba8'],
     [0x3f9a5f, '#3f9a5f'], [0xe0872a, '#e0872a']
@@ -17680,11 +17680,18 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   // ========================================================== obstacles =====
-  // Three honest verbs, never ambiguous:
-  //   low   → jump it        (open road trench)
+  // Two honest verbs, never ambiguous:
   //   high  → slide under it (scaffold beam, awning bar)
   //   block → change lane    (parked car, skip, ad column)
   // Only `block` restricts lanes, and it never fills all three.
+  //
+  // There is deliberately no jump hazard. The jumpable obstacles (a striped
+  // Absperrgitter, then the road trench that replaced it) were the course's
+  // least legible beat: read at speed they were "a thing across the lane",
+  // the same sentence the slide obstacles say, and the trench in particular
+  // ended up authored onto tram roofs, where a hole in the road is not a
+  // thing that can exist. Jump is now a pure reward verb — it collects the
+  // arced brezel lines and nothing punishes not using it.
   // Raised with GATE_POOL: hazard corridors are now scheduled out to the gate
   // horizon rather than the next 80 m, so roughly three times as many are
   // alive. Running dry is not a crash — freeObstacleSlots() guards the spawn
@@ -17752,34 +17759,6 @@ THREE.GLTFLoader = GLTFLoader;
     return registerProp('skip', g);
   }
 
-  function makeCrate() {
-    // Getränkekisten stack — low, jumpable, unmistakably a Späti delivery.
-    var g = new THREE.Group();
-    for (var i = 0; i < 3; i++) {
-      var crateMat = i % 2 ? PROP_CRATE_BLUE : PROP_CRATE_RED;
-      var crate = new THREE.Group();
-      crate.position.set(rand(-0.06, 0.06), i * 0.30, 0);
-      crate.rotation.y = rand(-0.08, 0.08);
-      crate.add(roundedBox(1.50, 0.30, 1.0, 0.07, crateMat, 0, 0.16, 0, 0.022));
-      crate.add(roundedBox(1.18, 0.13, 0.035, 0.035, MAT.metalDark, 0, 0.16, 0.505, 0.009));
-      [-0.62, 0.62].forEach(function (x) {
-        crate.add(roundedBox(0.11, 0.24, 0.055, 0.028, crateMat, x, 0.16, 0.525, 0.009));
-      });
-      g.add(crate);
-    }
-    for (var b = 0; b < 8; b++) {
-      var bx = -0.55 + (b % 4) * 0.36;
-      var bz = -0.22 + Math.floor(b / 4) * 0.44;
-      var bottle = new THREE.Mesh(cylGeo(0.065, 0.078, 0.25, 8), PROP_BOTTLE);
-      bottle.position.set(bx, 1.08, bz); g.add(bottle);
-      var neck = new THREE.Mesh(cylGeo(0.038, 0.052, 0.10, 8), PROP_BOTTLE);
-      neck.position.set(bx, 1.255, bz); g.add(neck);
-      var cap = new THREE.Mesh(cylGeo(0.042, 0.042, 0.025, 8), MAT.chrome);
-      cap.position.set(bx, 1.315, bz); g.add(cap);
-    }
-    g.traverse(function (o) { if (o.isMesh) o.castShadow = true; });
-    return registerProp('crate', g);
-  }
 
   function makeRoadworksCar() {
     var g = makeCar(pick(CAR_COLORS));
@@ -17808,52 +17787,6 @@ THREE.GLTFLoader = GLTFLoader;
     g.add(contact);
     g.traverse(function (o) { if (o.isMesh && o !== contact) o.castShadow = true; });
     return registerProp(kind, g);
-  }
-
-  function makeTrenchFrame() {
-    // Low road opening, perimeter plates and a compact breaker read as one
-    // jumpable roadworks beat without raising the established 1.02 m hitbox.
-    var g = new THREE.Group();
-    g.add(roundedBox(2.24, 0.055, 0.52, 0.025, MAT.tyre, 0, 0.045, 0, 0.010));
-    [-1, 1].forEach(function (side) {
-      g.add(roundedBox(2.52, 0.18, 0.14, 0.045, PROP_SAFETY_ORANGE,
-        0, 0.15, side * 0.32, 0.016));
-      g.add(roundedBox(0.16, 0.20, 0.72, 0.045, MAT.metalDark,
-        side * 1.18, 0.16, 0, 0.016));
-    });
-    for (var stripe = -2; stripe <= 2; stripe++) {
-      g.add(roundedBox(0.27, 0.205, 0.04, 0.018, MAT.barrierWhite,
-        stripe * 0.48, 0.17, 0.40, 0.008));
-    }
-    var breaker = new THREE.Mesh(cylGeo(0.10, 0.14, 0.58, 10), PROP_TOOL_BLUE);
-    breaker.position.set(0.43, 0.46, 0.02); breaker.rotation.z = -0.12; g.add(breaker);
-    var bit = new THREE.Mesh(cylGeo(0.04, 0.055, 0.34, 8), MAT.chrome);
-    bit.position.set(0.47, 0.12, 0.02); bit.rotation.z = -0.12; g.add(bit);
-    g.add(roundedBox(0.54, 0.10, 0.12, 0.04, MAT.metalDark, 0.37, 0.78, 0.02, 0.014));
-    g.add(roundedBox(0.24, 0.20, 0.18, 0.06, MAT.metalDark, -0.88, 0.34, 0.24, 0.018));
-    g.add(roundedBox(0.15, 0.13, 0.15, 0.055, PROP_AMBER, -0.88, 0.50, 0.24, 0.016));
-    return finishObstacleVariant('trench', g, 2.82, 0.86, 0, 0);
-  }
-
-  function makeDeliveryHandcart() {
-    // A low hand truck tipped toward the runner, with parcels filling the frame;
-    // wheels and handle make it distinct from the existing drinks-crate stack.
-    var g = new THREE.Group();
-    g.add(roundedBox(1.48, 0.12, 0.80, 0.045, PROP_CART_STEEL, 0, 0.20, 0, 0.016));
-    [-0.62, 0.62].forEach(function (x) {
-      var wheel = new THREE.Mesh(cylGeo(0.18, 0.18, 0.12, 12), MAT.tyre);
-      wheel.rotation.z = Math.PI / 2; wheel.position.set(x, 0.18, 0.34); g.add(wheel);
-      var hub = new THREE.Mesh(cylGeo(0.07, 0.07, 0.14, 10), MAT.chrome);
-      hub.rotation.z = Math.PI / 2; hub.position.copy(wheel.position); g.add(hub);
-      g.add(roundedBox(0.075, 0.76, 0.075, 0.025, PROP_CART_STEEL,
-        x * 0.82, 0.62, -0.31, 0.010));
-    });
-    g.add(roundedBox(1.12, 0.08, 0.08, 0.025, PROP_CART_STEEL, 0, 1.00, -0.31, 0.010));
-    g.add(roundedBox(0.78, 0.48, 0.62, 0.065, PROP_PARCEL, -0.28, 0.50, 0, 0.022));
-    g.add(roundedBox(0.58, 0.34, 0.52, 0.055, PROP_PARCEL_DARK, 0.41, 0.42, 0.05, 0.018));
-    g.add(roundedBox(0.62, 0.30, 0.48, 0.055, PROP_PARCEL, 0.13, 0.85, -0.02, 0.018));
-    g.add(roundedBox(0.045, 0.50, 0.65, 0.018, MAT.barrierWhite, -0.28, 0.50, 0, 0.008));
-    return finishObstacleVariant('handcart', g, 1.92, 1.34, 0, 0.02);
   }
 
   function makeCafeCanopy() {
@@ -17941,8 +17874,6 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   var OB_KINDS = [
-    { name: 'trench',   kind: 'low',   build: makeTrenchFrame,  halfW: LANE_W * 0.5, halfD: 0.35, yMin: 0,    yMax: 1.02 },
-    { name: 'crate',    kind: 'low',   build: makeCrate,        halfW: 0.85,         halfD: 0.62, yMin: 0,    yMax: 1.05 },
     { name: 'scaffold', kind: 'high',  build: makeScaffold,     halfW: LANE_W * 0.5, halfD: 0.30, yMin: 1.28, yMax: 4.0 },
     { name: 'skip',     kind: 'block', build: makeSkip,         halfW: 1.20,         halfD: 1.75, yMin: 0,    yMax: 1.85 },
     { name: 'car',      kind: 'block', build: makeRoadworksCar, halfW: 1.00,         halfD: 2.10, yMin: 0,    yMax: 1.95 }
@@ -17950,17 +17881,9 @@ THREE.GLTFLoader = GLTFLoader;
   // Visual breadth is deliberately parallel to OB_KINDS: physics continues to
   // read the immutable spec above, while every pooled slot owns both appearances.
   var OB_VISUAL_BUILDERS = [
-    // Deliberately single-appearance. The jump beat used to alternate between
-    // a red/white Absperrgitter and this trench, but the Absperrgitter is a
-    // lane-wide striped board — the same silhouette the café canopy and the
-    // scaffold banner present overhead, only lower. At speed the height was
-    // the sole cue separating "jump" from "slide", and it read as a coin
-    // flip. The trench is a hole in the road: it can only mean jump.
-    [makeTrenchFrame],
-    [OB_KINDS[1].build, makeDeliveryHandcart],
-    [OB_KINDS[2].build, makeCafeCanopy],
-    [OB_KINDS[3].build, makeLuggageTrolley],
-    [OB_KINDS[4].build, makeMaintenanceCluster]
+    [OB_KINDS[0].build, makeCafeCanopy],
+    [OB_KINDS[1].build, makeLuggageTrolley],
+    [OB_KINDS[2].build, makeMaintenanceCluster]
   ];
 
   // Building all ten detailed appearances inside every one of 48 pooled slots
@@ -22136,8 +22059,11 @@ THREE.GLTFLoader = GLTFLoader;
     var powerupPlaced = false;
     if (roofRouteBeat) {
       // The widened gate interval reserves a complete authored traversal beat:
-      // clean entry, three parallel tram roofs, a risk/reward centre jump, a
-      // late slide read, then a clean descent before the unchanged article gate.
+      // clean entry, three parallel tram roofs, a risk/reward centre line of
+      // arced brezels, a late slide read, then a clean descent before the
+      // unchanged article gate. The centre beat used to be a jump obstacle
+      // sitting on the tram roof; the reward arc teaches the same lane
+      // without asking the player to hurdle a hole in a train.
       var routeStart = gateZ - 171;
       if (routeStart > player.z + 32 &&
           spawnRoofRoute(routeStart)) {
@@ -22145,14 +22071,13 @@ THREE.GLTFLoader = GLTFLoader;
         // article gate's blue/pink/green language. Ground is safe but modest;
         // roof rewards are denser and teach the two action beats in advance.
         spawnPretzelRun(0, routeStart + 44, 5, false);
-        spawnObstacle(0, 0, routeStart + 61);
+        spawnPretzelRun(0, routeStart + 61, 5, true);
         spawnPretzelRun(0, routeStart + 82, 5, false);
-        spawnObstacle(2, 0, routeStart + 112);
+        spawnObstacle(0, 0, routeStart + 112);
         spawnPretzelRun(0, routeStart + 121, 4, false);
 
         spawnPretzelRun(1, routeStart + 5, 6, true);
         spawnPretzelRun(1, routeStart + 36, 6, true);
-        spawnObstacle(0, 1, routeStart + 42);
         spawnPretzelRun(2, routeStart + 44, 7, false);
         // The first gold diagonal is a literal navigation arrow across the
         // central service plate. Players who stay on lane 1 instead meet the
@@ -22162,9 +22087,9 @@ THREE.GLTFLoader = GLTFLoader;
         // The maintenance cabinet closes lane 2 after the arrow, so following
         // the transfer is a readable decision rather than optional decoration.
         spawnPretzelTransfer(2, 1, routeStart + 108, routeStart + 120, 7);
-        spawnObstacle(4, 2, routeStart + 125, 1);
+        spawnObstacle(2, 2, routeStart + 125, 1);
         spawnPretzelRun(1, routeStart + 128, 5, false);
-        spawnObstacle(2, 1, routeStart + 136);
+        spawnObstacle(0, 1, routeStart + 136);
         spawnPowerup(POWERUP_TYPES[((roofRouteSequence / 4) | 0) % POWERUP_TYPES.length],
                      1, routeStart + 129);
         spawnPretzelRun(1, routeStart + ROOF_ROUTE_LENGTH + 3, 4, false);
@@ -22192,22 +22117,24 @@ THREE.GLTFLoader = GLTFLoader;
         // 'free' is the shortest recovery constant above, so the following
         // beat still arrives promptly — this thins the wall of verbs, it
         // does not stall the run.
-        spawnPretzelRun(rewardLane, z - 2, 6, false);
+        spawnPretzelRun(rewardLane, z - 2, 6, Math.random() < 0.4);
         lastVerb = 'free';
         lastObstacleZ = z;
         continue;
       }
       if (roll < 0.44 && freeObstacleSlots() >= 3) {
-        // full-width jump or slide — pure reflex, lane stays free
-        var full = Math.random() < 0.5 ? 0 : 2;   // trench (jump) or scaffold (slide)
-        for (var l = 0; l < 3; l++) spawnObstacle(full, l, z);
+        // full-width slide — pure reflex, lane stays free
+        for (var l = 0; l < 3; l++) spawnObstacle(0, l, z);
         rewardLane = randInt(0, 2);
-        if (Math.random() < 0.6) spawnPretzelRun(rewardLane, z - 1, 5, full === 0);
-        lastVerb = full === 0 ? 'jump' : 'slide';
+        // Arc the approach brezels often enough that the jump button keeps
+        // earning its place on the launch card, without ever being the thing
+        // that saves you from the beat itself.
+        if (Math.random() < 0.6) spawnPretzelRun(rewardLane, z - 1, 5, Math.random() < 0.5);
+        lastVerb = 'slide';
       } else if (roll < 0.70) {
-        // single-lane low/high hazard
+        // single-lane overhead hazard
         var laneA = randInt(0, 2);
-        spawnObstacle(Math.random() < 0.55 ? 0 : 2, laneA, z);
+        spawnObstacle(0, laneA, z);
         var other = (laneA + 1 + randInt(0, 1)) % 3;
         rewardLane = other;
         if (Math.random() < 0.55) spawnPretzelRun(other, z - 2, 4, false);
@@ -22215,11 +22142,11 @@ THREE.GLTFLoader = GLTFLoader;
       } else {
         // one or two blocked lanes — force a lane change
         var blocked = randInt(0, 2);
-        spawnObstacle(randInt(3, 4), blocked, z);
+        spawnObstacle(randInt(1, 2), blocked, z);
         var free = (blocked + 1) % 3;
         rewardLane = free;
         if (Math.random() < 0.35 && difficulty > 0.3) {
-          spawnObstacle(randInt(3, 4), (blocked + 2) % 3, z + rand(-1.5, 1.5));
+          spawnObstacle(randInt(1, 2), (blocked + 2) % 3, z + rand(-1.5, 1.5));
         } else if (Math.random() < 0.6) {
           spawnPretzelRun(free, z - 2, 5, false);
         }
