@@ -19379,41 +19379,67 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function buildAuthoredActions() {
+    // Restaged 2026-08-19: the old apex key (index 3) left LeftUpLeg/RightUpLeg
+    // at only -.72/-.42 rad and RightForeArm slightly UNBENT (-.46), which
+    // read as a stumble, not a tuck -- both because those targets are modest
+    // and because they are ADDITIVE on top of whatever the baked run clip's
+    // own thigh/shoulder swing happens to be doing (see the cancellation
+    // block in poseRunner, which explains why that swing can point either
+    // direction). This version commits harder to four honest beats -- crouch
+    // (kf1), explosive extension (kf2, legs momentarily straighten below the
+    // body), a COMPACT SYMMETRIC tuck (kf3: both thighs driven past -1.2 rad,
+    // both knees folded past 1.6 rad, arms pulled in with the elbows bent
+    // instead of flung out to the sides) and a reach for the ground (kf4) --
+    // and relies on poseRunner's new cancellation nudge to make the tuck
+    // read the same regardless of when in the stride the jump started.
     var jt = [0, 0.07, 0.16, 0.34, 0.56, 0.76];
     var jumpClip = makeAuthoredClip('hero_jump', 0.76, jt, [
-      ['Hips',       [0,0,0, -.24,0,0, .18,0,0, -.10,0,0, .12,0,0, 0,0,0]],
-      ['Spine',      [0,0,0, .18,0,0, -.10,0,0, -.13,0,0, .16,0,0, 0,0,0]],
-      ['Spine01',    [0,0,0, .12,0,0, .16,0,0, -.10,0,0, .12,0,0, 0,0,0]],
-      ['Spine02',    [0,0,0, .06,0,0, .14,0,0, -.12,0,0, .08,0,0, 0,0,0]],
-      ['Head',       [0,0,0, -.10,0,0, -.08,0,0, .08,0,0, -.12,0,0, 0,0,0]],
-      ['LeftUpLeg',  [0,0,0, -.34,0,-.05, .28,0,-.06, -.72,0,-.09, .30,0,-.03, 0,0,0]],
-      ['RightUpLeg', [0,0,0, -.30,0,.05, -.22,0,.06, -.42,0,.09, .26,0,.03, 0,0,0]],
-      ['LeftLeg',    [0,0,0, .54,0,0, .12,0,0, 1.06,0,0, -.28,0,0, 0,0,0]],
-      ['RightLeg',   [0,0,0, .48,0,0, .24,0,0, .72,0,0, -.24,0,0, 0,0,0]],
-      ['LeftFoot',   [0,0,0, .12,0,0, -.30,0,-.03, -.06,0,0, .34,0,0, 0,0,0]],
-      ['RightFoot',  [0,0,0, .10,0,0, -.24,0,.03, -.04,0,0, .30,0,0, 0,0,0]],
-      ['LeftArm',    [0,0,0, .22,0,-.10, .52,0,-.18, -.68,0,-.30, -.34,0,-.24, 0,0,0]],
-      ['RightArm',   [0,0,0, .20,0,.10, .46,0,.18, -.52,0,.30, -.28,0,.24, 0,0,0]],
-      ['LeftForeArm',[0,0,0, -.12,0,0, -.24,0,0, -.34,0,0, -.20,0,0, 0,0,0]],
-      ['RightForeArm',[0,0,0,-.14,0,0, -.26,0,0, -.46,0,0, -.24,0,0, 0,0,0]],
-      ['LeftHand',   [0,0,0, .04,-.02,-.05, .08,-.04,-.10, .12,-.04,-.12, .06,-.02,-.06, 0,0,0]],
-      ['RightHand',  [0,0,0, .05,.02,.05, .10,.04,.10, .13,.04,.12, .07,.02,.06, 0,0,0]]
+      ['Hips',       [0,0,0, -.26,0,0, .14,0,0, -.20,0,0, .12,0,0, 0,0,0]],
+      ['Spine',      [0,0,0, .16,0,0, -.12,0,0, .16,0,0, -.08,0,0, 0,0,0]],
+      ['Spine01',    [0,0,0, .10,0,0, -.08,0,0, .20,0,0, -.06,0,0, 0,0,0]],
+      ['Spine02',    [0,0,0, .05,0,0, -.06,0,0, .14,0,0, -.04,0,0, 0,0,0]],
+      ['Head',       [0,0,0, -.06,0,0, -.10,0,0, .12,0,0, -.10,0,0, 0,0,0]],
+      ['LeftUpLeg',  [0,0,0, -.22,0,-.05, .16,0,-.06, -1.55,0,-.12, -.34,0,-.05, 0,0,0]],
+      ['RightUpLeg', [0,0,0, -.18,0,.05, .14,0,.06, -1.28,0,.12, -.26,0,.05, 0,0,0]],
+      ['LeftLeg',    [0,0,0, .48,0,0, .10,0,0, 1.90,0,0, .18,0,0, 0,0,0]],
+      ['RightLeg',   [0,0,0, .42,0,0, .08,0,0, 1.68,0,0, .14,0,0, 0,0,0]],
+      ['LeftFoot',   [0,0,0, .12,0,-.03, -.34,0,-.04, -.10,0,-.02, .32,0,.02, 0,0,0]],
+      ['RightFoot',  [0,0,0, .10,0,.03, -.28,0,.04, -.08,0,.02, .28,0,-.02, 0,0,0]],
+      ['LeftArm',    [0,0,0, .20,0,-.08, .58,0,-.10, -.92,0,-.08, -.32,0,-.12, 0,0,0]],
+      ['RightArm',   [0,0,0, .18,0,.08, .50,0,.10, -.82,0,.08, -.24,0,.12, 0,0,0]],
+      ['LeftForeArm',[0,0,0, -.10,0,0, -.06,0,0, 1.85,0,0, .55,0,0, 0,0,0]],
+      ['RightForeArm',[0,0,0,-.08,0,0, -.04,0,0, 1.62,0,0, .46,0,0, 0,0,0]],
+      ['LeftHand',   [0,0,0, .04,-.02,-.04, .07,-.03,-.08, -.10,.05,.14, .05,-.02,-.05, 0,0,0]],
+      ['RightHand',  [0,0,0, .05,.02,.04, .08,.03,.08, -.09,.04,-.12, .06,.02,.05, 0,0,0]]
     ]);
 
-    var lt = [0, 0.055, 0.13, 0.30];
+    // Restaged 2026-08-19: the old 4-key curve (rest/impact/rebound/rest)
+    // reached its impact key and started rebounding again inside 0.13s --
+    // fast enough that, sampled against real gameplay frames, the landing
+    // was hard to tell apart from an ordinary stride. Added a fifth key so
+    // impact and rebound are two DISTINCT beats instead of one blended
+    // moment: a hard strike (kf1) that is allowed to be the most extreme
+    // pose in the whole clip, a held deep-absorb (kf2, still clearly bent,
+    // easing off the strike rather than already recovering), then a genuine
+    // rebound (kf3) that pitches the hips/chest slightly PAST upright and
+    // opens the knees back out, before settling to rest at kf4. Paired with
+    // wider landContact/landRebound windows and taller squash/position
+    // terms in poseRunner so the extra beat actually has time to read.
+    var lt = [0, 0.05, 0.14, 0.22, 0.30];
     var landClip = makeAuthoredClip('hero_land', 0.30, lt, [
-      ['Hips',       [0,0,0, -.40,0,0, .15,0,0, 0,0,0]],
-      ['Spine',      [0,0,0, .30,0,0, -.10,0,0, 0,0,0]],
-      ['Spine01',    [0,0,0, .18,0,0, -.12,0,0, 0,0,0]],
-      ['Head',       [0,0,0, -.13,0,0, .08,0,0, 0,0,0]],
-      ['LeftUpLeg',  [0,0,0, -.62,0,-.08, -.18,0,-.03, 0,0,0]],
-      ['RightUpLeg', [0,0,0, -.58,0,.08, -.15,0,.03, 0,0,0]],
-      ['LeftLeg',    [0,0,0, .96,0,0, .28,0,0, 0,0,0]],
-      ['RightLeg',   [0,0,0, .92,0,0, .25,0,0, 0,0,0]],
-      ['LeftFoot',   [0,0,0, .20,0,-.04, -.10,0,0, 0,0,0]],
-      ['RightFoot',  [0,0,0, .18,0,.04, -.08,0,0, 0,0,0]],
-      ['LeftArm',    [0,0,0, -.52,0,-.34, .16,0,-.12, 0,0,0]],
-      ['RightArm',   [0,0,0, -.48,0,.34, .14,0,.12, 0,0,0]]
+      ['Hips',       [0,0,0, -.44,0,0, -.30,0,0, .26,0,0, 0,0,0]],
+      ['Spine',      [0,0,0, .34,0,0, .24,0,0, -.14,0,0, 0,0,0]],
+      ['Spine01',    [0,0,0, .22,0,0, .16,0,0, -.16,0,0, 0,0,0]],
+      ['Spine02',    [0,0,0, .10,0,0, .07,0,0, -.06,0,0, 0,0,0]],
+      ['Head',       [0,0,0, -.16,0,0, -.10,0,0, .10,0,0, 0,0,0]],
+      ['LeftUpLeg',  [0,0,0, -.68,0,-.09, -.52,0,-.07, -.10,0,-.02, 0,0,0]],
+      ['RightUpLeg', [0,0,0, -.64,0,.09, -.48,0,.07, -.08,0,.02, 0,0,0]],
+      ['LeftLeg',    [0,0,0, 1.10,0,0, .85,0,0, .16,0,0, 0,0,0]],
+      ['RightLeg',   [0,0,0, 1.05,0,0, .80,0,0, .14,0,0, 0,0,0]],
+      ['LeftFoot',   [0,0,0, .22,0,-.05, .16,0,-.03, -.08,0,0, 0,0,0]],
+      ['RightFoot',  [0,0,0, .20,0,.05, .14,0,.03, -.06,0,0, 0,0,0]],
+      ['LeftArm',    [0,0,0, -.58,0,-.38, -.40,0,-.28, .20,0,-.14, 0,0,0]],
+      ['RightArm',   [0,0,0, -.54,0,.38, -.36,0,.28, .18,0,.14, 0,0,0]]
     ]);
 
     // A forward duck, not a baseball recline. The front leg still shoots
@@ -19427,26 +19453,43 @@ THREE.GLTFLoader = GLTFLoader;
     // back plane — and its flag graphic — stays presented to camera.
     var slt = [0, 0.07, 0.18, 0.42, 0.62];
     var slideClip = makeAuthoredClip('hero_slide', 0.62, slt, [
-      ['Hips',       [0,0,0, -.10,0,0, .20,0,-.10, .18,0,-.08, 0,0,0]],
-      ['Spine',      [0,0,0, .10,0,0, .30,0,-.10, .28,0,-.08, 0,0,0]],
-      ['Spine01',    [0,0,0, .08,0,0, .22,0,-.06, .20,0,-.05, 0,0,0]],
-      ['Spine02',    [0,0,0, .05,0,0, .14,0,0, .12,0,0, 0,0,0]],
-      ['Head',       [0,0,0, .10,0,0, .30,0,.06, .28,0,.05, 0,0,0]],
-      ['LeftUpLeg',  [0,0,0, -.46,0,-.06, -1.02,0,-.14, -1.00,0,-.13, 0,0,0]],
-      ['RightUpLeg', [0,0,0, -.20,0,.06, -.30,0,.20, -.28,0,.19, 0,0,0]],
-      ['LeftLeg',    [0,0,0, .18,0,0, .10,0,0, .12,0,0, 0,0,0]],
-      ['RightLeg',   [0,0,0, .70,0,0, 1.98,0,0, 1.94,0,0, 0,0,0]],
+      ['Hips',       [0,0,0, -.10,0,0, .12,0,-.10, .11,0,-.08, 0,0,0]],
+      ['Spine',      [0,0,0, .07,0,0, .15,0,-.10, .14,0,-.08, 0,0,0]],
+      ['Spine01',    [0,0,0, .05,0,0, .11,0,-.06, .10,0,-.05, 0,0,0]],
+      ['Spine02',    [0,0,0, .03,0,0, .07,0,0, .06,0,0, 0,0,0]],
+      // Head barely pitches on its own: the torso is already carrying ~60
+      // degrees of duck, so any further forward Head/neck rotation drives the
+      // crown into the ground and hides the cap -- the single loudest colour
+      // the figure owns -- for the whole slide.
+      ['Head',       [0,0,0, .04,0,0, .06,0,.06, .05,0,.05, 0,0,0]],
+      // Both knees fold up under the chest rather than one leg shooting
+      // straight out. A straight leading leg plus a ducked torso is a plank
+      // -- from directly behind it reads as a body lying flat on the
+      // sleepers. Two folded knees make a compact ball, which is both the
+      // reference's roll silhouette and the shape that keeps the most flag
+      // area square to the chase camera.
+      ['LeftUpLeg',  [0,0,0, -.46,0,-.06, -1.15,0,-.14, -1.12,0,-.13, 0,0,0]],
+      ['RightUpLeg', [0,0,0, -.20,0,.06, -.98,0,.16, -.95,0,.15, 0,0,0]],
+      ['LeftLeg',    [0,0,0, .18,0,0, 1.55,0,0, 1.52,0,0, 0,0,0]],
+      ['RightLeg',   [0,0,0, .70,0,0, 1.78,0,0, 1.74,0,0, 0,0,0]],
       ['LeftFoot',   [0,0,0, -.20,0,0, -.56,0,-.06, -.54,0,-.06, 0,0,0]],
       ['RightFoot',  [0,0,0, .12,0,0, .38,0,.08, .35,0,.08, 0,0,0]],
-      ['LeftArm',    [0,0,0, .18,0,-.10, -.34,0,-.62, -.32,0,-.58, 0,0,0]],
-      // Keep the trailing arm below shoulder height. The old +1.02 rad target
-      // stacked with some run-cycle entry phases into a near-vertical arm,
-      // reading as a trip/flail rather than a committed low slide.
-      ['RightArm',   [0,0,0, .18,0,.10, .34,0,.28, .32,0,.26, 0,0,0]],
-      ['LeftForeArm',[0,0,0, -.22,0,0, -.94,0,0, -.90,0,0, 0,0,0]],
-      ['RightForeArm',[0,0,0,-.10,0,0, -.24,0,0, -.22,0,0, 0,0,0]],
-      ['LeftHand',   [0,0,0, .04,0,-.10, .10,0,-.26, .09,0,-.24, 0,0,0]],
-      ['RightHand',  [0,0,0, .05,0,.10, .14,0,.26, .12,0,.24, 0,0,0]]
+      // Restaged 2026-08-19: the old kf2/kf3 held pose (z out to -.62/-.58
+      // with the forearm nearly straight at -.94/-.90) put both arms out
+      // sideways at full extension -- a T-pose/Superman dive, not a roll.
+      // The held frame this clip actually spends most of the slide on is
+      // interpolated BETWEEN kf2 and kf3 (see updateAuthoredActions' 0.30s
+      // clamp), so both keys need the tucked shape, not just one. LeftArm
+      // (matching the leading LeftUpLeg) reaches forward-down close to the
+      // body -- small z, so it stays near the torso instead of winging out.
+      // RightArm folds across the ribs with a sharply bent elbow so that
+      // hand lands near the chest instead of at the end of a straight arm.
+      ['LeftArm',    [0,0,0, .16,0,-.06, -.45,0,-.08, -.42,0,-.06, 0,0,0]],
+      ['RightArm',   [0,0,0, .14,0,.08, .25,0,.06, .22,0,.05, 0,0,0]],
+      ['LeftForeArm',[0,0,0, -.10,0,0, .90,0,0, .86,0,0, 0,0,0]],
+      ['RightForeArm',[0,0,0,-.08,0,0, 1.65,0,0, 1.55,0,0, 0,0,0]],
+      ['LeftHand',   [0,0,0, .05,0,-.06, .06,0,-.05, .05,0,-.04, 0,0,0]],
+      ['RightHand',  [0,0,0, .06,0,.10, .10,0,.16, .09,0,.14, 0,0,0]]
     ]);
 
     var st = [0, 0.08, 0.22, 0.38, 0.58, 0.84];
@@ -19786,7 +19829,7 @@ THREE.GLTFLoader = GLTFLoader;
   // unlit wash: normals and cel bands still shape the result, but dark trim
   // or red sleeve can no longer collapse to black when the route crosses a
   // shadowed station. sqrt supplies a restrained perceptual lift to dark hues.
-  var HERO_FILL_STRENGTH = 0.38;
+  var HERO_FILL_STRENGTH = 0.54;
   function heroShaderPatch(m, key, rimStrength, costume) {
     // Chain rather than clobber: trim materials arrive from mat() already
     // carrying the cel-shading onBeforeCompile/customProgramCacheKey (see
@@ -20111,6 +20154,21 @@ THREE.GLTFLoader = GLTFLoader;
   var heroAmpBones = null, heroAmpAvg = null, heroAmpGain = null;
   var heroLean = 0, heroLeanLag = 0;
   var heroCapSpring = 0, heroCapVel = 0;
+  // Follow-through for poseRunner's authored actions: one scalar spring
+  // whose target is built from the same takeoff/landing/impact impulses the
+  // (mostly inert on this asset) finish-accessory springs already fire, fed
+  // into a small extra nudge on Head/Hands/Feet. Deliberately under-damped:
+  // the point is that it overshoots the target and rings down instead of
+  // snapping straight to it, so those extremities visibly lag the torso by
+  // a beat and settle after the pose lands rather than every joint hitting
+  // its pose on the same frame. The value returns to and holds at exactly
+  // 0 between events, so nudging by it every frame (see poseRunner) never
+  // accumulates -- adding zero forever is still zero.
+  var heroFollowX = 0, heroFollowV = 0;
+  // 0 = run clip at full strength, 1 = fully faded out so the authored
+  // additive action owns the pose. Set by poseRunner, consumed by the
+  // clip-sync block below.
+  var heroBaseClipFade = 0;
   var heroHipsAvg = new THREE.Vector3(), heroHipsReady = false;
   var _heroAmpQ = new THREE.Quaternion();
   // HERO_HAND_SCALE bumped again, 1.50->1.80: even at 1.50 a critic checking
@@ -23163,8 +23221,11 @@ THREE.GLTFLoader = GLTFLoader;
     var jumpAscent = phaseWindow(jumpActionAge, 0.08, 0.15, 0.27, 0.34);
     var jumpApex = phaseWindow(jumpActionAge, 0.25, 0.32, 0.39, 0.46);
     var jumpDescent = phaseWindow(jumpActionAge, 0.39, 0.47, 0.66, 0.76);
-    var landContact = phaseWindow(landingActionAge, 0.00, 0.025, 0.075, 0.13);
-    var landRebound = phaseWindow(landingActionAge, 0.075, 0.13, 0.22, 0.31);
+    // Widened so the deep-absorb hold (see the landClip comment) has time to
+    // actually read before the rebound takes over, instead of the two
+    // blurring into one another inside 0.13s.
+    var landContact = phaseWindow(landingActionAge, 0.00, 0.02, 0.10, 0.16);
+    var landRebound = phaseWindow(landingActionAge, 0.10, 0.16, 0.24, 0.34);
     var slideAnticipation = phaseWindow(slideActionAge, 0.00, 0.025, 0.055, 0.09);
     var slideEntry = phaseWindow(slideActionAge, 0.035, 0.10, 0.16, 0.23);
     var slideHold = sliding ? phaseEase((slideActionAge - 0.12) / 0.10) : 0;
@@ -23222,7 +23283,7 @@ THREE.GLTFLoader = GLTFLoader;
     // the whole way through instead of rotating it away.
     pitch = lerp(pitch, charAssetComplete ? 0.68 : 0.74, slideVisual);
     pitch += jumpAnticipation * 0.16 - jumpTakeoff * 0.10 + jumpApex * 0.07 +
-             jumpDescent * 0.14 + landContact * 0.20 - landRebound * 0.08;
+             jumpDescent * 0.14 + landContact * 0.26 - landRebound * 0.11;
     if (attractPose) pitch = -0.015 + Math.sin(t * 1.35) * 0.008;
     if (stumbleTimer > 0) {
       pitch = lerp(0.74, 0.19, stumbleProgress) + Math.sin(stumbleProgress * Math.PI * 2) * 0.10;
@@ -23231,16 +23292,16 @@ THREE.GLTFLoader = GLTFLoader;
     }
     body.rotation.x = pitch;
     if (charAssetComplete) body.rotation.z += slideVisual * 0.10;
-    body.position.y = -0.72 * slideVisual - landContact * 0.14 + landRebound * 0.045 +
+    body.position.y = -0.72 * slideVisual - landContact * 0.20 + landRebound * 0.075 +
                       jumpAnticipation * -0.075 + jumpTakeoff * 0.075 +
                       celebratePose * 0.055 + attractPose * Math.sin(t * 1.35) * 0.012;
     body.position.z = -0.36 * slideVisual;
     // Action deformation is visual-only: the collider and physics root retain
     // their tuned dimensions. Landings widen and compress, toe-off lengthens,
     // and the slide flattens the silhouette instead of merely rotating it.
-    var squash = landContact * 0.30 + jumpAnticipation * 0.15 + slideEntry * 0.075 +
+    var squash = landContact * 0.40 + jumpAnticipation * 0.15 + slideEntry * 0.075 +
                  slideVisual * 0.045 + stumbleImpact * 0.070 -
-                 jumpTakeoff * 0.135 - jumpAscent * 0.050 - landRebound * 0.075;
+                 jumpTakeoff * 0.135 - jumpAscent * 0.050 - landRebound * 0.120;
     body.scale.set(1 + squash * 0.62 + slideVisual * 0.05,
                    1 - squash - slideVisual * 0.03,
                    1 + squash * 0.46 - slideVisual * 0.06);
@@ -23446,6 +23507,53 @@ THREE.GLTFLoader = GLTFLoader;
                              Math.sin(t * 1.35) * 0.008 * attractPose +
                              (charAssetComplete ? slideVisual * 0.30 : 0);
 
+      // Neutralise the baked run clip's own swing while the authored jump /
+      // land / slide poses are driving the body, so those poses read the same
+      // regardless of where in the stride the action started. The authored
+      // clips are ADDITIVE, composed onto whatever the run clip holds, and
+      // that clip's own swing is large enough (thigh -0.44..+1.40 rad,
+      // shoulder +-1.05 rad) to sit either with or against the authored pose
+      // purely by luck of timing -- which is what read as a stumble-splay
+      // instead of a clean tuck.
+      //
+      // This is a WEIGHT fade on the base action, not a per-bone correction.
+      // An earlier version reconstructed leg_curve/arm_curve from
+      // tools/build_hero.py in JS and subtracted them with nudgeCharBone.
+      // That drifts without bound, for the reason captureHeroStaticPose
+      // documents: the gait clock is deliberately frozen while airborne, so
+      // charAction.time stops changing, so PropertyMixer.apply's change check
+      // stays false and the mixer stops writing these bones entirely -- and
+      // `+=` onto a bone nothing rewrites accumulates every frame. Measured
+      // in-game, LeftUpLeg walked a clean -0.068 rad/frame ramp and wrapped
+      // past a half-turn within two seconds of ordinary running. Fading the
+      // base action's weight instead is drift-immune by construction: at
+      // weight 0 three.js lerps the binding back toward the bind pose it
+      // captured, which is exactly what "cancel the run clip" means, and it
+      // needs no copy of the Blender curves over here to stay correct.
+      // Read one frame later by the clip-sync block that drives the mixer;
+      // the authored actions ramp in over ~0.1 s, so a single frame of lag
+      // is not observable.
+      heroBaseClipFade = clamp(airPose + landContact + landRebound + slideVisual, 0, 1);
+
+      // Secondary motion: Head/Hands/Feet lag the torso by a beat and settle
+      // instead of every joint reaching its pose on the same frame as the
+      // body (see heroFollowX's declaration for the spring itself). Reads
+      // as a head-nod/hand-flick follow-through right after takeoff, landing
+      // impact, a stumble, or a slide entry/exit -- and is silent the rest
+      // of the time, since the target and thus heroFollowX settle to
+      // exactly 0 between events.
+      var followTarget = takeoffPulse * 0.85 - landingPulse * 1.15 -
+                          stumbleImpact * 1.2 + slideEntry * 0.5 - slideExit * 0.4;
+      var followDecay = Math.exp(-9.5 * dt_);
+      heroFollowV = (heroFollowV + (followTarget - heroFollowX) * 150 * dt_) * followDecay;
+      heroFollowX += heroFollowV * dt_;
+      var followW = 1 - attractPose;
+      nudgeCharBone('Head', heroFollowX * 0.16, 0, 0, followW);
+      nudgeCharBone('LeftHand', -heroFollowX * 0.22, 0, heroFollowX * 0.10, followW);
+      nudgeCharBone('RightHand', -heroFollowX * 0.22, 0, -heroFollowX * 0.10, followW);
+      nudgeCharBone('LeftFoot', heroFollowX * 0.09, 0, 0, followW);
+      nudgeCharBone('RightFoot', heroFollowX * 0.09, 0, 0, followW);
+
       // Baseline running silhouette: a light torso counter-twist opposite the
       // leg swing — real gait mechanics, shoulders rotate against the hips —
       // on top of whatever the baked clip and the amplifier above are doing.
@@ -23645,13 +23753,19 @@ THREE.GLTFLoader = GLTFLoader;
         // one-knee-led from the rear. During descent the other leg catches up,
         // avoiding a frozen bunny-hop silhouette while every existing action
         // window and the physical jump arc remain exactly as authored.
+        // Trimmed to roughly a third of its old strength now that the
+        // authored clip's own apex key (LeftUpLeg -1.55 vs RightUpLeg -1.28)
+        // already carries a clearly-readable lead/trail split once the base
+        // run clip's own swing is cancelled above -- stacking the old, much
+        // bigger emphasis on top of that pushed the trailing leg's knee
+        // back down toward "hanging", undoing the point of the tuck.
         var completeAirOpen = clamp(jumpAscent + jumpApex + jumpDescent, 0, 1);
         nudgeCharBone('LeftUpLeg', 0, 0, -0.055, completeAirOpen);
         nudgeCharBone('RightUpLeg', 0, 0, 0.055, completeAirOpen);
-        nudgeCharBone('LeftUpLeg', -0.18, 0, -0.025, jumpApex);
-        nudgeCharBone('RightUpLeg', 0.16, 0, 0.025, jumpApex);
-        nudgeCharBone('LeftLeg', 0.20, 0, 0, jumpApex);
-        nudgeCharBone('RightLeg', -0.10, 0, 0, jumpApex);
+        nudgeCharBone('LeftUpLeg', -0.07, 0, -0.025, jumpApex);
+        nudgeCharBone('RightUpLeg', 0.06, 0, 0.025, jumpApex);
+        nudgeCharBone('LeftLeg', 0.08, 0, 0, jumpApex);
+        nudgeCharBone('RightLeg', -0.04, 0, 0, jumpApex);
         nudgeCharBone('LeftFoot', -0.08, 0.035, -0.02, jumpApex);
         nudgeCharBone('RightFoot', 0.08, -0.035, 0.02, jumpApex);
         nudgeCharBone('LeftUpLeg', 0.09, 0, -0.015, jumpDescent);
@@ -23666,10 +23780,10 @@ THREE.GLTFLoader = GLTFLoader;
         // forward trainer disappears exactly behind the torso. Counter-present
         // the head and open the legs/arms laterally without changing the shared
         // body translation, slide timer or collider height.
-        nudgeCharBone('neck', 0.10, 0, -0.03, slideVisual);
-        nudgeCharBone('Head', 0.22, 0, -0.04, slideVisual);
-        nudgeCharBone('LeftUpLeg', -0.10, 0, -0.38, slideVisual);
-        nudgeCharBone('RightUpLeg', 0.08, 0, 0.28, slideVisual);
+        nudgeCharBone('neck', -0.06, 0, -0.03, slideVisual);
+        nudgeCharBone('Head', -0.10, 0, -0.04, slideVisual);
+        nudgeCharBone('LeftUpLeg', -0.10, 0, -0.10, slideVisual);
+        nudgeCharBone('RightUpLeg', 0.08, 0, 0.08, slideVisual);
         nudgeCharBone('LeftFoot', -0.08, 0.05, -0.13, slideVisual);
         nudgeCharBone('RightFoot', 0.08, -0.04, 0.11, slideVisual);
         nudgeCharBone('LeftArm', 0, 0, -0.15, slideVisual);
@@ -24685,6 +24799,11 @@ THREE.GLTFLoader = GLTFLoader;
           syncedCycle -= Math.floor(syncedCycle);
           charAction.time = syncedCycle * syncedRunClip.duration;
         }
+        // Fade the base run cycle out under the authored jump/land/slide poses
+        // (see heroBaseClipFade). A floor of 0.12 keeps a trace of the stride
+        // alive so a fully-faded frame does not read as a mannequin snapped to
+        // its bind pose.
+        charAction.weight = 1 - heroBaseClipFade * 0.88;
         charMixer.update(0);
       }
     }

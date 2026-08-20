@@ -39,7 +39,7 @@ if '--out' in argv:
     OUT_GLB = argv[argv.index('--out') + 1]
 
 REPO = r'C:\Users\tamas\src\german'
-SCRATCH = r'C:\Users\tamas\AppData\Local\Temp\claude\C--Users-tamas-src-german\3cc3ec42-f791-4823-acb4-980711ec9f9e\scratchpad\hero'
+SCRATCH = os.environ.get('HERO_SCRATCH') or r'C:\Users\tamas\AppData\Local\Temp\claude\C--Users-tamas-src-german\3cc3ec42-f791-4823-acb4-980711ec9f9e\scratchpad\hero'
 os.makedirs(SCRATCH, exist_ok=True)
 if OUT_GLB is None:
     OUT_GLB = os.path.join(REPO, 'assets', 'models', 'berlin-runner-hero-v3.glb')
@@ -129,7 +129,14 @@ PROP = dict(
     # see torso_extent()'s eased (not linear) interpolation below, which
     # keeps this width held almost all the way up to the chest and only
     # tapers in the last stretch near the hip/hem itself.
-    waist_half_w=0.160,
+    # v18: -7.5% (0.160->0.148) on top of torso_extent's eased curve (see
+    # below) -- after softening the curve alone, the rear-view read was
+    # still closer to a slab than a taper because 0.160/0.196=0.82 is a
+    # shallow ratio even spread evenly across the height. A narrower waist
+    # endpoint gives the eased curve more contrast to work with without
+    # reverting to a full linear cone (most of the torso's height still
+    # sits close to chest width; only the lower stretch actually narrows).
+    waist_half_w=0.148,
     # v2's torso depth/width ratio was ~0.6-0.7 -- a shallow box that reads
     # as a plank at a grazing rear-3/4 angle. Deepened toward a real
     # barrel-chest ratio (~0.8-0.85) so the torso has volume from every
@@ -181,7 +188,9 @@ PROP = dict(
     # build_arm -- a critic pass on the shipped asset called the arms
     # short/thin and the hands "featureless capsule blobs, no thumb, no
     # finger break."
-    upper_arm_len=0.206, forearm_len=0.185, hand_len=0.096,
+    # v17: hand_len +25% (0.096->0.120) -- see hw_/hd_ in build_arm, which
+    # get the matching width increase. Arm/forearm lengths untouched.
+    upper_arm_len=0.206, forearm_len=0.185, hand_len=0.120,
     # Same numeric radii as v2, but now the CROSS-SECTION is an 8-gon
     # (round tube) instead of a 4-gon (square prism) -- see N_LIMB below.
     # A 4-gon tube shows a full flat face dead-on to the rear-3/4 camera at
@@ -205,15 +214,25 @@ PROP = dict(
     # that only worked because the two radii were nearly equal -- with
     # upper_arm_r0 now noticeably bigger than the deltoid's own base
     # radius, that overlap trick would show a hole).
-    upper_arm_r0=0.070, upper_arm_r1=0.057,
-    forearm_r0=0.058, forearm_r1=0.054,
+    # v17: thickened again and given more taper contrast -- v14 left
+    # upper_arm_r0 (0.070) and forearm_r0 (0.058) close enough to the
+    # deltoid base and to each other that the whole arm read as one
+    # near-constant-radius rod with no visible elbow. Bumped the shoulder
+    # end up, pulled the wrist end down, so the taper is doing real work:
+    # thick at the shoulder, visibly narrower at the wrist -- which is also
+    # what makes the hand (now deliberately wider than forearm_r1, see
+    # build_arm's hw_) read as a flare instead of a continuation.
+    upper_arm_r0=0.078, upper_arm_r1=0.060,
+    forearm_r0=0.063, forearm_r1=0.049,
     thigh_r0=0.080, thigh_r1=0.063,
     shin_r0=0.059, shin_r1=0.047,
     # Oversized trainers are part of the reference silhouette and they give
     # the stride its visual beat at the bottom of the dark leg column.
-    foot_len=0.158, foot_half_w=0.056, foot_h=0.066,
-    toe_len=0.072,
-    shoe_sole_h=0.024, shoe_mid_h=0.016,
+    # v17: +~20% across the board -- "shoes are small dark ovals" vs a
+    # reference where the shoe is a big, obviously chunky trainer.
+    foot_len=0.172, foot_half_w=0.068, foot_h=0.072,
+    toe_len=0.078,
+    shoe_sole_h=0.030, shoe_mid_h=0.020,
 )
 
 # Cross-section vertex counts -- round tubes, not flat boxes. Bumped
@@ -317,20 +336,41 @@ COLORS = {
     # nape shelf shows a clearer step from the main hair mass instead of a
     # single continuous gradient. Re-verified in-game (v14b-collar-zoom)
     # that this does NOT reproduce the fusion-with-flag_black failure.
-    'hair':         (0.400, 0.255, 0.150),
-    'hair_dark':    (0.235, 0.148, 0.088),
+    # v17 (hero-quality pass): the v14 chestnut brown (0.40/0.255/0.15,
+    # luminance ~0.28) made the exposed hair mass -- which is MOST of what
+    # the rear camera sees below the cap edge -- read as a dark, disconnected
+    # "collar" sitting under a bright red dome, not one continuous bright
+    # head. Reference (Jake) keeps the whole head, cap included, as the
+    # single brightest mass in the figure. True light ash-blond (high value,
+    # low-mid saturation, warm-yellow hue) instead of a mid-brown: hair
+    # luminance goes from ~0.28 to ~0.68, closing most of the gap to
+    # cap_red's own V=0.93 so cap+hair reads as one bright unit. hair_dark
+    # (the nape shelf) follows the same hue, scaled down, and still sits
+    # ~7x flag_black's average (0.070) -- far past the ~2.3x margin the
+    # file's own history flagged as the actual fusion threshold, so this is
+    # not at risk of repeating the v8 "hair fuses with the black band" bug.
+    'hair':         (0.780, 0.700, 0.520),
+    'hair_dark':    (0.560, 0.490, 0.350),
     # Near-black jeans (0.085) sat directly under the tricolour's black
     # shoulder band, so torso and legs fused and the figure's lower two
     # thirds read as one undifferentiated dark column -- only the red and
     # gold bands broke it up at all. Real mid denim keeps the legs safely
     # darker than the bright ochre road (so the dark-anchor strategy still
     # holds) while separating them from the black band above.
-    'jeans':        (0.235, 0.265, 0.355),
+    # v19: raised 0.235/0.265/0.355 -> 0.415/0.455/0.590. The "dark anchor"
+    # note above was an inference, never a user decision, and measuring the
+    # reference disproves it: sampled off a real Subway Surfers frame the
+    # runner's legs read luminance 124 against a track at 103, i.e. ABOVE the
+    # surface, while this hero's legs measured 55 against a lane at 93. The
+    # legs were the last part of the figure still reading as a silhouette cut
+    # out of the road. Blue against a warm ochre lane keeps them separate by
+    # hue as well as value, so lifting them costs no readability.
+    'jeans':        (0.415, 0.455, 0.590),
     # Medial-face shadow band on each leg -- a deliberate value break so the
     # two legs stay two separate readable shapes even when they swing close
     # together, instead of fusing into one dark mass at chase distance.
-    'jeans_shadow': (0.135, 0.155, 0.215),
-    'jeans_cuff':   (0.330, 0.365, 0.470),
+    'jeans_shadow': (0.250, 0.280, 0.380),
+    'jeans_cuff':   (0.545, 0.590, 0.720),
     'shoe_white':   (0.950, 0.948, 0.930),
     'shoe_red':     (0.720, 0.110, 0.115),
     'shoe_mid':     (0.820, 0.815, 0.790),
@@ -345,7 +385,20 @@ COLORS = {
     # value and read as a hole. Raised to a clear dark grey, still
     # unmistakably "rubber sole" (well below shoe_mid's 0.82) but now a
     # visibly separate mass from the black flag band.
-    'shoe_sole':    (0.205, 0.195, 0.190),
+    # v17: was (0.205,0.195,0.190), a dark charcoal -- realistic rubber, but
+    # the reference's shoe sole is a PALE band that catches light and reads
+    # as a strong terminator against the dark shoe upper/road, not another
+    # dark mass at the bottom of an already dark-anchored figure. Brightened
+    # to sit close to shoe_mid so the whole lower shoe (mid+sole, below the
+    # red trim) reads as one bold pale block, per the brief's "large shoes
+    # with a pale sole" note.
+    # v19: 0.760 was near-white and, on a shoe deliberately enlarged ~20%,
+    # the sole became the single brightest object in frame -- brighter than
+    # cap_red's own V=0.93, which inverts the reference's cap > everything
+    # hierarchy and pulls the eye to the feet. The reference sole is a
+    # mid-light band that catches light, not a white plate. Pulled back to a
+    # warm bone that still steps clearly off the dark upper and the road.
+    'shoe_sole':    (0.585, 0.560, 0.520),
     'wristband':    (0.720, 0.110, 0.115),
     'eye':          (0.090, 0.080, 0.075),
     'eyebrow':      (0.220, 0.165, 0.095),
@@ -675,7 +728,18 @@ def build_mesh_and_rig():
         # short flare right at the very bottom edge (see hem flare/pelvis
         # step below), not a taper spread across the whole torso.
         t = clamp01((z - z_hip) / (z_black_top - z_hip))
-        ease = t ** 0.45
+        # v17: was 0.45 -- that exponent reaches ~73% of the way from waist
+        # to chest width by just 10% of the way up from the hip, so the
+        # torso held within a few % of full chest width for nearly its
+        # whole height and only tapered in a short snap right at the hem.
+        # In game that read as a flat slab with the taper hidden down at
+        # the hem, which is the NEW complaint replacing the old "cone/dress"
+        # one 0.45 was chosen to fix. 0.68 spreads the taper across the
+        # whole hip-to-shoulder span instead of hiding it at either end --
+        # at t=0.5 this is ~62% of the way to chest width (vs ~78% at 0.45,
+        # ~50% at a straight linear 1.0), a visible shoulder-to-waist taper
+        # without reverting all the way to the old cone.
+        ease = t ** 0.68
         hw = lerp(P['waist_half_w'], P['chest_half_w'], ease)
         hd = lerp(P['torso_half_d_waist'], P['torso_half_d_chest'], ease)
         return hw, hd
@@ -1186,15 +1250,39 @@ def build_mesh_and_rig():
         # bulge ratios as before, just with N_*_RINGS extra interpolated
         # rings inserted between them so each taper curves instead of
         # reading as 2-3 straight cone segments end to end.
+        # v17: belly/base enlarged (0.084/0.062 -> 0.096/0.070) in step with
+        # the thickened upper arm (upper_arm_r0 0.070->0.078) so the deltoid
+        # cap keeps reading as a rounded mass proud of the upper arm, not a
+        # flat handoff.
         sh_z = [P['shoulder_line_z'] + 0.044, P['shoulder_line_z'] + 0.010, P['shoulder_line_z'] - 0.026]
         # v14: base radius (deltoid->upper-arm handoff) nudged 0.057->0.062
         # -- Task D thickened upper_arm_r0 to 0.070, and with an explicit
         # bridge_ring now connecting the two (see build_arm below), a
         # 23% radius jump at that seam read as a slightly abrupt flare.
         # Softened to a ~13% step, still a real taper, not a hard wall.
-        sh_r = [0.063, 0.084, 0.062]
+        # v18: top radius cut hard (0.068->0.038) -- the old top ring was
+        # wide enough that its flat cap() closure read as an epaulette/
+        # shoulder-pad plateau (a flat disc riding on top of the arm) rather
+        # than a rounded deltoid muscle, which is exactly the "no deltoid...
+        # visibly assembled from primitives" complaint applied to the
+        # shoulder specifically. Belly kept wide (0.096) so the cap->belly->
+        # base run over N_DELTOID_RINGS(9) rings now reads as a real rounded
+        # mound tapering to a near-point at the crown, the same silhouette
+        # logic build_cap already uses for the head dome.
+        sh_r = [0.038, 0.096, 0.070]
         sh_w = [{'Spine02': 0.4, sh_bone: 0.6}, {sh_bone: 1.0}, {sh_bone: 1.0}]
-        sh_rings = circ_chain(sx, 0, sh_z, sh_r, sh_w, N_LIMB, rings_per_seg=N_DELTOID_RINGS)
+        # v18b: belly bulge added to the cap->belly segment -- v18 narrowed
+        # the top ring (0.096->0.038) but circ_chain's plain lerp between
+        # two keyframes is a STRAIGHT taper no matter how many sub-rings
+        # it's split into, i.e. a cone, which is exactly the "shoulder pad"
+        # read a close-up crop (r3close-f176/f188) still showed even after
+        # the top-radius cut. A sin-hump belly on that one segment (same
+        # mechanism already used for the thigh and forearm bulges just
+        # below) pulls the mid-taper radius out toward the belly's own
+        # width, turning the straight cone into a convex, rounded mound --
+        # zero topology change, since bellies only scales existing sub-ring
+        # radii, not ring count.
+        sh_rings = circ_chain(sx, 0, sh_z, sh_r, sh_w, N_LIMB, rings_per_seg=N_DELTOID_RINGS, bellies=[0.35, 0.0])
         bridge_chain(sh_rings, ['flag_black', 'flag_black'], rects, flip=(sign > 0), rings_per_seg=N_DELTOID_RINGS)
         cap(sh_rings[0], 'flag_black', rects, flip=(sign < 0))
 
@@ -1231,7 +1319,7 @@ def build_mesh_and_rig():
         fa_z = [z1, z2]
         fa_r = [P['forearm_r0'], P['forearm_r1']]
         fa_w = [{arm_bone: 0.25, fore_bone: 0.75}, {fore_bone: 1.0}]
-        fa_rings = circ_chain(sx, 0, fa_z, fa_r, fa_w, N_LIMB, rings_per_seg=N_FARM_RINGS, bellies=[0.045])
+        fa_rings = circ_chain(sx, 0, fa_z, fa_r, fa_w, N_LIMB, rings_per_seg=N_FARM_RINGS, bellies=[0.06])
         bridge_ring(ua_hi, fa_rings[0], 'skin', rects, flip=(sign > 0))   # elbow seam -- both sides share z1, no length to subdivide
         bridge_chain(fa_rings, ['skin'], rects, flip=(sign > 0), rings_per_seg=N_FARM_RINGS)
         fa_lo = fa_rings[-1]
@@ -1256,7 +1344,13 @@ def build_mesh_and_rig():
         # skin-toned; the small hand volumes weren't holding onto enough
         # saturation under the game's own lighting, so this bakes extra
         # saturation in as insurance regardless of the exact cause.
-        hw_, hd_, hh_ = 0.052, 0.045, P['hand_len']
+        # v17: +58%/+47% (0.052/0.045 -> 0.082/0.066) -- the old hand cross-
+        # section was NARROWER than forearm_r1 (0.054 at the time), so the
+        # "mitt" never actually flared past the wrist; it read as the
+        # forearm rod just continuing to a rounded tip. Now clearly wider
+        # than the (now also slimmer) forearm_r1=0.049, so the hand-flare
+        # is real geometry, not just a colour change at the wrist.
+        hw_, hd_, hh_ = 0.082, 0.066, P['hand_len']
         z3 = z2 - hh_
         # v13: hand's cross-section is an ELLIPSE (rx != ry) with a
         # laterally-shifting centre (cy creeps forward toward the
@@ -1295,15 +1389,18 @@ def build_mesh_and_rig():
         # angled inward/forward off the hand's inner-top, at the knuckle
         # line so it reads as branching off the hand mass rather than
         # stuck onto the wrist.
-        tcx = sx - sign * 0.044
-        tcy = -0.030
+        # v17: scaled up ~1.58x in step with the enlarged hand (hw_ 0.052->
+        # 0.082) so the thumb stays proportional instead of looking like a
+        # small stub on a now-much-bigger mitt.
+        tcx = sx - sign * 0.069
+        tcy = -0.044
         tcz = z2 - hh_ * 0.30
         w = {hand_bone: 1.0}
         n = Vector((-sign * 0.55, -0.65, -0.55)).normalized()
         tangent = Vector((0, 1, 0)) if abs(n.x) < 0.9 else Vector((1, 0, 0))
         bitan = n.cross(tangent).normalized()
         tangent = bitan.cross(n).normalized()
-        s0 = 0.027
+        s0 = 0.043
         base = Vector((tcx, tcy, tcz))
         def ring4(center, size):
             return [V(tuple(center + tangent * size + bitan * 0), w),
@@ -1311,9 +1408,9 @@ def build_mesh_and_rig():
                     V(tuple(center - tangent * size + bitan * 0), w),
                     V(tuple(center - tangent * size * 0.4 - bitan * size * 0.9), w)]
         base_ring = ring4(base, s0)
-        mid = base + n * 0.032
+        mid = base + n * 0.050
         mid_ring = ring4(mid, s0 * 0.8)
-        tip = mid + n * 0.027
+        tip = mid + n * 0.043
         v_tip = V(tuple(tip), w)
         bridge_ring(base_ring, mid_ring, 'hand_skin', rects)
         for i in range(4):
@@ -1360,10 +1457,15 @@ def build_mesh_and_rig():
             {leg_bone: 1.0},
             {leg_bone: 1.0},
         ]
-        # belly hump only on the thigh->pre-knee span (the old r_tmid
-        # bulge, 5% at t~0.38); the kneecap/cuff bulges stay explicit
-        # keyframe values, same as before.
-        leg_bellies = [0.05, 0.0, 0.0, 0.0]
+        # v18: added a real calf bulge on the postknee->cuff span (was 0.0,
+        # i.e. no calf at all -- brief: "no deltoid, no forearm taper, no
+        # calf"). This span already runs from just below the knee to 68%
+        # of the way to the ankle, so its sin-hump midpoint (~34% down from
+        # the knee) lands right where a real calf muscle sits, ABOVE the
+        # r_cuff endpoint bump near the ankle -- two distinct events (calf
+        # belly, then the ankle/jeans-cuff taper), not a double-bump at the
+        # same point. Thigh belly (thigh->pre-knee) unchanged.
+        leg_bellies = [0.05, 0.0, 0.0, 0.30]
         leg_rings = circ_chain(hx, leg_cy, leg_z, leg_r, leg_w, N_LIMB, rings_per_seg=N_THIGH_RINGS, bellies=leg_bellies)
         bridge_chain_colored(leg_rings, leg_color, rects, flip=(sign > 0), cx=hx, cy=0)
         sh_mid = leg_rings[-1]
@@ -1588,7 +1690,15 @@ def arm_curve(p):
     th = 2 * math.pi * p
     shoulder = 1.05 * math.cos(th) - 0.09 * math.cos(2 * th)
     elbow = 1.05 + 0.55 * math.cos(th + 0.35)
-    adduct = 0.09 * clamp01(math.cos(th))
+    # Lateral (abduction) term, signed rather than clamped to the forward
+    # half of the stride. The chase camera looks straight up the character's
+    # back, which foreshortens the whole 1.05-rad sagittal swing above into
+    # almost nothing -- from behind, a big fore/aft arm swing is close to
+    # invisible. What the rear view CAN see is the gap between arm and torso,
+    # and measured against the reference that gap is the loudest single thing
+    # in its run silhouette. The arms now alternate visibly out and in across
+    # the stride instead of holding a near-constant tucked pose.
+    adduct = 0.20 * math.cos(th)
     return shoulder, elbow, adduct
 
 def bake_run_cycle(arm_obj):
@@ -1634,8 +1744,8 @@ def bake_run_cycle(arm_obj):
         # close to the torso instead of held out.
         shL, elL, adL = arm_curve(pR)
         shR, elR, adR = arm_curve(pL)
-        pb['LeftArm'].rotation_euler = (-shL, 0, -0.06 - adL)
-        pb['RightArm'].rotation_euler = (-shR, 0, 0.06 + adR)
+        pb['LeftArm'].rotation_euler = (-shL, 0, -0.15 - adL)
+        pb['RightArm'].rotation_euler = (-shR, 0, 0.15 + adR)
         pb['LeftForeArm'].rotation_euler = (elL, 0, 0)
         pb['RightForeArm'].rotation_euler = (elR, 0, 0)
         pb['LeftHand'].rotation_euler = (0.08, 0.02, 0.05)
