@@ -349,8 +349,14 @@ COLORS = {
     # ~7x flag_black's average (0.070) -- far past the ~2.3x margin the
     # file's own history flagged as the actual fusion threshold, so this is
     # not at risk of repeating the v8 "hair fuses with the black band" bug.
-    'hair':         (0.780, 0.700, 0.520),
-    'hair_dark':    (0.560, 0.490, 0.350),
+    # v19b: brighter and warmer again. At true chase-cam framing the v17 blond
+    # was reading grey-tan rather than as hair, because the cel quantiser plus
+    # the hero fill floor both pull toward neutral. The reference head samples
+    # (255,254,231) -- a warm near-white -- and is unambiguously the brightest
+    # mass in the figure; this closes most of the remaining gap without going
+    # fully white, which would lose the cap's own value step.
+    'hair':         (0.880, 0.820, 0.660),
+    'hair_dark':    (0.660, 0.590, 0.440),
     # Near-black jeans (0.085) sat directly under the tricolour's black
     # shoulder band, so torso and legs fused and the figure's lower two
     # thirds read as one undifferentiated dark column -- only the red and
