@@ -11,18 +11,22 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
-<!-- A directly double-clicked file:// page cannot fetch a neighbouring GLB.
-     Load a generated data-URI companion only in that mode; served builds keep
-     the smaller, cacheable binary preload and pay no duplicate transfer. -->
+<!-- A directly double-clicked file:// page cannot fetch a neighbouring GLB, and
+     three.js requests textures with crossOrigin='anonymous', so Chrome's CORS
+     policy blocks the painted PNGs too -- silently, leaving the skyline band
+     off and the street art absent while the game still runs. Load generated
+     data-URI companions only in that mode; served builds keep the smaller,
+     cacheable files and pay no duplicate transfer. -->
 <script>
   if (location.protocol === 'file:') {
-    document.write('<script src="assets/models/berlin-runner-hero-v9.inline.js"><\/script>');
+    document.write('<script src="assets/models/berlin-runner-hero-v12.inline.js"><\/script>');
+    document.write('<script src="assets/img/berlin-art.inline.js"><\/script>');
   } else {
-    document.write('<link rel="preload" href="assets/models/berlin-runner-hero-v9.glb?rev=1" as="fetch" crossorigin="anonymous">');
+    document.write('<link rel="preload" href="assets/models/berlin-runner-hero-v12.glb?rev=31" as="fetch" crossorigin="anonymous">');
+    document.write('<link rel="preload" href="assets/img/berlin-street-art-atlas-v1-1024.png" as="image">');
+    document.write('<link rel="preload" href="assets/img/berlin-skyline-strip.png" as="image">');
   }
 </script>
-<link rel="preload" href="assets/img/berlin-street-art-atlas-v1-1024.png" as="image">
-<link rel="preload" href="assets/img/berlin-skyline-strip.png" as="image">
 <title>Artikel Express — Berlin Runner</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -4259,18 +4263,28 @@ THREE.GLTFLoader = GLTFLoader;
   // from a file:// page every local file is an opaque origin, so relative paths
   // are silently refused and the game falls back to procedural art on a plain
   // double-click. Data URIs are same-origin and always load.
+  // Painted art, resolved the same way the hero GLB is: the data URI exists
+  // only when this HTML was opened straight off disk (see the file:// gate in
+  // the head), and every other mode keeps the small separately cacheable PNG.
+  // Without this the file:// page loses both textures silently — no error, no
+  // fallback marker, just a horizon quietly missing its skyline.
+  function artUrl(slot, url) {
+    var inline = globalThis.BERLIN_RUNNER_ART;
+    return (inline && inline[slot]) || url;
+  }
+  var STREET_ART_URL = artUrl('streetArt', 'assets/img/berlin-street-art-atlas-v1-1024.png');
   var ASSETS = window.ARTIKEL_EXPRESS_ASSETS || {
     sky: '', road: '', sidewalk: '', cobble: '', pretzel: '',
-    streetArt: 'assets/img/berlin-street-art-atlas-v1-1024.png',
+    streetArt: STREET_ART_URL,
     // Painted skyline band composited into the horizon of the sky dome — see
     // the uSkyline uniforms on skyMat. Buildings only, on transparency, and it
     // must tile horizontally: it wraps the full 360 degrees SKYLINE_TILES times.
-    skylineStrip: 'assets/img/berlin-skyline-strip.png',
+    skylineStrip: artUrl('skylineStrip', 'assets/img/berlin-skyline-strip.png'),
     facades: [], shopfronts: [],
     // The data URI is present only when this HTML was opened directly from
     // disk. GLTFLoader decodes it locally, avoiding file:// fetch restrictions.
-    character: globalThis.BERLIN_RUNNER_HERO_V9_DATA_URI ||
-               'assets/models/berlin-runner-hero-v9.glb?rev=1', props: {},
+    character: globalThis.BERLIN_RUNNER_HERO_V12_DATA_URI ||
+               'assets/models/berlin-runner-hero-v12.glb?rev=31', props: {},
     // True when the sky panorama already contains the city silhouette; the
     // procedural skyline ring and Fernsehturm then switch off so the horizon
     // is not drawn twice.
@@ -4280,7 +4294,12 @@ THREE.GLTFLoader = GLTFLoader;
   // explicitly empty slot as an opt-out, but make older manifests inherit the
   // shipped atlas instead of silently losing the new environmental storytelling.
   if (ASSETS.streetArt === undefined) {
-    ASSETS.streetArt = 'assets/img/berlin-street-art-atlas-v1-1024.png';
+    ASSETS.streetArt = STREET_ART_URL;
+  }
+  // Same reasoning for the skyline band, which post-dates those manifests too.
+  // An explicit '' still opts out; only a missing slot inherits the shipped art.
+  if (ASSETS.skylineStrip === undefined) {
+    ASSETS.skylineStrip = artUrl('skylineStrip', 'assets/img/berlin-skyline-strip.png');
   }
   // The shipped BerlinRunnerHero GLB is authored in Blender for the same cel +
   // ink language as the city. Its complete marker disables every legacy donor
@@ -18988,7 +19007,7 @@ THREE.GLTFLoader = GLTFLoader;
   enableFocalOutline(rig);
 
   // Contact shadow blob. The hero's own GLTF mesh deliberately does not enter
-  // the shadow pass (see the loader below — it is a 91k-triangle skinned mesh
+  // the shadow pass (see the loader below — it is a ~25k-triangle skinned mesh
   // and the sun throws its shadow back towards the chase camera, where the body
   // hides it anyway), so this quad IS the runner's shadow rather than a top-up
   // for one. Two things were keeping the previous version off screen even
@@ -19118,6 +19137,12 @@ THREE.GLTFLoader = GLTFLoader;
   var handCueR = makeContactCue(0x9dffd0);
   var cueWorldL = new THREE.Vector3(), cueWorldR = new THREE.Vector3();
   var cueHandL = new THREE.Vector3(), cueHandR = new THREE.Vector3();
+  // Cached extremities support a sub-100 ms visual foot plant during lane
+  // changes. The correction moves only the presentation root; authoritative
+  // physics/collisions keep their exact lane-spring position.
+  var laneFootAnchor = new THREE.Vector3(), laneFootProbe = new THREE.Vector3();
+  var lastFootWorldL = new THREE.Vector3(), lastFootWorldR = new THREE.Vector3();
+  var heroFootCacheReady = false;
 
   function makeContactRing() {
     var ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.15, 18),
@@ -19208,7 +19233,7 @@ THREE.GLTFLoader = GLTFLoader;
   // all disappeared beside the deliberately chunky city art. 2.55 lands at
   // roughly 25-27% in the chase camera while retaining clear hazard sightlines.
   var CHAR_DISPLAY_H = 2.55;
-  var charMixer = null, charAction = null, charModel = null, charBaseY = 0;
+  var charMixer = null, charAction = null, charIdleAction = null, charModel = null, charBaseY = 0;
   // Named bones let the single bundled run clip carry richer action silhouettes.
   // The mixer lays down its pose first; poseRunner adds small, state-specific
   // offsets afterwards, so jump/slide/stumble no longer look like a rigid statue.
@@ -19231,8 +19256,22 @@ THREE.GLTFLoader = GLTFLoader;
   // character whose cap, hair, costume and cartoon proportions are in the GLB.
   var charAssetComplete = false;
   var charAuthoredReady = false;
+  // True only when the primary gameplay performances came from the GLB.
+  // Older/copied assets still get the generated additive fallback below.
+  var charNamedActionsReady = false, charNamedLaneReady = false;
+  var charNamedLaneSupportReady = false;
+  var charNamedJumpPhasedReady = false;
   var charJumpAction = null, charLandAction = null, charSlideAction = null;
+  var charJumpActionL = null, charJumpActionR = null;
   var charStumbleAction = null, charVictoryActionL = null, charVictoryActionR = null;
+  // Current and interrupted lane beats need distinct AnimationActions. Three's
+  // clipAction caches by clip identity, so a rapid same-direction double tap
+  // cannot share one action without the newer sample overwriting the older one.
+  var charLaneCurrentL = null, charLaneCurrentR = null;
+  var charLaneOutgoingL = null, charLaneOutgoingR = null;
+  var charLaneCurrentLSupportL = null, charLaneCurrentRSupportR = null;
+  var charLaneOutgoingLSupportL = null, charLaneOutgoingRSupportR = null;
+  var jumpSupportSide = 1;
   // Bones the mixer provably never writes back to, plus the pose it left them
   // in. See captureHeroStaticPose for why this list has to exist at all.
   var heroStaticBones = null;
@@ -19265,15 +19304,49 @@ THREE.GLTFLoader = GLTFLoader;
       var track = runClip.tracks[i];
       var bone = track.name.split('.')[0];
       var v = track.values, constant = true;
-      for (var j = track.valueSize; j < v.length; j++) {
-        if (Math.abs(v[j] - v[j % track.valueSize]) > 1e-6) { constant = false; break; }
+      // KeyframeTrack exposes its component width through getValueSize().
+      // `valueSize` is not a public field (and is undefined in three r156),
+      // which made this loop start at `undefined` and never execute. Every run
+      // track was therefore misclassified as constant and the restore pass
+      // silently froze shoulders, toes, neck and any other bone not also named
+      // by an additive action. That erased a large part of the authored gait.
+      var valueSize = track.getValueSize ? track.getValueSize() :
+        (track.times && track.times.length ? v.length / track.times.length : v.length);
+      for (var j = valueSize; j < v.length; j++) {
+        if (Math.abs(v[j] - v[j % valueSize]) > 1e-6) { constant = false; break; }
       }
       if (!constant) moving[bone] = true;
     }
     for (var a = 0; a < additiveClips.length; a++) {
       var clip = additiveClips[a];
       if (!clip) continue;
-      for (var k = 0; k < clip.tracks.length; k++) moving[clip.tracks[k].name.split('.')[0]] = true;
+      for (var k = 0; k < clip.tracks.length; k++) {
+        var additiveTrack = clip.tracks[k];
+        var av = additiveTrack.values;
+        var property = additiveTrack.name.split('.').pop();
+        var additiveMoves = false;
+        // Blender can force-sample every joint even when an action only poses
+        // three of them. After makeClipAdditive those filler tracks are pure
+        // identity; counting them as motion would disable the static restore
+        // globally and reopen the cumulative neck-fold bug.
+        if (property === 'quaternion') {
+          for (var q = 0; q + 3 < av.length; q += 4) {
+            if (Math.abs(av[q]) > 1e-6 || Math.abs(av[q + 1]) > 1e-6 ||
+                Math.abs(av[q + 2]) > 1e-6 || Math.abs(av[q + 3] - 1) > 1e-6) {
+              additiveMoves = true; break;
+            }
+          }
+        } else if (property === 'scale') {
+          for (var sc = 0; sc < av.length; sc++) {
+            if (Math.abs(av[sc] - 1) > 1e-6) { additiveMoves = true; break; }
+          }
+        } else {
+          for (var ap = 0; ap < av.length; ap++) {
+            if (Math.abs(av[ap]) > 1e-6) { additiveMoves = true; break; }
+          }
+        }
+        if (additiveMoves) moving[additiveTrack.name.split('.')[0]] = true;
+      }
     }
     var stat = [];
     for (var name in charBones) {
@@ -19376,6 +19449,119 @@ THREE.GLTFLoader = GLTFLoader;
     action.weight = 0;
     action.play();
     return action;
+  }
+
+  function findFirstHeroNamedClip(clips, names) {
+    for (var i = 0; i < names.length; i++) {
+      var clip = findHeroNamedClip(clips, names[i]);
+      if (clip) return clip;
+    }
+    return null;
+  }
+
+  // Convert a Blender-authored absolute action into a safe additive layer.
+  // Root/object translation stays owned by gameplay physics. Local joint
+  // rotations and additive Hips translation are allowed so the asset can own
+  // load, compression and centre-of-mass performance without moving the
+  // collision root.
+  function prepareNamedAdditiveClip(clips, names, expectedDuration, instanceName) {
+    var source = findFirstHeroNamedClip(clips, names);
+    if (!source) return null;
+    if (Math.abs(source.duration - expectedDuration) > 0.021) {
+      console.warn('Hero action duration mismatch:', source.name,
+                   source.duration, 'expected', expectedDuration);
+      return null;
+    }
+    var clip = source.clone();
+    clip.name = instanceName || (source.name + '_additive');
+    clip.tracks = clip.tracks.filter(function (track) {
+      var bits = track.name.split('.');
+      if (bits.length <= 1) return false;
+      var property = bits[bits.length - 1];
+      return (property === 'quaternion' && !!charBones[bits[0]]) ||
+             (property === 'position' && bits[0] === 'Hips' && !!charBones.Hips);
+    });
+    if (!clip.tracks.length) return null;
+    THREE.AnimationUtils.makeClipAdditive(clip, 0, clip, ACTION_RESAMPLE_HZ);
+    clip.duration = source.duration;
+    return clip;
+  }
+
+  function bindNamedHeroActions(clips) {
+    charNamedActionsReady = false;
+    charNamedLaneReady = false;
+    charNamedLaneSupportReady = false;
+    charNamedJumpPhasedReady = false;
+    var used = [];
+    var jump = prepareNamedAdditiveClip(clips, ['hero_jump', 'jump'], 0.76, 'hero_jump_glb');
+    // Dedicated names are required here. Falling back to the generic jump for
+    // both sides would make `charNamedJumpPhasedReady` a false positive while
+    // silently playing the same takeoff foot for every gait octant.
+    var jumpL = prepareNamedAdditiveClip(clips,
+      ['hero_jump_l', 'jump_l'], 0.76, 'hero_jump_l_glb');
+    var jumpR = prepareNamedAdditiveClip(clips,
+      ['hero_jump_r', 'jump_r'], 0.76, 'hero_jump_r_glb');
+    var land = prepareNamedAdditiveClip(clips, ['hero_land', 'land'], 0.30, 'hero_land_glb');
+    var roll = prepareNamedAdditiveClip(clips, ['hero_roll', 'roll', 'hero_slide'], 0.62, 'hero_roll_glb');
+    var stumble = prepareNamedAdditiveClip(clips, ['hero_stumble', 'stumble'], 0.84, 'hero_stumble_glb');
+    var victoryL = prepareNamedAdditiveClip(clips,
+      ['hero_victory_l', 'victory_l', 'victory'], 0.68, 'hero_victory_l_glb');
+    var victoryR = prepareNamedAdditiveClip(clips,
+      ['hero_victory_r', 'victory_r', 'victory'], 0.68, 'hero_victory_r_glb');
+    if (jump && land && roll && stumble && victoryL && victoryR) {
+      charJumpAction = startAuthoredAction(jump);
+      charJumpActionL = startAuthoredAction(jumpL);
+      charJumpActionR = startAuthoredAction(jumpR);
+      charNamedJumpPhasedReady = !!(charJumpActionL && charJumpActionR);
+      charLandAction = startAuthoredAction(land);
+      charSlideAction = startAuthoredAction(roll);
+      charStumbleAction = startAuthoredAction(stumble);
+      charVictoryActionL = startAuthoredAction(victoryL);
+      charVictoryActionR = startAuthoredAction(victoryR);
+      charNamedActionsReady = true;
+      charAuthoredReady = true;
+      used.push(jump, jumpL, jumpR, land, roll, stumble, victoryL, victoryR);
+    }
+
+    // Two distinct instances per direction preserve an interrupted sample when
+    // a second swipe arrives before the first cut has recovered.
+    var laneL0 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_l', 'hero_cut_left', 'cut_left'], 0.42, 'hero_lane_l_current');
+    var laneR0 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_r', 'hero_cut_right', 'cut_right'], 0.42, 'hero_lane_r_current');
+    var laneL1 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_l', 'hero_cut_left', 'cut_left'], 0.42, 'hero_lane_l_outgoing');
+    var laneR1 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_r', 'hero_cut_right', 'cut_right'], 0.42, 'hero_lane_r_outgoing');
+    var laneLL0 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_l_support_l', 'lane_l_support_l'], 0.42,
+      'hero_lane_l_support_l_current');
+    var laneRR0 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_r_support_r', 'lane_r_support_r'], 0.42,
+      'hero_lane_r_support_r_current');
+    var laneLL1 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_l_support_l', 'lane_l_support_l'], 0.42,
+      'hero_lane_l_support_l_outgoing');
+    var laneRR1 = prepareNamedAdditiveClip(clips,
+      ['hero_lane_r_support_r', 'lane_r_support_r'], 0.42,
+      'hero_lane_r_support_r_outgoing');
+    if (laneL0 && laneR0 && laneL1 && laneR1) {
+      charLaneCurrentL = startAuthoredAction(laneL0);
+      charLaneCurrentR = startAuthoredAction(laneR0);
+      charLaneOutgoingL = startAuthoredAction(laneL1);
+      charLaneOutgoingR = startAuthoredAction(laneR1);
+      charNamedLaneReady = true;
+      used.push(laneL0, laneR0, laneL1, laneR1);
+    }
+    if (laneLL0 && laneRR0 && laneLL1 && laneRR1) {
+      charLaneCurrentLSupportL = startAuthoredAction(laneLL0);
+      charLaneCurrentRSupportR = startAuthoredAction(laneRR0);
+      charLaneOutgoingLSupportL = startAuthoredAction(laneLL1);
+      charLaneOutgoingRSupportR = startAuthoredAction(laneRR1);
+      charNamedLaneSupportReady = true;
+      used.push(laneLL0, laneRR0, laneLL1, laneRR1);
+    }
+    return used;
   }
 
   function buildAuthoredActions() {
@@ -19546,12 +19732,56 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function updateAuthoredActions() {
-    if (!charAuthoredReady) return;
-    setAuthoredAction(charJumpAction, jumpActionAge, jumpActionAge < 0.76 ? 1 : 0);
-    setAuthoredAction(charLandAction, landingActionAge, landingActionAge < 0.30 ? 1 : 0);
+    if (!charAuthoredReady) { heroBaseClipFade = 0; return; }
+    // Full-body actions are mutually exclusive. The old independent weights
+    // let jump, landing, slide and stumble all reach weight 1 together during
+    // legal input chains (jump still lives for 0.76 s while physical contact is
+    // around 0.67 s). Additive quaternion clips then produced impossible limb
+    // blends. Priority follows gameplay intent: stumble > slide > air > land.
+    var stumbleWeight = stumbleActionAge < 0.84 ? phaseEase(Math.min(
+      stumbleActionAge / 0.045, (0.84 - stumbleActionAge) / 0.10)) : 0;
     var isSliding = slideTimer > 0 && grounded;
-    var slideClipTime = isSliding ? (!slideWasActive ? 0 : Math.min(slideActionAge, 0.30)) :
-      (slideWasActive ? 0.42 : 0.42 + clamp(slideExitAge / 0.22, 0, 1) * 0.20);
+    var slideEnvelope = isSliding ? phaseEase(slideActionAge / 0.055) :
+      (slideExitAge < 0.22 ? 1 - phaseEase(slideExitAge / 0.22) : 0);
+    var slideStateWeight = slideEnvelope * (1 - stumbleWeight);
+    var jumpWeight = (!grounded && !isSliding && !stumbleWeight) ?
+      phaseEase(jumpActionAge / 0.055) : 0;
+    var landWeight = (grounded && !isSliding && !stumbleWeight && landingActionAge < 0.30) ?
+      phaseEase(Math.min(landingActionAge / 0.025, (0.30 - landingActionAge) / 0.075)) : 0;
+    // Resolve this before the mixer samples the base cycle. The older
+    // poseRunner assignment was one render late and omitted stumble entirely.
+    heroBaseClipFade = clamp(Math.max(stumbleWeight, slideStateWeight,
+                                      jumpWeight, landWeight), 0, 1);
+    // Phase-lock the authored airborne pose to the physical arc. A jump can be
+    // triggered on any gait octant (or become a spring jump / fast-fall), so a
+    // fixed animation clock cannot reliably put its apex and landing poses at
+    // the real apex and contact. Interpolated vertical velocity does.
+    var jumpClipTime = jumpActionAge;
+    if (!grounded) {
+      // At fixed-step alpha 0 the first airborne render still interpolates the
+      // previous grounded velocity (zero). Treat the opening 80 ms explicitly
+      // as takeoff so that zero cannot be mistaken for apex and scrub the clip
+      // backward on the following frame.
+      var velocityClipTime = visualVy >= 0 ?
+        lerp(0.09, 0.38, clamp(1 - visualVy / JUMP_V, 0, 1)) :
+        lerp(0.38, 0.72, clamp(-visualVy / JUMP_V, 0, 1));
+      var takeoffClipTime = lerp(0.04, 0.12,
+        phaseEase(clamp(jumpActionAge / 0.08, 0, 1)));
+      // Falling from a roof starts with negative velocity; blend into that
+      // descent sample instead of jumping from the takeoff key to ~0.48 at
+      // full weight on the first 80 ms boundary.
+      jumpClipTime = lerp(takeoffClipTime, velocityClipTime,
+        phaseEase(clamp((jumpActionAge - 0.06) / 0.10, 0, 1)));
+    }
+    setAuthoredAction(charJumpAction, jumpClipTime,
+      charNamedJumpPhasedReady ? 0 : jumpWeight);
+    setAuthoredAction(charJumpActionL, jumpClipTime,
+      charNamedJumpPhasedReady && jumpSupportSide < 0 ? jumpWeight : 0);
+    setAuthoredAction(charJumpActionR, jumpClipTime,
+      charNamedJumpPhasedReady && jumpSupportSide > 0 ? jumpWeight : 0);
+    setAuthoredAction(charLandAction, landingActionAge, landWeight);
+    var slideClipTime = isSliding ? (slideEnteredFrame ? 0 : Math.min(slideActionAge, 0.30)) :
+      (0.30 + clamp(slideExitAge / 0.22, 0, 1) * 0.32);
     // This used to run at 0.42 strength on the complete asset: reasoning was
     // that the donor-era full-strength clip folded its chunky costume volumes
     // through one another under the old BACKWARD baseball recline. Now that
@@ -19562,16 +19792,62 @@ THREE.GLTFLoader = GLTFLoader;
     // side of a slide frame and a run frame at 0.42 was hard to tell apart.
     // Close to full strength lets the authored front-leg shoot/back-leg-fold
     // pose actually reach the screen.
-    var slideClipWeight = charAssetComplete ? 0.85 : 1;
+    var slideClipWeight = charNamedActionsReady ? 1 : (charAssetComplete ? 0.85 : 1);
     setAuthoredAction(charSlideAction, slideClipTime,
-      (isSliding || slideWasActive || slideExitAge < 0.22) ? slideClipWeight : 0);
+      slideStateWeight * slideClipWeight);
     setAuthoredAction(charStumbleAction, stumbleActionAge,
-      stumbleActionAge < 0.84 ? 1 : 0);
-    var victoryWeight = victoryActionAge < 0.68 ? Math.min(1.15, celebratePower) : 0;
+      stumbleWeight);
+    // Celebration is primarily upper-body in its authored tracks, but suppress
+    // it during emergency full-body actions so the punch never twists through
+    // a roll or stumble.
+    var victoryWeight = victoryActionAge < 0.68 && !stumbleWeight && !slideStateWeight &&
+                        jumpWeight <= 0.001 && landWeight <= 0.001 ?
+      Math.min(1.15, celebratePower) : 0;
     setAuthoredAction(charVictoryActionL, victoryActionAge,
       celebrateSide < 0 ? victoryWeight : 0);
     setAuthoredAction(charVictoryActionR, victoryActionAge,
       celebrateSide > 0 ? victoryWeight : 0);
+
+    if (charNamedLaneReady) {
+      var laneLoadW = phaseWindow(laneActionAge, 0.00, 0.025, 0.055, 0.095);
+      var lanePushW = phaseWindow(laneActionAge, 0.045, 0.085, 0.145, 0.205);
+      var laneCrossW = phaseWindow(laneActionAge, 0.125, 0.175, 0.235, 0.295);
+      var laneCatchW = phaseWindow(laneActionAge, 0.225, 0.275, 0.345, 0.415);
+      var laneCurrentW = clamp(laneLoadW + lanePushW + laneCrossW + laneCatchW, 0, 1);
+      var laneOutLoadW = phaseWindow(laneOutgoingAge, 0.00, 0.025, 0.055, 0.095);
+      var laneOutPushW = phaseWindow(laneOutgoingAge, 0.045, 0.085, 0.145, 0.205);
+      var laneOutCrossW = phaseWindow(laneOutgoingAge, 0.125, 0.175, 0.235, 0.295);
+      var laneOutCatchW = phaseWindow(laneOutgoingAge, 0.225, 0.275, 0.345, 0.415);
+      var laneOutgoingW = clamp(laneOutLoadW + laneOutPushW +
+                                laneOutCrossW + laneOutCatchW, 0, 1);
+      var laneAllowed = grounded && !isSliding && !stumbleWeight ?
+        (1 - clamp(Math.max(jumpWeight, landWeight), 0, 1)) : 0;
+      // Let an interrupted opposite cut carry for a beat, then yield. Equal
+      // opposite additive samples can otherwise cancel to a neutral mannequin
+      // while the lateral root is visibly reversing direction.
+      if (laneActionDir && laneOutgoingDir && laneActionDir !== laneOutgoingDir) {
+        laneOutgoingW *= 1 - phaseEase(clamp(laneActionAge / 0.11, 0, 1));
+      }
+      var laneNorm = 1 / Math.max(1, laneCurrentW + laneOutgoingW);
+      laneCurrentW *= laneAllowed * laneNorm;
+      laneOutgoingW *= laneAllowed * laneNorm;
+      setAuthoredAction(charLaneCurrentL, laneActionAge,
+        laneActionDir > 0 && (!charNamedLaneSupportReady || laneGaitSupport > 0) ? laneCurrentW : 0);
+      setAuthoredAction(charLaneCurrentR, laneActionAge,
+        laneActionDir < 0 && (!charNamedLaneSupportReady || laneGaitSupport < 0) ? laneCurrentW : 0);
+      setAuthoredAction(charLaneCurrentLSupportL, laneActionAge,
+        laneActionDir > 0 && laneGaitSupport < 0 ? laneCurrentW : 0);
+      setAuthoredAction(charLaneCurrentRSupportR, laneActionAge,
+        laneActionDir < 0 && laneGaitSupport > 0 ? laneCurrentW : 0);
+      setAuthoredAction(charLaneOutgoingL, laneOutgoingAge,
+        laneOutgoingDir > 0 && (!charNamedLaneSupportReady || laneOutgoingSupport > 0) ? laneOutgoingW : 0);
+      setAuthoredAction(charLaneOutgoingR, laneOutgoingAge,
+        laneOutgoingDir < 0 && (!charNamedLaneSupportReady || laneOutgoingSupport < 0) ? laneOutgoingW : 0);
+      setAuthoredAction(charLaneOutgoingLSupportL, laneOutgoingAge,
+        laneOutgoingDir > 0 && laneOutgoingSupport < 0 ? laneOutgoingW : 0);
+      setAuthoredAction(charLaneOutgoingRSupportR, laneOutgoingAge,
+        laneOutgoingDir < 0 && laneOutgoingSupport > 0 ? laneOutgoingW : 0);
+    }
   }
 
   // ------------------------------------------------- hero silhouette kit ----
@@ -20143,13 +20419,17 @@ THREE.GLTFLoader = GLTFLoader;
   // Amplify whatever the baked clip is already doing rather than guessing its
   // phase: each tracked bone is pushed away from its own running average, which
   // is a pure amplitude boost with no drift and nothing clip-specific to tune.
+  // Gains raised for Subway-Surfers-tier silhouette energy: the arm pair is the
+  // hero's most readable motion from the chase camera, so it leads the bump
+  // (0.58 -> 0.70) with the forearms following so the elbow stays one beat
+  // behind the shoulder instead of stiffening into a single rigid lever.
   var HERO_AMP = [
-    ['LeftArm', 0.58], ['RightArm', 0.58],
-    ['LeftForeArm', 0.32], ['RightForeArm', 0.32],
+    ['LeftArm', 0.70], ['RightArm', 0.70],
+    ['LeftForeArm', 0.38], ['RightForeArm', 0.38],
     ['LeftShoulder', 0.30], ['RightShoulder', 0.30],
-    ['LeftUpLeg', 0.36], ['RightUpLeg', 0.36],
-    ['LeftLeg', 0.30], ['RightLeg', 0.30],
-    ['Spine01', 0.24], ['neck', 0.22], ['Head', 0.20]
+    ['LeftUpLeg', 0.42], ['RightUpLeg', 0.42],
+    ['LeftLeg', 0.36], ['RightLeg', 0.36],
+    ['Spine01', 0.28], ['neck', 0.22], ['Head', 0.24]
   ];
   var heroAmpBones = null, heroAmpAvg = null, heroAmpGain = null;
   var heroLean = 0, heroLeanLag = 0;
@@ -20253,6 +20533,16 @@ THREE.GLTFLoader = GLTFLoader;
     return fallback || clips[0];
   }
 
+  function findHeroNamedClip(clips, wanted) {
+    if (!clips || !clips.length) return null;
+    wanted = (wanted || '').toLowerCase().replace(/[\s_.-]/g, '');
+    for (var i = 0; i < clips.length; i++) {
+      var name = (clips[i].name || '').toLowerCase().replace(/[\s_.-]/g, '');
+      if (name === wanted) return clips[i];
+    }
+    return null;
+  }
+
   function activateProceduralHeroFallback() {
     // A missing optional art file must never remove a game feature. Keep the
     // authored asset as the shipped path, but release preload with the complete
@@ -20261,8 +20551,18 @@ THREE.GLTFLoader = GLTFLoader;
     charModel = null;
     charMixer = null;
     charAction = null;
+    charIdleAction = null;
     charAssetComplete = false;
     charAuthoredReady = false;
+    charNamedActionsReady = false;
+    charNamedLaneReady = false;
+    charNamedLaneSupportReady = false;
+    charNamedJumpPhasedReady = false;
+    charJumpActionL = charJumpActionR = null;
+    charLaneCurrentL = charLaneCurrentR = null;
+    charLaneOutgoingL = charLaneOutgoingR = null;
+    charLaneCurrentLSupportL = charLaneCurrentRSupportR = null;
+    charLaneOutgoingLSupportL = charLaneOutgoingRSupportR = null;
     hips.visible = true;
     heroFinish.visible = true;
     rig.visible = true;
@@ -20289,7 +20589,7 @@ THREE.GLTFLoader = GLTFLoader;
           }
           if (!o.isMesh) return;
           if (o.isSkinnedMesh && !heroSkin) heroSkin = o;
-          // The 91k-triangle skinned hero already has a soft contact anchor;
+          // The ~25k-triangle skinned hero already has a soft contact anchor;
           // sending it through the shadow pass doubled its vertex work for a
           // barely visible moving silhouette.
           o.castShadow = false;
@@ -20313,7 +20613,7 @@ THREE.GLTFLoader = GLTFLoader;
           // a real lights_fragment_begin chunk (diffuse-only, no specular —
           // also the better match for the reference art's flat shading), so
           // switching to it gives applyCelShading a real hook while staying
-          // far cheaper than MeshStandardMaterial on this 91k-tri skinned mesh.
+          // far cheaper than MeshStandardMaterial on this ~25k-tri skinned mesh.
           function tuneMaterial(src) {
             if (src.map) {
               src.map.colorSpace = THREE.SRGBColorSpace;
@@ -20432,13 +20732,24 @@ THREE.GLTFLoader = GLTFLoader;
           var heroRunClip = findHeroRunClip(gltf.animations);
           charAction = charMixer.clipAction(heroRunClip);
           charAction.play();
-          // The source run clip already animates all 24 joints. The six
+          var heroIdleClip = findHeroNamedClip(gltf.animations, 'idle');
+          charIdleAction = heroIdleClip ? charMixer.clipAction(heroIdleClip) : null;
+          if (charIdleAction) {
+            charIdleAction.enabled = true;
+            charIdleAction.paused = true;
+            charIdleAction.weight = 0;
+            charIdleAction.play();
+          }
+          // The source run clip already animates all 23 joints. The six
           // additive mixer clips built here are a one-time cost (created
           // once, not evaluated per render tier), so gate this on renderScale
           // is exactly the `sun.castShadow >= 0.99` trap documented above:
           // a quality-tier check on a setup call that isn't a per-frame cost,
           // silently stranding a feature whenever the tier isn't pinned to 1.
-          var authoredClips = buildAuthoredActions();
+          var authoredClips = bindNamedHeroActions(gltf.animations);
+          if (!charNamedActionsReady) {
+            authoredClips = authoredClips.concat(buildAuthoredActions());
+          }
           charMixer.update(0);
           // After the first update, so the captured pose is the one the mixer
           // itself put these bones in rather than the raw GLB bind pose.
@@ -21459,6 +21770,8 @@ THREE.GLTFLoader = GLTFLoader;
   // displays, preventing ProMotion's old 0px/2px alternating cadence.
   var visualPlayer = { x: 0, y: 0, z: 0 };
   var interpPrevX = 0, interpPrevY = 0, interpPrevZ = 0;
+  var interpPrevLaneVelocity = 0, visualLaneVelocity = 0;
+  var interpPrevVy = 0, visualVy = 0;
   // The gait clock needs the same treatment as the position above, and for the
   // same reason. runPhase only advances inside simulate() at a fixed 60 Hz,
   // but every presentation layer that reads it — the run clip's playhead, the
@@ -21468,14 +21781,14 @@ THREE.GLTFLoader = GLTFLoader;
   // repeats on some frames and skips on others, which is precisely the
   // "movement is not smooth" read. Interpolating the phase the same way the
   // position is interpolated puts the whole character back on one clock.
-  var interpPrevRunPhase = 0, visualRunPhase = 0;
+  var interpPrevRunPhase = 0, visualRunPhase = 0, heroRunPhase = 0;
   var lane = 1, targetLane = 1;
   // Velocity state for a critically damped lane spring. The old one-pole
   // position lerp changed velocity instantaneously on every key press, which
   // made an otherwise fluid character visibly snap into and out of a lane.
   var laneGlideVelocity = 0;
   var speed = 26;
-  var grounded = true, slideTimer = 0, coyote = 0;
+  var grounded = true, slideTimer = 0, slideExitGrace = 0, coyote = 0;
   var fastFalling = false, slideHeld = 0;
   var stumbleTimer = 0, graceTimer = 0;
   var runPhase = 0, stepFlip = false;
@@ -21483,7 +21796,23 @@ THREE.GLTFLoader = GLTFLoader;
   var slideVisual = 0, airVisual = 0, takeoffPulse = 0, landingPulse = 0, landingFx = 0;
   var celebrateTimer = 0, celebratePower = 1, celebrateSide = 1;
   var jumpActionAge = 9, landingActionAge = 9, slideActionAge = 9, slideExitAge = 9;
+  // A lane change is an authored movement beat, not just a sideways root
+  // translation. Direction is in world X (+1 is the on-screen left lane).
+  // The timeline drives a load, push-off, crossover and catching plant while
+  // the authoritative lane spring remains unchanged for collisions.
+  var laneActionAge = 9, laneActionDir = 0;
+  var laneOutgoingAge = 9, laneOutgoingDir = 0;
+  // Phase/contact state captured once when an action is accepted. Presentation
+  // may briefly warp toward that planted foot; the authoritative run clock is
+  // never changed, so input, simulation and collision remain deterministic.
+  var jumpGaitOctant = 0, jumpWarpFrom = 0, jumpWarpTo = 0;
+  var laneGaitOctant = 0, laneGaitSupport = 1, laneOutgoingSupport = 1;
+  var laneWarpFrom = 0, laneContactPhase = 0;
+  var laneFootLockActive = false, laneFootLockSupport = 1;
   var stumbleActionAge = 9, victoryActionAge = 9, slideWasActive = false;
+  var stumbleWasActive = false, landingWasActive = false;
+  var actionPhaseReleaseAge = 9, actionPhaseReleaseFrom = 0;
+  var slideEnteredFrame = false, slideExitedFrame = false;
   var cameraShakeClock = 0, fovVisual = 69, bridgeReveal = 0;
   var distance = 0, pretzelCount = 0, startZ = 0;
   var overdriveTier = 0, overdriveIntensity = 0;
@@ -22354,16 +22683,39 @@ THREE.GLTFLoader = GLTFLoader;
     visualPlayer.z = interpPrevZ = player.z;
     startZ = player.z;
     lane = targetLane = 1;
-    laneGlideVelocity = 0;
+    laneGlideVelocity = interpPrevLaneVelocity = visualLaneVelocity = 0;
+    interpPrevVy = visualVy = player.vy;
     speed = BASE_SPEED;
-    grounded = true; slideTimer = 0; coyote = 0;
+    grounded = true; slideTimer = 0; slideExitGrace = 0; coyote = 0;
     stumbleTimer = 0; graceTimer = 0;
-    runPhase = interpPrevRunPhase = visualRunPhase = 0;
+    runPhase = interpPrevRunPhase = visualRunPhase = heroRunPhase = 0;
     leanRoll = 0; camShake = 0; answerKick = 0;
     slideVisual = 0; airVisual = 0; takeoffPulse = 0; landingPulse = 0; landingFx = 0;
     celebrateTimer = 0; celebratePower = 1; celebrateSide = 1;
-    jumpActionAge = landingActionAge = slideActionAge = slideExitAge = 9;
+    jumpActionAge = landingActionAge = slideActionAge = slideExitAge = laneActionAge = 9;
+    laneActionDir = 0; laneOutgoingAge = 9; laneOutgoingDir = 0;
+    jumpGaitOctant = 0; jumpWarpFrom = jumpWarpTo = 0;
+    laneGaitOctant = 0; laneGaitSupport = laneOutgoingSupport = 1;
+    laneWarpFrom = laneContactPhase = 0;
+    laneFootLockActive = false; laneFootLockSupport = 1;
+    heroFootCacheReady = false;
     stumbleActionAge = victoryActionAge = 9; slideWasActive = false;
+    stumbleWasActive = landingWasActive = false;
+    actionPhaseReleaseAge = 9; actionPhaseReleaseFrom = 0;
+    slideEnteredFrame = slideExitedFrame = false;
+    heroLean = heroLeanLag = heroFollowX = heroFollowV = 0;
+    heroBaseClipFade = 0;
+    if (charAction) charAction.weight = 1;
+    if (charIdleAction) charIdleAction.weight = 0;
+    [charJumpAction, charJumpActionL, charJumpActionR,
+     charLandAction, charSlideAction, charStumbleAction,
+     charVictoryActionL, charVictoryActionR, charLaneCurrentL, charLaneCurrentR,
+     charLaneOutgoingL, charLaneOutgoingR,
+     charLaneCurrentLSupportL, charLaneCurrentRSupportR,
+     charLaneOutgoingLSupportL, charLaneOutgoingRSupportR].forEach(function (action) {
+     if (action) { action.weight = 0; action.time = 0; }
+     });
+    jumpSupportSide = 1;
     cameraShakeClock = 0; fovVisual = 69; bridgeReveal = 0;
     resetRouteIllusion();
     distance = 0; pretzelCount = 0;
@@ -22798,9 +23150,10 @@ THREE.GLTFLoader = GLTFLoader;
   // ============================================================= physics ====
   function simulate(dt) {
     interpPrevX = player.x; interpPrevY = player.y; interpPrevZ = player.z;
+    interpPrevLaneVelocity = laneGlideVelocity;
+    interpPrevVy = player.vy;
     interpPrevRunPhase = runPhase;
     prevZ = player.z;
-
     // ---- overdrive ramp
     var odRate = overdriveTier > overdriveIntensity ? 3.6 : 0.5;
     overdriveIntensity += (overdriveTier - overdriveIntensity) * damp(odRate, dt);
@@ -22831,12 +23184,45 @@ THREE.GLTFLoader = GLTFLoader;
 
     if (stumbleTimer <= 0) {
       var minPlayableLane = routeLevel === 1 ? 1 : 0;
+      var previousTargetLane = targetLane;
       if (routeLevel === 0) {
         targetLane = 0; bufLeft = bufRight = 0;
       } else if (bufLeft > 0 && targetLane > minPlayableLane) {
         targetLane--; bufLeft = 0; playLaneSound();
       } else if (bufRight > 0 && targetLane < 2) {
         targetLane++; bufRight = 0; playLaneSound();
+      }
+      if (targetLane !== previousTargetLane) {
+        if (laneActionAge < 0.415) {
+          laneOutgoingAge = laneActionAge;
+          laneOutgoingDir = laneActionDir;
+          laneOutgoingSupport = laneGaitSupport;
+        }
+        // Carry the exact phase offset the player was already seeing through a
+        // redirect, then target the nearest support contact at the authored
+        // load peak 55 ms after this accepted input.
+        // Keep this offset on the same unwrapped branch as laneContactPhase.
+        // Wrapping here can turn a harmless 2PI-equivalent redirect into a
+        // nearly full gait revolution when the new target is interpolated.
+        laneWarpFrom = heroRunPhase - visualRunPhase;
+        // Redirect from the foot the player is actually seeing, not the raw
+        // simulation phase hidden underneath the previous presentation warp.
+        laneGaitOctant = gaitOctantAt(heroRunPhase);
+        laneGaitSupport = gaitSupportAt(heroRunPhase);
+        var rawLaneContact = laneGaitSupport > 0 ? 0 : Math.PI;
+        // Store the nearest UNWRAPPED copy. The hold may cross a +/-PI seam;
+        // scaling a freshly wrapped offset during release would turn that
+        // harmless 2PI equivalence into a visible partial-phase snap.
+        laneContactPhase = heroRunPhase + wrapPi(rawLaneContact - heroRunPhase);
+        laneFootLockSupport = laneGaitSupport;
+        laneFootLockActive = heroFootCacheReady && !!charModel && grounded &&
+          slideTimer <= 0 && stumbleTimer <= 0 && landingActionAge >= 0.30;
+        if (laneFootLockActive) {
+          laneFootAnchor.copy(laneFootLockSupport > 0 ?
+            lastFootWorldR : lastFootWorldL);
+        }
+        laneActionAge = 0;
+        laneActionDir = Math.sign(LANES[targetLane] - LANES[previousTargetLane]);
       }
     }
 
@@ -22871,7 +23257,12 @@ THREE.GLTFLoader = GLTFLoader;
     if (!roofGapCrossing && insideRoofGap) {
       roofGapCrossing = true;
       player.y += ROOF_HEIGHT;
+      jumpWarpFrom = wrapPi(heroRunPhase - visualRunPhase);
+      jumpGaitOctant = gaitOctantAt(heroRunPhase);
+      jumpSupportSide = gaitSupportAt(heroRunPhase);
+      jumpWarpTo = wrapPi((jumpSupportSide > 0 ? 0 : Math.PI) - runPhase);
       grounded = false;
+      jumpActionAge = 0;
       coyote = Math.max(coyote, 0.11);
     } else if (roofGapCrossing && !insideRoofGap) {
       var clearedRoofLip = player.y > ROOF_HEIGHT + 0.08;
@@ -22887,6 +23278,12 @@ THREE.GLTFLoader = GLTFLoader;
     coyote = grounded ? 0.11 : Math.max(0, coyote - dt);
     var springJump = !grounded && springTimer > 0 && airJumps > 0;
     if (bufJump > 0 && (grounded || coyote > 0 || springJump) && stumbleTimer <= 0) {
+      jumpWarpFrom = wrapPi(heroRunPhase - visualRunPhase);
+      if (!springJump) {
+        jumpGaitOctant = gaitOctantAt(heroRunPhase);
+        jumpSupportSide = gaitSupportAt(heroRunPhase);
+      }
+      jumpWarpTo = wrapPi((jumpSupportSide > 0 ? 0 : Math.PI) - runPhase);
       player.vy = springJump ? JUMP_V * 0.86 : JUMP_V;
       if (springJump) airJumps--;
       grounded = false; coyote = 0;
@@ -22919,11 +23316,13 @@ THREE.GLTFLoader = GLTFLoader;
     if (slideTimer > 0) {
       slideTimer -= dt;
       slideHeld += dt;
-      // Holding extends the slide, but only to 1.1s — long enough to cover a
-      // misjudged scaffold, short enough that it is never a permanent stance.
-      if (keys.slide && slideHeld < 1.1 && slideTimer < 0.12) slideTimer = 0.12;
+      // A Subway-style roll is one authored, fixed-duration move on keyboard
+      // and touch alike. The former keyboard-only hold extension could freeze
+      // the visual pose for 1.1 s and made identical inputs platform-dependent.
       if (grounded) fxSlideSpray(player.x, player.z, dt);
+      if (slideTimer <= 0) slideExitGrace = 0.12;
     }
+    slideExitGrace = Math.max(0, slideExitGrace - dt);
 
     if (!grounded || player.y > 0) {
       player.vy -= GRAV * dt;
@@ -22987,7 +23386,12 @@ THREE.GLTFLoader = GLTFLoader;
     updateRoofRoutes(player.z);
   }
 
-  function playerHeight() { return (slideTimer > 0 && grounded) ? SLIDE_H : STAND_H; }
+  function playerHeight() {
+    // Keep the low collider through the first recovery beat. The old binary
+    // expansion restored standing height while the model was visibly still
+    // tucked, producing unfair hits on the far edge of an overhead obstacle.
+    return ((slideTimer > 0 || slideExitGrace > 0) && grounded) ? SLIDE_H : STAND_H;
+  }
 
   function collide() {
     if (gameOver) return;
@@ -23193,6 +23597,93 @@ THREE.GLTFLoader = GLTFLoader;
     return enter * leave;
   }
 
+  function wrapTau(p) {
+    p %= Math.PI * 2;
+    return p < 0 ? p + Math.PI * 2 : p;
+  }
+  function wrapPi(p) {
+    return wrapTau(p + Math.PI) - Math.PI;
+  }
+  function gaitOctantAt(p) {
+    return (Math.floor((wrapTau(p) + Math.PI / 8) / (Math.PI / 4)) & 7);
+  }
+  function gaitSupportAt(p) {
+    var octant = gaitOctantAt(p);
+    // The GLB run owns right-foot contact at phase 0 and left at PI. Keep the
+    // trailing foot through the two tie octants so support choice cannot chatter
+    // while the legs pass each other.
+    return (octant === 7 || octant <= 2) ? 1 : -1;
+  }
+
+  function advanceHeroActionClock(dt) {
+    var isLanding = landingActionAge < 0.30;
+    var landingEnteredFrame = isLanding && !landingWasActive;
+    jumpActionAge = Math.min(9, jumpActionAge + dt);
+    landingActionAge = Math.min(9, landingActionAge + dt);
+    stumbleActionAge = Math.min(9, stumbleActionAge + dt);
+    victoryActionAge = Math.min(9, victoryActionAge + dt);
+    laneActionAge = Math.min(9, laneActionAge + dt);
+    laneOutgoingAge = Math.min(9, laneOutgoingAge + dt);
+    var isSliding = slideTimer > 0 && grounded;
+    var isStumbling = stumbleTimer > 0;
+    slideEnteredFrame = isSliding && !slideWasActive;
+    slideExitedFrame = !isSliding && slideWasActive;
+    var stumbleEnteredFrame = isStumbling && !stumbleWasActive;
+    if (slideEnteredFrame || stumbleEnteredFrame || landingEnteredFrame) {
+      // Preserve the exact gait phase currently on screen while the primary
+      // action fades in, then yield it smoothly instead of snapping back to
+      // the simulation clock underneath a partially-visible run clip.
+      actionPhaseReleaseFrom = heroRunPhase - visualRunPhase;
+      actionPhaseReleaseAge = 0;
+    }
+    if (slideEnteredFrame) slideActionAge = 0;
+    if (slideExitedFrame) slideExitAge = 0;
+    slideWasActive = isSliding;
+    stumbleWasActive = isStumbling;
+    landingWasActive = isLanding;
+    actionPhaseReleaseAge = Math.min(9, actionPhaseReleaseAge + dt);
+    slideActionAge = Math.min(9, slideActionAge + dt);
+    slideExitAge = Math.min(9, slideExitAge + dt);
+  }
+
+  function resolveHeroRunPhase() {
+    heroRunPhase = visualRunPhase;
+    // The base run fades out over the same 55 ms that this phase arrives at the
+    // captured support contact. Thus the pose never snaps to another octant;
+    // the authored takeoff simply takes ownership as the gait yields.
+    if (!grounded && jumpActionAge < 0.76) {
+      var jumpWarp = jumpWarpFrom + wrapPi(jumpWarpTo - jumpWarpFrom) *
+        phaseEase(jumpActionAge / 0.055);
+      heroRunPhase = visualRunPhase + jumpWarp;
+      return;
+    }
+    if ((slideTimer > 0 || stumbleTimer > 0 || landingActionAge < 0.30) &&
+        actionPhaseReleaseAge < 0.055) {
+      heroRunPhase = visualRunPhase + actionPhaseReleaseFrom *
+        (1 - phaseEase(actionPhaseReleaseAge / 0.055));
+      return;
+    }
+    // A grounded cut holds its chosen contact through the authored push apex,
+    // then rejoins the untouched simulation gait by 205 ms. Redirects inherit the
+    // currently displayed offset, so rapid L/R chains remain continuous.
+    if (grounded && slideTimer <= 0 && stumbleTimer <= 0 &&
+        landingActionAge >= 0.30 && laneActionAge < 0.42) {
+      var inWeight = phaseEase(laneActionAge / 0.055);
+      var contactOffset = laneContactPhase - visualRunPhase;
+      var warp;
+      if (laneActionAge <= 0.145) {
+        // Arrive at the chosen contact over 55 ms, then keep tracking that
+        // absolute contact while the load completes. A constant offset would
+        // let the simulation gait continue underneath and lift the shoe again
+        // immediately after it arrived.
+        warp = laneWarpFrom + (contactOffset - laneWarpFrom) * inWeight;
+      } else {
+        warp = contactOffset * (1 - phaseEase((laneActionAge - 0.145) / 0.060));
+      }
+      heroRunPhase = visualRunPhase + warp;
+    }
+  }
+
   function poseRunner(t) {
     // Everything in here is presentation, so it reads the render-interpolated
     // gait clock rather than the 60 Hz simulation one (see interpPrevRunPhase).
@@ -23200,19 +23691,9 @@ THREE.GLTFLoader = GLTFLoader;
     // phase, so one binding here keeps the swing terms, the hip bob, the foot
     // plant windows and the accessory springs on exactly the same clock as the
     // run clip's playhead, with no call site left behind on the stepped value.
-    var runPhase = visualRunPhase;
+    var runPhase = heroRunPhase;
     var sliding = slideTimer > 0 && grounded;
     var air = !grounded;
-
-    jumpActionAge = Math.min(9, jumpActionAge + dt_);
-    landingActionAge = Math.min(9, landingActionAge + dt_);
-    stumbleActionAge = Math.min(9, stumbleActionAge + dt_);
-    victoryActionAge = Math.min(9, victoryActionAge + dt_);
-    if (sliding && !slideWasActive) slideActionAge = 0;
-    if (!sliding && slideWasActive) slideExitAge = 0;
-    slideWasActive = sliding;
-    slideActionAge = Math.min(9, slideActionAge + dt_);
-    slideExitAge = Math.min(9, slideExitAge + dt_);
 
     // Authored action timeline weights. These only stage the mesh; physics and
     // collider state continue to use the original timers above.
@@ -23243,6 +23724,35 @@ THREE.GLTFLoader = GLTFLoader;
     var victoryWindup = phaseWindow(victoryActionAge, 0.00, 0.07, 0.14, 0.20);
     var victoryPunch = phaseWindow(victoryActionAge, 0.13, 0.19, 0.36, 0.44);
     var victorySettle = phaseWindow(victoryActionAge, 0.38, 0.45, 0.60, 0.69);
+    // Four readable beats over the lane spring's ~0.35 s travel. The windows
+    // intentionally overlap so a rapid reversal blends through a new load
+    // instead of popping back to the neutral run pose for one frame.
+    var laneLoad = phaseWindow(laneActionAge, 0.00, 0.025, 0.055, 0.095);
+    var lanePush = phaseWindow(laneActionAge, 0.045, 0.085, 0.145, 0.205);
+    var laneCross = phaseWindow(laneActionAge, 0.125, 0.175, 0.235, 0.295);
+    var laneCatch = phaseWindow(laneActionAge, 0.225, 0.275, 0.345, 0.415);
+    var laneAction = clamp(laneLoad + lanePush + laneCross + laneCatch, 0, 1);
+    var laneDir = laneActionDir;
+    // Preserve the interrupted beat while a reversal starts. This keeps the
+    // previous planted leg and torso counter-rotation fading through the new
+    // load instead of snapping both sides to the neutral run pose for a frame.
+    var laneOutLoad = phaseWindow(laneOutgoingAge, 0.00, 0.025, 0.055, 0.095);
+    var laneOutPush = phaseWindow(laneOutgoingAge, 0.045, 0.085, 0.145, 0.205);
+    var laneOutCross = phaseWindow(laneOutgoingAge, 0.125, 0.175, 0.235, 0.295);
+    var laneOutCatch = phaseWindow(laneOutgoingAge, 0.225, 0.275, 0.345, 0.415);
+    var laneOutAction = clamp(laneOutLoad + laneOutPush + laneOutCross + laneOutCatch, 0, 1);
+    var laneOutDir = laneOutgoingDir;
+    var laneActionTotal = clamp(laneAction + laneOutAction, 0, 1);
+    var laneBlendNorm = 1 / Math.max(1, laneAction + laneOutAction);
+    // One complete forward somersault over the physical slide window. Smooth
+    // endpoints keep angular velocity at zero on entry/exit; holding the final
+    // 2pi angle is matrix-identical to upright, so recovery cannot snap.
+    // Window pulled earlier (0.015/0.555 -> 0.010/0.500): the flip now commits
+    // fast on entry — most of the rotation lands inside the first 60% of the
+    // slide — and the tail of the window HOLDS at a full 2pi, which reads as a
+    // slow-out settle onto the feet rather than the old constant-velocity spin.
+    var rollProgress = phaseEase((slideActionAge - 0.010) / 0.500);
+    var rollAngle = rollProgress * Math.PI * 2;
 
     takeoffPulse = Math.max(0, takeoffPulse - dt_ * 5.5);
     landingPulse = Math.max(0, landingPulse - dt_ * 4.8);
@@ -23254,16 +23764,51 @@ THREE.GLTFLoader = GLTFLoader;
     var attractPose = !started ? 1 : 0;
 
     // Body carriage: lean into the lane change, forward at speed, low in a slide.
-    var laneVel = clamp((LANES[targetLane] - visualPlayer.x) * 0.9, -1, 1);
+    // Actual lateral velocity gives the lean a sharp push and a natural settle;
+    // remaining-distance lean peaked before the runner was moving and then
+    // vanished while the feet were still sliding into the lane.
+    var laneVel = clamp(visualLaneVelocity / 17, -1, 1);
     leanRoll += (-laneVel * 0.42 - leanRoll) * damp(9, dt_);
     // A second, harder lean drives the mesh only — leanRoll still feeds the
     // camera roll and the existing bone offsets, so the chase framing is
     // untouched. The lagging copy supplies the whip-back once the lane arrives.
-    heroLean += (-laneVel * 0.48 - heroLean) * damp(13, dt_);
+    // Damp raised 13 -> 15 and target deepened -0.48 -> -0.55: the bank now
+    // reaches full travel-side lean faster (Subway Surfers cuts commit hard,
+    // then settle), and the deeper target gives the lagging copy more whip to
+    // overshoot with on arrival.
+    heroLean += (-laneVel * 0.55 - heroLean) * damp(15, dt_);
     heroLeanLag += (heroLean - heroLeanLag) * damp(6.5, dt_);
     var heroWhip = heroLean - heroLeanLag;
-    body.rotation.z = heroLean + heroWhip * 0.35;
-    body.rotation.y = heroLean * 0.32 - heroWhip * 0.20;
+    // Named cut clips already author the hips/spine bank and counter-rotation.
+    // Leave just a small velocity-responsive residue on the visual root while
+    // they own the pose; otherwise the asset bank and the old procedural bank
+    // stack into a near-fall. Camera leanRoll remains intentionally untouched.
+    // Read the effective mixer weights rather than the raw pose windows. The
+    // mixer already suppresses cuts during air/landing/roll/stumble; using raw
+    // windows here would gate the parent even when no named clip is playing.
+    var namedLaneOwnership = charNamedLaneReady ? clamp(
+      (charLaneCurrentL ? charLaneCurrentL.weight : 0) +
+      (charLaneCurrentR ? charLaneCurrentR.weight : 0) +
+      (charLaneOutgoingL ? charLaneOutgoingL.weight : 0) +
+      (charLaneOutgoingR ? charLaneOutgoingR.weight : 0) +
+      (charLaneCurrentLSupportL ? charLaneCurrentLSupportL.weight : 0) +
+      (charLaneCurrentRSupportR ? charLaneCurrentRSupportR.weight : 0) +
+      (charLaneOutgoingLSupportL ? charLaneOutgoingLSupportL.weight : 0) +
+      (charLaneOutgoingRSupportR ? charLaneOutgoingRSupportR.weight : 0), 0, 1) : 0;
+    var parentLaneBankGate = 1 - namedLaneOwnership * 0.88;
+    var windowLaneBankGate = 1 - namedLaneOwnership * 0.90;
+    var velocityLaneBank = heroLean + heroWhip * 0.45;
+    var windowLaneBank =
+      (laneDir * (-laneLoad * 0.10 - lanePush * 0.08 + laneCatch * 0.07) +
+       laneOutDir * (-laneOutLoad * 0.10 - laneOutPush * 0.08 + laneOutCatch * 0.07)) * laneBlendNorm;
+    body.rotation.z = velocityLaneBank * parentLaneBankGate +
+                      windowLaneBank * windowLaneBankGate;
+    var velocityLaneYaw = heroLean * 0.38 - heroWhip * 0.26;
+    var windowLaneYaw =
+      (laneDir * (laneLoad * 0.10 - laneCross * 0.08 + laneCatch * 0.05) +
+       laneOutDir * (laneOutLoad * 0.10 - laneOutCross * 0.08 + laneOutCatch * 0.05)) * laneBlendNorm;
+    body.rotation.y = velocityLaneYaw * parentLaneBankGate +
+                      windowLaneYaw * windowLaneBankGate;
     if (attractPose) {
       body.rotation.z = Math.sin(t * 0.72) * 0.035;
       body.rotation.y = -0.10 + Math.sin(t * 0.47) * 0.055;
@@ -23272,7 +23817,11 @@ THREE.GLTFLoader = GLTFLoader;
     // Athletic forward drive without folding the backpack toward the road.
     // The clip already contributes pelvis/spine pitch, so the former 0.20
     // parent lean double-counted the bend and hid the hero's strongest back graphic.
-    var pitch = 0.14 + clamp((speed - BASE_SPEED) / 40, 0, 1) * 0.16;
+    // heroSpeedK is shared with the run-juice block below: forward lean, root
+    // bob depth and amplifier gain all scale together as the road speeds up,
+    // which is what makes high-speed running read heavier than the start pace.
+    var heroSpeedK = clamp((speed - BASE_SPEED) / 40, 0, 1);
+    var pitch = 0.14 + heroSpeedK * 0.16;
     // Forward duck, not a baseball recline: the chase camera sits above and
     // behind the hero, so a backward pitch here tips the crown of the head
     // straight into the lens (seven prior tuning passes on a negative target
@@ -23281,8 +23830,10 @@ THREE.GLTFLoader = GLTFLoader;
     // shoulder-pendulum comment below); the slide just leans harder and drops,
     // which keeps the back plane — and its flag graphic — presented to camera
     // the whole way through instead of rotating it away.
-    pitch = lerp(pitch, charAssetComplete ? 0.68 : 0.74, slideVisual);
-    pitch += jumpAnticipation * 0.16 - jumpTakeoff * 0.10 + jumpApex * 0.07 +
+    // The limbs/action clip supply the tuck. Parent pitch stays modest because
+    // rollAngle below now provides the actual 360-degree movement.
+    pitch = lerp(pitch, charAssetComplete ? 0.18 : 0.22, slideVisual);
+    pitch += jumpAnticipation * 0.16 - jumpTakeoff * 0.10 + jumpApex * 0.17 +
              jumpDescent * 0.14 + landContact * 0.26 - landRebound * 0.11;
     if (attractPose) pitch = -0.015 + Math.sin(t * 1.35) * 0.008;
     if (stumbleTimer > 0) {
@@ -23290,19 +23841,36 @@ THREE.GLTFLoader = GLTFLoader;
       body.rotation.z += Math.sin(stumbleProgress * Math.PI * 2.5) * stumblePose * 0.24;
       body.rotation.y += Math.sin(stumbleProgress * Math.PI) * 0.16;
     }
-    body.rotation.x = pitch;
+    body.rotation.x = pitch + rollAngle;
     if (charAssetComplete) body.rotation.z += slideVisual * 0.10;
-    body.position.y = -0.72 * slideVisual - landContact * 0.20 + landRebound * 0.075 +
-                      jumpAnticipation * -0.075 + jumpTakeoff * 0.075 +
-                      celebratePose * 0.055 + attractPose * Math.sin(t * 1.35) * 0.012;
-    body.position.z = -0.36 * slideVisual;
+    body.position.x = charNamedLaneReady ? 0 :
+      (laneDir * (-laneLoad * 0.055 + lanePush * 0.085 - laneCatch * 0.045) +
+       laneOutDir * (-laneOutLoad * 0.055 + laneOutPush * 0.085 - laneOutCatch * 0.045)) * laneBlendNorm;
+    // Rotate around a point near the pelvis rather than around the soles. The
+    // compensating translation keeps the hero's centre travelling low and
+    // forward while the head/feet circle it, instead of orbiting through the
+    // road around the render root.
+    var rollPivotY = charAssetComplete ? 0.78 : 0.73;
+    var rollPivotLift = (1 - Math.cos(rollAngle)) * rollPivotY * slideVisual;
+    var rollPivotDrive = -Math.sin(rollAngle) * rollPivotY * slideVisual;
+    var legacyActionBodyY = charNamedActionsReady ? 0 :
+      (-landContact * 0.20 + landRebound * 0.075 +
+       jumpAnticipation * -0.075 + jumpTakeoff * 0.075 + celebratePose * 0.055);
+    var legacyLaneBodyY = charNamedLaneReady ? 0 :
+      ((laneLoad * 0.045 - laneCross * 0.025 + laneCatch * 0.035) +
+       (laneOutLoad * 0.045 - laneOutCross * 0.025 + laneOutCatch * 0.035)) * laneBlendNorm;
+    body.position.y = rollPivotLift + legacyActionBodyY - legacyLaneBodyY +
+                      attractPose * Math.sin(t * 1.35) * 0.012;
+    body.position.z = rollPivotDrive - Math.sin(rollProgress * Math.PI) * 0.16 * slideVisual;
     // Action deformation is visual-only: the collider and physics root retain
     // their tuned dimensions. Landings widen and compress, toe-off lengthens,
     // and the slide flattens the silhouette instead of merely rotating it.
     var squash = landContact * 0.40 + jumpAnticipation * 0.15 + slideEntry * 0.075 +
-                 slideVisual * 0.045 + stumbleImpact * 0.070 -
-                 jumpTakeoff * 0.135 - jumpAscent * 0.050 - landRebound * 0.120;
-    body.scale.set(1 + squash * 0.62 + slideVisual * 0.05,
+                  slideVisual * 0.045 + stumbleImpact * 0.070 -
+                  jumpTakeoff * 0.135 - jumpAscent * 0.050 - landRebound * 0.120 +
+                  ((laneLoad * 0.055 + laneCatch * 0.045 - lanePush * 0.035) +
+                   (laneOutLoad * 0.055 + laneOutCatch * 0.045 - laneOutPush * 0.035)) * laneBlendNorm;
+    body.scale.set(1 + squash * 0.62 + slideVisual * 0.05 + laneActionTotal * 0.018,
                    1 - squash - slideVisual * 0.03,
                    1 + squash * 0.46 - slideVisual * 0.06);
 
@@ -23348,7 +23916,7 @@ THREE.GLTFLoader = GLTFLoader;
       // Tuck with an eased visual hand-off at takeoff and landing. Every joint,
       // including both ankles, receives a target each frame.
       var av = airVisual;
-      var rise = clamp(player.vy / JUMP_V, -1, 1);
+      var rise = clamp(visualVy / JUMP_V, -1, 1);
       var airKneeL = kneeCycleL * 1.7;
       var airKneeR = kneeCycleR * 1.7;
       // Compact asymmetric tuck: one knee leads, the trailing leg still bends,
@@ -23488,6 +24056,33 @@ THREE.GLTFLoader = GLTFLoader;
       hips.rotation.z = -swing * 0.055;
     }
 
+    // Directional cut-step on the procedural display rig. One leg loads and
+    // pushes while the other crosses and catches, so lateral root motion has a
+    // visible cause instead of looking like a translated run loop. Airborne
+    // steering keeps the body bank above but correctly omits planted footwork.
+    var canPlantLane = grounded && !sliding && stumbleTimer <= 0 && !attractPose;
+    function applyProceduralCut(dir, load, push, cross, catchPose, action) {
+      if (action <= 0.001 || !canPlantLane || !dir) return;
+      var laneLead = dir > 0 ? legL : legR;
+      var lanePushLeg = dir > 0 ? legR : legL;
+      var leadSign = dir > 0 ? -1 : 1;
+      lanePushLeg.hip.rotation.x += load * 0.18 + push * 0.28;
+      lanePushLeg.knee.rotation.x += load * 0.34 + push * 0.22;
+      lanePushLeg.hip.rotation.z += leadSign * (load * 0.10 + push * 0.16);
+      laneLead.hip.rotation.x += -cross * 0.30 + catchPose * 0.10;
+      laneLead.knee.rotation.x += cross * 0.52 + catchPose * 0.38;
+      laneLead.hip.rotation.z -= leadSign * (cross * 0.15 + catchPose * 0.08);
+      laneLead.ankle.rotation.x += -cross * 0.18 + catchPose * 0.14;
+      torso.rotation.y += dir * (push * 0.10 - catchPose * 0.08);
+      hips.rotation.y -= dir * (push * 0.13 - catchPose * 0.10);
+      armL.shoulder.rotation.z += dir * (push - catchPose) * 0.07;
+      armR.shoulder.rotation.z += dir * (push - catchPose) * 0.07;
+    }
+    applyProceduralCut(laneDir, laneLoad * laneBlendNorm, lanePush * laneBlendNorm,
+                       laneCross * laneBlendNorm, laneCatch * laneBlendNorm, laneAction);
+    applyProceduralCut(laneOutDir, laneOutLoad * laneBlendNorm, laneOutPush * laneBlendNorm,
+                       laneOutCross * laneBlendNorm, laneOutCatch * laneBlendNorm, laneOutAction);
+
     // Additive action shapes for the imported single-clip character. The run
     // animation remains the base, while these offsets make each action readable
     // from the chase camera. Subtle asymmetry keeps the pose from feeling robotic.
@@ -23496,13 +24091,14 @@ THREE.GLTFLoader = GLTFLoader;
       // writing to (see captureHeroStaticPose). Must run before anything below
       // reads or adds to a bone rotation, or the additive layers compound onto
       // last frame's result instead of onto this frame's clip pose.
-      restoreHeroStaticPose();
+      if (!charIdleAction || charIdleAction.weight <= 0.001) restoreHeroStaticPose();
       // Exaggeration first, on the clean mixer output, so the additive action
       // offsets below stay the size they were authored at.
-      heroAmplify(dt_, (1 - attractPose * 0.6) * (1 - slideVisual * 0.55));
+      heroAmplify(dt_, (1 - attractPose * 0.6) * (1 - slideVisual * 0.55) *
+        (1 + heroSpeedK * 0.30));
       if (!charAssetComplete) heroScaleBones();
       var airPose = clamp(jumpAscent + jumpApex + jumpDescent, 0, 1);
-      var rise = clamp(player.vy / JUMP_V, -1, 1);
+      var rise = clamp(visualVy / JUMP_V, -1, 1);
       charModel.position.y = charBaseY + celebratePose * 0.025 +
                              Math.sin(t * 1.35) * 0.008 * attractPose +
                              (charAssetComplete ? slideVisual * 0.30 : 0);
@@ -23530,10 +24126,13 @@ THREE.GLTFLoader = GLTFLoader;
       // weight 0 three.js lerps the binding back toward the bind pose it
       // captured, which is exactly what "cancel the run clip" means, and it
       // needs no copy of the Blender curves over here to stay correct.
-      // Read one frame later by the clip-sync block that drives the mixer;
-      // the authored actions ramp in over ~0.1 s, so a single frame of lag
-      // is not observable.
-      heroBaseClipFade = clamp(airPose + landContact + landRebound + slideVisual, 0, 1);
+      // updateAuthoredActions resolves heroBaseClipFade before this frame's
+      // mixer sample, including stumble as well as air/land/roll.
+      var namedPrimaryWeight = charNamedActionsReady ? clamp(Math.max(
+        charJumpAction.weight, charJumpActionL ? charJumpActionL.weight : 0,
+        charJumpActionR ? charJumpActionR.weight : 0,
+        charLandAction.weight, charSlideAction.weight,
+        charStumbleAction.weight, charVictoryActionL.weight, charVictoryActionR.weight), 0, 1) : 0;
 
       // Secondary motion: Head/Hands/Feet lag the torso by a beat and settle
       // instead of every joint reaching its pose on the same frame as the
@@ -23547,7 +24146,7 @@ THREE.GLTFLoader = GLTFLoader;
       var followDecay = Math.exp(-9.5 * dt_);
       heroFollowV = (heroFollowV + (followTarget - heroFollowX) * 150 * dt_) * followDecay;
       heroFollowX += heroFollowV * dt_;
-      var followW = 1 - attractPose;
+      var followW = (1 - attractPose) * (1 - namedPrimaryWeight);
       nudgeCharBone('Head', heroFollowX * 0.16, 0, 0, followW);
       nudgeCharBone('LeftHand', -heroFollowX * 0.22, 0, heroFollowX * 0.10, followW);
       nudgeCharBone('RightHand', -heroFollowX * 0.22, 0, -heroFollowX * 0.10, followW);
@@ -23566,6 +24165,88 @@ THREE.GLTFLoader = GLTFLoader;
       nudgeCharBone('Spine02', 0, swing * 0.08, 0, runCounter);
       nudgeCharBone('Hips', 0, swing * 0.10, 0, runCounter);
 
+      // Run juice on the render clock, layered over the baked cycle. Everything
+      // here is phase-locked to heroRunPhase (the same clock the clip plays on)
+      // and weighted by runCounter, so it is silent during air/land/slide/
+      // stumble/celebrate and can never fight the authored poses. No
+      // allocations: every term is a scalar off values already computed above.
+      if (runCounter > 0.001) {
+        // Root bob at contact frequency (|cos| bottoms on each foot plant).
+        // Deeper with speed, plus a small landRebound pop so the recovery
+        // overshoots the standing height for a few frames before settling.
+        var runBobAmp = 0.030 + heroSpeedK * 0.022;
+        charModel.position.y +=
+          -Math.abs(Math.cos(runPhase)) * runBobAmp * runCounter +
+          landRebound * 0.035;
+        // Speed-scaled forward lean through the spine chain — the parent pitch
+        // above carries the base, this adds the "working harder" extra fold.
+        nudgeCharBone('Spine01', 0.055 + heroSpeedK * 0.11, 0,
+                      swing * 0.045, runCounter);
+        // Torso roll sway: the shoulders rock slightly into each stride,
+        // counter-phase to the hip drop, which reads as weight over the
+        // planted foot rather than a metronome.
+        nudgeCharBone('Spine02', 0, swing * 0.07, swing2 * 0.03, runCounter);
+        // Head stays level and leads very slightly: counter-pitch against the
+        // spine lean, plus a double-frequency nod synced to the bob.
+        nudgeCharBone('Head',
+                      -0.035 - heroSpeedK * 0.05 + Math.cos(runPhase * 2) * 0.028,
+                      swing * 0.04, -swing * 0.03, runCounter);
+        // Elbow pump on the eased flex lobes already computed for the gait:
+        // the forearm snaps closed through each back-swing and opens on the
+        // drive, one beat behind the shoulder (whose amplitude heroAmplify owns).
+        nudgeCharBone('LeftForeArm', armCurlL * 0.20, 0, 0, runCounter);
+        nudgeCharBone('RightForeArm', armCurlR * 0.20, 0, 0, runCounter);
+        // Foot-plant weight: a short toe-down press inside each narrow support
+        // window sells contact without ever lifting the shoe off its phase.
+        nudgeCharBone('LeftFoot', plantL * 0.12, 0, 0, runCounter);
+        nudgeCharBone('RightFoot', plantR * 0.12, 0, 0, runCounter);
+        // Pelvis bounce at double frequency — the hips rise between plants.
+        nudgeCharBone('Hips', Math.cos(runPhase * 2) * 0.020, 0, 0, runCounter);
+        // Lane-change upper-body lead: twist the shoulders into the travel
+        // direction on top of the parent yaw, but yield to the named cut clips
+        // (they author their own shoulder crossover) rather than stacking.
+        nudgeCharBone('Spine02', 0, heroLean * 0.12, 0,
+                      runCounter * parentLaneBankGate);
+      }
+
+      // Authored-direction cut step for the GLB rig. The outside leg supplies
+      // the push, the inside leg crosses into the new lane, then both feet open
+      // for the catch. These are small additive offsets over the baked run and
+      // action clips; collision continues to use the lane spring above.
+      function applyImportedCut(dir, load, push, cross, catchPose, action) {
+        var cutWeight = action * (grounded && !sliding && stumbleTimer <= 0 ? 1 : 0);
+        if (cutWeight <= 0.001 || !dir) return;
+        var leadUp = dir > 0 ? 'LeftUpLeg' : 'RightUpLeg';
+        var leadKnee = dir > 0 ? 'LeftLeg' : 'RightLeg';
+        var leadFoot = dir > 0 ? 'LeftFoot' : 'RightFoot';
+        var pushUp = dir > 0 ? 'RightUpLeg' : 'LeftUpLeg';
+        var pushKnee = dir > 0 ? 'RightLeg' : 'LeftLeg';
+        var cutSide = dir > 0 ? -1 : 1;
+        nudgeCharBone('Hips', load * -0.10 + cross * 0.06,
+                      dir * (push * -0.14 + catchPose * 0.10),
+                      dir * (load * -0.13 + push * 0.16 - catchPose * 0.10), cutWeight);
+        nudgeCharBone('Spine01', load * 0.07 - catchPose * 0.05,
+                      dir * (push * 0.12 - catchPose * 0.10),
+                      dir * (push * -0.11 + catchPose * 0.08), cutWeight);
+        nudgeCharBone(pushUp, load * 0.16 + push * 0.26, 0,
+                      cutSide * (load * 0.11 + push * 0.16), cutWeight);
+        nudgeCharBone(pushKnee, load * 0.34 + push * 0.24, 0, 0, cutWeight);
+        nudgeCharBone(leadUp, -cross * 0.32 + catchPose * 0.08, 0,
+                      -cutSide * (cross * 0.16 + catchPose * 0.08), cutWeight);
+        nudgeCharBone(leadKnee, cross * 0.56 + catchPose * 0.42, 0, 0, cutWeight);
+        nudgeCharBone(leadFoot, -cross * 0.20 + catchPose * 0.15,
+                      dir * (cross * 0.08 - catchPose * 0.05),
+                      -cutSide * catchPose * 0.08, cutWeight);
+        nudgeCharBone('LeftArm', 0, 0, dir * (push - catchPose) * 0.09, cutWeight);
+        nudgeCharBone('RightArm', 0, 0, dir * (push - catchPose) * 0.09, cutWeight);
+      }
+      if (!charNamedLaneReady) {
+        applyImportedCut(laneDir, laneLoad, lanePush, laneCross, laneCatch,
+                         laneAction * laneBlendNorm);
+        applyImportedCut(laneOutDir, laneOutLoad, laneOutPush, laneOutCross, laneOutCatch,
+                         laneOutAction * laneBlendNorm);
+      }
+
       // Title-screen idle: weight on one foot, loose shoulders, slow breathing.
       // Built from the fixed bind pose (setCharBoneFromBind), not nudged onto
       // whatever the bone currently holds — attractPose stays at a constant 1
@@ -23573,6 +24254,7 @@ THREE.GLTFLoader = GLTFLoader;
       // measured out as an unbounded per-frame drift with nothing resetting
       // it (see heroBindRot's comment). An absolute pose has no such state to
       // drift.
+      if (!charIdleAction) {
       setCharBoneFromBind('Hips', 0.035, -0.08, -0.045, attractPose);
       setCharBoneFromBind('Spine', -0.045, 0.035, 0.025, attractPose);
       setCharBoneFromBind('Spine01', 0.025 + Math.sin(t * 1.35) * 0.012, 0, -0.018, attractPose);
@@ -23584,6 +24266,7 @@ THREE.GLTFLoader = GLTFLoader;
       setCharBoneFromBind('RightArm', 0.12, 0, 0.08, attractPose);
       setCharBoneFromBind('LeftForeArm', -0.20, 0, 0, attractPose);
       setCharBoneFromBind('RightForeArm', -0.28, 0, 0, attractPose);
+      }
 
       // Keyed clips own action anatomy when every required clip was built. This
       // branch remains a safe overlay for partial or differently named rigs.
@@ -23646,6 +24329,25 @@ THREE.GLTFLoader = GLTFLoader;
       nudgeCharBone('RightArm', -0.44, 0, 0.34, landContact);
       nudgeCharBone('Hips', 0.14, 0, 0, landRebound);
       nudgeCharBone('Spine01', -0.12, 0, 0, landRebound);
+      // Transition juice on top of the authored windows. Anticipation gets a
+      // deeper collect (hips fold, arms swing back hard) so the takeoff reads
+      // as caused; takeoff extends the elbows into the reach; the hang keeps
+      // the arms lifted and the chest open so the apex silhouette is the
+      // widest, most readable frame of the jump.
+      nudgeCharBone('Spine01', 0.09, 0, 0, jumpAnticipation);
+      nudgeCharBone('LeftArm', -0.30, 0, -0.06, jumpAnticipation);
+      nudgeCharBone('RightArm', -0.30, 0, 0.06, jumpAnticipation);
+      nudgeCharBone('LeftForeArm', -0.28, 0, 0, jumpTakeoff);
+      nudgeCharBone('RightForeArm', -0.28, 0, 0, jumpTakeoff);
+      nudgeCharBone('LeftArm', 0.28, 0, -0.14, jumpAscent);
+      nudgeCharBone('RightArm', 0.28, 0, 0.14, jumpAscent);
+      nudgeCharBone('Spine02', -0.09, 0, 0, jumpAscent);
+      // Landing: head snaps down with the absorb, elbows fold into the chest,
+      // then the rebound window above pops the root and spine back past
+      // neutral for the overshoot-and-settle recovery.
+      nudgeCharBone('Head', 0.14, 0, 0, landContact);
+      nudgeCharBone('LeftForeArm', 0.30, 0, 0, landContact);
+      nudgeCharBone('RightForeArm', 0.30, 0, 0, landContact);
 
       nudgeCharBone('LeftUpLeg', -0.76, 0, -0.10, slideVisual);
       nudgeCharBone('RightUpLeg', -1.34, 0, 0.12, slideVisual);
@@ -23665,6 +24367,18 @@ THREE.GLTFLoader = GLTFLoader;
       nudgeCharBone('RightArm', 0.24, 0, 0.08, slideAnticipation);
       nudgeCharBone('Spine', 0.18, 0, 0, slideExit);
       nudgeCharBone('Head', -0.12, 0, 0, slideExit);
+      // Tight tuck on top of the slide pose: chin down, spine curled, knees
+      // pulled tighter and fists drawn in, so the somersault reads as a compact
+      // ball instead of a reclined slide that happens to rotate. Weighted by
+      // the full slideVisual envelope, so it builds with the entry and releases
+      // through the exit alongside everything else.
+      nudgeCharBone('Head', 0.12, 0, 0, slideVisual);
+      nudgeCharBone('Spine01', 0.20, 0, 0, slideVisual);
+      nudgeCharBone('Hips', 0.16, 0, 0, slideVisual);
+      nudgeCharBone('LeftLeg', 0.32, 0, 0, slideVisual);
+      nudgeCharBone('RightLeg', 0.42, 0, 0, slideVisual);
+      nudgeCharBone('LeftForeArm', 0.22, 0, 0, slideVisual);
+      nudgeCharBone('RightForeArm', 0.26, 0, 0, slideVisual);
 
       // Impact folds the torso; the brief flail loses foot contact; contact
       // catches on one leg; recovery counter-rotates toward the run posture.
@@ -23709,8 +24423,9 @@ THREE.GLTFLoader = GLTFLoader;
       if (charAuthoredReady) {
         // A tiny live attention layer remains independent of the action clips so
         // it can follow a lane change that begins mid-jump or mid-celebration.
-        nudgeCharBone('neck', -0.025, laneVel * 0.10, leanRoll * -0.14, 1 - attractPose);
-        nudgeCharBone('Head', -0.018, laneVel * 0.12, leanRoll * -0.10, 1 - attractPose);
+        var attentionWeight = (1 - attractPose) * (1 - namedPrimaryWeight);
+        nudgeCharBone('neck', -0.025, laneVel * 0.10, leanRoll * -0.14, attentionWeight);
+        nudgeCharBone('Head', -0.018, laneVel * 0.12, leanRoll * -0.10, attentionWeight);
 
         // Finish the extremity silhouettes after the keyed clips: planted toes
         // roll into the road, landing feet spread, and hands lead emergency and
@@ -23719,14 +24434,19 @@ THREE.GLTFLoader = GLTFLoader;
         // half a cycle). These cues used the procedural rig's opposite naming,
         // so toe roll landed on the airborne shoe once the two phases were
         // synchronized below.
-        var plantL = grounded && !sliding ? Math.pow(Math.max(0, -Math.cos(runPhase)), 7) : 0;
-        var plantR = grounded && !sliding ? Math.pow(Math.max(0, Math.cos(runPhase)), 7) : 0;
+        var plantGate = 1 - namedPrimaryWeight;
+        var plantL = grounded && !sliding ?
+          Math.pow(Math.max(0, -Math.cos(runPhase)), 7) * plantGate : 0;
+        var plantR = grounded && !sliding ?
+          Math.pow(Math.max(0, Math.cos(runPhase)), 7) * plantGate : 0;
         nudgeCharBone('LeftFoot', 0.11, 0, -0.025, plantL);
         nudgeCharBone('RightFoot', 0.11, 0, 0.025, plantR);
-        nudgeCharBone('LeftFoot', 0.09, 0, -0.075, landContact);
-        nudgeCharBone('RightFoot', 0.09, 0, 0.075, landContact);
-        nudgeCharBone('LeftHand', 0.035, -0.045, -0.10, slideEntry + stumbleFlail * 0.55);
-        nudgeCharBone('RightHand', 0.035, 0.045, 0.10, slideEntry + stumbleFlail * 0.55);
+        if (!charNamedActionsReady) {
+          nudgeCharBone('LeftFoot', 0.09, 0, -0.075, landContact);
+          nudgeCharBone('RightFoot', 0.09, 0, 0.075, landContact);
+          nudgeCharBone('LeftHand', 0.035, -0.045, -0.10, slideEntry + stumbleFlail * 0.55);
+          nudgeCharBone('RightHand', 0.035, 0.045, 0.10, slideEntry + stumbleFlail * 0.55);
+        }
       }
 
       // The complete Blender hero has broad cuffs and trainers, so the two
@@ -23759,21 +24479,22 @@ THREE.GLTFLoader = GLTFLoader;
         // run clip's own swing is cancelled above -- stacking the old, much
         // bigger emphasis on top of that pushed the trailing leg's knee
         // back down toward "hanging", undoing the point of the tuck.
-        var completeAirOpen = clamp(jumpAscent + jumpApex + jumpDescent, 0, 1);
-        nudgeCharBone('LeftUpLeg', 0, 0, -0.055, completeAirOpen);
-        nudgeCharBone('RightUpLeg', 0, 0, 0.055, completeAirOpen);
-        nudgeCharBone('LeftUpLeg', -0.07, 0, -0.025, jumpApex);
-        nudgeCharBone('RightUpLeg', 0.06, 0, 0.025, jumpApex);
-        nudgeCharBone('LeftLeg', 0.08, 0, 0, jumpApex);
-        nudgeCharBone('RightLeg', -0.04, 0, 0, jumpApex);
-        nudgeCharBone('LeftFoot', -0.08, 0.035, -0.02, jumpApex);
-        nudgeCharBone('RightFoot', 0.08, -0.035, 0.02, jumpApex);
-        nudgeCharBone('LeftUpLeg', 0.09, 0, -0.015, jumpDescent);
-        nudgeCharBone('RightUpLeg', -0.14, 0, 0.025, jumpDescent);
-        nudgeCharBone('LeftLeg', -0.06, 0, 0, jumpDescent);
-        nudgeCharBone('RightLeg', 0.16, 0, 0, jumpDescent);
-        nudgeCharBone('LeftFoot', 0.07, 0.025, 0, jumpDescent);
-        nudgeCharBone('RightFoot', -0.06, -0.025, 0, jumpDescent);
+        if (!charNamedActionsReady) {
+          var completeAirOpen = clamp(jumpAscent + jumpApex + jumpDescent, 0, 1);
+          nudgeCharBone('LeftUpLeg', 0, 0, -0.055, completeAirOpen);
+          nudgeCharBone('RightUpLeg', 0, 0, 0.055, completeAirOpen);
+          nudgeCharBone('LeftUpLeg', -0.07, 0, -0.025, jumpApex);
+          nudgeCharBone('RightUpLeg', 0.06, 0, 0.025, jumpApex);
+          nudgeCharBone('LeftLeg', 0.08, 0, 0, jumpApex);
+          nudgeCharBone('RightLeg', -0.04, 0, 0, jumpApex);
+          nudgeCharBone('LeftFoot', -0.08, 0.035, -0.02, jumpApex);
+          nudgeCharBone('RightFoot', 0.08, -0.035, 0.02, jumpApex);
+          nudgeCharBone('LeftUpLeg', 0.09, 0, -0.015, jumpDescent);
+          nudgeCharBone('RightUpLeg', -0.14, 0, 0.025, jumpDescent);
+          nudgeCharBone('LeftLeg', -0.06, 0, 0, jumpDescent);
+          nudgeCharBone('RightLeg', 0.16, 0, 0, jumpDescent);
+          nudgeCharBone('LeftFoot', 0.07, 0.025, 0, jumpDescent);
+          nudgeCharBone('RightFoot', -0.06, -0.025, 0, jumpDescent);
 
         // Keep the low baseball slide readable from directly behind. The broad
         // cap/backpack otherwise stack into a circular top-down blob while the
@@ -23787,7 +24508,8 @@ THREE.GLTFLoader = GLTFLoader;
         nudgeCharBone('LeftFoot', -0.08, 0.05, -0.13, slideVisual);
         nudgeCharBone('RightFoot', 0.08, -0.04, 0.11, slideVisual);
         nudgeCharBone('LeftArm', 0, 0, -0.15, slideVisual);
-        nudgeCharBone('RightArm', 0, 0, 0.12, slideVisual);
+          nudgeCharBone('RightArm', 0, 0, 0.12, slideVisual);
+        }
       }
     }
 
@@ -23858,6 +24580,37 @@ THREE.GLTFLoader = GLTFLoader;
 
     applyPlayerFrame(rig, visualPlayer.x, visualPlayer.y, visualPlayer.z, 0, 0, 0);
 
+    // For the first load beat of a lane change, keep the selected support shoe
+    // visually planted by offsetting only the rendered character root. This is
+    // intentionally lateral-only: locking forward would separate the hero from
+    // a 26-54 m/s collider by metres. The correction carries lightly through
+    // the push apex and releases by 175 ms; physics remains untouched and it is
+    // capped to 42 cm in world space, while physics remains exactly untouched.
+    if (laneFootLockActive && charModel && grounded && slideTimer <= 0 &&
+        stumbleTimer <= 0 && landingActionAge >= 0.30 && laneActionAge < 0.175) {
+      var lockFoot = laneFootLockSupport > 0 ? charBones.RightFoot : charBones.LeftFoot;
+      if (lockFoot) {
+        rig.updateMatrixWorld(true);
+        lockFoot.getWorldPosition(laneFootProbe);
+        var rigElements = rig.matrixWorld.elements;
+        var axisX = rigElements[0], axisY = rigElements[1], axisZ = rigElements[2];
+        var axisLength = Math.sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ);
+        if (axisLength > 1e-5) {
+          axisX /= axisLength; axisY /= axisLength; axisZ /= axisLength;
+          var footError = (laneFootAnchor.x - laneFootProbe.x) * axisX +
+                          (laneFootAnchor.y - laneFootProbe.y) * axisY +
+                          (laneFootAnchor.z - laneFootProbe.z) * axisZ;
+          var lockWeight = 1 - phaseEase((laneActionAge - 0.075) / 0.100);
+          var worldCorrection = clamp(footError, -0.42, 0.42) * lockWeight;
+          body.position.x += worldCorrection / axisLength;
+          rig.updateMatrixWorld(true);
+        }
+      }
+    } else if (laneActionAge >= 0.175 || !grounded || slideTimer > 0 ||
+               stumbleTimer > 0 || landingActionAge < 0.30) {
+      laneFootLockActive = false;
+    }
+
     // Offset along the sun's ground direction (CONTACT_DIR_*, the same constant
     // the pooled prop shadows use) so the dark core clears the runner's own
     // silhouette instead of hiding directly behind it. The lean grows as the
@@ -23918,10 +24671,12 @@ THREE.GLTFLoader = GLTFLoader;
     // Contact cues now follow the actual extremities. One reused matrix update and
     // four reused vectors keep landings, toe-off, slide reaches and fist punches
     // registered to the animated GLB rather than approximate body coordinates.
-    var runCueL = grounded && !sliding ? Math.pow(Math.max(0, Math.cos(runPhase)), 12) * 0.36 : 0;
-    var runCueR = grounded && !sliding ? Math.pow(Math.max(0, -Math.cos(runPhase)), 12) * 0.36 : 0;
-    var footPowerL = Math.max(runCueL, landContact * 0.78, jumpTakeoff * 0.48);
-    var footPowerR = Math.max(runCueR, landContact * 0.78, jumpTakeoff * 0.42);
+    var runCueR = grounded && !sliding ? Math.pow(Math.max(0, Math.cos(runPhase)), 12) * 0.36 : 0;
+    var runCueL = grounded && !sliding ? Math.pow(Math.max(0, -Math.cos(runPhase)), 12) * 0.36 : 0;
+    var footPowerL = Math.max(runCueL, landContact * 0.78,
+      jumpTakeoff * (jumpSupportSide < 0 ? 0.58 : 0.18));
+    var footPowerR = Math.max(runCueR, landContact * 0.78,
+      jumpTakeoff * (jumpSupportSide > 0 ? 0.58 : 0.18));
     if (charModel && charBones.LeftFoot && charBones.RightFoot) {
       rig.updateMatrixWorld(true);
       charBones.LeftFoot.getWorldPosition(cueWorldL);
@@ -23937,6 +24692,11 @@ THREE.GLTFLoader = GLTFLoader;
       cueHandL.set(routePointX, routePointY, routePointZ);
       sampleRoutePoint(visualPlayer.x + 0.64, visualPlayer.y + 1.72 + playerSurfaceY(visualPlayer.z + 0.03), visualPlayer.z + 0.03);
       cueHandR.set(routePointX, routePointY, routePointZ);
+    }
+    if (charModel && charBones.LeftFoot && charBones.RightFoot) {
+      lastFootWorldL.copy(cueWorldL);
+      lastFootWorldR.copy(cueWorldR);
+      heroFootCacheReady = true;
     }
     footCueL.visible = footPowerL > 0.015; footCueR.visible = footPowerR > 0.015;
     footCueL.material.opacity = footPowerL; footCueR.material.opacity = footPowerR;
@@ -24760,14 +25520,31 @@ THREE.GLTFLoader = GLTFLoader;
     visualPlayer.y = lerp(interpPrevY, player.y, renderAlpha);
     visualPlayer.z = lerp(interpPrevZ, player.z, renderAlpha);
     visualRunPhase = lerp(interpPrevRunPhase, runPhase, renderAlpha);
+    visualLaneVelocity = lerp(interpPrevLaneVelocity, laneGlideVelocity, renderAlpha);
+    visualVy = lerp(interpPrevVy, player.vy, renderAlpha);
+
+    // Advance presentation/action clocks before mixer weights are sampled.
+    // Previously poseRunner advanced them after charMixer.update, making every
+    // transition one rendered frame late and leaving slide edge detection out
+    // of sync with the action that consumed it.
+    advanceHeroActionClock(raw);
+    resolveHeroRunPhase();
 
     // Drive the run cycle off ground speed so the feet do not skate, hold it
     // near-frozen in the air, and stop it entirely during a slide.
     if (charMixer) {
       updateAuthoredActions();
       if (!started && charAction) {
-        // Pin one balanced frame of the run clip; poseRunner turns it into a
-        // breathing asymmetric idle without needing a second animation asset.
+        // Prefer the authored 2.4 s idle cycle. Older/fallback assets retain
+        // the balanced held-run frame plus procedural breathing pose below.
+        if (charIdleAction) {
+          charAction.weight = 0;
+          charIdleAction.weight = 1;
+          charIdleAction.paused = true;
+          var idleClip = charIdleAction.getClip ? charIdleAction.getClip() : null;
+          if (idleClip && idleClip.duration > 0.001) charIdleAction.time = t % idleClip.duration;
+          charMixer.update(0);
+        } else {
         // Pausing the action and re-pinning .time every frame (rather than
         // scrubbing time backward on an active action, which is what this
         // used to do) keeps every OTHER bone the sway below doesn't touch
@@ -24784,6 +25561,7 @@ THREE.GLTFLoader = GLTFLoader;
         charAction.paused = true;
         charAction.time = 0.18;
         charMixer.update(raw > 0 ? raw : 0.001);
+        }
       } else {
         // One master gait clock. The baked clip previously advanced from raw
         // render delta at speed/24 while foot plants, torso counter-motion,
@@ -24792,18 +25570,19 @@ THREE.GLTFLoader = GLTFLoader;
         // in overdrive, so feet slowly slid out of their own contact accents.
         // Scrubbing the clip from runPhase keeps every layer phase-locked and
         // also removes render-rate-dependent animation cadence on 60/120 Hz.
+        if (charIdleAction) charIdleAction.weight = 0;
         charAction.paused = true;
         var syncedRunClip = charAction.getClip ? charAction.getClip() : null;
         if (syncedRunClip && syncedRunClip.duration > 0.001) {
-          var syncedCycle = visualRunPhase / (Math.PI * 2);
+          var syncedCycle = heroRunPhase / (Math.PI * 2);
           syncedCycle -= Math.floor(syncedCycle);
           charAction.time = syncedCycle * syncedRunClip.duration;
         }
-        // Fade the base run cycle out under the authored jump/land/slide poses
-        // (see heroBaseClipFade). A floor of 0.12 keeps a trace of the stride
-        // alive so a fully-faded frame does not read as a mannequin snapped to
-        // its bind pose.
-        charAction.weight = 1 - heroBaseClipFade * 0.88;
+        // Named GLB performances own their full-body anatomy and fade the run
+        // completely. The generated fallback keeps its historic 12% floor so
+        // older assets do not expose a bind-frame gap.
+        charAction.weight = charNamedActionsReady ? (1 - heroBaseClipFade) :
+          (1 - heroBaseClipFade * 0.88);
         charMixer.update(0);
       }
     }

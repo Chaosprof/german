@@ -1,5 +1,5 @@
 """
-Berlin Runner hero v3 -- "Berliner in a German-flag T-shirt", round-volume pass.
+Berlin Runner hero v11 -- stylized Berlin courier, silhouette and motion pass.
 
 v2 spent 674 tris and read as a flat paper cutout: bladed 4-sided limbs,
 a faceted head, spike-ring hair (a sea urchin from above), a plank torso,
@@ -17,7 +17,7 @@ fixed by retuning curves; they have to be fixed in the rest pose itself).
 
 Reproducible generator: builds a low-poly, flat-cel, one-mesh/one-material/
 one-texture skinned character matching the game's 23-bone rig, bakes a
-looping sprint cycle named "run", and exports berlin-runner-hero-v3.glb.
+looping sprint cycle named "run", and exports berlin-runner-hero-v11.glb.
 
 Run headless:
   blender.exe -b --python tools/build_hero.py -- [--render-only] [--out PATH]
@@ -25,7 +25,7 @@ Run headless:
 All tunable proportions live in PROP below so iteration doesn't require
 re-deriving numbers by hand.
 """
-import bpy, bmesh, math, os, sys, mathutils
+import bpy, bmesh, math, os, sys, tempfile, mathutils
 from mathutils import Vector, Euler
 
 # --------------------------------------------------------------------------
@@ -38,11 +38,16 @@ OUT_GLB = None
 if '--out' in argv:
     OUT_GLB = argv[argv.index('--out') + 1]
 
-REPO = r'C:\Users\tamas\src\german'
-SCRATCH = os.environ.get('HERO_SCRATCH') or r'C:\Users\tamas\AppData\Local\Temp\claude\C--Users-tamas-src-german\3cc3ec42-f791-4823-acb4-980711ec9f9e\scratchpad\hero'
+VERSION = 'v11'
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from hero_actions import bake_gameplay_actions, set_action_linear
+SCRATCH = os.environ.get('HERO_SCRATCH') or os.path.join(
+    tempfile.gettempdir(), 'berlin-runner-hero-v11')
 os.makedirs(SCRATCH, exist_ok=True)
 if OUT_GLB is None:
-    OUT_GLB = os.path.join(REPO, 'assets', 'models', 'berlin-runner-hero-v3.glb')
+    OUT_GLB = os.path.join(REPO, 'assets', 'models', 'berlin-runner-hero-v11.glb')
 
 # ==========================================================================
 # PROPORTIONS  (meters, Z-up, character FRONT faces -Y -- matches v1/v2's
@@ -97,7 +102,7 @@ PROP = dict(
     # cap edge and hair that a critic pass read as a separate pale blob.
     # head_hair_fringe_v moves with it (see below) so the main-hair band
     # width stays roughly what it was, just shifted down slightly.
-    head_cap_edge_v=0.60,
+    head_cap_edge_v=0.50,
     # v8: repurposed. Used to mark a thin light-hair FRINGE right under the
     # cap edge (0.47); a critic pass on the shipped v7 head called the rest
     # of the visible skull -- everything from there down to the jaw, i.e.
@@ -112,7 +117,7 @@ PROP = dict(
     # a snug cap deliberately shows just a fringe of hair, not a full mass.
     # v14: shifted with head_cap_edge_v (0.58->0.60) so the main hair band
     # (cap_edge..this) stays ~0.10 wide instead of collapsing to a sliver.
-    head_hair_fringe_v=0.70,
+    head_hair_fringe_v=0.62,
     # --- lateral / depth ---
     hip_half_w=0.075,
     # v2 spaced the legs at 0.72x hip_half_w and built them as flat 4-sided
@@ -120,7 +125,9 @@ PROP = dict(
     # into one column. Wider spacing (0.85x) plus round tubes plus a medial
     # shadow face (added in build_leg) is the actual fix; the flat-stick
     # look was never really about the gap.
-    leg_spacing_mult=0.85,
+    # Centres now clear the thigh radii, preserving a real crotch/leg negative
+    # space at rear gameplay scale instead of merging into one trouser column.
+    leg_spacing_mult=1.18,
     # v15 (Task A -- "torso reads as a cone"): was 0.102, only 52% of
     # chest_half_w -- torso_extent() lerps this LINEARLY up to chest width
     # across the whole hip-to-shoulder span, which is exactly what a smooth
@@ -136,7 +143,10 @@ PROP = dict(
     # endpoint gives the eased curve more contrast to work with without
     # reverting to a full linear cone (most of the torso's height still
     # sits close to chest width; only the lower stretch actually narrows).
-    waist_half_w=0.148,
+    # v11: another small step down (0.148->0.142, 72% of chest) for more
+    # shoulder-to-waist taper contrast -- a Subway-Surfers silhouette is an
+    # explicit V, not a rectangle.
+    waist_half_w=0.142,
     # v2's torso depth/width ratio was ~0.6-0.7 -- a shallow box that reads
     # as a plank at a grazing rear-3/4 angle. Deepened toward a real
     # barrel-chest ratio (~0.8-0.85) so the torso has volume from every
@@ -172,11 +182,23 @@ PROP = dict(
     # blank sphere, a slightly smaller sphere should still read as "head",
     # so this is the lower-risk lever vs. touching chest_half_w again
     # (unchanged here) and re-litigating the shoulder ratio from scratch.
-    head_radius=0.190,
+    # v11 (Subway-Surfers proportion pass): bigger head, mesh-only -- the Head
+    # bone's head_low_z/head_top_z are rig contract and untouched; a larger
+    # skull sphere around the same bone span reads as a chunkier cartoon head
+    # without moving any joint.
+    # v11r2 (round-2 Subway-Surfers pass): another ~1.15x on the skull
+    # sphere, mesh-only -- the Head bone's head_low_z/head_top_z stay rig
+    # contract. Same established pattern as the first head bump: the sphere
+    # grows around the unchanged bone span, everything downstream
+    # (build_cap's dome/brim, build_ear's band, the face features) derives
+    # from head_r at build time and scales with it automatically.
+    head_radius=0.234,
     # Hair is now a bulge sculpted INTO the head sphere (see build_head),
     # not a ring of separate spike meshes -- it is round from every angle,
     # including straight overhead where the slide camera looks.
-    hair_bulge=0.075,
+    # v11: scaled up in step with the bigger skull so the hair mass keeps
+    # its relative read.
+    hair_bulge=0.094,
     neck_radius=0.052,
     # v2's shoulder socket (0.225) sat OUTSIDE the chest silhouette (half-
     # width 0.155) by 45% -- a REST-POSE offset, not an animation problem,
@@ -224,15 +246,23 @@ PROP = dict(
     # build_arm's hw_) read as a flare instead of a continuation.
     upper_arm_r0=0.078, upper_arm_r1=0.060,
     forearm_r0=0.063, forearm_r1=0.049,
-    thigh_r0=0.080, thigh_r1=0.063,
+    # v11r2: thighs slimmed ~12% so the enlarged head/upper body reads as
+    # carrying the mass -- the previous thigh read as thick as the torso.
+    thigh_r0=0.070, thigh_r1=0.055,
     shin_r0=0.059, shin_r1=0.047,
     # Oversized trainers are part of the reference silhouette and they give
     # the stride its visual beat at the bottom of the dark leg column.
     # v17: +~20% across the board -- "shoes are small dark ovals" vs a
     # reference where the shoe is a big, obviously chunky trainer.
-    foot_len=0.172, foot_half_w=0.068, foot_h=0.072,
-    toe_len=0.078,
-    shoe_sole_h=0.030, shoe_mid_h=0.020,
+    # v11: widened again (+15% on foot_half_w) -- the Subway-Surfers trainer
+    # is wider than the ankle it sits under, a visible ledge on BOTH sides
+    # of the shin. Length/height unchanged so the sole still lands on z=0.
+    foot_len=0.185, foot_half_w=0.086, foot_h=0.078,
+    toe_len=0.082,
+    # v11r2: midsole thickened to ~30% of the shoe's under-foot stack
+    # (0.030 of 0.030+0.030+trim) so the trainer reads as a real chunky
+    # foam midsole band, not a thin stripe.
+    shoe_sole_h=0.030, shoe_mid_h=0.030,
 )
 
 # Cross-section vertex counts -- round tubes, not flat boxes. Bumped
@@ -256,10 +286,10 @@ PROP = dict(
 # (hit this directly rebuilding this pass: forearm at N_LIMB and hand at a
 # different N_HAND blew up bridge_ring's zip). No vertex-count-reduction
 # transition ring exists anywhere in this file to bridge a mismatch.
-N_LIMB = 32
-N_TORSO = 32
-N_SHOE = 32
-N_HAND = 32
+N_LIMB = 40
+N_TORSO = 40
+N_SHOE = 40
+N_HAND = 40
 
 # Longitudinal ring counts (segments along the length, i.e. how many
 # bridge steps between anatomical keyframe rings) -- these are what stop
@@ -272,32 +302,65 @@ N_HAND = 32
 # Second pass (7/6/7/7/5/8/26/14 @ N_LIMB=28) landed 14,374 tris -- better
 # but still under the 20k floor. Pushed once more, plus N_LIMB/N_TORSO/
 # N_SHOE/N_HAND 28->32.
-N_TORSO_RINGS = 11   # per flag colour band (black/red/gold) -> 33 total
+N_TORSO_RINGS = 13   # per flag colour band (black/red/gold) -> 39 total
 N_DELTOID_RINGS = 9  # per deltoid segment (cap->belly, belly->arm root)
 N_UARM_RINGS = 11    # per upper-arm segment
 N_FARM_RINGS = 11    # per forearm segment
-N_HAND_RINGS = 7
-N_THIGH_RINGS = 13   # per leg-chain segment (thigh/knee/shin all share this)
-N_HEAD_RINGS = 40    # was 7 -- latitude bands on the skull
-N_CAP_RINGS = 22      # rings from skull join to crown tip -- a real dome,
+N_HAND_RINGS = 9
+N_THIGH_RINGS = 15   # per leg-chain segment (thigh/knee/shin all share this)
+N_HEAD_RINGS = 48    # was 7 -- latitude bands on the skull
+N_CAP_RINGS = 26      # rings from skull join to crown tip -- a real dome,
 # not a 2-ring-plus-tip cone.
 
 # ==========================================================================
-# ATLAS  -- flat colour swatches, one per costume region. 512x512, 8x8 grid
-# of 64px cells, each filled with one solid colour (crisp band edges are
-# built into the MESH via separate ring loops, not into the texture).
+# ATLAS  -- hand-painted-style colour swatches, one per costume region.
+# v11: 512x512 -> 1024x1024 (8x8 grid of 128px cells). Each cell is still
+# one costume colour at heart, but now carries baked painterly shading:
+# a soft top-light/bottom-shadow gradient, darkened border AO, subtle
+# deterministic fabric noise and a diagonal rim highlight -- so surfaces
+# read as painted fabric instead of flat plastic once faces sample a
+# small PATCH of their swatch (see uv_patch below) rather than a single
+# point. Crisp garment band edges remain built into the MESH via separate
+# ring loops / per-face colour keys, exactly as before; `rects` still
+# stores each swatch's CENTRE, so nothing about the layout contract moves.
 # ==========================================================================
-ATLAS_SIZE = 512
-CELL = 64
+# v11r3: 1024x1024 -> 2048x2048. The swatch count outgrew the old 8x8 grid
+# of 128px cells (new 'bib_back'/'bib_gold_soft' cells pushed the key count
+# past 64, which wrapped late swatches over row 0 and DESTROYED the face
+# swatches). 16x16 = 256 cell capacity, same 128px cell size everywhere.
+ATLAS_SIZE = 2048
+CELL = 128
 GRID = ATLAS_SIZE // CELL
+
+# Half-extent (in atlas UV units) of the centred patch a face samples
+# v11r3 BANDING FIX: this used to be 0.30 * CELL/ATLAS -- a patch spanning
+# 60% of the swatch cell -- so EVERY face stretched the cell's entire baked
+# vertical two-tone gradient (and the hoodie stitch rows at v=0.26/0.74)
+# across its surface. Adjacent lathe rings then alternated light/dark: the
+# corduroy/coiled-rope banding on every material. The patch is now a small
+# centred window (~11px of a 128px cell, rows 58-69) that lands on a single,
+# near-uniform tone: flat clean toon fills, while corner AO / rim / stitches
+# stay painted in the cell but simply aren't sampled.
+UV_PATCH = 0.055 * CELL / ATLAS_SIZE
 
 COLORS = {
     # Value strategy vs. Berlin Runner's bright ochre road: a DARK anchor
     # mass (torso+legs) topped by a PALE head, built from the German
     # tricolour instead of a plain vest.
     'flag_black':   (0.070, 0.065, 0.063),
+    # v11r3: dedicated anti-aliased bolt panel cell (painted over by the
+    # _bib painter in build_atlas; base colour matches the black band it
+    # sits on so any unsampled texel still blends).
+    'bib_back':     (0.070, 0.065, 0.063),
     'flag_red':     (0.720, 0.110, 0.115),
     'flag_gold':    (0.960, 0.740, 0.090),
+    # v19 hero-identity pass: a coherent hoodie replaces the three equally
+    # loud flag-colour torso slabs. The German palette remains in the gold hem,
+    # back monogram and cuff accents, but the body now reads as clothing first.
+    'hoodie_red':    (0.900, 0.105, 0.085),
+    'hoodie_shadow': (0.545, 0.045, 0.050),
+    'strap_navy':    (0.055, 0.090, 0.190),
+    'pouch_gold':    (0.940, 0.610, 0.075),
     'skin':         (0.930, 0.800, 0.670),
     'skin_shadow':  (0.780, 0.620, 0.500),
     # v8: the "keep the head light" rule from earlier passes was protecting
@@ -355,8 +418,12 @@ COLORS = {
     # (255,254,231) -- a warm near-white -- and is unambiguously the brightest
     # mass in the figure; this closes most of the remaining gap without going
     # fully white, which would lose the cap's own value step.
-    'hair':         (0.880, 0.820, 0.660),
-    'hair_dark':    (0.660, 0.590, 0.440),
+    # v20: caramel/chestnut, clearly separated from skin. The prior near-skin
+    # blond made the rear head read as a bald beige sphere under a red helmet.
+    # v11r4: hair darkened -- the old values blew out to beige under the key
+    # lights and read as bald skin / a tan slab, not hair.
+    'hair':         (0.400, 0.220, 0.085),
+    'hair_dark':    (0.240, 0.115, 0.048),
     # Near-black jeans (0.085) sat directly under the tricolour's black
     # shoulder band, so torso and legs fused and the figure's lower two
     # thirds read as one undifferentiated dark column -- only the red and
@@ -371,7 +438,9 @@ COLORS = {
     # legs were the last part of the figure still reading as a silhouette cut
     # out of the road. Blue against a warm ochre lane keeps them separate by
     # hue as well as value, so lifting them costs no readability.
-    'jeans':        (0.415, 0.455, 0.590),
+    # v11r2: shifted from grey-blue toward indigo (#4A5FA8) -- the grey
+    # denim read as faded workwear; indigo is the Subway-Surfers denim read.
+    'jeans':        (0.290, 0.373, 0.659),
     # Medial-face shadow band on each leg -- a deliberate value break so the
     # two legs stay two separate readable shapes even when they swing close
     # together, instead of fusing into one dark mass at chase distance.
@@ -404,10 +473,12 @@ COLORS = {
     # hierarchy and pulls the eye to the feet. The reference sole is a
     # mid-light band that catches light, not a white plate. Pulled back to a
     # warm bone that still steps clearly off the dark upper and the road.
-    'shoe_sole':    (0.585, 0.560, 0.520),
+    'shoe_sole':    (0.430, 0.405, 0.370),
     'wristband':    (0.720, 0.110, 0.115),
     'eye':          (0.090, 0.080, 0.075),
+    'eye_white':    (0.965, 0.950, 0.900),
     'eyebrow':      (0.220, 0.165, 0.095),
+    'mouth':        (0.330, 0.085, 0.070),
     # v7 cap. A harsh independent critique of the shipped hero scored the
     # head 2/10: "a hard diagonal seam splitting it into a gold zone and an
     # olive-grey zone with no brim, hood edge, or hair silhouette -- reads
@@ -441,33 +512,72 @@ COLORS = {
     # saturated element" while still reading as a loud, deliberate accent
     # against flag_black (S=0.767, V=0.850 here).
     'bib_gold': (0.850, 0.660, 0.190),
+    # 50/50 gold/navy blend -- anti-alias step on the supersampled bolt edges.
+    'bib_gold_soft': (0.490, 0.430, 0.285),
+    # v11r2: cheek blush tint for the painted face cell (see build_face_eye).
+    'blush':        (0.870, 0.430, 0.380),
 }
 
-# A bold dot-matrix "B" (Berliner) -- '1' = letter stroke (left untouched,
-# stays flag_black so it reads as a silhouette cut out of the gold field),
-# '0' = bib background (recoloured to bib_gold). Read top-to-bottom; see
-# bib_pixel() in build_mesh_and_rig for how row/col map onto the torso's
-# actual (z, theta) surface.
-#
-# v16: the grid is sized against the number of FACES available to draw it,
-# which is what the first version got wrong. The torso is N_TORSO (32)
-# segments around a full turn, so a bib spanning +-0.60 rad only owns
-# 32 * 1.2 / 2pi = 6.1 faces -- fewer than the 7 columns it was asking for.
-# Every column then landed on a fraction of a face and the glyph aliased
-# into an unreadable blob (in-game r4-0.png read as an "8", not a "B").
-# Two changes fix it: the bib is wider (see BIB_THETA_HALF below), and
-# every stroke here is TWO columns thick, so a stroke survives at ~2.5
-# faces instead of ~0.9. A one-cell-wide stroke cannot be drawn reliably
-# on this mesh at any bib width worth using.
+# v11r2: the old dot-matrix "B" read as a yellow RECTANGLE with holes from
+# the chase camera (the letter's negative space never survived face
+# resolution). Replaced with a bold single-shape LIGHTNING BOLT: one
+# connected zigzag, every stroke two columns thick, so it reads instantly
+# at torso-face resolution. Grid semantics:
+#   '1' = bolt stroke  -> bib_gold (yellow)
+#   '2' = bolt outline -> strap_navy (navy), auto-dilated around the stroke
+#   '0' = shirt (untouched, stays flag_black)
 BACK_BIB_BITMAP = [
-    "1111100",
-    "1100110",
-    "1100110",
-    "1111100",
-    "1100110",
-    "1100110",
-    "1111100",
+    "0000110",
+    "0001100",
+    "0111100",
+    "0011100",
+    "0001100",
+    "0011000",
+    "0110000",
 ]
+
+def bib_outline_grid(rows):
+    """Dilate the '1' cells by one grid step; those neighbours that are not
+    themselves stroke become '2' (navy outline) cells."""
+    out = [list(r) for r in rows]
+    h, w = len(rows), len(rows[0])
+    for r in range(h):
+        for c in range(w):
+            if rows[r][c] == '1':
+                continue
+            near = any(rows[rr][cc] == '1'
+                       for rr in (r - 1, r, r + 1)
+                       for cc in (c - 1, c, c + 1)
+                       if 0 <= rr < h and 0 <= cc < w)
+            if near:
+                out[r][c] = '2'
+    return [''.join(r) for r in out]
+
+BACK_BIB_BITMAP = bib_outline_grid(BACK_BIB_BITMAP)
+
+# v11r3 anti-aliased bolt: bilinearly upsample the binary stroke mask 4x so
+# glyph edges carry fractional coverage; bib_pixel() then picks gold, a
+# 50/50 gold/navy blend swatch, or navy depending on that coverage -- smooth
+# edges instead of per-face staircase aliasing.
+BIB_SS = 4
+def _bib_stroke_coverage(rows):
+    import numpy as np
+    m = np.array([[1.0 if ch == '1' else 0.0 for ch in r] for r in rows],
+                 dtype=np.float32)
+    def _up(a, f):
+        h, w = a.shape
+        ys = (np.arange(h * f) + 0.5) / f - 0.5
+        xs = (np.arange(w * f) + 0.5) / f - 0.5
+        y0 = np.clip(np.floor(ys).astype(int), 0, h - 1)
+        x0 = np.clip(np.floor(xs).astype(int), 0, w - 1)
+        y1 = np.clip(y0 + 1, 0, h - 1); x1 = np.clip(x0 + 1, 0, w - 1)
+        fy = ys - np.floor(ys); fx = xs - np.floor(xs)
+        return (a[np.ix_(y0, x0)] * (1 - fy)[:, None] * (1 - fx)[None, :] +
+                a[np.ix_(y0, x1)] * (1 - fy)[:, None] * fx[None, :] +
+                a[np.ix_(y1, x0)] * fy[:, None] * (1 - fx)[None, :] +
+                a[np.ix_(y1, x1)] * fy[:, None] * fx[None, :])
+    return _up(m, BIB_SS)
+BIB_COV = _bib_stroke_coverage(BACK_BIB_BITMAP)
 
 def build_atlas():
     img = bpy.data.images.new('HeroAtlas', ATLAS_SIZE, ATLAS_SIZE, alpha=False)
@@ -486,12 +596,195 @@ def build_atlas():
         cx = (x0 + CELL / 2) / ATLAS_SIZE
         cy = (y0 + CELL / 2) / ATLAS_SIZE
         rects[name] = (cx, cy)
+
+    # ---- v11 painterly pass: shade every swatch in place -----------------
+    # Deterministic RNG so rebuilds are byte-identical (the game caches the
+    # GLB; a texture that changed every build would churn diffs for nothing).
+    rng = np.random.default_rng(20260213)
+    # Fabric noise at two scales, blurred once so it reads as woven cloth
+    # rather than TV static under the game's linear filtering.
+    def _blur(a, times=1):
+        for _ in range(times):
+            p = np.pad(a, 1, mode='edge')
+            a = (p[:-2, :-2] + p[:-2, 1:-1] + p[:-2, 2:] +
+                 p[1:-1, :-2] + p[1:-1, 1:-1] + p[1:-1, 2:] +
+                 p[2:, :-2] + p[2:, 1:-1] + p[2:, 2:]) / 9.0
+        return a
+    yy, xx = np.mgrid[0:CELL, 0:CELL].astype(np.float32)
+    u = yy / (CELL - 1.0)
+    vgrad = 1.030 - 0.060 * u                      # lit top, shadowed bottom
+    edge = np.minimum.reduce([xx, yy, CELL - 1 - xx, CELL - 1 - yy]) / (CELL * 0.5)
+    ao = 0.94 + 0.06 * np.clip(edge, 0.0, 1.0)     # soft AO in the corners
+    d = (xx + yy) / (2.0 * (CELL - 1.0))
+    rim = 1.0 + 0.03 * np.exp(-((d - 0.32) ** 2) / (2 * 0.06 ** 2))
+    for i, name in enumerate(names):
+        gx, gy = i % GRID, i // GRID
+        x0, y0 = gx * CELL, gy * CELL
+        cell = px[y0:y0 + CELL, x0:x0 + CELL, :3]
+        # Very low frequency, very LOW amplitude -- v11r4: each face now
+        # samples a DIFFERENT patch of this cell (per-face UV jitter), so the
+        # noise contrast directly drives a per-face mosaic. Keep it a whisper:
+        # heavily blurred, ~1% amplitude.
+        # v11r5 NOISE CUT: residual per-face mottling read as dirty fabric.
+        # Total variation now < +-1% (was ~+-1.5%), and the low-frequency
+        # layer gets two extra blur passes so what remains is a broad wash,
+        # not per-face tone steps. Zero banding preserved (patches are
+        # near-uniform by design).
+        n_lo = _blur(rng.random((CELL, CELL)), 10)
+        n_hi = _blur(rng.random((CELL, CELL)), 7)
+        noise = 1.0 + (n_lo - 0.5) * 0.011 + (n_hi - 0.5) * 0.006
+        f = np.clip(vgrad * ao * rim * noise, 0.80, 1.15)[..., None]
+        import os as _os
+        if _os.environ.get('HERO_FLAT_ATLAS'):
+            f = np.ones_like(f)   # v11r4 diagnostic: pure flat cells
+        px[y0:y0 + CELL, x0:x0 + CELL, :3] = np.clip(cell * f, 0.0, 1.0)
+
+    # ---- v11r2 painted detail pass ----------------------------------------
+    # Per-swatch rim/shadow TONES (absolute RGB), plus authored micro-
+    # details: stitch lines on the hoodie seams, scuff blotches on the
+    # jeans, tread stripes on the sole swatch, a top highlight band + button
+    # dot on the cap cell. Everything stays LOW-frequency/low-contrast: each
+    # mesh face stretches a ~38px patch across its whole surface (see
+    # PATCH_HALF above), so anything sharper than a soft wash turns into a
+    # per-face checkerboard -- the exact failure the first noise pass had
+    # to be walked back from.
+    def _rect(name):
+        i = names.index(name)
+        gx, gy = i % GRID, i // GRID
+        return gx * CELL, gy * CELL
+
+    def _paint(name, fn):
+        x0d, y0d = _rect(name)
+        c = px[y0d:y0d + CELL, x0d:x0d + CELL, :3]
+        px[y0d:y0d + CELL, x0d:x0d + CELL, :3] = np.clip(fn(c), 0.0, 1.0)
+
+    # hi = lit rim tone, lo = core-shadow tone; blended by the same top-lit
+    # vertical gradient the generic pass uses.
+    PAINT_TONES = {
+        'hoodie_red':    ((1.000, 0.353, 0.235), (0.620, 0.122, 0.071)),  # #FF5A3C / #9E1F12
+        'hoodie_shadow': ((0.700, 0.100, 0.095), (0.400, 0.032, 0.038)),
+        'jeans':         ((0.360, 0.470, 0.790), (0.170, 0.225, 0.460)),
+        'jeans_shadow':  ((0.240, 0.310, 0.560), (0.110, 0.150, 0.330)),
+        'cap_red':       ((0.980, 0.230, 0.200), (0.520, 0.062, 0.058)),
+        'strap_navy':    ((0.130, 0.200, 0.380), (0.028, 0.048, 0.120)),
+        'shoe_white':    ((0.980, 0.965, 0.930), (0.740, 0.720, 0.690)),
+        'shoe_mid':      ((0.960, 0.930, 0.850), (0.740, 0.690, 0.600)),
+        'bib_gold':      ((0.980, 0.800, 0.260), (0.640, 0.450, 0.110)),
+    }
+    mtone = np.clip(u, 0.0, 1.0) ** 1.1          # 0 bottom -> 1 top
+    for tname, (hi, lo) in PAINT_TONES.items():
+        hi_a, lo_a = np.asarray(hi, np.float32), np.asarray(lo, np.float32)
+        _paint(tname, lambda c, hi_a=hi_a, lo_a=lo_a: hi_a * mtone[..., None] +
+               lo_a * (1.0 - mtone[..., None]))
+
+    # Stitch lines REMOVED (v11r4): with per-face UV jitter every face
+    # samples a different patch, so painted LINE details can never align
+    # with geometry -- they rendered as random dark flecks. Value interest
+    # now comes only from broad, soft gradients.
+
+    # Knee/scuff wear on both jeans swatches: soft dark blotches at very low
+    # density AND very low strength (jitter turns any contrast into mosaic).
+    def _scuffs(c):
+        blotch = _blur(rng.random((CELL, CELL)), 4)
+        mask = (blotch > np.quantile(blotch, 0.86)).astype(np.float32)
+        mask = _blur(mask, 2) * 0.05
+        return c * (1.0 - mask)[..., None]
+    _paint('jeans', _scuffs)
+    _paint('jeans_shadow', _scuffs)
+
+    # Sole tread: subtle diagonal darker stripes.
+    # Sole tread REMOVED (v11r4): line detail turns to flecks under per-face
+    # UV jitter; a single flat sole colour is the reference look anyway.
+
+    # Cap cell: bright TOP highlight band (reads as a satin sheen from above,
+    # exactly where the slide/overhead cameras look) + a small darker button
+    # dot at the crown centre. v11r4: the "panel seams" are BROAD soft
+    # vertical shading bands (sigma ~0.06 of the cell), not lines -- under
+    # per-face jitter only broad gradients survive as coherent paint.
+    band = np.exp(-((u - 0.18) ** 2) / (2 * 0.07 ** 2)) * 0.14
+    dotm = (((xx - CELL * 0.5) ** 2 + (yy - CELL * 0.28) ** 2) < (CELL * 0.055) ** 2)
+    cap_seams = (np.exp(-((xx - CELL * 0.50) ** 2) / (2 * (CELL * 0.09) ** 2)) * 0.10 +
+                 np.exp(-((xx - CELL * 0.20) ** 2) / (2 * (CELL * 0.07) ** 2)) * 0.05 +
+                 np.exp(-((xx - CELL * 0.80) ** 2) / (2 * (CELL * 0.07) ** 2)) * 0.05)
+    def _cap(c):
+        c = c * (1.0 + band)[..., None]
+        c = c * (1.0 - cap_seams)[..., None]
+        c[dotm] *= np.asarray((0.55, 0.42, 0.42), np.float32)
+        return c
+    _paint('cap_red', _cap)
+    # v11r4: strap cell gets a broad horizontal sheen band instead of stitch
+    # rows -- visible paint interest on the cap's back strap area.
+    strap_band = np.exp(-((u - 0.5) ** 2) / (2 * 0.16 ** 2)) * 0.12
+    _paint('cap_strap', lambda c: c * (1.0 + strap_band)[..., None])
+
+    # v11r3: dedicated ANTI-ALIASED bib panel cell. The whole back panel is
+    # UV-mapped continuously into this one cell (mesh-side remap below), so
+    # the bolt is a real 128px painted glyph with smooth edges instead of
+    # per-face colour blocks.
+    def _bib_resize(a):
+        h, w = a.shape
+        ys = (np.arange(CELL) + 0.5) / CELL * h - 0.5
+        xs = (np.arange(CELL) + 0.5) / CELL * w - 0.5
+        y0 = np.clip(np.floor(ys).astype(int), 0, h - 1)
+        x0 = np.clip(np.floor(xs).astype(int), 0, w - 1)
+        y1 = np.clip(y0 + 1, 0, h - 1); x1 = np.clip(x0 + 1, 0, w - 1)
+        fy = ys - np.floor(ys); fx = xs - np.floor(xs)
+        return (a[np.ix_(y0, x0)] * (1 - fy)[:, None] * (1 - fx)[None, :] +
+                a[np.ix_(y0, x1)] * (1 - fy)[:, None] * fx[None, :] +
+                a[np.ix_(y1, x0)] * fy[:, None] * (1 - fx)[None, :] +
+                a[np.ix_(y1, x1)] * fy[:, None] * fx[None, :])
+    def _bib(c):
+        cov = _bib_resize(BIB_COV)
+        od = cov.copy()
+        for dy in (-3, -2, -1, 0, 1, 2, 3):
+            for dx in (-3, -2, -1, 0, 1, 2, 3):
+                od = np.maximum(od, np.roll(np.roll(cov, dy, 0), dx, 1))
+        gold = np.asarray(COLORS['bib_gold'], np.float32)
+        navy = np.asarray(COLORS['strap_navy'], np.float32)
+        # v11r4: background is a verbatim COPY of the already-painted
+        # 'hoodie_red' cell (tone gradient + stitches), NOT flat black. The
+        # panel sits on the red hoodie band now (the old black torso band is
+        # gone), so a black cell background rendered as a hard dark rectangle
+        # against the hoodie. Sampling the same painted red means the panel
+        # boundary disappears and only the bolt reads.
+        # v11r5 TONE-MATCH FIX: the old background was a verbatim copy of
+        # the WHOLE hoodie_red cell -- but hoodie faces never see the whole
+        # cell; uv_patch() samples only a small CENTRED window (rows ~58-69),
+        # so the surrounding fabric reads as that patch's mid tone. Copying
+        # the full cell baked the corner-AO darkening + gradient extremes
+        # into the panel edges -> the panel rendered as a darker orange
+        # rectangle sticker. Fix: flat-fill the panel background with the
+        # EXACT mean texel value of the patch hoodie faces actually sample,
+        # making panel and hoodie pixel-identical by construction.
+        hx0, hy0 = _rect('hoodie_red')
+        pr = int(round(UV_PATCH * ATLAS_SIZE))
+        pcx, pcy = hx0 + CELL // 2, hy0 + CELL // 2
+        patch = px[pcy - pr:pcy + pr + 1, pcx - pr:pcx + pr + 1, :3]
+        bg_tone = patch.reshape(-1, 3).mean(axis=0)
+        out = np.broadcast_to(bg_tone, c.shape).copy()
+        m_edge = (cov > 0.28) & (cov <= 0.62)
+        out[m_edge] = 0.5 * (gold + navy)
+        out[cov > 0.62] = gold
+        out[(cov <= 0.28) & (od > 0.30)] = navy
+        c[:] = out
+        bg_sel = c[(cov <= 0.28) & (od <= 0.30)].reshape(-1, 3).mean(axis=0)
+        print('[atlas] bib_back panel-bg RGB = (%.4f, %.4f, %.4f)' % tuple(bg_sel))
+        print('[atlas] hoodie_red sampled-patch RGB = (%.4f, %.4f, %.4f)' % tuple(bg_tone))
+        return c
+    _paint('bib_back', _bib)
+
     px = px[::-1, :, :]
     for name in rects:
         cx, cy = rects[name]
         rects[name] = (cx, 1.0 - cy)
     img.pixels = px.ravel().tolist()
     img.pack()
+    # v11r3 debug: dump the painted atlas so texture-side defects can be
+    # inspected directly without opening Blender.
+    dbg = os.path.join(SCRATCH, 'atlas_debug.png')
+    img.filepath_raw = dbg
+    img.file_format = 'PNG'
+    img.save()
     return img, rects
 
 # ==========================================================================
@@ -507,18 +800,48 @@ def V(co, weights):
     vert_weights.append(dict(weights))
     return v
 
+def _hash01(a, b):
+    s = math.sin(a * 12.9898 + b * 78.233) * 43758.5453
+    return s - math.floor(s)
+
+def uv_patch(rect, ox=0.5, oy=0.5):
+    """v11: the four corners of a small centred patch inside a swatch cell.
+    Faces used to collapse all loops onto the swatch's centre point (pure
+    flat colour); sampling a patch instead lets each face carry the baked
+    painterly shading (gradient/AO/noise/rim) painted into the atlas.
+    v11r4: ox/oy in [0,1] re-centre the patch PER FACE -- every face used to
+    sample the IDENTICAL patch, so the cell's noise pattern tiled once per
+    face and read as faint diamond/horizontal striping on jeans and cuffs."""
+    cx, cy = rect
+    s = UV_PATCH
+    # v11r4: jitter radius kept SMALL (~+-5 texels). Full-cell jitter let each
+    # face sample wildly different heights of the painted tone gradients
+    # (PAINT_TONES spans ~60% brightness) and read as a per-face mosaic;
+    # +-5 texels still breaks up identical-patch tiling but varies tone by
+    # only ~+-4%.
+    rng = 10.0 / ATLAS_SIZE
+    cx += (ox - 0.5) * 2.0 * rng
+    cy += (oy - 0.5) * 2.0 * rng
+    return (cx - s, cy - s), (cx + s, cy - s), (cx + s, cy + s), (cx - s, cy + s)
+
+def _face_jitter(verts):
+    mx = sum(v.co.x for v in verts) / len(verts)
+    my = sum(v.co.y for v in verts) / len(verts)
+    mz = sum(v.co.z for v in verts) / len(verts)
+    return (_hash01(mx * 913.7, mz * 541.1), _hash01(my * 761.3, mz * 337.9))
+
 def quad(a, b, c, d, color_key, rects):
     f = bm.faces.new((a, b, c, d))
-    uv = rects[color_key]
-    for loop in f.loops:
+    p = uv_patch(rects[color_key], *_face_jitter((a, b, c, d)))
+    for loop, uv in zip(f.loops, p):
         loop[uv_layer].uv = uv
     face_color[f] = color_key
     return f
 
 def tri(a, b, c, color_key, rects):
     f = bm.faces.new((a, b, c))
-    uv = rects[color_key]
-    for loop in f.loops:
+    p = uv_patch(rects[color_key], *_face_jitter((a, b, c)))
+    for loop, uv in zip(f.loops, p):
         loop[uv_layer].uv = uv
     face_color[f] = color_key
     return f
@@ -593,6 +916,42 @@ def lerp_weights(wa, wb, t):
             out[b] = w
     return out
 
+def bridge_ring_subdivided(ring_lo, ring_hi, color_fn, rects, nx=3, ny=3):
+    """v11r3: like bridge_ring_colored but each segment quad is split into
+    an nx*ny grid of sub-quads, each coloured by color_fn(z_mid, theta) at
+    its OWN centre. This supersamples per-face painted details (the bib
+    lightning bolt) 3x3x beyond the torso's face resolution, killing the
+    staircase aliasing on the glyph edges without a full torso retopo."""
+    bm.verts.ensure_lookup_table()
+    n = len(ring_lo)
+    for i in range(n):
+        a0, a1 = ring_lo[i], ring_lo[(i + 1) % n]
+        b0, b1 = ring_hi[i], ring_hi[(i + 1) % n]
+        wa0, wa1 = vert_weights[a0.index], vert_weights[a1.index]
+        wb0, wb1 = vert_weights[b0.index], vert_weights[b1.index]
+        grid = []
+        for j in range(ny + 1):
+            t = j / ny
+            row = []
+            for k in range(nx + 1):
+                s = k / nx
+                pa = a0.co.lerp(a1.co, s)
+                pb = b0.co.lerp(b1.co, s)
+                co = pa.lerp(pb, t)
+                row.append(V(tuple(co),
+                             lerp_weights(lerp_weights(wa0, wa1, s),
+                                          lerp_weights(wb0, wb1, s), t)))
+            grid.append(row)
+        for j in range(ny):
+            for k in range(nx):
+                q = (grid[j][k], grid[j][k + 1], grid[j + 1][k + 1], grid[j + 1][k])
+                cx = sum(v.co.x for v in q) * 0.25
+                cy = sum(v.co.y for v in q) * 0.25
+                czm = sum(v.co.z for v in q) * 0.25
+                ck = color_fn(czm, math.atan2(cy, cx))
+                quad(q[0], q[1], q[2], q[3], ck, rects)
+
+
 def circ_chain(cx, cy_list, z_list, r_list, w_list, n, phase=0.0, rings_per_seg=3, bellies=None):
     """A round (circular cross-section) tube through K keyframe rings,
     with `rings_per_seg` sub-rings smoothly interpolated (z, radius, cy,
@@ -648,13 +1007,17 @@ def bridge_chain_colored(rings, color_fn, rects, flip=False, cx=0.0, cy=0.0):
 
 def cap(ring, color_key, rects, flip=False):
     verts = list(reversed(ring)) if flip else ring
+    p = uv_patch(rects[color_key], *_face_jitter(verts))
     if len(verts) == 4:
         quad(verts[0], verts[1], verts[2], verts[3], color_key, rects)
     else:
         f = bm.faces.new(verts)
-        uv = rects[color_key]
-        for loop in f.loops:
-            loop[uv_layer].uv = uv
+        # v11r4: assign a UV to EVERY loop -- the old range(len(p)) stopped
+        # after the first 4 loops, leaving all remaining loops of n-gon caps
+        # at default UV (0,0); the rasterizer then interpolated across the
+        # whole atlas and rendered caps as washed-out white discs.
+        for loop, i in zip(f.loops, range(len(verts))):
+            loop[uv_layer].uv = p[i % 4]
 
 def lerp(a, b, t): return a + (b - a) * t
 
@@ -674,7 +1037,7 @@ def lerp(a, b, t): return a + (b - a) * t
 # BOTH low-angle AND same-colour end up smooth -- which is the vast
 # majority of edges in a dense round tube, so the exported vertex count
 # collapses back toward the raw ~12k topology instead of ~3.4x that.
-def finalize_shading(bm, rects, angle_deg=32.0):
+def finalize_shading(bm, rects, angle_deg=78.0):
     thresh = math.radians(angle_deg)
     bm.normal_update()
     for f in bm.faces:
@@ -709,15 +1072,16 @@ def build_mesh_and_rig():
 
     # ---------------- torso: 4 rings -> 3 flag segments, 8-gon cross-
     # section with a flat front AND flat back edge (torso_phase) so the
-    # flag panel stays one crisp flat plane, sides now rounded instead of
-    # boxy. Weighted, NOT equal thirds: black dominates (~55%) as the dark
-    # anchor mass against the game's bright ochre road; red is a strong
-    # middle (~30%); gold stays a narrow hem accent (~15%).
+    # back panel stays one crisp flat plane, sides now rounded instead of
+    # boxy. v19 makes this read as one garment: a red hoodie body (~68%), a
+    # narrow shadowed waistband (~22%) and a gold Berlin accent hem (~10%).
+    # The previous 55% black block was the reason the entire torso looked like
+    # a square backpack with a logo tile at actual chase-camera size.
     z_hip = P['hip_z']
     z_black_top = P['shoulder_line_z']
     total_h = z_black_top - z_hip
-    z_gold_top = z_hip + 0.15 * total_h
-    z_red_top = z_gold_top + 0.30 * total_h
+    z_gold_top = z_hip + 0.10 * total_h
+    z_red_top = z_gold_top + 0.22 * total_h
 
     def torso_extent(z):
         # v15 (Task A): was a straight linear lerp of hw/hd across the WHOLE
@@ -768,7 +1132,7 @@ def build_mesh_and_rig():
     # subdividing is just sampling them more densely; N_TORSO_RINGS extra
     # rings per band, exact colours/boundaries unchanged.
     ring_zs = [z_hip, z_gold_top, z_red_top, z_black_top]
-    seg_colors = ['flag_gold', 'flag_red', 'flag_black']
+    seg_colors = ['flag_gold', 'hoodie_shadow', 'hoodie_red']
     hw0i, hd0i = torso_extent(ring_zs[0])
     torso_rings = [ellipse_ring(0, 0, ring_zs[0], hw0i, hd0i, torso_weights(ring_zs[0]), n=N_TORSO, phase=torso_phase)]
     torso_ring_zs = [ring_zs[0]]
@@ -781,8 +1145,8 @@ def build_mesh_and_rig():
             torso_rings.append(ellipse_ring(0, 0, z, hw, hd, torso_weights(z), n=N_TORSO, phase=torso_phase))
             torso_ring_zs.append(z)
 
-    # ---------------- Task B: back graphic. A bold blocky "B" (Berliner)
-    # bib punched out of a gold rectangle, built entirely from per-face
+    # ---------------- Task B: back graphic. A compact blocky "B" (Berliner)
+    # mark plus an asymmetric courier strap, built entirely from per-face
     # colour selection on the torso's own back-facing rings -- the atlas
     # only gives faces one flat colour each (see build_atlas/quad), so a
     # "graphic" here is a shaped region of faces in a contrasting colour,
@@ -791,15 +1155,14 @@ def build_mesh_and_rig():
     # colour field, and the band the rear-3/4 chase cam sees dead centre).
     # bib_gold is deliberately LESS saturated/bright than cap_red (see
     # COLORS) so the cap stays the brightest, most saturated element.
-    bib_z1 = z_black_top - 0.12 * (z_black_top - z_red_top)   # near the shoulder line
-    bib_z0 = z_red_top + 0.12 * (z_black_top - z_red_top)     # near the red/black seam
+    bib_z1 = z_black_top - 0.24 * (z_black_top - z_red_top)
+    bib_z0 = z_red_top + 0.28 * (z_black_top - z_red_top)
     BIB_ROWS = len(BACK_BIB_BITMAP)
     BIB_COLS = len(BACK_BIB_BITMAP[0])
     BIB_THETA_CENTER = math.pi / 2   # dead behind, +Y
-    # ~49deg each side. Widened from 0.60 so the glyph owns ~8.7 of the
-    # torso's 32 faces instead of 6.1 -- see BACK_BIB_BITMAP for why the
-    # face budget, not the desired letter size, is what sets this.
-    BIB_THETA_HALF = 0.85
+    # v19: compact enough to be a garment mark rather than a backpack panel;
+    # still spans about five of the torso's 32 faces so the glyph survives.
+    BIB_THETA_HALF = 0.55
 
     def bib_pixel(z, theta, base_color):
         if not (bib_z0 <= z <= bib_z1):
@@ -824,7 +1187,37 @@ def build_mesh_and_rig():
         # more legible and simpler: the letter now owns its own contrast and
         # there is no background rectangle whose edges have to survive the
         # torso's face resolution at all.
-        return 'bib_gold' if BACK_BIB_BITMAP[row][col] == '1' else base_color
+        # v16: strokes painted directly onto the black shirt (gold owns its
+        # own contrast). v11r2: '2' cells are the auto-dilated navy outline,
+        # so the bolt gets a hard graphic edge even where it crosses the
+        # strap or band seams.
+        # v11r3: supersampled stroke coverage (bilinear 4x) drives a 3-level
+        # AA step: full gold inside the stroke, 'bib_gold_soft' on the edge,
+        # navy outline / base elsewhere. Kills the staircase aliasing.
+        cell = BACK_BIB_BITMAP[row][col]
+        vf = (bib_z1 - z) / max(1e-6, bib_z1 - bib_z0)
+        uf = (dt + BIB_THETA_HALF) / (2 * BIB_THETA_HALF)
+        # v11r4: EVERY face inside the panel window gets ONE key --
+        # 'bib_back' -- whose UVs are continuously remapped into the
+        # anti-aliased painted cell below. Returning per-face gold/navy keys
+        # here (the old staircase) left a jagged ring of flat-coloured
+        # 'bib_gold_soft'/'strap_navy' faces around an already-smooth
+        # remapped core: the AA outline exists ONLY in the painted cell.
+        return 'bib_back'
+
+    strap_z0 = z_hip + 0.10 * total_h
+    strap_z1 = z_black_top - 0.035
+    def back_detail(z, theta, base_color):
+        # Diagonal navy courier strap: a single asymmetric line across the red
+        # back breaks the old mirrored tube-toy read. The B is evaluated last
+        # so its gold strokes remain crisp where the two details cross.
+        detail = base_color
+        if strap_z0 <= z <= strap_z1:
+            t = (z - strap_z0) / max(1e-6, strap_z1 - strap_z0)
+            strap_center = BIB_THETA_CENTER + lerp(-0.48, 0.40, t)
+            if abs(theta - strap_center) < 0.115:
+                detail = 'strap_navy'
+        return bib_pixel(z, theta, detail)
 
     ring_idx = 0
     for si, color in enumerate(seg_colors):
@@ -832,7 +1225,20 @@ def build_mesh_and_rig():
             z_lo, z_hi = torso_ring_zs[ring_idx], torso_ring_zs[ring_idx + 1]
             z_mid = (z_lo + z_hi) / 2.0
             if bib_z0 - 0.02 <= z_mid <= bib_z1 + 0.02:
-                color_fn = (lambda theta, zm=z_mid, base=color: bib_pixel(zm, theta, base))
+                # v11r3: ONE continuous 'bib_back' material whose UVs are
+                # remapped into the dedicated AA-painted atlas cell -- BUT the
+                # torso's own faces are far too coarse to carry a painted
+                # glyph (each spans ~15cm), so the panel rows are SUBDIVIDED
+                # 5x4 first; the later UV remap then tracks the bolt smoothly.
+                def bib_row_color(zm, theta, base=color):
+                    dtc = (theta - BIB_THETA_CENTER + math.pi) % (2 * math.pi) - math.pi
+                    if abs(dtc) <= BIB_THETA_HALF:
+                        return 'bib_back'
+                    return back_detail(zm, theta, base)
+                bridge_ring_subdivided(torso_rings[ring_idx], torso_rings[ring_idx + 1],
+                                       bib_row_color, rects, nx=5, ny=4)
+            elif strap_z0 <= z_mid <= strap_z1:
+                color_fn = (lambda theta, zm=z_mid, base=color: back_detail(zm, theta, base))
                 bridge_ring_colored(torso_rings[ring_idx], torso_rings[ring_idx + 1], color_fn, rects)
             else:
                 bridge_ring(torso_rings[ring_idx], torso_rings[ring_idx + 1], color, rects)
@@ -840,6 +1246,39 @@ def build_mesh_and_rig():
     cap(torso_rings[0], 'jeans', rects, flip=True)
 
     hw0, hd0 = torso_extent(z_hip)
+
+    # Sculpted hood/collar shell. Three open elliptical rings rise behind the
+    # neck and taper inward; the torso and neck hide the open ends. This adds a
+    # garment silhouette around the head instead of another hard cylinder.
+    hood_w = {'Spine02': 0.72, 'neck': 0.28}
+    hood_r0 = ellipse_ring(0, 0.030, z_black_top - 0.018, 0.178, 0.132, hood_w,
+                           n=N_TORSO, phase=torso_phase)
+    hood_r1 = ellipse_ring(0, 0.055, z_black_top + 0.042, 0.156, 0.142, hood_w,
+                           n=N_TORSO, phase=torso_phase)
+    hood_r2 = ellipse_ring(0, 0.050, z_black_top + 0.096, 0.112, 0.102, hood_w,
+                           n=N_TORSO, phase=torso_phase)
+    bridge_ring(hood_r0, hood_r1, 'hoodie_shadow', rects)
+    bridge_ring(hood_r1, hood_r2, 'hoodie_red', rects)
+
+    # Small side-slung courier pouch at the right hip, deliberately off-centre
+    # so the hero has an identifiable asymmetry in a quarter-second silhouette
+    # glance. It is Hips-weighted and therefore follows the stride naturally.
+    pouch_x = -hw0 * 0.98
+    pouch_y = hd0 + 0.036
+    pouch_w = {'Hips': 1.0}
+    pouch0 = ellipse_ring(pouch_x, pouch_y, z_hip - 0.010, 0.048, 0.032,
+                          pouch_w, n=16)
+    pouch1 = ellipse_ring(pouch_x, pouch_y, z_hip + 0.045, 0.068, 0.040,
+                          pouch_w, n=16)
+    pouch2 = ellipse_ring(pouch_x, pouch_y, z_hip + 0.115, 0.070, 0.041,
+                          pouch_w, n=16)
+    pouch3 = ellipse_ring(pouch_x, pouch_y, z_hip + 0.170, 0.050, 0.033,
+                          pouch_w, n=16)
+    bridge_ring(pouch0, pouch1, 'strap_navy', rects)
+    bridge_ring(pouch1, pouch2, 'strap_navy', rects)
+    bridge_ring(pouch2, pouch3, 'pouch_gold', rects)
+    cap(pouch0, 'strap_navy', rects, flip=True)
+    cap(pouch3, 'pouch_gold', rects)
 
     # ---------------- pelvis saddle: connects torso bottom to both legs
     # v15 (Task A): flare/step tightened from 0.92x to 0.72x -- with the
@@ -899,7 +1338,15 @@ def build_mesh_and_rig():
                 theta = si / segs * 2 * math.pi
                 x = ring_r * math.cos(theta)
                 y = ring_r * math.sin(theta) * 1.05
-                is_front = y < -ring_r * 0.15
+                # v11r5 SEAM FIX: the skin/hair paint boundary sat at only
+                # ~8.6 deg past dead-centre of each side (y < -0.15*ring_r),
+                # so the pale eye/brow plates' outer columns overlaid
+                # hair-painted skull -- a hard sliver seam in side view.
+                # Widening the front skin mask to -0.45*ring_r (~27 deg)
+                # puts the whole face plate field on skin so the plate-to-
+                # band transition happens in GEOMETRY, not as a texture
+                # sliver against hair.
+                is_front = y < -ring_r * 0.45
                 # v8: is_front now checked FIRST and unconditionally gets
                 # skin -- v7 checked "v < fringe_v" first, which painted a
                 # full-face hair mask down to fringe_v regardless of front/
@@ -984,7 +1431,12 @@ def build_mesh_and_rig():
                     # large bulge (see build_ear), so the silhouette break
                     # can come mostly from the nape shelf, which is where a
                     # real hairline actually steps out.
-                    extra_r = (0.004 + 0.014 * sil_w) * band_w + 0.030 * nape_w * back_w
+                    # Unequal low-frequency lobes break the perfect sphere at
+                    # the sides/nape, ramping from zero under the fitted cap.
+                    tuft = (0.007 * math.sin(theta * 5.0 + 0.55) +
+                            0.004 * math.sin(theta * 3.0 - 0.8)) * band_w * sil_w
+                    extra_r = ((0.004 + 0.014 * sil_w) * band_w +
+                               0.030 * nape_w * back_w + tuft)
                     x += extra_r * math.cos(theta)
                     y += extra_r * math.sin(theta) * 1.05
                 verts[(ri, si)] = (V((x, y, z), {'Head': 1.0}), ck)
@@ -1000,6 +1452,27 @@ def build_mesh_and_rig():
         return cz, r, top_ring, bottom_ring
 
     head_cz, head_r, head_top_ring, head_jaw_ring = build_head()
+
+    # Three chunky nape locks break the cap/head egg silhouette from the chase
+    # camera. They are deliberately low-frequency graphic wedges, not a noisy
+    # ring of spikes, and move rigidly with the Head bone.
+    def build_hair_lock(cx, cy, z_top, tip_x, tip_y, z_tip, hw, depth):
+        w = {'Head': 1.0}
+        mid_x, mid_y = lerp(cx, tip_x, 0.58), lerp(cy, tip_y, 0.58)
+        mid_z = lerp(z_top, z_tip, 0.58)
+        base = ellipse_ring(cx, cy, z_top, hw, depth, w, n=10)
+        mid = ellipse_ring(mid_x, mid_y, mid_z, hw * 0.76, depth * 0.82, w, n=10)
+        tip = ellipse_ring(tip_x, tip_y, z_tip, hw * 0.22, depth * 0.30, w, n=10)
+        bridge_ring(base, mid, 'hair', rects)
+        bridge_ring(mid, tip, 'hair_dark', rects)
+        cap(base, 'hair_dark', rects, flip=True)
+        cap(tip, 'hair_dark', rects)
+    build_hair_lock(-0.095, 0.145, head_cz - 0.050, -0.128, 0.150,
+                    head_cz - 0.190, 0.035, 0.025)
+    build_hair_lock(0.000, 0.175, head_cz - 0.058, 0.018, 0.185,
+                    head_cz - 0.205, 0.038, 0.026)
+    build_hair_lock(0.095, 0.145, head_cz - 0.050, 0.132, 0.150,
+                    head_cz - 0.180, 0.034, 0.024)
 
     def build_cap(top_ring, cz, r):
         # v13: replaces v8-v10's 2-ring-plus-tip "quarter circle" approx,
@@ -1026,7 +1499,15 @@ def build_mesh_and_rig():
         # Base flare: 1.18x -- inside the brief's 1.15-1.25x target, enough
         # lip to read as a cap sitting ON the head rather than paint on the
         # skull.
-        base_mult = 1.18
+        # v11r4: flat baseball-cap crown -- rise 0.45 -> 0.52 of the base
+        # radius: low and fitted (not a tureen) but with just enough dome
+        # that it doesn't pancake into a beret.
+        # v11r5: crown STILL bulbous from behind (v11-rest-back: a tall
+        # balloon over the skull). rise cut 0.58 -> 0.42 of base_rx and
+        # base_mult trimmed 1.06 -> 1.02 so the dome hugs the skull -- fabric
+        # sits ~5-8 mm proud of the hair surface at the sides instead of
+        # floating on a 6% pedestal: a fitted low-profile baseball crown.
+        base_mult = 1.02
         # v13: rise is now proportional to the join ring's OWN radius
         # (base_rx) instead of an absolute "crown_target_z" delta -- the
         # absolute-target version risked an elongated "coolie hat" dome if
@@ -1037,18 +1518,39 @@ def build_mesh_and_rig():
         # measured at the previous head_radius (rise/base_rx worked out to
         # ~1.25 there) so this is a like-for-like carry-forward, just
         # self-scaling now.
-        rise = base_rx * 1.25
+        # v11r3: dome FLATTENED (rise 0.88 -> 0.62 of base radius) -- the old
+        # near-hemisphere read as a mushroom/safari dome; 0.62 gives the low
+        # snapback crown profile.
+        rise = base_rx * 0.42
 
+        # v11r5 CROWN REBUILD: the old quarter-circle-of-base-radius dome --
+        # even flattened -- is a constant-curvature shell that stays WIDE too
+        # long and overhangs the skull: a beret/mushroom in silhouette. A
+        # fitted baseball crown instead PARALLELS THE SKULL SURFACE. The
+        # dome now continues the skull ellipsoid itself (same cz/r/1.05
+        # flattening build_head uses) from the join latitude up to a small
+        # tip aperture, scaled 1.04x in radius and lifted +6mm -- fabric
+        # hugging the skull at a constant ~4-8mm offset everywhere.
         rings_n = N_CAP_RINGS
+        phi0 = v0 * math.pi
+        phi_tip = 0.14          # small aperture at the crown, closed by the tip fan
+        fab = 1.04              # fabric thickness (radial)
+        lift = 0.006            # fabric offset along z
         dome_rings = []
         for i in range(rings_n + 1):
             t = i / rings_n
-            ang = t * (math.pi / 2)
-            rx = base_rx * base_mult * math.cos(ang)
-            ry = base_ry * base_mult * math.cos(ang)
-            z = z0 + rise * math.sin(ang)
-            dome_rings.append(ellipse_ring(0, 0, z, rx, ry, {'Head': 1.0}, n=n))
-        tip = V((0, 0, z0 + rise), {'Head': 1.0})
+            phi = lerp(phi0, phi_tip, t)
+            rr = r * math.sin(phi) * fab * base_mult
+            ry = rr * 1.05
+            z = cz + r * math.cos(phi) * 1.05 + lift
+            dome_rings.append(ellipse_ring(0, 0, z, rr, ry, {'Head': 1.0}, n=n))
+        # v11r4: slight back-down slope on the crown base ring -- a baseball
+        # cap sits tilted, high over the brow and low over the occiput.
+        # Ring convention: theta=pi/2 (+Y) is the BACK.
+        for i in range(n):
+            theta = i / n * 2 * math.pi
+            dome_rings[0][i].co.z -= 0.012 * math.sin(theta)
+        tip = V((0, 0, cz + r * math.cos(phi_tip) * 1.05 + lift), {'Head': 1.0})
 
         # Snapback strap notch: pull a small back-centred arc of the dome's
         # base ring outward (a real dimple/tab, not just a colour trick) --
@@ -1057,19 +1559,23 @@ def build_mesh_and_rig():
         # small OUTWARD tab (the centre vertex pushed back, its two
         # neighbours held in) breaks the round profile the way a real
         # plastic strap adjuster actually sits proud of a cap's fabric.
-        back_i = n // 4
-        for di in (-1, 0, 1):
-            idx = (back_i + di) % n
-            push = 1.16 if di == 0 else 0.94
-            dome_rings[0][idx].co.x *= push
-            dome_rings[0][idx].co.y *= push
+        # v11r4: the geometric strap notch is REMOVED -- even softened to
+        # 1.14x it broke the dome's overhead silhouette as a triangular
+        # spike. The strap/snapback area stays marked by the skirt's paint
+        # bands (hair opening + cap_strap swatch) and the strap cell's
+        # sheen band, which read cleanly from every angle.
 
         def ang_dist(a, b):
             d = abs(a - b) % (2 * math.pi)
             return min(d, 2 * math.pi - d)
 
         def skirt_color(theta):
-            return 'cap_strap' if ang_dist(theta, math.pi / 2) < 0.42 else 'cap_red_dark'
+            back_dist = ang_dist(theta, math.pi / 2)
+            # Exposed hair creates a real snapback opening and stops the crown
+            # reading as an unbroken crash helmet from the chase camera.
+            if back_dist < 0.32:
+                return 'hair_dark'
+            return 'cap_strap' if back_dist < 0.52 else 'cap_red_dark'
         bridge_ring_colored(join, dome_rings[0], skirt_color, rects)   # shadowed skirt, strap notch at back
         for i in range(rings_n):
             # first ring off the skirt stays shadowed (cap_red_dark) so the
@@ -1090,19 +1596,27 @@ def build_mesh_and_rig():
         # reads as a 3D peak breaking the cap's round silhouette at a
         # rear-3/4 angle -- not just dead overhead.
         front_i = 3 * n // 4
-        # v13b: widened further (5/28 -> 6.5/28 ratio) and reach pushed up
-        # -- the first pass's brim was barely perceptible in the rear-3/4
-        # in-game crop (v13a-0.png/zoom-0.png), so pushed harder rather
-        # than trusting the geometry existed "on paper".
-        span = max(2, round(n * 6.5 / 28))
+        # v11r2: brim widened to ~1.6x skull width -- span grows (6.5/28 ->
+        # 9.5/28 of the crown ring) AND the tip verts flare laterally
+        # (root.x * flare), so the peak's tip edge is genuinely wider than
+        # the dome instead of converging toward the centreline. The z-drop
+        # factor now ramps with w so the outer third of the brim curls
+        # visibly DOWNWARD -- a cap silhouette break from behind, not a
+        # flat plate.
+        span = max(2, round(n * 9.5 / 28))
         idxs = [(front_i + d) % n for d in range(-span, span + 1)]
         peak_top, peak_bot = [], []
+        # v11r4: thin stiff brim with a CRISP edge -- lateral flare cut
+        # 0.60 -> 0.18 (the old 1.6x-width fan read as side flaps), curl
+        # reduced to a gentle forward dip, thickness kept for the edge break.
         for d, idx in zip(range(-span, span + 1), idxs):
             w = max(0.0, 1.0 - (abs(d) / (span + 0.6)) ** 1.3)
             root = join[idx].co
-            reach = 0.135 * w
-            top_pt = Vector((root.x, root.y - reach, root.z - reach * 0.34))
-            bot_pt = Vector((top_pt.x, top_pt.y + reach * 0.06, top_pt.z - 0.016 * max(w, 0.35)))
+            reach = 0.132 * w
+            flare = 1.0 + 0.18 * w
+            curl = 0.08 + 0.12 * w ** 1.5
+            top_pt = Vector((root.x * flare, root.y - reach, root.z - reach * curl))
+            bot_pt = Vector((top_pt.x, top_pt.y + reach * 0.05, top_pt.z - 0.007 * max(w, 0.35)))
             peak_top.append(V(tuple(top_pt), {'Head': 1.0}))
             peak_bot.append(V(tuple(bot_pt), {'Head': 1.0}))
         for i in range(len(idxs) - 1):
@@ -1151,10 +1665,13 @@ def build_mesh_and_rig():
         v0e, v1e = P['head_cap_edge_v'], P['head_jaw_cutoff_v']
         z_cap_edge = head_cz + head_r * math.cos(v0e * math.pi) * 1.05
         z_jaw = head_cz + head_r * math.cos(v1e * math.pi) * 1.05
-        margin = 0.008
+        margin = 0.014
         z_band_top, z_band_bot = z_cap_edge - margin, z_jaw + margin
         cz0 = (z_band_top + z_band_bot) / 2.0
-        hh = min(0.045, (z_band_top - z_band_bot) / 2.0)
+        # v11r4: ear height clamped lower (0.032) so its top ring can never
+        # poke through the cap skirt -- the old 0.045 put beige squares on
+        # the red crown in the front render.
+        hh = min(0.022, (z_band_top - z_band_bot) / 2.0)
         phi_ear = math.acos(max(-1.0, min(1.0, (cz0 - head_cz) / (head_r * 1.05))))
         ring_r = head_r * math.sin(phi_ear)
         cy0 = -ring_r * 0.05
@@ -1189,10 +1706,22 @@ def build_mesh_and_rig():
         # takes skin_shadow rather than skin: an ear seen from directly
         # behind is a small form in its own shadow, not a highlight, so
         # this keeps it reading as anatomy without competing with the cap.
+        # v11r4: the ear base ring now digs INTO the skull (inner edge at
+        # ~0.95x of the local skull radius, i.e. under the hair-bulged
+        # surface) instead of hovering just outside it -- the old
+        # 1.02x-base/0.012-half-width ring sat entirely outside the hair
+        # mass's extra_r bulge and rendered as floating beige blobs. Peak
+        # kept modest (1.14x) so it stays an ear, not a wing.
+        # v11r5 EAR SHRINK: even at 1.14x peak the ears still flared as wide
+        # flat handles in silhouette/back view. Cut to a small cupped form:
+        # peak 1.14 -> 1.05x ring radius (barely proud of the hair mass),
+        # half-width/depth ~35% smaller, height clamped to 0.022 so most of
+        # the ear hides under the cap skirt edge -- Jake-style, where ears
+        # are a hint, not a handlebar.
         n_ear = 5
-        r_base, r_peak = ring_r * 1.02, ring_r * 1.20
-        w_base, w_peak = 0.012, 0.030
-        d_base, d_peak = 0.016, 0.026
+        r_base, r_peak = ring_r * 1.00, ring_r * 1.05
+        w_base, w_peak = 0.018, 0.016
+        d_base, d_peak = 0.015, 0.018
 
         def ring4(cx, hwv, hdv, z):
             return [
@@ -1213,16 +1742,116 @@ def build_mesh_and_rig():
         cap(ear_rings[-1], 'skin_shadow', rects, flip=(sign < 0))
     build_ear(1); build_ear(-1)
 
-    def build_brow_dot(sign):
-        cx = sign * head_r * 0.32
-        cz = head_cz + head_r * 0.12
-        cy = -head_r * 0.92
-        w = {'Head': 1.0}
-        s = 0.028
-        pts = [V((cx - s, cy, cz - s * 0.4), w), V((cx + s, cy, cz - s * 0.4), w),
-               V((cx + s, cy, cz + s * 0.4), w), V((cx - s, cy, cz + s * 0.4), w)]
-        quad(pts[0], pts[1], pts[2], pts[3], 'eyebrow', rects)
-    build_brow_dot(1); build_brow_dot(-1)
+    # v11r3 FACE FIX: the old planes were placed with ABSOLUTE millimetre
+    # offsets tuned for the pre-v11 head radius; after head_radius grew to
+    # 0.234 they ended up INSIDE the skull (mouth/blush ~19 mm deep, eyes
+    # straddling the surface -> z-fighting), so renders showed a blank head.
+    # Every facial vertex is now computed ON the skull ellipsoid itself
+    # (same equation build_head uses: x^2 + (y/1.05)^2 = ring_r^2) and then
+    # pushed OUT along -Y by a few mm, so the art can never be buried again,
+    # regardless of future head_radius changes.
+    fw = {'Head': 1.0}
+    def fpt(x, z, out=0.005):
+        cphi = max(-1.0, min(1.0, (z - head_cz) / (head_r * 1.05)))
+        rr = head_r * math.sqrt(max(0.0, 1.0 - cphi * cphi))
+        # v11r5 SMEAR FIX: at 3/4 yaw the outer grid nodes sat near the
+        # skull's visible horizon; a constant `out` let the plates sink
+        # back INTO the ellipsoid there (the surface normal tilts away),
+        # so eye/brow grids streaked as half-buried vertical slivers.
+        # Two guards:
+        #   1. clamp lateral position to <=0.88 of the local ring radius
+        #      (~28 deg short of the horizon) -- any grid point that would
+        #      fold past the visible horizon is pulled back instead of
+        #      smeared;
+        #   2. grow the outward offset with grazing angle (up to ~2.6x)
+        #      so plates stay proud of the curving surface all the way
+        #      out to that clamp -- crisp to well past +-45 deg yaw.
+        frac = min(0.70, abs(x) / max(rr, 1e-6))
+        x = math.copysign(frac * rr, x) if rr > 0 else 0.0
+        m = math.sqrt(max(1e-6, rr * rr - x * x))
+        lift = out * (1.0 + 1.6 * frac ** 3)
+        return V((x, -1.05 * m - lift, z), fw)
+
+    # v11r4 FACE WRAP: single flat quads chord across the ellipsoid and sink
+    # below the surface away from dead-centre, so eyes/brows vanish at 3/4
+    # yaw. Every feature is now a small GRID of surface-hugging points
+    # (fpt at each grid node), so the art follows the skull curvature and
+    # stays visible to +-45 deg.
+    def quad_grid(pts, color_key, edge_key=None):
+        # v11r5: optional edge_key paints the OUTERMOST column band with a
+        # blending colour (e.g. skin) so the plate vanishes against the
+        # skull at grazing yaw instead of showing an edge-on white sliver.
+        n_cols = len(pts[0]) - 1
+        for i in range(n_cols):
+            ck = edge_key if (edge_key and (i == 0 or i == n_cols - 1)) else color_key
+            for j in range(len(pts) - 1):
+                quad(pts[j][i], pts[j][i + 1], pts[j + 1][i + 1], pts[j + 1][i],
+                     ck, rects)
+
+    def build_face_eye(sign):
+        cx = sign * 0.078
+        eye_z = head_cz - 0.128          # clear of the brim shadow line (~cz-0.117)
+        ew, eh = 0.046, 0.031
+        # Almond eye: 4 columns x 3 rows, each node ON the ellipsoid; column
+        # height follows the almond profile sqrt(1-(dx/ew)^2).
+        nx = 4
+        rows_t = (-1.0, -0.45, 0.45, 1.0)
+        lid_cols = []
+        for i in range(nx + 1):
+            x = cx - ew + 2 * ew * i / nx
+            a = math.sqrt(max(0.0, 1.0 - ((x - cx) / ew) ** 2))
+            lid_cols.append([fpt(x, eye_z + eh * a * t, 0.006) for t in rows_t])
+        eye_rows = [[lid_cols[i][j] for i in range(nx + 1)] for j in range(len(rows_t))]
+        quad_grid(eye_rows, 'eye_white', edge_key='skin_shadow')
+        # Dark pupil, offset forward (deeper `out`) AND slightly inward so the
+        # gaze reads front-on from the chase/rest cameras. 2x2 wrapped grid.
+        px = cx - sign * 0.006
+        ps = 0.011
+        pz = ps * 0.8
+        pup = [[fpt(px - ps, eye_z - pz, 0.012), fpt(px, eye_z - pz * 1.05, 0.012), fpt(px + ps, eye_z - pz, 0.012)],
+               [fpt(px - ps, eye_z, 0.013), fpt(px, eye_z, 0.013), fpt(px + ps, eye_z, 0.013)],
+               [fpt(px - ps, eye_z + pz, 0.012), fpt(px, eye_z + pz * 1.05, 0.012), fpt(px + ps, eye_z + pz, 0.012)]]
+        quad_grid(pup, 'eye')
+
+        # Determined, asymmetric brow angle -- inner end lower toward the
+        # nose. 4x2 wrapped grid so it hugs the brow ridge curvature.
+        bw, bh = 0.034, 0.009
+        zi, zo = head_cz - 0.100, head_cz - 0.088
+        xi, xo = cx - sign * bw, cx + sign * bw
+        nbx = 4
+        brow_rows = []
+        for dz in (-bh, bh):
+            row = [fpt(xi + (xo - xi) * i / nbx,
+                       lerp(zi, zo, i / nbx) + dz, 0.007) for i in range(nbx + 1)]
+            brow_rows.append(row)
+        quad_grid(brow_rows, 'eyebrow')
+    build_face_eye(1); build_face_eye(-1)
+
+    # v11r4: dedicated temple side-shading patches were TRIED and REMOVED:
+    # the skull band at that latitude is painted hair, so skin-toned patches
+    # rendered as pale stuck-on squares beside the eyes. Front-vs-side value
+    # separation already comes from the smooth-shaded ellipsoid under the
+    # key/fill lights.
+
+    # Wedge nose + open grin, both hugging the surface.
+    nose_top = fpt(0.000, head_cz - 0.150, 0.022)
+    nose_l = fpt(-0.020, head_cz - 0.130, 0.005)
+    nose_r = fpt(0.021, head_cz - 0.127, 0.005)
+    tri(nose_top, nose_l, nose_r, 'skin_shadow', rects)
+    mouth_pts = [(-0.048, 0.007), (-0.017, -0.003), (0.016, -0.002), (0.050, 0.009)]
+    for i in range(len(mouth_pts) - 1):
+        x0, dz0 = mouth_pts[i]; x1, dz1 = mouth_pts[i + 1]
+        thick = 0.009
+        q = [fpt(x0, head_cz - 0.170 + dz0 - thick, 0.004),
+             fpt(x1, head_cz - 0.170 + dz1 - thick, 0.004),
+             fpt(x1, head_cz - 0.170 + dz1 + thick, 0.004),
+             fpt(x0, head_cz - 0.170 + dz0 + thick, 0.004)]
+        quad(q[0], q[1], q[2], q[3], 'mouth', rects)
+
+    # v11r4: cheek blush quads REMOVED -- under per-face jitter and hard
+    # colour-region shading edges they rendered as pale stuck-on squares
+    # ("band-aids") on the cheeks, not a tint. The face keeps its interest
+    # from eyes/brows/mouth and the new temple side-shading instead.
 
     # ---------------- arms
     def build_arm(sign):
@@ -1275,7 +1904,10 @@ def build_mesh_and_rig():
         # base run over N_DELTOID_RINGS(9) rings now reads as a real rounded
         # mound tapering to a near-point at the crown, the same silhouette
         # logic build_cap already uses for the head dome.
-        sh_r = [0.038, 0.096, 0.070]
+        # Keep the outer shoulder contour rounded and human rather than the
+        # old pagoda-like shelf. A smaller belly still gives a clear deltoid
+        # but no longer spikes far beyond the hoodie torso in rear silhouette.
+        sh_r = [0.024, 0.076, 0.066]
         sh_w = [{'Spine02': 0.4, sh_bone: 0.6}, {sh_bone: 1.0}, {sh_bone: 1.0}]
         # v18b: belly bulge added to the cap->belly segment -- v18 narrowed
         # the top ring (0.096->0.038) but circ_chain's plain lerp between
@@ -1288,16 +1920,18 @@ def build_mesh_and_rig():
         # width, turning the straight cone into a convex, rounded mound --
         # zero topology change, since bellies only scales existing sub-ring
         # radii, not ring count.
-        sh_rings = circ_chain(sx, 0, sh_z, sh_r, sh_w, N_LIMB, rings_per_seg=N_DELTOID_RINGS, bellies=[0.35, 0.0])
-        bridge_chain(sh_rings, ['flag_black', 'flag_black'], rects, flip=(sign > 0), rings_per_seg=N_DELTOID_RINGS)
-        cap(sh_rings[0], 'flag_black', rects, flip=(sign < 0))
+        sh_rings = circ_chain(sx, 0, sh_z, sh_r, sh_w, N_LIMB, rings_per_seg=N_DELTOID_RINGS, bellies=[0.22, 0.0])
+        bridge_chain(sh_rings, ['hoodie_red', 'hoodie_red'], rects, flip=(sign > 0), rings_per_seg=N_DELTOID_RINGS)
+        cap(sh_rings[0], 'hoodie_red', rects, flip=(sign < 0))
 
         arm_bone = 'LeftArm' if sign > 0 else 'RightArm'
         fore_bone = 'LeftForeArm' if sign > 0 else 'RightForeArm'
         hand_bone = 'LeftHand' if sign > 0 else 'RightHand'
 
         z0, z1 = P['shoulder_line_z'] - 0.024, P['shoulder_line_z'] - 0.024 - P['upper_arm_len']
-        # sleeve cuff: bottom third of upper arm is skin (short sleeve).
+        # Long hoodie sleeve. Hands remain bare and oversized below, giving a
+        # clean sleeve/cuff/hand break instead of the previous orange forearm
+        # cylinders dominating the rear silhouette.
         # The old belly-bump ring (r_mid = lerp*1.06 at t=0.38) is now a
         # `bellies` hump on the shoulder->sleeve segment instead of an
         # explicit extra keyframe -- same bulge, generated continuously.
@@ -1317,8 +1951,8 @@ def build_mesh_and_rig():
         # same gap would be wide enough to show as a hole/see-through
         # ring at the shoulder. A real bridge_ring closes it regardless of
         # how much the two radii differ.
-        bridge_ring(sh_rings[-1], ua_rings[0], 'flag_black', rects, flip=(sign > 0))
-        bridge_chain(ua_rings, ['flag_black', 'skin'], rects, flip=(sign > 0), rings_per_seg=N_UARM_RINGS)
+        bridge_ring(sh_rings[-1], ua_rings[0], 'hoodie_red', rects, flip=(sign > 0))
+        bridge_chain(ua_rings, ['hoodie_red', 'hoodie_red'], rects, flip=(sign > 0), rings_per_seg=N_UARM_RINGS)
         ua_hi = ua_rings[-1]
 
         z2 = z1 - P['forearm_len']
@@ -1326,14 +1960,16 @@ def build_mesh_and_rig():
         fa_r = [P['forearm_r0'], P['forearm_r1']]
         fa_w = [{arm_bone: 0.25, fore_bone: 0.75}, {fore_bone: 1.0}]
         fa_rings = circ_chain(sx, 0, fa_z, fa_r, fa_w, N_LIMB, rings_per_seg=N_FARM_RINGS, bellies=[0.06])
-        bridge_ring(ua_hi, fa_rings[0], 'skin', rects, flip=(sign > 0))   # elbow seam -- both sides share z1, no length to subdivide
-        bridge_chain(fa_rings, ['skin'], rects, flip=(sign > 0), rings_per_seg=N_FARM_RINGS)
+        bridge_ring(ua_hi, fa_rings[0], 'hoodie_red', rects, flip=(sign > 0))
+        bridge_chain(fa_rings, ['hoodie_shadow'], rects, flip=(sign > 0), rings_per_seg=N_FARM_RINGS)
         fa_lo = fa_rings[-1]
 
-        if sign > 0:
-            wb_hi = ellipse_ring(sx, 0, z2 + 0.03, P['forearm_r1'] * 1.10, P['forearm_r1'] * 1.10, {fore_bone: 1.0}, n=N_LIMB)
-            wb_lo = ellipse_ring(sx, 0, z2 + 0.015, P['forearm_r1'] * 1.12, P['forearm_r1'] * 1.12, {fore_bone: 1.0}, n=N_LIMB)
-            bridge_ring(wb_hi, wb_lo, 'wristband', rects, flip=(sign > 0))
+        wb_hi = ellipse_ring(sx, 0, z2 + 0.03, P['forearm_r1'] * 1.10,
+                             P['forearm_r1'] * 1.10, {fore_bone: 1.0}, n=N_LIMB)
+        wb_lo = ellipse_ring(sx, 0, z2 + 0.015, P['forearm_r1'] * 1.12,
+                             P['forearm_r1'] * 1.12, {fore_bone: 1.0}, n=N_LIMB)
+        bridge_ring(wb_hi, wb_lo, 'flag_gold' if sign > 0 else 'flag_black',
+                    rects, flip=(sign > 0))
 
         # hand: v7 -- a critic pass called the fist "featureless pale
         # capsule blobs (no thumb, no finger break)". Enlarged
@@ -1356,7 +1992,13 @@ def build_mesh_and_rig():
         # forearm rod just continuing to a rounded tip. Now clearly wider
         # than the (now also slimmer) forearm_r1=0.049, so the hand-flare
         # is real geometry, not just a colour change at the wrist.
-        hw_, hd_, hh_ = 0.082, 0.066, P['hand_len']
+        # Graphic runner hands should read as hands, not boxing gloves or
+        # camera-facing discs. Retain the warm knuckle/finger break while
+        # reducing the palm flare and tapering the fingertip more decisively.
+        # v11r2: another ~1.3x on the cross-section (0.073/0.038 ->
+        # 0.095/0.049) -- deeper AND wider fists so they read as chunky
+        # cartoon mitts against the enlarged head, not flat paddles.
+        hw_, hd_, hh_ = 0.095, 0.049, P['hand_len']
         z3 = z2 - hh_
         # v13: hand's cross-section is an ELLIPSE (rx != ry) with a
         # laterally-shifting centre (cy creeps forward toward the
@@ -1366,10 +2008,17 @@ def build_mesh_and_rig():
             (z2 - 0.008, hw_ * 0.86, hd_ * 0.90, 0.0, {hand_bone: 1.0}),
             (z2 - hh_ * 0.32, hw_, hd_, 0.004, {hand_bone: 1.0}),
             (z2 - hh_ * 0.68, hw_ * 0.90, hd_ * 0.94, 0.010, {hand_bone: 1.0}),
-            (z3, hw_ * 0.62, hd_ * 0.64, 0.014, {hand_bone: 1.0}),
+            (z3, hw_ * 0.60, hd_ * 0.64, 0.012, {hand_bone: 1.0}),
         ]
-        hand_colors = ['hand_skin', 'hand_skin_shadow', 'hand_skin']
+        # v11r4: one flat skin tone across the whole mitt (see hand_kf note).
         hz0, hrx0, hry0, hcy0, hw0 = hand_kf[0]
+        # v11r4: BRIDGE EVERY ring pair -- the old loop only ever bridged the
+        # first N_HAND_RINGS pairs (ring_idx never advanced past segment 0,
+        # because hand_colors had a single entry): rings 10..27 were orphaned
+        # verts (dropped at export) and the tip cap floated free as a pale
+        # disc beside the wrist/jaw while the bridged stump read as an open
+        # funnel. Now the whole keyframe tube is one solid skinned shell and
+        # the relaxed-fist taper reads as intended.
         hand_rings = [ellipse_ring(sx, hcy0, hz0, hrx0, hry0, hw0, n=N_HAND)]
         for si in range(3):
             hz0, hrx0, hry0, hcy0, hw0 = hand_kf[si]
@@ -1383,12 +2032,13 @@ def build_mesh_and_rig():
                 w = lerp_weights(hw0, hw1, t)
                 hand_rings.append(ellipse_ring(sx, cyy, zz, rx, ry, w, n=N_HAND))
         bridge_ring(fa_lo, hand_rings[0], 'hand_skin', rects, flip=(sign > 0))
-        ring_idx = 0
-        for si, col in enumerate(hand_colors):
-            for i in range(N_HAND_RINGS):
-                bridge_ring(hand_rings[ring_idx], hand_rings[ring_idx + 1], col, rects, flip=(sign > 0))
-                ring_idx += 1
-        cap(hand_rings[-1], 'hand_skin', rects, flip=(sign < 0))
+        for i in range(len(hand_rings) - 1):
+            bridge_ring(hand_rings[i], hand_rings[i + 1], 'hand_skin', rects, flip=(sign > 0))
+        # v11r4: tip cap in the SHADOW tone -- an upward-facing cap catches
+        # the key light and blew out to pure white on raised fists.
+        cap(hand_rings[-1], 'hand_skin_shadow', rects, flip=(sign < 0))
+        with open(os.path.join(SCRATCH, 'debug.txt'), 'a') as fh:
+            fh.write(f"hand sign={sign} rings={len(hand_rings)} faces_now={len(bm.faces)}\n")
 
         # thumb: bigger (base radius +40%, reach +33%) to match the bigger
         # hand -- 2-segment tapered stub (base -> mid -> rounded tip)
@@ -1398,15 +2048,15 @@ def build_mesh_and_rig():
         # v17: scaled up ~1.58x in step with the enlarged hand (hw_ 0.052->
         # 0.082) so the thumb stays proportional instead of looking like a
         # small stub on a now-much-bigger mitt.
-        tcx = sx - sign * 0.069
-        tcy = -0.044
+        tcx = sx - sign * 0.055
+        tcy = -0.036
         tcz = z2 - hh_ * 0.30
         w = {hand_bone: 1.0}
         n = Vector((-sign * 0.55, -0.65, -0.55)).normalized()
         tangent = Vector((0, 1, 0)) if abs(n.x) < 0.9 else Vector((1, 0, 0))
         bitan = n.cross(tangent).normalized()
         tangent = bitan.cross(n).normalized()
-        s0 = 0.043
+        s0 = 0.032
         base = Vector((tcx, tcy, tcz))
         def ring4(center, size):
             return [V(tuple(center + tangent * size + bitan * 0), w),
@@ -1414,15 +2064,19 @@ def build_mesh_and_rig():
                     V(tuple(center - tangent * size + bitan * 0), w),
                     V(tuple(center - tangent * size * 0.4 - bitan * size * 0.9), w)]
         base_ring = ring4(base, s0)
-        mid = base + n * 0.050
+        mid = base + n * 0.040
         mid_ring = ring4(mid, s0 * 0.8)
-        tip = mid + n * 0.043
+        tip = mid + n * 0.034
         v_tip = V(tuple(tip), w)
+        # v11r4: NO base cap -- the old flat quad at the thumb root floated
+        # as a pale disc near the wrist/jaw once the hand tube around it
+        # was missing. The base ring now sits INSIDE the solid mitt volume
+        # (tcx is well within hw_), so the open root is hidden geometry and
+        # the stub reads as branching off the fist.
         bridge_ring(base_ring, mid_ring, 'hand_skin', rects)
         for i in range(4):
             a, b = mid_ring[i], mid_ring[(i + 1) % 4]
             tri(a, b, v_tip, 'hand_skin', rects)
-        cap(base_ring, 'hand_skin', rects, flip=True)
 
     build_arm(1); build_arm(-1)
 
@@ -1518,10 +2172,12 @@ def build_mesh_and_rig():
         # Toe box: rounder/blunter (a real sneaker toe, not a pointed taper)
         # and re-ordered so the toe TIP is the light midsole colour (another
         # dark-oval trap, same fix as the main sole) with a distinct dark
-        # rubber toe-guard band just above it instead.
-        toe_hi = ellipse_ring(hx, -0.10, z_upper_bot + 0.01, P['foot_half_w'] * 0.98, 0.055, {toe_bone: 1.0}, n=N_SHOE)
-        toe_trim = ellipse_ring(hx, -0.155, z_trim_bot + 0.005, P['foot_half_w'] * 0.85, 0.050, {toe_bone: 1.0}, n=N_SHOE)
-        toe_lo = ellipse_ring(hx, -0.175, z_mid_bot, P['foot_half_w'] * 0.72, 0.040, {toe_bone: 1.0}, n=N_SHOE)
+        # rubber toe-guard band just above it.
+        # v11r2: toe box BULGED -- taller and wider at the first toe ring so
+        # the trainer reads as a puffy foam toe box over the thicker midsole.
+        toe_hi = ellipse_ring(hx, -0.105, z_upper_bot + 0.014, P['foot_half_w'] * 1.02, 0.066, {toe_bone: 1.0}, n=N_SHOE)
+        toe_trim = ellipse_ring(hx, -0.160, z_trim_bot + 0.008, P['foot_half_w'] * 0.90, 0.058, {toe_bone: 1.0}, n=N_SHOE)
+        toe_lo = ellipse_ring(hx, -0.182, z_mid_bot, P['foot_half_w'] * 0.76, 0.046, {toe_bone: 1.0}, n=N_SHOE)
         bridge_ring(upper_bot, toe_hi, 'shoe_white', rects, flip=(sign > 0))
         bridge_ring(toe_hi, toe_trim, 'shoe_white', rects, flip=(sign > 0))
         bridge_ring(toe_trim, toe_lo, 'shoe_sole', rects, flip=(sign > 0))   # dark rubber toe-guard bumper
@@ -1529,12 +2185,65 @@ def build_mesh_and_rig():
 
     build_leg(1); build_leg(-1)
 
+    # ---------------- v11: hood roll collar ----------------
+    # A chunky rolled hood collar arcing behind the neck, so the hoodie
+    # reads as a hoodie from the rear chase camera instead of ending in a
+    # flat neckline. Built as its own 12-gon tube along a hand-placed arc
+    # (5 keyframe rings bridged left->right); weighted to Spine02+neck so it
+    # bends with head turns without needing any new bone. Sits BEHIND the
+    # torso's back panel (+Y) and BELOW the skull's south pole, so it can't
+    # clip into the head or hide the flag/back graphic (which lives higher,
+    # on the black band).
+    def build_hood_collar():
+        w_end = {'Spine02': 0.55, 'neck': 0.45}
+        w_mid = {'Spine02': 0.25, 'neck': 0.75}
+        slz = P['shoulder_line_z']
+        pts = [(-0.105, 0.015, slz - 0.030),
+               (-0.082, 0.098, slz + 0.004),
+               (0.000, 0.128, slz + 0.022),
+               (0.082, 0.098, slz + 0.004),
+               (0.105, 0.015, slz - 0.030)]
+        tubes = [0.036, 0.042, 0.046, 0.042, 0.036]
+        rings = []
+        for i, ((x, y, z), rt) in enumerate(zip(pts, tubes)):
+            w = w_mid if 0 < i < 4 else w_end
+            rings.append(ellipse_ring(x, y, z, rt, rt * 0.82, w, n=12))
+        bridge_chain(rings,
+                     ['hoodie_shadow', 'hoodie_red', 'hoodie_shadow', 'hoodie_red'],
+                     rects)
+        cap(rings[0], 'hoodie_shadow', rects)
+        cap(rings[-1], 'hoodie_red', rects)
+    build_hood_collar()
+
     # NOTE: no back accessory (bag/strap) -- the tricolour bands are the
     # mandatory back graphic and nothing may partially occlude them, even
     # from a dead-on rear angle. The wristband stays: wrist-only, never
     # over the torso.
 
     # ---------------- finalize mesh
+    # v11r3: remap bib panel UVs continuously into the dedicated AA-painted
+    # 'bib_back' atlas cell (u across the glyph window, v down the panel).
+    cx_bb, cy_bb = rects['bib_back']
+    span_bb = (CELL - 8) / ATLAS_SIZE
+    n_remap = 0
+    for f, ck in list(face_color.items()):
+        if ck != 'bib_back':
+            continue
+        n_remap += 1
+        for loop in f.loops:
+            co = loop.vert.co
+            th = math.atan2(co.y, co.x)
+            dtc = (th - BIB_THETA_CENTER + math.pi) % (2 * math.pi) - math.pi
+            uf = (dtc + BIB_THETA_HALF) / (2 * BIB_THETA_HALF)
+            vf = (bib_z1 - co.z) / max(1e-6, bib_z1 - bib_z0)
+            # Clamp (never skip): a skipped loop keeps its centred-patch UV,
+            # sampling the middle of the glyph -> gold/black smear.
+            uf = max(0.0, min(1.0, uf))
+            vf = max(0.0, min(1.0, vf))
+            loop[uv_layer].uv = (cx_bb + (uf - 0.5) * span_bb,
+                                 cy_bb + (0.5 - vf) * span_bb)
+    with open(os.path.join(SCRATCH, 'debug.txt'), 'a') as fh:
+        fh.write(f"bib_back faces remapped: {n_remap}\n")
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     finalize_shading(bm, rects)
     me = bpy.data.meshes.new('BerlinRunnerHeroMesh')
@@ -1562,7 +2271,10 @@ def build_mesh_and_rig():
     bsdf = nt.nodes.get('Principled BSDF')
     tex = nt.nodes.new('ShaderNodeTexImage')
     tex.image = atlas_img
-    tex.interpolation = 'Closest'
+    # v11: was 'Closest' -- correct when every face collapsed onto one texel;
+    # now that faces sample a patch of painted shading, linear keeps the
+    # gradient/noise smooth instead of magnifying single texels.
+    tex.interpolation = 'Linear'
     nt.links.new(tex.outputs['Color'], bsdf.inputs['Base Color'])
     if 'Roughness' in bsdf.inputs:
         bsdf.inputs['Roughness'].default_value = 0.85
@@ -1679,32 +2391,48 @@ CYCLE_FRAMES = 60   # 0.5s at 120fps -- 60 keys/stride so glTF's linear-slerp
 
 def clamp01(v): return max(0.0, min(1.0, v))
 
+def _keyed(p, keys):
+    """Sample a keyframe list [(p0,v0),...] with cosine easing between keys."""
+    for (pa, va), (pb_, vb) in zip(keys, keys[1:]):
+        if pa <= p <= pb_:
+            t = (p - pa) / max(1e-6, pb_ - pa)
+            t = 0.5 - 0.5 * math.cos(math.pi * t)
+            return va + (vb - va) * t
+    return keys[-1][1]
+
+# Knee flexion keyed explicitly (v11r3): contact hold (~63 deg) eases into
+# stance, then SNAPS through toe-off into a deep ~140 deg recovery peak that is
+# HELD briefly (plateau keys at 0.58/0.64) -- the old curve smeared the same
+# bend across every frame, which read as dead middle frames. Retimed so the
+# extremes get held and the passing poses move fast.
+_KNEE_KEYS = [(0.00, 1.10), (0.05, 1.06), (0.16, 0.38), (0.38, 0.85),
+              (0.58, 2.45), (0.64, 2.40), (0.84, 1.30), (1.00, 1.10)]
+
 def leg_curve(p):
     """p in [0,1): 0 = contact, 0.5 = toe-off, 0.75 = peak recovery lift."""
     th = 2 * math.pi * p
-    thigh = -0.92 * math.cos(th) + 0.14 * math.cos(2 * th) + 0.34
-    swing_amt = clamp01(-math.sin(p * 2 * math.pi - 0.55))
-    knee = 0.14 + 1.60 * (swing_amt ** 1.3)
-    ankle = 0.30 * math.sin(th + 0.9) - 0.12
+    # v11r3 energy pass: contact thigh ~40 deg FORWARD of vertical, rear
+    # thigh ~46 deg BACK at toe-off, plus a sharp tuck bump centred on the
+    # passing phase (p=0.25) so BOTH feet leave the ground while the root
+    # bob peaks there -> a real airborne frame each half stride.
+    # -x on UpLeg = swing forward (rig sign convention, untouched).
+    thigh = -0.70 * math.cos(th) + 0.08 * math.cos(2 * th)
+    thigh -= 0.30 * math.exp(-(((p - 0.25) / 0.085) ** 2))
+    knee = _keyed(p, _KNEE_KEYS)
+    ankle = 0.32 * math.sin(th + 0.9) - 0.12
     toe = 0.42 * clamp01(math.sin(th + 0.4)) - 0.14 * clamp01(-math.sin(th - 2.4))
     return thigh, knee, ankle, toe
 
 def arm_curve(p):
     """Same phase convention as the CONTRALATERAL leg (natural cross
-    swing). Large swing (see module-level amplitude note above -- nothing
-    downstream amplifies this clip, so it has to look right baked as-is)."""
+    swing). v11r3: shoulder sweeps ~57 deg forward to ~66 deg back and the
+    elbow drives +/-16 deg around a locked ~90 deg carry, so the fists punch
+    up to CHIN height in front and past the hip behind -- a full graphic
+    sprint pump, not a jog."""
     th = 2 * math.pi * p
-    shoulder = 1.05 * math.cos(th) - 0.09 * math.cos(2 * th)
-    elbow = 1.05 + 0.55 * math.cos(th + 0.35)
-    # Lateral (abduction) term, signed rather than clamped to the forward
-    # half of the stride. The chase camera looks straight up the character's
-    # back, which foreshortens the whole 1.05-rad sagittal swing above into
-    # almost nothing -- from behind, a big fore/aft arm swing is close to
-    # invisible. What the rear view CAN see is the gap between arm and torso,
-    # and measured against the reference that gap is the loudest single thing
-    # in its run silhouette. The arms now alternate visibly out and in across
-    # the stride instead of holding a near-constant tucked pose.
-    adduct = 0.20 * math.cos(th)
+    shoulder = 1.15 * math.cos(th) - 0.13 * math.cos(2 * th)
+    elbow = 1.57 + 0.28 * math.cos(th + 0.35)
+    adduct = 0.24 * math.cos(th)
     return shoulder, elbow, adduct
 
 def bake_run_cycle(arm_obj):
@@ -1750,12 +2478,21 @@ def bake_run_cycle(arm_obj):
         # close to the torso instead of held out.
         shL, elL, adL = arm_curve(pR)
         shR, elR, adR = arm_curve(pL)
-        pb['LeftArm'].rotation_euler = (-shL, 0, -0.15 - adL)
-        pb['RightArm'].rotation_euler = (-shR, 0, 0.15 + adR)
+        # v11r5 FIST CLEARANCE: frames 2-3 (heel-kick phase) had the
+        # rear-swinging fist intersecting the torso panel. Add abduction on
+        # each arm ONLY during its own rear swing (cos<0 half of its phase)
+        # so the fist sweeps AROUND the hip instead of through it; front
+        # swing geometry is untouched.
+        extraL = 0.11 * max(0.0, -math.cos(2 * math.pi * pR))
+        extraR = 0.11 * max(0.0, -math.cos(2 * math.pi * pL))
+        pb['LeftArm'].rotation_euler = (-shL, 0, -0.15 - adL - extraL)
+        pb['RightArm'].rotation_euler = (-shR, 0, 0.15 + adR + extraR)
         pb['LeftForeArm'].rotation_euler = (elL, 0, 0)
         pb['RightForeArm'].rotation_euler = (elR, 0, 0)
-        pb['LeftHand'].rotation_euler = (0.08, 0.02, 0.05)
-        pb['RightHand'].rotation_euler = (0.08, -0.02, -0.05)
+        # Pronate the fists so the rear camera sees a graphic side/knuckle
+        # plane, never the circular end-cap that previously obscured the torso.
+        pb['LeftHand'].rotation_euler = (0.08, 0.62, 0.18)
+        pb['RightHand'].rotation_euler = (0.08, -0.62, -0.18)
 
         pb['LeftShoulder'].rotation_euler = (shL * 0.14, 0, -0.03 - adL * 0.07)
         pb['RightShoulder'].rotation_euler = (shR * 0.14, 0, 0.03 + adR * 0.07)
@@ -1766,15 +2503,25 @@ def bake_run_cycle(arm_obj):
         # amplitude note above) nothing downstream amplifies Hips/Spine
         # rotation for this asset either, so these are baked at the full
         # size they need to read at, not a "boosted later" fraction of it.
-        bob = -0.030 * math.cos(4 * math.pi * p) + 0.008
-        twist = 0.22 * math.sin(2 * math.pi * p)
+        # v11r3 energy pass: bob deepened to ~+/-0.09 m -- lowest at BOTH
+        # contact frames, highest at the two passing frames (2x stride
+        # frequency). Combined with the leg_curve passing tuck this gives a
+        # genuinely airborne frame twice per stride.
+        # Hips yaw cut to +/-8 deg and OPPOSED by an equal chest twist
+        # (+/-8 deg summed down the spine chain), so the shoulder line
+        # counterswings the hip line instead of both twisting the same
+        # total amount.
+        bob = -0.09 * math.cos(4 * math.pi * p) + 0.010
+        twist = 0.14 * math.sin(2 * math.pi * p)
         pb['Hips'].location = (0, 0, bob)
-        pb['Hips'].rotation_euler = (0.07, twist, 0.018 * math.sin(2 * math.pi * p))
+        # Forward lean totalling ~18 deg across hips->spine02: a committed
+        # sprint posture (was ~15 deg and read upright).
+        pb['Hips'].rotation_euler = (0.09, twist, 0.018 * math.sin(2 * math.pi * p))
 
-        chest_twist = -0.17 * math.sin(2 * math.pi * p)
-        pb['Spine'].rotation_euler = (0.09, chest_twist * 0.4, 0)
-        pb['Spine01'].rotation_euler = (0.06, chest_twist * 0.7, 0)
-        pb['Spine02'].rotation_euler = (0.035, chest_twist, 0)
+        chest_twist = -0.14 * math.sin(2 * math.pi * p)
+        pb['Spine'].rotation_euler = (0.11, chest_twist * 0.4, 0)
+        pb['Spine01'].rotation_euler = (0.07, chest_twist * 0.7, 0)
+        pb['Spine02'].rotation_euler = (0.04, chest_twist, 0)
         # Head stays comparatively STABLE while the chest bobs/twists under
         # it (real sprinters fix their gaze) -- counter-rotated against the
         # chest at a small fraction of chest_twist, same ratio as before.
@@ -1793,6 +2540,86 @@ def bake_run_cycle(arm_obj):
                 b.keyframe_insert('location', frame=frame)
 
     action.use_cyclic = True if hasattr(action, 'use_cyclic') else None
+    action.use_fake_user = True
+    bpy.context.scene.frame_set(0)
+    return action
+
+
+def bake_idle_cycle(arm_obj):
+    """A genuine looping title/ready stance, not a frozen frame of `run`.
+
+    The 2.4 s cycle has slow weight transfer, breathing, hand overlap and a
+    small head scan. Authoring keys land at 30 Hz while the scene remains 120
+    fps; Blender's glTF exporter may resample Euler rotation curves at scene
+    rate when it converts them to quaternion tracks.
+    """
+    bpy.context.view_layer.objects.active = arm_obj
+    arm_obj.animation_data_create()
+    action = bpy.data.actions.new('idle')
+    # The GLB exporter sees this action in-memory even with zero users, but a
+    # saved .blend discards it unless it has a persistent user. Keeping the
+    # source file reproducible matters more than relying on one export session.
+    action.use_fake_user = True
+    arm_obj.animation_data.action = action
+    try:
+        arm_obj.animation_data.action_slot = action.slots[0] if action.slots else None
+    except Exception:
+        pass
+
+    pb = arm_obj.pose.bones
+    idle_frames = 288
+    idle_step = 4
+    for frame in range(0, idle_frames + 1, idle_step):
+        p = (frame % idle_frames) / idle_frames
+        th = 2 * math.pi * p
+        breath = math.sin(th)
+        weight = math.sin(th + 0.35)
+        glance = math.sin(th * 0.5) ** 3
+        bpy.context.scene.frame_set(frame)
+
+        pb['Hips'].location = (0.012 * weight, 0, 0.008 + 0.010 * breath)
+        pb['Hips'].rotation_euler = (0.025, 0.045 * weight, -0.035 * weight)
+        pb['Spine'].rotation_euler = (0.015 + 0.012 * breath, -0.018 * weight, 0.010 * weight)
+        pb['Spine01'].rotation_euler = (-0.010 + 0.018 * breath, -0.028 * weight, 0.015 * weight)
+        pb['Spine02'].rotation_euler = (-0.018 + 0.010 * breath, -0.035 * weight, 0.020 * weight)
+        pb['neck'].rotation_euler = (-0.018 - 0.010 * breath, 0.035 * glance, -0.012 * weight)
+        pb['Head'].rotation_euler = (-0.015 - 0.015 * breath, 0.070 * glance, 0.018 * weight)
+
+        # Relaxed asymmetric support: the loaded leg stays long while the free
+        # knee and opposite heel breathe, then the weight slowly trades sides.
+        left_load = 0.5 + 0.5 * weight
+        right_load = 1.0 - left_load
+        pb['LeftUpLeg'].rotation_euler = (-0.055 + right_load * 0.055, 0, -0.025)
+        pb['RightUpLeg'].rotation_euler = (0.035 - left_load * 0.045, 0, 0.025)
+        pb['LeftLeg'].rotation_euler = (0.070 + right_load * 0.100, 0, 0)
+        pb['RightLeg'].rotation_euler = (0.055 + left_load * 0.085, 0, 0)
+        pb['LeftFoot'].rotation_euler = (0.025 - right_load * 0.045, 0, -0.025)
+        pb['RightFoot'].rotation_euler = (0.020 - left_load * 0.040, 0, 0.025)
+        pb['LeftToeBase'].rotation_euler = (0.015 * right_load, 0, 0)
+        pb['RightToeBase'].rotation_euler = (0.015 * left_load, 0, 0)
+
+        arm_sway = 0.035 * math.sin(th - 0.6)
+        pb['LeftShoulder'].rotation_euler = (0.015 + arm_sway, 0, -0.030)
+        pb['RightShoulder'].rotation_euler = (-0.010 - arm_sway, 0, 0.030)
+        pb['LeftArm'].rotation_euler = (-0.10 + arm_sway, 0, -0.13)
+        pb['RightArm'].rotation_euler = (0.08 - arm_sway, 0, 0.11)
+        pb['LeftForeArm'].rotation_euler = (0.48 + 0.025 * breath, 0, 0)
+        pb['RightForeArm'].rotation_euler = (0.56 - 0.020 * breath, 0, 0)
+        pb['LeftHand'].rotation_euler = (0.055, 0.025, 0.045 + 0.018 * breath)
+        pb['RightHand'].rotation_euler = (0.070, -0.020, -0.050 - 0.018 * breath)
+
+        for name in ['Hips', 'Spine', 'Spine01', 'Spine02', 'neck', 'Head',
+                     'LeftUpLeg', 'RightUpLeg', 'LeftLeg', 'RightLeg',
+                     'LeftFoot', 'RightFoot', 'LeftToeBase', 'RightToeBase',
+                     'LeftArm', 'RightArm', 'LeftForeArm', 'RightForeArm',
+                     'LeftHand', 'RightHand', 'LeftShoulder', 'RightShoulder']:
+            bone = pb[name]
+            bone.keyframe_insert('rotation_euler', frame=frame)
+            if name == 'Hips':
+                bone.keyframe_insert('location', frame=frame)
+
+    action.use_cyclic = True if hasattr(action, 'use_cyclic') else None
+    action.use_fake_user = True
     bpy.context.scene.frame_set(0)
     return action
 
@@ -1894,17 +2721,44 @@ def main():
         ('rest-front', 0, 2.5, 0.90),
     ]:
         point_cam(cam_o, target, dist, h, az)
-        p = os.path.join(SCRATCH, f'v3-{name}.png')
+        p = os.path.join(SCRATCH, f'{VERSION}-{name}.png')
         render_to(p)
         renders.append(p)
 
     # straight-down overhead, rest pose -- the slide-camera silhouette test
     point_cam_overhead(cam_o, (0, 0, 0.9), 3.4)
-    p = os.path.join(SCRATCH, 'v3-rest-overhead.png')
+    p = os.path.join(SCRATCH, f'{VERSION}-rest-overhead.png')
     render_to(p)
     renders.append(p)
 
     action = bake_run_cycle(arm_obj)
+    idle_action = bake_idle_cycle(arm_obj)
+    # Gameplay-defining movement lives in the asset, not hand-built mixer
+    # tracks in the HTML. Run is dense and explicitly linear; idle keeps its
+    # authored soft Bezier breathing curve.
+    set_action_linear(action)
+    gameplay_actions = bake_gameplay_actions(arm_obj, FPS)
+    # Verify the authored ready stance at two opposing weight-shift beats before
+    # restoring the sprint for the gameplay-angle sequence below.
+    arm_obj.animation_data.action = idle_action
+    try:
+        arm_obj.animation_data.action_slot = idle_action.slots[0] if idle_action.slots else None
+    except Exception:
+        pass
+    point_cam(cam_o, target, 2.5, 1.55, 180)
+    for i, frame in enumerate((0, 144)):
+        bpy.context.scene.frame_set(frame)
+        bpy.context.view_layer.update()
+        p = os.path.join(SCRATCH, f'{VERSION}-idle-{i}.png')
+        render_to(p)
+        renders.append(p)
+
+    # Both actions remain datablocks for ACTIONS export.
+    arm_obj.animation_data.action = action
+    try:
+        arm_obj.animation_data.action_slot = action.slots[0] if action.slots else None
+    except Exception:
+        pass
 
     # rear-high run cycle sequence -- the angle the player actually sees
     point_cam(cam_o, target, 2.5, 1.55, 180)
@@ -1912,7 +2766,7 @@ def main():
         frame = frac * CYCLE_FRAMES
         bpy.context.scene.frame_set(int(frame), subframe=frame - int(frame))
         bpy.context.view_layer.update()
-        p = os.path.join(SCRATCH, f'v3-run-{i}.png')
+        p = os.path.join(SCRATCH, f'{VERSION}-run-{i}.png')
         render_to(p)
         renders.append(p)
 
@@ -1922,7 +2776,7 @@ def main():
     bpy.context.scene.frame_set(int(frame), subframe=frame - int(frame))
     bpy.context.view_layer.update()
     point_cam_overhead(cam_o, (0, 0, 0.9), 3.4)
-    p = os.path.join(SCRATCH, 'v3-run-overhead.png')
+    p = os.path.join(SCRATCH, f'{VERSION}-run-overhead.png')
     render_to(p)
     renders.append(p)
 
@@ -1952,7 +2806,7 @@ def main():
         bpy.context.scene.display.render_aa = 'FXAA'
     except Exception:
         pass
-    p = os.path.join(SCRATCH, 'v3-silhouette.png')
+    p = os.path.join(SCRATCH, f'{VERSION}-silhouette.png')
     render_to(p)
     renders.append(p)
     mesh_obj.data.materials[0] = real_mat
@@ -1965,6 +2819,15 @@ def main():
         bpy.context.scene.render.engine = 'BLENDER_EEVEE'
 
     bpy.context.scene.frame_set(0)
+
+    tri_count = sum(len(p.vertices) - 2 for p in mesh_obj.data.polygons)
+    with open(os.path.join(SCRATCH, 'debug.txt'), 'a') as fh:
+        fh.write(f"POLYS {len(mesh_obj.data.polygons)} TRIS {tri_count}\n")
+    if RENDER_ONLY:
+        print('TRIANGLES', tri_count)
+        print('VERTS', len(mesh_obj.data.vertices))
+        print('RENDERS', renders)
+        return
 
     blend_path = os.path.splitext(OUT_GLB)[0] + '.blend'
     bpy.ops.wm.save_as_mainfile(filepath=blend_path)
@@ -1980,6 +2843,7 @@ def main():
         use_selection=True,
         export_animations=True,
         export_animation_mode='ACTIONS',
+        export_force_sampling=False,
         # export_apply=True ("Apply Modifiers") applies the Armature
         # modifier's CURRENT pose into the mesh at export time, which is
         # meaningless/wasteful for a skinned+animated export (glTF skinning
@@ -2006,7 +2870,6 @@ def main():
     except TypeError:
         bpy.ops.export_scene.gltf(**export_kwargs)
 
-    tri_count = sum(len(p.vertices) - 2 for p in mesh_obj.data.polygons)
     print('TRIANGLES', tri_count)
     print('VERTS', len(mesh_obj.data.vertices))
     print('RENDERS', renders)
