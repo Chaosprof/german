@@ -187,6 +187,14 @@
   #nountrans.empty { display:none; }
   #noun.long-word #nounword { font-size:clamp(28px,2.6vw,37px); }
   #noun.very-long-word #nounword { font-size:clamp(23px,2.15vw,31px); letter-spacing:-.012em; }
+  /* Tapeworm tier. A 67-letter compound cannot be one nowrap line at any
+     readable size - in the running strip it would need about 10 px type - so
+     past ~26 characters the plate widens and the word is allowed to wrap
+     instead. The class rides #quiz, not #noun, because the plate is the thing
+     that has to grow and there is no parent selector to reach it from #noun. */
+  #quiz.giant-word { width:min(760px,calc(100vw - 120px)); }
+  #quiz.giant-word #nounword { font-size:clamp(18px,1.9vw,26px); line-height:1.1;
+                               letter-spacing:-.014em; }
 
   /* --------------------------------------------------------- feedback ------ */
   /* Verdict feedback flashes the whole word sign (background + border), no
@@ -213,18 +221,27 @@
 
   #flash { position:absolute; inset:0; opacity:0; transition:opacity .32s;
            background:radial-gradient(circle at 50% 58%, rgba(255,80,80,0) 32%, rgba(230,50,50,.5) 100%); }
-  /* Music toggle. Bottom-right is the one corner the HUD leaves empty (score
-     top-right, mistakes top-left, deck stats bottom-left). */
-  #musicbtn { position:absolute; right:16px; bottom:18px; width:40px; height:40px;
+  /* Audio toggles. Bottom-right is the one corner the HUD leaves empty (score
+     top-right, mistakes top-left, deck stats bottom-left). The voice toggle
+     stacks directly above the music one and shares every rule below. */
+  #musicbtn, #voicebtn {
+              position:absolute; right:16px; bottom:18px; width:40px; height:40px;
               border-radius:50%; border:2px solid rgba(255,255,255,.30);
               background:rgba(14,20,34,.62); color:#fff; font-size:19px; line-height:1;
               cursor:pointer; z-index:6; padding:0; backdrop-filter:blur(3px); pointer-events:auto;
               transition:opacity .18s, border-color .18s, color .18s, transform .12s; }
-  #musicbtn:hover { transform:scale(1.08); border-color:rgba(255,255,255,.55); }
-  #musicbtn.off { color:rgba(255,255,255,.34); border-color:rgba(255,255,255,.14); }
-  /* A slash across the note when muted, so the state reads without colour. */
-  #musicbtn.off::after { content:''; position:absolute; left:8px; right:8px; top:50%;
+  #voicebtn { bottom:66px; }
+  #musicbtn:hover, #voicebtn:hover:not(:disabled) { transform:scale(1.08); border-color:rgba(255,255,255,.55); }
+  #musicbtn.off, #voicebtn.off { color:rgba(255,255,255,.34); border-color:rgba(255,255,255,.14); }
+  /* A slash across the glyph when muted, so the state reads without colour. */
+  #musicbtn.off::after, #voicebtn.off::after {
+                         content:''; position:absolute; left:8px; right:8px; top:50%;
                          height:2px; background:currentColor; transform:rotate(-45deg); }
+  /* No German voice installed: the control stays put and stops pretending it
+     can do anything, rather than vanishing and sliding the music button under
+     the player's thumb mid-run. */
+  #voicebtn:disabled { cursor:default; opacity:.5; }
+  #voicebtn svg { display:block; margin:auto; }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
   #stumblemsg { position:absolute; top:27%; left:18%; transform:translate(-50%,-50%) scale(.86);
@@ -265,6 +282,28 @@
   #deckselect:disabled { cursor:progress; opacity:.72; }
   #deckstatus { min-height:16px; margin-top:6px; font-size:9.5px; line-height:1.35; color:#9fb1d4; }
   #deckstatus.error { color:#ffaaa5; }
+  /* Tempo choice. A two-way segmented control rather than another dropdown:
+     there are exactly two answers, both should be readable without opening
+     anything, and the pressed one has to be obvious at a glance from across a
+     desk. Shares the deck picker's label style so the start card keeps one
+     vocabulary of small-caps section headings. */
+  #speedpicker { width:min(100%,460px); margin:0 auto 16px; text-align:left; }
+  #speedpicker > span { display:block; margin-bottom:6px; font-size:8.5px; font-weight:800;
+                        letter-spacing:.19em; text-transform:uppercase; color:#a6b6d8; }
+  #speedmodes { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .speedmode { min-height:40px; padding:6px 10px; border-radius:9px; cursor:pointer;
+               border:1px solid rgba(255,255,255,.22); background:#16213a; color:#c8d6f2;
+               font:800 12px/1.15 "Segoe UI",Arial,sans-serif; text-align:center;
+               display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+               transition:border-color .15s, background .15s, color .15s; }
+  .speedmode small { font:700 9px/1.2 "Segoe UI",Arial,sans-serif; letter-spacing:.06em;
+                     color:#8ea3ca; text-transform:uppercase; }
+  .speedmode:hover { border-color:rgba(255,255,255,.42); }
+  .speedmode[aria-pressed="true"] { background:#1d3f74; color:#fff;
+                                    border-color:rgba(255,211,82,.78);
+                                    box-shadow:0 0 0 1px rgba(255,211,82,.30) inset; }
+  .speedmode[aria-pressed="true"] small { color:#ffd352; }
+  .speedmode:focus-visible { outline:2px solid rgba(255,211,82,.75); outline-offset:2px; }
   /* Chunky moulded button: a hard colour ledge underneath instead of a soft
      glow, so it reads as something you press rather than something that lights
      up. The pulse keeps the eye on the only control that matters. */
@@ -329,6 +368,16 @@
                             max-width:100%; opacity:.92; }
   body.running #noun.long-word #nounword { font-size:clamp(22px,2.25vw,30px); }
   body.running #noun.very-long-word #nounword { font-size:clamp(18px,1.9vw,26px); letter-spacing:-.01em; }
+  /* The running strip is the one that clips: everything in it is nowrap +
+     ellipsis, which turns a tapeworm into "Grundstuecksverkehrsgenehmigungszus...".
+     Undo exactly those three properties for this tier and nothing else. */
+  body.running #quiz.giant-word { width:min(760px,calc(100vw - 120px)); }
+  body.running #quiz.giant-word #nounword {
+                           font-size:clamp(15px,1.5vw,21px); line-height:1.1; letter-spacing:-.014em;
+                           white-space:normal; overflow:visible; text-overflow:clip;
+                           overflow-wrap:anywhere; }
+  body.running #quiz.giant-word #nountrans {
+                           white-space:normal; overflow:visible; text-overflow:clip; }
 
   /* Continuously blurring a live WebGL canvas beneath four compact HUD cards
      forces extra full-resolution compositor passes. Their existing translucent
@@ -470,6 +519,9 @@
   @media (max-width:1080px) {
     #quiz { width:min(420px, calc(100vw - 250px)); }
     body.running #quiz { width:min(420px,calc(100vw - 250px)); }
+    /* Same specificity as the two rules above and later in the sheet, so the
+       tapeworm plate has to be restated here or it loses its extra width. */
+    #quiz.giant-word, body.running #quiz.giant-word { width:min(640px,calc(100vw - 90px)); }
   }
   @media (max-width:820px) {
     #wordstats { top:auto; bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px));
@@ -481,6 +533,8 @@
                   transform:scale(.82); transform-origin:bottom right; }
     #musicbtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
                 bottom:max(68px,calc(var(--ios-safe-bottom, 0px) + 64px)); }
+    #voicebtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
+                bottom:max(116px,calc(var(--ios-safe-bottom, 0px) + 112px)); }
 
     /* Mobile perf: drop the full-screen compositing layers that cost extra GPU
        passes over a live WebGL canvas on iPhone. The in-engine grade already
@@ -495,6 +549,8 @@
     #nountrans { font-size:clamp(12px,3vw,15px); }
     #noun.long-word #nounword { font-size:clamp(27px,6vw,36px); }
     #noun.very-long-word #nounword { font-size:clamp(23px,5vw,31px); }
+    #quiz.giant-word { width:min(340px, calc(100vw - 130px)); }
+    #quiz.giant-word #nounword { font-size:clamp(15px,4.2vw,22px); line-height:1.1; }
     #touchhint { display:flex; }
     /* Portrait iPhones used to let the intrinsic width of the two-column key
        legend widen the start card beyond the viewport, clipping both the
@@ -521,6 +577,15 @@
                               white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
     body.running #noun.long-word #nounword { font-size:clamp(22px,6.2vw,31px); }
     body.running #noun.very-long-word #nounword { font-size:clamp(18px,5.1vw,27px); letter-spacing:-.01em; }
+    /* The portrait strip is already edge-to-edge, so this tier only has to
+       stop clipping and drop a size - there is no extra width to be had. */
+    body.running #quiz.giant-word { width:auto; }
+    body.running #quiz.giant-word #nounword {
+                             font-size:clamp(12px,3.4vw,19px); line-height:1.08; letter-spacing:-.014em;
+                             white-space:normal; overflow:visible; text-overflow:clip;
+                             overflow-wrap:anywhere; }
+    body.running #quiz.giant-word #nountrans {
+                             white-space:normal; overflow:visible; text-overflow:clip; }
     body.running #wordstats { top:auto; bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px));
                               left:max(8px,calc(var(--ios-safe-left, 0px) + 6px)); transform:none;
                               grid-template-columns:repeat(3,39px); padding:5px 5px 4px; }
@@ -562,6 +627,8 @@
     #halation, #halation-night, #halation-dawn, #speedveil { display:none; }
     #musicbtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
                 bottom:max(12px,calc(var(--ios-safe-bottom, 0px) + 8px)); }
+    #voicebtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
+                bottom:max(60px,calc(var(--ios-safe-bottom, 0px) + 56px)); }
   }
 </style>
 </head>
@@ -610,6 +677,15 @@
   <div id="flash"></div>
   <div id="stumblemsg">AUA!</div>
 
+  <button id="voicebtn" type="button" aria-pressed="true" title="Stimme aus (V)">
+    <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9.4h3.3L12 5.5v13L7.3 14.6H4z" fill="currentColor"></path>
+      <path d="M15.6 9.2a3.9 3.9 0 0 1 0 5.6"></path>
+      <path d="M18.5 6.4a7.9 7.9 0 0 1 0 11.2"></path>
+    </svg><span class="sr">Stimme</span>
+  </button>
+
   <button id="musicbtn" type="button" aria-pressed="true" title="Musik aus (M)">
     <span aria-hidden="true">♪</span><span class="sr">Musik</span>
   </button>
@@ -637,11 +713,23 @@
         <span><kbd>5×</kbd></span><span>Serie zündet den Overdrive — schneller, heller, mehr Punkte</span>
         <span><kbd>R</kbd></span><span>Neustart</span>
       </div>
+      <div id="speedpicker">
+        <span id="speedlabel">Tempo</span>
+        <div id="speedmodes" role="group" aria-labelledby="speedlabel">
+          <button id="speed-normal" class="speedmode" type="button" data-mode="normal" aria-pressed="true">
+            Normal<small>volles Tempo</small>
+          </button>
+          <button id="speed-slow" class="speedmode" type="button" data-mode="slow" aria-pressed="false">
+            Langsam<small>halbes Tempo</small>
+          </button>
+        </div>
+      </div>
       <div id="deckpicker">
         <label for="deckselect">Wortdeck aus Artikel Blitz</label>
         <select id="deckselect" aria-describedby="deckstatus">
           <option value="catalog">Weitere Decks laden ...</option>
           <option value="embedded">Offline-Häufigkeitsdeck</option>
+          <option value="monster">Bandwurmwörter (4)</option>
         </select>
         <div id="deckstatus" role="status">Offline-Deck · sofort spielbereit</div>
       </div>
@@ -4211,7 +4299,7 @@ THREE.GLTFLoader = GLTFLoader;
   // Compact launch-time glosses for the shipped 756-word deck. This preserves
   // every opening translation without fetching and parsing the 7.6 MB master
   // noun catalog. The complete table is loaded only when another deck is chosen.
-  var BUNDLED_NOUN_MEANINGS = {"Jahr":"year","Kind":"child","Mensch":"person/human/human being","Zeit":"time","Tag":"day","Thema":"topic/subject","Euro":"euro","Stadt":"city/town","Frage":"question","Bereich":"area/field","Arbeit":"work/job","Prozent":"per cent","Schule":"school","MÃ¶glichkeit":"possibility/opportunity","Projekt":"project","Information":"information","Uhr":"clock/watch","Frau":"woman/wife","Datum":"date","Beispiel":"example","Land":"country/land","Seite":"page/side","Angebot":"offer/selection","SchÃ¼ler":"pupil/school student","Teil":"part/piece/part (concrete: ein Ersatzteil)","Kunde":"customer/client","Ziel":"goal/destination","Leben":"life","Entwicklung":"development","Weg":"way/path","Ende":"end","Woche":"week","Mitarbeiter":"employee/colleague","Ort":"place/location","Welt":"world","Familie":"family","Fall":"case/fall","Aufgabe":"task/assignment","Person":"person","Ergebnis":"result/outcome","Produkt":"product","Monat":"month","Problem":"problem","Art":"kind/type/species","Bild":"picture/image","Platz":"place/square/seat","Veranstaltung":"event","Programm":"programme","Grund":"reason/ground","Million":"million","Jugendliche":"young person/teenager","Region":"region","Team":"team","Geschichte":"history/story","Einsatz":"use/deployment/commitment","Zukunft":"future","Preis":"price/prize","Regel":"rule","Haus":"house/home","Stelle":"position/place/job","Erfahrung":"experience","Hilfe":"help","Mitglied":"member","Gruppe":"group","Mann":"man/husband","Raum":"room/space","September":"September","SchÃ¼lerin":"female student/pupil","Studium":"studies","Leistung":"performance/achievement","UniversitÃ¤t":"university","Patient":"patient","Stunde":"hour/lesson","Blick":"look/glance/view","Idee":"idea","Ausbildung":"training/education","GerÃ¤t":"device/appliance","Beitrag":"contribution/article","Mal":"time/occasion","Inhalt":"content/contents","Internet":"internet","LÃ¶sung":"solution/answer","System":"system","Rolle":"role/part","UnterstÃ¼tzung":"support","Geld":"money","Hochschule":"university/college","Interesse":"interest","Gesellschaft":"society/company","Wasser":"water","Einrichtung":"facility/institution","Buch":"book","Partner":"partner","Gast":"guest/visitor","Hand":"hand","StraÃŸe":"street/road","Form":"form/shape","HÃ¶he":"height/altitude","Schritt":"step","Betrieb":"business/operation","Spiel":"game/play","Wert":"value/worth","Zahl":"number","Arzt":"doctor/physician","Teilnehmer":"participant","Besucher":"visitor","Oktober":"October","Film":"film/movie","Zusammenarbeit":"cooperation/collaboration","Anfang":"beginning/start","Gemeinde":"municipality","Markt":"market","Klasse":"class/grade","Entscheidung":"decision","Mai":"May","Herausforderung":"challenge","Folge":"consequence/episode","Verein":"club/association","Juni":"June","Kirche":"church","Minute":"minute","Punkt":"point/dot","Chance":"chance/opportunity","Bedeutung":"meaning/importance","Tier":"animal","Modell":"model","Wirtschaft":"economy/business","Anspruch":"claim/entitlement","Artikel":"article/commodity","Erfolg":"success","FÃ¶rderung":"support/promotion","Kontakt":"contact","Voraussetzung":"prerequisite/requirement","App":"app","Musik":"music","November":"November","Recht":"right/law","Januar":"January","Sinn":"meaning/sense","Antrag":"application/request","Vorteil":"advantage","Sicherheit":"safety/security","MÃ¤rz":"March","April":"April","Auto":"car","Hotel":"hotel","Situation":"situation","QualitÃ¤t":"quality","Vergleich":"comparison","GesprÃ¤ch":"conversation/talk","Webseite":"web page/website","Weise":"way/manner","Praxis":"practice/surgery (doctor\u0027s)","Freund":"friend/boyfriend","Jahrhundert":"century","Sprache":"language/speech","Besuch":"visit","Angabe":"information/detail","Beratung":"advice/counselling","Anbieter":"provider/supplier","Organisation":"organisation","Wort":"word","Technik":"technology/technique","Netzwerk":"network","Energie":"energy","Firma":"company/firm","Wahl":"election/choice","Wohnung":"flat","Auswahl":"selection/choice","Material":"material","Kultur":"culture","Juli":"July","Natur":"nature","Forschung":"research","Prozess":"process/trial","Beginn":"beginning/start","Konzept":"concept/draft","Ausstellung":"exhibition","Herr":"Mr/gentleman","Anlage":"facility/investment/attachment","Lage":"situation/location","Engagement":"commitment/engagement","BÃ¼rger":"citizen","Alter":"age","Richtung":"direction","Fahrzeug":"vehicle","Aktion":"campaign/action","Text":"text","GebÃ¤ude":"building","Wald":"forest/woods","Politik":"politics/policy","Foto":"photo","Hinweis":"hint/note/reference","Schutz":"protection","August":"August","Experte":"expert","Antwort":"answer","Dezember":"December","Beruf":"profession/job","SpaÃŸ":"fun","Video":"video","Tipp":"tip/hint","Dienst":"service/duty","Smartphone":"smartphone","Mutter":"mother","Alltag":"everyday life","Wissen":"knowledge","Abschluss":"degree/conclusion/completion","Service":"service","Verbindung":"connection/link","Hersteller":"manufacturer","Grenze":"border/limit","Meter":"metre","Zusammenhang":"connection/context","Sache":"thing/matter","Museum":"museum","Wunsch":"wish/desire","TÃ¤tigkeit":"activity/work","Methode":"method","Auge":"eye","Februar":"February","Kraft":"force/strength","Gebiet":"area/field/territory","Gesetz":"law","Vortrag":"lecture/presentation","Menge":"amount/quantity","PrÃ¼fung":"exam/examination","Ã„nderung":"change/modification","Lehrer":"teacher","Mittel":"means/resources","Studie":"study","Ding":"thing","Unterricht":"lessons/instruction","Zentrum":"centre","Termin":"appointment/deadline","Abend":"evening","Umgebung":"surroundings/area","Bank":"bank/bench","Bedarf":"need","Kunst":"art","Mitte":"middle/centre","Untersuchung":"investigation/examination","Verwaltung":"administration","Arbeitgeber":"employer","KÃ¶rper":"body","Technologie":"technology","Titel":"title","Zugang":"access/entrance","Workshop":"workshop","Satz":"sentence/set/rate","NÃ¤he":"proximity/vicinity","Farbe":"colour/paint","Kollege":"colleague","Sommer":"summer","Sport":"sport","Digitalisierung":"digitisation","Diskussion":"discussion","FlÃ¤che":"area/surface","Netz":"net","Wissenschaft":"science","Gesundheit":"health","Staat":"state/country","Wettbewerb":"competition","Gefahr":"danger","Institut":"institute","Polizei":"police","Austausch":"exchange","Herz":"heart","Kommunikation":"communication","VerÃ¤nderung":"change","GrÃ¶ÃŸe":"size","Ausgabe":"edition/expenditure","Planung":"planning","Hintergrund":"background","Sonntag":"Sunday","Vertrag":"contract/agreement","Bund":"federation/federal government/alliance","Teilnahme":"participation","Vater":"father","Freitag":"Friday","Anmeldung":"registration","AktivitÃ¤t":"activity","Test":"test","Anzahl":"number","Kompetenz":"competence","Kreis":"circle/district","Werk":"work/factory/plant","Garten":"garden","Reihe":"row/series","Boden":"floor/ground","Auftrag":"order/assignment","Verantwortung":"responsibility","Unterschied":"difference","Milliarde":"billion","Karte":"card/map/ticket","BehÃ¶rde":"authority/agency","Integration":"integration","Partei":"party","Zeitpunkt":"moment","Nachricht":"message/news","Job":"job","Plattform":"platform","Krankenhaus":"hospital","MÃ¤dchen":"girl","Umwelt":"environment","Kopf":"head","Marke":"brand/mark","Zeitraum":"period/time span","Bewegung":"movement/exercise","Bundesland":"federal state","Gott":"God/god","Wirkung":"effect/impact","Ausland":"abroad/foreign countries","Reise":"trip/journey/travel","Generation":"generation","Kenntnis":"knowledge","Gericht":"court/dish","Verband":"association/bandage","Samstag":"Saturday","Schaden":"damage/harm","Urlaub":"holiday/vacation","Motto":"motto","FÃ¼hrung":"leadership/guided tour","Klinik":"clinic/hospital","Lernen":"learning","Vertreter":"representative","Bericht":"report","Band":"ribbon/tape","Kilometer":"kilometre","Erwachsene":"adult","Liste":"list","Versorgung":"supply/care","Praktikum":"internship","Betreuung":"care","Linie":"line","FÃ¤higkeit":"ability/skill","Bedingung":"condition/requirement","Bewerbung":"application","BevÃ¶lkerung":"population","GefÃ¼hl":"feeling/emotion","Nacht":"night","Einfluss":"influence","Amt":"office","Behinderung":"disability","Industrie":"industry","Start":"start","Produktion":"production","Seminar":"seminar","EinfÃ¼hrung":"introduction","Autor":"author","Wochenende":"weekend","Pflanze":"plant","Kauf":"purchase","Stimme":"voice/vote","Feld":"field","Eindruck":"impression","Angst":"fear/anxiety","Design":"design","HÃ¤lfte":"half","Lebensmittel":"food/groceries","KÃ¼nstler":"artist","Regierung":"government","Zimmer":"room","Liebe":"love","Gelegenheit":"opportunity/occasion","Aufnahme":"recording/admission","Fehler":"mistake/error","Montag":"Monday","Baum":"tree","Trend":"trend","Bestellung":"order","Restaurant":"restaurant","Meinung":"opinion","Position":"position","Verwendung":"use/usage","Licht":"light","Strom":"electricity/current","Krankheit":"illness/disease","Fahrt":"journey/ride","Dienstleistung":"service","AngehÃ¶rige":"relative/family member","ErnÃ¤hrung":"nutrition/diet","Plan":"plan","Deutsche":"German","Instrument":"instrument","GeschÃ¤ft":"shop/business","Dokument":"document","Haushalt":"household/budget","Wissenschaftler":"scientist","Arbeitsplatz":"workplace/job","Luft":"air","Schloss":"castle/lock","Gymnasium":"grammar school/high school","Sitz":"seat/headquarters","Station":"station/ward","Detail":"detail","Freude":"joy/pleasure","Ã–ffentlichkeit":"public","Spieler":"player","Maschine":"machine","Tod":"death","FuÃŸ":"foot","Rat":"advice/council","KÃ¼che":"kitchen/cuisine","Vorschlag":"suggestion/proposal","Vorbereitung":"preparation","Leitung":"management/line/pipe","Mittwoch":"Wednesday","Kurs":"course/rate","Landschaft":"landscape","Jugend":"youth","Tour":"tour","Handel":"trade/commerce","Ware":"goods/product","Vorstellung":"idea/performance","See":"lake","Interview":"interview","Gewalt":"violence/power","Erlebnis":"experience","Runde":"round","Donnerstag":"Thursday","Bau":"construction/building","Beziehung":"relationship","Computer":"computer","Strategie":"strategy","Risiko":"risk","Link":"link","Forum":"forum","Empfehlung":"recommendation","Kombination":"combination","Abteilung":"department","Anschluss":"connection","Bus":"bus","Vergangenheit":"past","Zustand":"condition/state","Rechnung":"bill/invoice","Insel":"island","Student":"student","Mitarbeiterin":"female employee/colleague","Herbst":"autumn","Flughafen":"airport","GlÃ¼ck":"luck/happiness","Kontrolle":"control/check","Name":"name","Professor":"professor","Hund":"dog","Kamera":"camera","Moment":"moment","Messe":"trade fair/mass","Erde":"earth/ground","Winter":"winter","Publikum":"audience/public","Therapie":"therapy","Nummer":"number","Temperatur":"temperature","Weiterbildung":"further education","Ursache":"cause","Infrastruktur":"infrastructure","Theater":"theatre","Haut":"skin","VerhÃ¤ltnis":"relationship/ratio","Bibliothek":"library","Modul":"module","Strecke":"route/distance/stretch","BÃ¼ro":"office","Personal":"staff/personnel","Mannschaft":"team/crew","Konzert":"concert/concerto","Bewohner":"resident/inhabitant","Leiter":"leader/director","Versicherung":"insurance","Landwirtschaft":"agriculture/farming","Saison":"season","Faktor":"factor","MaÃŸ":"measure/degree","Sorge":"worry/concern","Verhalten":"behaviour","Urteil":"judgement/verdict","Aussage":"statement","Bahn":"train/railway","Jahrzehnt":"decade","Krankenkasse":"health insurer/statutory health insurance fund","Krieg":"war","Essen":"food/meal","Tradition":"tradition","Werbung":"advertising","Grad":"degree","AtmosphÃ¤re":"atmosphere","Grundschule":"primary school/elementary school","Druck":"pressure/print","Heimat":"home/homeland","Ausnahme":"exception","Darstellung":"representation/depiction","Adresse":"address","Dienstag":"Tuesday","Dauer":"duration","Serie":"series","Anzeige":"advertisement/display","Fenster":"window","Medikament":"medication/medicine","VerstÃ¤ndnis":"understanding","Wetter":"weather","Lehre":"teaching/apprenticeship","Zeichen":"sign/symbol","BÃ¼hne":"stage","Ausflug":"excursion/outing","Datei":"file","Pflicht":"duty","BÃ¼rgermeister":"mayor","Download":"download","Sohn":"son","BÃ¼rgerin":"female citizen","Forderung":"demand/claim","Verlag":"publishing company","Dank":"thanks/gratitude","Nachfrage":"demand; enquiry/follow-up question","Handy":"mobile phone","Zweck":"purpose","Gegenstand":"object/subject","Dialog":"dialogue","Einwohner":"inhabitant","Sonne":"sun","HÃ¤ndler":"dealer/trader","Meer":"sea/ocean","Ressource":"resource","Gesicht":"face","Ruhe":"peace/quiet","Holz":"wood","Stoff":"material/fabric","Demokratie":"democracy","Vertrauen":"trust/confidence","Verkehr":"traffic/transport","Zeitung":"newspaper","Ereignis":"event/occurrence","Wand":"wall","Tochter":"daughter","Phase":"phase","Gewinn":"profit/gain","Sekunde":"second","Fortbildung":"further education","Opfer":"victim/sacrifice","Erinnerung":"memory/reminder","Fan":"fan","Feuerwehr":"fire brigade","Unfall":"accident","Zug":"train/move","Lust":"desire/pleasure","Gegensatz":"contrast/opposite","Vorschrift":"regulation","Tisch":"table","Semester":"semester","Mathematik":"mathematics","Park":"park","Aufenthalt":"stay","Schreiben":"letter/writing","Papier":"paper","Agentur":"agency","Sammlung":"collection","GebÃ¼hr":"fee","Kommentar":"comment","Info":"info","Tor":"goal/gate","Innenstadt":"city centre/downtown","Fahrrad":"bicycle","Baby":"baby/infant","Drittel":"third","Rathaus":"town hall/city hall","Zuschauer":"spectator/viewer","Training":"training","Ãœbung":"exercise/practice","Auszubildende":"apprentice/trainee","Senior":"senior citizen","TÃ¼r":"door","Kaffee":"coffee","Kritik":"criticism/critique","Freiheit":"freedom/liberty","FrÃ¼hjahr":"spring","Gemeinschaft":"community","GrundstÃ¼ck":"property/plot","Kampf":"fight/battle","PrÃ¤sentation":"presentation","Versuch":"attempt/experiment","Vordergrund":"foreground","Dorf":"village","Geburt":"birth","Sieg":"victory","Parkplatz":"parking lot/car park","Klimawandel":"climate change","Steuer":"tax","BroschÃ¼re":"brochure","Leser":"reader","Verlust":"loss","Format":"format","Post":"post/post office","Unternehmer":"businessman/entrepreneur","Gewicht":"weight","Event":"event","Strand":"beach","Betrag":"amount","Konferenz":"conference","Spur":"trace/track/lane","Norden":"north","ErklÃ¤rung":"explanation","Auskunft":"information","Tarif":"rate/tariff","Homepage":"homepage","Karriere":"career","Zahlung":"payment","Bundestag":"German federal parliament (the Bundestag)","Formular":"form","Geschenk":"gift/present","Fahrer":"driver","Trainer":"coach","Profil":"profile","Medizin":"medicine","Bett":"bed","Konflikt":"clash/conflict","Mehrheit":"majority","Note":"grade/mark","Dach":"roof","Szene":"scene","Traum":"dream","Konto":"account","Fach":"subject/compartment","Haar":"hair","Zeitschrift":"journal/magazine","Ordnung":"order","Mieter":"tenant","GetrÃ¤nk":"drink/beverage","Klima":"climate","Englisch":"English","Figur":"figure","Geschmack":"taste","Umfrage":"poll/survey","Einladung":"invitation","Klick":"click","Beamte":"civil servant/official","Nachteil":"disadvantage","Vermieter":"landlord","Abschnitt":"section","Reaktion":"reaction","Einkauf":"purchase/shopping","Hauptstadt":"capital city","Sendung":"broadcast/shipment","Telefon":"phone/telephone","Ausdruck":"expression","Werkzeug":"tool","Geburtstag":"birthday/day of birth","Operation":"operation/surgery","Lehrerin":"female teacher","Nachmittag":"afternoon","Tonne":"tonne (metric)/bin","Kontext":"context","Parlament":"parliament","Frist":"deadline","Rede":"speech","Osten":"east","Tablet":"tablet","SÃ¼den":"south","Einkommen":"income","Fernsehen":"TV/television","BrÃ¼cke":"bridge","FrÃ¼hstÃ¼ck":"breakfast","Kindergarten":"kindergarten","Glas":"glass","Kleidung":"clothing/clothes","Hoffnung":"hope","Bahnhof":"train station","Blog":"blog/weblog","Kapitel":"chapter","Rezept":"recipe/prescription","Stufe":"step/level","Zoo":"zoo","GemÃ¼se":"vegetables","Morgen":"morning","BeschÃ¤ftigung":"employment/occupation","LÃ¤nge":"length","Laden":"shop/store","Passwort":"password","Zuhause":"home","Berg":"mountain","Rad":"wheel/bicycle","Verletzung":"injury","Stern":"star","Ankunft":"arrival","Hobby":"hobby","Fett":"fat/grease","Schlafzimmer":"bedroom","GepÃ¤ck":"luggage","Label":"label","Pass":"passport/pass","Treppe":"flight of stairs/staircase/stairway","Arm":"arm","Schauspielerin":"actor/actress","AuslÃ¤nder":"foreigner","Schreibtisch":"desk/writing desk","Reiseziel":"destination","KÃ¤se":"cheese/curd","Wohnort":"residence","Zufall":"chance/coincidence/fortuity","Anweisung":"directive/instruction/statement","Ausweis":"ID/identification document; reserve â€œidentity cardâ€ specifically for Personalausweis.","Hausaufgabe":"homework","Ausgang":"exit/outcome","Bitte":"request/plea","Erdgeschoss":"ground floor","Stadion":"stadium","Hals":"neck/throat","Regal":"shelf/shelving","Schrank":"cupboard/wardrobe/cabinet","Tasse":"cup","Stock":"floor/level/stick","Koffer":"suitcase","Sofa":"sofa/settee/couch","Zahnarzt":"dentist","Ã„uÃŸerung":"statement/utterance","Wolke":"cloud","Deckel":"lid","Lampe":"lamp","Flur":"corridor/hall/hallway","Lokal":"bar/pub/restaurant","Waschmaschine":"washing machine","Schmuck":"jewellery","Aufforderung":"request/prompt","Messer":"knife","Teller":"plate","Honig":"honey","Butter":"butter","Weihnachtsmarkt":"Christmas fair/Christmas market","Erfindung":"invention","Fantasie":"fantasy/imagination","Saft":"juice","Bogen":"arc/arch/bow","Bleistift":"pencil","Bahnsteig":"platform","Pommes":"fries/chips (informal)","TÃ¼rke":"Turk","Entschuldigung":"apology/excuse","Doktor":"doctor/physician","Durst":"thirst","Abflug":"departure/takeoff","Disco":"disco","Vorwahl":"area code/primary election","Ansage":"announcement","Einzelzimmer":"single room","Geburtsort":"birthplace","Schinken":"ham","Anrede":"address/form of address/salutation","Familienname":"family name/last name/surname","Hausfrau":"housewife","HÃ¤hnchen":"chicken","Finne":"Finn","Kugelschreiber":"ballpoint pen","Halbpension":"half board","Familienstand":"marital status","Mexikaner":"Mexican"};
+  var BUNDLED_NOUN_MEANINGS = {"Jahr":"year","Kind":"child","Mensch":"person/human/human being","Zeit":"time","Tag":"day","Thema":"topic/subject","Euro":"euro","Stadt":"city/town","Frage":"question","Bereich":"area/field","Arbeit":"work/job","Prozent":"per cent","Schule":"school","Möglichkeit":"possibility/opportunity","Projekt":"project","Information":"information","Uhr":"clock/watch","Frau":"woman/wife","Datum":"date","Beispiel":"example","Land":"country/land","Seite":"page/side","Angebot":"offer/selection","Schüler":"pupil/school student","Teil":"part/piece/part (concrete: ein Ersatzteil)","Kunde":"customer/client","Ziel":"goal/destination","Leben":"life","Entwicklung":"development","Weg":"way/path","Ende":"end","Woche":"week","Mitarbeiter":"employee/colleague","Ort":"place/location","Welt":"world","Familie":"family","Fall":"case/fall","Aufgabe":"task/assignment","Person":"person","Ergebnis":"result/outcome","Produkt":"product","Monat":"month","Problem":"problem","Art":"kind/type/species","Bild":"picture/image","Platz":"place/square/seat","Veranstaltung":"event","Programm":"programme","Grund":"reason/ground","Million":"million","Jugendliche":"young person/teenager","Region":"region","Team":"team","Geschichte":"history/story","Einsatz":"use/deployment/commitment","Zukunft":"future","Preis":"price/prize","Regel":"rule","Haus":"house/home","Stelle":"position/place/job","Erfahrung":"experience","Hilfe":"help","Mitglied":"member","Gruppe":"group","Mann":"man/husband","Raum":"room/space","September":"September","Schülerin":"female student/pupil","Studium":"studies","Leistung":"performance/achievement","Universität":"university","Patient":"patient","Stunde":"hour/lesson","Blick":"look/glance/view","Idee":"idea","Ausbildung":"training/education","Gerät":"device/appliance","Beitrag":"contribution/article","Mal":"time/occasion","Inhalt":"content/contents","Internet":"internet","Lösung":"solution/answer","System":"system","Rolle":"role/part","Unterstützung":"support","Geld":"money","Hochschule":"university/college","Interesse":"interest","Gesellschaft":"society/company","Wasser":"water","Einrichtung":"facility/institution","Buch":"book","Partner":"partner","Gast":"guest/visitor","Hand":"hand","Straße":"street/road","Form":"form/shape","Höhe":"height/altitude","Schritt":"step","Betrieb":"business/operation","Spiel":"game/play","Wert":"value/worth","Zahl":"number","Arzt":"doctor/physician","Teilnehmer":"participant","Besucher":"visitor","Oktober":"October","Film":"film/movie","Zusammenarbeit":"cooperation/collaboration","Anfang":"beginning/start","Gemeinde":"municipality","Markt":"market","Klasse":"class/grade","Entscheidung":"decision","Mai":"May","Herausforderung":"challenge","Folge":"consequence/episode","Verein":"club/association","Juni":"June","Kirche":"church","Minute":"minute","Punkt":"point/dot","Chance":"chance/opportunity","Bedeutung":"meaning/importance","Tier":"animal","Modell":"model","Wirtschaft":"economy/business","Anspruch":"claim/entitlement","Artikel":"article/commodity","Erfolg":"success","Förderung":"support/promotion","Kontakt":"contact","Voraussetzung":"prerequisite/requirement","App":"app","Musik":"music","November":"November","Recht":"right/law","Januar":"January","Sinn":"meaning/sense","Antrag":"application/request","Vorteil":"advantage","Sicherheit":"safety/security","März":"March","April":"April","Auto":"car","Hotel":"hotel","Situation":"situation","Qualität":"quality","Vergleich":"comparison","Gespräch":"conversation/talk","Webseite":"web page/website","Weise":"way/manner","Praxis":"practice/surgery (doctor's)","Freund":"friend/boyfriend","Jahrhundert":"century","Sprache":"language/speech","Besuch":"visit","Angabe":"information/detail","Beratung":"advice/counselling","Anbieter":"provider/supplier","Organisation":"organisation","Wort":"word","Technik":"technology/technique","Netzwerk":"network","Energie":"energy","Firma":"company/firm","Wahl":"election/choice","Wohnung":"flat","Auswahl":"selection/choice","Material":"material","Kultur":"culture","Juli":"July","Natur":"nature","Forschung":"research","Prozess":"process/trial","Beginn":"beginning/start","Konzept":"concept/draft","Ausstellung":"exhibition","Herr":"Mr/gentleman","Anlage":"facility/investment/attachment","Lage":"situation/location","Engagement":"commitment/engagement","Bürger":"citizen","Alter":"age","Richtung":"direction","Fahrzeug":"vehicle","Aktion":"campaign/action","Text":"text","Gebäude":"building","Wald":"forest/woods","Politik":"politics/policy","Foto":"photo","Hinweis":"hint/note/reference","Schutz":"protection","August":"August","Experte":"expert","Antwort":"answer","Dezember":"December","Beruf":"profession/job","Spaß":"fun","Video":"video","Tipp":"tip/hint","Dienst":"service/duty","Smartphone":"smartphone","Mutter":"mother","Alltag":"everyday life","Wissen":"knowledge","Abschluss":"degree/conclusion/completion","Service":"service","Verbindung":"connection/link","Hersteller":"manufacturer","Grenze":"border/limit","Meter":"metre","Zusammenhang":"connection/context","Sache":"thing/matter","Museum":"museum","Wunsch":"wish/desire","Tätigkeit":"activity/work","Methode":"method","Auge":"eye","Februar":"February","Kraft":"force/strength","Gebiet":"area/field/territory","Gesetz":"law","Vortrag":"lecture/presentation","Menge":"amount/quantity","Prüfung":"exam/examination","Änderung":"change/modification","Lehrer":"teacher","Mittel":"means/resources","Studie":"study","Ding":"thing","Unterricht":"lessons/instruction","Zentrum":"centre","Termin":"appointment/deadline","Abend":"evening","Umgebung":"surroundings/area","Bank":"bank/bench","Bedarf":"need","Kunst":"art","Mitte":"middle/centre","Untersuchung":"investigation/examination","Verwaltung":"administration","Arbeitgeber":"employer","Körper":"body","Technologie":"technology","Titel":"title","Zugang":"access/entrance","Workshop":"workshop","Satz":"sentence/set/rate","Nähe":"proximity/vicinity","Farbe":"colour/paint","Kollege":"colleague","Sommer":"summer","Sport":"sport","Digitalisierung":"digitisation","Diskussion":"discussion","Fläche":"area/surface","Netz":"net","Wissenschaft":"science","Gesundheit":"health","Staat":"state/country","Wettbewerb":"competition","Gefahr":"danger","Institut":"institute","Polizei":"police","Austausch":"exchange","Herz":"heart","Kommunikation":"communication","Veränderung":"change","Größe":"size","Ausgabe":"edition/expenditure","Planung":"planning","Hintergrund":"background","Sonntag":"Sunday","Vertrag":"contract/agreement","Bund":"federation/federal government/alliance","Teilnahme":"participation","Vater":"father","Freitag":"Friday","Anmeldung":"registration","Aktivität":"activity","Test":"test","Anzahl":"number","Kompetenz":"competence","Kreis":"circle/district","Werk":"work/factory/plant","Garten":"garden","Reihe":"row/series","Boden":"floor/ground","Auftrag":"order/assignment","Verantwortung":"responsibility","Unterschied":"difference","Milliarde":"billion","Karte":"card/map/ticket","Behörde":"authority/agency","Integration":"integration","Partei":"party","Zeitpunkt":"moment","Nachricht":"message/news","Job":"job","Plattform":"platform","Krankenhaus":"hospital","Mädchen":"girl","Umwelt":"environment","Kopf":"head","Marke":"brand/mark","Zeitraum":"period/time span","Bewegung":"movement/exercise","Bundesland":"federal state","Gott":"God/god","Wirkung":"effect/impact","Ausland":"abroad/foreign countries","Reise":"trip/journey/travel","Generation":"generation","Kenntnis":"knowledge","Gericht":"court/dish","Verband":"association/bandage","Samstag":"Saturday","Schaden":"damage/harm","Urlaub":"holiday/vacation","Motto":"motto","Führung":"leadership/guided tour","Klinik":"clinic/hospital","Lernen":"learning","Vertreter":"representative","Bericht":"report","Band":"ribbon/tape","Kilometer":"kilometre","Erwachsene":"adult","Liste":"list","Versorgung":"supply/care","Praktikum":"internship","Betreuung":"care","Linie":"line","Fähigkeit":"ability/skill","Bedingung":"condition/requirement","Bewerbung":"application","Bevölkerung":"population","Gefühl":"feeling/emotion","Nacht":"night","Einfluss":"influence","Amt":"office","Behinderung":"disability","Industrie":"industry","Start":"start","Produktion":"production","Seminar":"seminar","Einführung":"introduction","Autor":"author","Wochenende":"weekend","Pflanze":"plant","Kauf":"purchase","Stimme":"voice/vote","Feld":"field","Eindruck":"impression","Angst":"fear/anxiety","Design":"design","Hälfte":"half","Lebensmittel":"food/groceries","Künstler":"artist","Regierung":"government","Zimmer":"room","Liebe":"love","Gelegenheit":"opportunity/occasion","Aufnahme":"recording/admission","Fehler":"mistake/error","Montag":"Monday","Baum":"tree","Trend":"trend","Bestellung":"order","Restaurant":"restaurant","Meinung":"opinion","Position":"position","Verwendung":"use/usage","Licht":"light","Strom":"electricity/current","Krankheit":"illness/disease","Fahrt":"journey/ride","Dienstleistung":"service","Angehörige":"relative/family member","Ernährung":"nutrition/diet","Plan":"plan","Deutsche":"German","Instrument":"instrument","Geschäft":"shop/business","Dokument":"document","Haushalt":"household/budget","Wissenschaftler":"scientist","Arbeitsplatz":"workplace/job","Luft":"air","Schloss":"castle/lock","Gymnasium":"grammar school/high school","Sitz":"seat/headquarters","Station":"station/ward","Detail":"detail","Freude":"joy/pleasure","Öffentlichkeit":"public","Spieler":"player","Maschine":"machine","Tod":"death","Fuß":"foot","Rat":"advice/council","Küche":"kitchen/cuisine","Vorschlag":"suggestion/proposal","Vorbereitung":"preparation","Leitung":"management/line/pipe","Mittwoch":"Wednesday","Kurs":"course/rate","Landschaft":"landscape","Jugend":"youth","Tour":"tour","Handel":"trade/commerce","Ware":"goods/product","Vorstellung":"idea/performance","See":"lake","Interview":"interview","Gewalt":"violence/power","Erlebnis":"experience","Runde":"round","Donnerstag":"Thursday","Bau":"construction/building","Beziehung":"relationship","Computer":"computer","Strategie":"strategy","Risiko":"risk","Link":"link","Forum":"forum","Empfehlung":"recommendation","Kombination":"combination","Abteilung":"department","Anschluss":"connection","Bus":"bus","Vergangenheit":"past","Zustand":"condition/state","Rechnung":"bill/invoice","Insel":"island","Student":"student","Mitarbeiterin":"female employee/colleague","Herbst":"autumn","Flughafen":"airport","Glück":"luck/happiness","Kontrolle":"control/check","Name":"name","Professor":"professor","Hund":"dog","Kamera":"camera","Moment":"moment","Messe":"trade fair/mass","Erde":"earth/ground","Winter":"winter","Publikum":"audience/public","Therapie":"therapy","Nummer":"number","Temperatur":"temperature","Weiterbildung":"further education","Ursache":"cause","Infrastruktur":"infrastructure","Theater":"theatre","Haut":"skin","Verhältnis":"relationship/ratio","Bibliothek":"library","Modul":"module","Strecke":"route/distance/stretch","Büro":"office","Personal":"staff/personnel","Mannschaft":"team/crew","Konzert":"concert/concerto","Bewohner":"resident/inhabitant","Leiter":"leader/director","Versicherung":"insurance","Landwirtschaft":"agriculture/farming","Saison":"season","Faktor":"factor","Maß":"measure/degree","Sorge":"worry/concern","Verhalten":"behaviour","Urteil":"judgement/verdict","Aussage":"statement","Bahn":"train/railway","Jahrzehnt":"decade","Krankenkasse":"health insurer/statutory health insurance fund","Krieg":"war","Essen":"food/meal","Tradition":"tradition","Werbung":"advertising","Grad":"degree","Atmosphäre":"atmosphere","Grundschule":"primary school/elementary school","Druck":"pressure/print","Heimat":"home/homeland","Ausnahme":"exception","Darstellung":"representation/depiction","Adresse":"address","Dienstag":"Tuesday","Dauer":"duration","Serie":"series","Anzeige":"advertisement/display","Fenster":"window","Medikament":"medication/medicine","Verständnis":"understanding","Wetter":"weather","Lehre":"teaching/apprenticeship","Zeichen":"sign/symbol","Bühne":"stage","Ausflug":"excursion/outing","Datei":"file","Pflicht":"duty","Bürgermeister":"mayor","Download":"download","Sohn":"son","Bürgerin":"female citizen","Forderung":"demand/claim","Verlag":"publishing company","Dank":"thanks/gratitude","Nachfrage":"demand; enquiry/follow-up question","Handy":"mobile phone","Zweck":"purpose","Gegenstand":"object/subject","Dialog":"dialogue","Einwohner":"inhabitant","Sonne":"sun","Händler":"dealer/trader","Meer":"sea/ocean","Ressource":"resource","Gesicht":"face","Ruhe":"peace/quiet","Holz":"wood","Stoff":"material/fabric","Demokratie":"democracy","Vertrauen":"trust/confidence","Verkehr":"traffic/transport","Zeitung":"newspaper","Ereignis":"event/occurrence","Wand":"wall","Tochter":"daughter","Phase":"phase","Gewinn":"profit/gain","Sekunde":"second","Fortbildung":"further education","Opfer":"victim/sacrifice","Erinnerung":"memory/reminder","Fan":"fan","Feuerwehr":"fire brigade","Unfall":"accident","Zug":"train/move","Lust":"desire/pleasure","Gegensatz":"contrast/opposite","Vorschrift":"regulation","Tisch":"table","Semester":"semester","Mathematik":"mathematics","Park":"park","Aufenthalt":"stay","Schreiben":"letter/writing","Papier":"paper","Agentur":"agency","Sammlung":"collection","Gebühr":"fee","Kommentar":"comment","Info":"info","Tor":"goal/gate","Innenstadt":"city centre/downtown","Fahrrad":"bicycle","Baby":"baby/infant","Drittel":"third","Rathaus":"town hall/city hall","Zuschauer":"spectator/viewer","Training":"training","Übung":"exercise/practice","Auszubildende":"apprentice/trainee","Senior":"senior citizen","Tür":"door","Kaffee":"coffee","Kritik":"criticism/critique","Freiheit":"freedom/liberty","Frühjahr":"spring","Gemeinschaft":"community","Grundstück":"property/plot","Kampf":"fight/battle","Präsentation":"presentation","Versuch":"attempt/experiment","Vordergrund":"foreground","Dorf":"village","Geburt":"birth","Sieg":"victory","Parkplatz":"parking lot/car park","Klimawandel":"climate change","Steuer":"tax","Broschüre":"brochure","Leser":"reader","Verlust":"loss","Format":"format","Post":"post/post office","Unternehmer":"businessman/entrepreneur","Gewicht":"weight","Event":"event","Strand":"beach","Betrag":"amount","Konferenz":"conference","Spur":"trace/track/lane","Norden":"north","Erklärung":"explanation","Auskunft":"information","Tarif":"rate/tariff","Homepage":"homepage","Karriere":"career","Zahlung":"payment","Bundestag":"German federal parliament (the Bundestag)","Formular":"form","Geschenk":"gift/present","Fahrer":"driver","Trainer":"coach","Profil":"profile","Medizin":"medicine","Bett":"bed","Konflikt":"clash/conflict","Mehrheit":"majority","Note":"grade/mark","Dach":"roof","Szene":"scene","Traum":"dream","Konto":"account","Fach":"subject/compartment","Haar":"hair","Zeitschrift":"journal/magazine","Ordnung":"order","Mieter":"tenant","Getränk":"drink/beverage","Klima":"climate","Englisch":"English","Figur":"figure","Geschmack":"taste","Umfrage":"poll/survey","Einladung":"invitation","Klick":"click","Beamte":"civil servant/official","Nachteil":"disadvantage","Vermieter":"landlord","Abschnitt":"section","Reaktion":"reaction","Einkauf":"purchase/shopping","Hauptstadt":"capital city","Sendung":"broadcast/shipment","Telefon":"phone/telephone","Ausdruck":"expression","Werkzeug":"tool","Geburtstag":"birthday/day of birth","Operation":"operation/surgery","Lehrerin":"female teacher","Nachmittag":"afternoon","Tonne":"tonne (metric)/bin","Kontext":"context","Parlament":"parliament","Frist":"deadline","Rede":"speech","Osten":"east","Tablet":"tablet","Süden":"south","Einkommen":"income","Fernsehen":"TV/television","Brücke":"bridge","Frühstück":"breakfast","Kindergarten":"kindergarten","Glas":"glass","Kleidung":"clothing/clothes","Hoffnung":"hope","Bahnhof":"train station","Blog":"blog/weblog","Kapitel":"chapter","Rezept":"recipe/prescription","Stufe":"step/level","Zoo":"zoo","Gemüse":"vegetables","Morgen":"morning","Beschäftigung":"employment/occupation","Länge":"length","Laden":"shop/store","Passwort":"password","Zuhause":"home","Berg":"mountain","Rad":"wheel/bicycle","Verletzung":"injury","Stern":"star","Ankunft":"arrival","Hobby":"hobby","Fett":"fat/grease","Schlafzimmer":"bedroom","Gepäck":"luggage","Label":"label","Pass":"passport/pass","Treppe":"flight of stairs/staircase/stairway","Arm":"arm","Schauspielerin":"actor/actress","Ausländer":"foreigner","Schreibtisch":"desk/writing desk","Reiseziel":"destination","Käse":"cheese/curd","Wohnort":"residence","Zufall":"chance/coincidence/fortuity","Anweisung":"directive/instruction/statement","Ausweis":"ID/identification document; reserve “identity card” specifically for Personalausweis.","Hausaufgabe":"homework","Ausgang":"exit/outcome","Bitte":"request/plea","Erdgeschoss":"ground floor","Stadion":"stadium","Hals":"neck/throat","Regal":"shelf/shelving","Schrank":"cupboard/wardrobe/cabinet","Tasse":"cup","Stock":"floor/level/stick","Koffer":"suitcase","Sofa":"sofa/settee/couch","Zahnarzt":"dentist","Äußerung":"statement/utterance","Wolke":"cloud","Deckel":"lid","Lampe":"lamp","Flur":"corridor/hall/hallway","Lokal":"bar/pub/restaurant","Waschmaschine":"washing machine","Schmuck":"jewellery","Aufforderung":"request/prompt","Messer":"knife","Teller":"plate","Honig":"honey","Butter":"butter","Weihnachtsmarkt":"Christmas fair/Christmas market","Erfindung":"invention","Fantasie":"fantasy/imagination","Saft":"juice","Bogen":"arc/arch/bow","Bleistift":"pencil","Bahnsteig":"platform","Pommes":"fries/chips (informal)","Türke":"Turk","Entschuldigung":"apology/excuse","Doktor":"doctor/physician","Durst":"thirst","Abflug":"departure/takeoff","Disco":"disco","Vorwahl":"area code/primary election","Ansage":"announcement","Einzelzimmer":"single room","Geburtsort":"birthplace","Schinken":"ham","Anrede":"address/form of address/salutation","Familienname":"family name/last name/surname","Hausfrau":"housewife","Hähnchen":"chicken","Finne":"Finn","Kugelschreiber":"ballpoint pen","Halbpension":"half board","Familienstand":"marital status","Mexikaner":"Mexican"};
   var nounMeaningLookup = BUNDLED_NOUN_MEANINGS;
   var nounMeaningsComplete = false, nounMeaningPromise = null;
   var articleDeckCatalog = Object.create(null);
@@ -4346,6 +4434,9 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function unlockGameAudio() {
+    // Before the AudioContext guard: a browser with no WebAudio can still have
+    // a speech engine, and the voice is the half of the audio that teaches.
+    primeSpeech();
     var AudioCtor = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtor) return;
     try {
@@ -4645,7 +4736,7 @@ THREE.GLTFLoader = GLTFLoader;
     if (!gameAudio || !musicBus) return;
     var now = gameAudio.currentTime;
     // Tempo follows the run. BASE_SPEED-ish is 124 BPM; full pelt is ~146.
-    var drive = clamp((speed - BASE_SPEED) / 26, 0, 1);
+    var drive = clamp(speedOver() / 26, 0, 1);
     var bpm = 124 + drive * 22 + overdriveIntensity * 1.6;
     var stepDur = 60 / bpm / 4;                       // one 16th
     var energy = clamp(drive * 0.85 + overdriveIntensity * 0.22, 0, 1);
@@ -4703,15 +4794,23 @@ THREE.GLTFLoader = GLTFLoader;
     if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
   }
 
+  // The music bus has two owners now — the mute toggle and the speech ducker —
+  // so neither writes the gain directly. Both set their own term and call this,
+  // which means a duck that lands while the player is muting cannot resurrect
+  // the bed, and un-ducking cannot un-mute it.
+  var musicDuck = 1;
+  function applyMusicGain(timeConst) {
+    if (!musicBus || !gameAudio) return;
+    // Ramp rather than snap, or toggling clicks as loudly as the old sfx did.
+    musicBus.gain.cancelScheduledValues(gameAudio.currentTime);
+    musicBus.gain.setTargetAtTime((musicEnabled ? MUSIC_LEVEL : 0) * musicDuck,
+                                  gameAudio.currentTime, timeConst || 0.08);
+  }
+
   function setMusicEnabled(on) {
     musicEnabled = !!on;
     try { localStorage.setItem('artikel-express-music', musicEnabled ? '1' : '0'); } catch (e) {}
-    if (musicBus && gameAudio) {
-      // Ramp rather than snap, or toggling clicks as loudly as the old sfx did.
-      musicBus.gain.cancelScheduledValues(gameAudio.currentTime);
-      musicBus.gain.setTargetAtTime(musicEnabled ? MUSIC_LEVEL : 0,
-                                    gameAudio.currentTime, 0.08);
-    }
+    applyMusicGain(0.08);
     var btn = document.getElementById('musicbtn');
     if (btn) {
       btn.classList.toggle('off', !musicEnabled);
@@ -4719,6 +4818,211 @@ THREE.GLTFLoader = GLTFLoader;
       btn.title = musicEnabled ? 'Musik aus (M)' : 'Musik an (M)';
     }
   }
+
+  // ===================================================== spoken article =====
+  // Every cleared gate says the noun back with its article - "der Bahnhof" - in
+  // a German voice, low and unhurried like a U-Bahn platform announcement, and
+  // brighter the longer the streak runs. The article glued to the noun is
+  // exactly how a native speaker stores the gender, so this is the one cue in
+  // the game that teaches the thing the game is about rather than scoring it.
+  //
+  // speechSynthesis rather than audio assets: the deck runs to 750+ nouns, so
+  // pre-baking clips is out of the question, and the OS voices keep the page
+  // self-contained and offline the way every other asset here is.
+  var SPEECH_SUPPORTED = typeof window.speechSynthesis !== 'undefined' &&
+                         typeof window.SpeechSynthesisUtterance !== 'undefined';
+  var speechEnabled = true;
+  try { if (localStorage.getItem('artikel-express-voice') === '0') speechEnabled = false; } catch (e) {}
+  var speechVoice = null;                        // stays null until German is found
+  var speechDeadVoices = Object.create(null);    // remote voices that failed offline
+  var speechPrimed = false;
+  var speechDuckTimer = null;
+  var speechPendingTimer = null;
+
+  // GERMAN ONLY, deliberately. An en-US voice will happily read "der Bahnhof"
+  // and it is funny for about four gates, but this is a pronunciation drill and
+  // it would be teaching the wrong phonemes several times a minute. If no German
+  // voice exists the button says so rather than the game faking it.
+  //
+  // Rank a LOCAL voice first: it is the only kind that works from file:// with
+  // no network. Chrome's "Google Deutsch" is a remote voice that fails silently
+  // when offline, so it is a fallback and never the pick - and it is struck off
+  // the list the moment an utterance using it actually errors.
+  function pickGermanVoice() {
+    if (!SPEECH_SUPPORTED) return null;
+    var voices;
+    try { voices = window.speechSynthesis.getVoices() || []; } catch (e) { return null; }
+    var best = null, bestScore = -1;
+    for (var i = 0; i < voices.length; i++) {
+      var v = voices[i];
+      var lang = String(v.lang || '').toLowerCase().replace('_', '-');
+      if (lang.indexOf('de') !== 0) continue;
+      if (speechDeadVoices[v.name]) continue;
+      var score = v.localService ? 100 : 10;
+      if (lang === 'de-de') score += 6;           // over de-AT / de-CH
+      if (v.default) score += 1;
+      if (score > bestScore) { bestScore = score; best = v; }
+    }
+    return best;
+  }
+
+  function refreshSpeechVoice() {
+    speechVoice = pickGermanVoice();
+    refreshVoiceButton();
+  }
+
+  function duckForSpeech() {
+    musicDuck = 0.40;
+    applyMusicGain(0.05);
+    // Watchdog: engines are inconsistent about whether a cancelled utterance
+    // ends via onend or onerror, and a duck that never lifted would leave the
+    // bed quiet for the rest of the run. Nothing here says more than about a
+    // second and a half of German.
+    if (speechDuckTimer) clearTimeout(speechDuckTimer);
+    speechDuckTimer = setTimeout(unduckForSpeech, 4000);
+  }
+  function unduckForSpeech() {
+    if (speechDuckTimer) { clearTimeout(speechDuckTimer); speechDuckTimer = null; }
+    if (musicDuck === 1) return;
+    musicDuck = 1;
+    applyMusicGain(0.18);
+  }
+
+  function stopSpeech() {
+    if (speechPendingTimer) { clearTimeout(speechPendingTimer); speechPendingTimer = null; }
+    if (!SPEECH_SUPPORTED) return;
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    unduckForSpeech();
+  }
+
+  // A gate is spoken either way. Clearing it is praise - the noun you just
+  // got right, said back with its article. Missing it is a correction: the
+  // SAME phrase, always with the article that was actually right, so the wrong
+  // guess is never the last version of the word the player hears. That is the
+  // whole point of a gender drill, and it is the half a scoreboard cannot do.
+  function speakArticleWord(article, noun, streak, correction) {
+    if (!SPEECH_SUPPORTED || !speechEnabled || !speechVoice || !article || !noun) return;
+    if (speechPendingTimer) { clearTimeout(speechPendingTimer); speechPendingTimer = null; }
+    if (correction) {
+      // Let the buzzer land on its own first. The correction carries further as
+      // a separate beat than it does shouting over the sound that is already
+      // telling the player they were wrong.
+      speechPendingTimer = setTimeout(function () {
+        speechPendingTimer = null;
+        utterArticleWord(article, noun, streak, true);
+      }, 240);
+      return;
+    }
+    utterArticleWord(article, noun, streak, false);
+  }
+
+  function utterArticleWord(article, noun, streak, correction) {
+    if (!SPEECH_SUPPORTED || !speechEnabled || !speechVoice) return;
+    var synth = window.speechSynthesis;
+    // Latest word wins. Deep into a streak the gates arrive faster than a
+    // two-word phrase takes to say, and a queue would drift a whole noun behind
+    // the player - hearing the article for the gate before last is worse than
+    // hearing nothing at all.
+    try { synth.cancel(); } catch (e) {}
+    var u;
+    try { u = new SpeechSynthesisUtterance(article + ' ' + noun); } catch (e) { return; }
+    var used = speechVoice;
+    u.voice = used;
+    u.lang = used.lang || 'de-DE';
+    // Low and slow is the joke - a stern Berlin platform announcer, which also
+    // happens to be the most legible way to land a two-word phrase over a music
+    // bed. The streak lifts it: by a dozen in a row the announcer has stopped
+    // being stern and is audibly enjoying himself.
+    //
+    // A correction goes the other way - lower and slower than any streak ever
+    // makes it, which is both the funnier reading and the clearer one. It is
+    // the phrase the player most needs to actually parse, and it is competing
+    // with a stumble, a camera shake and a red flash.
+    if (correction) {
+      u.pitch = 0.68;
+      u.rate = 0.80;
+    } else {
+      var lift = Math.min(1, Math.max(0, (streak - 1) / 12));
+      u.pitch = 0.78 + lift * 0.32;
+      u.rate = 0.86 + lift * 0.18;
+    }
+    u.volume = 1;
+    u.onstart = duckForSpeech;
+    u.onend = unduckForSpeech;
+    u.onerror = function (e) {
+      var err = e && e.error;
+      if (err === 'interrupted' || err === 'canceled') { unduckForSpeech(); return; }
+      // A remote voice with no network lands here. Strike it off and re-pick, so
+      // the next gate either finds a local voice or the button honestly reports
+      // that there is nothing to speak with.
+      if (used && !used.localService) speechDeadVoices[used.name] = true;
+      unduckForSpeech();
+      refreshSpeechVoice();
+    };
+    try { synth.speak(u); } catch (e) { unduckForSpeech(); }
+  }
+
+  // Some engines only populate getVoices() - and only permit speaking at all -
+  // after the page has spoken once inside a user gesture. unlockGameAudio sits
+  // on every first-gesture path (start card, music button, first key), so a
+  // silent warm-up there means the first cleared gate is not the one that gets
+  // swallowed.
+  function primeSpeech() {
+    if (!SPEECH_SUPPORTED || speechPrimed) return;
+    speechPrimed = true;
+    try {
+      var warm = new SpeechSynthesisUtterance(' ');
+      warm.volume = 0; warm.lang = 'de-DE';
+      window.speechSynthesis.speak(warm);
+    } catch (e) {}
+    refreshSpeechVoice();
+  }
+
+  function setSpeechEnabled(on) {
+    speechEnabled = !!on;
+    try { localStorage.setItem('artikel-express-voice', speechEnabled ? '1' : '0'); } catch (e) {}
+    if (!speechEnabled) stopSpeech();
+    refreshVoiceButton();
+  }
+
+  function refreshVoiceButton() {
+    var btn = document.getElementById('voicebtn');
+    if (!btn) return;
+    var available = SPEECH_SUPPORTED && !!speechVoice;
+    var on = speechEnabled && available;
+    btn.classList.toggle('off', !on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.disabled = !available;
+    btn.title = !SPEECH_SUPPORTED
+      ? 'Dieser Browser kann nicht sprechen'
+      : (!available
+          ? 'Keine deutsche Stimme installiert \u2014 Windows: Einstellungen \u203a Zeit und Sprache \u203a Sprache \u203a Deutsch hinzuf\u00fcgen'
+          : (speechEnabled ? 'Stimme aus (V)' : 'Stimme an (V)'));
+  }
+
+  (function wireVoiceButton() {
+    var btn = document.getElementById('voicebtn');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      // Same first-gesture role as the music button: pressing this on the start
+      // card has to be able to bring the audio and the speech engine up itself.
+      unlockGameAudio();
+      setSpeechEnabled(!speechEnabled);
+      btn.blur();
+    });
+    if (SPEECH_SUPPORTED) {
+      refreshSpeechVoice();
+      // The voice list is populated asynchronously on every engine, often after
+      // first paint, so the button starts unavailable and corrects itself.
+      try {
+        window.speechSynthesis.addEventListener('voiceschanged', refreshSpeechVoice);
+      } catch (e) {
+        window.speechSynthesis.onvoiceschanged = refreshSpeechVoice;
+      }
+    }
+    refreshVoiceButton();
+  })();
 
   function playStumbleSound() {
     if (!gameAudio) return;
@@ -4911,12 +5215,15 @@ THREE.GLTFLoader = GLTFLoader;
   // that, so the switch always happens behind a solid wall of air, and every
   // other distance gate in the file (chunk cull, near-detail band, building
   // core LOD) is expressed against these two rather than hand-picked.
-  // 190 puts CHUNK_CULL_FAR back on the 210 m the street was already drawn to
-  // before this pass, so the number of chunks submitted per frame is unchanged
-  // and the whole fix costs draw distance nowhere. Pushing it further (250 was
-  // measured) buys a crisper mid-ground but costs ~8% of the frame for city
-  // that is, by construction, behind an opaque wall of air.
-  var WORLD_EMERGE = 120;
+  // 190 puts CHUNK_CULL_FAR on 210 m: far enough that a 20-30 m facade is still
+  // a small horizon shape when it first starts contributing pixels, while the
+  // existing seven-slot ring still recycles a chunk beyond the visibility edge
+  // (the freshly wrapped centre is at least ~216 m ahead). At the former 120 m
+  // emerge point, a full-height facade was already a large screen-space block;
+  // even a technically fog-hidden switch therefore read as a wall advancing
+  // out of the vanishing point rather than as distant architecture resolving
+  // gradually through air.
+  var WORLD_EMERGE = 190;
   var FOG_FAR_MAX = WORLD_EMERGE - 12;
 
   // Stock linear fog is smoothstep(fogNear, fogFar, depth), which spends most
@@ -4925,8 +5232,9 @@ THREE.GLTFLoader = GLTFLoader;
   // Raising it to a power keeps both endpoints (still 0 at fogNear and 1 at
   // fogFar, so FOG_FAR_MAX above still guarantees an opaque far edge) while
   // pushing the bulk of the density into the last third of the range: the
-  // street stays crisp out to ~160 m and then hazes out hard, rather than a
-  // flat grey wash starting at 100 m. Patched into the shared ShaderChunk
+  // street stays crisp through the decision zone, while distant facades gain
+  // contrast progressively instead of crossing a narrow, obvious fog wall.
+  // Patched into the shared ShaderChunk
   // before the first material compiles, so every fogged material in the scene
   // inherits it with no per-material uniform plumbing. If a three.js bump ever
   // changes this chunk's text, the replace matches nothing and the stock curve
@@ -4939,10 +5247,44 @@ THREE.GLTFLoader = GLTFLoader;
   // arches, skyline blocks) visibly recedes into air instead of staying pin-
   // sharp out to the horizon. Still well beyond the ~40-50 m an obstacle needs
   // to read clearly at top speed, so this is pure atmosphere, not a spawn cue.
-  scene.fog = new THREE.Fog(FOG_COLOR, 95, FOG_FAR_MAX);
+  scene.fog = new THREE.Fog(FOG_COLOR, 70, FOG_FAR_MAX);
 
   var camera = new THREE.PerspectiveCamera(69, window.innerWidth / window.innerHeight, 0.4, 4000);
   scene.add(camera);
+
+  // ------------------------------------------------- near-side render cull --
+  // The far end of the corridor has a depth budget (see WORLD_EMERGE above):
+  // nothing switches on until the haze in front of it is opaque. The NEAR end
+  // had no equivalent, and every gate that dropped a passing object was a
+  // hand-picked offset from the RUNNER — "playerZ - 0.75", "dz > -16",
+  // "playerZ + 20". The runner is not the viewpoint. The chase camera sits
+  // 3.35-6.4 m further back (backOff, and more again in portrait), so each of
+  // those planes actually sat several metres IN FRONT of the lens: a parked car
+  // blinked out while still beside the bonnet, a gate the runner had just
+  // cleared vanished with its posts still in frame, and — the one that reads as
+  // "the building went transparent" — shopDepth, the solid interior box behind
+  // every shop window, was dropped a whole chunk early, leaving nothing but
+  // glass to see through.
+  //
+  // So near-side removal is derived, exactly like the far side, from the one
+  // thing that decides whether a pixel exists: the camera. nearCullZ is the
+  // plane behind which nothing can be on screen. Anything whose TRAILING edge
+  // is still in front of it stays drawn, whatever it is and however close.
+  // Objects that wrap the screen edge are cheap — three.js frustum-culls each
+  // mesh — so nothing is bought by dropping them early except the pop.
+  //
+  // The margin covers three lags at once: updateChunks runs inside the fixed
+  // sim step, so camera.position is one rendered frame stale; the rig damps
+  // toward its target rather than snapping to it (hence the min() against the
+  // ideal position, which leads the damped one while accelerating); and the
+  // camera's forward axis is tilted a few degrees off +Z by the lane-follow, so
+  // a point far out to the side sits slightly "ahead" of a pure Z compare.
+  var NEAR_CULL_MARGIN = 3.0;
+  var cameraBackOff = 3.35;     // written each frame by updateCamera
+  var nearCullZ = -1e9;
+  function refreshNearCullPlane(playerZ) {
+    nearCullZ = Math.min(camera.position.z, playerZ - cameraBackOff) - NEAR_CULL_MARGIN;
+  }
 
   // ====================================================== post-processing ===
   // The inlined three build carries no EffectComposer/UnrealBloomPass and the
@@ -5970,7 +6312,7 @@ THREE.GLTFLoader = GLTFLoader;
             outlineTransparentWasVisible[otd] = outlineTransparentDetails[otd].visible ? 1 : 0;
             outlineTransparentDetails[otd].visible = false;
           }
-          // Transit/station/bridge/tunnel/landmark roots past NEAR_DETAIL_FAR.
+          // Transit/station/bridge/tunnel/landmark roots past SPECTACLE_INK_FAR.
           // They are in the beauty pass so they can emerge through the haze
           // instead of popping (see spectacleNear in applyChunkLOD), but out
           // there they are deep enough in the fog that an ink line costs a
@@ -8576,6 +8918,16 @@ THREE.GLTFLoader = GLTFLoader;
   // texture's uv transform for us. uTint carries the per-mood grade and is
   // allowed above 1.0 so the sun and the brightest cloud tops clear the bloom
   // threshold in the linear buffer.
+  // The painted strip is the default shipped horizon (the procedural rings and
+  // tower are only its load-failure fallback). Give that real path a very slow,
+  // ground-anchored approach: over a long run the band grows by only ~16%, so
+  // it reads as landmark depth/parallax rather than a UI image being zoomed.
+  // uSkylineTop is both the on-dome height and the V sampling denominator, so
+  // changing it expands the skyline upward while its base stays nailed to the
+  // horizon at uv.y=0.
+  var SKYLINE_TOP_FAR = 0.158;
+  var SKYLINE_TOP_NEAR = 0.183;
+  var SKYLINE_APPROACH_DIST = 1200;
   var skyMat = new THREE.ShaderMaterial({
     uniforms: {
       mapA: { value: skyTextures[0] },
@@ -8596,7 +8948,7 @@ THREE.GLTFLoader = GLTFLoader;
       // the ~95 degree field of view never contains a full repeat.
       uSkyline: { value: null },
       uSkylineOn: { value: 0 },
-      uSkylineTop: { value: 0.167 },
+      uSkylineTop: { value: SKYLINE_TOP_FAR },
       uSkylineTiles: { value: 3.0 },
       // Applied in the shader, NOT via texture.offset: a raw ShaderMaterial
       // gets no uvTransform from three, which is the same reason projectSky's
@@ -9048,13 +9400,12 @@ THREE.GLTFLoader = GLTFLoader;
   var MOOD_TREATMENTS = [
     {
       // 0 — Berlin midday. Where every run starts.
-      // fogFar used to be 520 — more than twice the distance at which the
-      // street actually switches on, i.e. haze that never finished before the
-      // pop it was supposed to hide. Every mood's far plane now lands at or
-      // under FOG_FAR_MAX (see the depth-budget block by scene.fog), which
-      // clamps it in any case; the day treatment keeps the clearest air of the
-      // three, same ordering as the 520/480/470 set it replaces.
-      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 58, fogFar: 108,
+      // Fog finishes before the 190 m chunk-emerge surface, but its ramp is
+      // intentionally broad. The former 58..108 m range concealed the switch
+      // yet made the whole skyline resolve inside only 50 m, so tall facades
+      // arrived as large blocks. 70..168 m lets them begin as tiny, low-contrast
+      // horizon shapes and acquire colour over several seconds of approach.
+      background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 70, fogFar: 168,
       skyTint: new THREE.Color(1.03, 1.03, 1.05), exposure: 1.06,
       // Colour-temperature pass: measured via console (sample the actual light
       // objects, not the eye) that the sun-facing facade row and the fill-lit
@@ -9144,7 +9495,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 1 — magenta/teal sunset. Warm key, hard teal fill; the split-tone does
       // the rest so the shadows stay cyan instead of sliding to brown.
-      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 52, fogFar: 103,
+      background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 65, fogFar: 160,
       skyTint: new THREE.Color(1.03, 1.01, 1.02), exposure: 1.07,
       // Same colour-temperature pass as mood 0: deepened the teal fill and the
       // salmon sun a notch so the warm/cool split survives the wall albedo
@@ -9176,7 +9527,7 @@ THREE.GLTFLoader = GLTFLoader;
     {
       // 2 — neon dusk. The sky is still an electric blue, the shopfronts and
       // station signage carry the frame, and bloom is at its widest here.
-      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 55, fogFar: 100,
+      background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 62, fogFar: 154,
       skyTint: new THREE.Color(1.01, 1.02, 1.06), exposure: 1.10,
       // This mood's brief is deliberately a uniform electric blue (no warm key
       // — warmth here comes from bulb/shop/station emissive, not the sun), so
@@ -9253,11 +9604,11 @@ THREE.GLTFLoader = GLTFLoader;
   var ROAD_HALF = 7.2;          // asphalt edge
   var WALK_OUT = 12.4;          // sidewalk outer edge / building line
   var CHUNK_LEN = 40;
-  // Seven 40 m slots cover the complete -38..140 m render envelope and still
-  // leave 76 m between a recycled slot (+216 m) and the far visibility edge.
-  // The old 13-slot ring built 240 m of city that could never be submitted,
-  // roughly doubling boot construction and pooled GPU capacity for no pixels.
-  var CHUNK_COUNT = 7;          // 280 m ring; identical visible street coverage
+  // Seven 40 m slots cover the complete -38..210 m render envelope. A recycled
+  // slot lands at least ~216 m ahead, just beyond the far visibility edge, so
+  // the existing ring supports the longer architectural approach without
+  // rebuilding the much larger old 13-slot pool.
+  var CHUNK_COUNT = 7;          // 280 m ring; supports the full 210 m envelope
   var INITIAL_CHUNK_COUNT = 5;  // complete -20..180 m title/play envelope
   var WORLD_LEN = CHUNK_LEN * CHUNK_COUNT;
   // applyChunkLOD measures a chunk by its CENTRE, so a chunk switching on at
@@ -9265,27 +9616,34 @@ THREE.GLTFLoader = GLTFLoader;
   // whole haze budget is built around (see the depth-budget block by
   // scene.fog). Change WORLD_EMERGE, not this.
   var CHUNK_CULL_FAR = WORLD_EMERGE + CHUNK_LEN / 2;
-  // Where sidewalk props, roof furniture, parked vehicles and the transit /
-  // station / bridge set pieces switch on. Not fog-hidden the way the chunk
-  // cull is — no playable amount of haze reaches this close — but far enough
-  // out that everything arriving here is a handful of pixels tall, already
-  // inside the depth-of-field's full-blur range, and carrying the first ~10%
-  // of the haze ramp. Kept identical across quality tiers on purpose: shedding
+  // Where small sidewalk props, contact shadows and facade micro-depth switch
+  // on. Rooflines and other silhouette-bearing architecture explicitly do not
+  // use this gate. At this distance the remaining arrivals are a handful of
+  // pixels, inside the full-blur band and already substantially haze-softened.
+  // Kept identical across quality tiers on purpose: shedding
   // draw distance under load just trades a frame or two for the exact pop-in
   // this whole block exists to remove.
-  var NEAR_DETAIL_FAR = 90;
+  var NEAR_DETAIL_FAR = 135;
+  // Scene-wide micro pools are switched as one chunk slice, so their nearest
+  // instance can sit almost half a chunk closer than the chunk centre. Give
+  // that coarse-grained path its own deeper threshold; individual scene nodes
+  // below are staggered by their actual authored Z instead.
+  var MICRO_POOL_FAR = 165;
   // Where a building core collapses from its four authored materials to the
   // single facade one (see applyChunkLOD). Past the near-detail band so the two
   // switches never land on the same building in the same stretch of road.
-  var CORE_LOD_FAR = 104;
+  var CORE_LOD_FAR = 149;
   // Street trees and parked cars/buses are the two prop families big enough to
-  // be caught arriving: a 5 m canopy or a 10 m bus is tens of pixels at
-  // NEAR_DETAIL_FAR, where the haze is only ~39% and hides nothing. They are
-  // also few per chunk, so pushing just these two past the fog's far plane
-  // costs a fraction of what widening the whole prop band would, and buys a
-  // switch that happens in air the player cannot see through at all. Must stay
+  // be caught arriving. They are also few per chunk, so pushing just these two
+  // into the nearly opaque end of the haze costs a fraction of widening the
+  // whole prop band and keeps their switch visually buried. Must stay
   // under CHUNK_CULL_FAR — beyond that their chunk is not submitted anyway.
-  var NEAR_BULK_FAR = 126;
+  var NEAR_BULK_FAR = 176;
+  // Large set pieces remain in beauty through the chunk fog wall, but their
+  // second (ink/depth) submission can drop only once the chunk is deep in haze.
+  // Keeping this separate from micro-detail prevents a station/bridge outline
+  // from changing as early as a bench or facade insert.
+  var SPECTACLE_INK_FAR = 170;
 
   // Multiply a geometry's UVs so one shared texture can tile at any size
   // without per-object texture clones.
@@ -9939,7 +10297,8 @@ THREE.GLTFLoader = GLTFLoader;
     scaffold: 3.40, skip: 1.85,
     cafeCanopy: 3.40, luggage: 1.85, maintenance: 1.95,
     bikerack: 0.80, cargobike: 1.10, cafeset: 1.55, cratestackdecor: 0.85,
-    sandwichboard: 0.90, hazardbarrier: 0.66, planter: 0.77, wheeliebin: 0.86
+    sandwichboard: 0.90, hazardbarrier: 0.66, planter: 0.77, wheeliebin: 0.86,
+    commuter: 1.82
   };
   var propSwapTargets = Object.create(null);
   function registerProp(kind, group) {
@@ -12097,6 +12456,93 @@ THREE.GLTFLoader = GLTFLoader;
     return registerProp('cafeset', g);
   }
 
+  // Pavement commuters give the city a human scale and a foreground/midground
+  // silhouette layer without entering the play lanes. Subway-style city
+  // scenes feel inhabited because a few bold people-shaped masses interrupt
+  // the hard architectural rhythm; a Berlin street made only of buildings,
+  // bins and parked vehicles reads like a closed film set no matter how rich
+  // the facade art is. These are intentionally posed, graphic background
+  // figures rather than animated NPCs: each is a rigid batched prop, so it
+  // rides the existing recyclable sidewalk pool and costs the same handful of
+  // submissions as a cafe set or cargo bike.
+  var COMMUTER_COATS = [
+    mat(0x2f6fa8, { roughness: 0.80 }),
+    mat(0xd84b3f, { roughness: 0.82 }),
+    mat(0x2e927d, { roughness: 0.82 }),
+    mat(0xe0a32d, { roughness: 0.80 }),
+    mat(0x76519b, { roughness: 0.82 })
+  ];
+  var COMMUTER_TROUSERS = [MAT.metalDark, mat(0x375377, { roughness: 0.88 }),
+    mat(0x645447, { roughness: 0.90 })];
+  var COMMUTER_SKIN = [mat(0xf0b382, { roughness: 0.86 }),
+    mat(0xc57d54, { roughness: 0.88 }), mat(0x8d563f, { roughness: 0.90 })];
+  var COMMUTER_BAG = [MAT.bvgYellow, PROP_KIOSK_RED, PROP_TOOL_BLUE];
+  var COMMUTER_HAIR = [MAT.metalDark, mat(0x6b422b, { roughness: 0.92 }),
+    mat(0xd0a05c, { roughness: 0.90 })];
+  function makeCommuter() {
+    var g = new THREE.Group();
+    var coat = pick(COMMUTER_COATS), trousers = pick(COMMUTER_TROUSERS);
+    var skin = pick(COMMUTER_SKIN), hair = pick(COMMUTER_HAIR);
+    var stride = Math.random() < 0.52;
+
+    // Shoes and offset legs create a readable walking/weight-bearing stance,
+    // avoiding the straight symmetrical mannequin pose that cheap background
+    // figures often fall into.
+    [-1, 1].forEach(function (side) {
+      var leg = new THREE.Mesh(cylGeo(0.075, 0.09, 0.68, 8), trousers);
+      leg.position.set(side * 0.11, 0.46, stride ? side * 0.11 : 0);
+      leg.rotation.x = stride ? side * 0.18 : 0;
+      leg.rotation.z = side * 0.035;
+      leg.castShadow = true; g.add(leg);
+      var shoe = roundedBox(0.17, 0.10, 0.30, 0.045, MAT.metalDark,
+        side * 0.11, 0.10, (stride ? side * 0.16 : 0) + 0.045, 0.018);
+      shoe.castShadow = true; g.add(shoe);
+    });
+    var torso = roundedBox(0.46, 0.69, 0.28, 0.12, coat, 0, 1.06, 0, 0.035);
+    torso.castShadow = true; g.add(torso);
+    // A bright scarf/collar is a tiny area but a useful high-frequency colour
+    // break between the coat and head at chase-camera distance.
+    g.add(roundedBox(0.30, 0.10, 0.30, 0.05, MAT.barrierWhite,
+      0, 1.40, 0, 0.018));
+
+    var head = new THREE.Mesh(
+      cached('commuter_head', function () { return new THREE.IcosahedronGeometry(0.185, 1); }), skin);
+    head.position.set(0, 1.63, 0); head.scale.y = 1.08;
+    head.castShadow = true; g.add(head);
+    // Hair is an offset low cap rather than a second full sphere, keeping the
+    // face patch visible while giving the head an unmistakable orientation.
+    var hairCap = new THREE.Mesh(
+      cached('commuter_hair', function () { return new THREE.SphereGeometry(0.19, 12, 7, 0, Math.PI * 2, 0, Math.PI * 0.58); }), hair);
+    hairCap.position.set(0, 1.69, -0.006); hairCap.rotation.x = -0.05;
+    g.add(hairCap);
+
+    // One bent phone arm and one bag arm form an asymmetric, specifically
+    // urban commuter read. Cylinders are deliberately thick enough to hold a
+    // silhouette after fog/outline filtering.
+    var phoneSide = Math.random() < 0.5 ? -1 : 1;
+    [-1, 1].forEach(function (side) {
+      var arm = new THREE.Mesh(cylGeo(0.055, 0.07, 0.50, 8), coat);
+      arm.position.set(side * 0.31, side === phoneSide ? 1.21 : 1.03,
+        side === phoneSide ? 0.08 : 0);
+      arm.rotation.z = side * (side === phoneSide ? -0.64 : 0.22);
+      arm.rotation.x = side === phoneSide ? -0.42 : 0.04;
+      arm.castShadow = true; g.add(arm);
+      var hand = new THREE.Mesh(icoGeo(0.075), skin);
+      hand.position.set(side * (side === phoneSide ? 0.46 : 0.40),
+        side === phoneSide ? 1.36 : 0.82, side === phoneSide ? 0.18 : 0.01);
+      g.add(hand);
+    });
+    g.add(roundedBox(0.075, 0.16, 0.025, 0.012, MAT.metalDark,
+      phoneSide * 0.49, 1.43, 0.20, 0.006));
+    var bagSide = -phoneSide;
+    g.add(roundedBox(0.30, 0.42, 0.16, 0.055, pick(COMMUTER_BAG),
+      bagSide * 0.38, 0.69, 0.01, 0.022));
+    var strap = new THREE.Mesh(cylGeo(0.018, 0.018, 0.47, 6), MAT.metalDark);
+    strap.position.set(bagSide * 0.34, 0.94, 0.01);
+    strap.rotation.z = bagSide * -0.20; g.add(strap);
+    return registerProp('commuter', g);
+  }
+
   // Decorative crate stack — a Spati delivery dropped on the kerb. Shares the
   // same red/blue crate materials as the construction-motif obstacle crate
   // (plus two extra hues only this decorative stack uses) so the hue language
@@ -13333,6 +13779,23 @@ THREE.GLTFLoader = GLTFLoader;
       root.add(stationWall);
       root.add(roundedBox(0.30, 0.44, 37.5, 0.06, STATION_MAT.tileDark,
         side * 14.82, 2.18, 0, 0.016));
+      // Give the 37 m wall a readable section instead of one enormous flush
+      // plane. The projecting crown and plinth catch opposite light bands,
+      // while three irregularly spaced shallow piers throw real side shadows
+      // across the tile atlas. The spacing is deliberately non-periodic: an
+      // even row of identical inset bays was the other strong "procedural
+      // slab" tell in this sequence.
+      root.add(roundedBox(0.50, 0.28, 37.6, 0.07, MAT.stone,
+        side * 14.62, 4.74, 0, 0.020));
+      root.add(roundedBox(0.42, 0.30, 37.6, 0.06, STATION_MAT.tileDark,
+        side * 14.68, 0.30, 0, 0.018));
+      [-13.7, -1.4, 14.2].forEach(function (pierZ, pierIndex) {
+        var pierH = [3.62, 4.10, 3.78][pierIndex];
+        root.add(roundedBox(0.48, pierH, 0.34, 0.07, STATION_MAT.steel,
+          side * 14.58, 0.55 + pierH * 0.5, pierZ, 0.020));
+        root.add(roundedBox(0.62, 0.18, 0.50, 0.055, MAT.stone,
+          side * 14.54, 0.50 + pierH, pierZ, 0.016));
+      });
       // A 5 m double-row cadence boxed the station into a dense picket cage.
       // Four paired bays retain the structure and end supports with fewer
       // meshes/triangles and clearer views through to the city.
@@ -13430,6 +13893,41 @@ THREE.GLTFLoader = GLTFLoader;
       [-1, 1].forEach(function (side) {
         portalRoot.add(roundedBox(0.94, 0.22, 1.10, 0.07, MAT.stone,
           side * 8.28, 0.11, portalZ, 0.018));
+
+        // The long station walls used to terminate at the portal as a single
+        // flat cut edge. From the chase camera that end filled the outer third
+        // of the frame as an unarticulated pale slab, making the authored arch
+        // look pasted in front of a box. A shallow masonry return now steps
+        // through four real depth planes: tiled wing -> dark display recess ->
+        // glazed poster case -> stone sill/cornice. All pieces remain outside
+        // x=+-8.28, so the gameplay aperture is byte-for-byte unchanged, and
+        // compactStaticPropGroup below folds matching materials back into the
+        // portal's existing batches.
+        var portalWing = roundedBox(6.18, 5.05, 0.40, 0.12, STATION_MAT.tile,
+          side * 11.55, 2.53, portalZ, 0.030);
+        portalWing.receiveShadow = true; portalRoot.add(portalWing);
+        var approachZ = portalZ - 0.245;
+        portalRoot.add(roundedBox(4.38, 2.92, 0.12, 0.09, STATION_MAT.tileDark,
+          side * 11.55, 2.48, approachZ, 0.024));
+        portalRoot.add(roundedBox(3.82, 2.36, 0.08, 0.07, MAT.glassDark,
+          side * 11.55, 2.50, approachZ - 0.075, 0.020));
+        // A broad sill and crown cast horizontal shadow lines across the wing;
+        // paired pilasters keep the bay vertical without the old picket-fence
+        // cadence of many equal inset rectangles.
+        portalRoot.add(roundedBox(4.48, 0.22, 0.56, 0.065, MAT.stone,
+          side * 11.55, 1.22, portalZ - 0.13, 0.018));
+        portalRoot.add(roundedBox(6.46, 0.30, 0.72, 0.08, MAT.stone,
+          side * 11.55, 5.02, portalZ - 0.10, 0.022));
+        [-1.98, 1.98].forEach(function (bayOffset) {
+          portalRoot.add(roundedBox(0.24, 3.34, 0.54, 0.06, STATION_MAT.steel,
+            side * 11.55 + bayOffset, 2.48, portalZ - 0.10, 0.018));
+        });
+        // One coloured poster per display case gives the glazing a focal patch
+        // and prevents both wings reading as mirrored anonymous architecture.
+        var posterSideOffset = side * (portalIndex ? -0.72 : 0.72);
+        portalRoot.add(roundedBox(1.16, 1.62, 0.055, 0.045,
+          side * (portalIndex ? 1 : -1) > 0 ? PROP_BANNER : MAT.bvgYellow,
+          side * 11.55 + posterSideOffset, 2.46, approachZ - 0.125, 0.014));
       });
       // Same UV trap as the platform boards above; uses the 7.15:1 portal
       // variant of the texture so the lettering is not stretched.
@@ -15191,7 +15689,7 @@ THREE.GLTFLoader = GLTFLoader;
   // one unconditional draw call per frame regardless of fill (see
   // makeSharedPool), 15 pools would be a net draw-call INCREASE over the
   // per-building meshes it would replace, not a win. It stays a real Mesh,
-  // added to the scene graph in makeBuilding and gated by ud.detailNodes.
+  // added to the scene graph in makeBuilding and follows whole-chunk visibility.
   var BUILDING_PART_ZERO_POS = new THREE.Vector3(0, -9000, 0);
   var BUILDING_PART_ZERO_SCALE = new THREE.Vector3(0, 0, 0);
   var buildingPartZeroQuat = new THREE.Quaternion();
@@ -15200,18 +15698,20 @@ THREE.GLTFLoader = GLTFLoader;
   var buildingPartScratchA = new THREE.Matrix4();
   var buildingPartScratchB = new THREE.Matrix4();
 
-  // Ground, bollards and dashes only ever depend on whole-chunk visibility;
-  // contacts and the building-driven pools (crate stacks, window bays, shopDepth, and the
-  // new roof/erker dressing above) also depend on the tighter near-detail
-  // band, exactly like ud.detailNodes did — see applyChunkLOD.
-  var WHOLE_CHUNK_POOLS = GROUND_CHUNK_POOLS.concat([bollardPool, laneDashPool, hangingBracketPool]);
-  var NEAR_GATED_POOLS = [contactPool, windowBayPool, crateSolidPool]
-    .concat(crateBvgPools)
-    .concat(BUILD_WIDTHS.map(function (w) { return shopDepthPools[w]; }))
-    .concat([erkerCapPool, aerialPool, roofFurnBPool])
+  // Silhouette-bearing architecture follows whole-chunk visibility. These
+  // parts used to ride the near-detail gate, which made every roof block,
+  // dormer, chimney, erker cap and balcony on all six facades snap in together
+  // when the CHUNK CENTRE crossed one threshold. Fog can soften colour, but it
+  // cannot hide a skyline changing shape as a unit. Keep only true micro-depth
+  // and ground-contact dressing in the tighter near band.
+  var WHOLE_CHUNK_POOLS = GROUND_CHUNK_POOLS.concat([bollardPool, laneDashPool,
+    hangingBracketPool, erkerCapPool, aerialPool, roofFurnBPool])
     .concat(BUILD_WIDTHS.map(function (w) { return roofDormersPools[w]; }))
     .concat(roofBlockPools).concat(chimneyAPools).concat(chimneyBPools)
     .concat(balconySlabPools).concat(balconyRailPools).concat(roofFurnAPools);
+  var NEAR_GATED_POOLS = [contactPool, windowBayPool, crateSolidPool]
+    .concat(crateBvgPools)
+    .concat(BUILD_WIDTHS.map(function (w) { return shopDepthPools[w]; }));
 
   // Repeated facade micro-depth is beauty-only. Its underlying facade core
   // remains in the outline/AO/DoF prepass, preserving large architectural
@@ -15486,10 +15986,10 @@ THREE.GLTFLoader = GLTFLoader;
     // clutter, kept tight against the building line, versus "freestanding"
     // fixtures kept mid-pavement (see WALL_HUG_PROPS below).
     var propBuilders = [makeLitfass, makeUBahn, makeBench, makeContainer, makeKiosk, makeAmpel,
-                        makeBikeRack, makeBikeRack, makeCargoBike, makeCargoBike,
+                        makeBikeRack, makeCommuter, makeCargoBike, makeCargoBike,
                         makeCafeSet, makeCafeSet, makeCrateStackDecor, makeCrateStackDecor,
                         makeSandwichBoard, makeSandwichBoard, makeHazardBarrier, makeHazardBarrier,
-                        makePlanter, makePlanter, makeWheelieBin, makeWheelieBin];
+                        makePlanter, makePlanter, makeWheelieBin, makeCommuter];
     var shuffledProps = shuffledCopy(propBuilders);
     // Twelve slots (up from eight) so the kerb reads as continuously dressed
     // rather than a handful of isolated set-pieces per 40 m block — building
@@ -16561,22 +17061,32 @@ THREE.GLTFLoader = GLTFLoader;
       }
     });
     clearContacts(ud.contactView, contactCount);
-    captureChunkDetailState(g);
     freezeChunkStaticMatrices(g);
+    // Freezing above refreshes every authored world matrix after this reroll;
+    // capture can therefore cache accurate per-node local Z for staggered LOD.
+    captureChunkDetailState(g);
   }
 
-  // Facade atlases carry the distant architectural read by themselves. Beyond
-  // roughly 100 m, tiny roof furniture, kerb props and depth inserts cost more
-  // draw calls than visible pixels. Pool their authored visibility and restore
-  // it unchanged as each chunk enters the near field.
+  // Only micro dressing is range-gated here. Anything that changes a large
+  // silhouette (lamps, macro props, building projections, construction and the
+  // authored stop story) stays authored-visible from the chunk's fog-hidden
+  // entrance onward; binary visibility changes must never reshape the horizon.
   function captureChunkDetailState(chunk) {
     var ud = chunk.userData;
     if (!ud.detailNodes) {
       var nodes = [];
       function add(node) { if (node && nodes.indexOf(node) < 0) nodes.push(node); }
-      ud.lamps.forEach(add); ud.trees.forEach(add);
+      // Trees and parked vehicles have their own farther, bulk-aware cutoff in
+      // applyChunkLOD; lamps are cheap enough to remain with the building mass.
       ud.manholes.forEach(add); ud.puddles.forEach(add);
-      ud.props.forEach(function (prop) { prop.variants.forEach(add); });
+      ud.props.forEach(function (prop) {
+        prop.variants.forEach(function (variant) {
+          var kind = variant.userData.propKind;
+          // These are district anchors, not clutter. Let them emerge with the
+          // facades rather than blinking on with benches and bins.
+          if (kind !== 'kiosk' && kind !== 'ubahn' && kind !== 'litfass') add(variant);
+        });
+      });
       // crateSolid/crateBvg/windowBayInst/shopDepthInst used to be per-chunk
       // InstancedMeshes added to this same near/far detail-node list. They are
       // now scene-wide pools shared by every chunk (see makeSharedPool above
@@ -16585,8 +17095,6 @@ THREE.GLTFLoader = GLTFLoader;
       // other chunk's instances too. applyChunkLOD's NEAR_GATED_POOLS sync
       // reproduces the exact same near/far gate at the slot-range level
       // instead (see syncPoolRange/syncPoolGroup).
-      ud.cars.forEach(function (slot) { add(slot.car); add(slot.bus); });
-      add(ud.streetStory);
       ud.buildings.forEach(function (building) {
         var b = building.userData;
         // Ground-floor colour and signage must be present from the first far
@@ -16601,7 +17109,9 @@ THREE.GLTFLoader = GLTFLoader;
         // budget on the outer chunks, not a draw call (both were already a
         // single merged mesh each), and nothing newly pops since core.visible
         // still follows the chunk-level cull exactly as facade always did.
-        add(b.awning);
+        // Awning/roof/erker/gable/balcony shapes stay visible through the full
+        // far band. Toggling them here changed the outline of all six buildings
+        // at once because this gate is chunk-centred.
         // roofBlock, erkerCap, roofDormers, roofBits (and its former sole
         // real child roofFurnA), hangingBracket, and balcony (and its former
         // children balconySlab/balconyRail) are all pooled instances now
@@ -16613,16 +17123,17 @@ THREE.GLTFLoader = GLTFLoader;
         // NOT be in this list. roofShell was measured and NOT pooled (a
         // 15-variant pool set would cost more draw calls than the ~4-8 it
         // typically replaces — see its comment in makeBuilding), so it keeps
-        // the old real-mesh behaviour here, same as balconyPanel (a separate
-        // real mesh whose facade material varies per building — see the
-        // "Do NOT touch" list).
-        add(b.roofShell);
-        add(b.erker); add(b.balconyPanel); add(b.gable);
+        // the old real-mesh path, same as balconyPanel (a separate real mesh
+        // whose facade material varies per building — see the "Do NOT touch"
+        // list). Both now follow the whole chunk, not this micro-detail list.
+        // Pooled equivalents live in WHOLE_CHUNK_POOLS above; these are the
+        // remaining real scene-graph meshes and deliberately need no gate.
         add(b.ghostAd);
       });
-      add(ud.construction);
       ud.detailNodes = nodes;
       ud.detailBase = new Array(nodes.length);
+      ud.detailLocalZ = new Float32Array(nodes.length);
+      ud.detailState = new Uint8Array(nodes.length);
       ud.spectacleNodes = [ud.transit.root, ud.station.root, ud.bridge.root,
                            ud.tunnel.root, ud.landmark];
       ud.spectacleBase = new Array(ud.spectacleNodes.length);
@@ -16634,7 +17145,16 @@ THREE.GLTFLoader = GLTFLoader;
         if (obj.isMesh && obj.castShadow) ud.shadowCasters.push(obj);
       });
     }
-    for (var i = 0; i < ud.detailNodes.length; i++) ud.detailBase[i] = ud.detailNodes[i].visible;
+    for (var i = 0; i < ud.detailNodes.length; i++) {
+      ud.detailBase[i] = ud.detailNodes[i].visible;
+      // ROUTE_IS_STRAIGHT is fixed true, so world Z differs from chunk-local Z
+      // only by the root translation. matrixWorld was refreshed by the freeze
+      // immediately before this call, including rotated building children.
+      ud.detailLocalZ[i] = ud.detailNodes[i].matrixWorld.elements[14] - chunk.position.z;
+      // Sentinel forces applyChunkLOD to restore the freshly rolled authored
+      // state even if the old and new chunks happen to land in the same band.
+      ud.detailState[i] = 255;
+    }
     for (var s = 0; s < ud.spectacleNodes.length; s++) ud.spectacleBase[s] = ud.spectacleNodes[s].visible;
     ud.detailNear = null;
     ud.spectacleNear = null;
@@ -16719,6 +17239,12 @@ THREE.GLTFLoader = GLTFLoader;
     var visible = dz > -38 && dz < farLimit;
     var ud = chunk.userData;
     var nearDetailLimit = NEAR_DETAIL_FAR;
+    // Chunk-level near gates below operate on the chunk's TRAILING edge, not
+    // its centre. A 40 m chunk whose centre is 16 m behind the runner still
+    // reaches 4 m in FRONT of him — and further still in front of the camera —
+    // so every gate that read `dz > -16` was switching off a band of street the
+    // player was looking straight at. See nearCullZ.
+    var chunkNearAlive = chunk.position.z + CHUNK_LEN / 2 > nearCullZ;
 
     // The 92 m shadow camera is centred fourteen metres ahead of the runner;
     // geometry outside this conservative -24..70 m caster band cannot project a
@@ -16756,7 +17282,7 @@ THREE.GLTFLoader = GLTFLoader;
     // than relying on the `near` local below, which is only computed once
     // chunk.visible is already true) so this still resolves correctly for a
     // chunk that is currently off-screen.
-    var nearEff = visible && dz > -16 && dz < nearDetailLimit;
+    var nearEff = visible && chunkNearAlive && dz < MICRO_POOL_FAR;
     if (nearEff !== ud.nearPoolsVisible || ud.justRolled) {
       ud.nearPoolsVisible = nearEff;
       syncPoolGroup(NEAR_GATED_POOLS, ud.chunkSlot, nearEff);
@@ -16769,27 +17295,36 @@ THREE.GLTFLoader = GLTFLoader;
       ud.spectacleOutlineFar = false;
       return;
     }
-    // The paired supports become intrusive at the chase camera. Retain the
-    // continuous wires, but stop submitting the poles inside the final 7m.
-    if (ud.catenaryFrame) ud.catenaryFrame.visible = ud.catenary.visible && dz > 7;
-    // Atlas facades carry the mid/far read; roof furniture, parked vehicles and
-    // sidewalk props switch on separately. That switch used to happen at 46m —
-    // fully inside clear air — so a lamp or tree would visibly blink into
-    // existence in plain view mid-run. It then moved to 100m, which was chosen
-    // against fog.near, i.e. the distance where haze is still exactly zero.
-    // NEAR_DETAIL_FAR moves it to where the ramp has actually started AND the
-    // depth of field is at full blur, so a prop arrives as a soft few-pixel
-    // smudge instead of a crisp object. Nothing here narrows under load: real
+    // The catenary poles used to stop at `dz > 7` to keep them out of the
+    // camera's face — but that is a CHUNK-level test, so it deleted every pole
+    // in a 40 m span at once, including the ones still 27 m ahead. They now
+    // follow their wires and simply pass the lens, the way the lamp posts on
+    // the same pavement always have.
+    if (ud.catenaryFrame) ud.catenaryFrame.visible = ud.catenary.visible;
+    // Atlas facades and all silhouette-bearing dressing carry the mid/far read;
+    // only true micro props switch separately here. That switch used to happen
+    // at 46m — fully inside clear air — and later still flipped a whole 40 m
+    // chunk together. NEAR_DETAIL_FAR now applies to each node's authored world
+    // depth, where the haze and full-blur band make it a soft few-pixel smudge.
+    // Nothing here narrows under load: real
     // frame pressure is absorbed by the quality ladder below (DoF/SSAO/bloom/
     // shadows/resolution), because shedding draw distance instead would just
     // reintroduce the pop-in this whole band exists to remove.
-    var near = dz > -16 && dz < nearDetailLimit;
-    if (ud.detailNear !== near) {
-      ud.detailNear = near;
-      for (var i = 0; i < ud.detailNodes.length; i++) {
-        ud.detailNodes[i].visible = near && ud.detailBase[i];
+    // Stagger micro props by their own world depth instead of flipping every
+    // prop in a 40 m chunk on one frame. This turns the old block-wide blink
+    // into a continuous trickle of already blurred, haze-softened arrivals.
+    var anyNear = false;
+    for (var i = 0; i < ud.detailNodes.length; i++) {
+      var nodeDz = dz + ud.detailLocalZ[i];
+      var nodeNear = visible && nodeDz > -16 && nodeDz < nearDetailLimit;
+      var nodeState = nodeNear ? 1 : 0;
+      anyNear = anyNear || nodeNear;
+      if (ud.detailState[i] !== nodeState) {
+        ud.detailState[i] = nodeState;
+        ud.detailNodes[i].visible = nodeNear && ud.detailBase[i];
       }
     }
+    ud.detailNear = anyNear;
     // Deep in the haze a building core occupies only a few pixels, but its four
     // geometry groups still submit four beauty/shadow draws. A single facade
     // material renders the same full geometry in one call there; every authored
@@ -16799,10 +17334,9 @@ THREE.GLTFLoader = GLTFLoader;
     // The threshold was 92 m, i.e. just INSIDE fog.near — so the swap fired in
     // completely clear air and the ground-floor shopfront band visibly changed
     // colour to facade cream as each building crossed it. CORE_LOD_FAR puts it
-    // where the haze is already ~30% and the depth of field is at full blur, so
-    // the same swap costs nothing visible. It sits below NEAR_DETAIL_FAR + a
-    // margin so a building never swaps materials while its own sidewalk props
-    // are still switching on beside it.
+    // where the haze is already dense and the depth of field is at full blur,
+    // so the same swap costs little visible contrast. Its per-building depth is
+    // independent of the staggered sidewalk-prop arrivals beside it.
     for (var bm = 0; bm < ud.buildings.length; bm++) {
       var lodBuilding = ud.buildings[bm];
       var lodData = lodBuilding.userData;
@@ -16813,19 +17347,20 @@ THREE.GLTFLoader = GLTFLoader;
       }
     }
     // Parked scenery is authored and pooled by the chunk exactly as before,
-    // but a vehicle whose centre has crossed the runner no longer contributes
-    // useful street depth: it only becomes a cropped foreground wall beside
-    // the chase camera. Apply this render-only cutoff every frame after the
-    // ordinary near-detail gate; rollChunk's parkedActive flags remain the
-    // source of truth for which car/bus slots were actually populated.
+    // and each vehicle is dropped on its own TRAILING bumper (position minus
+    // half its length) crossing nearCullZ, so it leaves the frame instead of
+    // blinking out beside it — the old `playerZ - 0.75` plane sat ~3 m in front
+    // of the lens, which is a parked car vanishing in plain sight. rollChunk's
+    // parkedActive flags remain the source of truth for which car/bus slots
+    // were actually populated.
     // NEAR_BULK_FAR rather than the ordinary prop band: see its declaration.
-    var bulkNear = dz > -16 && dz < NEAR_BULK_FAR;
+    var bulkNear = chunkNearAlive && dz < NEAR_BULK_FAR;
     for (var pv = 0; pv < ud.cars.length; pv++) {
       var parkedSlot = ud.cars[pv];
       var carWanted = bulkNear && parkedSlot.car.userData.parkedActive &&
-        chunk.position.z + parkedSlot.car.position.z - 2.10 > playerZ - 0.75;
+        chunk.position.z + parkedSlot.car.position.z - 2.10 > nearCullZ;
       var busWanted = bulkNear && parkedSlot.bus.userData.parkedActive &&
-        chunk.position.z + parkedSlot.bus.position.z - 5.50 > playerZ - 0.75;
+        chunk.position.z + parkedSlot.bus.position.z - 5.50 > nearCullZ;
       if (parkedInstancingEnabled) {
         if (parkedSlot.car.userData.parkedRenderVisible !== carWanted ||
             parkedSlot.bus.userData.parkedRenderVisible !== busWanted) parkedInstancesDirty = true;
@@ -16837,15 +17372,15 @@ THREE.GLTFLoader = GLTFLoader;
         parkedSlot.bus.visible = busWanted;
       }
     }
-    // A tree root can remain ahead after its broad crown has already wrapped
-    // around the chase camera, producing a faceted green screen-edge wall.
-    // Cull on the trailing canopy extent instead of the trunk/root position;
-    // rolledActive remains the source of truth for tree identity and density.
+    // A tree's crown reaches well behind its trunk, so culling on the root
+    // position drops the canopy while it is still filling the screen edge.
+    // Test the trailing canopy extent against nearCullZ instead; rolledActive
+    // remains the source of truth for tree identity and density.
     for (var tv = 0; tv < ud.trees.length; tv++) {
       var tree = ud.trees[tv];
       var canopyExtent = (tree.userData.canopyRadius || 2.05) * tree.scale.z;
       tree.visible = bulkNear && tree.userData.rolledActive &&
-        chunk.position.z + tree.position.z - canopyExtent > playerZ - 0.75;
+        chunk.position.z + tree.position.z - canopyExtent > nearCullZ;
     }
     // mass used to have its own >88m cull here (farMasses/massNear); it is
     // now baked into the core mesh alongside facade (see getBuildingCoreGeo)
@@ -16863,10 +17398,13 @@ THREE.GLTFLoader = GLTFLoader;
     // ride farLimit: a set piece is submitted for exactly as long as its chunk
     // is, and its arrival happens inside the same opaque wall of air that the
     // street, the kerbs and the facades arrive through. The near cutoff stays
-    // (see the station-portal cull below for the same reasoning at the other
-    // end): a 16 m arch wrapping around the chase camera is not depth, it is a
-    // dark vignette.
-    var spectacleNear = dz > -20 && dz < farLimit;
+    // The near end now rides nearCullZ like everything else: a 40 m chunk of
+    // station/bridge structure whose centre is 20 m behind the runner still
+    // reaches to the runner's own feet, so the old `dz > -20` deleted a whole
+    // set piece out from under the camera in one frame. Passing THROUGH the
+    // structure is what the shot wants anyway — the arch is 8.3 m in radius and
+    // the lens goes cleanly under it.
+    var spectacleNear = chunkNearAlive && dz < farLimit;
     // ...but only the NEAR ones earn a place in the ink prepass. Submitting a
     // set piece out to farLimit is what removes the pop (above); submitting it
     // to the outline pass as well would be paying a second full draw for an ink
@@ -16875,21 +17413,22 @@ THREE.GLTFLoader = GLTFLoader;
     // there gives up nothing that was ever on screen — it just declines to spend
     // the frame time the pop fix would otherwise have cost twice over.
     // Read by renderPresent; see outlineSpectacleFar there.
-    ud.spectacleOutlineFar = spectacleNear && dz >= NEAR_DETAIL_FAR;
+    ud.spectacleOutlineFar = spectacleNear && dz >= SPECTACLE_INK_FAR;
     if (ud.spectacleNear !== spectacleNear) {
       ud.spectacleNear = spectacleNear;
       for (var s = 0; s < ud.spectacleNodes.length; s++) {
         ud.spectacleNodes[s].visible = spectacleNear && ud.spectacleBase[s];
       }
     }
-    // Each station portal is a single decorative root. Stop submitting it in
-    // the final 20 m approach, where its 16.6 m arch can only wrap around the
-    // chase camera as a giant dark vignette. Platforms, canopy, wall dressing
-    // and the train stay visible; the forward exit portal remains intact.
+    // Each station portal is a single decorative root, kept per-portal so the
+    // entrance can drop independently of the exit. It used to go at
+    // `playerZ + 20`, i.e. while the whole arch was still square in frame
+    // twenty metres ahead — the single most conspicuous vanish in the game.
+    // It now runs past the lens and drops behind it like every other structure.
     if (ud.station.portals) {
       for (var sp = 0; sp < ud.station.portals.length; sp++) {
         var stationPortal = ud.station.portals[sp];
-        stationPortal.visible = chunk.position.z + stationPortal.userData.portalZ > playerZ + 20;
+        stationPortal.visible = chunk.position.z + stationPortal.userData.portalZ > nearCullZ;
       }
     }
   }
@@ -16934,6 +17473,8 @@ THREE.GLTFLoader = GLTFLoader;
 
   // Recycle any chunk that has fallen a full chunk behind the camera.
   function updateChunks(playerZ) {
+    // One plane for every near-side gate below, resolved once per step.
+    refreshNearCullPlane(playerZ);
     for (var i = 0; i < chunks.length; i++) {
       var c = chunks[i];
       if (c.position.z < playerZ - CHUNK_LEN * 1.6) {
@@ -21265,7 +21806,7 @@ THREE.GLTFLoader = GLTFLoader;
   scene.add(fxTrail);
 
   function fxUpdateTrail(dt) {
-    var speedMix = clamp((speed - BASE_SPEED) / 22, 0, 1);
+    var speedMix = clamp(speedOver() / 22, 0, 1);
     var swerve = Math.min(1, Math.abs(fxLaneVel) * 0.07);
     var want = clamp(speedMix * 0.85 + swerve * 0.9 + overdriveIntensity * 0.16, 0, 1.15);
     if (gameOver || !started) want = 0;
@@ -21497,7 +22038,7 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function fxFootstep(lx, lz, spd) {
-    var power = clamp((spd - BASE_SPEED * 0.6) / 26, 0.35, 1.25);
+    var power = clamp((spd - BASE_SPEED * 0.6) / (26 * speedScale), 0.35, 1.25);
     fxReset();
     fxAnchor(lx, 0.05, lz);
     var n = fxN(3 + ((power * 2) | 0));
@@ -21606,7 +22147,7 @@ THREE.GLTFLoader = GLTFLoader;
     // Screen overlay: radial streaks above a speed threshold, verdict pulses
     // any time. Fill rate is the expensive part, so it is skipped outright when
     // there is nothing to show and thinned on pressured hardware.
-    var speedMix = clamp((speed - (BASE_SPEED + 4)) / 20, 0, 1);
+    var speedMix = clamp((speedOver() - 4) / 20, 0, 1);
     var wantSpeed = started && !gameOver ?
       clamp(speedMix * 0.75 + overdriveIntensity * 0.10, 0, 1) : 0;
     // The world-space streak layer still carries speed in slow mode. Dropping
@@ -21681,6 +22222,12 @@ THREE.GLTFLoader = GLTFLoader;
       if (musicEnabled) musicStart();
       return;
     }
+    if (e.code === 'KeyV') {
+      e.preventDefault();
+      unlockGameAudio();
+      setSpeechEnabled(!speechEnabled);
+      return;
+    }
     var a = CODES[e.code];
     if (a) e.preventDefault();
     if (!started) { begin(); return; }
@@ -21705,6 +22252,7 @@ THREE.GLTFLoader = GLTFLoader;
     last = performance.now();
     if (document.hidden) {
       musicStop();
+      stopSpeech();
       if (gameAudio && gameAudio.state === 'running') gameAudio.suspend().catch(function () {});
     } else if (gameAudio) {
       gameAudio.resume().catch(function () {});
@@ -21818,8 +22366,46 @@ THREE.GLTFLoader = GLTFLoader;
   var overdriveTier = 0, overdriveIntensity = 0;
   var gameOver = false, gameOverToken = 0;
 
+  // ------------------------------------------------------------- tempo ----
+  // Two modes. Slow halves every world velocity - the base speed, the ramp it
+  // gains with distance, and the shove each cleared gate gives it - so gates
+  // and obstacles arrive at exactly half the rate and there is twice as long
+  // to read the noun and choose a lane.
+  //
+  // Only the WORLD is halved. A lane change, a jump and a slide still take the
+  // wall-clock time they always did, which is what keeps slow mode feeling
+  // deliberate rather than syrupy - and it is also why this is not implemented
+  // by scaling dt, which would have slowed the controls with everything else.
+  //
+  // Everything that reads speed for look and feel - camera dolly, FOV, speed
+  // veil, streaks, coat flutter, music tempo - goes through speedOver() rather
+  // than a raw (speed - BASE_SPEED), so every one of those curves still spans
+  // its full range in both modes. Without it, slow mode would sit permanently
+  // at the bottom of every ramp and read as flat rather than as slow.
+  var SPEED_SCALES = { normal: 1, slow: 0.5 };
+  var speedMode = 'normal';
+  var speedScale = 1;
   var BASE_SPEED = 26;
   var MAX_SPEED = 54;
+  function speedOver() { return (speed - BASE_SPEED) / speedScale; }
+  function setSpeedMode(mode, persist) {
+    if (!SPEED_SCALES[mode]) mode = 'normal';
+    speedMode = mode;
+    speedScale = SPEED_SCALES[mode];
+    BASE_SPEED = 26 * speedScale;
+    MAX_SPEED = 54 * speedScale;
+    // Only meaningful before a run; reset() sets it again on every start. Left
+    // in so the attract-loop city scrolls at the tempo that was chosen.
+    if (!started) speed = BASE_SPEED;
+    if (persist) {
+      try { localStorage.setItem('artikel-express-tempo', mode); } catch (e) {}
+    }
+    var buttons = document.querySelectorAll('.speedmode');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute('aria-pressed',
+        buttons[i].getAttribute('data-mode') === mode ? 'true' : 'false');
+    }
+  }
   var GRAV = 46;
   var JUMP_V = 15.4;
   var SLIDE_TIME = 0.62;
@@ -21883,6 +22469,14 @@ THREE.GLTFLoader = GLTFLoader;
   // The lightweight offline option is the launch default even though the
   // following sentinel offers the full catalog on demand.
   el.deckSelect.value = 'embedded';
+  // ...except for the inline deck, which needs no catalogue and so can be
+  // restored here rather than inside buildRunnerDeckCatalog with the rest.
+  try {
+    if (localStorage.getItem('artikel-express-deck') === 'monster') {
+      el.deckSelect.value = 'monster';
+      setTimeout(function () { loadSelectedArticleDeck('monster'); }, 0);
+    }
+  } catch (e) {}
 
   var lastPowerHudMagnet = -1, lastPowerHudShield = -1, lastPowerHudSpring = -1;
   function updatePowerupHUD(force) {
@@ -21931,15 +22525,26 @@ THREE.GLTFLoader = GLTFLoader;
     if (BUNDLED_DECK_DATA && Array.isArray(BUNDLED_DECK_DATA.nouns)) {
       articleNounDataPromise = Promise.resolve((function () {
         var entries = BUNDLED_DECK_DATA.nouns.map(function (row, index) {
-          return { word: row[0], article: row[1], rank: row[2], id: String(index) };
+          return { word: row[0], article: row[1], rank: row[2], english: row[3] || '',
+                   id: String(index) };
         });
         var byId = Object.create(null), byWord = Object.create(null);
         entries.forEach(function (entry) {
           byId[entry.id] = entry;
+          // Seed the gloss table from the bundle. This is the offline path -
+          // it is reached exactly when the page was opened as a file, which is
+          // exactly when the data/nouns.json fetch below is going to be blocked
+          // by the file:// origin rules. Without this, every deck except the
+          // 756 words hard-coded above ran with no translation at all.
+          if (entry.english && !nounMeaningLookup[entry.word]) {
+            nounMeaningLookup[entry.word] = entry.english;
+          }
           if (!byWord[entry.word] || entry.rank < byWord[entry.word].rank) byWord[entry.word] = entry;
         });
         return { entries: entries, byId: byId, byWord: byWord };
       })());
+      // Still worth trying: served over http the master catalogue carries
+      // senses the compact bundle drops, and it is a no-op when it fails.
       loadNounMeanings();
       return articleNounDataPromise;
     }
@@ -21996,6 +22601,30 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
 
+  // ------------------------------------------------------ Bandwurmwörter ---
+  // Four of German's famous tapeworm compounds, kept inline: none of them is in
+  // any frequency deck, and the joke does not survive a fetch that fails
+  // offline. The article of a compound is always the article of its LAST
+  // element, which is the entire lesson here - -gesetz is das, -verordnung and
+  // -versicherung are die, -kapitän is der - and none of the sixty characters
+  // in front of it changes that.
+  //
+  // The first two are real statute names: the beef-labelling one was actually
+  // repealed by Mecklenburg-Vorpommern in 2013, which is why it stopped being
+  // the longest German word anybody could cite in earnest.
+  var MONSTER_WORDS = [
+    { noun: 'Rindfleischetikettierungs\u00fcberwachungsaufgaben\u00fcbertragungsgesetz',
+      article: 'das', meaning: 'beef labelling supervision duties delegation act' },
+    { noun: 'Grundst\u00fccksverkehrsgenehmigungszust\u00e4ndigkeits\u00fcbertragungsverordnung',
+      article: 'die', meaning: 'ordinance delegating authority over land-conveyance permits' },
+    { noun: 'Donaudampfschifffahrtsgesellschaftskapit\u00e4n',
+      article: 'der', meaning: 'Danube steamship company captain' },
+    { noun: 'Kraftfahrzeughaftpflichtversicherung',
+      article: 'die', meaning: 'motor third-party liability insurance' }
+  ];
+  articleDeckCatalog.monster = { kind: 'literal', words: MONSTER_WORDS,
+                                 label: 'Bandwurmw\u00f6rter' };
+
   function dedupeArticleWords(words) {
     var seen = Object.create(null), out = [];
     words.forEach(function (word) {
@@ -22009,25 +22638,40 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function wordsForDeckSpec(spec) {
+    // Already words rather than ids or ranks: nothing to look up, and nothing
+    // to fetch, so this resolves even from file:// with no network at all.
+    if (spec.kind === 'literal') {
+      return Promise.resolve(dedupeArticleWords(spec.words.map(function (word) {
+        return { noun: word.noun, article: word.article, meaning: word.meaning || '' };
+      })));
+    }
     if (spec.kind === 'indices' && BUNDLED_DECK_DATA) {
       return Promise.resolve(dedupeArticleWords(spec.nouns.map(function (index) {
         var row = BUNDLED_DECK_DATA.nouns[index];
-        return row ? { noun: row[0], article: row[1] } : null;
+        return row ? { noun: row[0], article: row[1], meaning: row[3] || '' } : null;
       })));
     }
     return loadArticleNounData().then(function (data) {
+      // entry.english is populated on both paths now - from the bundle offline,
+      // from nouns.json when served - so no deck has to rely on the lookup
+      // table being filled by a fetch that may never land.
       if (spec.kind === 'tier') {
         return data.entries.filter(function (entry) { return entry.rank <= spec.max; })
-          .map(function (entry) { return { noun: entry.word, article: entry.article }; });
+          .map(function (entry) {
+            return { noun: entry.word, article: entry.article, meaning: entry.english || '' };
+          });
       }
       if (spec.kind === 'range') {
         return data.entries.filter(function (entry) { return entry.rank > spec.min && entry.rank <= spec.max; })
-          .map(function (entry) { return { noun: entry.word, article: entry.article }; });
+          .map(function (entry) {
+            return { noun: entry.word, article: entry.article, meaning: entry.english || '' };
+          });
       }
       if (spec.kind === 'names') {
         return spec.nouns.map(function (name) {
           var entry = data.byId[name] || data.byWord[name];
-          return entry ? { noun: entry.word, article: entry.article } : null;
+          return entry ? { noun: entry.word, article: entry.article,
+                           meaning: entry.english || '' } : null;
         });
       }
       return fetch(spec.path).then(function (response) {
@@ -22036,7 +22680,8 @@ THREE.GLTFLoader = GLTFLoader;
       }).then(function (deck) {
         return (deck.nouns || []).map(function (name) {
           var entry = data.byId[name] || data.byWord[name];
-          return entry ? { noun: entry.word, article: entry.article } : null;
+          return entry ? { noun: entry.word, article: entry.article,
+                           meaning: entry.english || '' } : null;
         });
       });
     }).then(dedupeArticleWords);
@@ -22189,7 +22834,9 @@ THREE.GLTFLoader = GLTFLoader;
         if (!words[mi].meaning) words[mi].meaning = meanings[words[mi].noun] || '';
       }
       if (token !== articleDeckLoadToken) return;
-      if (words.length < 3) throw new Error('Zu wenige Nomen mit eindeutigem Artikel');
+      if (words.length < (spec.kind === 'literal' ? 1 : 3)) {
+        throw new Error('Zu wenige Nomen mit eindeutigem Artikel');
+      }
       selectedArticleWords = words;
       selectedArticleDeckLabel = spec.label;
       articleDeckLoading = false;
@@ -22214,6 +22861,26 @@ THREE.GLTFLoader = GLTFLoader;
   ['click', 'touchstart', 'pointerdown'].forEach(function (eventName) {
     el.deckPicker.addEventListener(eventName, function (event) { event.stopPropagation(); });
   });
+
+  // The whole start card is one big begin() button, so anything interactive
+  // sitting on it has to swallow its own gestures - same guard as the deck
+  // picker above, or picking a tempo would also start the run.
+  (function wireSpeedPicker() {
+    var picker = document.getElementById('speedpicker');
+    if (!picker) return;
+    ['click', 'touchstart', 'pointerdown'].forEach(function (eventName) {
+      picker.addEventListener(eventName, function (event) { event.stopPropagation(); });
+    });
+    picker.addEventListener('click', function (event) {
+      var btn = event.target.closest ? event.target.closest('.speedmode') : null;
+      if (!btn) return;
+      setSpeedMode(btn.getAttribute('data-mode'), true);
+      btn.blur();
+    });
+    var saved = '';
+    try { saved = localStorage.getItem('artikel-express-tempo') || ''; } catch (e) {}
+    setSpeedMode(SPEED_SCALES[saved] ? saved : 'normal', false);
+  })();
   el.deckPicker.addEventListener('pointerenter', function () { ensureRunnerDeckCatalog().catch(function () {}); }, { once: true });
   el.deckSelect.addEventListener('focus', function () { ensureRunnerDeckCatalog().catch(function () {}); }, { once: true });
   el.deckSelect.addEventListener('change', function () {
@@ -22401,6 +23068,10 @@ THREE.GLTFLoader = GLTFLoader;
     var n = currentWord.noun.length;
     el.noun.classList.toggle('long-word', n > 13 && n <= 20);
     el.noun.classList.toggle('very-long-word', n > 20);
+    // Past ~26 characters even the very-long tier clips inside the running
+    // strip (measured: 35 chars needs 442 px of a 380 px box). See the
+    // giant-word CSS - it is on the plate, so it is toggled on the plate.
+    el.quiz.classList.toggle('giant-word', n > 26);
 
     // The gate for this question is NOT spawned here any more — see
     // ensureGatesAhead. Placing it at question start put a 14 m truss into
@@ -22581,13 +23252,17 @@ THREE.GLTFLoader = GLTFLoader;
       // cleared is what makes the streak legible as speed — and every
       // downstream cue (speed streaks, veil, FOV push, music tempo) keys off
       // `speed`, so they all punch with it for free.
-      speed = Math.min(MAX_SPEED, speed + (tierUp ? 2.6 : 1.1));
+      speed = Math.min(MAX_SPEED, speed + (tierUp ? 2.6 : 1.1) * speedScale);
       answerKick = Math.max(answerKick, 0.5 + Math.min(0.3, (streakMultiplier() - 1) * 0.07));
       celebrateTimer = 0.68;
       celebratePower = tierUp ? 1.30 : 1;
       celebrateSide = (quizStreak % 2) ? 1 : -1;
       victoryActionAge = 0;
       playCorrectSound(quizStreak);
+      // Said on the frame the gate is cleared, not when the next word arrives
+      // 560 ms later: the phrase has to land on the player's own success or it
+      // reads as a prompt for the NEXT noun rather than praise for this one.
+      speakArticleWord(currentWord.article, currentWord.noun, quizStreak);
     } else {
       quizWrong++;
       // A mistake always resets this word to two consecutive correct passes.
@@ -22601,6 +23276,8 @@ THREE.GLTFLoader = GLTFLoader;
       if (quizMistakes.length > 5) quizMistakes.length = 5;
       camShake = Math.max(camShake, 0.55);
       playWrongSound();
+      // currentWord.article is by definition the one the player did NOT pick.
+      speakArticleWord(currentWord.article, currentWord.noun, 0, true);
     }
     updateQuizHUD();
 
@@ -22793,10 +23470,9 @@ THREE.GLTFLoader = GLTFLoader;
     resetMovingTraffic(player.z);
 
     // endRun faded the bus out and stopped the loop; a restart brings both back.
-    if (musicBus && gameAudio) {
-      musicBus.gain.setTargetAtTime(musicEnabled ? MUSIC_LEVEL : 0,
-                                    gameAudio.currentTime, 0.15);
-    }
+    stopSpeech();
+    musicDuck = 1;
+    applyMusicGain(0.15);
     musicStart();
 
     updateQuizHUD();
@@ -23168,7 +23844,11 @@ THREE.GLTFLoader = GLTFLoader;
     // it coasts back down to a lowered one, so winning reads as a shove and
     // losing a streak reads as a glide rather than a handbrake.
     var streakBoost = Math.min(15, quizStreak * 1.15);
-    var target = BASE_SPEED + Math.min(11, distance / 260) + overdriveIntensity * 2.6 + streakBoost;
+    // The headroom over BASE_SPEED is what slow mode halves. distance is in
+    // metres and is itself accumulated at half rate, so the ramp stays the
+    // same per metre travelled and simply takes twice as long to arrive.
+    var target = BASE_SPEED + speedScale *
+      (Math.min(11, distance / 260) + overdriveIntensity * 2.6 + streakBoost);
     if (stumbleTimer > 0) target *= 0.55;
     var approach = stumbleTimer > 0 ? 5 : (target > speed ? 2.9 : 0.85);
     speed += (Math.min(MAX_SPEED, target) - speed) * damp(approach, dt);
@@ -23452,11 +24132,14 @@ THREE.GLTFLoader = GLTFLoader;
         answerArticle(portal.userData.article, portal);
       }
       // The logical gate remains active until the existing -30m recycle point,
-      // but once its resolved plane is behind the runner it has no useful
-      // visual role. Hiding only the render root prevents tall frame variants
-      // from lingering as a near-camera arch vignette and removes their draws;
-      // answer timing, feedback, pooling and cleanup state stay unchanged.
-      if (ud.resolved && ud.z < player.z - 0.75) g.visible = false;
+      // but once it is behind the LENS it has no further visual role. This used
+      // to fire at `player.z - 0.75`, which is roughly three metres in FRONT of
+      // the chase camera: the gate the runner had just cleared blinked out with
+      // its posts and curtain still filling both edges of frame, on every
+      // single question. nearCullZ puts the drop where it cannot be seen, and
+      // the verdict colour now stays lit all the way past the camera.
+      // Answer timing, feedback, pooling and cleanup state are unchanged.
+      if (ud.resolved && ud.z < nearCullZ) g.visible = false;
       // Same split as the obstacles below (see PLAY_RENDER_FAR): a gate three
       // haze-depths away is a logical placement, not something to draw.
       else g.visible = ud.z - player.z < PLAY_RENDER_FAR;
@@ -23820,7 +24503,7 @@ THREE.GLTFLoader = GLTFLoader;
     // heroSpeedK is shared with the run-juice block below: forward lean, root
     // bob depth and amplifier gain all scale together as the road speeds up,
     // which is what makes high-speed running read heavier than the start pace.
-    var heroSpeedK = clamp((speed - BASE_SPEED) / 40, 0, 1);
+    var heroSpeedK = clamp(speedOver() / 40, 0, 1);
     var pitch = 0.14 + heroSpeedK * 0.16;
     // Forward duck, not a baseball recline: the chase camera sits above and
     // behind the hero, so a backward pitch here tips the crown of the head
@@ -24531,7 +25214,7 @@ THREE.GLTFLoader = GLTFLoader;
     // allocation, and they run on bone children so they inherit the pose for free.
     if (heroCap) {
       var accDecay = Math.exp(-11.5 * dt_);
-      var travel = clamp((speed - BASE_SPEED) / 30, 0, 1);
+      var travel = clamp(speedOver() / 30, 0, 1);
       var capT = -landingPulse * 0.30 + jumpTakeoff * 0.22 - stumbleImpact * 0.34 +
                  travel * 0.05;
       heroCapVel = (heroCapVel + (capT - heroCapSpring) * 78 * dt_) * accDecay;
@@ -24566,7 +25249,7 @@ THREE.GLTFLoader = GLTFLoader;
       packFinish.position.y = 1.17 + Math.sin(runPhase + 0.8) * 0.012 + celebratePose * 0.025;
       packFinish.position.z = -0.31 - landingPulse * 0.025;
 
-      var coatSpeed = clamp((speed - BASE_SPEED) / 28, 0, 1);
+      var coatSpeed = clamp(speedOver() / 28, 0, 1);
       var coatBase = 0.08 + coatSpeed * 0.09 + slideVisual * 0.15 + jumpDescent * 0.08;
       var coatTargetL = coatBase + Math.sin(runPhase) * 0.075 * (1 - slideVisual);
       var coatTargetR = coatBase - Math.sin(runPhase) * 0.075 * (1 - slideVisual);
@@ -24777,7 +25460,7 @@ THREE.GLTFLoader = GLTFLoader;
     // Close enough to read the hero's outfit and pose, with a measured speed
     // pull preserving the lane read. The look target anticipates lane changes
     // while the camera body lags behind, creating stronger parallax.
-    var speedMix = clamp((speed - BASE_SPEED) / 26, 0, 1);
+    var speedMix = clamp(speedOver() / 26, 0, 1);
     // Preserve the desktop composition while restoring horizontal gameplay
     // coverage on narrow portrait screens. A dolly is preferable to a huge
     // vertical FOV here: the hero stays expressive and all three lanes remain
@@ -24788,6 +25471,10 @@ THREE.GLTFLoader = GLTFLoader;
     var dolly = -slideVisual * 0.58 + clamp(visualPlayer.y, 0, 3.2) * 0.15;
     var backOff = 3.35 + speedMix * 0.90 + bridgeRevealAmount * 0.22 +
                   Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 2.15 + roofRevealScale * 0.65;
+    // Published for the near-side render cull (see nearCullZ): portrait alone
+    // pulls the lens 2.15 m further back, so a fixed offset from the runner
+    // would leave that whole band of street being culled on screen.
+    cameraBackOff = backOff;
     var height = 2.20 + speedMix * 0.28 + bridgeRevealAmount * 0.24 + routeCameraCrest * 0.08 -
                  slideVisual * 0.30 + portraitView * 0.52 + roofRevealScale * 0.35;
     // Extra vertical follow while airborne only (airVisual, not visualPlayer.y
@@ -25029,6 +25716,15 @@ THREE.GLTFLoader = GLTFLoader;
         clamp(_skylineHazeTmp.r / 0.0684, 0.35, 1.25),
         clamp(_skylineHazeTmp.g / 0.1845, 0.35, 1.25),
         clamp(_skylineHazeTmp.b / 0.3250, 0.35, 1.25));
+      // Unlike the fallback tower below, this strip is camera-centred and
+      // would otherwise remain exactly the same screen size forever. Ease its
+      // height over a kilometre-plus of travel so the far city supplies a
+      // continuous, almost subliminal progress cue behind the much faster 3D
+      // facade approach. Smoothstep gives zero velocity at both ends.
+      var skylineApproach = clamp(distance / SKYLINE_APPROACH_DIST, 0, 1);
+      skylineApproach = skylineApproach * skylineApproach * (3 - 2 * skylineApproach);
+      skyMat.uniforms.uSkylineTop.value = lerp(SKYLINE_TOP_FAR, SKYLINE_TOP_NEAR,
+                                               skylineApproach);
     }
 
     // Fixed CSS layers avoid rebuilding gradient strings in the frame loop.
@@ -25050,7 +25746,7 @@ THREE.GLTFLoader = GLTFLoader;
   function updateWorldVisuals(dt, t) {
     var od = overdriveIntensity;
     updateEnvironmentMood(od);
-    var speedveilOpacity = clamp((speed - BASE_SPEED) / 60 + od * 0.065, 0, 0.36);
+    var speedveilOpacity = clamp(speedOver() / 60 + od * 0.065, 0, 0.36);
     if (Math.abs(speedveilOpacity - lastSpeedveilOpacity) > 0.002) {
       lastSpeedveilOpacity = speedveilOpacity;
       el.speedveil.style.opacity = String(speedveilOpacity);
@@ -25218,7 +25914,7 @@ THREE.GLTFLoader = GLTFLoader;
     // with overdrive. Density and length both ride on how fast the run is, and
     // each segment carries its own head/tail alpha so it reads as a smear
     // rather than a stick.
-    var streakSpeed = clamp((speed - (BASE_SPEED + 3)) / 20, 0, 1);
+    var streakSpeed = clamp((speedOver() - 3) / 20, 0, 1);
     var streakGain = clamp(streakSpeed * 0.85 + od * 0.12, 0, 1);
     if (adaptiveSlowMode) streakGain *= 0.5;
     streaks.visible = streakGain > 0.006;

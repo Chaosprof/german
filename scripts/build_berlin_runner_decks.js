@@ -24,7 +24,17 @@ function isSafeNoun(entry) {
 }
 
 const sourceNouns = readJson(path.join(dataRoot, 'nouns.json')).nouns.filter(isSafeNoun);
-const compactNouns = sourceNouns.map(entry => [entry.word, entry.article, entry.rank || 0]);
+// The fourth column is the English gloss, and it is the reason this file is
+// worth its size. The runner reads glosses from data/nouns.json, and `fetch`
+// is blocked on file:// - so a double-clicked page showed a translation only
+// for the 756 words hard-coded into the HTML, i.e. under 7% of a Top 10000
+// deck. This bundle is delivered by a <script> tag, which file:// does allow,
+// so carrying the glosses here is what makes every deck fully glossed offline.
+// Costs ~514 KB on a file that is only fetched once the player opens the deck
+// catalogue at all.
+const compactNouns = sourceNouns.map(entry => [
+  entry.word, entry.article, entry.rank || 0, String(entry.english || '').trim()
+]);
 const byId = new Map();
 const byWord = new Map();
 
@@ -72,7 +82,7 @@ for (const dirName of deckDirs) {
 }
 
 const payload = {
-  version: '2026-08-01',
+  version: '2026-08-27',
   nouns: compactNouns,
   groups
 };
