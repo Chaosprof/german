@@ -5414,7 +5414,41 @@ THREE.GLTFLoader = GLTFLoader;
     // full strength by dofFar, which sits inside the fog's own 95-520 near/far
     // range so the blur and the fog reinforce the same depth cue instead of
     // fighting it.
-    dofOn: true,
+    // OFF BY DEFAULT, and the reason is arithmetic rather than taste. Two
+    // numbers below make this pass unable to draw anything: dofNear is 220 m,
+    // while the street's haze reaches FULL opacity at FOG_FAR_MAX = 178 m (see
+    // the depth-budget block near scene.fog). Nothing survives to 220 m to be
+    // blurred. The only surface left past that plane is the sky dome -- which
+    // is excluded from the outline prepass (it is transparent, so
+    // buildOutlineSwapList marks it beautyOnly), so it reads far-plane depth
+    // and blurs at full strength -- with a radius of 0.65 TEXELS, i.e. under
+    // one pixel.
+    //
+    // Measured, one frozen frame rendered twice with only uDofEnable changed,
+    // 1280x800: mean absolute channel difference 0.06-0.16 out of 255, with
+    // 0.6-2.2% of channels differing by more than 1/255 (isolated sub-pixel
+    // softening where an ink line meets sky). Visually nothing.
+    //
+    // The cost is not nothing: pinning the quality ladder and measuring the
+    // frame EMA on an AMD iGPU at 1280x800 gave tier 0 (DoF + 2x MSAA)
+    // 18.83 ms, tier 1 (DoF off, MSAA kept) 17.06 ms, tier 2 (both off)
+    // 16.67 ms. DoF alone was 1.8 ms -- 11% of a 60 Hz frame, and four times
+    // what the MSAA it gets shed BEFORE is worth.
+    //
+    // Where that 1.8 ms actually lands is the quality ladder. 18.83 ms is
+    // above monitorFrameBudget's 17.8 ms promotion threshold, so headroom can
+    // never accumulate and the run only ever ratchets down -- shedding MSAA,
+    // then SSAO, then bloom, then shadows. 17.06 ms is below it. That does not
+    // guarantee a device holds tier 0 (this scene is genuinely near budget on
+    // an iGPU, and a spectacle-heavy stretch still pushes past it), but every
+    // rung is reached later and every tier renders faster. Spending an eighth
+    // of the frame on a sub-pixel blur of the sky, and paying for it in
+    // shadows and bloom, is the wrong trade at any tier.
+    //
+    // The pass itself is left intact: widening dofNear inside the fog range
+    // and raising dofRadiusTexels would make it a real effect if the budget
+    // ever allows one.
+    dofOn: false,
     dofNear: 220,
     dofFar: 720,
     dofRadiusTexels: 0.65,
@@ -6540,6 +6574,21 @@ THREE.GLTFLoader = GLTFLoader;
   var texLoader = new THREE.TextureLoader(assetManager);
 
   // ------------------------------------------------------ procedural art ----
+  // Anisotropy was capped at 8 here while the hardware reports 16, and the
+  // surfaces that lost by it are exactly the ones a runner shows most: every
+  // facade and shopfront down both sides of the street is viewed at a grazing
+  // angle, and a grazing surface is precisely where the isotropic mip
+  // selection over-blurs. The needed sample ratio is 1/cos(incidence): a wall
+  // seen 15 degrees off edge-on already wants ~4:1, and the same wall 30 m up
+  // the street wants far more than 16 -- so 8 was being CLAMPED, not merely
+  // exceeded, over most of the visible frontage. That is what read as "the
+  // props at the sides are not sharp enough": not resolution, filtering.
+  //
+  // The cost is per-sample bandwidth on the fragments that actually need the
+  // extra taps, and modern hardware only pays for the ratio it uses -- a
+  // face-on surface still costs one tap at aniso 16. Every texture here is
+  // <= 1280 px, so the working set stays in cache either way.
+  var MAX_ANISO = renderer.capabilities.getMaxAnisotropy();
   function canvasTexture(w, h, draw, opts) {
     opts = opts || {};
     var cv = document.createElement('canvas');
@@ -6547,12 +6596,10 @@ THREE.GLTFLoader = GLTFLoader;
     draw(cv.getContext('2d'), w, h);
     var t = new THREE.CanvasTexture(cv);
     t.colorSpace = opts.linear ? THREE.LinearSRGBColorSpace : THREE.SRGBColorSpace;
-    t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    t.anisotropy = MAX_ANISO;
     if (opts.wrap !== false) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
     return t;
   }
-
-  var MAX_ANISO = renderer.capabilities.getMaxAnisotropy();
 
   // Swap in a generated image when the matching ASSETS slot is filled, keeping
   // the procedural texture on screen until (and unless) the load succeeds.
@@ -8080,7 +8127,24 @@ THREE.GLTFLoader = GLTFLoader;
   var SHOP_GLASS_DEEP = ['#102f3f', '#123945', '#16304a', '#153d39', '#1a3042'];
   // Was 8 while SHOP_SIGNS carried 12 entries — BUCHLADEN, U-BAHN and EIS were
   // fully authored and never baked. Raised to bake every defined sign.
-  var SHOP_TEX_W = 640, SHOP_TEX_H = 320, SHOP_TEX_COUNT = SHOP_SIGNS.length;
+  // The shopfront sheet maps 0..1 across the ENTIRE building frontage exactly
+  // once (see shopGeo -- it deliberately does not tile), and BUILD_WIDTHS runs
+  // 11-16 m. At 640 px that is only 40-58 texels per metre horizontally, less
+  // than half the facade sheet's 89/m (640 px over a 7.2 m repeating tile) --
+  // and it is the horizontal axis that carries the shop NAME. Measured against
+  // screen density: an 11 m frontage seen from ~8 m subtends ~920 px at this
+  // FOV, i.e. ~84 px/m, so the sign band was being magnified ~2x. That is the
+  // mushy "SPAETI"/"BUCHLADEN" lettering, and no amount of filtering fixes a
+  // texture with fewer texels than the screen has pixels.
+  //
+  // 1280 restores ~80-116 texels/m, at or above screen density, and brings the
+  // shopfront in line with the facade it sits under. The vertical axis is
+  // already at 94/m and is left alone. The emissive companion is authored in
+  // the SAME coordinate space but rasterised at half scale (see makeShopfront)
+  // -- it is a soft night-glow mask, and glow does not need sign resolution.
+  var SHOP_TEX_W = IS_MOBILE ? 768 : 1280, SHOP_TEX_H = 320;
+  var SHOP_EMISSIVE_SCALE = 0.5;
+  var SHOP_TEX_COUNT = SHOP_SIGNS.length;
 
   // Weight selection toward the distinctly-Berlin names (Späti, Bäckerei,
   // Apotheke, Döner, Currywurst, Blumen, and the three added above) over
@@ -8454,7 +8518,14 @@ THREE.GLTFLoader = GLTFLoader;
       noiseFill(g, w, h, 3);
     });
 
-    var emissive = canvasTexture(SHOP_TEX_W, SHOP_TEX_H, function (g, w, h) {
+    var emissive = canvasTexture(
+        Math.round(SHOP_TEX_W * SHOP_EMISSIVE_SCALE),
+        Math.round(SHOP_TEX_H * SHOP_EMISSIVE_SCALE), function (g, w, h) {
+      // glowRects were recorded in the ALBEDO sheet's pixel space. Scale the
+      // context so this mask can be authored in those same coordinates at any
+      // resolution, then work in albedo units for the rest of the function.
+      g.scale(w / SHOP_TEX_W, h / SHOP_TEX_H);
+      w = SHOP_TEX_W; h = SHOP_TEX_H;
       g.fillStyle = '#000000'; g.fillRect(0, 0, w, h);
       for (var k = 0; k < glowRects.length; k++) {
         var r = glowRects[k];
@@ -9055,7 +9126,7 @@ THREE.GLTFLoader = GLTFLoader;
       t.generateMipmaps = true;
       t.minFilter = THREE.LinearMipmapLinearFilter;
       t.magFilter = THREE.LinearFilter;
-      t.anisotropy = Math.min(8, MAX_ANISO);
+      t.anisotropy = MAX_ANISO;
       skyMat.uniforms.uSkyline.value = t;
       skyMat.uniforms.uSkylineOn.value = 1;
       skylineStripActive = true;
@@ -9927,7 +9998,13 @@ THREE.GLTFLoader = GLTFLoader;
     // updateEnvironmentMood) without the glass itself going flat white.
     lampGlobe: mat(cssHex(CITY.glassLit), {
       roughness: 0.14, metalness: 0.04, envMapIntensity: 1.3,
-      transparent: true, opacity: 0.90,
+      // 0.90 opacity with depthWrite left ON put a nearly-opaque ball into the
+      // transparent queue that still stamped the depth buffer, so it clipped
+      // the lamp's own additive light cone (lampConeMat, drawn in the same
+      // queue and co-located with it) into a hard-edged bite around the globe
+      // at dusk and night. A translucent object should never occlude another
+      // translucent object it is physically inside.
+      transparent: true, opacity: 0.90, depthWrite: false,
       emissive: 0xffe4ad, emissiveIntensity: 0.32
     }),
     glassLit:  mat(cssHex(CITY.glassLit), { emissive: 0xffb85e, emissiveIntensity: 1.5, roughness: 0.25 }),
@@ -10102,8 +10179,13 @@ THREE.GLTFLoader = GLTFLoader;
     viaductDeck: mat(0x8a959c, { map: viaductSteelTex, roughness: 0.62, metalness: 0.38 }),
     viaductRail: mat(0xaab2b6, { map: viaductSteelTex, roughness: 0.42, metalness: 0.62 })
   };
+  // Overhead catenary. depthWrite off for the same reason as every other thin
+  // translucent element here: a 1 px line at 46% opacity that stamps depth
+  // makes every transparent object behind it disappear along the wire, and
+  // wires cross the whole upper frame. Nothing is ever occluded BY a wire, so
+  // it only ever needs to read depth, not write it.
   var wireMat = new THREE.LineBasicMaterial({
-    color: 0x587985, transparent: true, opacity: 0.46, fog: true
+    color: 0x587985, transparent: true, opacity: 0.46, fog: true, depthWrite: false
   });
   var lampConeMat = new THREE.MeshBasicMaterial({
     color: 0xffc978, transparent: true, opacity: 0.005,
@@ -11092,7 +11174,17 @@ THREE.GLTFLoader = GLTFLoader;
     });
   });
   var ghostAdMats = ghostAdTex.map(function (tex) {
-    return mat(0xffffff, { map: tex, transparent: true, roughness: 0.94, envMapIntensity: 0.2 });
+    // depthWrite MUST be off. This canvas is uncleared outside the strokes, so
+    // most of the plane is alpha 0 -- and a transparent material still writes
+    // depth by default. Every fully-invisible texel of a ghost sign was
+    // therefore stamping the depth buffer and occluding whatever the
+    // transparent pass drew after it: the sign's own building had a rectangle
+    // of "nothing" punched through anything behind it. It is a decal lying on
+    // a wall with nothing between the two, so it needs no depth of its own.
+    return mat(0xffffff, {
+      map: tex, transparent: true, depthWrite: false,
+      roughness: 0.94, envMapIntensity: 0.2
+    });
   });
   var ghostAdGeo = {};
   BUILD_WIDTHS.forEach(function (w) {
@@ -13321,6 +13413,23 @@ THREE.GLTFLoader = GLTFLoader;
   }, { wrap: false });
   var viaductSignMat = new THREE.MeshBasicMaterial({ map: viaductSignTex });
 
+  // Viaduct-tram cruise speed, shared by makeTransitSpectacle's default and by
+  // rollChunk's per-chunk variation. Was 9.0-10.1 m/s (32-36 km/h). At that
+  // speed the train's SCREEN-space rate over the last 40 m of its approach is
+  // the highest of anything in the game by a wide margin, and that -- not the
+  // world speed -- is the number the smoothness of this spectacle is set by.
+  // Everything else on screen travels ALONG the view axis, where a large world
+  // speed buys a small screen displacement; the tram crosses it. Measured at
+  // 20-40 m ahead it swept 9-15 px per rendered frame, and roughly double that
+  // across any frame the browser drops, which is what makes a hard-edged
+  // silhouette read as a sequence of positions instead of as travel.
+  //
+  // 5.4-6.1 m/s (19-22 km/h) is an ordinary street-running tram speed, cuts
+  // the per-frame screen step by ~43%, and as a side effect holds the
+  // spectacle in frame longer during the approach -- the part of the beat the
+  // player actually watches, and the part where it is far enough away to be
+  // moving slowly on screen anyway.
+  var TRANSIT_SPEED = 5.4;
   function makeTransitSpectacle() {
     var root = new THREE.Group();
 
@@ -13548,7 +13657,7 @@ THREE.GLTFLoader = GLTFLoader;
     compactStaticPropGroup(train, { skipTransparent:true });
     root.add(train);
     root.visible = false;
-    return { root: root, train: train, x: -28, speed: 9.4 };
+    return { root: root, train: train, x: -28, speed: TRANSIT_SPEED };
   }
 
   // A second authored transit beat follows selected plaza/viaduct chunks. The
@@ -13629,7 +13738,12 @@ THREE.GLTFLoader = GLTFLoader;
     green: mat(0x168447, { emissive: 0x0b522c, emissiveIntensity: 1.4, roughness: 0.38 }),
     name: new THREE.MeshBasicMaterial({ map: stationNameTex, side: THREE.DoubleSide }),
     namePortal: new THREE.MeshBasicMaterial({ map: stationNamePortalTex, side: THREE.DoubleSide }),
-    clock: new THREE.MeshBasicMaterial({ map: stationClockTex, transparent: true })
+    // The clock canvas is a disc on a cleared background, so three quarters of
+    // the quad is alpha 0. With depthWrite left on, those corners occluded the
+    // transparent pass behind the clock -- a square hole around a round clock.
+    clock: new THREE.MeshBasicMaterial({
+      map: stationClockTex, transparent: true, depthWrite: false
+    })
   };
 
   function makeStationTrain() {
@@ -14097,7 +14211,7 @@ THREE.GLTFLoader = GLTFLoader;
   BRIDGE_MAT.brickLight.roughnessMap = BRIDGE_MAT.brick.roughnessMap;
   BRIDGE_MAT.brickLight.needsUpdate = true;
   var bridgeCableMat = new THREE.LineBasicMaterial({
-    color: 0xc0c7c9, transparent: true, opacity: 0.82, fog: true
+    color: 0xc0c7c9, transparent: true, opacity: 0.82, fog: true, depthWrite: false
   });
   var bridgeCableGeo = (function () {
     var pts = [];
@@ -16350,7 +16464,7 @@ THREE.GLTFLoader = GLTFLoader;
       // the first article gate becomes the decision focus farther up the road.
       ud.transit.root.position.z = crossZ - 5;
       ud.transit.x = -28 + (worldChunkIndex % 6);
-      ud.transit.speed = 9.0 + (worldChunkIndex % 3) * 0.55;
+      ud.transit.speed = TRANSIT_SPEED + (worldChunkIndex % 3) * 0.35;
       ud.transit.train.position.x = ud.transit.x;
     }
 
@@ -17823,6 +17937,58 @@ THREE.GLTFLoader = GLTFLoader;
 
   // Vertical falloff for the light curtain: hot at the road, gone by head
   // height, so the player runs through light rather than through a pane.
+  // Soft-edge masks for the two additive gate glows. Both were untextured
+  // PlaneGeometry before, which meant a light pool that simply STOPPED at a
+  // hard rectangular boundary -- an additive glow with a visible straight
+  // edge, on the road and behind the sign. Light does not have corners; that
+  // hard cut is the single most "pasted-on decal" thing in the frame and is a
+  // large part of what reads as transparency behaving oddly. A falloff mask
+  // costs one 64px texture each and turns both into pools that end where the
+  // eye expects them to.
+  //
+  // The sign halo fades radially from a flat bright core, so the plate still
+  // sits on a solid colour block while the surround bleeds away.
+  var gateHaloTex = canvasTexture(128, 80, function (g, w, h) {
+    var cx = w / 2, cy = h / 2;
+    g.clearRect(0, 0, w, h);
+    g.save();
+    g.translate(cx, cy);
+    g.scale(1, h / w);
+    var grad = g.createRadialGradient(0, 0, w * 0.16, 0, 0, w * 0.50);
+    grad.addColorStop(0.00, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.46, 'rgba(255,255,255,0.86)');
+    grad.addColorStop(0.74, 'rgba(255,255,255,0.34)');
+    grad.addColorStop(1.00, 'rgba(255,255,255,0)');
+    g.fillStyle = grad;
+    g.fillRect(-w, -w, w * 2, w * 2);
+    g.restore();
+  }, { wrap: false });
+
+  // The lane pad is a corridor, not a disc: it must stay solid down the middle
+  // of the lane (that is the answer cue) and fade at the two long sides and,
+  // more importantly, at the far end where it meets untreated road.
+  var gatePadTex = canvasTexture(64, 128, function (g, w, h) {
+    g.clearRect(0, 0, w, h);
+    var across = g.createLinearGradient(0, 0, w, 0);
+    across.addColorStop(0.00, 'rgba(255,255,255,0)');
+    across.addColorStop(0.17, 'rgba(255,255,255,0.92)');
+    across.addColorStop(0.50, 'rgba(255,255,255,1)');
+    across.addColorStop(0.83, 'rgba(255,255,255,0.92)');
+    across.addColorStop(1.00, 'rgba(255,255,255,0)');
+    g.fillStyle = across; g.fillRect(0, 0, w, h);
+    // Multiply a lengthwise ramp on top: short fade at the near end, long
+    // fade out at the far end so the pad dissolves into the road ahead
+    // instead of ending on a line drawn across the lane.
+    g.globalCompositeOperation = 'destination-in';
+    var along = g.createLinearGradient(0, 0, 0, h);
+    along.addColorStop(0.00, 'rgba(0,0,0,0)');
+    along.addColorStop(0.16, 'rgba(0,0,0,1)');
+    along.addColorStop(0.66, 'rgba(0,0,0,1)');
+    along.addColorStop(1.00, 'rgba(0,0,0,0)');
+    g.fillStyle = along; g.fillRect(0, 0, w, h);
+    g.globalCompositeOperation = 'source-over';
+  }, { wrap: false });
+
   var gateCurtainTex = canvasTexture(8, 128, function (g, w, h) {
     var grad = g.createLinearGradient(0, h, 0, 0);
     grad.addColorStop(0.00, 'rgba(255,255,255,1)');
@@ -18112,7 +18278,7 @@ THREE.GLTFLoader = GLTFLoader;
       // it throws a coloured halo that separates the sign from the facades and
       // carries the verdict colour at a distance where the word is unreadable.
       var haloMat = new THREE.MeshBasicMaterial({
-        color: ARTICLE_HEX.der, transparent: true, opacity: 0.55,
+        color: ARTICLE_HEX.der, map: gateHaloTex, transparent: true, opacity: 0.55,
         blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false
       });
       var halo = new THREE.Mesh(new THREE.PlaneGeometry(3.35, 2.05), haloMat);
@@ -18145,7 +18311,7 @@ THREE.GLTFLoader = GLTFLoader;
 
       // Floor decal so the correct lane is readable even when looking down.
       var padMat = new THREE.MeshBasicMaterial({
-        color: ARTICLE_HEX.der, transparent: true, opacity: 0.34,
+        color: ARTICLE_HEX.der, map: gatePadTex, transparent: true, opacity: 0.34,
         blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false
       });
       var pad = new THREE.Mesh(new THREE.PlaneGeometry(LANE_W * 0.9, 5), padMat);
@@ -18546,6 +18712,9 @@ THREE.GLTFLoader = GLTFLoader;
     [0.62, 0.08, 0], [0.55, 0.34, 0], [0.36, 0.46, 0], [0.16, 0.38, 0.05],
     [-0.02, 0.20, 0.085], [-0.20, 0.00, 0.085], [-0.32, -0.24, 0.085]
   ];
+  // Shared by the material below and by the per-token near-field taper in
+  // updateWorldVisuals, so the two can never drift apart.
+  var PRETZEL_HALO_OPACITY = 0.72;
   (function buildPretzels() {
     // The halo used to be a filled radial glow the size of the pretzel, sitting
     // on a camera-facing plane through its centre. Additive and depth-tested,
@@ -18566,7 +18735,7 @@ THREE.GLTFLoader = GLTFLoader;
       g.fillStyle = glow; g.fillRect(0, 0, w, h);
     }, { wrap: false });
     var haloMat = new THREE.SpriteMaterial({ map: haloTex, transparent: true, depthWrite: false,
-      blending: THREE.AdditiveBlending, fog: true, opacity: .72 });
+      blending: THREE.AdditiveBlending, fog: true, opacity: PRETZEL_HALO_OPACITY });
 
     var pts = PRETZEL_PATH.map(function (p) { return new THREE.Vector3(p[0], p[1], p[2]); });
     var curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
@@ -18685,7 +18854,8 @@ THREE.GLTFLoader = GLTFLoader;
 
       holder.visible = false;
       scene.add(holder);
-      pretzels.push({ sprite: holder, mesh: spin, active: false, z: 0, lane: 1, x: LANES[1], y: 1 });
+      pretzels.push({ sprite: holder, mesh: spin, halo: halo, active: false,
+                      z: 0, lane: 1, x: LANES[1], y: 1 });
     }
   })();
 
@@ -18745,8 +18915,10 @@ THREE.GLTFLoader = GLTFLoader;
     glow.addColorStop(1, 'rgba(35,120,255,0)');
     g.fillStyle = glow; g.fillRect(0, 0, w, h);
   }, { wrap:false });
+  var POWERUP_HALO_OPACITY = 0.72;
   var powerupHaloMat = new THREE.SpriteMaterial({ map:powerupHaloTex, transparent:true,
-    depthWrite:false, blending:THREE.AdditiveBlending, fog:true, opacity:.72 });
+    depthWrite:false, blending:THREE.AdditiveBlending, fog:true,
+    opacity:POWERUP_HALO_OPACITY });
   var POWER_MAT = {
     red: mat(0xff4058, { roughness:.32, metalness:.16, emissive:0x7a0918, emissiveIntensity:.55 }),
     blue: mat(0x35c9ff, { roughness:.28, metalness:.22, emissive:0x075b91, emissiveIntensity:.72 }),
@@ -18777,6 +18949,7 @@ THREE.GLTFLoader = GLTFLoader;
     }
     var halo = new THREE.Sprite(powerupHaloMat.clone()); halo.scale.set(1.45,1.45,1); root.add(halo);
     root.userData.spin = spin;
+    root.userData.halo = halo;
     root.scale.setScalar(1.18);
     return root;
   }
@@ -21158,7 +21331,12 @@ THREE.GLTFLoader = GLTFLoader;
           function tuneMaterial(src) {
             if (src.map) {
               src.map.colorSpace = THREE.SRGBColorSpace;
-              src.map.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+              // The hero fills ~35% of frame height and is the one mesh the eye
+              // tracks continuously, so its atlas gets the full sample budget
+              // like every other surface. It is a single 2048 map -- capping it
+              // at 4 saved nothing measurable and softened the costume's flag
+              // panel and shoe edges at every oblique body angle.
+              src.map.anisotropy = MAX_ANISO;
             }
             var m = applyCelShading(new THREE.MeshLambertMaterial({
               map: src.map || null,
@@ -21370,6 +21548,7 @@ THREE.GLTFLoader = GLTFLoader;
     tex.magFilter = THREE.LinearFilter;
     tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
     tex.generateMipmaps = true;
+    tex.anisotropy = MAX_ANISO;
     return tex;
   })();
 
@@ -21720,8 +21899,16 @@ THREE.GLTFLoader = GLTFLoader;
     g.fillStyle = css;
     g.fillText(text, 128, 50);
     var tex = new THREE.CanvasTexture(cv);
-    tex.minFilter = THREE.LinearFilter;
-    tex.generateMipmaps = false;
+    // These were the only mip-less textures in the scene. A 256x96 word sprite
+    // that starts 40 m away is minified 6-8x on its first frames, and with a
+    // single LinearFilter tap that samples one texel in nine -- the outline
+    // crawls and the glyph stems flicker in and out for the whole rise. With a
+    // mip chain and anisotropy it resolves cleanly at every size it passes
+    // through, which is the entire life of the sprite.
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = true;
+    tex.anisotropy = MAX_ANISO;
     fxPopTexCache[key] = tex;
     return tex;
   }
@@ -21745,6 +21932,8 @@ THREE.GLTFLoader = GLTFLoader;
     }
   })();
   var fxPopHead = 0;
+  // Fraction of viewport HEIGHT a score popup may occupy at most.
+  var FX_POP_MAX_SCREEN_H = 0.10;
   function fxPopup(lx, ly, lz, text, css, scale) {
     var p = fxPops[fxPopHead]; fxPopHead = (fxPopHead + 1) % FX_POP_N;
     // The map slot is already non-null (see buildPops above), so swapping in
@@ -21773,6 +21962,20 @@ THREE.GLTFLoader = GLTFLoader;
       p.sprite.position.set(p.x, p.y, p.z);
       var pop = 1 + 0.42 * Math.min(1, u * 9) - 0.18 * u;
       var s = p.scale * pop;
+      // Screen-size ceiling. Sprites attenuate with distance, and these spawn
+      // AT the thing that triggered them -- a pretzel collected beside the
+      // camera puts a world-space word ~1.5 m from the lens, where a 1.9 m
+      // wide billboard with depthTest off covers a quarter of the frame and
+      // sits over the hero and the next gate. It is score confetti, not a
+      // set piece, so cap what it may occupy: convert a target fraction of the
+      // viewport height into the world height a sprite may have at THIS
+      // distance, and shrink if the pop would exceed it. Far popups are
+      // untouched (they are nowhere near the cap), so only the broken
+      // near-camera case changes.
+      var popDist = Math.max(0.35, camera.position.distanceTo(p.sprite.position));
+      var popMaxH = 2 * Math.tan(camera.fov * 0.5 * Math.PI / 180) * popDist *
+                    FX_POP_MAX_SCREEN_H;
+      if (s * 0.72 > popMaxH) s = popMaxH / 0.72;
       p.sprite.scale.set(s * 1.9, s * 0.72, 1);
       p.mat.opacity = Math.min(1, u * 12) * Math.min(1, t * 2.6);
     }
@@ -25885,6 +26088,20 @@ THREE.GLTFLoader = GLTFLoader;
         pr.mesh.rotation.z = Math.sin(t * 2 + pr.z) * .16;
         var s = 1.0 + Math.sin(t * 4 + pr.z) * 0.07;
         pr.sprite.scale.set(s, s, s);
+        // Near-field halo taper. The halo is an ADDITIVE camera-facing sprite
+        // 1.42 m across; its job is to separate a small distant token from a
+        // busy street. Inside a few metres it stops doing that job and starts
+        // doing damage: perspective blows a 96 px radial gradient up to a
+        // several-hundred-pixel orange wash laid over the run lane, over the
+        // hero's feet and over the kerb -- the "transparency looks weird up
+        // close" read, and the one place additive blending has nothing left to
+        // separate the token FROM. Full strength from ~7 m out, tapering to a
+        // faint rim by the time the token is on top of the camera. Cheap: one
+        // clamp and one multiply per active token, and the token's own lit
+        // geometry carries the read at that range.
+        var haloFade = clamp((pr.z - visualPlayer.z - 0.6) / 6.2, 0, 1);
+        pr.halo.material.opacity =
+          PRETZEL_HALO_OPACITY * (0.12 + 0.88 * haloFade * haloFade);
         pr.sprite.updateMatrix();
         pr.mesh.updateMatrix();
         pretzelSolidMatrix.multiplyMatrices(pr.sprite.matrix, pr.mesh.matrix);
@@ -25908,6 +26125,16 @@ THREE.GLTFLoader = GLTFLoader;
       powerVisual.userData.spin.rotation.z = Math.sin(t * 2.6 + pup.z) * 0.10;
       var powerPulse = 1.12 + Math.sin(t * 5 + pup.z) * 0.06;
       powerVisual.scale.setScalar(powerPulse);
+      // Same near-field taper as the pretzel halo -- see updateWorldVisuals'
+      // pretzel loop for the reasoning. The power-up sprite is larger (1.45)
+      // and its holder is scaled 1.18 on top, so untapered it washes an even
+      // wider band of lane than the pretzel does.
+      var powerHalo = powerVisual.userData.halo;
+      if (powerHalo) {
+        var powerFade = clamp((pup.z - visualPlayer.z - 0.6) / 6.2, 0, 1);
+        powerHalo.material.opacity = POWERUP_HALO_OPACITY *
+          (0.12 + 0.88 * powerFade * powerFade);
+      }
     }
 
     // Speed streaks — they fade in above a speed threshold and keep growing
@@ -26285,10 +26512,25 @@ THREE.GLTFLoader = GLTFLoader;
     poseRunner(t);
     updateRouteIllusion(visualPlayer.z, distance, raw);
     updateCamera(raw);
+    // The transit movers are the fastest SCREEN-SPACE objects in the game and
+    // the only ones that must never be deferred. Everything else -- street,
+    // facades, props, kerb traffic -- travels along the view axis, where a
+    // large world speed buys a small screen displacement; the viaduct tram
+    // crosses it, so at 20-40 m ahead it sweeps 6-12 px per rendered frame
+    // (measured; it was 9-15 before TRANSIT_SPEED came down). Halving its
+    // update rate is therefore visible AS STEPPING on the one object least
+    // able to hide it, while the same deferral is invisible on the kerb cars
+    // it was written for.
+    //
+    // It also costs nothing to keep: updateTransitSpectacles is two texture
+    // offsets and a handful of scalar adds per chunk. The real expense in this
+    // block is updateMovingTraffic -> syncTrafficInstances, which rewrites and
+    // re-uploads an instance matrix (and colour) per car per material bucket.
+    // That is what the half-rate path is for, so only that stays on it.
+    updateTransitSpectacles(raw);
     deferredTrafficDt += raw;
     if (!adaptiveSlowMode || (frameNumber & 1) === 0) {
       updateMovingTraffic(deferredTrafficDt, player.z);
-      updateTransitSpectacles(deferredTrafficDt);
       deferredTrafficDt = 0;
     }
     updateWorldVisuals(raw, t);
