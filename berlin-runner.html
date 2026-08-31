@@ -18687,6 +18687,14 @@ THREE.GLTFLoader = GLTFLoader;
   // arc so the reward and the hazard read as the same beat.
   var PRETZEL_POOL = 80;
   var pretzels = [];
+  var pretzelHaloInst = null;
+  // Scratch for the halo billboard transform; see pretzelHaloInst's build.
+  var PRETZEL_HALO_QUAT = new THREE.Quaternion();
+  var pretzelHaloInvQuat = new THREE.Quaternion();
+  var pretzelHaloPos = new THREE.Vector3();
+  var pretzelHaloScale = new THREE.Vector3();
+  var pretzelHaloMatrix = new THREE.Matrix4();
+  var pretzelHaloColor = new THREE.Color();
   var pretzelSolidInst = null;
   var pretzelSolidMatrix = new THREE.Matrix4();
   // How many of the compacted instances sit inside OUTLINE_PLAY_FAR. The
@@ -18734,8 +18742,43 @@ THREE.GLTFLoader = GLTFLoader;
       glow.addColorStop(1, 'rgba(255,122,16,0)');
       g.fillStyle = glow; g.fillRect(0, 0, w, h);
     }, { wrap: false });
-    var haloMat = new THREE.SpriteMaterial({ map: haloTex, transparent: true, depthWrite: false,
-      blending: THREE.AdditiveBlending, fog: true, opacity: PRETZEL_HALO_OPACITY });
+    // ONE DRAW FOR THE WHOLE TRAIL. This was a per-token THREE.Sprite with a
+    // cloned material, and the pool is 60 deep and essentially always fully on
+    // screen -- so a single soft glow was costing 61 draw calls AND 61 material
+    // switches every frame, measured at 13% of all beauty-pass submissions and
+    // 61 of the mere 64 duplicate materials in the entire scene. Nothing else
+    // in the game was close to that ratio of cost to pixels.
+    //
+    // A three.js Sprite is SCREEN-aligned, not point-facing: every sprite in
+    // the frame shares one orientation, the camera's. That is what makes this
+    // collapsible without a custom billboard shader. The instanced mesh carries
+    // the camera's world rotation R, and each instance is placed at
+    // R-inverse * worldPos, so R * (R-inverse * worldPos) puts it back exactly
+    // where it was with the quad facing the lens -- identical to what the
+    // Sprite path produced, through a stock MeshBasicMaterial.
+    //
+    // Per-token fade rides instanceColor rather than material.opacity, which is
+    // exact rather than approximate under additive blending: the blend is
+    // src*srcAlpha + dst, so scaling RGB and scaling alpha are the same
+    // operation. vertexColors is required for instanceColor to reach the
+    // fragment stage (three applies it only under USE_COLOR), hence the
+    // all-ones colour attribute on the quad.
+    var pretzelHaloGeo = new THREE.PlaneGeometry(1, 1);
+    pretzelHaloGeo.setAttribute('color', new THREE.BufferAttribute(
+      new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), 3));
+    var pretzelHaloMat = new THREE.MeshBasicMaterial({
+      map: haloTex, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, fog: true, vertexColors: true,
+      opacity: PRETZEL_HALO_OPACITY });
+    pretzelHaloInst = new THREE.InstancedMesh(pretzelHaloGeo, pretzelHaloMat, PRETZEL_POOL);
+    pretzelHaloInst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    // Allocate instanceColor NOW. A pool that first calls setColorAt() mid-run
+    // grows the attribute then, and that is a fresh program link during play --
+    // the exact stall class warmRemainingPrograms exists to prevent.
+    pretzelHaloInst.setColorAt(0, new THREE.Color(0xffffff));
+    pretzelHaloInst.frustumCulled = false;
+    pretzelHaloInst.count = 0;
+    scene.add(pretzelHaloInst);
 
     var pts = PRETZEL_PATH.map(function (p) { return new THREE.Vector3(p[0], p[1], p[2]); });
     var curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
@@ -18841,10 +18884,6 @@ THREE.GLTFLoader = GLTFLoader;
 
     for (var i = 0; i < PRETZEL_POOL; i++) {
       var holder = new THREE.Group();
-      var halo = new THREE.Sprite(haloMat.clone());
-      // Sized so the ring's bright band clears the token's own silhouette.
-      halo.scale.set(1.42, 1.42, 1);
-      holder.add(halo);
 
       // The empty spin group preserves the exact old parent/child transform;
       // updateWorldVisuals multiplies holder.matrix * spin.matrix into the
@@ -18854,7 +18893,7 @@ THREE.GLTFLoader = GLTFLoader;
 
       holder.visible = false;
       scene.add(holder);
-      pretzels.push({ sprite: holder, mesh: spin, halo: halo, active: false,
+      pretzels.push({ sprite: holder, mesh: spin, active: false,
                       z: 0, lane: 1, x: LANES[1], y: 1 });
     }
   })();
@@ -23612,6 +23651,7 @@ THREE.GLTFLoader = GLTFLoader;
     // A fresh run re-measures the device from scratch, including the verdict on
     // how far down the ladder is worth walking.
     ladderCeiling = QUALITY_TIER_MAX; ladderProbeUntil = 0;
+    promoteFloor = 0; promoteWatch = 0; promoteRetryIn = PROMOTE_RETRY_SECONDS;
     applyQualityTier(0);
 
     gameOver = false;
@@ -26072,6 +26112,12 @@ THREE.GLTFLoader = GLTFLoader;
     // — and the split lets the outline prepass draw instances [0, inkCount)
     // instead of the whole trail. Nothing else depends on instance order.
     var pretzelSolidCount = 0;
+    var pretzelHaloCount = 0;
+    // The halo billboards all share the camera's orientation (see
+    // pretzelHaloInst); establish it once for the whole trail.
+    pretzelHaloInvQuat.copy(camera.quaternion).invert();
+    pretzelHaloInst.quaternion.copy(camera.quaternion);
+    pretzelHaloInst.updateMatrix();
     var pretzelInkZ = player.z + PICKUP_INK_FAR;
     for (var pretzelPass = 0; pretzelPass < 2; pretzelPass++) {
       for (var pi2 = 0; pi2 < pretzels.length; pi2++) {
@@ -26100,8 +26146,14 @@ THREE.GLTFLoader = GLTFLoader;
         // clamp and one multiply per active token, and the token's own lit
         // geometry carries the read at that range.
         var haloFade = clamp((pr.z - visualPlayer.z - 0.6) / 6.2, 0, 1);
-        pr.halo.material.opacity =
-          PRETZEL_HALO_OPACITY * (0.12 + 0.88 * haloFade * haloFade);
+        var haloSize = 1.42 * s;   // clears the token's own silhouette
+        pretzelHaloPos.copy(pr.sprite.position).applyQuaternion(pretzelHaloInvQuat);
+        pretzelHaloScale.set(haloSize, haloSize, 1);
+        pretzelHaloMatrix.compose(pretzelHaloPos, PRETZEL_HALO_QUAT, pretzelHaloScale);
+        pretzelHaloInst.setMatrixAt(pretzelHaloCount, pretzelHaloMatrix);
+        pretzelHaloColor.setScalar(0.12 + 0.88 * haloFade * haloFade);
+        pretzelHaloInst.setColorAt(pretzelHaloCount, pretzelHaloColor);
+        pretzelHaloCount++;
         pr.sprite.updateMatrix();
         pr.mesh.updateMatrix();
         pretzelSolidMatrix.multiplyMatrices(pr.sprite.matrix, pr.mesh.matrix);
@@ -26111,6 +26163,9 @@ THREE.GLTFLoader = GLTFLoader;
     }
     pretzelSolidInst.count = pretzelSolidCount;
     pretzelSolidInst.instanceMatrix.needsUpdate = true;
+    pretzelHaloInst.count = pretzelHaloCount;
+    pretzelHaloInst.instanceMatrix.needsUpdate = true;
+    if (pretzelHaloInst.instanceColor) pretzelHaloInst.instanceColor.needsUpdate = true;
 
     // Power-ups use only six pooled roots and are animated in world space. A
     // counter-rotating halo keeps the silhouette readable against bright sky;
@@ -26189,9 +26244,27 @@ THREE.GLTFLoader = GLTFLoader;
   // Closed-loop guard on the quality ladder — see monitorFrameBudget. The
   // ceiling is the deepest rung that has been shown to actually help; the probe
   // fields hold the pending "did that demotion work?" measurement.
-  var ladderCeiling = QUALITY_TIER_MAX;
+  // Infinity, not QUALITY_TIER_MAX: this runs BEFORE buildQualityLadder below
+  // assigns it, so the old spelling initialised the ceiling to `undefined` and
+  // every `qualityTier < Math.min(undefined, ...)` was NaN-false until the
+  // first run reset repaired it. Every read is already clamped by
+  // Math.min(QUALITY_TIER_MAX, ladderCeiling), so Infinity is the honest
+  // "no verdict yet" value and is order-independent.
+  var ladderCeiling = Infinity;
   var ladderProbeUntil = 0;
   var ladderProbeEmaBefore = 0;
+  // The shallowest tier a promotion is allowed to reach. The ladder could only
+  // ever ratchet DOWN before this existed: demotion needs 1.1 s over budget,
+  // promotion needs many seconds under it, and any single over-budget sample
+  // reset the headroom to zero -- so a device hovering near 60 Hz accumulated
+  // pressure repeatedly and headroom never once, and walked to the bottom rung
+  // over a single run. It now climbs back, and when a promotion is immediately
+  // undone it remembers that verdict instead of retrying it every few seconds.
+  var promoteFloor = 0;
+  var promoteWatch = 0;     // s left watching whether a fresh promotion holds
+  var promoteRetryIn = 0;   // s of COMFORTABLE frames before a floor is retested
+  var PROMOTE_SECONDS = 4;        // was 8 -- still 3.6x the demote threshold
+  var PROMOTE_RETRY_SECONDS = 25;
   var droppedCatchups = 0;
   var deferredTrafficDt = 0;
   var perfWarmup = 0;
@@ -26216,16 +26289,53 @@ THREE.GLTFLoader = GLTFLoader;
   // Resolution now precedes lighting cuts: on a DPR>1 display the first three
   // rungs only remove expensive oversampling, while AO/bloom/shadows continue
   // to shape the city at the panel's actual pixel resolution.
-  var TIER_DOF_OFF = 1;
-  var TIER_RES_START = 2;
-  var RES_TIER_COUNT = 3;
-  var TIER_RES_END = TIER_RES_START + RES_TIER_COUNT - 1;
-  var TIER_SHADOW_SLOW = TIER_RES_END + 1;
-  var TIER_AO_OFF = TIER_SHADOW_SLOW + 1;
-  var TIER_BLOOM_OFF = TIER_AO_OFF + 1;
-  var TIER_SHADOW_OFF = TIER_BLOOM_OFF + 1;
-  var TIER_FOCAL_OUTLINE = TIER_SHADOW_OFF + 1;
-  var QUALITY_TIER_MAX = TIER_FOCAL_OUTLINE;
+  // A RUNG THAT CANNOT CHANGE ANYTHING ON THIS DEVICE IS NOT A RUNG.
+  // The ladder above was a fixed 0..9 on every machine, and on the commonest
+  // configuration of all -- a 1x-DPR desktop display -- three of its ten rungs
+  // were provably inert. Measured by pinning each tier in turn and reading the
+  // drawing buffer back: tiers 0 through 8 ALL rendered 1280x800; only tier 9's
+  // separate emergency step moved it (1177x736). The reason is arithmetic.
+  // MIN_RENDER_SCALE is `1 / min(devicePixelRatio, MAX_RENDER_DPR)`, which is
+  // exactly 1 whenever the display has no supersampling to give back -- so
+  // `lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT)` is 1 for every one
+  // of the three resolution rungs. Only their side effect (setSceneRTLeanMode,
+  // i.e. MSAA off) did any work, and only on the first of the three. The DoF
+  // rung is inert too now that POST.dofOn is false by default.
+  //
+  // Dead rungs are not free, and they are the direct mechanism behind "it drops
+  // to lower and lower tiers". Each demotion costs 1.1-1.6 s of accumulated
+  // pressure plus a 0.9-1.6 s probe window, and -- critically -- resets
+  // perfHeadroom to zero. So a device that is merely NEAR budget spends six to
+  // nine seconds walking through rungs that change nothing, cannot bank any
+  // headroom while doing it, and arrives at the rungs that DO cost something
+  // (shadows, SSAO, bloom, the ink) having never once measured whether it
+  // needed to. The ladder was descending because it could not tell that it had
+  // not yet tried anything.
+  //
+  // So it is built at startup from the rungs this device can actually act on.
+  // MSAA also becomes a rung in its own right rather than a side effect of the
+  // first resolution step: they are different mechanisms, and on a 1x display
+  // MSAA is the only supersampling there is to shed.
+  var TIER_DOF_OFF, TIER_MSAA_OFF, TIER_RES_START, RES_TIER_COUNT,
+      TIER_SHADOW_SLOW, TIER_AO_OFF, TIER_BLOOM_OFF, TIER_SHADOW_OFF,
+      TIER_FOCAL_OUTLINE, QUALITY_TIER_MAX;
+  (function buildQualityLadder() {
+    var t = 0;
+    // 0 means "this rung does not exist": every test against it is
+    // `qualityTier < TIER_X`, and no tier is ever below 0.
+    TIER_DOF_OFF = POST.dofOn ? ++t : 0;
+    TIER_MSAA_OFF = ++t;
+    // Supersampling rungs only exist where there is supersampling.
+    RES_TIER_COUNT = MIN_RENDER_SCALE < 0.999 ? 3 : 0;
+    TIER_RES_START = t + 1;
+    t += RES_TIER_COUNT;
+    TIER_SHADOW_SLOW = ++t;
+    TIER_AO_OFF = ++t;
+    TIER_BLOOM_OFF = ++t;
+    TIER_SHADOW_OFF = ++t;
+    TIER_FOCAL_OUTLINE = ++t;
+    QUALITY_TIER_MAX = t;
+  })();
 
   var qualityTier = 0;
   var dofActive = POST.dofOn;
@@ -26253,7 +26363,7 @@ THREE.GLTFLoader = GLTFLoader;
     tier = clamp(tier, 0, QUALITY_TIER_MAX);
     if (tier === qualityTier) return;
     qualityTier = tier;
-    dofActive = POST.dofOn && qualityTier < TIER_DOF_OFF;
+    dofActive = POST.dofOn && TIER_DOF_OFF > 0 && qualityTier < TIER_DOF_OFF;
     aoActive = POST.aoOn && qualityTier < TIER_AO_OFF;
     bloomActive = POST.bloomOn && qualityTier < TIER_BLOOM_OFF;
     shadowSlow = qualityTier >= TIER_SHADOW_SLOW;
@@ -26264,17 +26374,19 @@ THREE.GLTFLoader = GLTFLoader;
     // the player reads moment to moment at a fraction of the city-wide cost.
     outlineActive = POST.outlineOn;
     outlineFocalOnly = qualityTier >= TIER_FOCAL_OUTLINE;
-    var resSteps = clamp(qualityTier - TIER_RES_START + 1, 0, RES_TIER_COUNT);
+    var resSteps = RES_TIER_COUNT > 0
+      ? clamp(qualityTier - TIER_RES_START + 1, 0, RES_TIER_COUNT) : 0;
     // Old code stepped renderScale through hardcoded 0.82/0.72/0.64 rungs,
     // which predates MIN_RENDER_SCALE and could clamp straight past several
     // rungs at once on a high-DPR device. Interpolate against the real floor
     // instead so every device gets RES_TIER_COUNT evenly spaced steps down to
     // its own 1:1 limit, never below it.
     emergencyResolutionActive = qualityTier >= TIER_FOCAL_OUTLINE;
-    var qualityRenderScale = lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT);
+    var qualityRenderScale = RES_TIER_COUNT > 0
+      ? lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT) : 1;
     if (emergencyResolutionActive) qualityRenderScale *= EMERGENCY_RENDER_SCALE;
     applyRenderScale(qualityRenderScale);
-    setSceneRTLeanMode(qualityTier >= TIER_RES_START);
+    setSceneRTLeanMode(qualityTier >= TIER_MSAA_OFF);
     adaptiveSlowMode = qualityTier >= TIER_SHADOW_OFF;
   }
 
@@ -26302,7 +26414,13 @@ THREE.GLTFLoader = GLTFLoader;
     perfEmaMs += (ms - perfEmaMs) * 0.045;
     if (perfEmaMs > 19.2) {
       perfPressure += budgetRaw;
-      perfHeadroom = 0;
+      // Decay rather than reset. `perfHeadroom = 0` meant a single spike --
+      // one heavy spectacle, one background tab waking up -- erased every
+      // second of smooth play banked before it, which is why the promotion
+      // threshold was unreachable in practice on any device near budget.
+      // Losing three seconds of credit per second over budget still makes
+      // sustained pressure win comfortably.
+      perfHeadroom = Math.max(0, perfHeadroom - budgetRaw * 3);
     } else if (perfEmaMs < 17.8) {
       perfHeadroom += budgetRaw;
       perfPressure = Math.max(0, perfPressure - budgetRaw * 0.4);
@@ -26358,6 +26476,15 @@ THREE.GLTFLoader = GLTFLoader;
       return;
     }
 
+    if (promoteWatch > 0) promoteWatch = Math.max(0, promoteWatch - budgetRaw);
+    // Only comfortable frames pay down the retry timer, so a device that is
+    // simply short of budget never re-tests a rung it has already failed,
+    // while one that genuinely recovered (thermals, a closed tab) does.
+    if (promoteFloor > 0) {
+      if (perfEmaMs < 17.8) promoteRetryIn -= budgetRaw;
+      if (promoteRetryIn <= 0) { promoteFloor--; promoteRetryIn = PROMOTE_RETRY_SECONDS; }
+    }
+
     var severePressure = perfEmaMs > 30;
     if (perfPressure > (severePressure ? 0.55 : 1.1) &&
         qualityTier < Math.min(QUALITY_TIER_MAX, ladderCeiling)) {
@@ -26370,13 +26497,24 @@ THREE.GLTFLoader = GLTFLoader;
       // reach the next meaningful cost domain quickly instead of spending half
       // a minute proving nine microscopic transitions one by one.
       applyQualityTier(Math.min(QUALITY_TIER_MAX, qualityTier + (severePressure ? 2 : 1)));
+      // This demotion came straight after a promotion, so the shallower tier
+      // has now been measured and does not hold. Stop offering it: that is the
+      // difference between a ladder that settles and one that oscillates.
+      if (promoteWatch > 0) {
+        promoteFloor = qualityTier;
+        promoteRetryIn = PROMOTE_RETRY_SECONDS;
+        promoteWatch = 0;
+      }
       perfPressure = 0;
       perfHeadroom = 0;
-    } else if (perfHeadroom > 8 && qualityTier > 0) {
+    } else if (perfHeadroom > PROMOTE_SECONDS && qualityTier > promoteFloor) {
       // Recovering proves the pressure was transient, so let the ceiling rise
       // again with it — a hitch during loading must not cap the whole run.
       ladderCeiling = Math.min(QUALITY_TIER_MAX, Math.max(ladderCeiling, qualityTier));
       applyQualityTier(qualityTier - 1);
+      // Watch the tier we just restored. If it costs us a demotion within this
+      // window, the branch above pins promoteFloor and we stop trying.
+      promoteWatch = 6;
       perfPressure = 0;
       perfHeadroom = 0;
     }
