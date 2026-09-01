@@ -12026,19 +12026,17 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   // BVG double-decker in service yellow — parks at the kerb as set dressing.
-  // A dedicated body material — same BVG yellow as everything else, just with
-  // less roughness — instead of the shared MAT.bvgYellow: the bus body is the
-  // single biggest painted panel in the whole street, so it is worth the one
-  // extra cached material to give it a lacquered coach-panel sheen without
-  // relighting every small yellow accent (railings, U-Bahn sign, bins) that
-  // reuses MAT.bvgYellow elsewhere.
-  // Roughness 0.26 -> 0.44 for the same reason makeCar's body was pulled back
-  // (see its comment): the sheen this material exists to provide survives, but
-  // the hotspot broadens into a value shift across the panel instead of a tight
-  // saturated blob that reads as its own graphic shape. Being "the single
-  // biggest painted panel in the whole street" is exactly why it is the worst
-  // place for a highlight that fights the flat-cel language around it.
-  var PROP_BUS_BODY = mat(cssHex(CITY.bvgYellow), { roughness: 0.44, metalness: 0.10 });
+  //
+  // This used to be its own material, justified in a long comment as "same BVG
+  // yellow, just with less roughness", to give the biggest painted panel on the
+  // street a lacquered coach-panel sheen. A later pass then pulled that
+  // roughness from 0.26 to 0.44 for the same reason makeCar's body was pulled
+  // back — a broad value shift reads better than a tight specular blob against
+  // the flat-cel language around it. That retune removed the entire reason the
+  // material existed: at 0.44 it is ROUGHER than the shared MAT.bvgYellow's
+  // 0.40, not smoother, so it was buying a duplicate material switch every
+  // frame to render marginally flatter than the thing it forked from.
+  var PROP_BUS_BODY = MAT.bvgYellow;
   // Lighter inset panes sit proud of the continuous dark window band so the
   // band still reads as one graphic shape, with individual panes lit into
   // it, instead of a row of separate window boxes reading as dots.
@@ -12251,7 +12249,10 @@ THREE.GLTFLoader = GLTFLoader;
 
   // Cargo bike (Lastenrad) — parked, kickstand down. A very Berlin silhouette
   // built from six cheap primitives: box, two wheels, frame bar, seat, bars.
-  var PROP_CARGO_BOX = mat(cssHex(CITY.bvgYellow), { roughness: 0.45, metalness: 0.08 });
+  // Was its own material at roughness 0.45 / metalness 0.08 against the shared
+  // yellow's 0.40 / 0.16 — a difference no one can see on a 0.6 m box, for the
+  // cost of a second material switch.
+  var PROP_CARGO_BOX = MAT.bvgYellow;
   function makeCargoBike() {
     var g = new THREE.Group();
     g.add(roundedBox(0.62, 0.46, 0.86, 0.06, PROP_CARGO_BOX, 0, 0.44, 0.62, 0.02));
@@ -13926,7 +13927,11 @@ THREE.GLTFLoader = GLTFLoader;
     // towers are actually read from. See the tower build in the portal loop.
     brickDark: mat(0x2b1519, { roughness: 0.88 }),
     stone: mat(0xc1a78a, { roughness: 0.83 }),
-    steel: mat(0x394d54, { roughness: 0.40, metalness: 0.72 }),
+    // Identical roughness AND metalness to MAT.viaductSteel, and 4% away from
+    // it in colour (#394d54 vs #33455c) — two names for one painted steel,
+    // costing a material switch to say nothing. The viaduct's is the canonical
+    // one because the transit train shares it.
+    steel: MAT.viaductSteel,
     water: new THREE.MeshStandardMaterial({
       color: 0x4b8194, map: spreeWaterTex, roughness: 0.18, metalness: 0.28,
       emissive: 0x102c3b, emissiveIntensity: 0.62, transparent: true, opacity: 0.92,
