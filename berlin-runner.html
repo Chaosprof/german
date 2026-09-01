@@ -19795,7 +19795,7 @@ THREE.GLTFLoader = GLTFLoader;
   // metre-plus of plane — the rings were always "hard-edged" in code, the
   // softness was the source texture being too coarse for how large it was
   // stretched.
-  var heroShadowTex = canvasTexture(128, 128, function (g, w, h) {
+  var heroShadowTex = canvasTexture(256, 256, function (g, w, h) {
     var cx = w / 2, cy = h / 2, R = w / 2;
     // White-wash the whole sheet first: under MultiplyBlending white is the
     // identity (no darkening of the road), so this keeps the square canvas's
@@ -19815,18 +19815,29 @@ THREE.GLTFLoader = GLTFLoader;
     // steps instead of three close-value ones — so the band edges themselves
     // carry the "hard ink shape" read Subway Surfers' shadow has, rather than
     // three near-identical greys that only ever looked like one soft blob.
-    // Second pass: still reading soft in a live capture even at 128px/half
-    // size, because bilinear magnification smears whatever AA the canvas arc
-    // left on the ring edges across several screen pixels once stretched
-    // over a metre-plus plane. Two changes compensate: the rim ring is
-    // pulled almost to white (was 150 — a near-mid grey that itself had a
-    // soft transition into the white background) so only the last, smallest
-    // ring carries real darkness, and that core is pulled in to a smaller
-    // fraction of the radius so the dark shape reads as a tight contact
-    // patch under the feet rather than a broad shaded disc.
-    ring(R * 0.80, 'rgb(206,199,186)');
-    ring(R * 0.52, 'rgb(120,110,90)');
-    ring(R * 0.26, 'rgb(58,50,40)');
+    // THIRD PASS: three hard bands of visibly different value do not read as
+    // one shadow -- captured at 3x they read as a BULLSEYE. A target has
+    // concentric rings; a shadow does not. Worse, the two multiply quads
+    // (this blob plus runnerFootAO) each carried all three rings, so their
+    // overlap produced a fourth and fifth edge in the middle.
+    //
+    // Subway Surfers' shadow is one flat dark ellipse. So this is now a single
+    // shape: a solid core carrying all of the darkness out to 0.70R, then ONE
+    // narrow collar to 0.88R whose only job is to keep the rim from aliasing
+    // when the 1.35 m plane is magnified. The collar is deliberately close in
+    // value to the core so it reads as the edge of one shape rather than as a
+    // second ring around it, and the texture is 256 px so that edge survives
+    // bilinear magnification -- the concern the previous pass was reacting to,
+    // fixed with resolution rather than with more bands.
+    // Values are set for the OVERLAP, not for one quad. Two multiply planes are
+    // stacked here (this blob plus runnerFootAO), so whatever the core is worth
+    // gets squared under the feet: the first attempt used 52/255 = 0.20 and the
+    // centre came out at 0.20^2 = 0.04, a near-black hole punched in the road.
+    // 140/255 = 0.55 compounds to 0.30 where the two overlap and stays at 0.55
+    // across the rest of the footprint -- a shadow with a darker contact point,
+    // which is the reading a real one has.
+    ring(R * 0.88, 'rgb(205,199,188)');
+    ring(R * 0.70, 'rgb(140,132,118)');
   }, { wrap: false });
   var blob = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 1.75),
     new THREE.MeshBasicMaterial({ map: heroShadowTex, transparent: true,
@@ -20717,6 +20728,105 @@ THREE.GLTFLoader = GLTFLoader;
   var _heroV3 = new THREE.Vector3();
   var _heroV3b = new THREE.Vector3();
 
+  // ---------------------------------------------- authored-hero recolour ---
+  // The bundled v12 hero is an AUTHORED asset (isCompleteAuthoredHero -> true),
+  // so buildHeroCostume's per-bone HERO_COSTUME tint above is deliberately not
+  // applied to it -- the costume is supposed to come from the GLB's own painted
+  // albedo. The trouble is what that albedo actually contains. Sampling the
+  // live 2048x2048 atlas and histogramming it: the single largest colour family
+  // is #303030 / #282828 / #383838 / #404040 / #202020 -- roughly 930,000
+  // pixels of ZERO-saturation near-black at value 0.13-0.25. That is the shirt
+  // and the cap. The jeans (#486090, sat 0.5) and the skin (#e0b090) are fine;
+  // the garment is not.
+  //
+  // The consequence is the single biggest art gap against the reference. Subway
+  // Surfers' rule is that the character is always the most saturated,
+  // highest-contrast object in frame -- it is what lets a small figure read
+  // against any backdrop. Here the runner was the LEAST saturated object on a
+  // screen full of saturated facades, and on the blue tram roof of the roof
+  // route he nearly disappeared.
+  //
+  // A saturation boost in the shader cannot fix this: scaling the chroma of a
+  // grey leaves a grey. The hue has to be injected, which means touching the
+  // texture. So the neutral-dark family is remapped in place at load, keeping
+  // each pixel's own relative luminance so every painted fold, seam and
+  // wrinkle in the albedo survives -- only its hue and its overall level move.
+  // The target is the red the project already chose for this character in
+  // HERO_COSTUME above (#d8241c body, #f14a35 highlight), which is also the
+  // complement of the jeans that are already blue.
+  //
+  // Selection is by colour, not by UV region, because the atlas is fragmented
+  // into dozens of islands (a Meshy unwrap) and no rectangle isolates the
+  // shirt. Anything already carrying real chroma -- jeans, skin, the olive
+  // bag, the hair, the shoe accents -- is above HERO_GARMENT_SAT and is left
+  // exactly as authored.
+  var HERO_GARMENT_SAT = 0.20;   // above this the pixel is already a real hue
+  // The input band is cut close around where the garment actually sits in the
+  // histogram (0.13-0.30) rather than spanning every dark pixel. A wide band
+  // put the whole shirt in its bottom third, so the remap below only ever
+  // reached its darkest, least saturated output and the result was a dusty
+  // brick rather than a costume colour.
+  var HERO_GARMENT_VAL_LO = 0.06;
+  var HERO_GARMENT_VAL_HI = 0.40;
+  // Where that band is remapped to. Ordering is preserved, so every painted
+  // fold still reads; only the level and the chroma move.
+  var HERO_GARMENT_OUT_LO = 0.55;
+  var HERO_GARMENT_OUT_HI = 1.00;
+  var HERO_GARMENT_HUE = 6 / 360;    // red-orange, matching HERO_COSTUME
+  var HERO_GARMENT_CHROMA = 0.88;
+  var heroRecolouredMaps = new WeakSet();
+  function recolourHeroGarment(tex) {
+    // The same atlas is shared by every material on the mesh, so guard against
+    // recolouring it two or three times (each pass would lift the value again).
+    if (!tex || !tex.image || heroRecolouredMaps.has(tex)) return;
+    var img = tex.image, w = img.width | 0, h = img.height | 0;
+    if (!w || !h) return;
+    var cv = document.createElement('canvas');
+    cv.width = w; cv.height = h;
+    var g = cv.getContext('2d', { willReadFrequently: true });
+    try { g.drawImage(img, 0, 0); } catch (e) { return; }
+    var id;
+    try { id = g.getImageData(0, 0, w, h); } catch (e) { return; }
+    var d = id.data;
+    var span = HERO_GARMENT_VAL_HI - HERO_GARMENT_VAL_LO;
+    for (var i = 0; i < d.length; i += 4) {
+      if (d[i + 3] < 8) continue;
+      var r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255;
+      var mx = r > gg ? (r > b ? r : b) : (gg > b ? gg : b);
+      var mn = r < gg ? (r < b ? r : b) : (gg < b ? gg : b);
+      var sat = mx > 0 ? (mx - mn) / mx : 0;
+      if (sat > HERO_GARMENT_SAT) continue;
+      if (mx < HERO_GARMENT_VAL_LO || mx > HERO_GARMENT_VAL_HI) continue;
+      // Position within the authored garment band -> position within the new
+      // one. This is what preserves the painting: a fold that was 12% darker
+      // than its surroundings still is.
+      var t = (mx - HERO_GARMENT_VAL_LO) / span;
+      var v = HERO_GARMENT_OUT_LO + (HERO_GARMENT_OUT_HI - HERO_GARMENT_OUT_LO) * t;
+      // Ease chroma in with brightness. Full saturation on the darkest folds
+      // turns them into flat maroon and swallows the shading.
+      var c = HERO_GARMENT_CHROMA * (0.72 + 0.28 * t);
+      // Inline HSV->RGB for one fixed hue sector (0-60 degrees), so this stays
+      // a couple of multiplies per pixel over a 4.2M-pixel atlas.
+      // Sector 0 of HSV (0-60 degrees): red is the max channel, green RISES
+      // with the hue angle, blue is the min. Using the descending ramp here
+      // instead put green level with red and produced olive.
+      var f = HERO_GARMENT_HUE * 6;
+      var lo = v * (1 - c);
+      var mid = v * (1 - c * (1 - f));
+      d[i] = (v * 255) | 0;
+      d[i + 1] = (mid * 255) | 0;
+      d[i + 2] = (lo * 255) | 0;
+    }
+    g.putImageData(id, 0, 0);
+    // Mutate the texture's image rather than building a new CanvasTexture:
+    // a GLTF texture carries flipY=false, its own wrap and filter settings and
+    // the sRGB colour space, and a fresh CanvasTexture would silently reset
+    // flipY to true and render the whole character upside down in UV space.
+    tex.image = cv;
+    tex.needsUpdate = true;
+    heroRecolouredMaps.add(tex);
+  }
+
   function buildHeroCostume(mesh) {
     var geo = mesh && mesh.geometry, sk = mesh && mesh.skeleton;
     if (!geo || !sk || !geo.attributes.skinIndex || !geo.attributes.skinWeight) return false;
@@ -21369,6 +21479,9 @@ THREE.GLTFLoader = GLTFLoader;
           // far cheaper than MeshStandardMaterial on this ~25k-tri skinned mesh.
           function tuneMaterial(src) {
             if (src.map) {
+              // Before the colour space is declared, so the pixel maths above
+              // operates on the raw authored bytes.
+              recolourHeroGarment(src.map);
               src.map.colorSpace = THREE.SRGBColorSpace;
               // The hero fills ~35% of frame height and is the one mesh the eye
               // tracks continuously, so its atlas gets the full sample budget
@@ -25547,7 +25660,12 @@ THREE.GLTFLoader = GLTFLoader;
     // unscaled against the new 1.35m plane would have shoved the shadow
     // almost entirely out from under the runner instead of just clearing his
     // silhouette. Same proportion, smaller shadow.
-    var blobLean = 0.36 + visualPlayer.y * 0.16;
+    // Lean cut again. At 0.36 m against a 1.35 m plane the dark core sat a
+    // quarter of its own width behind the runner, so from the chase camera the
+    // feet landed on the shadow's upper RIM and the character read as floating
+    // above a disc rather than standing on the road. The offset only has to
+    // clear his silhouette, not escape it.
+    var blobLean = 0.14 + visualPlayer.y * 0.10;
     applyPlayerFrame(blob, visualPlayer.x + CONTACT_DIR_X * blobLean, 0.035,
                    visualPlayer.z + 0.1 + CONTACT_DIR_Z * blobLean, 0, -Math.PI / 2, 0);
     // Multiply blending has no opacity term, so height is carried entirely by
