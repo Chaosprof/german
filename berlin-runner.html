@@ -26156,9 +26156,34 @@ THREE.GLTFLoader = GLTFLoader;
     TIER_RES_START = t + 1;
     t += RES_TIER_COUNT;
     TIER_SHADOW_SLOW = ++t;
+    TIER_SHADOW_OFF = ++t;
+    // SSAO AND BLOOM SHED LAST, because measurement says they are not worth
+    // anything to shed. Each was toggled every three seconds inside ONE
+    // session -- so both states see the same spread of street content -- and
+    // the mean frame delta compared:
+    //
+    //   MSAA  2.21 ms   (and p90 33.3 ms on vs 16.7 ms off: the difference
+    //                    between dropping ~10% of frames and dropping none)
+    //   SSAO -0.13 ms
+    //   bloom -0.23 ms
+    //   control (identical state both ways) -0.42 ms
+    //
+    // SSAO and bloom are inside the noise floor the control establishes: on
+    // this frame they are free. That is not a surprise once the frame is
+    // understood -- it is bound by CPU draw submission, not fill (the beauty
+    // pass costs the same 9 ms at 640x400 as at 1280x800), and SSAO and bloom
+    // are pure fill. They were rungs 3 and 4, so a device under pressure used
+    // to give up ambient occlusion and every bloom highlight in exchange for
+    // nothing measurable, twice, before reaching a rung that helps.
+    //
+    // What does help is anything that removes DRAWS: the shadow atlas refresh
+    // rate and the focused shadow scope (which also switches adaptiveSlowMode
+    // on, shedding particle counts and traffic update cadence). Those now come
+    // first. SSAO and bloom remain on the ladder rather than being deleted,
+    // because a genuinely fill-bound device would still want them -- they are
+    // simply last in line now, where their measured value puts them.
     TIER_AO_OFF = ++t;
     TIER_BLOOM_OFF = ++t;
-    TIER_SHADOW_OFF = ++t;
     TIER_FOCAL_OUTLINE = ++t;
     QUALITY_TIER_MAX = t;
   })();
