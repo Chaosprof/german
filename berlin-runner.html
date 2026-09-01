@@ -9556,6 +9556,121 @@ THREE.GLTFLoader = GLTFLoader;
     return material;
   }
 
+  // ---------------------------------------------- shared flat-prop material -
+  // The city's flat-colour props (bollards, kerbs, railings, bins, roofs, sign
+  // posts, set-piece steelwork) were 58 distinct MeshStandardMaterials drawing
+  // 215 meshes. Measured by hiding exactly that set, they are the single
+  // largest cost in the beauty pass -- 9.7 ms with them, 5.7 ms without -- and
+  // 58 of those draws are material SWITCHES, each a full uniform refresh.
+  //
+  // They have no texture. The only thing separating them is a colour and two
+  // scalars, so the colour moves to a vertex attribute and the scalars to a
+  // second one, and every last one of them renders from this single material.
+  //
+  // Colour is Uint16-normalised rather than Uint8 because these are LINEAR
+  // values: 0x25282e lands near 0.017, where a 1/255 step is a 25% error on
+  // that colour. At 1/65535 it is not. aSurf stays Uint8 -- 1/255 on a
+  // roughness is invisible.
+  var PROP_FLAT_MAT = null;
+  function buildFlatPropMaterial() {
+    var m = new THREE.MeshStandardMaterial({
+      color: 0xffffff, vertexColors: true,
+      roughness: 1, metalness: 0, envMapIntensity: 0.68, dithering: true
+    });
+    m.onBeforeCompile = function (shader) {
+      shader.vertexShader =
+        'attribute vec2 aSurf;\nvarying vec2 vSurf;\n' +
+        shader.vertexShader.replace('#include <begin_vertex>',
+          '#include <begin_vertex>\n  vSurf = aSurf;');
+      shader.fragmentShader = 'varying vec2 vSurf;\n' + shader.fragmentShader
+        .replace('#include <roughnessmap_fragment>',
+                 '#include <roughnessmap_fragment>\n  roughnessFactor = vSurf.x;')
+        .replace('#include <metalnessmap_fragment>',
+                 '#include <metalnessmap_fragment>\n  metalnessFactor = vSurf.y;');
+    };
+    m.customProgramCacheKey = function () { return 'flatprop-v1'; };
+    // applyCelShading chains onto whatever onBeforeCompile is already set and
+    // calls it first, so this composes rather than clobbering -- the trap the
+    // project notes warn about (a second String.replace pass silently matching
+    // nothing) does not apply, because these are two separate patch functions
+    // against two different anchors, not two replaces of one string.
+    return applyCelShading(m);
+  }
+
+  // A material may join PROP_FLAT_MAT only if nothing about it survives the
+  // move except colour, roughness and metalness. Everything below is a real
+  // exclusion found in this scene, not defensive boilerplate:
+  //   - emissive: the two materials that ARE mutated at runtime (measured over
+  //     9000 frames across a mood change) are both emissiveIntensity ramps on
+  //     glowing props. Excluding emissive removes the entire mutation hazard.
+  //   - envMapIntensity: overridden by a handful of props and there is no
+  //     per-vertex route to it, so only the default 0.68 converts.
+  //   - instanced/skinned: parked cars and traffic tint through instanceColor,
+  //     and the hero is skinned; both want their own path.
+  function isFlatPropMaterial(m) {
+    return !!m && m.type === 'MeshStandardMaterial' &&
+      !m.map && !m.normalMap && !m.roughnessMap && !m.metalnessMap &&
+      !m.emissiveMap && !m.alphaMap && !m.aoMap && !m.lightMap && !m.bumpMap &&
+      !m.displacementMap && !m.vertexColors && !m.transparent &&
+      m.opacity === 1 && m.alphaTest === 0 && !m.wireframe && !m.flatShading &&
+      m.emissive.getHex() === 0 && m.side === THREE.FrontSide &&
+      m.blending === THREE.NormalBlending && m.depthWrite && m.depthTest &&
+      m.toneMapped === true && m.envMapIntensity === 0.68 &&
+      !(m.userData && m.userData.noShare);
+  }
+
+  function unifyFlatPropMaterials() {
+    if (!PROP_FLAT_MAT) PROP_FLAT_MAT = buildFlatPropMaterial();
+    // Pass 1: who uses which geometry, and does every user agree on a material?
+    // A geometry shared by two meshes that want different colours cannot carry
+    // one baked colour, and one also used by a mesh that is NOT converting must
+    // not be given a colour attribute at all.
+    var users = new Map();
+    scene.traverse(function (o) {
+      if (!o.geometry || !o.material || Array.isArray(o.material)) return;
+      var u = users.get(o.geometry);
+      if (!u) { u = { total: 0, mats: new Set() }; users.set(o.geometry, u); }
+      u.total++;
+      u.mats.add(o.material);
+    });
+
+    var converted = 0, cloned = 0, baked = 0;
+    var bakedFor = new Map();   // geometry -> material it was baked for
+    scene.traverse(function (o) {
+      if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) return;
+      if (Array.isArray(o.material) || !isFlatPropMaterial(o.material)) return;
+      var src = o.material, geo = o.geometry;
+      if (!geo || !geo.attributes || !geo.attributes.position) return;
+      var u = users.get(geo);
+      // Safe to bake in place only when every mesh on this geometry is this
+      // same material; otherwise take a private copy.
+      if (!(u && u.mats.size === 1 && u.mats.has(src))) {
+        geo = geo.clone(); o.geometry = geo; cloned++;
+        users.set(geo, { total: 1, mats: new Set([src]) });
+      }
+      if (bakedFor.get(geo) !== src) {
+        var n = geo.attributes.position.count;
+        var col = new Uint16Array(n * 3), srf = new Uint8Array(n * 2);
+        var cr = Math.round(clamp(src.color.r, 0, 1) * 65535);
+        var cg = Math.round(clamp(src.color.g, 0, 1) * 65535);
+        var cb = Math.round(clamp(src.color.b, 0, 1) * 65535);
+        var rr = Math.round(clamp(src.roughness, 0, 1) * 255);
+        var mm = Math.round(clamp(src.metalness, 0, 1) * 255);
+        for (var i = 0, c = 0, sIdx = 0; i < n; i++) {
+          col[c++] = cr; col[c++] = cg; col[c++] = cb;
+          srf[sIdx++] = rr; srf[sIdx++] = mm;
+        }
+        geo.setAttribute('color', new THREE.Uint16BufferAttribute(col, 3, true));
+        geo.setAttribute('aSurf', new THREE.Uint8BufferAttribute(srf, 2, true));
+        bakedFor.set(geo, src);
+        baked++;
+      }
+      o.material = PROP_FLAT_MAT;
+      converted++;
+    });
+    return { converted: converted, cloned: cloned, baked: baked };
+  }
+
   function mat(color, opts) {
     opts = opts || {};
     return applyCelShading(new THREE.MeshStandardMaterial({
@@ -23629,6 +23744,19 @@ THREE.GLTFLoader = GLTFLoader;
     // and our pool lights are permanently visible. So a single compile() now
     // covers every station/tunnel/chunk-visibility state at once, and this
     // step no longer needs to touch chunk/station/tunnel .visible at all.
+    // Collapse every flat-colour prop onto one material BEFORE the warm scene
+    // is gathered below, so the programs compiled here are the ones that will
+    // actually be used. Doing it after would warm 58 dead materials and leave
+    // the real one to link on its first frame of play -- the exact stall this
+    // whole function exists to prevent.
+    try {
+      var flatUnify = unifyFlatPropMaterials();
+      if (canvas && canvas.dataset) {
+        canvas.dataset.flatPropsMerged = flatUnify.converted + '/' +
+          flatUnify.baked + '/' + flatUnify.cloned;
+      }
+    } catch (e) {}
+
     var savedTarget = renderer.getRenderTarget();
     var steps = [];
 
