@@ -5465,154 +5465,27 @@ THREE.GLTFLoader = GLTFLoader;
   var postScene = null, postCam = null, postQuad = null;
   var sceneRT = null, bloomA = null, bloomB = null;
   var sceneRTBaseSamples = 0;
-  // On WebGL2/mobile the beauty target is non-MSAA. In that exact case the
-  // opaque geometry can emit beauty, view normal and packed depth together,
-  // removing the duplicate full-city outline submission. The legacy prepass
-  // remains live as an automatic fallback and as a deterministic QA switch.
-  var mrtOutlineActive = false, mrtOutlineFailed = false;
-  var mrtSceneColor = null, mrtOutlineNormal = null, mrtOutlineDepth = null;
-  var MRT_OUTLINE_LAYER = 8, MRT_BEAUTY_LAYER = 9, MRT_RESIDUAL_LAYER = 10;
-  var mrtPatchedMaterials = new WeakSet();
-  var mrtResidualEntries = [], mrtResidualVisible = [], mrtResidualCount = 0;
+  // (An abandoned multiple-render-target attempt used to be scaffolded here.
+  // MRT would have needed every material in the scene patched to emit a second
+  // output, including blend-neutral values per blending mode for the
+  // transparent ones. None of that is necessary: the beauty pass's own depth
+  // buffer already carries everything the ink needs. See renderPresent.)
   var brightMat = null, blurMat = null, compositeMat = null;
   var postSize = new THREE.Vector2(1, 1);
   // Outline prepass: a half-res normal+depth render used only to build the
   // ink-line edge mask in compositeMat. Half res quarters the extra fragment
   // cost of the second scene pass; the line itself is soft enough (~2px) that
   // the resolution drop is not visible in the composited edge.
-  var outlineRT = null, outlineMat = null;
-  // outlineMat used to be the ONE material pushed through every object in the
-  // scene via scene.overrideMaterial. WebGLRenderer caches per-draw state
-  // (instancing / instancingColor / skinning flags) keyed by MATERIAL OBJECT
-  // IDENTITY (WebGLRenderer.properties, a WeakMap<material, ...>), not by
-  // object -- so one shared material bouncing between plain meshes, several
-  // InstancedMesh pool flavours (with/without instanceColor) and the skinned
-  // hero thrashed that cache on nearly every draw call, forcing a full
-  // getParameters/getProgramCacheKey recompute each time. Splitting by the
-  // exact axes WebGLRenderer's setProgram keys on gives each shape of draw
-  // its own stable cache entry; see outlineMaterialFor() below. This does NOT
-  // add compiled GL programs -- the program cache itself is keyed by
-  // parameters, not material identity, so the same program variants get
-  // reused across these four material objects.
-  var outlineMatInstanced = null, outlineMatInstancedColor = null, outlineMatSkinned = null;
-  // Cache of { obj, variant, saved } built once (see buildOutlineSwapList),
-  // covering every material-bearing object in the scene. Populated only once
-  // the whole scene graph (including the async-loaded hero) is known
-  // complete -- see the preloadReady handoff in maybeFinishPreload -- so
-  // renderPresent() below falls back to the old scene.overrideMaterial path
-  // (correct but slow) for the handful of loading-screen frames before that.
-  var outlineSwapList = null;
-  // The permanent list above is still needed by the loading-screen shader
-  // warm-up, which deliberately compiles every pooled visibility state. The
-  // live prepass must not, however, swap all ~11k pooled descendants twice per
-  // frame when most sit below invisible chunk/obstacle roots. Build a WeakMap
-  // once, then gather only the exact objects Three can submit this frame:
-  // visible ancestry, current camera layer and the same frustum test used by
-  // WebGLRenderer.projectObject(). This changes no draw or outline result; it
-  // removes thousands of property writes from the steady-state hot path.
-  var outlineEntryMap = null;
-  var visibleOutlineSwapList = [];
-  var visibleOutlineSwapCount = 0;
-  var outlineCullMatrix = new THREE.Matrix4();
-  var outlineCullFrustum = new THREE.Frustum();
-  // The final adaptive rung keeps the game's focal ink instead of dropping the
-  // art style altogether. Meshes on this extra layer still remain on layer 0,
-  // so beauty rendering is unchanged; only the emergency outline prepass can
-  // ask the camera to see this much smaller hero/gate/hazard subset.
-  var FOCAL_OUTLINE_LAYER = 7;
-  function enableFocalOutline(root) {
-    root.traverse(function (obj) {
-      if (!obj.material) return;
-      var mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-      // Additive curtains, floor pads, glows and contact-shadow planes must not
-      // become opaque rectangles when the normal-material override is active.
-      for (var i = 0; i < mats.length; i++) if (mats[i] && mats[i].transparent) return;
-      obj.layers.enable(FOCAL_OUTLINE_LAYER);
-    });
-  }
-  // Resolution of the outline prepass relative to the scene buffer. 1 = full.
-  // Kept as a named constant rather than an inline /2 so the trade-off is
-  // visible and adjustable: this is the dial between crisp ink contours and
-  // one extra full-resolution geometry pass per frame.
-  var OUTLINE_RT_SCALE = 1;
-  var outlineSize = new THREE.Vector2(1, 1);
-
-  // Which outline material variant an object's real draw call should use,
-  // matched exactly to the flags WebGLRenderer's setProgram keys its
-  // per-material cache on (see the comment on outlineMatInstanced above).
-  // Shared between the real render (renderPresent) and the compile warm-up
-  // (warmRemainingPrograms) so the two can never drift apart.
-  function outlineMaterialFor(obj) {
-    if (obj.isSkinnedMesh) return outlineMatSkinned;
-    if (obj.isInstancedMesh) return obj.instanceColor ? outlineMatInstancedColor : outlineMatInstanced;
-    return outlineMat;
-  }
-
-  function swapVisibleOutlineObject(obj) {
-    if (!obj.material || !obj.layers.test(camera.layers)) return;
-    if (!(obj.isMesh || obj.isLine || obj.isPoints || obj.isSprite)) return;
-    if (obj.frustumCulled) {
-      if (obj.isSprite) {
-        if (!outlineCullFrustum.intersectsSprite(obj)) return;
-      } else if (!outlineCullFrustum.intersectsObject(obj)) return;
-    }
-    var entry = outlineEntryMap.get(obj);
-    if (!entry) return;
-    entry.saved = obj.material;
-    obj.material = entry.variant;
-    visibleOutlineSwapList[visibleOutlineSwapCount++] = entry;
-  }
-
-  // Built once, the first time the scene graph is known complete (see
-  // outlineSwapList above). Every material-bearing object gets a fixed
-  // { obj, variant } entry; array materials get a same-length array of the
-  // matching variant pre-built here so the per-frame swap never allocates.
-  function buildOutlineSwapList() {
-    var list = [];
-    outlineEntryMap = new WeakMap();
-    var transparentOutlineSet = new WeakSet();
-    for (var ti = 0; ti < outlineTransparentDetails.length; ti++) {
-      transparentOutlineSet.add(outlineTransparentDetails[ti]);
-    }
-    scene.traverse(function (obj) {
-      if (!obj.material) return;
-      var sourceMats = Array.isArray(obj.material) ? obj.material : [obj.material];
-      var beautyOnly = false;
-      for (var smi = 0; smi < sourceMats.length; smi++) {
-        var sourceMat = sourceMats[smi];
-        if (sourceMat && (sourceMat.transparent || sourceMat.depthWrite === false ||
-            (sourceMat.blending !== undefined && sourceMat.blending !== THREE.NormalBlending))) {
-          beautyOnly = true; break;
-        }
-      }
-      // Glows, curtains, contact decals, particles and sprites become opaque
-      // slabs under a normal-material swap and waste submissions. Hide them as
-      // one prebuilt list during the outline pass. The horizon tower is the one
-      // intentional transparent silhouette and keeps its ink contribution.
-      if (beautyOnly && obj !== fernsehturm) {
-        if (!transparentOutlineSet.has(obj)) {
-          transparentOutlineSet.add(obj);
-          outlineTransparentDetails.push(obj);
-          outlineTransparentWasVisible.push(0);
-        }
-        return;
-      }
-      var variant = outlineMaterialFor(obj);
-      var entry = {
-        obj: obj,
-        // The override carries one normal/depth material for every geometry
-        // group. Supplying it as an array makes Three submit one identical draw
-        // per original facade/mass/trim/shop group; supplying the same material
-        // once renders the complete grouped geometry in one pass.
-        variant: variant,
-        saved: null
-      };
-      list.push(entry);
-      outlineEntryMap.set(obj, entry);
-    });
-    visibleOutlineSwapList = new Array(list.length);
-    return list;
-  }
+  // The ink-outline PREPASS and everything that fed it used to live here: a
+  // dedicated normal+depth render target, four MeshNormalMaterial variants
+  // split to stop WebGLRenderer's per-material state cache thrashing, a
+  // permanent per-object swap list, and a per-frame traverseVisible that
+  // swapped every visible material and put it back afterwards. All of it
+  // existed to give compositeMat a normal and a depth per pixel.
+  //
+  // sceneRT's own depth texture supplies both now (see buildPostChain and
+  // renderPresent), so the second submission, its target, its materials and
+  // its bookkeeping are all gone -- 250 draw calls and 2.3 ms per frame.
 
   function postMakeRT(w, h, opts) {
     opts = opts || {};
@@ -5666,6 +5539,24 @@ THREE.GLTFLoader = GLTFLoader;
     renderer.getDrawingBufferSize(postSize);
     postSize.set(Math.max(1, Math.floor(postSize.x)), Math.max(1, Math.floor(postSize.y)));
     sceneRT = postMakeRT(postSize.x, postSize.y, { type: hdrType, depth: true, samples: msaa });
+    // THE INK NOW COMES OUT OF THIS BUFFER'S OWN DEPTH, and the second
+    // full-city scene submission that used to produce it is gone.
+    //
+    // The old comment here read "sceneRT's own depth is MSAA-resolved and
+    // awkward to sample directly", and that assumption cost 250 draw calls and
+    // 2.3 ms every frame. It is not true of this three build: r156's
+    // updateMultisampleRenderTarget blits DEPTH_BUFFER_BIT into the resolve
+    // framebuffer, and that framebuffer is exactly where an attached
+    // DepthTexture lives -- so a multisampled target CAN hand back a sampleable
+    // resolved depth texture. Verified live at samples=2: full ink, correct
+    // silhouettes, no GL errors.
+    //
+    // NearestFilter is not a preference. A filtered depth sample is the average
+    // of two different surfaces' distances, which is a distance at which
+    // nothing exists, and the edge detector would draw contours around it.
+    sceneRT.depthTexture = new THREE.DepthTexture(postSize.x, postSize.y);
+    sceneRT.depthTexture.minFilter = THREE.NearestFilter;
+    sceneRT.depthTexture.magFilter = THREE.NearestFilter;
     bloomA = postMakeRT(postSize.x / 4, postSize.y / 4, { type: hdrType });
     bloomB = postMakeRT(postSize.x / 4, postSize.y / 4, { type: hdrType });
 
@@ -5687,21 +5578,10 @@ THREE.GLTFLoader = GLTFLoader;
     // The prepass is a MeshNormalMaterial render with a trivial fragment
     // shader, so full resolution costs vertex/raster work rather than fill,
     // and renderPresent already skips it entirely under adaptiveSlowMode.
-    outlineSize.set(Math.max(1, Math.floor(postSize.x * OUTLINE_RT_SCALE)),
-                    Math.max(1, Math.floor(postSize.y * OUTLINE_RT_SCALE)));
-    outlineRT = postMakeRT(outlineSize.x, outlineSize.y, { depth: true });
-    outlineRT.depthTexture = new THREE.DepthTexture(outlineSize.x, outlineSize.y);
-    outlineRT.depthTexture.minFilter = THREE.NearestFilter;
-    outlineRT.depthTexture.magFilter = THREE.NearestFilter;
-    outlineMat = new THREE.MeshNormalMaterial();
-    // Same shader, four material identities -- see the comment on this var's
-    // declaration for why. Each is a completely default MeshNormalMaterial,
-    // so all four still compile down to the exact same GLSL per instancing/
-    // skinning combination; splitting them changes nothing about what gets
-    // drawn, only how WebGLRenderer's per-material draw-state cache behaves.
-    outlineMatInstanced = new THREE.MeshNormalMaterial();
-    outlineMatInstancedColor = new THREE.MeshNormalMaterial();
-    outlineMatSkinned = new THREE.MeshNormalMaterial();
+    // outlineRT and its four MeshNormalMaterial variants used to be built
+    // here -- a second full-resolution RGBA target plus a depth texture, fed
+    // by a second scene submission. Both are gone; the composite reads
+    // sceneRT.depthTexture instead.
 
     brightMat = new THREE.ShaderMaterial({
       uniforms: {
@@ -5772,9 +5652,8 @@ THREE.GLTFLoader = GLTFLoader;
         uHighTint: { value: new THREE.Vector3(1, 1, 1) },
         uVignette: { value: POST.vignette },
         uAberration: { value: POST.aberration },
-        tOutlineN: { value: outlineRT.texture },
-        tOutlineD: { value: outlineRT.depthTexture },
-        uOutlineTexel: { value: new THREE.Vector2(1 / outlineSize.x, 1 / outlineSize.y) },
+        tOutlineD: { value: sceneRT.depthTexture },
+        uOutlineTexel: { value: new THREE.Vector2(1 / postSize.x, 1 / postSize.y) },
         uOutlineStrength: { value: POST.outlineStrength },
         uOutlineWidth: { value: POST.outlineWidth },
         uOutlineFalloff: { value: POST.outlineDepthFalloff },
@@ -5808,7 +5687,6 @@ THREE.GLTFLoader = GLTFLoader;
         'varying vec2 vUv;',
         'uniform sampler2D tScene;',
         'uniform sampler2D tBloom;',
-        'uniform sampler2D tOutlineN;',
         'uniform sampler2D tOutlineD;',
         'uniform float uExposure, uBloom, uSat, uVib, uVignette, uAberration;',
         'uniform vec3 uLift, uGain, uGamma, uShadowTint, uHighTint;',
@@ -5826,7 +5704,27 @@ THREE.GLTFLoader = GLTFLoader;
         '  float ndc = z * 2.0 - 1.0;',
         '  return (2.0 * uCamNear * uCamFar) / (uCamFar + uCamNear - ndc * (uCamFar - uCamNear));',
         '}',
-        'vec3 outlineNormal(vec2 uv){ return texture2D(tOutlineN, uv).rgb * 2.0 - 1.0; }',
+        // View-space position of a screen pixel, from the beauty buffer's own
+        // depth. Same reconstruction aoViewPos does further down; declared here
+        // because GLSL needs it before outlineEdge uses it.
+        'vec3 outlineViewPos(vec2 uv, float dist){',
+        '  vec2 ndc = uv * 2.0 - 1.0;',
+        '  return vec3(ndc.x * uCamTanFov * uCamAspect * dist, ndc.y * uCamTanFov * dist, -dist);',
+        '}',
+        // The prepass used to hand over a normal buffer. There is no prepass any
+        // more, so the surface normal is recovered from the depth field instead:
+        // the cross product of its two screen-space derivatives is the normal of
+        // the surface the fragment sits on. This is exact for the flat facets
+        // this city is built from, and it is what the MeshNormalMaterial pass
+        // was reporting anyway -- that pass carried no normal map, so it too was
+        // rendering pure geometric normals.
+        //
+        // Only valid at the fragment being shaded (derivatives are per-quad),
+        // which is all AO and the crease term below need.
+        'vec3 outlineNormalHere(vec2 uv, float dist){',
+        '  vec3 P = outlineViewPos(uv, dist);',
+        '  return normalize(cross(dFdx(P), dFdy(P)));',
+        '}',
         // Depth+normal edge mask. Depth catches silhouettes (a building against
         // sky has near-identical normals either side of the roofline but a hard
         // depth step); normals catch interior creases (window reveals, panel
@@ -5920,14 +5818,23 @@ THREE.GLTFLoader = GLTFLoader;
         // normalEdge is clamped to [0,1], so it cannot beat a depth term that
         // already reaches uOutlineCreaseWeight. Defer its four normal-map reads
         // until that secondary crease signal can actually affect max().
+        // Interior creases, formerly four extra normal-buffer reads compared
+        // against the centre normal. The same signal is available from depth
+        // alone and costs nothing extra: a crease is where the depth field's
+        // FIRST derivative changes, i.e. its second derivative is non-zero.
+        // A flat surface has a constant depth gradient however steeply it
+        // recedes -- the road at a grazing angle included -- so the curvature
+        // term is ~0 across it and spikes exactly where two planes meet.
+        //
+        // The four samples this needs are the ones dL/dR/dU/dD already
+        // fetched for the silhouette term, so the crease line is now free
+        // rather than costing four dependent texture reads on the majority of
+        // the frame (this branch runs wherever the depth term is WEAK, which
+        // is most pixels).
         '  float normalTerm = 0.0;',
         '  if (depthTerm < uOutlineCreaseWeight) {',
-        '    vec3 nL = outlineNormal(uv - vec2(oc.x, 0.0));',
-        '    vec3 nR = outlineNormal(uv + vec2(oc.x, 0.0));',
-        '    vec3 nU = outlineNormal(uv + vec2(0.0, oc.y));',
-        '    vec3 nD = outlineNormal(uv - vec2(0.0, oc.y));',
-        '    float normalEdge = (1.0 - dot(nC, nL)) + (1.0 - dot(nC, nR)) + (1.0 - dot(nC, nU)) + (1.0 - dot(nC, nD));',
-        '    normalTerm = smoothstep(0.12, 0.55, normalEdge) * uOutlineCreaseWeight;',
+        '    float curve = abs(dL + dR - 2.0 * dC) + abs(dU + dD - 2.0 * dC);',
+        '    normalTerm = smoothstep(0.0022, 0.0130, curve / max(dC, 1.0)) * uOutlineCreaseWeight;',
         '  }',
         '  float edge = max(depthTerm, normalTerm);',
         // Fades to uOutlineFarFloor, not all the way to 0 — a receding line
@@ -6065,7 +5972,7 @@ THREE.GLTFLoader = GLTFLoader;
         '    centerDist = outlineLinearDepth(texture2D(tOutlineD, vUv).r);',
         '  }',
         '  if (max(uOutlineEnable, uAoEnable) > 0.0) {',
-        '    centerNormal = outlineNormal(vUv);',
+        '    centerNormal = outlineNormalHere(vUv, centerDist);',
         '  }',
         // Depth of field: sharp through the whole gameplay reaction band,
         // blended toward a small disk blur only past uDofNear. The per-pixel
@@ -6226,10 +6133,15 @@ THREE.GLTFLoader = GLTFLoader;
     bloomA.setSize(bw, bh);
     bloomB.setSize(bw, bh);
     brightMat.uniforms.uTexel.value.set(1 / postSize.x, 1 / postSize.y);
-    outlineSize.set(Math.max(1, Math.floor(postSize.x * OUTLINE_RT_SCALE)),
-                    Math.max(1, Math.floor(postSize.y * OUTLINE_RT_SCALE)));
-    outlineRT.setSize(outlineSize.x, outlineSize.y);
-    compositeMat.uniforms.uOutlineTexel.value.set(1 / outlineSize.x, 1 / outlineSize.y);
+    // setSize() disposes and reallocates the target, which drops the attached
+    // depth texture's GPU storage with it; the DepthTexture object's own
+    // dimensions have to follow or the next frame samples a stale size.
+    if (sceneRT.depthTexture) {
+      sceneRT.depthTexture.image.width = postSize.x;
+      sceneRT.depthTexture.image.height = postSize.y;
+      sceneRT.depthTexture.needsUpdate = true;
+    }
+    compositeMat.uniforms.uOutlineTexel.value.set(1 / postSize.x, 1 / postSize.y);
   }
 
   // Once the quality ladder has reached its resolution rungs the device is
@@ -6273,202 +6185,27 @@ THREE.GLTFLoader = GLTFLoader;
     passBeautyCalls = renderer.info.render.calls;
     passBeautyTriangles = renderer.info.render.triangles;
 
-    // At the emergency tier, render only hero/gates/hazards into the outline
-    // target. This preserves the gameplay silhouettes and the inked identity
-    // for a few dozen draws instead of paying a second pass over the whole city.
-    var doOutline = outlineActive;
-    if (doOutline) {
-      // Pickups were previously held out of this pass entirely, on the theory
-      // that a tiny luminous breadcrumb needs no collision silhouette and that
-      // the screen-space crease filter would turn one into a heavy lane-blocking
-      // ring. Holding them out is worse, and for a reason that is not about ink
-      // at all: the composite reads depth ONLY from this target. Every pixel a
-      // brezel covers therefore reports the depth and normal of whatever is
-      // *behind* it, so outlineEdge (and AO, and the DoF blend) evaluate the
-      // shopfront, tram, kerb or rail back there and then apply the result to
-      // the brezel's own colour. Against a busy backdrop the token ends up with
-      // a foreign contour net painted across its body — which is exactly what
-      // reads as "pale, see-through, not really an object" — while the same
-      // token against clean sky or open road keeps its glaze. Measured at
-      // 1280x800 on one frozen frame: submitting the solid here lifted the
-      // saturated-orange area of a near cluster from 6.1% to 9.2% of the crop.
-      //
-      // Only the tokens inside OUTLINE_PLAY_FAR are submitted — the same band
-      // gates and hazards use above — because they are the ones large enough on
-      // screen for foreign ink to matter. The compaction in updateWorldVisuals
-      // writes those first, so this is a prefix of the instance buffer: one
-      // extra draw and a handful of instances, not the whole 60-deep trail.
-      var pretzelOutlineCount = -1;
-      var savedOutlineLayerMask = camera.layers.mask;
-      var outlineWorldWasVisible = false, outlineTrafficWasVisible = false;
-      var activeOutlineSwapList = null;
-      var swappedOutlineCount = 0;
-      try {
-        if (outlineFocalOnly) {
-          // The environment and kerb traffic contain no focal-layer meshes.
-          // Hide their roots so Three never traverses those large subtrees at
-          // this tier; gates, hazards and the runner are direct scene children.
-          outlineWorldWasVisible = worldRoot.visible;
-          outlineTrafficWasVisible = trafficRoot.visible;
-          worldRoot.visible = false;
-          trafficRoot.visible = false;
-          camera.layers.set(FOCAL_OUTLINE_LAYER);
-        } else {
-          if (pretzelSolidInst && pretzelSolidInst.visible) {
-            pretzelOutlineCount = pretzelSolidInst.count;
-            pretzelSolidInst.count = pretzelSolidInkCount;
-          }
-          // Facade micro-depth still renders in the beauty pass, but its repeated
-          // bay/shop/balcony geometry must not compete with gameplay silhouettes
-          // in the normal/depth ink pass. The solid facade cores remain present,
-          // so AO/DoF retain valid building depth instead of seeing sky holes.
-          for (var ofd = 0; ofd < outlineFacadeDetails.length; ofd++) {
-            outlineFacadeDetailWasVisible[ofd] = outlineFacadeDetails[ofd].visible ? 1 : 0;
-            outlineFacadeDetails[ofd].visible = false;
-          }
-          for (var owd = 0; owd < outlineWireDetails.length; owd++) {
-            outlineWireWasVisible[owd] = outlineWireDetails[owd].visible ? 1 : 0;
-            outlineWireDetails[owd].visible = false;
-          }
-          // Parked kerb traffic is background dressing, not a collision target.
-          // Keep its full cel-shaded beauty pass, but reserve the heavy silhouette
-          // prepass for moving traffic, hazards, gates and the runner. The root
-          // list/state buffer are populated once at startup, so this allocates
-          // nothing in the frame loop.
-          for (var opd = 0; opd < outlineParkedDetails.length; opd++) {
-            outlineParkedWasVisible[opd] = outlineParkedDetails[opd].visible ? 1 : 0;
-            outlineParkedDetails[opd].visible = false;
-          }
-          // Transparent station glazing belongs in beauty only. Rendering it with
-          // the opaque normal override creates a solid depth slab and heavy black
-          // perimeter that contradict its alpha, so omit those fixed canopy meshes.
-          for (var otd = 0; otd < outlineTransparentDetails.length; otd++) {
-            outlineTransparentWasVisible[otd] = outlineTransparentDetails[otd].visible ? 1 : 0;
-            outlineTransparentDetails[otd].visible = false;
-          }
-          // Transit/station/bridge/tunnel/landmark roots past SPECTACLE_INK_FAR.
-          // They are in the beauty pass so they can emerge through the haze
-          // instead of popping (see spectacleNear in applyChunkLOD), but out
-          // there they are deep enough in the fog that an ink line costs a
-          // second full draw of a large set piece to change almost no pixels.
-          // Hiding the root removes the whole subtree from the traversal, not
-          // just its draws. Flag is refreshed every frame by applyChunkLOD.
-          // Gates and hazards deep in the haze. They have to be in the beauty
-          // pass from the fog wall inward so their arrival is hidden (see
-          // PLAY_RENDER_FAR), but an ink outline on a barrier that is 60% fog
-          // is a second full draw for a line nobody can resolve.
-          outlinePlayFarCount = 0;
-          var outlineInkZ = player.z + OUTLINE_PLAY_FAR;
-          for (var ogi = 0; ogi < gates.length; ogi++) {
-            var outlineGate = gates[ogi];
-            if (outlineGate.visible && outlineGate.userData.z > outlineInkZ) {
-              outlinePlayFar[outlinePlayFarCount++] = outlineGate;
-              outlineGate.visible = false;
-            }
-          }
-          for (var ooi = 0; ooi < obstacles.length; ooi++) {
-            var outlineOb = obstacles[ooi];
-            if (outlineOb.active && outlineOb.holder.visible && outlineOb.z > outlineInkZ) {
-              outlinePlayFar[outlinePlayFarCount++] = outlineOb.holder;
-              outlineOb.holder.visible = false;
-            }
-          }
-
-          outlineSpectacleFarCount = 0;
-          for (var osc = 0; osc < chunks.length; osc++) {
-            var outlineChunkUd = chunks[osc].userData;
-            if (!outlineChunkUd.spectacleOutlineFar || !outlineChunkUd.spectacleNodes) continue;
-            for (var osn = 0; osn < outlineChunkUd.spectacleNodes.length; osn++) {
-              var outlineSpectacle = outlineChunkUd.spectacleNodes[osn];
-              if (!outlineSpectacle || !outlineSpectacle.visible) continue;
-              outlineSpectacleFar[outlineSpectacleFarCount++] = outlineSpectacle;
-              outlineSpectacle.visible = false;
-            }
-          }
-          // A chunk whose nearest surface is beyond fog.far is already exactly
-          // the fog colour in the beauty buffer. Its normal/depth submission can
-          // no longer change a visible contour, AO or focus pixel, so omit the
-          // authored root only from this second scene pass.
-          outlineFogChunkCount = 0;
-          var outlineFogZ = player.z + scene.fog.far;
-          for (var ofc = 0; ofc < chunks.length; ofc++) {
-            var fogChunk = chunks[ofc];
-            if (fogChunk.visible && fogChunk.position.z - CHUNK_LEN * 0.5 >= outlineFogZ) {
-              outlineFogChunks[outlineFogChunkCount++] = fogChunk;
-              fogChunk.visible = false;
-            }
-          }
-        }
-        // Per-category material swap instead of scene.overrideMaterial -- see
-        // outlineMatInstanced's declaration comment for why. outlineSwapList is
-        // null only for the handful of loading-screen frames before the scene
-        // (including the async hero) is known complete; that rare path falls
-        // back to the always-correct overrideMaterial approach.
-        if (outlineSwapList && outlineEntryMap) {
-          // The beauty render immediately above has already updated every
-          // world matrix, so this is the renderer's current camera frustum.
-          // traverseVisible also stops at the same hidden parent roots as
-          // WebGLRenderer; the callback applies the object's current layer and
-          // frustum tests before touching its material.
-          outlineCullMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-          outlineCullFrustum.setFromProjectionMatrix(outlineCullMatrix);
-          visibleOutlineSwapCount = 0;
-          activeOutlineSwapList = visibleOutlineSwapList;
-          scene.traverseVisible(swapVisibleOutlineObject);
-          swappedOutlineCount = visibleOutlineSwapCount;
-        } else {
-          scene.overrideMaterial = outlineMat;
-        }
-        renderer.setRenderTarget(outlineRT);
-        renderer.render(scene, camera);
-      } finally {
-        // If traversal itself ever throws after swapping a prefix, restore that
-        // prefix as well; visibleOutlineSwapCount advances with every write.
-        if (activeOutlineSwapList === visibleOutlineSwapList) {
-          swappedOutlineCount = visibleOutlineSwapCount;
-        }
-        for (var osr2 = 0; osr2 < swappedOutlineCount; osr2++) {
-          activeOutlineSwapList[osr2].obj.material = activeOutlineSwapList[osr2].saved;
-        }
-        scene.overrideMaterial = null;
-        camera.layers.mask = savedOutlineLayerMask;
-        if (outlineFocalOnly) {
-          worldRoot.visible = outlineWorldWasVisible;
-          trafficRoot.visible = outlineTrafficWasVisible;
-        } else {
-          for (var ofr = 0; ofr < outlineFacadeDetails.length; ofr++) {
-            outlineFacadeDetails[ofr].visible = !!outlineFacadeDetailWasVisible[ofr];
-          }
-          for (var owr = 0; owr < outlineWireDetails.length; owr++) {
-            outlineWireDetails[owr].visible = !!outlineWireWasVisible[owr];
-          }
-          for (var opr = 0; opr < outlineParkedDetails.length; opr++) {
-            outlineParkedDetails[opr].visible = !!outlineParkedWasVisible[opr];
-          }
-          for (var otr = 0; otr < outlineTransparentDetails.length; otr++) {
-            outlineTransparentDetails[otr].visible = !!outlineTransparentWasVisible[otr];
-          }
-          // Only ever contains roots this function set to false, so restoring
-          // unconditionally cannot resurrect something applyChunkLOD had culled.
-          for (var osr3 = 0; osr3 < outlineSpectacleFarCount; osr3++) {
-            outlineSpectacleFar[osr3].visible = true;
-          }
-          outlineSpectacleFarCount = 0;
-          for (var ofcr = 0; ofcr < outlineFogChunkCount; ofcr++) {
-            outlineFogChunks[ofcr].visible = true;
-          }
-          outlineFogChunkCount = 0;
-          for (var opf = 0; opf < outlinePlayFarCount; opf++) {
-            outlinePlayFar[opf].visible = true;
-          }
-          outlinePlayFarCount = 0;
-          if (pretzelOutlineCount >= 0) pretzelSolidInst.count = pretzelOutlineCount;
-        }
-      }
-    }
-
-    passOutlineCalls = renderer.info.render.calls - passBeautyCalls;
-    passOutlineTriangles = renderer.info.render.triangles - passBeautyTriangles;
+    // THE OUTLINE PREPASS IS GONE. It used to sit here: a second full
+    // submission of the whole city with every material swapped for a
+    // MeshNormalMaterial, purely so the composite could read a normal and a
+    // depth for each pixel. Measured at 250 draw calls and 2.3 ms of a 12.1 ms
+    // frame -- 36% of every draw call in the game -- to produce a buffer the
+    // beauty pass already had the information for.
+    //
+    // Both terms now come from sceneRT's own depth texture (see buildPostChain
+    // for why a multisampled target CAN hand one back, which the comment there
+    // previously assumed it could not): silhouettes from the depth step,
+    // creases from the depth field's curvature, and the AO normal from the
+    // screen-space derivatives of the reconstructed view position.
+    //
+    // Two behaviours fall out of this rather than needing to be ported.
+    // Transparent objects were explicitly excluded from the prepass; they are
+    // excluded here too, and for free, because they draw with depthWrite off
+    // and so never touch the depth buffer at all. And pickups needed a special
+    // extra submission to stop the composite reading the shopfront behind them
+    // -- they write depth like any other opaque mesh, so that is simply true.
+    passOutlineCalls = 0;
+    passOutlineTriangles = 0;
     var bw = Math.max(1, Math.floor(postSize.x / 4));
     var bh = Math.max(1, Math.floor(postSize.y / 4));
     var strength = POST.bloomStrength;
@@ -6525,19 +6262,23 @@ THREE.GLTFLoader = GLTFLoader;
     } else {
       cu.uBloom.value = strength;
     }
-    // Toggled every frame by the same perf gate as the prepass render above,
-    // independent of gradeDirty so a mid-run quality demotion takes effect
+    // Independent of gradeDirty so a mid-run quality demotion takes effect
     // immediately instead of waiting on the next grade change.
-    cu.uOutlineEnable.value = doOutline ? 1 : 0;
-    cu.uOutlineFocalOnly.value = outlineFocalOnly ? 1 : 0;
-    // AO and DoF both read the outline prepass buffer, so they can only be on
-    // when that prepass actually rendered this frame — the same doOutline
-    // condition above (slow-tier gate, and covers outlineOn being off for any
-    // other reason too, which would otherwise leave them sampling a stale
-    // buffer). camera.fov animates with run speed (see fovVisual), so the
-    // reprojection basis is refreshed every frame regardless of gradeDirty.
-    cu.uAoEnable.value = (aoActive && doOutline) ? 1 : 0;
-    cu.uDofEnable.value = (dofActive && doOutline) ? 1 : 0;
+    cu.uOutlineEnable.value = outlineActive ? 1 : 0;
+    // Always 0 now. uOutlineFocalOnly told the shader that non-focal pixels had
+    // been cleared to camera-far in a dedicated prepass buffer; with the ink
+    // read straight from the beauty depth there is no such buffer and nothing
+    // to clear. The rung that used to set it is repurposed -- see
+    // applyQualityTier -- because the ink no longer costs anything to draw.
+    cu.uOutlineFocalOnly.value = 0;
+    // AO and DoF used to be gated on the prepass having actually rendered this
+    // frame, because they sampled its buffer and would otherwise read a stale
+    // one. They read the beauty pass's own depth now, which is written every
+    // frame unconditionally, so they answer only to their own quality flags.
+    // camera.fov animates with run speed (see fovVisual), so the reprojection
+    // basis is refreshed every frame regardless of gradeDirty.
+    cu.uAoEnable.value = aoActive ? 1 : 0;
+    cu.uDofEnable.value = dofActive ? 1 : 0;
     cu.uCamTanFov.value = Math.tan(camera.fov * 0.5 * Math.PI / 180);
     cu.uCamAspect.value = camera.aspect;
     postPass(compositeMat, null);
@@ -10418,16 +10159,11 @@ THREE.GLTFLoader = GLTFLoader;
         var scale = h > 0.001 ? (PROP_TARGET_H[kind] || h) / h : 1;
         for (var i = 0; i < targets.length; i++) {
           var g = targets[i];
-          var keepFocalOutline = false;
-          g.traverse(function (o) {
-            if (o.material && o.layers.isEnabled(FOCAL_OUTLINE_LAYER)) keepFocalOutline = true;
-          });
           for (var c = g.children.length - 1; c >= 0; c--) g.remove(g.children[c]);
           var clone = src.clone(true);
           clone.scale.setScalar(scale);
           clone.position.y = -bbox.min.y * scale;      // stand it on the ground
           clone.traverse(function (o) { if (o.isMesh) o.castShadow = true; });
-          if (keepFocalOutline) enableFocalOutline(clone);
           g.add(clone);
           g.userData.swapped = true;
           delete g.userData.localVisualBounds;
@@ -18342,7 +18078,6 @@ THREE.GLTFLoader = GLTFLoader;
 
     g.userData = { portals: portals, active: false, resolved: true, z: 0, spawnZ: 0,
                    frameBeamMesh: frameBeamMesh, frameAccentMesh: frameAccentMesh, frameVariant: 'classic' };
-    enableFocalOutline(g);
     freezeObjectTree(g, portals.map(function (portal) { return portal.userData.sign; }), false);
     g.visible = false;
     scene.add(g);
@@ -18644,7 +18379,6 @@ THREE.GLTFLoader = GLTFLoader;
       });
     });
     holder.visible = false;
-    enableFocalOutline(holder);
     freezeObjectTree(holder, [], false);
     scene.add(holder);
     return { holder: holder, variants: variants, active: false, spec: null,
@@ -19757,7 +19491,6 @@ THREE.GLTFLoader = GLTFLoader;
   // the donor mesh had castShadow off), and the banded contact blob below IS
   // the runner's shadow. Skipping it keeps ~30 meshes out of the depth pass.
   rig.traverse(function (o) { if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; } });
-  enableFocalOutline(rig);
 
   // Contact shadow blob. The hero's own GLTF mesh deliberately does not enter
   // the shadow pass (see the loader below — it is a ~25k-triangle skinned mesh
@@ -21592,7 +21325,6 @@ THREE.GLTFLoader = GLTFLoader;
         model.position.y = isFinite(footY) ? -footY + 0.02 : 0;   // soles on the road
         charBaseY = model.position.y;
         hips.visible = false;
-        enableFocalOutline(model);
         body.add(model);
         charModel = model;
         // The GLB is the complete character. Keeping the finishing group hidden
@@ -24039,37 +23771,8 @@ THREE.GLTFLoader = GLTFLoader;
       try { renderer.compile(programWarmScene, camera); } catch (e) {}
     });
 
-    // Build the permanent per-object lookup, then warm the four actual outline
-    // program shapes in a tiny representative scene. The old path swapped and
-    // compiled every object in the entire city even though all of them resolve
-    // to regular, instanced, instance-coloured or skinned MeshNormalMaterial.
-    // This preserves exact first-use coverage without a third full graph walk.
-    steps.push(function () {
-      outlineSwapList = buildOutlineSwapList();
-      var warmScene = new THREE.Scene(); warmScene.fog = scene.fog;
-      var warmGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-      warmScene.add(new THREE.Mesh(warmGeo, outlineMat));
-      var warmInst = new THREE.InstancedMesh(warmGeo, outlineMatInstanced, 1);
-      warmInst.setMatrixAt(0, new THREE.Matrix4()); warmScene.add(warmInst);
-      var warmInstColor = new THREE.InstancedMesh(warmGeo, outlineMatInstancedColor, 1);
-      warmInstColor.setMatrixAt(0, new THREE.Matrix4());
-      warmInstColor.setColorAt(0, new THREE.Color(0xffffff)); warmScene.add(warmInstColor);
-      var warmSkinSource = null;
-      scene.traverse(function (obj) { if (!warmSkinSource && obj.isSkinnedMesh) warmSkinSource = obj; });
-      if (warmSkinSource) {
-        var warmSkin = new THREE.SkinnedMesh(warmSkinSource.geometry, outlineMatSkinned);
-        warmSkin.bind(warmSkinSource.skeleton, warmSkinSource.bindMatrix);
-        warmScene.add(warmSkin);
-      }
-      if (POST.on && outlineRT) renderer.setRenderTarget(outlineRT);
-      var savedShadowEnabled = renderer.shadowMap.enabled;
-      try {
-        renderer.shadowMap.enabled = false;
-        renderer.compile(warmScene, camera);
-      } catch (e) {}
-      renderer.shadowMap.enabled = savedShadowEnabled;
-      warmGeo.dispose();
-    });
+    // The outline prepass's four MeshNormalMaterial program shapes used to be
+    // warmed here. There is no prepass, so there are no such programs.
 
     // renderer.compile() resolves BEAUTY programs only -- it never runs the
     // shadow pass, so the MeshDepthMaterial variants a caster needs (plain,
@@ -26491,7 +26194,12 @@ THREE.GLTFLoader = GLTFLoader;
     // prepass to its pre-tagged focal layer, preserving only the silhouettes
     // the player reads moment to moment at a fraction of the city-wide cost.
     outlineActive = POST.outlineOn;
-    outlineFocalOnly = qualityTier >= TIER_FOCAL_OUTLINE;
+    // The ink is now free -- it falls out of the beauty pass's depth buffer --
+    // so this rung no longer sheds a full-city submission and outlineFocalOnly
+    // stays false. What survives of the rung is the emergency resolution step
+    // below, which is still a real last resort on a device that cannot hold
+    // budget any other way.
+    outlineFocalOnly = false;
     var resSteps = RES_TIER_COUNT > 0
       ? clamp(qualityTier - TIER_RES_START + 1, 0, RES_TIER_COUNT) : 0;
     // Old code stepped renderScale through hardcoded 0.82/0.72/0.64 rungs,
