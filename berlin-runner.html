@@ -18270,8 +18270,9 @@ THREE.GLTFLoader = GLTFLoader;
   // Absperrgitter, then the road trench that replaced it) were the course's
   // least legible beat: read at speed they were "a thing across the lane",
   // the same sentence the slide obstacles say, and the trench in particular
-  // ended up authored onto tram roofs, where a hole in the road is not a
-  // thing that can exist. Jump is now a pure reward verb — it collects the
+  // ended up authored onto the tram roofs that used to exist here, where a
+  // hole in the road is not a thing that can be. Jump is now a pure reward
+  // verb (the roofs are gone too now, but the reasoning stands) — it collects the
   // arced brezel lines and nothing punishes not using it.
   // Raised with GATE_POOL: hazard corridors are now scheduled out to the gate
   // horizon rather than the next 80 m, so roughly three times as many are
@@ -18777,6 +18778,10 @@ THREE.GLTFLoader = GLTFLoader;
   // A diagonal reward trail is both navigation arrow and collectible line. It
   // extends the existing pooled slot coordinates rather than adding route
   // physics, so magnet, scoring and all ordinary straight/arc runs stay intact.
+  // Currently unused: the tram roof corridor was its only caller and that is
+  // gone. Kept because the mechanic is sound and independent of the roofs -- a
+  // diagonal reward line reads as a navigation arrow anywhere. Wire it into
+  // scheduleCorridor or delete it; do not leave it half-alive indefinitely.
   function spawnPretzelTransfer(fromLane, toLane, z0, z1, count) {
     var placed = 0;
     for (var i = 0; i < pretzels.length && placed < count; i++) {
@@ -18868,171 +18873,19 @@ THREE.GLTFLoader = GLTFLoader;
     return null;
   }
 
-  // ====================================================== tram roof route ====
-  // A self-contained vertical traversal module avoids the scene-wide chunk
-  // transform assumption used by the heavily instanced city. Physics remains
-  // in the same lane/+Z space; this surface height is presentation-only and is
-  // applied equally to the runner, hazards, rewards, gates, FX and camera.
-  // Modules are separated by at least four gates (>300 m), so one pooled root
-  // always recycles long before the next can enter the 154 m route envelope.
-  var ROOF_ROUTE_POOL = 1, roofRoutes = [];
-  var ROOF_ROUTE_LENGTH = 154, ROOF_UP_RAMP = 18, ROOF_DOWN_RAMP = 12, ROOF_HEIGHT = 2.48;
-  var ROOF_FLAT = ROOF_ROUTE_LENGTH - ROOF_UP_RAMP - ROOF_DOWN_RAMP;
-  var ROOF_GAP_LOCAL_Z = 100.667, ROOF_GAP_HALF = 3.0;
-  var roofRouteSequence = 0, routeLevel = -1, activePlayerRoofRoute = null, roofCameraReveal = 0;
-  var roofGapCrossing = false;
-  function makeRoofRamp(root, laneX, startZ, length, rising) {
-    var slopeLen = Math.sqrt(length * length + ROOF_HEIGHT * ROOF_HEIGHT);
-    var ramp = roundedBox(2.72, 0.18, slopeLen, 0.055, MAT.signBlue,
-                          laneX, ROOF_HEIGHT * 0.5, startZ + length * 0.5, 0.018);
-    ramp.rotation.x = rising ? -Math.atan(ROOF_HEIGHT / length) : Math.atan(ROOF_HEIGHT / length);
-    ramp.receiveShadow = true; root.add(ramp);
-    // Yellow edge paint makes the climb legible through fog and at phone size.
-    [-1, 1].forEach(function (side) {
-      var edge = roundedBox(0.10, 0.08, slopeLen, 0.025, MAT.bvgYellow,
-                            laneX + side * 1.30, ROOF_HEIGHT * 0.5 + 0.11,
-                            startZ + length * 0.5, 0.012);
-      edge.rotation.x = ramp.rotation.x; root.add(edge);
-    });
-  }
-  function makeRoofRouteSlot() {
-    var root = new THREE.Group();
-    // Lane 0 (+X / screen-left) deliberately remains street-level and readable
-    // as the safe route. Only centre/right become the elevated risk/reward path.
-    for (var laneIndex = 1; laneIndex < 3; laneIndex++) {
-      var laneX = LANES[laneIndex];
-      makeRoofRamp(root, laneX, 0, ROOF_UP_RAMP, true);
-      makeRoofRamp(root, laneX, ROOF_UP_RAMP + ROOF_FLAT, ROOF_DOWN_RAMP, false);
-      // Six individually readable cars: a 1.10 m pitch gap leaves a 0.90 m dark
-      // roof seam at phone scale. Each lane is one coherent consist rather than
-      // alternating body colours that read as stripes on a single blue slab.
-      var roofCarCount = 6, roofCarPitch = ROOF_FLAT / roofCarCount;
-      var roofCarLen = roofCarPitch - 1.10;
-      for (var carIndex = 0; carIndex < roofCarCount; carIndex++) {
-        var carZ = ROOF_UP_RAMP + roofCarPitch * (carIndex + 0.5);
-        var thisCarLen = roofCarLen;
-        // Pull the two adjoining lane-1 cars back from the fourth joint. This
-        // creates a real six-metre opening instead of a sub-second dark seam;
-        // lane 2 keeps its continuous consist as the recoverable bypass.
-        if (laneIndex === 1 && (carIndex === 3 || carIndex === 4)) thisCarLen -= 2.45;
-        var bodyMat = laneIndex === 1 ? MAT.bvgYellow : MAT.tramRed;
-        var body = roundedBox(2.64, 2.16, thisCarLen, 0.22, bodyMat,
-                              laneX, 1.20, carZ, 0.045);
-        root.add(body);
-        root.add(roundedBox(2.72, 0.25, thisCarLen + 0.20, 0.10, MAT.roof,
-                            laneX, ROOF_HEIGHT - 0.15, carZ, 0.026));
-        [-1, 1].forEach(function (side) {
-          root.add(roundedBox(0.055, 0.66, thisCarLen * 0.86, 0.06, MAT.glassDark,
-                              laneX + side * 1.335, 1.44, carZ, 0.018));
-          root.add(roundedBox(0.065, 0.14, thisCarLen * 0.91, 0.04, MAT.signBlue,
-                              laneX + side * 1.345, 0.91, carZ, 0.014));
-        });
-      }
-      // Dark articulated bellows/end masses make every joint visible from the
-      // chase camera. The flush roof bridge keeps the continuous logical
-      // surface honest; no decorative object protrudes into a playable lane.
-      for (var jointIndex = 1; jointIndex < roofCarCount; jointIndex++) {
-        var jointZ = ROOF_UP_RAMP + roofCarPitch * jointIndex;
-        var jumpGapJoint = laneIndex === 1 && jointIndex === 4;
-        // The jump joint is open all the way down to the street. Do not leave
-        // bellows, a top strip or decorative housings masquerading as support.
-        if (jumpGapJoint) continue;
-        root.add(roundedBox(2.42, 1.70, 0.56, 0.08, MAT.metalDark,
-                            laneX, 1.25, jointZ, 0.026));
-        // Expose a high-contrast top seam instead of covering the articulation
-        // with another full-width roof slab. A narrow central service bridge
-        // communicates the continuous walkable line while the dark shoulders
-        // make the individual cars unmistakable from the chase camera.
-        root.add(roundedBox(2.54, 0.065, 0.56, 0.018, MAT.metalDark,
-                            laneX, ROOF_HEIGHT + 0.005, jointZ, 0.012));
-        root.add(roundedBox(0.82, 0.08, 1.18, 0.022, MAT.roof,
-                            laneX, ROOF_HEIGHT + 0.035, jointZ, 0.014));
-        // Low side-edge service housings add roof rhythm without becoming an
-        // uncollidable obstacle in the runner's central footpath.
-        root.add(roundedBox(0.30, 0.13, 1.15, 0.035, MAT.metalDark,
-                            laneX + (jointIndex % 2 ? 1.08 : -1.08),
-                            ROOF_HEIGHT + 0.045, jointZ - 2.1, 0.016));
-      }
-    }
-    // Cross-lane service plates support both authored pickup diagonals. The
-    // first pair aligns to articulated joints; the third sits at local z=114
-    // under the return trail while leaving lane 1's z=100.667 jump gap open.
-    var serviceJoints = [ROOF_UP_RAMP + ROOF_FLAT / 3,
-                         ROOF_UP_RAMP + ROOF_FLAT / 2,
-                         114];
-    for (var bridgeIndex = 0; bridgeIndex < serviceJoints.length; bridgeIndex++) {
-      root.add(roundedBox(5.72, 0.13, 1.7, 0.04, MAT.metalDark,
-                          -1.5, ROOF_HEIGHT - 0.08, serviceJoints[bridgeIndex], 0.018));
-      root.add(roundedBox(5.30, 0.045, 0.16, 0.018, MAT.bvgYellow,
-                          -1.5, ROOF_HEIGHT + 0.005, serviceJoints[bridgeIndex], 0.01));
-    }
-    // Entry gantry gives the route an authored, Berlin-transit silhouette.
-    [-1, 1].forEach(function (side) {
-      root.add(roundedBox(0.16, 3.0, 0.16, 0.05, MAT.metalDark,
-                          side * 4.75, 4.45, ROOF_UP_RAMP + 2.2, 0.018));
-    });
-    root.add(roundedBox(9.7, 0.18, 0.18, 0.05, MAT.metalDark,
-                        0, 5.92, ROOF_UP_RAMP + 2.2, 0.018));
-    root.add(roundedBox(3.4, 0.66, 0.16, 0.08, MAT.signBlue,
-                        0, 5.55, ROOF_UP_RAMP + 2.08, 0.022));
-    root.add(roundedBox(2.72, 0.10, 0.18, 0.025, MAT.bvgYellow,
-                        0, 5.55, ROOF_UP_RAMP + 1.97, 0.012));
-    compactStaticPropGroup(root);
-    root.visible = false; scene.add(root);
-    return { root:root, active:false, startZ:0, endZ:0 };
-  }
-  for (var roofPoolIndex = 0; roofPoolIndex < ROOF_ROUTE_POOL; roofPoolIndex++) {
-    roofRoutes.push(makeRoofRouteSlot());
-  }
-  function spawnRoofRoute(startZ) {
-    for (var i = 0; i < roofRoutes.length; i++) {
-      var route = roofRoutes[i];
-      if (route.active) continue;
-      route.active = true; route.startZ = startZ; route.endZ = startZ + ROOF_ROUTE_LENGTH;
-      route.root.position.set(0, 0, startZ); route.root.visible = false;
-      route.root.updateMatrix();
-      return route;
-    }
-    return null;
-  }
-  function roofSurfaceY(z) {
-    for (var i = 0; i < roofRoutes.length; i++) {
-      var route = roofRoutes[i];
-      if (!route.active || z <= route.startZ || z >= route.endZ) continue;
-      var localZ = z - route.startZ;
-      if (localZ < ROOF_UP_RAMP) return ROOF_HEIGHT * (localZ / ROOF_UP_RAMP);
-      if (localZ > ROOF_UP_RAMP + ROOF_FLAT) {
-        return ROOF_HEIGHT * (1 - (localZ - ROOF_UP_RAMP - ROOF_FLAT) / ROOF_DOWN_RAMP);
-      }
-      return ROOF_HEIGHT;
-    }
-    return 0;
-  }
-  function roofGapRouteAt(z, logicalX) {
-    if (Math.abs(logicalX - LANES[1]) >= LANE_W * 0.45) return null;
-    for (var i = 0; i < roofRoutes.length; i++) {
-      var route = roofRoutes[i];
-      if (!route.active) continue;
-      var localZ = z - route.startZ;
-      if (localZ > ROOF_GAP_LOCAL_Z - ROOF_GAP_HALF &&
-          localZ < ROOF_GAP_LOCAL_Z + ROOF_GAP_HALF) return route;
-    }
-    return null;
-  }
-  function roofLaneSurfaceY(z, logicalX) {
-    return roofGapRouteAt(z, logicalX) ? 0 : roofSurfaceY(z);
-  }
-  function playSurfaceY(z, logicalX) {
-    // Lane 0 is the ground branch. Render objects in centre/right on the roof;
-    // the player uses the committed routeLevel so lane-glide interpolation can
-    // never make the hero float diagonally between the two elevations.
-    if (logicalX !== undefined && logicalX > LANE_W * 0.5) return 0;
-    return roofLaneSurfaceY(z, logicalX);
-  }
-  function playerSurfaceY(z, logicalX) {
-    var px = logicalX === undefined ? player.x : logicalX;
-    return routeLevel === 1 ? roofLaneSurfaceY(z, px) : 0;
-  }
+  // The tram roof route -- three parked tram consists with entry/exit ramps
+  // that the runner boarded and ran along -- was removed. It put a second
+  // elevation into a game whose whole read is three flat lanes, and the descent
+  // landed too close to the following article gate to leave a fair lane
+  // decision. Everything it needed (surface height, a route-level state
+  // machine, a gap-crossing physics special case, a camera reveal) is gone with
+  // it; playSurfaceY is now flat, which is what every other system already
+  // assumed.
+  // Flat, always. These two survive the roof route's removal because every
+  // gameplay object is positioned through them; they simply no longer add an
+  // elevation on top of the route bend.
+  function playSurfaceY() { return 0; }
+  function playerSurfaceY() { return 0; }
   function applyPlayFrame(object, logicalX, logicalY, logicalZ, baseYaw, basePitch, baseRoll) {
     applyRouteFrame(object, logicalX, logicalY + playSurfaceY(logicalZ, logicalX), logicalZ,
                     baseYaw, basePitch, baseRoll);
@@ -19041,17 +18894,11 @@ THREE.GLTFLoader = GLTFLoader;
     applyRouteFrame(object, logicalX, logicalY + playerSurfaceY(logicalZ, logicalX), logicalZ,
                     baseYaw, basePitch, baseRoll);
   }
-  function updateRoofRoutes(playerZ) {
-    for (var i = 0; i < roofRoutes.length; i++) {
-      var route = roofRoutes[i];
-      if (!route.active) continue;
-      if (route.endZ < playerZ - 22) {
-        route.active = false; route.root.visible = false; continue;
-      }
-      route.root.visible = route.startZ - playerZ < FOG_FAR_MAX + 12;
-    }
-    // Gameplay roots must share the exact same deck profile. The authoritative
-    // hit tests continue to read their unchanged logical lane/y/z values.
+  // Gates and obstacles have to be re-framed every frame because the route
+  // illusion's bend changes every frame; their authoritative lane/y/z hit
+  // tests are untouched by it. This used to also drive the roof route's
+  // visibility and recycling.
+  function updateWorldPlayFrames() {
     for (var gi = 0; gi < gates.length; gi++) {
       var gate = gates[gi];
       if (gate.userData.active) applyPlayFrame(gate, 0, 0, gate.userData.z, 0, 0, 0);
@@ -19062,38 +18909,6 @@ THREE.GLTFLoader = GLTFLoader;
                                            obstacle.z, 0, 0, 0);
     }
   }
-  function updatePlayerRouteLevel() {
-    var current = null;
-    for (var i = 0; i < roofRoutes.length; i++) {
-      var route = roofRoutes[i];
-      // Commit on a six-metre neutral apron before the ramp. At maximum speed
-      // this is still ~110 ms—enough for the existing lane spring to settle—so
-      // the surface never lifts a hero who is visually between street and roof.
-      if (route.active && player.z >= route.startZ - 6 && player.z < route.endZ) { current = route; break; }
-    }
-    if (!current) {
-      routeLevel = -1; activePlayerRoofRoute = null; return;
-    }
-    if (activePlayerRoofRoute !== current) {
-      activePlayerRoofRoute = current;
-      routeLevel = targetLane === 0 ? 0 : 1;
-      if (routeLevel === 0) {
-        targetLane = lane = 0;
-        // The branch decision happens before the physical ramp. Finish the lane
-        // change on that flat apron, eliminating the only possible diagonal
-        // street/roof crossing without changing any in-route movement timing.
-        if (player.z < current.startZ) player.x = LANES[0];
-      } else {
-        if (targetLane < 1) targetLane = lane = 1;
-        if (player.z < current.startZ) player.x = LANES[targetLane];
-      }
-      interpPrevX = player.x;
-      playRoofRouteSound(routeLevel === 1);
-    }
-    if (routeLevel === 0) targetLane = lane = 0;
-    else if (targetLane < 1) targetLane = lane = 1;
-  }
-
   // ============================================================= runner =====
   // Low-poly Berliner in a parka: readable from behind at speed, animated by a
   // single phase value so lane lean, jump tuck and slide all stay in sync.
@@ -23303,11 +23118,9 @@ THREE.GLTFLoader = GLTFLoader;
     // Bounded so a pathological speed spike cannot place a whole run's worth
     // of gates (and their corridors) in one frame.
     for (var guard = 0; guard < 4 && nextGateZ < horizon; guard++) {
-      var roofRouteBeat = (++roofRouteSequence % 4) === 0;
-      var spacing = roofRouteBeat ? 180 : gateDistance();
-      nextGateZ = Math.max(nextGateZ + spacing, player.z + 40);
+      nextGateZ = Math.max(nextGateZ + gateDistance(), player.z + 40);
       spawnGate(nextGateZ);
-      scheduleCorridor(nextGateZ, roofRouteBeat);
+      scheduleCorridor(nextGateZ);
     }
   }
 
@@ -23316,52 +23129,12 @@ THREE.GLTFLoader = GLTFLoader;
   var GATE_CLEAR_BEFORE = 17;
   var GATE_CLEAR_AFTER = 9;
   var powerupCorridorIndex = 0;
-  function scheduleCorridor(gateZ, roofRouteBeat) {
+  function scheduleCorridor(gateZ) {
     var z = Math.max(lastObstacleZ, player.z + 34);
     var difficulty = clamp((distance / 1400) + overdriveTier * 0.18, 0, 1);
     var lastVerb = 'free';
     var wantsPowerup = (++powerupCorridorIndex % 2) === 0;
     var powerupPlaced = false;
-    if (roofRouteBeat) {
-      // The widened gate interval reserves a complete authored traversal beat:
-      // clean entry, three parallel tram roofs, a risk/reward centre line of
-      // arced brezels, a late slide read, then a clean descent before the
-      // unchanged article gate. The centre beat used to be a jump obstacle
-      // sitting on the tram roof; the reward arc teaches the same lane
-      // without asking the player to hurdle a hole in a train.
-      var routeStart = gateZ - 171;
-      if (routeStart > player.z + 32 &&
-          spawnRoofRoute(routeStart)) {
-        // White/gold pickup paths telegraph the topology without borrowing the
-        // article gate's blue/pink/green language. Ground is safe but modest;
-        // roof rewards are denser and teach the two action beats in advance.
-        spawnPretzelRun(0, routeStart + 44, 5, false);
-        spawnPretzelRun(0, routeStart + 61, 5, true);
-        spawnPretzelRun(0, routeStart + 82, 5, false);
-        spawnObstacle(0, 0, routeStart + 112);
-        spawnPretzelRun(0, routeStart + 121, 4, false);
-
-        spawnPretzelRun(1, routeStart + 5, 6, true);
-        spawnPretzelRun(1, routeStart + 36, 6, true);
-        spawnPretzelRun(2, routeStart + 44, 7, false);
-        // The first gold diagonal is a literal navigation arrow across the
-        // central service plate. Players who stay on lane 1 instead meet the
-        // six-metre fourth articulation as a real surface gap.
-        spawnPretzelTransfer(1, 2, routeStart + 73, routeStart + 87, 7);
-        // A return diagonal over the next service plate rejoins the fast line.
-        // The maintenance cabinet closes lane 2 after the arrow, so following
-        // the transfer is a readable decision rather than optional decoration.
-        spawnPretzelTransfer(2, 1, routeStart + 108, routeStart + 120, 7);
-        spawnObstacle(2, 2, routeStart + 125, 1);
-        spawnPretzelRun(1, routeStart + 128, 5, false);
-        spawnObstacle(0, 1, routeStart + 136);
-        spawnPowerup(POWERUP_TYPES[((roofRouteSequence / 4) | 0) % POWERUP_TYPES.length],
-                     1, routeStart + 129);
-        spawnPretzelRun(1, routeStart + ROOF_ROUTE_LENGTH + 3, 4, false);
-        lastObstacleZ = Math.max(lastObstacleZ, gateZ + GATE_CLEAR_AFTER);
-        return;
-      }
-    }
     while (z < gateZ - GATE_CLEAR_BEFORE) {
       // Space by recovery time, not just metres. The old 18-30 m late-game
       // range compressed to 0.33-0.56 s at 54 m/s—shorter than either the
@@ -23532,24 +23305,6 @@ THREE.GLTFLoader = GLTFLoader;
     fxStumble(player.x, 0.8, player.z);
   }
 
-  function missRoofGap() {
-    if (gameOver || graceTimer > 0 || stumbleTimer > 0) return;
-    if (shieldCharges > 0) {
-      shieldCharges--;
-      graceTimer = 0.16;
-      playPowerupSound('shield');
-      fxPopup(player.x + (player.x >= 0 ? -0.9 : 0.9), player.y + 1.25, player.z,
-              'GERETTET!', '#ffe45c', 0.62);
-      fxScreenPulse(1.0, 0.78, 0.22, 0.18, 6.4);
-      fxCamKick(0, 0.10, -0.14, 0.014, 0.48, 7.4);
-      updatePowerupHUD(true);
-      return;
-    }
-    fxPopup(player.x + (player.x >= 0 ? -0.9 : 0.9), player.y + 1.15, player.z,
-            'KANTE!', '#ff8b70', 0.58);
-    stumble();
-  }
-
   function clearStumbleUI() {
     el.flash.style.opacity = 0;
     el.stumble.style.opacity = 0;
@@ -23605,9 +23360,7 @@ THREE.GLTFLoader = GLTFLoader;
     distance = 0; pretzelCount = 0;
     overdriveTier = 0; overdriveIntensity = 0;
     magnetTimer = springTimer = 0; shieldCharges = airJumps = 0;
-    powerupCorridorIndex = 0; roofRouteSequence = 0;
-    routeLevel = -1; activePlayerRoofRoute = null; roofCameraReveal = 0;
-    roofGapCrossing = false;
+    powerupCorridorIndex = 0;
     bufLeft = bufRight = bufJump = bufSlide = 0;
     fastFalling = false; slideHeld = 0;
     prevZ = player.z; lastObstacleZ = player.z;
@@ -23655,7 +23408,6 @@ THREE.GLTFLoader = GLTFLoader;
     for (var o = 0; o < obstacles.length; o++) { obstacles[o].active = false; obstacles[o].holder.visible = false; }
     for (var p = 0; p < pretzels.length; p++) { pretzels[p].active = false; pretzels[p].sprite.visible = false; }
     for (var pu = 0; pu < powerups.length; pu++) { powerups[pu].active = false; powerups[pu].holder.visible = false; }
-    for (var rr = 0; rr < roofRoutes.length; rr++) { roofRoutes[rr].active = false; roofRoutes[rr].root.visible = false; }
     updatePowerupHUD(true);
     if (pretzelSolidInst) {
       pretzelSolidInst.count = 0;
@@ -24046,7 +23798,6 @@ THREE.GLTFLoader = GLTFLoader;
     speed += (Math.min(MAX_SPEED, target) - speed) * damp(approach, dt);
     player.z += speed * dt;
     distance = player.z - startZ;
-    updatePlayerRouteLevel();
 
     // ---- input buffers
     bufLeft = Math.max(0, bufLeft - dt);
@@ -24055,11 +23806,8 @@ THREE.GLTFLoader = GLTFLoader;
     bufSlide = Math.max(0, bufSlide - dt);
 
     if (stumbleTimer <= 0) {
-      var minPlayableLane = routeLevel === 1 ? 1 : 0;
       var previousTargetLane = targetLane;
-      if (routeLevel === 0) {
-        targetLane = 0; bufLeft = bufRight = 0;
-      } else if (bufLeft > 0 && targetLane > minPlayableLane) {
+      if (bufLeft > 0 && targetLane > 0) {
         targetLane--; bufLeft = 0; playLaneSound();
       } else if (bufRight > 0 && targetLane < 2) {
         targetLane++; bufRight = 0; playLaneSound();
@@ -24119,32 +23867,6 @@ THREE.GLTFLoader = GLTFLoader;
       laneGlideVelocity = 0;
     }
     lane = targetLane;
-
-    // Lane 1's articulated opening is a real discontinuity, not an invisible
-    // roof with a low obstacle on it. Convert the local-clearance coordinate
-    // only at the two hard edges so the runner's WORLD height is continuous:
-    // entering adds the removed roof height and begins a fall toward street;
-    // leaving subtracts it and tests whether the far lip was actually cleared.
-    var insideRoofGap = routeLevel === 1 && !!roofGapRouteAt(player.z, player.x);
-    if (!roofGapCrossing && insideRoofGap) {
-      roofGapCrossing = true;
-      player.y += ROOF_HEIGHT;
-      jumpWarpFrom = wrapPi(heroRunPhase - visualRunPhase);
-      jumpGaitOctant = gaitOctantAt(heroRunPhase);
-      jumpSupportSide = gaitSupportAt(heroRunPhase);
-      jumpWarpTo = wrapPi((jumpSupportSide > 0 ? 0 : Math.PI) - runPhase);
-      grounded = false;
-      jumpActionAge = 0;
-      coyote = Math.max(coyote, 0.11);
-    } else if (roofGapCrossing && !insideRoofGap) {
-      var clearedRoofLip = player.y > ROOF_HEIGHT + 0.08;
-      player.y -= ROOF_HEIGHT;
-      roofGapCrossing = false;
-      if (player.y <= 0) {
-        player.y = 0; player.vy = 0; grounded = true;
-      }
-      if (!clearedRoofLip) missRoofGap();
-    }
 
     // ---- jump / slide
     coyote = grounded ? 0.11 : Math.max(0, coyote - dt);
@@ -24255,7 +23977,7 @@ THREE.GLTFLoader = GLTFLoader;
     collectPowerups();
     recycle();
     updateChunks(player.z);
-    updateRoofRoutes(player.z);
+    updateWorldPlayFrames();
   }
 
   function playerHeight() {
@@ -24374,19 +24096,6 @@ THREE.GLTFLoader = GLTFLoader;
       playTone(330, now, 0.14, 0.15, 'triangle');
       playTone(494, now + 0.045, 0.18, 0.13, 'sine');
       playTone(659, now + 0.090, 0.23, 0.11, 'sine');
-    }
-  }
-
-  function playRoofRouteSound(boarded) {
-    if (!gameAudio) return;
-    var now = gameAudio.currentTime;
-    if (boarded) {
-      playTone(330, now, 0.13, 0.12, 'triangle');
-      playTone(494, now + 0.075, 0.18, 0.11, 'sine');
-      playNoise(now, 0.12, 0.045, 1100, 0.55);
-    } else {
-      playTone(220, now, 0.16, 0.09, 'triangle');
-      playTone(277, now + 0.07, 0.16, 0.08, 'sine');
     }
   }
 
@@ -25634,19 +25343,6 @@ THREE.GLTFLoader = GLTFLoader;
     bridgeReveal += (bridgeRevealTarget - bridgeReveal) * damp(2.4, dt);
     var bridgeRevealAmount = Math.abs(bridgeReveal);
     var routeCameraMix = routeCameraBend * (1 - bridgeRevealAmount * 0.65);
-    var roofRevealTarget = 0;
-    for (var roofRevealIndex = 0; roofRevealIndex < roofRoutes.length; roofRevealIndex++) {
-      var revealRoute = roofRoutes[roofRevealIndex];
-      if (!revealRoute.active) continue;
-      var toRoof = revealRoute.startZ - visualPlayer.z;
-      if (toRoof > 0 && toRoof < 90) roofRevealTarget = Math.max(roofRevealTarget, 1 - toRoof / 90);
-      else if (visualPlayer.z >= revealRoute.startZ && visualPlayer.z <= revealRoute.endZ) roofRevealTarget = 1;
-      else if (visualPlayer.z > revealRoute.endZ && visualPlayer.z < revealRoute.endZ + 24) {
-        roofRevealTarget = Math.max(roofRevealTarget, 1 - (visualPlayer.z - revealRoute.endZ) / 24);
-      }
-    }
-    roofCameraReveal += (roofRevealTarget - roofCameraReveal) * damp(3.2, dt);
-
     // Lateral rate of the hero, smoothed. It drives three separate things: how
     // far the rig lags behind a lane change (so the world swings), how hard the
     // camera banks into it, and how strongly the trail ribbon fans out.
@@ -25663,17 +25359,16 @@ THREE.GLTFLoader = GLTFLoader;
     // vertical FOV here: the hero stays expressive and all three lanes remain
     // readable without fisheye distortion.
     var portraitView = clamp((0.72 - camera.aspect) / 0.30, 0, 1);
-    var roofRevealScale = roofCameraReveal * lerp(1, 0.55, portraitView);
     // Dolly in over a slide, ease out over a jump — both purely framing.
     var dolly = -slideVisual * 0.58 + clamp(visualPlayer.y, 0, 3.2) * 0.15;
     var backOff = 3.35 + speedMix * 0.90 + bridgeRevealAmount * 0.22 +
-                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 2.15 + roofRevealScale * 0.65;
+                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 2.15;
     // Published for the near-side render cull (see nearCullZ): portrait alone
     // pulls the lens 2.15 m further back, so a fixed offset from the runner
     // would leave that whole band of street being culled on screen.
     cameraBackOff = backOff;
     var height = 2.20 + speedMix * 0.28 + bridgeRevealAmount * 0.24 + routeCameraCrest * 0.08 -
-                 slideVisual * 0.30 + portraitView * 0.52 + roofRevealScale * 0.35;
+                 slideVisual * 0.30 + portraitView * 0.52;
     // Extra vertical follow while airborne only (airVisual, not visualPlayer.y
     // alone, so grounded rooftop sections keep their own already-tuned
     // framing). The base 0.34 below only tracked a third of the hero's actual
@@ -25696,7 +25391,7 @@ THREE.GLTFLoader = GLTFLoader;
     var desiredCamX = routePointX, desiredCamY = routePointY, desiredCamZ = routePointZ;
     var lookLogicalX = visualPlayer.x * (0.80 + portraitView * 0.12) + laneDelta * 0.11 + bridgeReveal * 1.22;
     var lookLogicalY = 1.46 + visualPlayer.y * 0.48 - slideVisual * 0.20;
-    var lookLogicalZ = visualPlayer.z + 12.8 + speedMix * 1.6 + roofRevealScale * 3.2;
+    var lookLogicalZ = visualPlayer.z + 12.8 + speedMix * 1.6;
     sampleRoutePoint(lookLogicalX, lookLogicalY + playerSurfaceY(lookLogicalZ), lookLogicalZ);
     var desiredLookX = routePointX, desiredLookY = routePointY, desiredLookZ = routePointZ;
 
@@ -25732,7 +25427,7 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Keep the runner framed from frame one, then widen gently at full speed.
     var fov = 69 + speedMix * 5.5 + od * 1.15 + answerKick * 2.6 + fxFovPunch -
-              slideVisual * 1.6 + roofRevealScale * 2.4;
+              slideVisual * 1.6;
     if (fov > 80) fov = 80;
     fovVisual += (fov - fovVisual) * damp(fxFovPunch > 0.05 ? 16 : 5.5, dt);
     if (Math.abs(camera.fov - fovVisual) > 0.01) {
