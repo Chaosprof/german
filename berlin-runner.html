@@ -5158,6 +5158,12 @@ THREE.GLTFLoader = GLTFLoader;
   // anyway: lose an effect before you lose sharpness.
   var MIN_RENDER_SCALE = Math.min(1,
     1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
+  // Hold one physical backing pixel per CSS pixel for the whole session. The
+  // broad cel bands, 3 px ink and native-resolution DOM HUD make extra device-
+  // pixel supersampling visually redundant in motion, while a stable 1:1 image
+  // avoids the conspicuous mid-run sharp/soft transition entirely. All authored
+  // effects, lighting, textures and the full-resolution presentation remain on.
+  var STABLE_PRESENTATION_SCALE = MIN_RENDER_SCALE;
   function applyRenderScale(scale) {
     var scaleFloor = MIN_RENDER_SCALE * (emergencyResolutionActive ? EMERGENCY_RENDER_SCALE : 1);
     renderScale = clamp(scale, scaleFloor, 1);
@@ -9022,8 +9028,13 @@ THREE.GLTFLoader = GLTFLoader;
   // reads at speed) and drops the street-wide ones. It also means the warm-up
   // no longer has to compile a second copy of every lit program for a
   // shadow-less state that can no longer occur — worth ~10 s of loading.
-  var SHADOW_BOX_FULL = 46, SHADOW_BOX_FOCUS = 15;
-  var SHADOW_FAR_FULL = 220, SHADOW_FAR_FOCUS = 110;
+  // Spend the same 2048² atlas on the part of the road where a shadow can be
+  // read. Explicit contact decals already ground thin/distant props, while the
+  // former 92 m box submitted large numbers of hazed building casters whose
+  // shadows landed outside the reaction corridor. The tighter full-quality box
+  // is actually sharper near the runner and materially cheaper to refresh.
+  var SHADOW_BOX_FULL = 32, SHADOW_BOX_FOCUS = 15;
+  var SHADOW_FAR_FULL = 170, SHADOW_FAR_FOCUS = 110;
   var shadowFocused = false;
   function applyShadowScope(focused) {
     if (shadowFocused === focused) return;
@@ -9416,11 +9427,13 @@ THREE.GLTFLoader = GLTFLoader;
   var ROAD_HALF = 7.2;          // asphalt edge
   var WALK_OUT = 12.4;          // sidewalk outer edge / building line
   var CHUNK_LEN = 40;
-  // Seven 40 m slots cover the complete -38..210 m render envelope. A recycled
-  // slot lands at least ~216 m ahead, just beyond the far visibility edge, so
-  // the existing ring supports the longer architectural approach without
-  // rebuilding the much larger old 13-slot pool.
-  var CHUNK_COUNT = 7;          // 280 m ring; supports the full 210 m envelope
+  // Keep one complete 16-beat macro cycle resident. Runtime recycling then only
+  // translates an already-authored chunk and its pooled instance ranges; it no
+  // longer regenerates buildings, props, hierarchy caches and dozens of GPU
+  // buffers on the gameplay frame where a slab leaves the camera. Sixteen slots
+  // also preserve the station/bridge/tunnel macro rhythm and give the repeated
+  // city 640 m (~20-25 s) before a composition returns.
+  var CHUNK_COUNT = 16;
   var INITIAL_CHUNK_COUNT = 5;  // complete -20..180 m title/play envelope
   var WORLD_LEN = CHUNK_LEN * CHUNK_COUNT;
   // applyChunkLOD measures a chunk by its CENTRE, so a chunk switching on at
@@ -9671,6 +9684,96 @@ THREE.GLTFLoader = GLTFLoader;
     return { converted: converted, cloned: cloned, baked: baked };
   }
 
+  // Once the resident macro-cycle has been authored, the flat-colour pieces of
+  // bins, benches, parcels, manholes and similar micro dressing are immutable.
+  // They already share PROP_FLAT_MAT after the pass above, so submitting each
+  // little rigid cluster separately is pure overhead. Bake them per chunk into
+  // three depth bands: exact vertices/colours/surface response are retained,
+  // while the bands preserve the existing staggered fog arrival instead of one
+  // whole-block pop.
+  function batchChunkFlatDetails() {
+    var totalBatches = 0, totalSources = 0;
+    var rootInv = new THREE.Matrix4(), rel = new THREE.Matrix4();
+
+    function mergedFlatGeometry(root, meshes) {
+      root.updateMatrixWorld(true);
+      rootInv.copy(root.matrixWorld).invert();
+      var geos = [], total = 0;
+      for (var i = 0; i < meshes.length; i++) {
+        var mesh = meshes[i];
+        var geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
+        rel.multiplyMatrices(rootInv, mesh.matrixWorld);
+        geo.applyMatrix4(rel);
+        geos.push(geo);
+        total += geo.attributes.position.count;
+      }
+      var pos = new Float32Array(total * 3), nor = new Float32Array(total * 3),
+          uv = new Float32Array(total * 2), col = new Uint16Array(total * 3),
+          surf = new Uint8Array(total * 2), at = 0;
+      geos.forEach(function (geo) {
+        var count = geo.attributes.position.count;
+        pos.set(geo.attributes.position.array, at * 3);
+        nor.set(geo.attributes.normal.array, at * 3);
+        uv.set(geo.attributes.uv.array, at * 2);
+        col.set(geo.attributes.color.array, at * 3);
+        surf.set(geo.attributes.aSurf.array, at * 2);
+        at += count;
+        geo.dispose();
+      });
+      var out = new THREE.BufferGeometry();
+      out.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+      out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      out.setAttribute('color', new THREE.Uint16BufferAttribute(col, 3, true));
+      out.setAttribute('aSurf', new THREE.Uint8BufferAttribute(surf, 2, true));
+      out.computeBoundingSphere();
+      return out;
+    }
+
+    for (var ci = 0; ci < chunks.length; ci++) {
+      var chunk = chunks[ci], ud = chunk.userData;
+      var bands = [[], [], []], bandZ = [0, 0, 0], bandN = [0, 0, 0];
+      var seen = new Set();
+      chunk.updateMatrixWorld(true);
+      for (var ni = 0; ni < ud.detailNodes.length; ni++) {
+        if (!ud.detailBase[ni]) continue;
+        var localZ = ud.detailLocalZ[ni];
+        var band = clamp(Math.floor((localZ + CHUNK_LEN * 0.5) / (CHUNK_LEN / 3)), 0, 2);
+        ud.detailNodes[ni].traverse(function (mesh) {
+          if (!mesh.isMesh || mesh.isInstancedMesh || mesh.material !== PROP_FLAT_MAT ||
+              !mesh.geometry || !mesh.geometry.attributes.normal || !mesh.geometry.attributes.uv ||
+              !mesh.geometry.attributes.color || !mesh.geometry.attributes.aSurf || seen.has(mesh)) return;
+          seen.add(mesh);
+          bands[band].push(mesh);
+        });
+        bandZ[band] += localZ; bandN[band]++;
+      }
+      ud.flatDetailBatches = [];
+      for (var bi = 0; bi < bands.length; bi++) {
+        if (bands[bi].length < 2) continue;
+        var cast = false, receive = false;
+        for (var mi = 0; mi < bands[bi].length; mi++) {
+          cast = cast || bands[bi][mi].castShadow;
+          receive = receive || bands[bi][mi].receiveShadow;
+        }
+        var batch = new THREE.Mesh(mergedFlatGeometry(chunk, bands[bi]), PROP_FLAT_MAT);
+        batch.castShadow = cast; batch.receiveShadow = receive;
+        batch.updateMatrix(); batch.matrixAutoUpdate = false;
+        batch.visible = false;
+        chunk.add(batch);
+        if (cast) ud.shadowCasters.push(batch);
+        ud.flatDetailBatches.push({ mesh: batch,
+          localZ: bandN[bi] ? bandZ[bi] / bandN[bi] : 0 });
+        for (var rm = 0; rm < bands[bi].length; rm++) {
+          if (bands[bi][rm].parent) bands[bi][rm].parent.remove(bands[bi][rm]);
+        }
+        totalSources += bands[bi].length;
+        totalBatches++;
+      }
+    }
+    return { batches: totalBatches, sources: totalSources };
+  }
+
   function mat(color, opts) {
     opts = opts || {};
     return applyCelShading(new THREE.MeshStandardMaterial({
@@ -9685,6 +9788,7 @@ THREE.GLTFLoader = GLTFLoader;
       opacity: opts.opacity !== undefined ? opts.opacity : 1,
       side: opts.side || THREE.FrontSide,
       toneMapped: opts.toneMapped !== undefined ? opts.toneMapped : true,
+      vertexColors: !!opts.vertexColors,
       dithering: true,
       flatShading: !!opts.flatShading
     }));
@@ -10406,6 +10510,17 @@ THREE.GLTFLoader = GLTFLoader;
       map: t, color: 0xffffff, dithering: true
     }) : mat(0xffffff, { map: t, roughness: 0.86, envMapIntensity: 0.42 });
   });
+  // Building cores carry vertex colour so their front plane and set-back mass
+  // can share one material group. White vertices reproduce the facade exactly;
+  // mass vertices retain the old 0.80 tint. Ordinary facadeMats stay in use on
+  // erkers/gables/balcony panels, whose shared geometries have no colour data.
+  var facadeCoreMats = facadeTex.map(function (t) {
+    return renderScale < 0.99 ? new THREE.MeshBasicMaterial({
+      map: t, color: 0xffffff, vertexColors: true, dithering: true
+    }) : mat(0xffffff, {
+      map: t, roughness: 0.86, envMapIntensity: 0.42, vertexColors: true
+    });
+  });
   // Emission is driven by a dedicated mask so the night treatment lights the
   // glass and the sign lettering only; the painted stall colour stays a solid
   // daylight block instead of becoming one orange smear along the whole street.
@@ -10417,13 +10532,6 @@ THREE.GLTFLoader = GLTFLoader;
       envMapIntensity: 0.42, dithering: true,
       emissiveMap: sh.emissive, emissive: 0xffd9ad, emissiveIntensity: 0.34
     });
-  });
-  // The mass is only ever seen as roofs and firewalls stacking up behind the
-  // front row, so it wants roof tones — but saturated ones. Grey-brown made the
-  // skyline read as a field of blank slabs.
-  var massMats = [CITY.roofNavy, CITY.roofTeal, CITY.roofPlum,
-                  CITY.roofBrick, CITY.roofSlate].map(function (c) {
-    return mat(cssHex(c), { roughness: 0.88, envMapIntensity: 0.40 });
   });
   var ordinaryRoofMats = [
     MAT.roof,
@@ -10668,8 +10776,7 @@ THREE.GLTFLoader = GLTFLoader;
     return root;
   }
 
-  // Merges building parts that carry DIFFERENT materials (facade sheet, mass
-  // tint, stone trim, shop sheet) into ONE BufferGeometry with material
+  // Merges building parts that carry different materials into one geometry.
   // groups, instead of mergeBoxes' single-material concat above. Each part's
   // own baked-in UV scaling rides through untouched — toNonIndexed()/clone()
   // copy the source attributes verbatim, they never recompute UVs, so the
@@ -10679,9 +10786,11 @@ THREE.GLTFLoader = GLTFLoader;
   // A part's old standalone-Mesh position offset (facade sat 0.04 ahead of
   // the mass front face, shop 0.10 ahead of it) is baked into the vertex
   // data here via spec.z, since a merged mesh has only one transform shared
-  // by every group. spec.mat is a FIXED role index (0 facade, 1 mass, 2
-  // trim, 3 shop) even when a variant omits a part, so every variant can
-  // share one 4-long material array on the Mesh and callers never renumber.
+  // by every group. Consecutive parts with the same spec.mat are deliberately
+  // coalesced: Three submits once per geometry group even if two adjacent
+  // groups point at the same material. spec.tint supplies a per-vertex colour
+  // multiplier, allowing facade and mass to share one textured material while
+  // keeping the mass's authored darker value.
   function mergeCoreParts(specs) {
     var parts = specs.map(function (b) {
       var n = b.geo.index ? b.geo.toNonIndexed() : b.geo.clone();
@@ -10689,21 +10798,35 @@ THREE.GLTFLoader = GLTFLoader;
       return n;
     });
     var total = parts.reduce(function (n, g) { return n + g.attributes.position.count; }, 0);
-    var pos = new Float32Array(total * 3), nor = new Float32Array(total * 3), uv = new Float32Array(total * 2);
+    var pos = new Float32Array(total * 3), nor = new Float32Array(total * 3),
+        uv = new Float32Array(total * 2), col = new Float32Array(total * 3);
     var out = new THREE.BufferGeometry();
-    var o = 0;
+    var o = 0, groupStart = 0, groupCount = 0, groupMat = specs[0].mat;
     parts.forEach(function (g, i) {
       var c = g.attributes.position.count;
       pos.set(g.attributes.position.array, o * 3);
       nor.set(g.attributes.normal.array, o * 3);
       uv.set(g.attributes.uv.array, o * 2);
-      out.addGroup(o, c, specs[i].mat);
+      var tint = specs[i].tint === undefined ? 1 : specs[i].tint;
+      for (var cv = 0, co = o * 3; cv < c; cv++, co += 3) {
+        col[co] = col[co + 1] = col[co + 2] = tint;
+      }
+      if (specs[i].mat !== groupMat) {
+        out.addGroup(groupStart, groupCount, groupMat);
+        groupStart = o;
+        groupCount = c;
+        groupMat = specs[i].mat;
+      } else {
+        groupCount += c;
+      }
       o += c;
       g.dispose();
     });
+    out.addGroup(groupStart, groupCount, groupMat);
     out.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
     out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    out.setAttribute('color', new THREE.BufferAttribute(col, 3));
     out.computeBoundingSphere();
     return out;
   }
@@ -11119,11 +11242,12 @@ THREE.GLTFLoader = GLTFLoader;
     // ~3% roll and the anti-repeat pass) are resolved once at roll time into
     // a fixed boolean and select a pre-merged, cached geometry variant — see
     // getBuildingCoreGeo. Each part keeps its own material via a geometry
-    // group + a 4-slot material array (index 0 facade, 1 mass, 2 trim, 3
-    // shop), so per-building hue/atlas-cell variety works exactly as before;
+    // group + a 3-slot material array (index 0 facade + vertex-tinted mass,
+    // 1 trim, 2 shop), so per-building hue/atlas-cell variety works exactly
+    // as before while the two facade-sheet groups become one submission;
     // only the .visible-per-part toggle is gone, replaced by which cached
     // geometry variant is selected (see rollBuilding).
-    var coreFullMaterials = [facadeMats[0], massMats[0], MAT.stone, shopMats[0]];
+    var coreFullMaterials = [facadeCoreMats[0], MAT.stone, shopMats[0]];
     var core = new THREE.Mesh(getBuildingCoreGeo(13.5, 6, 0, true, true), coreFullMaterials);
     // Was facade.receiveShadow only. mass already cast+received; trim
     // received only; shop had neither set. A merged mesh has one shadow
@@ -11240,9 +11364,13 @@ THREE.GLTFLoader = GLTFLoader;
     // list — each stays reachable only via g.userData below, for
     // writeBuildingPartPools to read. roofShell was measured and NOT pooled
     // (see its comment above) — it stays a real scene-graph child.
-    g.add(core, awning,
-          hangingPanel, roofShell, erker,
-          balconyPanel, gable, ghostAd);
+    // Erker, balcony facade and gable are rigid, share one facade material and
+    // never animate independently. Keep their original Mesh objects as rollout
+    // data holders, but present their enabled geometry through one baked mesh.
+    // This is pixel-equivalent and removes up to two submissions per building.
+    var facadeProjection = new THREE.Mesh(new THREE.BufferGeometry(), facadeMats[0]);
+    facadeProjection.receiveShadow = true;
+    g.add(core, awning, hangingPanel, roofShell, facadeProjection, ghostAd);
     g.userData = { core: core, coreFullMaterials: coreFullMaterials,
                    coreFarMaterial: facadeMats[0], coreFar: false,
                    awning: awning,
@@ -11250,12 +11378,20 @@ THREE.GLTFLoader = GLTFLoader;
                    roofBlock: roofBlock, roofShell: roofShell, roofDormers: roofDormers,
                    roofBits: roofBits, chimneyA: chimneyA, chimneyB: chimneyB,
                    aerial: aerial, roofFurnA: roofFurnA, roofFurnB: roofFurnB,
-                   erker: erker, erkerCap: erkerCap,
+                   erker: erker, erkerCap: erkerCap, facadeProjection: facadeProjection,
                    balconyPanel: balconyPanel, balcony: balcony, balconySlab: balconySlab,
                    balconyRail: balconyRail, gable: gable, ghostAd: ghostAd,
                    facadeCell: 0, shopCell: 0, erkerCell: FACADE_BAY_CELL,
                    balconyCell: FACADE_BALCONY_CELLS[0], gableCell: FACADE_GABLE_CELLS[0],
                    fallbackFacadeIndex: 0, fallbackShopIndex: 0, side: side };
+    // These meshes supply close-range projection and signage. The core already
+    // bakes the complete facade, shop band and a varied silhouette crown, so in
+    // the deep fog they can become a one-draw architectural proxy without the
+    // street losing its mass, colour rhythm or skyline. Authored visibility is
+    // recaptured on every roll and restored before the building reaches clear
+    // air; the ghost ad keeps its finer independent distance gate.
+    g.userData.proxyDetails = [awning, hangingPanel, roofShell, facadeProjection];
+    g.userData.proxyDetailBase = new Uint8Array(g.userData.proxyDetails.length);
     // Street-facing orientation: left side (-x) turns to face +x and vice versa.
     g.rotation.y = side < 0 ? Math.PI / 2 : -Math.PI / 2;
     return g;
@@ -11333,10 +11469,10 @@ THREE.GLTFLoader = GLTFLoader;
     var wsKey = w + '|' + s;
     var specs = [
       { geo: facadeGeo[wsKey], z: 0.04, mat: 0 },        // matches old facade.position.z
-      { geo: getMassCrownGeo(w, s, crownVariant), mat: 1 }
+      { geo: getMassCrownGeo(w, s, crownVariant), mat: 0, tint: 0.80 }
     ];
-    if (hasTrim) specs.push({ geo: trimGeo[wsKey], mat: 2 });
-    if (hasShop) specs.push({ geo: shopGeo[w], z: 0.10, mat: 3 }); // matches old shop.position.z
+    if (hasTrim) specs.push({ geo: trimGeo[wsKey], mat: 1 });
+    if (hasShop) specs.push({ geo: shopGeo[w], z: 0.10, mat: 2 }); // matches old shop.position.z
     return buildingCoreGeo[key] = mergeCoreParts(specs);
   }
 
@@ -11352,42 +11488,20 @@ THREE.GLTFLoader = GLTFLoader;
   // Surfers block. The stylised sheets painted at the top of this file are now
   // the authored look. The atlas path is kept intact behind one switch so the
   // photographic treatment can be restored without unpicking anything.
-  // The mass box (and, now, the crown baked onto it) shares the facade's
-  // texture for continuity on the flank walls visible in the gaps between
-  // buildings, but not the facade's exact material instance: a flat colour
-  // multiply gives that set-back volume its own, slightly deeper value so it
-  // reads as a receded mass sitting behind the crisp, directly lit facade
-  // plane instead of the same flat sheet just wrapped around a box. Cached
-  // per source material — bounded by the existing facade/atlas material
-  // lists — and never adds a draw call, since the mass mesh already existed.
-  var massVolumeMats = new Map();
-  function getMassVolumeMaterial(base) {
-    if (!base) return base;
-    var cached = massVolumeMats.get(base);
-    if (cached) return cached;
-    var tinted = base.clone();
-    tinted.color = base.color.clone().multiplyScalar(0.80);
-    if (tinted.roughness !== undefined) {
-      tinted.roughness = Math.min(1, (base.roughness !== undefined ? base.roughness : 0.86) + 0.06);
-    }
-    massVolumeMats.set(base, tinted);
-    return tinted;
-  }
-
   function applyBuildingSurfaceMaterials(d) {
     var facadeMaterial = facadeMats[d.fallbackFacadeIndex];
-    // coreFullMaterials is the authored [facade, mass, trim, shop] array.
+    // coreFullMaterials is the authored [facade+mass, trim, shop] array.
     // The live mesh may temporarily use coreFarMaterial in the fog-band LOD,
     // so update the stable full array and let applyChunkLOD choose the view.
-    d.coreFullMaterials[0] = facadeMaterial;
-    d.coreFullMaterials[1] = getMassVolumeMaterial(facadeMaterial);
-    d.coreFullMaterials[3] = shopMats[d.fallbackShopIndex];
-    d.coreFarMaterial = facadeMaterial;
+    d.coreFullMaterials[0] = facadeCoreMats[d.fallbackFacadeIndex];
+    d.coreFullMaterials[2] = shopMats[d.fallbackShopIndex];
+    d.coreFarMaterial = facadeCoreMats[d.fallbackFacadeIndex];
     d.core.material = d.coreFar ? d.coreFarMaterial : d.coreFullMaterials;
     // Erker, balcony panel and gable all share the facade sheet.
     d.erker.material = facadeMaterial;
     d.balconyPanel.material = facadeMaterial;
     d.gable.material = facadeMaterial;
+    d.facadeProjection.material = facadeMaterial;
   }
 
   function rollBuilding(g, w, heightBand, styleSeed, colorSlot, usedShopIndices, dressBias) {
@@ -11641,6 +11755,32 @@ THREE.GLTFLoader = GLTFLoader;
       d.roofBlock.visible = styleUnit(styleSeed, 23) < 0.68;
       d.roofBlock.position.set((styleUnit(styleSeed, 24) * 2 - 1) * w * 0.18, h + 0.34, -3.8);
       d.roofBlock.scale.set(0.82 + styleUnit(styleSeed, 25) * 0.54, 0.18, 0.72);
+    }
+    // Bake the final, rolled transforms of the three facade projections into a
+    // single buffer. Their source meshes remain available to the pool writer;
+    // they simply never reach the scene graph themselves.
+    var projectionParts = [];
+    if (d.erker.visible) projectionParts.push({ geo: d.erker.geometry,
+      x: d.erker.position.x, y: d.erker.position.y, z: d.erker.position.z });
+    if (d.balconyPanel.visible) projectionParts.push({ geo: d.balconyPanel.geometry,
+      x: d.balconyPanel.position.x, y: d.balconyPanel.position.y, z: d.balconyPanel.position.z });
+    if (d.gable.visible) projectionParts.push({ geo: d.gable.geometry,
+      x: d.gable.position.x, y: d.gable.position.y, z: d.gable.position.z });
+    if (d.facadeProjection.userData.rolledGeometry) {
+      d.facadeProjection.geometry.dispose();
+      d.facadeProjection.userData.rolledGeometry = false;
+    }
+    if (projectionParts.length) {
+      d.facadeProjection.geometry = mergeBoxes(projectionParts);
+      d.facadeProjection.userData.rolledGeometry = true;
+      d.facadeProjection.visible = true;
+      d.facadeProjection.castShadow = d.erker.visible;
+    } else {
+      d.facadeProjection.visible = false;
+      d.facadeProjection.castShadow = false;
+    }
+    for (var pd = 0; pd < d.proxyDetails.length; pd++) {
+      d.proxyDetailBase[pd] = d.proxyDetails[pd].visible ? 1 : 0;
     }
     g.position.x = d.side * WALK_OUT;
     d.width = w;
@@ -15518,7 +15658,11 @@ THREE.GLTFLoader = GLTFLoader;
   // a full budget in the same visual frame -- defeating the point on
   // exactly the already-slow frames this exists to help.
   var repackCursor = 0;
-  var REPACK_BUDGET_PER_FRAME = 12;
+  // Pool count alone is a poor cost proxy: a one-instance ground pool and the
+  // thousands-slot window pool used to consume the same unit. Bound both count
+  // and wall time so visibility transitions cannot monopolise a gameplay frame.
+  var REPACK_BUDGET_PER_FRAME = 6;
+  var REPACK_TIME_BUDGET_MS = 0.9;
   var repackBudgetRemaining = Infinity;
   var repackBudgetActive = false;
   function repackDirtyPools() {
@@ -15531,11 +15675,13 @@ THREE.GLTFLoader = GLTFLoader;
       return;
     }
     var n = ALL_POOLS.length, scanned = 0;
+    var repackStartedAt = performance.now();
     while (repackBudgetRemaining > 0 && scanned < n) {
       var pool = ALL_POOLS[repackCursor];
       if (pool.dirty) { repackPool(pool); repackBudgetRemaining--; }
       repackCursor = (repackCursor + 1) % n;
       scanned++;
+      if (performance.now() - repackStartedAt >= REPACK_TIME_BUDGET_MS) break;
     }
   }
 
@@ -15588,12 +15734,8 @@ THREE.GLTFLoader = GLTFLoader;
   // erkerCap, aerial, roofFurnB and each per-width roofDormers still use one
   // shared singleton material apiece (MAT.stone / MAT.metalDark), so one
   // pool per part is a free win, same idiom as windowBayPool. roofBlock and
-  // chimneyA/chimneyB vary their material over the short, fixed
-  // ordinaryRoofMats list (5 entries — see rollBuilding's roofMatIndex), so
-  // each gets one pool PER MATERIAL VARIANT rather than a single tinted
-  // pool: the list is short enough that 5 draw calls each beats a
-  // setColorAt hack that would flatten ordinaryRoofMats' roughness/
-  // metalness differences (not just hue) into a single shared material.
+  // chimneyA/chimneyB carry the ordinaryRoofMats palette per instance, so each
+  // rigid shape also stays one shared draw instead of one draw per hue.
   // Capacity 6 per chunk (one slot per building — same reasoning as
   // SHOP_DEPTH_CAP), one slot always reserved per building index
   // (side*3+b2) regardless of which variant pool it lands in this roll —
@@ -15617,15 +15759,20 @@ THREE.GLTFLoader = GLTFLoader;
   BUILD_WIDTHS.forEach(function (w) {
     roofDormersPools[w] = makeSharedPool(dormerGeo[w], MAT.stone, BUILDING_PART_CAP, {});
   });
-  var roofBlockPools = ordinaryRoofMats.map(function (m) {
-    return makeSharedPool(roundedBoxGeo(3, 2.2, 3, 0.24, 0.05), m, BUILDING_PART_CAP, {});
-  });
-  var chimneyAPools = ordinaryRoofMats.map(function (m) {
-    return makeSharedPool(roundedBoxGeo(0.92, 2.6, 1.02, 0.14, 0.035), m, BUILDING_PART_CAP, {});
-  });
-  var chimneyBPools = ordinaryRoofMats.map(function (m) {
-    return makeSharedPool(roundedBoxGeo(0.76, 2.0, 0.88, 0.12, 0.03), m, BUILDING_PART_CAP, {});
-  });
+  // Roof colour variants used to require five pools (and therefore five draws)
+  // per rigid shape. Their roughness range is only 0.84..0.90; one representative
+  // shaded material plus per-instance colour preserves the visible palette and
+  // collapses fifteen submissions to three.
+  var roofTintMaterial = ordinaryRoofMats[0].clone();
+  roofTintMaterial.color.setHex(0xffffff);
+  roofTintMaterial.vertexColors = true;
+  roofTintMaterial.needsUpdate = true;
+  var roofBlockPools = [makeSharedPool(
+    roundedBoxGeo(3, 2.2, 3, 0.24, 0.05), roofTintMaterial, BUILDING_PART_CAP, { withColor: true })];
+  var chimneyAPools = [makeSharedPool(
+    roundedBoxGeo(0.92, 2.6, 1.02, 0.14, 0.035), roofTintMaterial, BUILDING_PART_CAP, { withColor: true })];
+  var chimneyBPools = [makeSharedPool(
+    roundedBoxGeo(0.76, 2.0, 0.88, 0.12, 0.03), roofTintMaterial, BUILDING_PART_CAP, { withColor: true })];
   // hangingBracket: fixed geometry + singleton MAT.metalDark, exactly the
   // erkerCap/aerial idiom — but NOT near-gated (see WHOLE_CHUNK_POOLS below):
   // the un-pooled mesh was never in ud.detailNodes, so it was always visible
@@ -15644,12 +15791,14 @@ THREE.GLTFLoader = GLTFLoader;
   var balconyRailPools = balconyRailStackGeo.map(function (geo) {
     return makeSharedPool(geo, MAT.rail, BUILDING_PART_CAP, {});
   });
-  // roofFurnA: material varies over roofAccentMats (6 entries) — one pool
-  // per variant, same idiom as roofBlockPools/chimneyAPools/chimneyBPools
-  // over ordinaryRoofMats. castShadow stays false (the mesh never set it).
-  var roofFurnAPools = roofAccentMats.map(function (m) {
-    return makeSharedPool(roofFurnAccentGeo, m, BUILDING_PART_CAP, {});
-  });
+  // roofFurnA uses the same per-instance-colour consolidation for its six
+  // accent hues. castShadow stays false (the mesh never set it).
+  var roofAccentTintMaterial = roofAccentMats[0].clone();
+  roofAccentTintMaterial.color.setHex(0xffffff);
+  roofAccentTintMaterial.vertexColors = true;
+  roofAccentTintMaterial.needsUpdate = true;
+  var roofFurnAPools = [makeSharedPool(
+    roofFurnAccentGeo, roofAccentTintMaterial, BUILDING_PART_CAP, { withColor: true })];
   // roofShell was NOT pooled — measured and rejected, see the comment on the
   // roofShell var in makeBuilding for the numbers. It varies by BOTH width
   // (mansardGeo[w]) AND the same roofMatIndex roofBlock/chimneyA/chimneyB
@@ -15729,9 +15878,8 @@ THREE.GLTFLoader = GLTFLoader;
     // every other variant's slot so a previous roll's different variant
     // can't linger.
     var rmIdx = d.roofMatIndex || 0;
-    for (var i = 0; i < ud.roofBlockViews.length; i++) {
-      put(ud.roofBlockViews[i], d.roofBlock, writeInstances && d.roofBlock.visible && i === rmIdx, null);
-    }
+    put(ud.roofBlockViews[0], d.roofBlock, writeInstances && d.roofBlock.visible, null);
+    ud.roofBlockViews[0].setColorAt(buildingSlot, ordinaryRoofMats[rmIdx].color);
 
     // chimneyA/chimneyB/aerial/roofFurnB/roofFurnA are all logically
     // "roofBits children" (see makeBuilding — none of them is an actual
@@ -15741,12 +15889,10 @@ THREE.GLTFLoader = GLTFLoader;
     // like windowBayInstMat folds in bld.matrix.
     d.roofBits.updateMatrix();
     var roofBitsOn = writeInstances && d.roofBits.visible;
-    for (var j = 0; j < ud.chimneyAViews.length; j++) {
-      put(ud.chimneyAViews[j], d.chimneyA, roofBitsOn && j === rmIdx, d.roofBits.matrix);
-    }
-    for (var k = 0; k < ud.chimneyBViews.length; k++) {
-      put(ud.chimneyBViews[k], d.chimneyB, roofBitsOn && k === rmIdx, d.roofBits.matrix);
-    }
+    put(ud.chimneyAViews[0], d.chimneyA, roofBitsOn, d.roofBits.matrix);
+    ud.chimneyAViews[0].setColorAt(buildingSlot, ordinaryRoofMats[rmIdx].color);
+    put(ud.chimneyBViews[0], d.chimneyB, roofBitsOn, d.roofBits.matrix);
+    ud.chimneyBViews[0].setColorAt(buildingSlot, ordinaryRoofMats[rmIdx].color);
     put(ud.aerialView, d.aerial, roofBitsOn, d.roofBits.matrix);
     put(ud.roofFurnBView, d.roofFurnB, roofBitsOn && d.roofFurnB.visible, d.roofBits.matrix);
     // roofFurnA: same roofBits-nested parent as chimneyA/B/aerial/roofFurnB
@@ -15754,9 +15900,8 @@ THREE.GLTFLoader = GLTFLoader;
     // roofFurnAMatIndex, rollBuilding) — same per-variant-pool split
     // roofBlock/chimneyA/chimneyB use for ordinaryRoofMats.
     var famIdx = d.roofFurnAMatIndex || 0;
-    for (var fi = 0; fi < ud.roofFurnAViews.length; fi++) {
-      put(ud.roofFurnAViews[fi], d.roofFurnA, roofBitsOn && d.roofFurnA.visible && fi === famIdx, d.roofBits.matrix);
-    }
+    put(ud.roofFurnAViews[0], d.roofFurnA, roofBitsOn && d.roofFurnA.visible, d.roofBits.matrix);
+    ud.roofFurnAViews[0].setColorAt(buildingSlot, roofAccentMats[famIdx].color);
 
     // roofDormers: one pool per width, zero every OTHER width's slot.
     BUILD_WIDTHS.forEach(function (w) {
@@ -17221,7 +17366,7 @@ THREE.GLTFLoader = GLTFLoader;
     // shadow into its useful near field. Toggle only on band transitions. Large
     // authored contact decals remain visible at every existing distance, and
     // beauty/outline visibility is completely independent of this flag.
-    var shadowNear = visible && dz > -24 && dz < 70;
+    var shadowNear = visible && dz > -20 && dz < 58;
     if (ud.shadowNear !== shadowNear) {
       ud.shadowNear = shadowNear;
       for (var sc = 0; sc < ud.shadowCasters.length; sc++) {
@@ -17295,8 +17440,18 @@ THREE.GLTFLoader = GLTFLoader;
       }
     }
     ud.detailNear = anyNear;
-    // Deep in the haze a building core occupies only a few pixels, but its four
-    // geometry groups still submit four beauty/shadow draws. A single facade
+    // Flat micro dressing was consolidated into three local-depth bands after
+    // authoring. Match each band's representative depth to the same soft LOD
+    // envelope used by its original pieces.
+    if (ud.flatDetailBatches) {
+      for (var fb = 0; fb < ud.flatDetailBatches.length; fb++) {
+        var flatBand = ud.flatDetailBatches[fb];
+        var flatDz = dz + flatBand.localZ;
+        flatBand.mesh.visible = visible && flatDz > -16 && flatDz < nearDetailLimit;
+      }
+    }
+    // Deep in the haze a building core occupies only a few pixels, but its three
+    // geometry groups still submit three beauty/shadow draws. A single facade
     // material renders the same full geometry in one call there; every authored
     // facade/mass/stone/shop material is restored before the building reaches
     // clear air. This is a rendering LOD only, never a geometry cull.
@@ -17314,6 +17469,13 @@ THREE.GLTFLoader = GLTFLoader;
       if (lodData.coreFar !== farSurface) {
         lodData.coreFar = farSurface;
         lodData.core.material = farSurface ? lodData.coreFarMaterial : lodData.coreFullMaterials;
+        // The one-material core is the far impostor: it retains actual 3D depth
+        // and the pre-baked crown rather than turning into a flat billboard.
+        // Remove only the small projecting meshes whose pixels are already
+        // blurred into that texture at this distance.
+        for (var pd = 0; pd < lodData.proxyDetails.length; pd++) {
+          lodData.proxyDetails[pd].visible = !farSurface && !!lodData.proxyDetailBase[pd];
+        }
       }
     }
     // Parked scenery is authored and pooled by the chunk exactly as before,
@@ -17441,6 +17603,39 @@ THREE.GLTFLoader = GLTFLoader;
     }
   }
 
+  // Move a prepared chunk around the ring without regenerating its appearance.
+  // Real scene children inherit the chunk root transform. Scene-wide pools do
+  // not, because their matrices already contain the old world Z, so translate
+  // only this slot's CPU shadow ranges by the same delta. The slot is well past
+  // the rear cull plane when this runs and lands hundreds of metres beyond the
+  // fog wall; its eventual packed-buffer upload is therefore naturally spread
+  // across ordinary frames before any instance can contribute a visible pixel.
+  var runtimeChunkRecycles = 0;
+  function recyclePreparedChunk(chunk, nextZ) {
+    var dz = nextZ - chunk.position.z;
+    var slot = chunk.userData.chunkSlot;
+    chunk.position.z = nextZ;
+    chunk.updateMatrix();
+    chunk.updateMatrixWorld(true);
+    for (var p = 0; p < ALL_POOLS.length; p++) {
+      var pool = ALL_POOLS[p];
+      var start = slot * pool.cap;
+      for (var i = 0; i < pool.cap; i++) {
+        var o = (start + i) * 16;
+        // Collapsed spare instances sit at y=-9000 with a zero basis. Their Z
+        // is irrelevant and leaving it untouched avoids dirty numeric churn.
+        if (pool.shadowMatrix[o] === 0 && pool.shadowMatrix[o + 1] === 0 &&
+            pool.shadowMatrix[o + 2] === 0) continue;
+        pool.shadowMatrix[o + 14] += dz;
+      }
+      if (pool.slotVisible[slot]) pool.dirty = true;
+    }
+    parkedInstancesDirty = true;
+    chunk.userData.justRolled = true;
+    runtimeChunkRecycles++;
+    canvas.dataset.chunkRecycles = String(runtimeChunkRecycles);
+  }
+
   // Recycle any chunk that has fallen a full chunk behind the camera.
   function updateChunks(playerZ) {
     // One plane for every near-side gate below, resolved once per step.
@@ -17448,7 +17643,7 @@ THREE.GLTFLoader = GLTFLoader;
     for (var i = 0; i < chunks.length; i++) {
       var c = chunks[i];
       if (c.position.z < playerZ - CHUNK_LEN * 1.6) {
-        rollChunk(c, c.position.z + WORLD_LEN);
+        recyclePreparedChunk(c, c.position.z + WORLD_LEN);
       }
       applyChunkLOD(c, playerZ);
     }
@@ -23503,9 +23698,11 @@ THREE.GLTFLoader = GLTFLoader;
     // whole function exists to prevent.
     try {
       var flatUnify = unifyFlatPropMaterials();
+      var flatBatches = batchChunkFlatDetails();
       if (canvas && canvas.dataset) {
         canvas.dataset.flatPropsMerged = flatUnify.converted + '/' +
           flatUnify.baked + '/' + flatUnify.cloned;
+        canvas.dataset.flatDetailBatches = flatBatches.sources + '/' + flatBatches.batches;
       }
     } catch (e) {}
 
@@ -23723,6 +23920,12 @@ THREE.GLTFLoader = GLTFLoader;
       // first-use depth links 30-45 s into a run. Building them here costs a
       // few hundred milliseconds against a warm-up measured in seconds.
       while (deferredChunkSlot < CHUNK_COUNT) buildDeferredChunk(null);
+      // Establish the steady-state presentation before compiling. A 1:1 CSS
+      // backing buffer is already native sharpness; the former 1.25x device-
+      // pixel supersampling plus 2x MSAA was an expensive redundant layer. This
+      // keeps every artistic pass enabled and, crucially, never changes in play.
+      applyRenderScale(STABLE_PRESENTATION_SCALE);
+      setSceneRTLeanMode(true);
       warmRemainingPrograms(function () {
         requestAnimationFrame(function () {
           preloadReady = true;
@@ -25968,6 +26171,12 @@ THREE.GLTFLoader = GLTFLoader;
   var TIER_DOF_OFF, TIER_MSAA_OFF, TIER_RES_START, RES_TIER_COUNT,
       TIER_SHADOW_SLOW, TIER_AO_OFF, TIER_BLOOM_OFF, TIER_SHADOW_OFF,
       TIER_FOCAL_OUTLINE, QUALITY_TIER_MAX;
+  // Runtime resolution/effect changes were more visible than the frame-time
+  // improvement they bought on this submission-bound scene. Keep the complete
+  // ladder available for profiling, but ship a stable full-quality image: the
+  // performance work below removes submissions and generation spikes instead
+  // of making the picture breathe between sharp and soft during one run.
+  var ADAPTIVE_VISUAL_QUALITY = false;
   (function buildQualityLadder() {
     var t = 0;
     // 0 means "this rung does not exist": every test against it is
@@ -26165,7 +26374,8 @@ THREE.GLTFLoader = GLTFLoader;
     }
 
     var severePressure = perfEmaMs > 30;
-    if (perfPressure > (severePressure ? 0.55 : 1.1) &&
+    if (ADAPTIVE_VISUAL_QUALITY &&
+        perfPressure > (severePressure ? 0.55 : 1.1) &&
         qualityTier < Math.min(QUALITY_TIER_MAX, ladderCeiling)) {
       // Walk least-visible effects first (see the ladder above). Ordinary
       // pressure moves one small rung; severe pressure moves a two-rung bundle.
@@ -26346,7 +26556,12 @@ THREE.GLTFLoader = GLTFLoader;
     // That is what the half-rate path is for, so only that stays on it.
     updateTransitSpectacles(raw);
     deferredTrafficDt += raw;
-    if (!adaptiveSlowMode || (frameNumber & 1) === 0) {
+    // Kerb traffic travels mainly along the view axis; measured screen motion
+    // stays sub-pixel between alternate frames. Upload its ten instanced
+    // material buckets at 30 Hz in every quality mode, while the cross-screen
+    // tram above remains a true per-frame update. This removes hundreds of
+    // matrix writes/uploads per second without changing the rendered objects.
+    if ((frameNumber & 1) === 0) {
       updateMovingTraffic(deferredTrafficDt, player.z);
       deferredTrafficDt = 0;
     }
