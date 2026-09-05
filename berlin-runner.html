@@ -630,6 +630,64 @@
     #voicebtn { right:max(10px,calc(var(--ios-safe-right, 0px) + 8px));
                 bottom:max(60px,calc(var(--ios-safe-bottom, 0px) + 56px)); }
   }
+
+  /* 2026 art direction: warm sunlight, soft materials, compact transit UI. */
+  #c { filter:none; }
+  #grain { opacity:.009; }
+  #colorgrade, #halation { opacity:.035; }
+  #start { justify-content:flex-start; padding:24px 5vw;
+    background:linear-gradient(90deg,rgba(12,32,53,.42),rgba(12,32,53,.08) 47%,transparent 72%); }
+  #startcard { width:400px; max-width:100%; padding:26px 28px 23px;
+    border:1px solid rgba(255,255,255,.5); border-radius:28px; text-align:left;
+    background:linear-gradient(155deg,rgba(18,57,78,.96),rgba(14,34,56,.96));
+    box-shadow:0 22px 65px rgba(15,35,51,.27),inset 0 1px 0 rgba(255,255,255,.22); }
+  .edition { display:flex; align-items:center; justify-content:space-between; gap:8px;
+    font-size:8px; letter-spacing:.14em; font-weight:800; color:#c3e5e8; }
+  .edition span { font-size:7px; padding:5px 7px; border:1px solid #70958c; border-radius:5px; color:#ffd571; }
+  #startcard h1 { margin:17px 0 9px; font-size:63px; line-height:.85; letter-spacing:-.055em;
+    color:#fff9e6; background:none; filter:none; transform:skewY(-3deg);
+    text-shadow:0 3px 0 #193344,0 6px 0 rgba(5,24,42,.5); }
+  #startcard h1 span { color:#ffd05b; font-size:65px; }
+  #startcard .sub { font-size:10px; letter-spacing:.04em; color:#c2dbe4; text-transform:none; margin-top:17px; }
+  #startcard .rule { width:100%; height:1px; margin:15px 0;
+    background:linear-gradient(90deg,#77a8b1,transparent); }
+  #startcard .keys { width:100%; grid-template-columns:auto 1fr; gap:6px 12px; font-size:10px; margin-bottom:16px; }
+  #startcard .keys kbd { font-size:9px; padding:1px 4px; background:#304d63; }
+  #startcard .keys span { align-self:center; }
+  #startcard #go { width:100%; cursor:pointer; padding:14px 8px; font-size:12px;
+    letter-spacing:.055em; border-radius:14px; animation:none;
+    box-shadow:0 5px 0 #ad7521,0 10px 22px rgba(0,0,0,.18); transition:transform .15s,filter .15s; }
+  #startcard #go:hover { transform:translateY(-2px); filter:brightness(1.06); }
+  #startcard #go:focus-visible { outline:3px solid #fff; outline-offset:5px; }
+  #gohint { font-size:7px; letter-spacing:.04em; line-height:1.4; margin-top:15px; }
+  #speedpicker { margin-bottom:12px; } #deckpicker { margin-bottom:12px; }
+  body.running #quiz { border-radius:18px; border:2px solid #e3f1eb;
+    background:linear-gradient(110deg,#184460,#23627a); padding:7px 16px 8px;
+    box-shadow:0 4px 0 rgba(12,40,57,.35),0 9px 23px rgba(12,40,57,.18); }
+  body.running #mistakehistory, body.running #wordstats { background:rgba(21,54,72,.90); border-color:rgba(225,246,245,.65); }
+  @media (max-width:820px) {
+    #start { justify-content:center; padding:12px; }
+    #startcard { width:360px; padding:19px 22px 20px; }
+    #startcard h1, #startcard h1 span { font-size:54px; }
+  }
+  @media (max-height:650px) {
+    #start { padding:10px 3vw; }
+    #startcard { padding:16px 22px; }
+    #startcard h1, #startcard h1 span { font-size:45px; }
+    #startcard h1 br { display:none; }
+    #startcard h1 span { margin-left:8px; }
+    #startcard .sub { margin-top:12px; }
+    #startcard .rule { margin:10px 0; }
+    #startcard .keys { margin-bottom:10px; }
+  }
+  @media (prefers-reduced-motion:reduce) { #go { animation:none; } }
+  #photobtn { position:absolute; right:16px; bottom:114px; width:40px; height:40px;
+    border:2px solid rgba(255,255,255,.5); border-radius:50%; color:#fff;
+    background:rgba(21,54,72,.88); pointer-events:auto; cursor:pointer; font-size:18px; }
+  body:not(.running) #photobtn { display:none; }
+  body.photo-mode #hud > :not(#photobtn), body.photo-mode #hud > :not(#photobtn) * { visibility:hidden !important; }
+  body.photo-mode #photobtn { width:auto; border-radius:14px; padding:0 16px; font-size:12px; }
+
 </style>
 </head>
 <body>
@@ -689,6 +747,7 @@
   <button id="musicbtn" type="button" aria-pressed="true" title="Musik aus (M)">
     <span aria-hidden="true">♪</span><span class="sr">Musik</span>
   </button>
+  <button id="photobtn" type="button" aria-pressed="false" aria-label="Fotomodus (P)" title="Fotomodus (P)">▣</button>
 
   <div id="touchhint">
     <span>◀ Wischen ▶ · Spur</span><span>▲ Sprung</span><span>▼ Rutschen</span>
@@ -702,8 +761,9 @@
 
   <div id="start" class="loading" aria-busy="true">
     <div id="startcard" class="panel">
-      <h1>ARTIKEL EXPRESS</h1>
-      <div class="sub">Der Berlin Runner</div>
+      <div class="edition">ARTIKEL EXPRESS <span>BERLIN EDITION</span></div>
+      <h1>BERLIN<br><span>RUNNER</span></h1>
+      <div class="sub">Dein Kiez. Dein Tempo. Dein Deutsch.</div>
       <div class="rule"></div>
       <div class="keys">
         <span><kbd>A</kbd> <kbd>D</kbd> / <kbd>&larr;</kbd> <kbd>&rarr;</kbd></span><span>Spur wechseln</span>
@@ -733,7 +793,7 @@
         </select>
         <div id="deckstatus" role="status">Offline-Deck · sofort spielbereit</div>
       </div>
-      <div id="go">Berlin wird geladen</div>
+      <button id="go" type="button">Berlin wird geladen</button>
       <div id="gohint">Alle Wörter meistern · Nach einem Fehler zweimal richtig</div>
     </div>
   </div>
@@ -5158,13 +5218,11 @@ THREE.GLTFLoader = GLTFLoader;
   // anyway: lose an effect before you lose sharpness.
   var MIN_RENDER_SCALE = Math.min(1,
     1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
-  // Hold one physical backing pixel per CSS pixel for the whole session. The
-  // broad cel bands, 3 px ink and native-resolution DOM HUD make extra device-
-  // pixel supersampling visually redundant in motion, while a stable 1:1 image
-  // avoids the conspicuous mid-run sharp/soft transition entirely. All authored
-  // effects, lighting, textures and the full-resolution presentation remain on.
-  var STABLE_PRESENTATION_SCALE = MIN_RENDER_SCALE;
+  // Keep the pixel-budgeted native DPR throughout the run. Fine foliage and
+  // softened silhouettes need that sample density as much as the title screen.
+  var STABLE_PRESENTATION_SCALE = 1;
   function applyRenderScale(scale) {
+    photoRenderDirty = true;
     var scaleFloor = MIN_RENDER_SCALE * (emergencyResolutionActive ? EMERGENCY_RENDER_SCALE : 1);
     renderScale = clamp(scale, scaleFloor, 1);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR) * renderScale);
@@ -5308,6 +5366,7 @@ THREE.GLTFLoader = GLTFLoader;
   // behaviour holds even if the build changes. Everything but the composite
   // runs at 1/16 of the pixel count, which is what keeps this affordable on an
   // integrated GPU.
+  // Soft arcade grade: subtle silhouettes, contact depth, crisp gameplay distance.
   var POST = {
     on: false,
     bloomOn: true,
@@ -5323,143 +5382,25 @@ THREE.GLTFLoader = GLTFLoader;
     shadowTint: new THREE.Color(0xffffff),
     highTint: new THREE.Color(0xffffff),
     vignette: 0.20,
-    // Was 0.012 — a harsh critic flagged heavy red/cyan fringing on every
-    // hard edge (mullions, kiosk sign, kerb lines), fighting signage
-    // legibility for a flat-shaded style that doesn't need it. This is only
-    // the pre-mood-lerp default anyway (see grdAberration in the route
-    // moods below, which drive the runtime value every frame); halved to
-    // match the same pull-back there.
     aberration: 0.006,
-    // Screen-space ink outline pass (depth+normal edge detect, applied in
-    // compositeMat before the tonemap). See buildPostChain/renderPresent.
-    // Weights are deliberately heavy. The first tuning pass landed at
-    // strength 1.15 / width 1.8 / mix 0.26 and a blind critic looking at the
-    // resulting frame reported the game had *no outline pass at all* — the
-    // line was technically present and perceptually absent. The reference art
-    // draws confident 3-5px ink at this resolution, so the line has to be a
-    // primary graphic element, not a subtle edge enhancement. Err bold: a line
-    // slightly too heavy still reads as deliberate illustration, whereas a
-    // line slightly too light reads as nothing at all.
     outlineOn: true,
-    outlineStrength: 1.95,
-    outlineWidth: 2.45,
+    outlineStrength: 0.52,
+    outlineWidth: 0.95,
     outlineDepthFalloff: 265,
-    // ART PASS: outlineEdge used to fade the line all the way to absolute
-    // zero past outlineDepthFalloff (see outlineEdge in buildPostChain) —
-    // deliberately, per that pass's own comment, to keep the distant skyline
-    // ring (r=560-1240, far past this falloff) from turning into a busy
-    // black lattice of tiny outlined boxes. That worked, but overshot: the
-    // reference art still draws a light, present line on distant blocks and
-    // steps them in value so depth reads as drawn layers, not photographic
-    // fog. A hard zero also silently erased the outline on anything else
-    // past ~265m — most of all the mid-band traffic that spawns and recedes
-    // down the same visible street, which is exactly why distant cars were
-    // reading as unlined dark blobs. outlineFarFloor keeps a low, constant
-    // floor under the fade instead of letting it bottom out at 0, so far
-    // geometry keeps a thin, subdued contour instead of none. Kept well
-    // below the near-field 1.0 multiplier (0.16 of full strength, i.e. a
-    // ~0.35x edge multiplier once uOutlineStrength=2.35 is applied) so it
-    // reads as a light, receding line rather than reintroducing the
-    // black-lattice noise on the skyline the original fade was tuned to
-    // avoid.
-    outlineFarFloor: 0.12,
-    outlineColorMix: 0.15,
-    // Weight hierarchy: depthEdge (true silhouettes — an object against what's
-    // behind it) reads at full strength, the bold confident contour the ref
-    // art draws around every shape. normalEdge (interior creases — panel
-    // seams, window reveals, roof folds) is pulled down by this ratio so it
-    // stays a finer, lighter line that reads as detail instead of competing
-    // with the outline. outlineCreaseWidth shrinks the crease sampling radius
-    // too (vs. outlineWidth for the silhouette), so interior lines are both
-    // thinner and lighter, not just fainter at the same thickness.
-    // 0.42 -> 0.50: the runner's own limb-against-torso boundaries (an arm
-    // swung in front of the chest mid-stride) are a real but SMALL depth step
-    // — maybe 10-20cm at a few metres' camera distance — so they land in this
-    // crease bucket rather than the full-weight silhouette one even after the
-    // isolatedEdge fix above (that fix targets a thin object against a much
-    // FARTHER background; a swinging arm's background is the character's own
-    // nearby torso, not distant road/sky). The critic's "arm/hand shapes
-    // ambiguous mid-stride" complaint is exactly this case, so the crease
-    // floor across the whole scene comes up slightly — still clearly a
-    // lighter line than a true silhouette (nowhere near 1.0), just no longer
-    // "thin-to-absent" on the one place this line is doing the most work.
-    outlineCreaseWeight: 0.32,
+    outlineFarFloor: 0.0,
+    outlineColorMix: 0.48,
+    outlineCreaseWeight: 0.12,
     outlineCreaseWidth: 0.48,
-    // Feature-scale gate (see outlineEdge in buildPostChain): the wide probe
-    // radius is this many multiples of uOutlineWidth. 3x puts the wide
-    // sample several texels past the narrow one at the outline prepass's
-    // half resolution — wide enough that grout lines, bollard rims and
-    // railing balusters (a texel or two of true width) fall inside it and
-    // read as "no edge" on the wide probe, narrow enough that it still
-    // agrees with the narrow probe on genuine silhouettes (building/sky,
-    // arch, character) instead of also softening those.
     outlineFeatureRadius: 3.0,
-    // Contact ambient occlusion, computed in compositeMat from the same
-    // outline prepass normal+depth buffer (no third scene render). A small
-    // normal-oriented hemisphere kernel darkens only near true contact
-    // points (feet on pavement, kerb/wall junctions, prop bases) — kept
-    // deliberately weak and short-radius so it reads as the soft grounding
-    // shadow the reference art has rather than general dirt/grime across
-    // whole cel bands. Gated off past aoMaxDist so it costs nothing on sky/
-    // far facades where it would not be visible anyway.
-    // Nudged up a notch (0.6->0.72, radius 0.5->0.58): the wall/pavement
-    // junction the street reads flattest at (see the sky/lighting art-pass
-    // brief) is exactly this contact term's job, and the old weak setting
-    // left it nearly invisible at the chase camera's distance from the kerb
-    // line. Still short-radius and gated to aoMaxDist, so this only ever
-    // darkens genuine contact seams, never a general facade/road wash.
     aoOn: true,
-    aoStrength: 0.72,
+    aoStrength: 0.58,
     aoRadius: 0.58,
     aoBias: 0.035,
     aoMaxDist: 85,
-    // Distance-based defocus, also reusing the prepass depth. Sharp through
-    // the whole gameplay reaction band (obstacles/gates need to read clearly
-    // out to ~40-50m at top speed per the fog-tuning notes below), blur
-    // ramps in only past dofNear — comfortably beyond that band — and reaches
-    // full strength by dofFar, which sits inside the fog's own 95-520 near/far
-    // range so the blur and the fog reinforce the same depth cue instead of
-    // fighting it.
-    // OFF BY DEFAULT, and the reason is arithmetic rather than taste. Two
-    // numbers below make this pass unable to draw anything: dofNear is 220 m,
-    // while the street's haze reaches FULL opacity at FOG_FAR_MAX = 178 m (see
-    // the depth-budget block near scene.fog). Nothing survives to 220 m to be
-    // blurred. The only surface left past that plane is the sky dome -- which
-    // is excluded from the outline prepass (it is transparent, so
-    // buildOutlineSwapList marks it beautyOnly), so it reads far-plane depth
-    // and blurs at full strength -- with a radius of 0.65 TEXELS, i.e. under
-    // one pixel.
-    //
-    // Measured, one frozen frame rendered twice with only uDofEnable changed,
-    // 1280x800: mean absolute channel difference 0.06-0.16 out of 255, with
-    // 0.6-2.2% of channels differing by more than 1/255 (isolated sub-pixel
-    // softening where an ink line meets sky). Visually nothing.
-    //
-    // The cost is not nothing: pinning the quality ladder and measuring the
-    // frame EMA on an AMD iGPU at 1280x800 gave tier 0 (DoF + 2x MSAA)
-    // 18.83 ms, tier 1 (DoF off, MSAA kept) 17.06 ms, tier 2 (both off)
-    // 16.67 ms. DoF alone was 1.8 ms -- 11% of a 60 Hz frame, and four times
-    // what the MSAA it gets shed BEFORE is worth.
-    //
-    // Where that 1.8 ms actually lands is the quality ladder. 18.83 ms is
-    // above monitorFrameBudget's 17.8 ms promotion threshold, so headroom can
-    // never accumulate and the run only ever ratchets down -- shedding MSAA,
-    // then SSAO, then bloom, then shadows. 17.06 ms is below it. That does not
-    // guarantee a device holds tier 0 (this scene is genuinely near budget on
-    // an iGPU, and a spectacle-heavy stretch still pushes past it), but every
-    // rung is reached later and every tier renders faster. Spending an eighth
-    // of the frame on a sub-pixel blur of the sky, and paying for it in
-    // shadows and bloom, is the wrong trade at any tier.
-    //
-    // The pass itself is left intact: widening dofNear inside the fog range
-    // and raising dofRadiusTexels would make it a real effect if the budget
-    // ever allows one.
     dofOn: false,
     dofNear: 220,
     dofFar: 720,
     dofRadiusTexels: 0.65,
-    // Set by updateEnvironmentMood whenever any composite uniform changes, so
-    // renderPresent can skip the redundant per-frame uploads in between.
     gradeDirty: true
   };
 
@@ -6567,9 +6508,9 @@ THREE.GLTFLoader = GLTFLoader;
     // middle of the value stack so facades, pickups and signage own the
     // highlights. The supplied targets consistently use bright lane paint on
     // a calm mid-value carriageway, not dark bars on a near-cream floor.
-    asphalt:     '#817a72',
-    asphaltDeep: '#5d5751',
-    asphaltLift: '#9a9288',
+    asphalt:     '#819aa6',
+    asphaltDeep: '#687f8e',
+    asphaltLift: '#a1b4bd',
     // Dark lane rail, not white-on-white paint: with the road promoted to
     // brightest surface in frame, a near-white dash on a near-white road (the
     // old #fbfeff on the old #d7d7d7) lost essentially all its contrast —
@@ -6598,9 +6539,9 @@ THREE.GLTFLoader = GLTFLoader;
     // there is headroom to pull the pavement back toward believable
     // mid-grey concrete while the road, ~20+ points brighter at every step,
     // still clears it by a wide, unambiguous margin.
-    walkStone:   '#9f9789',   // was #82745e (earth-brown at this L)
-    walkStoneB:  '#8f8778',   // was #6e6254
-    walkStoneC:  '#aea699',   // was #9b8764
+    walkStone:   '#c4bba4',   // was #82745e (earth-brown at this L)
+    walkStoneB:  '#b4ac99',   // was #6e6254
+    walkStoneC:  '#d5cbb7',   // was #9b8764
     walkJoint:   '#6d6152',
     kerbStone:   '#f2ecd9',
     kerbTop:     '#fffdf4',   // bright lip catching the key light
@@ -6622,16 +6563,16 @@ THREE.GLTFLoader = GLTFLoader;
     // desaturate toward neutral stone and lift lightness, while staying
     // deliberately a notch DARKER than walkStone (a recessed gutter/border
     // detail, not the main slab field) and still comfortably under the road.
-    cobbleA:     '#7a6e5c',   // was #5e4f3b (earth-brown at this L)
-    cobbleB:     '#695e4f',   // was #4c4234
-    cobbleC:     '#91826e',   // was #746243
+    cobbleA:     '#9fa79f',   // was #5e4f3b (earth-brown at this L)
+    cobbleB:     '#89978f',   // was #4c4234
+    cobbleC:     '#b4b9a9',   // was #746243
     // GROUND ART PASS: was '#6b5c49' — only ~1L below cobbleB, so the joint
     // between setts barely separated from the darkest stone tone and the
     // whole strip mip-blurred into one flat gold band at any distance (see
     // the "no surface language" complaint on a live capture). A joint has to
     // read as a groove, not another stone colour — darkened well below the
     // whole tone family so every sett gets a real dark outline.
-    cobbleJoint: '#554c40',
+    cobbleJoint: '#74847e',
     railSteel:   '#cfd9e3',
     railGlint:   '#f7fbff',   // near-white specular streak painted into the rail head
     railBed:     '#b6a48c',
@@ -6665,9 +6606,9 @@ THREE.GLTFLoader = GLTFLoader;
     glassLit:    '#ffd98f',
     tyre:        '#25282e',
     trunkWarm:   '#8a532c',
-    leafMid:     '#48bf5a',
-    leafLime:    '#8fd63e',
-    leafDeep:    '#2b9a55',
+    leafMid:     '#43ad72',
+    leafLime:    '#96cf60',
+    leafDeep:    '#287a60',
     concrete:    '#d7dbdd',
     stoneWarm:   '#f6e8c8',
     litfassRed:  '#e03a2e',
@@ -6688,22 +6629,22 @@ THREE.GLTFLoader = GLTFLoader;
   CITY.facades = [
     { wall: '#f5cf72', shade: '#e0b354', trim: '#fffaea', band: '#e79b34', accent: '#e2503a' }, // ochre
     { wall: '#4fc9a0', shade: '#3aa384', trim: '#f2fffa', band: '#20887a', accent: '#f26a43' }, // mint
-    { wall: '#ff6a2e', shade: '#e0501a', trim: '#fff1e4', band: '#a83614', accent: '#ffc93c' }, // terracotta — pushed to a hot near-primary orange; the previous '#f37f4e' read as a burnt/muted terracotta next to the reference's saturated orange
+    { wall: '#f59368', shade: '#d67450', trim: '#fff1e4', band: '#a83614', accent: '#ffc93c' }, // terracotta — pushed to a hot near-primary orange; the previous '#f37f4e' read as a burnt/muted terracotta next to the reference's saturated orange
     { wall: '#5aabe0', shade: '#3f8cc4', trim: '#f0fbff', band: '#1f6ba8', accent: '#ffb020' }, // slate blue
     { wall: '#ef8fae', shade: '#d5729a', trim: '#fff2f6', band: '#b03a67', accent: '#38b48e' }, // rose
     { wall: '#ffca4d', shade: '#e0992a', trim: '#fff8de', band: '#c26a12', accent: '#2a7fc0' }, // marigold
-    { wall: '#a0cc4a', shade: '#88ad3a', trim: '#f7ffe6', band: '#4f8a2c', accent: '#e2503a' }, // pistachio
+    { wall: '#b6cc82', shade: '#91ad6c', trim: '#f7ffe6', band: '#4f8a2c', accent: '#e2503a' }, // pistachio
     { wall: '#ab8de3', shade: '#8f6cc4', trim: '#f9f5ff', band: '#5342a3', accent: '#ffab2e' }, // lilac
     { wall: '#f2e6c8', shade: '#ddd0a4', trim: '#ffffff', band: '#8a6a3a', accent: '#2a7fc0' }, // cream stone
-    { wall: '#d43a1f', shade: '#a92c12', trim: '#fff2e0', band: '#4a1d0d', accent: '#ffcc00' }, // brick — more saturated red so it separates from terracotta by more than hue angle alone
+    { wall: '#d97560', shade: '#b45e52', trim: '#fff2e0', band: '#4a1d0d', accent: '#ffcc00' }, // brick — more saturated red so it separates from terracotta by more than hue angle alone
     // The original ten skew heavily warm: three of them (ochre/marigold/cream
     // stone) land within a couple of degrees of the same ~43° hue, and
     // terracotta/brick sit on top of each other around ~16° — exactly the
     // "both cream, both orange" collision the hue-distance guard below exists
     // to catch. These two widen the cool end of the wheel instead of adding
     // another warm entry.
-    { wall: '#2fac57', shade: '#237f3d', trim: '#eefff0', band: '#146228', accent: '#ffcc00' }, // sage green — was reading grey-green; pushed saturation so it registers as GREEN at speed
-    { wall: '#3654e0', shade: '#2740b8', trim: '#eef1ff', band: '#1c2f8a', accent: '#ffb020' }  // indigo — was reading grey-blue; pushed saturation so it registers as BLUE at speed
+    { wall: '#78b79a', shade: '#55967e', trim: '#eefff0', band: '#146228', accent: '#ffcc00' }, // sage green — was reading grey-green; pushed saturation so it registers as GREEN at speed
+    { wall: '#779cc8', shade: '#597eaa', trim: '#eef1ff', band: '#1c2f8a', accent: '#ffb020' }  // indigo — was reading grey-blue; pushed saturation so it registers as BLUE at speed
   ];
   // Plattenbau: fewer, bigger elements — a pale panel field with one loud
   // spandrel colour per block, which is exactly how the painted GDR slabs read.
@@ -7319,9 +7260,13 @@ THREE.GLTFLoader = GLTFLoader;
       g.fillStyle = 'rgba(150,74,22,0.35)';
       g.fillRect(x, y, w * 0.28, h);
     } else {
-      fillRR(g, x, y, w, h, r, o.glass || pick(GLASS_VARIANTS));
-      g.fillStyle = 'rgba(6,24,52,0.38)';
-      g.fillRect(x, y + h * 0.52, w, h * 0.48);
+      var pane = g.createLinearGradient(x, y, x + w * 0.25, y + h);
+      pane.addColorStop(0, '#92c9df');
+      pane.addColorStop(0.42, o.glass || pick(GLASS_VARIANTS));
+      pane.addColorStop(1, '#345b78');
+      fillRR(g, x, y, w, h, r, pane);
+      g.fillStyle = 'rgba(21,46,66,0.18)';
+      g.fillRect(x, y + h * 0.72, w, h * 0.28);
     }
 
     // Reflection tint shift: a faint wash of a randomly rolled hue across
@@ -9206,186 +9151,56 @@ THREE.GLTFLoader = GLTFLoader;
     for (var q = used; q < seqLightPool.length; q++) seqLightPool[q].intensity = 0;
   }
 
-  // Three authored long-run treatments share the same geometry and textures.
-  // The brief for all three is the same: high key, saturated, no murk. The run
-  // opens on index 0 (flat bright daylight) and the other two are a *chromatic*
-  // sunset and a *chromatic* dusk, not a dimming towards grey — the moment a
-  // treatment desaturates, the game stops looking like a cartoon and starts
-  // looking like an underexposed photograph.
-  //
-  // Each entry now also carries its own composite grade (grd*), which the post
-  // chain reads through POST. Fog is always sampled from the matching painted
-  // sky's horizon band so haze and dome agree.
-  //
-  // NOTE: lift/gain/gamma/tint colours are constructed from FLOAT triples, not
-  // hex. Hex goes through the sRGB->linear conversion, which is right for a
-  // light colour and wrong for a grading coefficient.
+  // Daylight, sunset and blue hour share one material palette.
   var MOOD_TREATMENTS = [
     {
-      // 0 — Berlin midday. Where every run starts.
-      // Fog finishes before the 190 m chunk-emerge surface, but its ramp is
-      // intentionally broad. The former 58..108 m range concealed the switch
-      // yet made the whole skyline resolve inside only 50 m, so tall facades
-      // arrived as large blocks. 70..168 m lets them begin as tiny, low-contrast
-      // horizon shapes and acquire colour over several seconds of approach.
       background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 70, fogFar: 168,
       skyTint: new THREE.Color(1.03, 1.03, 1.05), exposure: 1.06,
-      // Colour-temperature pass: measured via console (sample the actual light
-      // objects, not the eye) that the sun-facing facade row and the fill-lit
-      // shadow row were landing at raw R/B ratios of ~1.4-1.6 (warm) vs ~0.40
-      // (cool) once hemi's ambient wash was mixed in — a real split, but a warm
-      // cream wall albedo partially cancels a light-driven cool cast (the
-      // channel-wise product of a warm albedo and a cool light lands closer to
-      // neutral than the light colour alone suggests), which is why the shadow
-      // row specifically wasn't reading as clearly blue. Deepened fill's
-      // saturation (less pale/cyan-leaning, more a clean saturated azure) and
-      // sun's (more golden, less pale) so the post-albedo residual survives;
-      // hemi trimmed 10% (1.05->0.95) so its neutral-blue ambient dilutes the
-      // sun's warmth on the lit row less, without materially touching the lit
-      // row's brightness (sun still dominates there) or the shadow row's
-      // legibility (fill + the reduced-but-still-present hemi keep it well off
-      // black — verified right_lum stayed ~0.52, same ballpark as before).
-      hemiSky: new THREE.Color(0xe5f2ff), hemiGround: new THREE.Color(0x658eb9), hemi: 1.02,
-      sun: new THREE.Color(0xffcf82), sunI: 3.05,
-      fill: new THREE.Color(0x6ea5ed), fillI: 0.58,
+      hemiSky: new THREE.Color(0xe5f2ff), hemiGround: new THREE.Color(0xa1b6cf), hemi: 1.55,
+      sun: new THREE.Color(0xffe2b4), sunI: 2.65,
+      fill: new THREE.Color(0xa4cbf4), fillI: 0.85,
       rim: new THREE.Color(0xffd9a2), rimI: 1.24,
       bounce: new THREE.Color(0x86c2f0), bounceI: 0.32,
       bulb: new THREE.Color(0xfff1cc), bulbI: 0.16, shopI: 0.24, glassI: 1.18, stationI: 2.20,
-      // Was 0x639bd2/0x82b4e2/0xa4cbee — pale blue blocks sitting almost
-      // exactly on the pale blue sky's value, camouflaged. The near ring is
-      // now clearly darker and cooler so it reads as a silhouette against the
-      // horizon band, while the far ring stays close to the sky for
-      // atmospheric melt.
-      //
-      // These are deliberately not as dark as the 0x46586c/0x62788c/0x93a8b8
-      // they briefly held: that set was picked while the rings were rendering
-      // pure black from the vertexColors bug (see buildSkyline), so it was
-      // tuned against a frame that showed none of it. Distant buildings in the
-      // reference art are a soft desaturated blue that recedes — separated
-      // from the sky by value, but never a hard cutout.
-      // Chroma raised a notch off the previous set (raw R-B spread ~41-61 ->
-      // ~79-224/255) — same near-darker/far-paler value order the comment
-      // above this array explains, just no longer flat blue-grey blocks.
       skyline: [new THREE.Color(0x4a7699), new THREE.Color(0x6f93b5), new THREE.Color(0x9bb9d4)],
-      grdBloom: 0.44, grdSat: 1.15, grdVib: 0.18, grdVignette: 0.17, grdAberration: 0.004,
-      // Value range widened on top of the existing warm/cool grdShadow/grdHigh
-      // split below: a console histogram of the graded frame (readRenderTargetPixels,
-      // not eyeballed) showed the shadowed road sitting in an ~0.06-wide
-      // luminance band and almost nothing above L=0.9 — "nothing genuinely
-      // dark, nothing genuinely bright" was a real, measured reading, not
-      // just a critic's impression. grdLift nudged negative (was a small
-      // POSITIVE lift, i.e. raising the black point) so true shadow crushes
-      // toward real black instead of floating grey; grdGain raised so lit
-      // highlights (kerb tops, glass, sun-side trim) can actually reach
-      // near-white; grdGamma raised to add shadow/midtone contrast on top.
-      // Same proportional warm-lean shape as before (R>G>B on gain/gamma) so
-      // the existing colour-temperature split is preserved, just wider.
-      // That pass then went too far in the other direction: a negative lift
-      // AND a >1 gamma both pull midtones down, and stacked on top of the
-      // (correctly) darkened neutral asphalt the carriageway crushed to near
-      // black and the whole frame read as dusk in broad daylight. The gain is
-      // the part that was actually wanted — it buys real highlights — so it
-      // stays; the lift returns to a slight positive and the gamma to nearly
-      // linear, which keeps the widened range without eating the midtones the
-      // entire scene lives in.
+      grdBloom: 0.24, grdSat: 1.04, grdVib: 0.08, grdVignette: 0.09, grdAberration: 0.0,
       grdLift: new THREE.Color(0.002, 0.004, 0.010),
       grdGain: new THREE.Color(1.10, 1.08, 1.04),
       grdGamma: new THREE.Color(1.00, 1.00, 1.00),
-      // Widened so the (now measurably brighter, per the sun/shadow-map pass)
-      // lit row and shadow row land in visibly different tint buckets instead
-      // of both reading as near-white "highlight" — see the celQuantize/
-      // tonemap console trace in the sun/fill comment above.
-      //
-      // Second pass, still on the same lever: console-measured the actual light
-      // contribution each wall receives (sample window.__DBG_LIGHTS.sun/fill,
-      // dot against +-x wall normals, run through the same celQuantize the
-      // shader uses) rather than eyeballing the frame. Direct light alone has a
-      // huge split — lit wall (1.525,0.952,0.340) R/B~4.5 vs shadow wall
-      // (0.015,0.083,0.310) R/B~0.05 — but hemi's neutral-blue ambient
-      // (0.36,0.51,0.74, identical on both walls since N.y=0 either side) and
-      // then a warm cream ALBEDO multiplying through both (comment above: warm
-      // albedo x cool light lands near neutral) collapse that back down by the
-      // time it reaches the screen, which is exactly the "brightness split
-      // without colour split" the critics kept flagging. grdShadow/grdHigh is
-      // the one lever downstream of the albedo multiply, so it is the one that
-      // actually survives to the composited pixel: widened another notch (was
-      // 0.82/0.92/1.20 and 1.15/1.02/0.88) so the R/B spread between the two
-      // buckets grows roughly 40% past the first pass instead of relying on
-      // material colour to carry the rest of the read.
-      grdShadow: new THREE.Color(0.84, 0.94, 1.15),
-      grdHigh: new THREE.Color(1.15, 1.04, 0.91)
+      grdShadow: new THREE.Color(0.94, 0.98, 1.06),
+      grdHigh: new THREE.Color(1.06, 1.03, 0.98)
     },
     {
-      // 1 — magenta/teal sunset. Warm key, hard teal fill; the split-tone does
-      // the rest so the shadows stay cyan instead of sliding to brown.
       background: new THREE.Color(0x2f7fb4), fog: new THREE.Color(0xffc9a2), fogNear: 65, fogFar: 160,
       skyTint: new THREE.Color(1.03, 1.01, 1.02), exposure: 1.07,
-      // Same colour-temperature pass as mood 0: deepened the teal fill and the
-      // salmon sun a notch so the warm/cool split survives the wall albedo
-      // (see mood 0's comment) and trimmed hemi 10% to match.
       hemiSky: new THREE.Color(0xffd4e2), hemiGround: new THREE.Color(0x3f63ae), hemi: 0.88,
       sun: new THREE.Color(0xffa860), sunI: 3.05,
       fill: new THREE.Color(0x2fb8c2), fillI: 0.68,
       rim: new THREE.Color(0xff86b4), rimI: 1.56,
       bounce: new THREE.Color(0x74a8e0), bounceI: 0.34,
       bulb: new THREE.Color(0xffe4ad), bulbI: 0.62, shopI: 0.56, glassI: 2.00, stationI: 3.20,
-      // Dark plum-grey silhouette near ring against the glowing warm sky,
-      // hazing up towards the pink horizon fog for the far ring.
-      // Same chroma-lift pass as mood 0's skyline (raw R-B spread ~18-25 ->
-      // ~35-41/255), same near/far value order preserved.
       skyline: [new THREE.Color(0x3d2f52), new THREE.Color(0x5e4770), new THREE.Color(0x8f6f92)],
-      grdBloom: 0.64, grdSat: 1.17, grdVib: 0.20, grdVignette: 0.20, grdAberration: 0.005,
-      // Same value-range widening pass as mood 0 (see that comment) applied
-      // with this mood's own warm/cool ratios preserved.
-      // Same correction as the daylight mood above — gain kept, lift back to
-      // positive, gamma back to nearly linear.
+      grdBloom: 0.64, grdSat: 1.17, grdVib: 0.20, grdVignette: 0.20, grdAberration: 0.0,
       grdLift: new THREE.Color(0.004, 0.002, 0.014),
       grdGain: new THREE.Color(1.12, 1.06, 1.09),
       grdGamma: new THREE.Color(1.00, 1.00, 1.00),
-      // Same console-measured pass as mood 0 above, widened by the same ~40%
-      // notch on the R/B spread.
       grdShadow: new THREE.Color(0.83, 0.92, 1.16),
       grdHigh: new THREE.Color(1.14, 1.01, 0.91)
     },
     {
-      // 2 — neon dusk. The sky is still an electric blue, the shopfronts and
-      // station signage carry the frame, and bloom is at its widest here.
       background: new THREE.Color(0x2a58bd), fog: new THREE.Color(0xd79ac6), fogNear: 62, fogFar: 154,
       skyTint: new THREE.Color(1.01, 1.02, 1.06), exposure: 1.10,
-      // This mood's brief is deliberately a uniform electric blue (no warm key
-      // — warmth here comes from bulb/shop/station emissive, not the sun), so
-      // the fix isn't a warm/cool hue split like the other two moods: it's
-      // separating the key and fill into two distinguishable blues (cool cyan
-      // key vs deeper violet fill) so the lit/shadow rows still read as two
-      // different walls rather than one flat navy block. Hemi trimmed 10% to
-      // match the other moods' pass.
       hemiSky: new THREE.Color(0xb8dbff), hemiGround: new THREE.Color(0x4966a4), hemi: 0.94,
       sun: new THREE.Color(0xa8ccff), sunI: 2.30,
       fill: new THREE.Color(0x7187e8), fillI: 0.58,
       rim: new THREE.Color(0x7fe8ff), rimI: 1.90,
       bounce: new THREE.Color(0x6fa8e8), bounceI: 0.40,
       bulb: new THREE.Color(0xfff0c3), bulbI: 1.0, shopI: 1.05, glassI: 2.60, stationI: 4.00,
-      // Near-black navy silhouette against the electric dusk vault — a real
-      // dusk skyline is the darkest thing on screen, not a lighter blue block.
-      // Same chroma-lift pass as the other two moods' skyline (raw R-B
-      // spread ~28-58 -> ~43-77/255), same near-black/lighter-far order.
       skyline: [new THREE.Color(0x141b3f), new THREE.Color(0x22315f), new THREE.Color(0x3c5389)],
-      grdBloom: 0.76, grdSat: 1.16, grdVib: 0.20, grdVignette: 0.22, grdAberration: 0.006,
-      // Same value-range widening pass as the other two moods (see mood 0's
-      // comment) applied with this mood's own blue-key-vs-violet-fill ratios
-      // preserved.
-      // Same correction as the two moods above. Dusk can carry a little more
-      // gamma than daylight without reading as crushed, but not 1.09.
+      grdBloom: 0.76, grdSat: 1.16, grdVib: 0.20, grdVignette: 0.22, grdAberration: 0.0,
       grdLift: new THREE.Color(0.012, 0.014, 0.026),
       grdGain: new THREE.Color(1.08, 1.09, 1.13),
       grdGamma: new THREE.Color(1.01, 1.01, 1.00),
-      // Lighter touch than moods 0/1 (~15% wider, not ~40%): this mood's own
-      // brief is deliberately NOT a warm/cool split (see the hemiSky/sun/fill
-      // comment above — key vs fill are two blues, not warm vs cool), so
-      // grdHigh stays close to neutral rather than pulling toward gold the way
-      // the other two treatments now do. Only a little more shadow/high
-      // separation than before, enough to keep the brightness split reading as
-      // a colour step too without fighting the mood's own electric-blue intent.
       grdShadow: new THREE.Color(0.84, 0.93, 1.16),
       grdHigh: new THREE.Color(1.08, 1.00, 0.95)
     }
@@ -9488,20 +9303,12 @@ THREE.GLTFLoader = GLTFLoader;
   // aliased terminator, not a plastic gradient. Tunable live (uniforms, not
   // baked constants) so later rounds — or the console, mid-frame — can adjust
   // without a shader recompile or a program-cache explosion.
-  var CEL_BANDS = { value: 3.0 };       // flat diffuse steps per direct light
-  // 0.035 proved with a console sweep (CEL_BANDS=2/8 vs default, on the
-  // runner's shirt/overalls) to be technically working but perceptually a
-  // soft gradient — no hard-to-see-if-it's-on complaint was actually a real
-  // bug report. Hardened to 0.02: an unmistakable tone step at bands=3,
-  // checked against back-to-back frames on the runner's rounded shoulder/
-  // head for temporal stability (no visible crawl) before landing here.
-  var CEL_EDGE_SOFT = { value: 0.02 };  // smoothstep half-width, in N.L units
+  // A small stepped component gives broad highlights without flattening form.
+  var CEL_BANDS = { value: 4.0 };
+  var CEL_EDGE_SOFT = { value: 0.32 };  // smoothstep half-width, in N.L units
   window.CEL_BANDS = CEL_BANDS;         // expose for console tuning:
   window.CEL_EDGE_SOFT = CEL_EDGE_SOFT; //   CEL_BANDS.value = 4
 
-  // celQuantize(nl) staircases nl into `bands` flat levels between 0 and 1,
-  // softening each riser with smoothstep so curved surfaces (cylinders, the
-  // tree canopy, wheels) don't alias/crawl the way a hard floor() would.
   var CEL_FUNCTIONS_GLSL =
     'uniform float uCelBands;\nuniform float uCelSoft;\n' +
     'float celQuantize( float nl, float bands, float soft ) {\n' +
@@ -9511,19 +9318,9 @@ THREE.GLTFLoader = GLTFLoader;
     '    if ( float( i ) >= bands ) break;\n' +
     '    y += smoothstep( float( i ) - soft, float( i ) + soft, x );\n' +
     '  }\n' +
-    '  return y / max( bands - 1.0, 1.0 );\n' +
+    '  return mix(nl, y / max( bands - 1.0, 1.0 ), 0.18);\n' +
     '}\n';
 
-  // Patched copy of three's own lights_fragment_begin chunk (read straight out
-  // of the bundled THREE.ShaderChunk, so it always matches this build's exact
-  // r156 source instead of a hand-transcribed guess). Right before each
-  // RE_Direct() call we rescale directLight.color by
-  // celQuantize(N.L)/N.L — RE_Direct recomputes the identical saturate(dot(...))
-  // internally, so the rescale lands as celQuantize(N.L)*color once RE_Direct
-  // multiplies back through, with no need to reimplement RE_Direct itself.
-  // That keeps shadow-mapped regions (directLight.color already zeroed by the
-  // shadow term upstream) darkening correctly — banding only touches the lit
-  // side of the terminator.
   var _celLightsChunk = null;
   function celLightsFragmentBegin() {
     if (_celLightsChunk) return _celLightsChunk;
@@ -9881,7 +9678,7 @@ THREE.GLTFLoader = GLTFLoader;
     // "no gloss" territory the hero character and other flat props already
     // use (see the HERO_* block's envMapIntensity: 0.14 comment) instead of
     // inheriting a default tuned for glossier props.
-    road:      mat(0xffffff, { map: roadTex, roughness: 0.92, emissive: 0x2e2a25, envMapIntensity: 0.08 }),
+    road:      mat(0xffffff, { map: roadTex, roughness: 0.92, emissive: 0x25313a, envMapIntensity: 0.16 }),
     // Same "no gloss" fix as road above — walk/cobble/kerb are the other
     // three ground-plane materials a grazing near-camera view crosses in the
     // same bottom-corner band, so they carry the identical Fresnel-blowout
@@ -9898,7 +9695,7 @@ THREE.GLTFLoader = GLTFLoader;
     // was already the lowest of the three) — the road > kerb/cobble > walk
     // hierarchy only needs relative spacing preserved, not these exact
     // absolute values.
-    cobble:    mat(0xffffff, { map: cobbleTex, roughness: 0.92, emissive: 0x463d2e, envMapIntensity: 0.10 }),
+    cobble:    mat(0xffffff, { map: cobbleTex, roughness: 0.92, emissive: 0x29342e, envMapIntensity: 0.14 }),
     // kerbTex/paintTex/railTex are tiny painted gradients, not photos — see
     // the ground-texture block above. Box UVs put their gradient axis on the
     // faces the camera actually sees, so one shared 32x128/64x256/32x8 sheet
@@ -10658,11 +10455,23 @@ THREE.GLTFLoader = GLTFLoader;
     });
     var total = parts.reduce(function (n, g) { return n + g.attributes.position.count; }, 0);
     var pos = new Float32Array(total * 3), nor = new Float32Array(total * 3), uv = new Float32Array(total * 2);
+    // Preserve baked canopy shading through the static batching path. A
+    // vertex-color material with no color attribute otherwise renders black.
+    var hasColor = parts.some(function (g) { return !!g.attributes.color; });
+    var color = hasColor ? new Float32Array(total * 3).fill(1) : null;
     var o = 0;
     parts.forEach(function (g) {
       pos.set(g.attributes.position.array, o * 3);
       nor.set(g.attributes.normal.array, o * 3);
       uv.set(g.attributes.uv.array, o * 2);
+      if (color && g.attributes.color) {
+        var ca = g.attributes.color;
+        for (var ci = 0; ci < ca.count; ci++) {
+          color[(o + ci) * 3] = ca.getX(ci);
+          color[(o + ci) * 3 + 1] = ca.getY(ci);
+          color[(o + ci) * 3 + 2] = ca.getZ(ci);
+        }
+      }
       o += g.attributes.position.count;
       g.dispose();
     });
@@ -10670,6 +10479,7 @@ THREE.GLTFLoader = GLTFLoader;
     out.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
     out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    if (color) out.setAttribute('color', new THREE.BufferAttribute(color, 3));
     out.computeBoundingSphere();
     return out;
   }
@@ -11989,6 +11799,9 @@ THREE.GLTFLoader = GLTFLoader;
     return registerProp('lamp', g);
   }
 
+  var SOFT_TREE_LIME = mat(0x96cf60, { vertexColors: true, roughness: 0.86 });
+  var SOFT_TREE_MID = mat(0x43ad72, { vertexColors: true, roughness: 0.90 });
+  var SOFT_TREE_DEEP = mat(0x287a60, { vertexColors: true, roughness: 0.94 });
   function makeTree() {
     var g = new THREE.Group();
     var trunk = new THREE.Mesh(cylGeo(0.22, 0.35, 3.05, 10), PROP_BARK);
@@ -12003,21 +11816,27 @@ THREE.GLTFLoader = GLTFLoader;
       g.add(branch);
     });
 
-    // Five overlapping FACETED clusters (icosahedra, not smooth spheres) in
-    // two greens plus a hidden shadow lobe. A single smooth blob reads as a
-    // lollipop; low-poly icosahedra give the silhouette an irregular,
-    // non-circular edge even at distance, and each lobe gets its own random
-    // rotation so their facets don't line up into a repeating pattern. The
-    // shadow lobe sits low and to the back of the cluster — it only peeks
-    // through the gaps between the lit lobes above it, but that sliver of
-    // value contrast is what stops the canopy reading as one flat gradient.
-    var crownGeo = cached('tree_crown_facet', function () {
-      return new THREE.IcosahedronGeometry(1, 1);
+    // Rounded leaf masses with quiet surface variation and baked canopy depth.
+    var crownGeo = cached('tree_crown_soft_v2', function () {
+      var geo = new THREE.SphereGeometry(1, 18, 12);
+      var pos = geo.attributes.position, colors = [];
+      var col = new THREE.Color();
+      for (var i = 0; i < pos.count; i++) {
+        var x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+        var bulge = 1 + 0.055 * Math.sin(x * 7 + z * 3) * Math.sin(y * 5 - z * 4);
+        pos.setXYZ(i, x * bulge, y * bulge, z * bulge);
+        var light = 0.72 + 0.28 * (y * 0.5 + 0.5);
+        col.setRGB(light * 0.97, light, light * 0.93);
+        colors.push(col.r, col.g, col.b);
+      }
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geo.computeVertexNormals();
+      return geo;
     });
     var lime = Math.random() < 0.45;
-    var crownLight = lime ? TREE_LEAF_LIT : TREE_LEAF_LIT_MID;
-    var crownDark = lime ? MAT.leaf : MAT.leafDeep;
-    var crownShadow = MAT.leafDeep;
+    var crownLight = lime ? SOFT_TREE_LIME : SOFT_TREE_MID;
+    var crownDark = lime ? SOFT_TREE_MID : SOFT_TREE_DEEP;
+    var crownShadow = SOFT_TREE_DEEP;
     var crowns = [
       { x: 0.00, y: 3.28, z: -0.14, sx: 1.55, sy: 1.15, sz: 1.30, m: crownShadow },
       { x: -0.06, y: 3.42, z: 0.10, sx: 2.30, sy: 1.32, sz: 1.76, m: crownDark },
@@ -13196,13 +13015,75 @@ THREE.GLTFLoader = GLTFLoader;
   // opens out to the city rather than terminating in dirt.
   var groundPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(4000, 4000),
-    mat(0x8e97a3, { roughness: 0.98 })
+    mat(0x9bb0a0, { roughness: 0.98 })
   );
   groundPlane.rotation.x = -Math.PI / 2;
   groundPlane.position.y = -0.06;          // just under the road slab
   groundPlane.receiveShadow = false;
   groundPlane.frustumCulled = false;
   scene.add(groundPlane);
+
+  // A middle-distance garden layer fills the views through cross streets.
+  // Three instanced draws replace the old empty floor beyond the first terrace.
+  var gardenRoot = new THREE.Group();
+  var GARDEN_SPAN = 288, GARDEN_COUNT = 72;
+  var gardenPositions = [];
+  var gardenMatrix = new THREE.Matrix4();
+  var gardenScale = new THREE.Vector3();
+  var gardenPoint = new THREE.Vector3();
+  var gardenRotation = new THREE.Quaternion();
+  var gardenCrownGeo = mergeBoxes([
+    { geo: new THREE.SphereGeometry(2.3, 16, 10), x:-1.0, y:4.0, z:0 },
+    { geo: new THREE.SphereGeometry(2.0, 16, 10), x:1.2, y:4.3, z:0.4 },
+    { geo: new THREE.SphereGeometry(1.9, 16, 10), x:0, y:5.5, z:-0.2 }
+  ]);
+  var gardenCrowns = new THREE.InstancedMesh(gardenCrownGeo,
+    mat(0xffffff, { roughness:0.93 }), GARDEN_COUNT);
+  var gardenTrunks = new THREE.InstancedMesh(cylGeo(0.22,0.42,3.9,10),
+    mat(0x886547, { roughness:0.96 }), GARDEN_COUNT);
+  var gardenBeds = new THREE.InstancedMesh(roundedBoxGeo(8.0,0.22,11.0,1.2,0.06),
+    mat(0x74966d, { roughness:0.98 }), GARDEN_COUNT);
+  var gardenColors = [0x4d9474,0x6bab76,0x81b582,0x569c86,0x99bb72];
+  for (var gi = 0; gi < GARDEN_COUNT; gi++) {
+    var row = Math.floor(gi / 24), side = gi % 2 ? -1 : 1;
+    gardenPositions.push({ x:side * (25 + row * 20 + Math.sin(gi * 2.1) * 4),
+      z:Math.floor(gi % 24 / 2) * 24 + row * 9,
+      size:0.8 + (Math.sin(gi * 8.7) * 0.5 + 0.5) * 0.55 });
+    gardenCrowns.setColorAt(gi, new THREE.Color(gardenColors[gi % gardenColors.length]));
+  }
+  [gardenCrowns,gardenTrunks,gardenBeds].forEach(function (mesh) {
+    mesh.frustumCulled = false;
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    gardenRoot.add(mesh);
+  });
+  scene.add(gardenRoot);
+  function updateGardenLayer(z) {
+    gardenRoot.position.x = camera.position.x * 0.6;
+    var changed = false;
+    for (var i = 0; i < GARDEN_COUNT; i++) {
+      var p = gardenPositions[i];
+      var gz = z - 40 + ((p.z - z + 40) % GARDEN_SPAN + GARDEN_SPAN) % GARDEN_SPAN;
+      // These positions stay fixed until wrapping behind the camera. Upload
+      // only on that wrap, keeping all three buffers static during approach.
+      if (p.currentZ !== undefined && Math.abs(p.currentZ - gz) < 0.01) continue;
+      p.currentZ = gz; changed = true;
+      gardenScale.setScalar(p.size);
+      gardenPoint.set(p.x,0,gz);
+      gardenMatrix.compose(gardenPoint,gardenRotation,gardenScale);
+      gardenCrowns.setMatrixAt(i,gardenMatrix);
+      gardenPoint.y = 1.95 * p.size;
+      gardenMatrix.compose(gardenPoint,gardenRotation,gardenScale);
+      gardenTrunks.setMatrixAt(i,gardenMatrix);
+      gardenPoint.y = -0.02;
+      gardenMatrix.compose(gardenPoint,gardenRotation,gardenScale);
+      gardenBeds.setMatrixAt(i,gardenMatrix);
+    }
+    if (changed) {
+      gardenCrowns.instanceMatrix.needsUpdate = true;
+      gardenTrunks.instanceMatrix.needsUpdate = true;
+      gardenBeds.instanceMatrix.needsUpdate = true;
+    }
+  }
 
   // ---------------------------------------------------- distant skyline ----
   // Three low, generic city bands sit in front of the photographed horizon.
@@ -19659,48 +19540,13 @@ THREE.GLTFLoader = GLTFLoader;
   // softness was the source texture being too coarse for how large it was
   // stretched.
   var heroShadowTex = canvasTexture(256, 256, function (g, w, h) {
-    var cx = w / 2, cy = h / 2, R = w / 2;
-    // White-wash the whole sheet first: under MultiplyBlending white is the
-    // identity (no darkening of the road), so this keeps the square canvas's
-    // corners invisible without leaning on an alpha channel or a soft fade to
-    // hide the seam — that softness was the actual bug.
-    g.fillStyle = '#ffffff';
-    g.fillRect(0, 0, w, h);
-    function ring(r, rgb) {
-      g.fillStyle = rgb;
-      g.beginPath(); g.arc(cx, cy, r, 0, 6.283); g.fill();
-    }
-    // Largest ring first so each smaller one overpaints it, leaving flat,
-    // hard-edged bands with a clean, crisp silhouette all the way to the rim.
-    // Warm-neutral family (same reasoning as before: a cool ring under
-    // uShadowTint's blue boost reads as an indigo stain, not a shadow) but
-    // pushed to a wider, more graphic value spread — three visibly distinct
-    // steps instead of three close-value ones — so the band edges themselves
-    // carry the "hard ink shape" read Subway Surfers' shadow has, rather than
-    // three near-identical greys that only ever looked like one soft blob.
-    // THIRD PASS: three hard bands of visibly different value do not read as
-    // one shadow -- captured at 3x they read as a BULLSEYE. A target has
-    // concentric rings; a shadow does not. Worse, the two multiply quads
-    // (this blob plus runnerFootAO) each carried all three rings, so their
-    // overlap produced a fourth and fifth edge in the middle.
-    //
-    // Subway Surfers' shadow is one flat dark ellipse. So this is now a single
-    // shape: a solid core carrying all of the darkness out to 0.70R, then ONE
-    // narrow collar to 0.88R whose only job is to keep the rim from aliasing
-    // when the 1.35 m plane is magnified. The collar is deliberately close in
-    // value to the core so it reads as the edge of one shape rather than as a
-    // second ring around it, and the texture is 256 px so that edge survives
-    // bilinear magnification -- the concern the previous pass was reacting to,
-    // fixed with resolution rather than with more bands.
-    // Values are set for the OVERLAP, not for one quad. Two multiply planes are
-    // stacked here (this blob plus runnerFootAO), so whatever the core is worth
-    // gets squared under the feet: the first attempt used 52/255 = 0.20 and the
-    // centre came out at 0.20^2 = 0.04, a near-black hole punched in the road.
-    // 140/255 = 0.55 compounds to 0.30 where the two overlap and stays at 0.55
-    // across the rest of the footprint -- a shadow with a darker contact point,
-    // which is the reading a real one has.
-    ring(R * 0.88, 'rgb(205,199,188)');
-    ring(R * 0.70, 'rgb(140,132,118)');
+    var shadow = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    shadow.addColorStop(0, '#62666b');
+    shadow.addColorStop(0.28, '#80858a');
+    shadow.addColorStop(0.58, '#c0c5c8');
+    shadow.addColorStop(0.82, '#e8eaec');
+    shadow.addColorStop(1, '#ffffff');
+    g.fillStyle = shadow; g.fillRect(0, 0, w, h);
   }, { wrap: false });
   var blob = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 1.75),
     new THREE.MeshBasicMaterial({ map: heroShadowTex, transparent: true,
@@ -20831,7 +20677,7 @@ THREE.GLTFLoader = GLTFLoader;
   // unlit wash: normals and cel bands still shape the result, but dark trim
   // or red sleeve can no longer collapse to black when the route crosses a
   // shadowed station. sqrt supplies a restrained perceptual lift to dark hues.
-  var HERO_FILL_STRENGTH = 0.54;
+  var HERO_FILL_STRENGTH = 0.18;
   function heroShaderPatch(m, key, rimStrength, costume) {
     // Chain rather than clobber: trim materials arrive from mat() already
     // carrying the cel-shading onBeforeCompile/customProgramCacheKey (see
@@ -21342,19 +21188,15 @@ THREE.GLTFLoader = GLTFLoader;
           // far cheaper than MeshStandardMaterial on this ~25k-tri skinned mesh.
           function tuneMaterial(src) {
             if (src.map) {
-              // Before the colour space is declared, so the pixel maths above
-              // operates on the raw authored bytes.
               recolourHeroGarment(src.map);
               src.map.colorSpace = THREE.SRGBColorSpace;
-              // The hero fills ~35% of frame height and is the one mesh the eye
-              // tracks continuously, so its atlas gets the full sample budget
-              // like every other surface. It is a single 2048 map -- capping it
-              // at 4 saved nothing measurable and softened the costume's flag
-              // panel and shoe edges at every oblique body angle.
               src.map.anisotropy = MAX_ANISO;
             }
-            var m = applyCelShading(new THREE.MeshLambertMaterial({
+            var m = applyCelShading(new THREE.MeshStandardMaterial({
               map: src.map || null,
+              roughness: 0.72,
+              metalness: 0.0,
+              envMapIntensity: 0.50,
               color: src.color ? src.color.clone() : new THREE.Color(0xffffff),
               side: src.side,
               transparent: src.transparent,
@@ -22427,9 +22269,31 @@ THREE.GLTFLoader = GLTFLoader;
     setMusicEnabled(musicEnabled);
   })();
 
+  var photoMode = false, photoRenderDirty = false;
+  function togglePhotoMode() {
+    if (!started || gameOver) return;
+    photoMode = !photoMode;
+    photoRenderDirty = true;
+    document.body.classList.toggle('photo-mode', photoMode);
+    var photoButton = document.getElementById('photobtn');
+    photoButton.setAttribute('aria-pressed', String(photoMode));
+    photoButton.setAttribute('aria-label', photoMode ? 'Weiterlaufen (P)' : 'Fotomodus (P)');
+    photoButton.textContent = photoMode ? '▶ Weiterlaufen · P' : '▣';
+    for (var k in keys) keys[k] = false;
+    bufLeft = bufRight = bufJump = bufSlide = 0;
+    touchLive = false; touchCommitted = false; touchId = -1;
+    accum = 0; last = performance.now();
+    if (photoMode) { musicStop(); stopSpeech(); }
+    else if (musicEnabled) musicStart();
+  }
+  document.getElementById('photobtn').addEventListener('click', togglePhotoMode);
   window.addEventListener('keydown', function (e) {
     var targetTag = e.target && e.target.tagName;
     if (!started && (targetTag === 'SELECT' || targetTag === 'OPTION' || targetTag === 'INPUT' || targetTag === 'BUTTON')) return;
+    if (e.code === 'KeyP' && started && !gameOver) {
+      e.preventDefault(); if (!e.repeat) togglePhotoMode(); return;
+    }
+    if (photoMode) { e.preventDefault(); return; }
     // Before the CODES lookup and its begin() fallthrough, so M toggles music
     // instead of starting the run.
     if (e.code === 'KeyM') {
@@ -22473,7 +22337,7 @@ THREE.GLTFLoader = GLTFLoader;
       if (gameAudio && gameAudio.state === 'running') gameAudio.suspend().catch(function () {});
     } else if (gameAudio) {
       gameAudio.resume().catch(function () {});
-      if (started && !gameOver && musicEnabled) musicStart();
+      if (started && !gameOver && !photoMode && musicEnabled) musicStart();
     }
   });
 
@@ -22489,6 +22353,7 @@ THREE.GLTFLoader = GLTFLoader;
     return null;
   }
   canvas.addEventListener('touchstart', function (e) {
+    if (photoMode) return;
     if (!started) { begin(); return; }
     var t = e.changedTouches[0];
     touchX = t.clientX; touchY = t.clientY; touchT = performance.now();
@@ -25853,6 +25718,7 @@ THREE.GLTFLoader = GLTFLoader;
     skyDome.position.set(camera.position.x, 0, camera.position.z);
     groundPlane.position.x = camera.position.x;
     groundPlane.position.z = camera.position.z;
+    updateGardenLayer(camera.position.z);
     for (var sli = 0; sli < skylineLayers.length; sli++) {
       var skylineLayer = skylineLayers[sli];
       skylineLayer.position.set(
@@ -26428,6 +26294,11 @@ THREE.GLTFLoader = GLTFLoader;
 
   function frame(now) {
     requestAnimationFrame(frame);
+    if (photoMode) {
+      last = now;
+      if (photoRenderDirty) { renderer.info.reset(); renderPresent(); photoRenderDirty = false; }
+      return;
+    }
     frameNumber++;
     // One repack budget per rendered frame -- see repackDirtyPools -- however
     // many times updateChunks() runs inside it via the fixed-timestep catch-up
