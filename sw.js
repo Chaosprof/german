@@ -1,6 +1,6 @@
 /* Artikel Blitz service worker: precache the app shell, then runtime-cache
    everything the app requests (data JSON, deck manifests, runner assets). */
-const CACHE_NAME = "artikel-blitz-v41";
+const CACHE_NAME = "artikel-blitz-v42";
 const PRECACHE_URLS = [
   "./",
   "./index.html",

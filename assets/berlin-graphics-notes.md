@@ -1,4 +1,54 @@
-# Berlin Runner graphics pass
+# Berlin Runner graphics and performance
+
+## September 2026 rendering polish
+
+- Softer silhouette ink, more directional daylight, and calmer asphalt relief.
+- Sculpted foliage with twelve overlapping leaf masses and baked warm/cool
+  colour. Canopies share one geometry and material: one foliage draw per tree
+  instead of three, and 3,456 triangles instead of 4,320.
+- Matte courier fabric, curved shoulder strap, pocket piping, zipper pull and
+  transit badge, still within the existing seven accessory material batches.
+- Restored desktop MSAA at startup. Phones and reduced-quality desktop frames
+  use edge-directed antialiasing in the existing composite, with no extra
+  framebuffer or scene submission.
+- Enabled the previously disabled adaptive controller. Sustained pressure
+  reduces cost; twelve seconds of comfortable frames permits promotion.
+  Retries retain measured quality, and resizing rebuilds the available tiers.
+- A real 1.25-million-pixel phone / 2.1-million-pixel desktop scene budget,
+  including 1x-DPR 4K screens. DOM text retains its native resolution.
+- Phone presentation capped at 60 Hz; title/results presentation at 30 Hz.
+  Simulation still uses elapsed time and fixed collision steps. Hidden tabs
+  skip rendering; GPU context restoration resets stale simulation time.
+- Portrait instructions show swipes/taps. The service-worker cache is v42.
+
+No new external assets, dependencies, asset-generation services, or Blender
+export are required for this pass. The existing character and painted sky remain.
+
+Validation:
+
+```text
+node tools/check_berlin_graphics.cjs
+node tools/check_berlin_courier.cjs
+node tools/check_berlin_performance.cjs
+```
+
+The performance check exercises the actual embedded controller, cadence and
+canopy code: 59.94/60/90/120/144 Hz schedules, Retina/4K pixel budgets, sustained
+slow frames and recovery, isolated hitches, hidden tabs, resize and context
+restoration. These are deterministic logic checks, not device benchmarks.
+
+Browser checks covered 1280 × 800 desktop, 390 × 844 portrait and rotation to
+844 × 390 landscape, with no horizontal document overflow. Both desktop MSAA
+and phone FXAA rendered with shader diagnostics enabled and no reported shader
+errors. Gameplay launch, keyboard lane/jump input and the resized scene were
+inspected. Native touch gestures were not emulated by these browser controls.
+
+The browser preview validates rendered output and layout. Its frame counters
+include automation and shader-warmup interruptions, so they must not be presented
+as sustained iPhone performance. A physical Safari/iPhone session is still needed
+to establish thermal stability and a device-specific frame-rate guarantee.
+
+## Existing art and provenance
 
 The game retains its existing Three.js engine, vocabulary decks, controls,
 authored character rig and animation clips.

@@ -681,6 +681,12 @@
     #startcard .rule { margin:10px 0; }
     #startcard .keys { margin-bottom:10px; }
   }
+  .touch-control { display:none; }
+  @media (max-width:820px), (pointer:coarse) {
+    #startcard .keyboard-control { display:none; }
+    #startcard .touch-control { display:inline; color:#92e6df; font-weight:750; }
+    #startcard .keyboard-restart { display:none; }
+  }
   @media (prefers-reduced-motion:reduce) { #go { animation:none; } }
   #photobtn { position:absolute; right:16px; bottom:114px; width:40px; height:40px;
     border:2px solid rgba(255,255,255,.5); border-radius:50%; color:#fff;
@@ -767,12 +773,12 @@
       <div class="sub">Dein Kiez. Dein Tempo. Dein Deutsch.</div>
       <div class="rule"></div>
       <div class="keys">
-        <span><kbd>A</kbd> <kbd>D</kbd> / <kbd>&larr;</kbd> <kbd>&rarr;</kbd></span><span>Spur wechseln</span>
-        <span><kbd>W</kbd> / <kbd>&uarr;</kbd> / <kbd>Space</kbd></span><span>Springen</span>
-        <span><kbd>S</kbd> / <kbd>&darr;</kbd></span><span>Rutschen</span>
+        <span class="keyboard-control"><kbd>A</kbd> <kbd>D</kbd> / <kbd>&larr;</kbd> <kbd>&rarr;</kbd></span><span class="touch-control">↔ Wischen</span><span>Spur wechseln</span>
+        <span class="keyboard-control"><kbd>W</kbd> / <kbd>&uarr;</kbd> / <kbd>Space</kbd></span><span class="touch-control">↑ / Tippen</span><span>Springen</span>
+        <span class="keyboard-control"><kbd>S</kbd> / <kbd>&darr;</kbd></span><span class="touch-control">↓ Wischen</span><span>Rutschen</span>
         <span class="lane"><span style="color:#5bb8ff">der</span> <span style="color:#ff6fa8">die</span> <span style="color:#46d98a">das</span></span><span>Lauf durch das Tor mit dem richtigen Artikel</span>
         <span><kbd>5×</kbd></span><span>Serie zündet den Overdrive — schneller, heller, mehr Punkte</span>
-        <span><kbd>R</kbd></span><span>Neustart</span>
+        <span class="keyboard-restart"><kbd>R</kbd></span><span class="keyboard-restart">Neustart</span>
       </div>
       <div id="speedpicker">
         <span id="speedlabel">Tempo</span>
@@ -5171,27 +5177,14 @@ THREE.GLTFLoader = GLTFLoader;
   // looked soft while being the cheaper of the two to draw. A phone's saving
   // grace is that its viewport is tiny; a ratio cap throws that away.
   //
-  // So: pick a pixel budget and let each device take the sharpest ratio that
-  // fits inside it. Mobile gets a smaller budget because a phone GPU is weaker
-  // per-pixel and thermally limited, but it still lands far above 1:1 instead
-  // of far below. The hard floor of 1 guarantees no device ever renders below
-  // its own CSS resolution and upscales, which was the actual defect.
-  // monitorFrameBudget still demotes renderScale on measured evidence, so this
-  // is a ceiling, not a promise.
+  // Cap total scene pixels, including large 1x-DPR desktop displays. Retina
+  // phones keep their useful supersampling; 4K screens upscale a bounded
+  // scene buffer while the DOM HUD remains at the native screen resolution.
   var PIXEL_BUDGET = IS_MOBILE ? 1250000 : 2100000;
   var CSS_PIXELS = Math.max(1, window.innerWidth * window.innerHeight);
-  var MAX_RENDER_DPR = Math.max(1, Math.min(
-    Math.sqrt(PIXEL_BUDGET / CSS_PIXELS), IS_MOBILE ? 2.5 : 2.0));
-  // Start at full scale and let monitorFrameBudget demote on measured evidence.
-  // This mirrors the reasoning already applied to the sun's shadow map further
-  // down ("assume yes, prove otherwise") — the previous conservative 0.82 start
-  // meant most machines never rendered a sharp frame even when they could
-  // easily afford one, and the adaptive monitor only ever demotes, so nothing
-  // here can strand a slow device at a resolution it cannot sustain.
-  // Mobile no longer gets an extra 0.82 floor here. That was a second penalty
-  // stacked on top of the DPR cap, and with the cap now expressed as a pixel
-  // budget it would double-charge the same device for the same constraint —
-  // the budget already decides what a phone can afford.
+  var MAX_RENDER_DPR = Math.min(
+    Math.sqrt(PIXEL_BUDGET / CSS_PIXELS), IS_MOBILE ? 2.5 : 2.0);
+  // Begin at the device budget and adapt only to measured sustained pressure.
   var renderScale = 1;
   // The ordinary ladder never drops below one backing pixel per CSS pixel.
   // If that has already shed every expensive effect and the focal-outline rung
@@ -5202,21 +5195,8 @@ THREE.GLTFLoader = GLTFLoader;
   // so every promotion immediately restores the exact native-resolution floor.
   var EMERGENCY_RENDER_SCALE = 0.92;
   var emergencyResolutionActive = false;
-  // The adaptive floor exists so a fill-bound device can claw its way back to
-  // 60 Hz. It used to be 0.64, and that quietly re-created the very defect the
-  // pixel-budget cap above was written to remove: 0.64 x a 1.25 cap resolves to
-  // 0.8 physical pixels per CSS pixel, i.e. the renderer draws a buffer smaller
-  // than the element it fills and the browser upscales it. Rendering below 1:1
-  // is not a quality tier, it is a visual bug — it was the single largest cause
-  // of the game reading as low-resolution, and a safety valve that can silently
-  // reintroduce it is worse than no valve.
-  //
-  // So the floor is now derived: the lowest scale that still keeps the drawing
-  // buffer at or above CSS resolution on this device. Everything else the
-  // adaptive monitor can shed — depth of field, SSAO, bloom, shadow updates —
-  // sits on earlier rungs of the quality ladder below (see qualityTier near
-  // monitorFrameBudget) and is dropped first, which is the correct order
-  // anyway: lose an effect before you lose sharpness.
+  // Preserve at least CSS resolution where the pixel budget allows it. On
+  // huge screens the budget itself is the floor, not unrestricted native 4K.
   var MIN_RENDER_SCALE = Math.min(1,
     1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
   // Keep the pixel-budgeted native DPR throughout the run. Fine foliage and
@@ -5385,8 +5365,8 @@ THREE.GLTFLoader = GLTFLoader;
     vignette: 0.20,
     aberration: 0.006,
     outlineOn: true,
-    outlineStrength: 0.52,
-    outlineWidth: 0.95,
+    outlineStrength: 0.34,
+    outlineWidth: 0.80,
     outlineDepthFalloff: 265,
     outlineFarFloor: 0.0,
     outlineColorMix: 0.48,
@@ -5474,7 +5454,9 @@ THREE.GLTFLoader = GLTFLoader;
     // cleanly without the bandwidth and memory cost of the old 4x target.
     // High-DPI displays already supply near-1:1 internal pixels at the smooth
     // tier; a second multisample resolve there adds bandwidth with little gain.
-    var msaa = caps.isWebGL2 && renderScale >= 0.99 ? 2 : 0;
+    // Retina already supplies edge samples. Avoid a redundant HDR multisample
+    // resolve on tile-based phone GPUs; desktop 1x screens retain 2x MSAA.
+    var msaa = caps.isWebGL2 && !IS_MOBILE ? 2 : 0;
     sceneRTBaseSamples = msaa;
 
     postScene = new THREE.Scene();
@@ -5588,6 +5570,7 @@ THREE.GLTFLoader = GLTFLoader;
     compositeMat = new THREE.ShaderMaterial({
       uniforms: {
         tScene: { value: sceneRT.texture },
+        uFxaa: { value: msaa ? 0 : 1 },
         tBloom: { value: bloomA.texture },
         uExposure: { value: POST.exposure },
         uBloom: { value: POST.bloomStrength },
@@ -5636,7 +5619,7 @@ THREE.GLTFLoader = GLTFLoader;
         'uniform sampler2D tScene;',
         'uniform sampler2D tBloom;',
         'uniform sampler2D tOutlineD;',
-        'uniform float uExposure, uBloom, uSat, uVib, uVignette, uAberration;',
+        'uniform float uExposure, uBloom, uSat, uVib, uVignette, uAberration, uFxaa;',
         'uniform vec3 uLift, uGain, uGamma, uShadowTint, uHighTint;',
         'uniform vec2 uOutlineTexel;',
         'uniform float uOutlineStrength, uOutlineWidth, uOutlineFalloff, uOutlineMix, uOutlineEnable;',
@@ -5903,6 +5886,28 @@ THREE.GLTFLoader = GLTFLoader;
         '  c = max(c, vec3(0.0));',
         '  return mix(c * 12.92, 1.055 * pow(c, vec3(0.4166666667)) - 0.055, step(vec3(0.0031308), c));',
         '}',
+        // Edge-directed AA shares the existing composite target. Flat pixels
+        // return early; only high-contrast edges take the directional samples.
+        // This preserves readable rails and windows after MSAA is shed.
+        'float aaLuma(vec3 c) { return dot(sqrt(max(c, vec3(0.0))), vec3(0.299,0.587,0.114)); }',
+        'vec3 antialiasScene(vec2 uv, vec3 center) {',
+        '  vec2 px = uOutlineTexel;',
+        '  float nw = aaLuma(texture2D(tScene, uv + vec2(-1.0,1.0)*px).rgb);',
+        '  float ne = aaLuma(texture2D(tScene, uv + vec2(1.0,1.0)*px).rgb);',
+        '  float sw = aaLuma(texture2D(tScene, uv + vec2(-1.0,-1.0)*px).rgb);',
+        '  float se = aaLuma(texture2D(tScene, uv + vec2(1.0,-1.0)*px).rgb);',
+        '  float m = aaLuma(center);',
+        '  float lo = min(m,min(min(nw,ne),min(sw,se)));',
+        '  float hi = max(m,max(max(nw,ne),max(sw,se)));',
+        '  if (hi-lo < max(0.045,hi*0.14)) return center;',
+        '  vec2 dir = vec2(-((nw+ne)-(sw+se)),(nw+sw)-(ne+se));',
+        '  float reduce = max((nw+ne+sw+se)*0.03125,0.0078125);',
+        '  dir = clamp(dir/(min(abs(dir.x),abs(dir.y))+reduce),vec2(-6.0),vec2(6.0))*px;',
+        '  vec3 a = 0.5*(texture2D(tScene,uv-dir/6.0).rgb+texture2D(tScene,uv+dir/6.0).rgb);',
+        '  vec3 b = a*0.5+0.25*(texture2D(tScene,uv-dir*0.5).rgb+texture2D(tScene,uv+dir*0.5).rgb);',
+        '  float lb = aaLuma(b);',
+        '  return (lb<lo || lb>hi) ? a : b;',
+        '}',
         'void main(){',
         '  vec2 d = vUv - 0.5;',
         '  float r2 = dot(d, d);',
@@ -5910,7 +5915,8 @@ THREE.GLTFLoader = GLTFLoader;
         // the runner and the article gates never smear.
         '  vec2 off = d * r2 * uAberration;',
         '  vec4 mid = texture2D(tScene, vUv);',
-        '  vec3 col = vec3(texture2D(tScene, vUv + off).r, mid.g, texture2D(tScene, vUv - off).b);',
+        '  vec3 col = uFxaa > 0.5 ? antialiasScene(vUv,mid.rgb) : mid.rgb;',
+        '  if (uAberration > 0.0) col = vec3(texture2D(tScene,vUv+off).r,col.g,texture2D(tScene,vUv-off).b);',
         // Depth is shared by outline, AO and DoF; the centre normal is shared
         // by outline and AO. Previously each helper fetched its own identical
         // copy. Sample each once only when at least one consumer is enabled.
@@ -6100,6 +6106,7 @@ THREE.GLTFLoader = GLTFLoader;
   function setSceneRTLeanMode(lean) {
     if (!sceneRT) return;
     var wanted = lean ? 0 : sceneRTBaseSamples;
+    if (compositeMat) compositeMat.uniforms.uFxaa.value = wanted ? 0 : 1;
     if (sceneRT.samples === wanted) return;
     sceneRT.samples = wanted;
     sceneRT.dispose();
@@ -6509,9 +6516,9 @@ THREE.GLTFLoader = GLTFLoader;
     // middle of the value stack so facades, pickups and signage own the
     // highlights. The supplied targets consistently use bright lane paint on
     // a calm mid-value carriageway, not dark bars on a near-cream floor.
-    asphalt:     '#819aa6',
-    asphaltDeep: '#687f8e',
-    asphaltLift: '#a1b4bd',
+    asphalt:     '#78929f',
+    asphaltDeep: '#637c8b',
+    asphaltLift: '#9baeba',
     // Dark lane rail, not white-on-white paint: with the road promoted to
     // brightest surface in frame, a near-white dash on a near-white road (the
     // old #fbfeff on the old #d7d7d7) lost essentially all its contrast —
@@ -9188,8 +9195,8 @@ THREE.GLTFLoader = GLTFLoader;
     {
       background: new THREE.Color(0x3ea8ee), fog: new THREE.Color(0xcfeaff), fogNear: 70, fogFar: 168,
       skyTint: new THREE.Color(1.03, 1.03, 1.05), exposure: 1.06,
-      hemiSky: new THREE.Color(0xd7eeff), hemiGround: new THREE.Color(0x748bab), hemi: 1.12,
-      sun: new THREE.Color(0xffe6be), sunI: 3.25,
+      hemiSky: new THREE.Color(0xd7eeff), hemiGround: new THREE.Color(0x748bab), hemi: 0.98,
+      sun: new THREE.Color(0xffe6be), sunI: 3.12,
       fill: new THREE.Color(0x96cafa), fillI: 0.62,
       rim: new THREE.Color(0xffd9a2), rimI: 1.24,
       bounce: new THREE.Color(0x86c2f0), bounceI: 0.32,
@@ -9997,7 +10004,8 @@ THREE.GLTFLoader = GLTFLoader;
   // the authored art directly — same helper, same one-time cost, no photo
   // required. This is what makes the patches, seams and slab bevels above
   // actually catch the key light instead of sitting dead flat.
-  relief(MAT.road,   roadTex.image,     3.0, 0.72, 1.00);
+  // Quiet asphalt relief preserves the bright pickups and lane markings.
+  relief(MAT.road,   roadTex.image,     1.1, 0.88, 1.00);
   relief(MAT.walk,   sidewalkTex.image, 4.5, 0.70, 1.00);
   relief(MAT.cobble, cobbleTex.image,   9.0, 0.55, 0.95);
   // Same treatment for the viaduct masonry (see viaductBrickTex above) — the
@@ -11831,9 +11839,50 @@ THREE.GLTFLoader = GLTFLoader;
     return registerProp('lamp', g);
   }
 
-  var SOFT_TREE_LIME = mat(0xb3d94b, { vertexColors: true, roughness: 0.82 });
-  var SOFT_TREE_MID = mat(0x59b84f, { vertexColors: true, roughness: 0.88 });
-  var SOFT_TREE_DEEP = mat(0x247b55, { vertexColors: true, roughness: 0.94 });
+  // One shared sculpted canopy: volume and warm/cool leaf colour are baked
+  // into the vertices. Every tree uses one foliage draw and one GPU geometry.
+  var SOFT_TREE_CANOPY = mat(0xffffff, { vertexColors: true, roughness: 0.88 });
+  function sculptedCanopyGeometry() {
+    return cached('tree_sculpted_canopy_v3', function () {
+      var lobes = [
+        [-0.04,3.40,0.05,1.45,0.88,1.13,0x36866b],
+        [-0.60,3.73,0.23,1.00,0.83,0.96,0x55a855],
+        [0.67,3.76,-0.22,0.98,0.83,0.92,0x449b65],
+        [0.06,4.24,-0.18,1.17,1.03,1.01,0x81bd55],
+        [-0.60,4.32,0.24,0.79,0.79,0.78,0xa9d466],
+        [0.72,4.26,0.22,0.73,0.72,0.78,0x73b65a],
+        [-0.20,4.92,0.04,0.69,0.61,0.66,0xb7d86a],
+        [-1.16,3.99,0.12,0.57,0.59,0.61,0x94c460],
+        [1.22,3.92,-0.11,0.55,0.56,0.61,0x61ab63],
+        [0.14,4.27,0.82,0.66,0.65,0.49,0x8bc45b],
+        [-0.63,3.69,-0.69,0.66,0.60,0.59,0x469e66],
+        [0.56,4.65,-0.54,0.54,0.55,0.53,0x9bca62]
+      ];
+      var specs = [], tint = new THREE.Color();
+      lobes.forEach(function (l, li) {
+        var geo = new THREE.SphereGeometry(1, 16, 10);
+        var pos = geo.attributes.position, color = new Float32Array(pos.count * 3);
+        tint.setHex(l[6]);
+        for (var i = 0; i < pos.count; i++) {
+          var x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+          var fold = Math.sin(x * 7 + z * 4) * Math.sin(y * 6 - z * 3);
+          var bulge = 1 + fold * 0.085;
+          pos.setXYZ(i, x * bulge * l[3] + l[0], y * bulge * l[4] + l[1], z * bulge * l[5] + l[2]);
+          // Sky bounce in the lower lobes, lemon light on their upper crowns.
+          var light = 0.72 + 0.28 * (y * 0.5 + 0.5) + fold * 0.04;
+          color[i*3] = tint.r * light;
+          color[i*3+1] = tint.g * light;
+          color[i*3+2] = tint.b * light * (1.04 - Math.max(y,0) * 0.14);
+        }
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(color, 3));
+        geo.computeVertexNormals();
+        specs.push({geo:geo});
+      });
+      var result = mergeBoxes(specs);
+      specs.forEach(function (s) { s.geo.dispose(); });
+      return result;
+    });
+  }
   function makeTree() {
     var g = new THREE.Group();
     var trunk = new THREE.Mesh(cylGeo(0.22, 0.35, 3.05, 10), PROP_BARK);
@@ -11848,46 +11897,9 @@ THREE.GLTFLoader = GLTFLoader;
       g.add(branch);
     });
 
-    // Rounded leaf masses with quiet surface variation and baked canopy depth.
-    var crownGeo = cached('tree_crown_soft_v2', function () {
-      var geo = new THREE.SphereGeometry(1, 24, 16);
-      var pos = geo.attributes.position, colors = [];
-      var col = new THREE.Color();
-      for (var i = 0; i < pos.count; i++) {
-        var x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-        var leaf = Math.sin(x * 17 + z * 11) * Math.sin(y * 15 - z * 9);
-        var bulge = 1 + 0.095 * Math.sin(x * 7 + z * 3) * Math.sin(y * 5 - z * 4) + leaf * 0.028;
-        pos.setXYZ(i, x * bulge, y * bulge, z * bulge);
-        var light = 0.56 + 0.44 * (y * 0.5 + 0.5) + leaf * 0.055;
-        col.setRGB(light * (0.90 + 0.10 * Math.max(0, y)), light, light * 0.78);
-        colors.push(col.r, col.g, col.b);
-      }
-      geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-      geo.computeVertexNormals();
-      return geo;
-    });
-    var lime = Math.random() < 0.45;
-    var crownLight = lime ? SOFT_TREE_LIME : SOFT_TREE_MID;
-    var crownDark = lime ? SOFT_TREE_MID : SOFT_TREE_DEEP;
-    var crownShadow = SOFT_TREE_DEEP;
-    var crowns = [
-      { x: 0.00, y: 3.28, z: -0.14, sx: 1.55, sy: 1.15, sz: 1.30, m: crownShadow },
-      { x: -0.06, y: 3.42, z: 0.10, sx: 2.30, sy: 1.32, sz: 1.76, m: crownDark },
-      { x: 0.18, y: 4.46, z: -0.02, sx: 1.80, sy: 1.34, sz: 1.50, m: crownLight },
-      { x: -1.18, y: 3.84, z: 0.32, sx: 1.32, sy: 1.08, sz: 1.22, m: crownLight },
-      { x: 1.04, y: 4.00, z: -0.36, sx: 1.18, sy: 0.98, sz: 1.08, m: crownDark },
-      { x: -0.42, y: 4.74, z: 0.22, sx: 0.96, sy: 0.84, sz: 0.90, m: crownLight }
-    ];
-    crowns.forEach(function (c) {
-      var crown = new THREE.Mesh(crownGeo, c.m);
-      // Compact depth-layer foliage: keep the authored lobe overlap, but stop
-      // a near crown from expanding into a full screen-edge wall.
-      crown.position.set(c.x * 0.82, c.y, c.z * 0.82);
-      crown.scale.set(c.sx * 0.74, c.sy * 0.74, c.sz * 0.74);
-      crown.rotation.set(0, Math.random() * Math.PI * 2, 0);
-      crown.castShadow = true; crown.receiveShadow = true;
-      g.add(crown);
-    });
+    var crown = new THREE.Mesh(sculptedCanopyGeometry(), SOFT_TREE_CANOPY);
+    crown.castShadow = true; crown.receiveShadow = true;
+    g.add(crown);
     // Conservative horizontal crown radius used only by the render cull.
     // The tree can rotate around Y when a chunk rolls, so this encloses both
     // its local X and Z lobe spread; the rolled root scale is applied later.
@@ -21255,8 +21267,8 @@ THREE.GLTFLoader = GLTFLoader;
           new THREE.Matrix4().copy(sk.boneInverses[frontIndex]).invert()));
       front = frontPoint.z >= center.z ? 1 : -1;
     }
-    var teal = heroTrimMat(0x16bcae, 0.53, 0.20);
-    var navy = heroTrimMat(0x153c58, 0.65, 0.16);
+    var teal = heroTrimMat(0x24baae, 0.78, 0.12);
+    var navy = heroTrimMat(0x19435f, 0.86, 0.10);
     var cream = heroTrimMat(0xffe4a2, 0.56, 0.20);
     var cap = new THREE.Group();
     cap.name = 'Courier cap';
@@ -21304,6 +21316,25 @@ THREE.GLTFLoader = GLTFLoader;
     var stripe = new THREE.Mesh(new THREE.BoxGeometry(radius * 1.28, radius * 0.09, radius * 0.03), cream);
     stripe.position.set(radius * 0.02, radius * 0.13, -front * radius * 0.76);
     stripe.rotation.z = -0.20; bag.add(stripe);
+    // Sewn canvas, a curved shoulder strap, zipper and transit roundel all
+    // join the existing three material batches; no texture or extra draw.
+    function bagCord(points, thickness, material) {
+      var path = new THREE.CatmullRomCurve3(points.map(function (p) {
+        return new THREE.Vector3(p[0]*radius, p[1]*radius, p[2]*radius*front);
+      }));
+      bag.add(new THREE.Mesh(new THREE.TubeGeometry(path, 16, radius*thickness, 5, false), material));
+    }
+    bagCord([[-0.85,0.55,0.05],[-1.03,1.8,0.28],[-0.62,2.22,1.00],
+      [0.45,1.72,1.05],[1.02,0.78,0.12]],0.115,navy);
+    bagCord([[-0.82,-0.86,-0.76],[-0.91,-0.28,-0.76],[-0.65,0.26,-0.76],
+      [0.54,0.49,-0.76],[0.95,0.04,-0.76],[0.89,-0.56,-0.76]],0.022,cream);
+    var pull = roundedBox(radius*0.10,radius*0.24,radius*0.045,radius*0.025,
+      cream,radius*0.62,radius*0.22,-front*radius*0.80,radius*0.015);
+    pull.rotation.z = -0.36; bag.add(pull);
+    var badge = new THREE.Mesh(new THREE.TorusGeometry(radius*0.23,radius*0.04,5,20),cream);
+    badge.position.set(radius*0.03,-radius*0.40,-front*radius*0.78); bag.add(badge);
+    bag.add(roundedBox(radius*0.61,radius*0.11,radius*0.05,radius*0.02,
+      cream,radius*0.03,-radius*0.40,-front*radius*0.82,radius*0.01));
     bag.scale.setScalar(0.74);
     attach('Spine02', bag);
   }
@@ -23648,7 +23679,7 @@ THREE.GLTFLoader = GLTFLoader;
     // how far down the ladder is worth walking.
     ladderCeiling = QUALITY_TIER_MAX; ladderProbeUntil = 0;
     promoteFloor = 0; promoteWatch = 0; promoteRetryIn = PROMOTE_RETRY_SECONDS;
-    applyQualityTier(0);
+    // Retain measured quality across retries; comfortable play can promote.
 
     gameOver = false;
     gameOverToken++;
@@ -24003,12 +24034,10 @@ THREE.GLTFLoader = GLTFLoader;
       // first-use depth links 30-45 s into a run. Building them here costs a
       // few hundred milliseconds against a warm-up measured in seconds.
       while (deferredChunkSlot < CHUNK_COUNT) buildDeferredChunk(null);
-      // Establish the steady-state presentation before compiling. A 1:1 CSS
-      // backing buffer is already native sharpness; the former 1.25x device-
-      // pixel supersampling plus 2x MSAA was an expensive redundant layer. This
-      // keeps every artistic pass enabled and, crucially, never changes in play.
+      // Compile at the initial device budget. Desktop retains MSAA; phone
+      // edges use the integrated AA filter without an HDR multisample resolve.
       applyRenderScale(STABLE_PRESENTATION_SCALE);
-      setSceneRTLeanMode(true);
+      setSceneRTLeanMode(IS_MOBILE);
       warmRemainingPrograms(function () {
         requestAnimationFrame(function () {
           preloadReady = true;
@@ -26201,7 +26230,7 @@ THREE.GLTFLoader = GLTFLoader;
   var promoteFloor = 0;
   var promoteWatch = 0;     // s left watching whether a fresh promotion holds
   var promoteRetryIn = 0;   // s of COMFORTABLE frames before a floor is retested
-  var PROMOTE_SECONDS = 4;        // was 8 -- still 3.6x the demote threshold
+  var PROMOTE_SECONDS = 12;       // sustained recovery, not a brief easy street
   var PROMOTE_RETRY_SECONDS = 25;
   var droppedCatchups = 0;
   var deferredTrafficDt = 0;
@@ -26257,18 +26286,15 @@ THREE.GLTFLoader = GLTFLoader;
   var TIER_DOF_OFF, TIER_MSAA_OFF, TIER_RES_START, RES_TIER_COUNT,
       TIER_SHADOW_SLOW, TIER_AO_OFF, TIER_BLOOM_OFF, TIER_SHADOW_OFF,
       TIER_FOCAL_OUTLINE, QUALITY_TIER_MAX;
-  // Runtime resolution/effect changes were more visible than the frame-time
-  // improvement they bought on this submission-bound scene. Keep the complete
-  // ladder available for profiling, but ship a stable full-quality image: the
-  // performance work below removes submissions and generation spikes instead
-  // of making the picture breathe between sharp and soft during one run.
-  var ADAPTIVE_VISUAL_QUALITY = false;
-  (function buildQualityLadder() {
+  // Adapt to sustained load on the actual device, with slower promotion to
+  // prevent visible oscillation. A retry retains the measured tier.
+  var ADAPTIVE_VISUAL_QUALITY = true;
+  function buildQualityLadder() {
     var t = 0;
     // 0 means "this rung does not exist": every test against it is
     // `qualityTier < TIER_X`, and no tier is ever below 0.
     TIER_DOF_OFF = POST.dofOn ? ++t : 0;
-    TIER_MSAA_OFF = ++t;
+    TIER_MSAA_OFF = sceneRTBaseSamples > 0 ? ++t : 0;
     // Supersampling rungs only exist where there is supersampling.
     RES_TIER_COUNT = MIN_RENDER_SCALE < 0.999 ? 3 : 0;
     TIER_RES_START = t + 1;
@@ -26304,7 +26330,8 @@ THREE.GLTFLoader = GLTFLoader;
     TIER_BLOOM_OFF = ++t;
     TIER_FOCAL_OUTLINE = ++t;
     QUALITY_TIER_MAX = t;
-  })();
+  }
+  buildQualityLadder();
 
   var qualityTier = 0;
   var dofActive = POST.dofOn;
@@ -26512,13 +26539,44 @@ THREE.GLTFLoader = GLTFLoader;
     }
   }
 
+  var presentationClock = 0;
+  function presentationDue(now, interval) {
+    if (!interval) { presentationClock = now; return true; }
+    var elapsed = now - presentationClock;
+    if (presentationClock && elapsed < interval - 0.7) return false;
+    if (!presentationClock || elapsed > 250) presentationClock = now;
+    else presentationClock += Math.max(1, Math.floor((elapsed + 0.7) / interval)) * interval;
+    return true;
+  }
+  var graphicsContextLost = false;
+  canvas.addEventListener('webglcontextlost', function (event) {
+    event.preventDefault();
+    graphicsContextLost = true;
+    musicStop(); stopSpeech();
+    canvas.dataset.contextState = 'lost';
+  });
+  canvas.addEventListener('webglcontextrestored', function () {
+    graphicsContextLost = false;
+    accum = 0; last = performance.now(); presentationClock = 0;
+    photoRenderDirty = true; POST.gradeDirty = true;
+    renderer.shadowMap.needsUpdate = true;
+    perfWarmup = 0;
+    canvas.dataset.contextState = 'ready';
+    if (started && !gameOver && !photoMode && musicEnabled) musicStart();
+  });
+
   function frame(now) {
     requestAnimationFrame(frame);
+    if (document.hidden || graphicsContextLost) { last = now; accum = 0; return; }
     if (photoMode) {
       last = now;
       if (photoRenderDirty) { renderer.info.reset(); renderPresent(); photoRenderDirty = false; }
       return;
     }
+    // Retina phones present at 60 Hz; title/results idle at 30 Hz. Carry
+    // cadence remainder so a fractional refresh rate cannot lock to 30 fps.
+    var presentationInterval = (!started || gameOver) ? 1000 / 30 : (IS_MOBILE ? 1000 / 60 : 0);
+    if (!presentationDue(now, presentationInterval)) return;
     frameNumber++;
     // One repack budget per rendered frame -- see repackDirtyPools -- however
     // many times updateChunks() runs inside it via the fixed-timestep catch-up
@@ -26678,9 +26736,15 @@ THREE.GLTFLoader = GLTFLoader;
     // renderer.render(scene, camera) if the post chain could not be built.
     renderer.info.reset();
     renderPresent();
-    if (frameNumber % 120 === 0) {
+    if (frameNumber === 1 || frameNumber % 60 === 0) {
       canvas.dataset.drawCalls = String(renderer.info.render.calls);
       canvas.dataset.triangles = String(renderer.info.render.triangles);
+      canvas.dataset.frameEma = perfEmaMs.toFixed(2);
+      canvas.dataset.renderScale = renderScale.toFixed(2);
+      canvas.dataset.qualityTier = String(qualityTier);
+      canvas.dataset.aa = sceneRT && sceneRT.samples ? 'msaa' : 'fxaa';
+      canvas.dataset.framesPresented = String(frameNumber);
+      canvas.dataset.pixelBudget = String(PIXEL_BUDGET);
     }
   }
 
@@ -26700,11 +26764,16 @@ THREE.GLTFLoader = GLTFLoader;
     // resize cap penalised small/high-DPR screens and could silently soften a
     // previously sharp frame after an orientation or window-size change.
     CSS_PIXELS = Math.max(1, vw * vh);
-    MAX_RENDER_DPR = Math.max(1, Math.min(
-      Math.sqrt(PIXEL_BUDGET / CSS_PIXELS), IS_MOBILE ? 2.5 : 2.0));
+    MAX_RENDER_DPR = Math.min(
+      Math.sqrt(PIXEL_BUDGET / CSS_PIXELS), IS_MOBILE ? 2.5 : 2.0);
     MIN_RENDER_SCALE = Math.min(1,
       1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
-    applyRenderScale(renderScale);
+    // Rotation, zoom and moving between monitors can change the usable rungs.
+    buildQualityLadder();
+    var viewportTier = qualityTier;
+    qualityTier = -1;
+    ladderCeiling = QUALITY_TIER_MAX;
+    applyQualityTier(viewportTier);
     pMat.uniforms.uScale.value = vh * 0.5;
   }
   function queueViewportResize() {
