@@ -11,6 +11,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="preload" href="assets/models/berlin-coffee-sign-v1.mesh.js" as="script">
 <!-- A directly double-clicked file:// page cannot fetch a neighbouring GLB, and
      three.js requests textures with crossOrigin='anonymous', so Chrome's CORS
      policy blocks the painted PNGs too -- silently, leaving the skyline band
@@ -19,13 +20,14 @@
      cacheable files and pay no duplicate transfer. -->
 <script>
   if (location.protocol === 'file:') {
-    document.write('<script src="assets/models/berlin-runner-hero-v12.inline.js"><\/script>');
+    document.write('<script src="assets/models/berlin-runner-hero-v13.inline.js"><\/script>');
     document.write('<script src="assets/img/berlin-art.inline.js"><\/script>');
   } else {
-    document.write('<link rel="preload" href="assets/models/berlin-runner-hero-v12.glb?rev=31" as="fetch" crossorigin="anonymous">');
+    document.write('<link rel="preload" href="assets/models/berlin-runner-hero-v13.glb?rev=32" as="fetch" crossorigin="anonymous">');
     document.write('<link rel="preload" href="assets/img/berlin-street-art-atlas-v1-1024.png" as="image">');
     document.write('<link rel="preload" href="assets/img/berlin-skyline-strip.png" as="image">');
     document.write('<link rel="preload" href="assets/img/berlin-summer-sky-v1.png" as="image">');
+    document.write('<link rel="preload" href="assets/img/berlin-sunset-sky-v2.png" as="image">');
   }
 </script>
 <title>Artikel Express — Berlin Runner</title>
@@ -673,13 +675,39 @@
   }
   @media (max-height:650px) {
     #start { padding:10px 3vw; }
-    #startcard { padding:16px 22px; }
+    #startcard { padding:16px 22px; max-height:calc(100dvh - 24px);
+      overflow-y:auto; overscroll-behavior:contain; touch-action:pan-y; }
     #startcard h1, #startcard h1 span { font-size:45px; }
     #startcard h1 br { display:none; }
     #startcard h1 span { margin-left:8px; }
     #startcard .sub { margin-top:12px; }
     #startcard .rule { margin:10px 0; }
     #startcard .keys { margin-bottom:10px; }
+  }
+  /* Short landscape screens need a launch layout, not a clipped portrait card.
+     The primary action and both choices stay visible without shrinking targets. */
+  @media (min-width:600px) and (max-height:500px) {
+    #start { align-items:center; justify-content:center;
+      padding:10px max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left)); }
+    #startcard { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);
+      column-gap:24px; row-gap:8px; width:740px; padding:16px 22px; border-radius:22px; }
+    #startcard .edition { grid-column:1 / -1; grid-row:1; }
+    #startcard h1 { grid-column:1; grid-row:2; align-self:center; margin:8px 0; }
+    #startcard h1, #startcard h1 span { font-size:34px; }
+    #startcard .sub { grid-column:1; grid-row:3; margin:0; font-size:9px; }
+    #startcard .rule { display:none; }
+    #startcard .keys { grid-column:1; grid-row:4 / 8; align-self:start; margin:0; gap:5px 10px; }
+    #startcard #speedpicker { grid-column:2; grid-row:2; margin:0; }
+    #startcard #deckpicker { grid-column:2; grid-row:3 / 5; margin:0; align-self:center; }
+    #startcard #go { grid-column:2; grid-row:5; align-self:start; min-height:44px; }
+    #startcard #gohint { grid-column:2; grid-row:6; margin:7px 0 0; }
+    body.running #quiz { top:max(8px,env(safe-area-inset-top)); padding:5px 12px 6px; }
+    body.running #quiz.giant-word { width:min(620px,calc(100vw - 220px)); }
+    body.running #noun { min-height:0; }
+    #gameovercard { max-height:calc(100dvh - 20px); overflow-y:auto; touch-action:pan-y; padding:16px 24px; }
+    #gameovercard h2 { font-size:36px; }
+    #gameoverstats { margin-top:14px; }
+    #restartgame { margin-top:16px; }
   }
   .touch-control { display:none; }
   @media (max-width:820px), (pointer:coarse) {
@@ -821,6 +849,7 @@
 
   <div id="err"><div><b>Das Spiel konnte nicht starten.</b><br><span id="errmsg"></span></div></div>
 </div>
+<script src="assets/models/berlin-coffee-sign-v1.mesh.js"></script>
 <script>// three.js r156 (MIT) - embedded so this file runs with no network access
 /**
  * @license
@@ -952,6 +981,12 @@ class GLTFLoader extends Loader {
 		this.meshoptDecoder = null;
 
 		this.pluginCallbacks = [];
+
+		this.register( function ( parser ) {
+
+			return new GLTFTextureWebPExtension( parser );
+
+		} );
 
 		this.register( function ( parser ) {
 
@@ -1275,7 +1310,52 @@ const EXTENSIONS = {
 	KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
 	KHR_TEXTURE_TRANSFORM: 'KHR_texture_transform',
 	KHR_MESH_QUANTIZATION: 'KHR_mesh_quantization',
+	EXT_TEXTURE_WEBP: 'EXT_texture_webp',
 };
+
+// Adapted from the MIT-licensed Three.js r156 WebP extension. Probe lossless
+// VP8L, matching the hero atlas, rather than inferring it from lossy support.
+class GLTFTextureWebPExtension {
+	constructor( parser ) {
+		this.parser = parser;
+		this.name = EXTENSIONS.EXT_TEXTURE_WEBP;
+		this.isSupported = null;
+	}
+	loadTexture( textureIndex ) {
+		const parser = this.parser;
+		const json = parser.json;
+		const textureDef = json.textures[ textureIndex ];
+		const extension = textureDef.extensions && textureDef.extensions[ this.name ];
+		if ( ! extension ) return null;
+		const source = json.images[ extension.source ];
+		let loader = parser.textureLoader;
+		if ( source.uri ) {
+			const handler = parser.options.manager.getHandler( source.uri );
+			if ( handler !== null ) loader = handler;
+		}
+		return this.detectSupport().then( ( supported ) => {
+			if ( supported ) return parser.loadTextureImage( textureIndex, extension.source, loader ).then( ( texture ) => {
+				// Core image errors resolve null: reject so the game retries its PNG rig.
+				if ( ! texture ) throw new Error( 'THREE.GLTFLoader: WebP texture failed to decode.' );
+				return texture;
+			} );
+			if ( ( json.extensionsRequired || [] ).includes( this.name ) ) {
+				throw new Error( 'THREE.GLTFLoader: Lossless WebP required by asset but unsupported.' );
+			}
+			return parser.loadTexture( textureIndex );
+		} );
+	}
+	detectSupport() {
+		if ( ! this.isSupported ) {
+			this.isSupported = new Promise( ( resolve ) => {
+				const image = new Image();
+				image.onload = image.onerror = () => resolve( image.width === 1 && image.height === 1 );
+				image.src = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAdQslKUu/+BiOh/AAA=';
+			} );
+		}
+		return this.isSupported;
+	}
+}
 
 /**
  * Unlit Materials Extension
@@ -4438,8 +4518,8 @@ THREE.GLTFLoader = GLTFLoader;
     facades: [], shopfronts: [],
     // The data URI is present only when this HTML was opened directly from
     // disk. GLTFLoader decodes it locally, avoiding file:// fetch restrictions.
-    character: globalThis.BERLIN_RUNNER_HERO_V12_DATA_URI ||
-               'assets/models/berlin-runner-hero-v12.glb?rev=31', props: {},
+    character: globalThis.BERLIN_RUNNER_HERO_V13_DATA_URI ||
+               'assets/models/berlin-runner-hero-v13.glb?rev=32', props: {},
     // True when the sky panorama already contains the city silhouette; the
     // procedural skyline ring and Fernsehturm then switch off so the horizon
     // is not drawn twice.
@@ -5202,12 +5282,19 @@ THREE.GLTFLoader = GLTFLoader;
   // Keep the pixel-budgeted native DPR throughout the run. Fine foliage and
   // softened silhouettes need that sample density as much as the title screen.
   var STABLE_PRESENTATION_SCALE = 1;
+  var renderViewportW = 0, renderViewportH = 0, renderViewportDpr = 0;
   function applyRenderScale(scale) {
     photoRenderDirty = true;
     var scaleFloor = MIN_RENDER_SCALE * (emergencyResolutionActive ? EMERGENCY_RENDER_SCALE : 1);
     renderScale = clamp(scale, scaleFloor, 1);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR) * renderScale);
-    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    var vw = Math.max(1, window.innerWidth), vh = Math.max(1, window.innerHeight);
+    var dpr = Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR) * renderScale;
+    // Effect-only tier changes must not reset the canvas or invalidate depth
+    // storage. Set DPR and dimensions together: setPixelRatio() calls setSize()
+    // internally, otherwise a rotation reallocates the old size and then the new.
+    if (vw === renderViewportW && vh === renderViewportH && dpr === renderViewportDpr) return;
+    renderViewportW = vw; renderViewportH = vh; renderViewportDpr = dpr;
+    renderer.setDrawingBufferSize(vw, vh, dpr);
     // The post targets have to track the drawing buffer, including the adaptive
     // resolution drops. Hoisted declaration, guarded for the first call.
     if (typeof postResize === 'function') postResize();
@@ -6442,157 +6529,32 @@ THREE.GLTFLoader = GLTFLoader;
   function cssHex(s) { return parseInt(s.slice(1), 16); }
 
   var CITY = {
-    // ---- ground -----------------------------------------------------------
-    // REVERSED, deliberately, from every previous pass recorded below: a
-    // blind greyscale critique against real Subway Surfers frames found the
-    // dark-road philosophy itself was the single dominant cause of the look
-    // gap. Subway Surfers' track is always the brightest, most saturated
-    // large surface on screen — the eye pins to it. This corridor was tuned
-    // to be the DARKEST large surface instead, which put it at the same
-    // rendered luminance as the pavement slabs, the kerb shadow and bridge
-    // undersides (measured: road mean 13.3%L vs sidewalk 28.6%L vs facade
-    // 40%L on a 1280x720 capture, greyscale-sampled — the road was reading
-    // as one of the darkest things in frame, not the lightest). The player's
-    // red-hoodie/blue-jeans silhouette and its own ground shadow both sank
-    // into it.
-    // The fix keeps every guardrail the passes below learned the hard way —
-    // it does NOT rotate hue toward orange (previous #544539/#6b5847 read as
-    // packed brown earth). It also does NOT repeat the earlier "make it
-    // lighter" attempt's cornflower-blue overshoot, but for a more specific,
-    // now-understood reason than "just avoid blue": a first attempt at this
-    // pass kept the old set's faint cool lean (~218° hue) and only raised L,
-    // which measured WORSE than intended, because of how the post-tonemap
-    // grade (see MOOD_TREATMENTS' grdShadow/grdHigh and the
-    // uShadowTint/uHighTint mix in the post shader) works. Most of the road's
-    // area sits in the post-grade "shadow" bucket (ambient-lit only — the
-    // sun-elevation comment above the `sun` light explains why the
-    // carriageway is mostly out of direct light), which gets multiplied by
-    // uShadowTint ≈ (0.74, 0.90, 1.30): a strong per-channel blue boost. A
-    // cool-leaning grey road pixel gets that blue lean AMPLIFIED by the grade
-    // on top of its own bias, while the (intentionally warm-leaning)
-    // pavement's warm bias gets partially cancelled by the same mechanism —
-    // so a "same hue, higher L" road not only read visibly blue, it also
-    // read perceptually DARKER than its warm neighbour at matched HSL-L,
-    // because blue carries the lowest luma weight (0.114) of the three
-    // channels. Going fully NEUTRAL (equal R=G=B) sidesteps both problems at
-    // once: nothing for the shadow-tint's blue bias to amplify, and every
-    // point of lightness counts fully toward perceived luma instead of a
-    // fraction of it. Deep/base/lift keep the same relative spacing (deep <
-    // base < lift) that gives celQuantize's direct-light bands something to
-    // land in as two visibly different tones rather than one flat fill.
-    // Second measured round: the first neutral-grey pass (L 59/43/74) got the
-    // running lanes close but a live capture showed the road still landing
-    // slightly under the cobblestone gutter strip/sidewalk border it runs
-    // beside (see CITY.cobbleA/B/C below, which needed the same treatment —
-    // they hadn't been touched yet and turned out to be the more visually
-    // dominant competing warm surface in most camera framings, more so than
-    // the walkStone field itself which street furniture often partly
-    // occludes). Pushed another notch past that measurement.
-    // Third measured round: on the sun-shadowed half of the street (the
-    // right-hand running lane — see the sun-elevation comment above the
-    // `sun` light, which deliberately leaves a shadow band there), the road
-    // and the cobble gutter border it sits beside were landing within half a
-    // point of each other (both ambient-lit, same shadow condition) — an
-    // apples-to-apples tie that would not read as "obviously lightest" under
-    // a squint. Pushed once more, on both sides of that comparison (asphalt
-    // up here, cobble down further below), so the gap holds even in the
-    // shadowed half of the frame, not just the sunlit half.
-    // Fourth measured round: "go fully neutral" was the right call at the OLD
-    // dark value (see the block above) but does NOT hold once the road is the
-    // BRIGHTEST surface in frame instead of the darkest — at L 80-90% a flat
-    // neutral grey reads as a poured-concrete plaza, not a street, and the
-    // roadTex deep/lift patches (painted at low alpha to modulate a DARK
-    // base) nearly vanish against a light one because their whole delta was
-    // value-only. Subway Surfers' track is bright AND saturated. The warm
-    // hue rotation that read as "packed brown earth" a few rounds back (see
-    // the block above) was applied at a DARK L, where warm chroma reads as
-    // mud; the same hue at L 79-91% reads as sunlit concrete instead — this
-    // is genuinely different headroom, not a repeat of that mistake. Kept the
-    // hue modest (~38°, the same warm family pavement/cobble below use, so
-    // the whole street is one consistent material temperature) and let the
-    // deep/lift spread carry both a value AND a chroma step so roadTex's
-    // patches read as real wear again.
-    // GAUNTLET CITY PASS: keep the Berlin warmth, but return the road to the
-    // middle of the value stack so facades, pickups and signage own the
-    // highlights. The supplied targets consistently use bright lane paint on
-    // a calm mid-value carriageway, not dark bars on a near-cream floor.
-    asphalt:     '#78929f',
-    asphaltDeep: '#637c8b',
-    asphaltLift: '#9baeba',
-    // Dark lane rail, not white-on-white paint: with the road promoted to
-    // brightest surface in frame, a near-white dash on a near-white road (the
-    // old #fbfeff on the old #d7d7d7) lost essentially all its contrast —
-    // measured dash-vs-road gaps under ~5-20L at mid/far distance, i.e.
-    // effectively invisible past the near band. Subway Surfers' lane
-    // separators are dark rails ON a bright track, not the other way round;
-    // that reads at a glance at any distance, which a sacred-track lane
-    // marking has to. Flipped to a DARK tone instead of chasing more
-    // brightness the grading would only crush again. Kept strictly
-    // warm-neutral, not cool: the same shadow-tint amplification that turned
-    // a cool-leaning asphalt cornflower-blue in the low-luminance bucket (see
-    // the block above) would do the same to a cool-leaning dark dash, and a
-    // dash spends MORE of its area in that bucket than the road did once it's
-    // this dark.
-    laneWhite:   '#e2d5ba',   // quieter warm lane paint on the calmer asphalt
-    bikeLane:    '#c85742',   // Berlin's red bike lane
-    // Gehwegplatten: mid-tone concrete. The value-ordering guardrail from the
-    // asphalt block above still holds (road brightest, pavement clearly
-    // behind it) but dropping walkStone/cobble far enough to lose that race
-    // relocated the material-identity failure instead of fixing it: at L
-    // 44-53% and the OLD ~36°/14-21% hue/sat, the family stopped reading as
-    // concrete and started reading as dark brown earth flanking a white
-    // road. Concrete is a neutral material — it should barely register hue
-    // at all. Saturation cut roughly in half (~9-11%) and lightness raised
-    // back up now that the road sits so much higher (see asphalt above):
-    // there is headroom to pull the pavement back toward believable
-    // mid-grey concrete while the road, ~20+ points brighter at every step,
-    // still clears it by a wide, unambiguous margin.
-    walkStone:   '#c4bba4',   // was #82745e (earth-brown at this L)
-    walkStoneB:  '#b4ac99',   // was #6e6254
-    walkStoneC:  '#d5cbb7',   // was #9b8764
+    // Ground: warm, quiet stone carries the tram route against cooler asphalt.
+    // Restrained joints and wear preserve broad color areas at phone size.
+    // Rails, lane paint and curb edges provide the structural contrast.
+    asphalt:     '#637f90',
+    asphaltDeep: '#5c7685',
+    asphaltLift: '#7893a1',
+    laneWhite:   '#e2d5ba',
+    bikeLane:    '#c85742',
+    walkStone:   '#c4bba4',
+    walkStoneB:  '#b4ac99',
+    walkStoneC:  '#d5cbb7',
     walkJoint:   '#6d6152',
     kerbStone:   '#f2ecd9',
-    kerbTop:     '#fffdf4',   // bright lip catching the key light
-    // GROUND ART PASS: widened well past a "warm shadow" tone toward a real
-    // dark value — a live capture showed the kerb face landing within a few
-    // L of the road right beside it, which is the exact "value step at the
-    // kerb has vanished" complaint. The kerb's whole job is a graphic
-    // light-to-dark strip (see kerbTex below), not a subtly-shaded stone; it
-    // needs to hold its own dark end against a BRIGHT road now, not a dark
-    // one, so this end of the ramp has far more work to do than the old
-    // dark-road era ever asked of it.
-    kerbShadow:  '#5f5540',   // was '#c7bb97' — too close to the bright road to read as a step
-    kerbBase:    '#1f1a12',   // near-black ink line right at the road seam — the crispest cel edge every kerb has
-    // Kleinpflaster setts: the tram-bed/gutter strip that runs immediately
-    // beside the road edge (see makeChunk's `cob` mesh) and the sidewalk
-    // texture's own border use this family. Same over-correction as
-    // walkStone just above — dropped low enough to clear the road that it
-    // read as packed dirt rather than granite setts — and the same fix:
-    // desaturate toward neutral stone and lift lightness, while staying
-    // deliberately a notch DARKER than walkStone (a recessed gutter/border
-    // detail, not the main slab field) and still comfortably under the road.
-    cobbleA:     '#9fa79f',   // was #5e4f3b (earth-brown at this L)
-    cobbleB:     '#89978f',   // was #4c4234
-    cobbleC:     '#b4b9a9',   // was #746243
-    // GROUND ART PASS: was '#6b5c49' — only ~1L below cobbleB, so the joint
-    // between setts barely separated from the darkest stone tone and the
-    // whole strip mip-blurred into one flat gold band at any distance (see
-    // the "no surface language" complaint on a live capture). A joint has to
-    // read as a groove, not another stone colour — darkened well below the
-    // whole tone family so every sett gets a real dark outline.
-    cobbleJoint: '#74847e',
+    kerbTop:     '#fffdf4',
+    kerbShadow:  '#5f5540',
+    kerbBase:    '#1f1a12',
+    cobbleA:     '#c3b999',
+    cobbleB:     '#bbb294',
+    cobbleC:     '#cbc0a4',
+    cobbleJoint: '#aaa18b',
     railSteel:   '#cfd9e3',
-    railGlint:   '#f7fbff',   // near-white specular streak painted into the rail head
+    railGlint:   '#f7fbff',
     railBed:     '#b6a48c',
-    // GROUND ART PASS round 2: creosote-dark sleeper timber for the tram bed
-    // (see the merged tie geometry in makeChunk). Deliberately its own colour
-    // rather than a reuse of railGrime — railGrime is shared with the
-    // tunnel/viaduct rail-trench geometry, which has no ties, so recolouring
-    // it would put wood tone on bare steel-trench floors it was never meant
-    // to touch.
     tieDark:     '#241a12',
     tieMid:      '#3a2a1c',
-    drainRing:   '#3c4856',   // deep ring tone for manhole/drain detailing
+    drainRing:   '#3c4856',
     manhole:     '#5d6d7d',
     // ---- architecture shared -----------------------------------------------
     trimCream:   '#fff4dc',
@@ -6663,6 +6625,13 @@ THREE.GLTFLoader = GLTFLoader;
     { wall: '#dee2ee', shade: '#c2c8da', panel: '#e6537d', trim: '#fcfdff', rail: '#3f5fa8' }
   ];
 
+  // Warm limestone joinery lets whole wall and window shapes read first.
+  // Convert once before either atlas is painted; signs keep their bright ink.
+  CITY.facades.concat(CITY.plattes).forEach(function (palette) {
+    palette.trim = '#' + new THREE.Color(palette.trim)
+      .lerp(new THREE.Color(0xc8baa1), 0.32).getHexString();
+  });
+
   // Canvas helpers. Every painted shape in this file is a chunky rounded block —
   // hard 90° corners and hairlines are what made the old sheets read as photos.
   function rrPath(g, x, y, w, h, r) {
@@ -6728,7 +6697,7 @@ THREE.GLTFLoader = GLTFLoader;
     // pale shape.
     for (var p = 0; p < 11; p++) {
       var zoneDeep = p % 2 === 0;
-      g.globalAlpha = zoneDeep ? rand(0.14, 0.26) : rand(0.06, 0.12);
+      g.globalAlpha = zoneDeep ? rand(0.08, 0.14) : rand(0.03, 0.07);
       fillRR(g, rand(-24, w - 36), rand(-40, h - 60),
              rand(120, 260) * ROAD_X_FEATURE_SCALE, rand(90, 200),
              rand(18, 60) * ROAD_X_FEATURE_SCALE,
@@ -6846,23 +6815,17 @@ THREE.GLTFLoader = GLTFLoader;
       g.globalAlpha = 1;
       g.strokeStyle = 'rgba(20,26,34,0.4)'; g.lineWidth = 2; g.stroke();
     }
-    // sparse light aggregate flecks — texture, not grain. Was rgb(220,232,244)
-    // — a COOL blue-white, which is exactly the hue the CITY palette block's
-    // whole multi-round history was written to avoid on this surface (see the
-    // uShadowTint amplification comment up there); every fleck was quietly
-    // pulling the road's average hue back toward the blue this pass exists to
-    // kill. Rewarmed to the same family the rest of the road now commits to,
-    // and pushed a touch more opaque so it still registers as texture once
-    // the brighter emissive floor (see MAT.road) lifts the base value.
-    for (var i = 0; i < 520 * (w / 512); i++) {
-      g.fillStyle = 'rgba(255,246,224,' + rand(0.07, 0.20).toFixed(2) + ')';
+    // Sparse, low-contrast aggregate gives the asphalt a little surface
+    // variation without filling the foreground with bright grain.
+    for (var i = 0; i < 200 * (w / 512); i++) {
+      g.fillStyle = 'rgba(230,235,235,' + rand(0.04, 0.10).toFixed(2) + ')';
       var r = rand(1.2, 3.4);
       g.beginPath();
       g.ellipse(Math.random() * w, Math.random() * h,
                 r * ROAD_X_FEATURE_SCALE, r, 0, 0, 6.283);
       g.fill();
     }
-    noiseFill(g, w, h, 4);
+    noiseFill(g, w, h, 2);
   });
   roadTex.repeat.set(1, 1);
   // ASSETS.road / .sidewalk / .cobble ship as photographic JPEG data URIs, and
@@ -7024,25 +6987,21 @@ THREE.GLTFLoader = GLTFLoader;
       var ox = (y % 2) * cell * 0.5;
       for (var x = 0; x <= n; x++) {
         var px = (x * cell + ox) % w, py = y * cell;
-        var sz = cell * rand(0.74, 0.90);
-        var jx = rand(-cell * 0.06, cell * 0.06), jy = rand(-cell * 0.06, cell * 0.06);
+        var sz = cell * rand(0.86, 0.93);
+        var jx = rand(-cell * 0.025, cell * 0.025), jy = rand(-cell * 0.025, cell * 0.025);
         var kx = px + (cell - sz) / 2 + jx, ky = py + (cell - sz) / 2 + jy;
         fillRR(g, kx, ky, sz, sz, sz * 0.26, tones[(x * 3 + y * 5) % 3]);
-        // Bottom-right shadow edge to pair with the existing top-left
-        // highlight: one bright facet + one dark facet per stone is what
-        // reads as a small domed sett catching the key light, rather than a
-        // flat painted square — the highlight alone (previous pass) left
-        // every stone looking like a sticker on a flat gold field once mip
-        // blur softened the joint lines at distance.
-        g.fillStyle = 'rgba(20,15,10,0.14)';
+        // Restrained bevels retain rounded setts without a flickering grid
+        // of bright facets beneath the runner at phone resolution.
+        g.fillStyle = 'rgba(20,15,10,0.06)';
         rrPath(g, kx + sz * 0.32, ky + sz * 0.60, sz * 0.58, sz * 0.30, sz * 0.14);
         g.fill();
-        g.fillStyle = 'rgba(255,248,236,0.14)';
+        g.fillStyle = 'rgba(255,248,236,0.05)';
         rrPath(g, kx + sz * 0.10, ky + sz * 0.08, sz * 0.6, sz * 0.28, sz * 0.14);
         g.fill();
       }
     }
-    noiseFill(g, w, h, 6);
+    noiseFill(g, w, h, 2);
   });
   if (USE_PHOTO_GROUND) {
     upgradeTexture(ASSETS.cobble, cobbleTex, function (im) { noteImage('cobble', im); });
@@ -7321,8 +7280,8 @@ THREE.GLTFLoader = GLTFLoader;
       g.save();
       rrPath(g, x, y, w, h, r); g.clip();
       g.fillStyle = o.lit ?
-        'rgba(255,255,255,' + rand(0.26, 0.44) + ')' :
-        'rgba(255,255,255,' + rand(0.28, 0.46) + ')';
+        'rgba(255,245,223,' + rand(0.12, 0.22) + ')' :
+        'rgba(237,248,255,' + rand(0.12, 0.24) + ')';
       var sw = w * rand(0.08, 0.20);
       var sx0 = x + w * rand(0, 0.30);
       var slen = w * rand(0.32, 0.62);
@@ -7341,8 +7300,8 @@ THREE.GLTFLoader = GLTFLoader;
     // cross reads as joinery over the glass rather than another slab of
     // white eating into it.
     g.fillStyle = trim;
-    g.fillRect(x + w * 0.5 - lw * 0.275, y, lw * 0.55, h);
-    g.fillRect(x, y + h * 0.40 - lw * 0.275, w, lw * 0.55);
+    g.fillRect(x + w * 0.5 - lw * 0.19, y, lw * 0.38, h);
+    g.fillRect(x, y + h * 0.40 - lw * 0.19, w, lw * 0.38);
 
     // Exterior roller shutter (Rollladen), partially lowered — the single
     // most common "someone's home, or isn't" tell on a Berlin street, and
@@ -8663,18 +8622,22 @@ THREE.GLTFLoader = GLTFLoader;
 
   // Keep the procedural plate as a zero-network fallback. The authored plate
   // tiles by mirroring, so its non-identical edge colors cannot leave a seam.
-  texLoader.load(artUrl('summerSky', 'assets/img/berlin-summer-sky-v1.png'), function (t) {
-    t.colorSpace = THREE.SRGBColorSpace;
-    t.wrapS = THREE.MirroredRepeatWrapping;
-    t.wrapT = THREE.ClampToEdgeWrapping;
-    t.anisotropy = MAX_ANISO;
-    t.userData = { panoramaScale: 3 };
-    skyTextures[0].dispose();
-    skyTextures[0] = t;
-    skyTex = t;
-    lastMoodFromIndex = -1;
-    photoRenderDirty = true;
-  }, undefined, function () { /* Procedural sky remains available offline. */ });
+  function loadPaintedSky(index, slot, path) {
+    texLoader.load(artUrl(slot, path), function (t) {
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.wrapS = THREE.MirroredRepeatWrapping;
+      t.wrapT = THREE.ClampToEdgeWrapping;
+      t.anisotropy = MAX_ANISO;
+      t.userData = { panoramaScale: 3 };
+      skyTextures[index].dispose();
+      skyTextures[index] = t;
+      if (index === 0) skyTex = t;
+      lastMoodFromIndex = -1;
+      photoRenderDirty = true;
+    }, undefined, function () { /* Keep the procedural fallback on load failure. */ });
+  }
+  loadPaintedSky(0, 'summerSky', 'assets/img/berlin-summer-sky-v1.png');
+  loadPaintedSky(1, 'sunsetSky', 'assets/img/berlin-sunset-sky-v2.png');
 
   // Sphere UVs run V=1 at the zenith down to V=0 at the nadir, and with the
   // default flipY a texture's V=1 is its TOP row. So the image's top already
@@ -9635,196 +9598,27 @@ THREE.GLTFLoader = GLTFLoader;
   // hue exists in exactly one place and the painted textures and the untextured
   // solids can never drift apart.
   var MAT = {
-    // The ground sheets are now painted at their final value, so the tint stays
-    // neutral: multiplying a hand-picked colour by a grey only muddies it, which
-    // is exactly how the road ended up reading as a black hole before.
-    // A faint neutral emissive floor: unshadowed lights (rim/fill/bounce)
-    // still reach the road under arches and overpasses even where the sun's
-    // own shadow map fully occludes it. This is a constant, so it barely
-    // registers once direct light dominates, but it keeps the corridor from
-    // crushing to black in the one lighting condition an albedo tweak alone
-    // can't reach. Kept strictly neutral (equal channels, no blue lean) —
-    // a cool-tinted version of this used to read as a saturated cornflower
-    // blue the instant direct light dropped away, exactly under the arches
-    // where the road most needs to still look like dark asphalt.
-    // Emissive floor raised in step with the brighter roadTex albedo (see
-    // CITY.asphalt's comment — the corridor now targets the BRIGHTEST large
-    // surface in frame, not the darkest). Measured (greyscale luma sample on
-    // a real capture, not eyeballed) that most of the carriageway sits in
-    // ambient-only light — out of the sun's shadow-mapped reach far more
-    // than the pavement is — so albedo alone under-delivers there; this
-    // constant floor is what actually lifts THAT area without touching any
-    // other material (pavement, facades) that isn't fighting the same
-    // shadow coverage.
-    // Nudged again (0x565656 -> 0x686868) after re-giving the cobble/
-    // walkStone family (see CITY block) some lightness back to stop them
-    // reading as dirt: a live capture on the sun-SHADOWED half of the street
-    // (road right lane vs. the cobble gutter beside it, both ambient-only —
-    // same apples-to-apples comparison the CITY.asphalt/cobble comments
-    // describe) showed the two within ~1L of each other again, and briefly
-    // NEGATIVE (cobble brighter) in the dusk treatment. Cobble/walkStone
-    // have no matching emissive floor of their own, so this is the one
-    // lever that widens the shadow-side gap without re-darkening the
-    // pavement back toward the earth-brown failure it was just pulled out
-    // of.
-    // GROUND ART PASS: a live capture (analyze.js luma-sampling the actual
-    // rendered frame, not the source hex) measured the carriageway landing at
-    // L 19-34% and strongly blue on the sun-shadowed half of an ordinary open
-    // street — nowhere near the "brightest large surface" the CITY.asphalt
-    // comment above documents four rounds of tuning to reach. The post
-    // grade's uShadowTint/uHighTint split (see the shader block below the
-    // CITY palette) blends toward the warm highTint only once a pixel's
-    // POST-tonemap luminance clears ~0.4-0.5 — under the sun-shadowed half's
-    // cool ambient (hemi+fill are both blue) a warm albedo alone doesn't get
-    // there, so the emissive floor is the one lever that both lifts value and
-    // pushes a pixel across that bucket boundary. Raised again and given a
-    // little of the same warm lean the CITY family already commits to
-    // (rather than staying perfectly neutral) — a neutral floor plateaus
-    // exactly where the last round left it, still short.
-    // Second measured round: a live capture at mid/far distance on the
-    // sun-shadowed half of an open street still showed the carriageway
-    // sinking to L 17-36% and staying blue past ~15m out — the floor above
-    // lifts the NEAR band (which dominates screen area at chase-camera
-    // distance) convincingly but was still short in the distance, where the
-    // "is the road the brightest surface" read still has to hold up under a
-    // squint. Pushed again.
-    // GROUND ART PASS round 2: that chase pushed the floor high enough to
-    // start clipping the OPPOSITE end — this is a flat, unconditional
-    // additive (emissive stacks on top of direct sun lighting exactly as
-    // much as it does on shadow), so on the SUN-LIT near-field, where the
-    // grazing chase camera already gives the ground a huge share of screen
-    // area, albedo + direct diffuse + this floor was clearing the post
-    // grade's ~0.76 peak and sliding into neutralTonemap's desaturate-to-
-    // white branch — the bottom-corner cream/white wash. Pulled back ~25%:
-    // still comfortably clears walk/cobble in shadow (they carry no floor,
-    // or a smaller one — see cobble below), but no longer stacks past the
-    // clip threshold on the lit half near camera.
-    // GROUND ART PASS round 3: cutting the emissive floor above (~25%) did
-    // NOT fix the near-camera bottom-corner cream/white blowout a live
-    // capture kept showing — measured L=79-81% in that corner with the
-    // channels desaturating toward each other (238,199,124 — losing blue
-    // faster than red/green), which is neutralTonemap's clip branch, but the
-    // defect tracks screen CORNER, not lit-vs-shadowed lane, and is far more
-    // one-sided (bottom-right >> bottom-left) than a flat isotropic additive
-    // like emissive could ever produce. That signature is Fresnel: mat()'s
-    // default envMapIntensity (0.68, tuned for normal-incidence props) reads
-    // the scene.environment PMREM through a view-angle Schlick term that
-    // climbs toward 1.0 at the grazing view angle the chase camera has onto
-    // the NEAR ground — exactly the bottom corners — and reflects whichever
-    // side of the sky/sun is brighter there, which is exactly the left/right
-    // asymmetry measured. A rough (0.90), matte, cel-shaded street was never
-    // meant to carry a glossy sky mirror at all; brought down to the same
-    // "no gloss" territory the hero character and other flat props already
-    // use (see the HERO_* block's envMapIntensity: 0.14 comment) instead of
-    // inheriting a default tuned for glossier props.
     road:      mat(0xffffff, { map: roadTex, roughness: 0.92, emissive: 0x25313a, envMapIntensity: 0.16 }),
-    // Same "no gloss" fix as road above — walk/cobble/kerb are the other
-    // three ground-plane materials a grazing near-camera view crosses in the
-    // same bottom-corner band, so they carry the identical Fresnel-blowout
-    // risk even though only road's emissive floor was ever visibly a
-    // problem (it is simply the brightest of the four to begin with).
     walk:      mat(0xffffff, { map: sidewalkTex, roughness: 0.92, envMapIntensity: 0.10 }),
-    // Cobble (the gutter strip bordering the kerb) gets its own small floor
-    // now — it previously had none and relied entirely on outranking road's
-    // OLD, darker floor by staying above it, which stopped working the
-    // moment road's floor got raised again above. Kept well under road's own
-    // floor so the hierarchy (road > kerb/cobble > walk) still holds.
-    // GROUND ART PASS round 2: trimmed ~15% in step with road's floor above
-    // (same near-camera lit-side clipping risk, smaller because this floor
-    // was already the lowest of the three) — the road > kerb/cobble > walk
-    // hierarchy only needs relative spacing preserved, not these exact
-    // absolute values.
-    cobble:    mat(0xffffff, { map: cobbleTex, roughness: 0.92, emissive: 0x29342e, envMapIntensity: 0.14 }),
-    // kerbTex/paintTex/railTex are tiny painted gradients, not photos — see
-    // the ground-texture block above. Box UVs put their gradient axis on the
-    // faces the camera actually sees, so one shared 32x128/64x256/32x8 sheet
-    // is all every kerb run / lane dash / rail head in the city needs.
-    // The kerb's whole job is a bright lip / dark base value STEP (see
-    // kerbTex below) that has to read at a glance as the road/pavement
-    // boundary; a thin 0.3m strip viewed at a chase camera's grazing angle
-    // is only a few screen pixels tall, so it needs its own emissive floor to
-    // survive the same shadow-bucket crush the road did, or the step
-    // disappears into whichever neighbour is in deeper shadow that frame.
-    // GROUND ART PASS round 2: trimmed ~15% alongside road/cobble above —
-    // same near-camera clipping risk, same reasoning.
+    cobble:    mat(0xffffff, { map: cobbleTex, roughness: 0.92, emissive: 0x322c20, envMapIntensity: 0.14 }),
     kerb:      mat(0xffffff, { map: kerbTex, roughness: 0.82, emissive: 0x4e4738, envMapIntensity: 0.10 }),
-    // Tram sleeper ties (see tramTieGeo below the roadGeo/cobbleGeo block) —
-    // flat creosote-dark timber, no map needed at this size/distance; a flat
-    // colour reads fine the way MAT.metalDark's station-sleeper equivalent
-    // already does. Kept off STREET_MAT.railGrime deliberately (see
-    // tramTieGeo's comment) so the tunnel/viaduct rail trenches this material
-    // is shared with never inherit a wood tone they have no ties to justify.
-    // The lane dash is the single strongest graphic read in the frame. It
-    // used to need to survive the grading crushing a lit near-white toward
-    // grey (see CITY.laneWhite's history) — hence the old bright,
-    // toneMapped:false emissive hack below. That problem is retired: the
-    // dash is a DARK rail on the now-bright road (see CITY.laneWhite), so the
-    // failure mode flips from "the grade crushes it to invisibility" to "a
-    // leftover bright emissive floor washes the darkness back out" — a flat
-    // additive ~31%L floor would have put a hard ceiling on how dark this
-    // material could ever read, undoing the whole point of the palette
-    // change. Emissive dropped to a small warm-neutral trickle (same
-    // hue-safety reasoning as CITY.laneWhite — never cool, or the shadow
-    // grade's blue amplification repaints it cornflower) that only keeps the
-    // dash from crushing to pure black at night; toneMapped restored to the
-    // default (true) since there is no longer a near-white this material
-    // needs exempted from the grade.
     paint:     mat(0xffffff, { map: paintTex, roughness: 0.52, emissive: 0x393226 }),
     rail:      mat(0xffffff, { map: railTex, roughness: 0.20, metalness: 0.85, envMapIntensity: 1.5 }),
-    // Street-running rail heads stay subordinate to lane paint and the hero.
-    // Station, balcony and spectacle rails keep the brighter shared MAT.rail;
-    // this darker rough steel is used only by the two flush carriageway runs.
     streetRail: mat(0x9aa8ad, { map: railTex, roughness: 0.46, metalness: 0.55, envMapIntensity: 0.55 }),
     metalDark: mat(cssHex(CITY.metalNavy), { roughness: 0.48, metalness: 0.55 }),
     poleGreen: mat(cssHex(CITY.poleTeal), { roughness: 0.50, metalness: 0.30 }),
     bulb:      new THREE.MeshBasicMaterial({ color: 0xffe4ad }),
-    // Dedicated globe material for the street lamp only — MAT.bulb above is
-    // shared by every vehicle headlight/taillight in the scene (see the mood
-    // update below), where a flat unlit box reads fine at that size. Applied
-    // to a 0.36 m sphere sitting right next to the runner's path, the same
-    // flat unlit colour has no lighting response at all, so it renders as a
-    // single uniform tone with no shading gradient — exactly the "flat khaki
-    // disc" a critic flagged. mat() runs this through the normal cel-shaded
-    // MeshStandardMaterial pipeline instead, so sun/hemi/fill/rim actually
-    // model it and it picks up a lit-top/shadowed-bottom band like every
-    // other prop; low roughness plus a little transparency sells "glass"
-    // over "painted metal ball". The emissive channel carries the bulb glow
-    // and is kept separate from the base colour precisely so it can be
-    // scaled by the same per-mood bulbI taper as MAT.bulb (see
-    // updateEnvironmentMood) without the glass itself going flat white.
     lampGlobe: mat(cssHex(CITY.glassLit), {
       roughness: 0.14, metalness: 0.04, envMapIntensity: 1.3,
-      // 0.90 opacity with depthWrite left ON put a nearly-opaque ball into the
-      // transparent queue that still stamped the depth buffer, so it clipped
-      // the lamp's own additive light cone (lampConeMat, drawn in the same
-      // queue and co-located with it) into a hard-edged bite around the globe
-      // at dusk and night. A translucent object should never occlude another
-      // translucent object it is physically inside.
       transparent: true, opacity: 0.90, depthWrite: false,
       emissive: 0xffe4ad, emissiveIntensity: 0.32
     }),
     glassLit:  mat(cssHex(CITY.glassLit), { emissive: 0xffb85e, emissiveIntensity: 1.5, roughness: 0.25 }),
     trunk:     mat(cssHex(CITY.trunkWarm), { roughness: 0.92 }),
-    // FOLIAGE ART PASS: flatShading was true here to force each of the
-    // crown's ~80 per-lobe triangles to carry its own N.L, on the theory
-    // that smooth normals would collapse cel quantisation into one flat
-    // band. In practice, with today's lighting rig (see the sun/fill split
-    // a few hundred lines below) and CEL_BANDS=3, per-facet flat shading
-    // instead reads as a faceted gem — dozens of tiny independently-
-    // quantised patches — the opposite failure from the one this comment
-    // used to guard against, and now the single worst "engine primitive"
-    // tell left in the frame. Smooth normals let celQuantize band each
-    // lobe's *curved surface* into a few large, clean regions instead, the
-    // same toon-sphere read every other rounded prop already gets. leaf/
-    // leafDeep are makeTree-exclusive (confirmed: no other call site
-    // references MAT.leaf or MAT.leafDeep), so this is scoped to the tree.
-    // leafWarm is currently unused by anything and left alone.
     leaf:      mat(cssHex(CITY.leafMid), { roughness: 0.88, flatShading: false }),
     leafWarm:  mat(cssHex(CITY.leafLime), { roughness: 0.88, flatShading: true }),
     leafDeep:  mat(cssHex(CITY.leafDeep), { roughness: 0.90, flatShading: false }),
     roof:      mat(cssHex(CITY.roofNavy), { roughness: 0.86 }),
-    // Cream trim, lighter and warmer than every wall colour, so every projecting
-    // moulding separates from the plaster behind it by value AND temperature.
     stone:     mat(cssHex(CITY.stoneWarm), { roughness: 0.78 }),
     concrete:  mat(cssHex(CITY.concrete), { roughness: 0.90 }),
     bvgYellow: mat(cssHex(CITY.bvgYellow), { roughness: 0.40, metalness: 0.16 }),
@@ -9835,7 +9629,6 @@ THREE.GLTFLoader = GLTFLoader;
     signBlue:  mat(cssHex(CITY.bvgBlue), { roughness: 0.46 }),
     barrierRed: mat(cssHex(CITY.signalRed), { roughness: 0.56 }),
     barrierWhite: mat(0xfff6e6, { roughness: 0.56 }),
-    // Accent solids the props draw on for their bold blocks.
     accentCoral: mat(0xf2603f, { roughness: 0.60 }),
     accentMint:  mat(0x35c2a0, { roughness: 0.60 }),
     accentSky:   mat(0x3f9be0, { roughness: 0.60 }),
@@ -9989,8 +9782,7 @@ THREE.GLTFLoader = GLTFLoader;
     side: THREE.DoubleSide, fog: true
   });
 
-  // Relief for the ground. Cobble gets the strongest push — setts are the one
-  // surface the player sees from two metres away.
+  // Optional photographic replacements retain their original relief settings.
   bindRelief('road',   MAT.road,   3.0, 0.72, 1.00);
   bindRelief('walk',   MAT.walk,   4.5, 0.70, 1.00);
   bindRelief('cobble', MAT.cobble, 9.0, 0.55, 0.95);
@@ -10007,7 +9799,13 @@ THREE.GLTFLoader = GLTFLoader;
   // Quiet asphalt relief preserves the bright pickups and lane markings.
   relief(MAT.road,   roadTex.image,     1.1, 0.88, 1.00);
   relief(MAT.walk,   sidewalkTex.image, 4.5, 0.70, 1.00);
-  relief(MAT.cobble, cobbleTex.image,   9.0, 0.55, 0.95);
+  relief(MAT.cobble, cobbleTex.image,   2.4, 0.82, 0.98);
+  // The shaded running strip needs a warmer value floor than the sunlit
+  // gutters. Material.copy shares all three texture resources; reapply the
+  // cel hook because Three.js intentionally does not clone shader callbacks.
+  MAT.tramBed = applyCelShading(MAT.cobble.clone());
+  MAT.tramBed.emissive.setHex(0x756544);
+  MAT.cobble.color.setHex(0xbcc1b9);
   // Same treatment for the viaduct masonry (see viaductBrickTex above) — the
   // pier variant shares the derived maps rather than paying for its own
   // lumaField pass, since only the base colour differs between the two.
@@ -10914,15 +10712,25 @@ THREE.GLTFLoader = GLTFLoader;
   hangingPanelGeo.translate(0, 2.62, 0.90);
 
   // Erker — the projecting bay window that gives half of Berlin its silhouette.
-  // Three storeys of facade pushed 1.15 m into the street, carrying the same
-  // sheet as the wall so it reads as part of the building.
+  // Three storeys with angled cheeks and a broad front, carrying the wall
+  // sheet. The deeper profile reads as architecture from the running camera.
   var ERKER_H = STOREY_H * 3;
   var erkerGeo = (function () {
-    var g = new THREE.BoxGeometry(3.4, ERKER_H, 1.15);
-    scaleUV(g, 3.4 / FACADE_TILE_W, 3 / FACADE_STOREY_BANDS);
-    g.translate(0, ERKER_H / 2, 0.575);
+    var g = new THREE.BoxGeometry(4.6, ERKER_H, 1.9);
+    var pos = g.attributes.position;
+    for (var i = 0; i < pos.count; i++) {
+      if (pos.getZ(i) > 0) pos.setX(i, pos.getX(i) * (3.3 / 4.6));
+    }
+    g.computeVertexNormals();
+    scaleUV(g, 4.6 / FACADE_TILE_W, 3 / FACADE_STOREY_BANDS);
+    g.translate(0, ERKER_H / 2, 0.95);
     return g;
   })();
+
+  // A broader upper bay gives selected street corners a stepped silhouette
+  // inside the portrait view. Shared source geometry keeps the same 12-triangle
+  // budget; the existing projection batch and cornice instance present it.
+  var crossingCornerBayGeo = erkerGeo.clone().scale(1.4, 1, 2.25);
 
   // Atlas-backed accent planes let special cells affect the physical building
   // grammar instead of appearing as random wallpaper. They reuse one mesh per
@@ -11180,7 +10988,7 @@ THREE.GLTFLoader = GLTFLoader;
     erker.castShadow = true; erker.receiveShadow = true;
     // erkerCap is pooled (erkerCapPool) — same detached-data-holder pattern
     // as roofBlock above; never added to the scene graph.
-    var erkerCap = roundedBox(3.92, 0.46, 1.62, 0.14, MAT.stone, 0, 0, 0.66, 0.04);
+    var erkerCap = roundedBox(5.04, 0.46, 2.28, 0.14, MAT.stone, 0, 0, 0.95, 0.04);
     // Facade mass, roof shell, erker and gable own the building silhouette.
     // Sub-texel trim/depth pieces remain fully rendered and receive shadows,
     // but no longer repeat the expensive shadow pass without visible benefit.
@@ -11354,7 +11162,7 @@ THREE.GLTFLoader = GLTFLoader;
     d.facadeProjection.material = facadeMaterial;
   }
 
-  function rollBuilding(g, w, heightBand, styleSeed, colorSlot, usedShopIndices, dressBias) {
+  function rollBuilding(g, w, heightBand, styleSeed, colorSlot, usedShopIndices, dressBias, streetCorner) {
     var d = g.userData;
     // dressBias nudges the erker/balcony/ghost-ad/gable probabilities up or
     // down (see rollChunk's dressBiasBySide) so one side of the street reads
@@ -11365,8 +11173,10 @@ THREE.GLTFLoader = GLTFLoader;
     styleSeed = ((styleSeed || 0) % 997 + 997) % 997;
     var storeyPool = heightBand > 0 ? TALL_STOREYS : (heightBand < 0 ? LOW_STOREYS : BUILD_STOREYS);
     var s = storeyPool[Math.floor(styleUnit(styleSeed, 1) * storeyPool.length)];
+    if (streetCorner) s = Math.max(5, s);
     var h = s * STOREY_H;
     d.facadeFamily = styleUnit(styleSeed, 10) < 0.38 ? 1 : 0;
+    if (streetCorner) d.facadeFamily = 0;
     // Rotating hue palette: colorSlot packs (world chunk index + side*3 +
     // in-chunk building index) into one small integer at the call site, so
     // the up-to-six buildings visible in a single chunk land on six
@@ -11489,15 +11299,20 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Bay window on taller blocks only — a three-storey Erker on a four-storey
     // building would reach the cornice.
-    var hasErker = s >= 6 && (d.facadeFamily === 1 ?
+    var hasErker = streetCorner || s >= 5 && (d.facadeFamily === 1 ?
       d.facadeCell === 0 && styleUnit(styleSeed, 4) < 0.72 + dressBias :
-      styleUnit(styleSeed, 4) < 0.38 + dressBias);
+      styleUnit(styleSeed, 4) < 0.60 + dressBias);
     d.erker.visible = hasErker;
     d.erkerCap.visible = hasErker;
+    d.erker.geometry = streetCorner ? crossingCornerBayGeo : erkerGeo;
+    d.erkerCap.scale.set(streetCorner ? 1.4 : 1, streetCorner ? 1.4 : 1, streetCorner ? 2.25 : 1);
     if (hasErker) {
       var ex = (styleUnit(styleSeed, 5) * 2 - 1) * Math.max(0, w / 2 - 2.5);
+      // Extend the upper bay toward the crossing. Opposite street faces rotate
+      // in opposite directions, so mirror X to keep both ends ahead of us.
+      if (streetCorner) ex = d.side * Math.max(0, w / 2 - 3.6);
       d.erker.position.set(ex, STOREY_H, 0);
-      d.erkerCap.position.set(ex, STOREY_H + ERKER_H + 0.17, 0);
+      d.erkerCap.position.set(ex, STOREY_H + ERKER_H + 0.17, streetCorner ? 0.95 * 2.25 : 0.95);
     }
 
     // Balcony only where there is no Erker, so the frontage keeps one idea.
@@ -11508,7 +11323,7 @@ THREE.GLTFLoader = GLTFLoader;
     d.balconyPanel.visible = hasBalcony;
     if (hasBalcony) {
       var balconyX = (styleUnit(styleSeed, 7) * 2 - 1) * Math.max(0, w / 2 - 2.7);
-      var balconyLevel = 2 + Math.floor(styleUnit(styleSeed, 8) * Math.max(1, s - 2));
+      var balconyLevel = 2 + Math.floor(styleUnit(styleSeed, 8) * 2);
       // Stack as many balcony levels as the remaining storeys can hold
       // (2 floors per level, see BALCONY_STACK_OFFSETS) instead of always
       // stopping at one — a stacked column of balconies is what the
@@ -11837,6 +11652,69 @@ THREE.GLTFLoader = GLTFLoader;
     g.add(flag);
     g.userData.flag = flag; g.userData.flagStub = flagStub;
     return registerProp('lamp', g);
+  }
+
+  function batchRigidChunkProps(root, props, kind) {
+    // Each prop is already merged internally. Instance only identical opaque
+    // pieces across copies; flags and transparent glass/cones keep their own
+    // visibility and sorting. Optional replacement GLBs retain their old path.
+    if (ASSETS.props && ASSETS.props[kind]) return [];
+    var batches = [];
+    props.forEach(function (prop) {
+      prop.children.slice().forEach(function (mesh) {
+        if (!mesh.isMesh || mesh.isSkinnedMesh || mesh.isInstancedMesh ||
+            !mesh.visible || Array.isArray(mesh.material) ||
+            mesh.material.transparent || mesh.material.blending !== THREE.NormalBlending ||
+            mesh.userData.noStaticMerge || mesh.morphTargetInfluences) return;
+        var batch = null;
+        for (var b = 0; b < batches.length; b++) {
+          var candidate = batches[b];
+          if (candidate.geometry === mesh.geometry && candidate.material === mesh.material &&
+              candidate.castShadow === mesh.castShadow && candidate.receiveShadow === mesh.receiveShadow &&
+              candidate.renderOrder === mesh.renderOrder) { batch = candidate; break; }
+        }
+        if (!batch) {
+          batch = {geometry:mesh.geometry, material:mesh.material, castShadow:mesh.castShadow,
+            receiveShadow:mesh.receiveShadow, renderOrder:mesh.renderOrder, entries:[]};
+          batches.push(batch);
+        }
+        mesh.updateMatrix();
+        batch.entries.push({prop:prop, source:mesh, local:mesh.matrix.clone()});
+      });
+    });
+    return batches.filter(function (batch) {
+      if (batch.entries.length < 2) return false;
+      var mesh = new THREE.InstancedMesh(batch.geometry, batch.material, batch.entries.length);
+      mesh.castShadow = batch.castShadow; mesh.receiveShadow = batch.receiveShadow;
+      mesh.renderOrder = batch.renderOrder;
+      mesh.count = 0; mesh.visible = false;
+      batch.mesh = mesh;
+      batch.entries.forEach(function (entry) { entry.prop.remove(entry.source); });
+      root.add(mesh);
+      return true;
+    });
+  }
+  var rigidPropInstanceMatrix = new THREE.Matrix4();
+  function syncRigidChunkProps(batches) {
+    // Called on reroll or a tree's existing cull transition, after authored
+    // transforms settle. The ordinary chunk shadow band still owns castShadow.
+    for (var b = 0; b < batches.length; b++) {
+      var batch = batches[b], count = 0;
+      for (var i = 0; i < batch.entries.length; i++) {
+        var entry = batch.entries[i];
+        if (!entry.prop.visible) continue;
+        entry.prop.updateMatrix();
+        rigidPropInstanceMatrix.multiplyMatrices(entry.prop.matrix, entry.local);
+        batch.mesh.setMatrixAt(count++, rigidPropInstanceMatrix);
+      }
+      batch.mesh.count = count; batch.mesh.visible = count > 0;
+      if (count) {
+        batch.mesh.instanceMatrix.updateRange.offset = 0;
+        batch.mesh.instanceMatrix.updateRange.count = count * 16;
+        batch.mesh.instanceMatrix.needsUpdate = true;
+        batch.mesh.computeBoundingSphere();
+      }
+    }
   }
 
   // One shared sculpted canopy: volume and warm/cool leaf colour are baked
@@ -12381,6 +12259,22 @@ THREE.GLTFLoader = GLTFLoader;
   }, { wrap: false });
   var kioskMuralMat = mat(0xffffff, { map: kioskMuralTex, roughness: 0.87, envMapIntensity: 0.25 });
 
+  // Blender-authored silhouette, decoded once into shared GPU buffers. The
+  // small JS companion also loads from file:// without a model fetch/CORS path.
+  function makeCoffeeSignGeometry(data) {
+    if (!data || !data.positions || !data.indices) return null;
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(data.positions, 3));
+    geo.setAttribute('normal', new THREE.Float32BufferAttribute(data.normals, 3));
+    geo.setAttribute('color', new THREE.Uint8BufferAttribute(data.colors, 3, true));
+    geo.setIndex(data.indices);
+    geo.computeBoundingBox(); geo.computeBoundingSphere();
+    return geo;
+  }
+  var kioskCoffeeGeo = makeCoffeeSignGeometry(globalThis.BERLIN_COFFEE_SIGN);
+  delete globalThis.BERLIN_COFFEE_SIGN;
+  var kioskCoffeeMat = mat(0xffffff, { vertexColors: true, roughness: 0.62, envMapIntensity: 0.35 });
+
   function makeKiosk() {
     var g = new THREE.Group();
     var shell = roundedBox(3.2, 2.6, 2.4, 0.20, PROP_KIOSK_SHELL, 0, 1.3, 0, 0.05);
@@ -12412,6 +12306,12 @@ THREE.GLTFLoader = GLTFLoader;
     }
     g.add(roundedBox(3.0, 0.50, 0.12, 0.10, PROP_KIOSK_SIGN, 0, 2.88, 1.20, 0.025));
     g.add(roundedBox(3.42, 0.18, 2.56, 0.10, MAT.metalDark, 0, 2.67, -0.02, 0.03));
+    if (kioskCoffeeGeo) {
+      var roofSign = new THREE.Mesh(kioskCoffeeGeo, kioskCoffeeMat);
+      roofSign.position.set(0, 2.80, -0.10);
+      roofSign.receiveShadow = true;
+      g.add(roofSign);
+    }
     g.add(roundedBox(3.6, 0.16, 2.8, 0.08, MAT.concrete, 0, 0.08, 0.2, 0.025));
     // Two side-wall paste-ups turn the guaranteed kiosk anchor into a piece of
     // lived-in Berlin street furniture. Both cells share one batched draw and
@@ -13407,6 +13307,40 @@ THREE.GLTFLoader = GLTFLoader;
   }, { wrap: false });
   var viaductSignMat = new THREE.MeshBasicMaterial({ map: viaductSignTex });
 
+  // One shared enamel atlas: the station identity must read inside the narrow
+  // portrait view, where the shopfronts are largely outside the chase camera.
+  var STADTBAHN_NAMES = ['ALEXANDERPLATZ', 'HACKESCHER MARKT', 'FRIEDRICHSTRASSE', 'OSTBAHNHOF'];
+  var stadtbahnFasciaTex = canvasTexture(1024, 512, function (g, w) {
+    STADTBAHN_NAMES.forEach(function (name, row) {
+      var h = 128;
+      g.save(); g.translate(0, row * h);
+      g.fillStyle = '#102f48'; g.fillRect(0, 0, w, h);
+      var enamel = g.createLinearGradient(0, 0, 0, h);
+      enamel.addColorStop(0, '#28778a'); enamel.addColorStop(1, '#174658');
+      fillRR(g, 6, 6, w - 12, h - 12, 12, enamel);
+      g.strokeStyle = '#a9d2cd'; g.lineWidth = 3;
+      rrPath(g, 9, 9, w - 18, h - 18, 10); g.stroke();
+      g.fillStyle = '#f8c750'; g.fillRect(16, h - 19, w - 32, 7);
+      g.fillStyle = '#f5f7de'; g.beginPath(); g.arc(68, 59, 42, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#008b66'; g.beginPath(); g.arc(68, 59, 35, 0, Math.PI * 2); g.fill();
+      signText(g, 'S', 68, 61, 53, '#fffbe8');
+      signText(g, name, w * 0.55, 61, 66, '#fffbe8', null, w * 0.78);
+      g.restore();
+    });
+  }, { wrap: false });
+  var stadtbahnFasciaMat = new THREE.MeshBasicMaterial({ map: stadtbahnFasciaTex });
+  function stadtbahnFasciaGeometry(index) {
+    return cached('stadtbahn-fascia-' + index, function () {
+      var geo = new THREE.PlaneGeometry(9.6, 1.20);
+      var uv = geo.attributes.uv;
+      for (var i = 0; i < uv.count; i++) {
+        uv.setY(i, (3 - index + 0.015 + uv.getY(i) * 0.970) / 4);
+      }
+      geo.rotateY(Math.PI);
+      return geo;
+    });
+  }
+
   // Viaduct-tram cruise speed, shared by makeTransitSpectacle's default and by
   // rollChunk's per-chunk variation. Was 9.0-10.1 m/s (32-36 km/h). At that
   // speed the train's SCREEN-space rate over the last 40 m of its approach is
@@ -13424,8 +13358,12 @@ THREE.GLTFLoader = GLTFLoader;
   // player actually watches, and the part where it is far enough away to be
   // moving slowly on screen anyway.
   var TRANSIT_SPEED = 5.4;
-  function makeTransitSpectacle() {
+  function makeTransitSpectacle(chunkSlot) {
     var root = new THREE.Group();
+    root.add(roundedBox(9.86, 1.42, 0.22, 0.16, MAT.metalDark, 0, 9.81, -2.54, 0.04));
+    var fascia = new THREE.Mesh(stadtbahnFasciaGeometry((chunkSlot || 0) % 4), stadtbahnFasciaMat);
+    fascia.position.set(0, 9.81, -2.665);
+    root.add(fascia);
 
     // The road opening is 14.4 m wide. These masonry feet begin beyond it,
     // while the arch underside stays above the gate truss at every play lane.
@@ -13451,8 +13389,8 @@ THREE.GLTFLoader = GLTFLoader;
       // approach-facing pier cap (z=-2.34, the face a runner coming from -Z
       // actually sees) — real signage on the structure itself, not just on
       // the train passing over it.
-      root.add(roundedBox(0.86, 0.58, 0.05, 0.02, viaductSignMat,
-        side * 9.05, 2.55, -2.36, 0.008));
+      root.add(roundedBox(1.48, 0.98, 0.05, 0.04, viaductSignMat,
+        side * 9.05, 2.38, -2.36, 0.008));
     });
 
     var archGeo = cached('viaduct_arch', function () {
@@ -14607,6 +14545,8 @@ THREE.GLTFLoader = GLTFLoader;
     tileAlt: mat(0x7f9986, { map: tunnelWallTex, roughness: 0.82 }),
     blueBand: mat(0x174f7c, { roughness: 0.58 }),
     soot: mat(0x262c30, { roughness: 0.88 }),
+    // Exterior enamel catches daylight; interior soot remains dark for depth.
+    portal: mat(0x6b9ba2, { roughness: 0.56, metalness: 0.06 }),
     steel: mat(0x40494e, { roughness: 0.42, metalness: 0.70 }),
     // Overhead service pipes: the old pipe pass reused TUNNEL_MAT.steel/
     // blueBand, both dark enough to nearly vanish against the equally dark
@@ -14974,11 +14914,16 @@ THREE.GLTFLoader = GLTFLoader;
     var portalGeo = cached('ubahn_tunnel_portal', function () {
       return new THREE.TorusGeometry(8.34, 0.42, 8, 32, Math.PI);
     });
+    var portalLipGeo = cached('ubahn_tunnel_portal_lip', function () {
+      return new THREE.TorusGeometry(8.34, 0.085, 6, 32, Math.PI);
+    });
     [-18.75, 18.75].forEach(function (portalZ, portalIndex) {
-      var portal = new THREE.Mesh(portalGeo, TUNNEL_MAT.soot);
+      var portal = new THREE.Mesh(portalGeo, TUNNEL_MAT.portal);
       portal.position.set(0, 0.66, portalZ); portal.castShadow = true; root.add(portal);
+      var portalLip = new THREE.Mesh(portalLipGeo, MAT.stone);
+      portalLip.position.set(0, 0.66, portalZ - 0.43); root.add(portalLip);
       [-1, 1].forEach(function (side) {
-        root.add(roundedBox(0.72, 5.80, 0.72, 0.12, TUNNEL_MAT.soot,
+        root.add(roundedBox(0.72, 5.80, 0.72, 0.12, TUNNEL_MAT.portal,
           side * 8.30, 2.90, portalZ, 0.028));
         root.add(roundedBox(0.96, 0.22, 1.12, 0.07, MAT.stone,
           side * 8.30, 0.11, portalZ, 0.018));
@@ -15711,7 +15656,7 @@ THREE.GLTFLoader = GLTFLoader;
   var chunkWalkPool = makeSharedPool(chunkWalkGeo, MAT.walk, 1, { receiveShadow: true });
   var chunkKerbPool = makeSharedPool(chunkKerbGeo, MAT.kerb, 1, {});
   var chunkCobPool = makeSharedPool(chunkCobGeo, MAT.cobble, 1, {});
-  var chunkTramBedPool = makeSharedPool(tramBedGeo, MAT.cobble, 1, { receiveShadow: true, posY: 0.012 });
+  var chunkTramBedPool = makeSharedPool(tramBedGeo, MAT.tramBed, 1, { receiveShadow: true, posY: 0.012 });
   var chunkRailPool = makeSharedPool(chunkRailGeo, MAT.streetRail, 1, {});
   var GROUND_CHUNK_POOLS = [chunkRoadPool, chunkWalkPool, chunkKerbPool,
                             chunkCobPool, chunkTramBedPool, chunkRailPool];
@@ -15754,7 +15699,7 @@ THREE.GLTFLoader = GLTFLoader;
   // the GPU: writeBuildingPartPools (below) is the only place anything ever
   // reads these Mesh objects' state, to fill the pools here.
   var BUILDING_PART_CAP = 6;
-  var erkerCapPool = makeSharedPool(roundedBoxGeo(3.92, 0.46, 1.62, 0.14, 0.04), MAT.stone, BUILDING_PART_CAP, {});
+  var erkerCapPool = makeSharedPool(roundedBoxGeo(5.04, 0.46, 2.28, 0.14, 0.04), MAT.stone, BUILDING_PART_CAP, {});
   var aerialPool = makeSharedPool(roundedBoxGeo(0.20, 4.0, 0.20, 0.07, 0.025), MAT.metalDark, BUILDING_PART_CAP, {});
   var roofFurnBPool = makeSharedPool(roofFurnTrimGeo, MAT.stone, BUILDING_PART_CAP, {});
   var roofDormersPools = {};
@@ -15936,6 +15881,39 @@ THREE.GLTFLoader = GLTFLoader;
     // driven the old way, nothing to write here.
   }
 
+  // Second-row courtyard blocks close views through the open intersections.
+  // Four simple masses share existing facade art and one draw per open chunk;
+  // the 16 m gap between them preserves the cross street and landmark views.
+  function courtyardBlockGeometry() {
+    return cached('courtyard-blocks-v1', function () {
+      var pieces = [];
+      [-1, 1].forEach(function (side) {
+        [-1, 1].forEach(function (end) {
+          var h = (side === end ? 5 : 4) * STOREY_H;
+          var geo = new THREE.BoxGeometry(12, h, 14);
+          var uv = geo.attributes.uv, normal = geo.attributes.normal;
+          var color = new Float32Array(normal.count * 3);
+          for (var i = 0; i < normal.count; i++) {
+            var faceWidth = Math.abs(normal.getX(i)) > 0.5 ? 14 : 12;
+            uv.setXY(i, uv.getX(i) * faceWidth / FACADE_TILE_W,
+              uv.getY(i) * h / STOREY_H / FACADE_STOREY_BANDS);
+            var shade = normal.getY(i) > 0.5 ? 0.26 :
+              normal.getZ(i) < -0.5 ? 0.90 : 0.72;
+            color[i * 3] = shade;
+            color[i * 3 + 1] = shade;
+            color[i * 3 + 2] = shade;
+          }
+          geo.setAttribute('color', new THREE.BufferAttribute(color, 3));
+          geo.translate(side * 27, h / 2, end * 15);
+          pieces.push({ geo: geo });
+        });
+      });
+      var result = mergeBoxes(pieces);
+      pieces.forEach(function (piece) { piece.geo.dispose(); });
+      return result;
+    });
+  }
+
   function makeChunk(chunkSlot) {
     var g = new THREE.Group();
     var ud = { lamps: [], trees: [], props: [], cars: [], buildings: [],
@@ -15944,6 +15922,10 @@ THREE.GLTFLoader = GLTFLoader;
                transit: null, station: null, bridge: null,
                tunnel: null, catenary: null,
                motif: 0, chunkSlot: chunkSlot };
+
+    ud.courtyard = new THREE.Mesh(courtyardBlockGeometry(), facadeCoreMats[0]);
+    ud.courtyard.visible = false;
+    g.add(ud.courtyard);
 
     // These six invariant surfaces are scene-wide pools, so this chunk owns
     // only views into its six one-instance slot ranges. Geometry, materials,
@@ -16088,8 +16070,10 @@ THREE.GLTFLoader = GLTFLoader;
       g.add(lamp);
       ud.lamps.push(lamp);
     }
+    ud.lampBatches = batchRigidChunkProps(g, ud.lamps, 'lamp');
     // Trees and sidewalk props.
     for (var t = 0; t < 4; t++) { var tr = makeTree(); g.add(tr); ud.trees.push(tr); }
+    ud.treeBatches = batchRigidChunkProps(g, ud.trees, 'tree');
     // Each prop slot carries two of the fourteen sidewalk fixtures. Spreading
     // the choice across chunks rather than stocking every chunk with every
     // variant keeps the scene varied at a fraction of the object count. Eight
@@ -16214,7 +16198,7 @@ THREE.GLTFLoader = GLTFLoader;
     ud.construction = construction;
     ud.constructionSides = constructionSides;
 
-    var transit = makeTransitSpectacle();
+    var transit = makeTransitSpectacle(chunkSlot);
     g.add(transit.root);
     ud.transit = transit;
 
@@ -16311,6 +16295,31 @@ THREE.GLTFLoader = GLTFLoader;
     return extent;
   }
 
+  var PARKING_TRUNK_BOUNDS = { minX:-0.45, maxX:0.45, minZ:-0.45, maxZ:0.45 };
+  function reserveParkingFixture(blocked, root, footprint) {
+    if (!root || !root.visible) return;
+    var b = footprint || rigidPropLocalBounds(root);
+    if (!isFinite(b.minX) || !isFinite(b.maxZ)) return;
+    var c = Math.cos(root.rotation.y), s = Math.sin(root.rotation.y);
+    var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+    [b.minX, b.maxX].forEach(function (x) {
+      [b.minZ, b.maxZ].forEach(function (z) {
+        var xx = x * root.scale.x, zz = z * root.scale.z;
+        var px = root.position.x + c * xx + s * zz;
+        var pz = root.position.z - s * xx + c * zz;
+        minX = Math.min(minX, px); maxX = Math.max(maxX, px);
+        minZ = Math.min(minZ, pz); maxZ = Math.max(maxZ, pz);
+      });
+    });
+    [-1, 1].forEach(function (side) {
+      var nearX = side < 0 ? -maxX : minX, farX = side < 0 ? -minX : maxX;
+      // Union of the existing car/bus curb strips, including their body width.
+      if (farX >= ROAD_HALF + 0.05 && nearX <= ROAD_HALF + 3.10) {
+        blocked[String(side)].push({ z: (minZ + maxZ) * 0.5, halfLength: (maxZ - minZ) * 0.5 });
+      }
+    });
+  }
+
   // freezeChunkStaticMatrices (below) permanently keeps the five authored
   // transit movers (transit train, station train, bridge vessels, tunnel
   // train, tunnel sweep) unfrozen -- matrixWorldAutoUpdate stays true -- on
@@ -16399,6 +16408,8 @@ THREE.GLTFLoader = GLTFLoader;
     }
 
     var hasCross = motif === 1;
+    ud.courtyard.visible = hasCross || macroCycleIndex === 5 || macroCycleIndex === 7;
+    ud.courtyard.material = facadeCoreMats[(worldChunkIndex & 1) ? 1 : 0];
     ud.crossStreet.visible = hasCross;
     ud.landmark.visible = false;
 
@@ -16463,9 +16474,9 @@ THREE.GLTFLoader = GLTFLoader;
     ud.transit.root.visible = hasCross;
     setMoverLive(ud.transit.train, hasCross);
     if (hasCross) {
-      // Five metres before the plaza centre: the train clears the camera before
-      // the first article gate becomes the decision focus farther up the road.
-      ud.transit.root.position.z = crossZ - 5;
+      // The crossing centre leaves the approach corner wings in front of the
+      // supports, so they frame the street instead of hiding behind the arch.
+      ud.transit.root.position.z = crossZ;
       ud.transit.x = -28 + (worldChunkIndex % 6);
       ud.transit.speed = TRANSIT_SPEED + (worldChunkIndex % 3) * 0.35;
       ud.transit.train.position.x = ud.transit.x;
@@ -16571,13 +16582,20 @@ THREE.GLTFLoader = GLTFLoader;
         // The six slots share one district palette: warm masonry dominates and
         // the cooler library entries become deliberate accents, not a rainbow.
         // The choice remains deterministic for a recycled world position.
+        var streetCorner = hasCross && !hasStation && !hasBridge && !hasTunnel &&
+          !bridgeEdgeChunk && b2 === 0;
+        // The crossing keeps a full 18 m opening, with two 11 m approach
+        // corners. The old width/gap layout rejected all six buildings,
+        // leaving the arch isolated across an entire empty block on phones.
+        if (streetCorner && hasCross) widths[b2] = 11;
         rollBuilding(bld, widths[b2], heightBandBySide[side],
           worldChunkIndex * 19 + sideIdx * 7 + b2 * 3,
           macroHueFamily(worldChunkIndex, motif, buildingSlot), chunkUsedShopIdx,
-          dressBiasBySide[side]);
-        bld.position.x = side * setbackBySide[side];
+          dressBiasBySide[side], streetCorner);
+        bld.position.x = side * (streetCorner ? WALK_OUT + 0.1 : setbackBySide[side]);
         var centre = cursor + widths[b2] / 2;
         cursor += widths[b2] + gap;
+        if (streetCorner && hasCross) centre = side < 0 ? -14.5 : -15.0;
         bld.position.z = centre;
         var clearsViaductSeam = (macroCycleIndex === 5 && b2 === 2) ||
                                 (macroCycleIndex === 7 && b2 === 0);
@@ -16721,6 +16739,9 @@ THREE.GLTFLoader = GLTFLoader;
       var side = (i % 2 === 0) ? -1 : 1;
       var lampJit = (Math.random() - 0.5) * 2 * LAMP_POLE_JITTER;
       lamp.position.set(side * (ROAD_HALF + LAMP_POLE_OFF) + lampJit, 0.16, -CHUNK_LEN / 2 + 9 + i * 20);
+      // Keep the approach lamp in front of the projected corner, where its
+      // tall post and flag cannot pass through the new upper-storey bay.
+      if (hasCross && !bridgeEdgeChunk && lamp.position.z < 0) lamp.position.z = -18.5;
       lamp.rotation.y = side < 0 ? Math.PI : 0;
       lamp.visible = !hasStation && !hasBridge && !hasTunnel &&
         !(hasCross && Math.abs(lamp.position.z - crossZ) < 8);
@@ -16735,6 +16756,7 @@ THREE.GLTFLoader = GLTFLoader;
       lamp.userData.flagStub.visible = lamp.userData.flag.visible;
       if (lamp.userData.flag.visible) lamp.userData.flag.material = pick(FLAG_MATS);
     });
+    syncRigidChunkProps(ud.lampBatches);
 
     // Trees.
     ud.trees.forEach(function (tree, i) {
@@ -16762,8 +16784,10 @@ THREE.GLTFLoader = GLTFLoader;
       var treeChance = [0.24, 0.52, 1.0, 0.14][motif];
       var clearsStreetStory = !hierarchyStoryOn || side !== hierarchyStorySide ||
         Math.abs(tree.position.z - hierarchyStoryZ) >= 5.2;
+      var clearsCornerBay = !hasCross || bridgeEdgeChunk ||
+        tree.position.z - (tree.userData.canopyRadius || 2.05) * tree.scale.z > -8.8;
       tree.visible = !hasStation && !hasBridge && !hasTunnel && Math.random() < treeChance &&
-        clearsStreetStory && !(hasCross && Math.abs(tree.position.z - crossZ) < 8);
+        clearsStreetStory && clearsCornerBay && !(hasCross && Math.abs(tree.position.z - crossZ) < 8);
       // Preserve the authored roll independently from the per-frame camera
       // cull below, exactly like parkedActive does for kerb vehicles.
       tree.userData.rolledActive = tree.visible;
@@ -17074,6 +17098,17 @@ THREE.GLTFLoader = GLTFLoader;
     // Kerbside vehicles — parked outside the lanes, so they read as scenery
     // rather than as something the player is meant to dodge.
     var parkedBySide = { '-1': [], '1': [] };
+    // Reserve actual rotated fixture footprints before rolling cars. A kiosk
+    // can share a pavement strip with parking, but cannot share the same space.
+    ud.props.forEach(function (slot) {
+      slot.variants.forEach(function (prop) { reserveParkingFixture(parkedBySide, prop); });
+    });
+    reserveParkingFixture(parkedBySide, ud.streetStory);
+    // Instanced trees/lamps retain their authored roots; reserve their solid
+    // base rather than their broad canopy or transparent light cone.
+    ud.trees.concat(ud.lamps).forEach(function (prop) {
+      reserveParkingFixture(parkedBySide, prop, PARKING_TRUNK_BOUNDS);
+    });
     // A double-decker is a Berlin accent, not a second street wall. Reserve it
     // for one out of every six world chunks and allow at most one in that
     // chunk, so adjacent near-field chunks can never box the camera in with
@@ -17177,6 +17212,7 @@ THREE.GLTFLoader = GLTFLoader;
         }
       }
     });
+    syncRigidChunkProps(ud.treeBatches);
     clearContacts(ud.contactView, contactCount);
     freezeChunkStaticMatrices(g);
     // Freezing above refreshes every authored world matrix after this reroll;
@@ -17510,12 +17546,16 @@ THREE.GLTFLoader = GLTFLoader;
     // position drops the canopy while it is still filling the screen edge.
     // Test the trailing canopy extent against nearCullZ instead; rolledActive
     // remains the source of truth for tree identity and density.
+    var treeBatchDirty = false;
     for (var tv = 0; tv < ud.trees.length; tv++) {
       var tree = ud.trees[tv];
       var canopyExtent = (tree.userData.canopyRadius || 2.05) * tree.scale.z;
-      tree.visible = bulkNear && tree.userData.rolledActive &&
+      var treeWanted = bulkNear && tree.userData.rolledActive &&
         chunk.position.z + tree.position.z - canopyExtent > nearCullZ;
+      if (tree.visible !== treeWanted) treeBatchDirty = true;
+      tree.visible = treeWanted;
     }
+    if (treeBatchDirty) syncRigidChunkProps(ud.treeBatches);
     // mass used to have its own >88m cull here (farMasses/massNear); it is
     // now baked into the core mesh alongside facade (see getBuildingCoreGeo)
     // and follows the chunk-level cull above instead.
@@ -18749,11 +18789,6 @@ THREE.GLTFLoader = GLTFLoader;
   var pretzelHaloColor = new THREE.Color();
   var pretzelSolidInst = null;
   var pretzelSolidMatrix = new THREE.Matrix4();
-  // How many of the compacted instances sit inside OUTLINE_PLAY_FAR. The
-  // per-frame compaction below writes those first precisely so the outline
-  // prepass can submit a prefix of the trail instead of all 60 tokens; see the
-  // pickup-depth comment in renderPresent for why they must be submitted at all.
-  var pretzelSolidInkCount = 0;
   // The pickup used to be a flat billboard with a decorative torus behind it.
   // A billboard cannot spin, so the reward read as a sticker pasted on the
   // street rather than an object lying in it. This is a real lathed rope
@@ -18787,10 +18822,10 @@ THREE.GLTFLoader = GLTFLoader;
     // bright horizontal bar across the lane the token was sitting in.
     var haloTex = canvasTexture(96, 96, function (g, w, h) {
       var cx = w / 2, cy = h / 2;
-      var glow = g.createRadialGradient(cx, cy, w * 0.28, cx, cy, w / 2);
+      var glow = g.createRadialGradient(cx, cy, w * 0.34, cx, cy, w / 2);
       glow.addColorStop(0, 'rgba(255,222,138,0)');
-      glow.addColorStop(.28, 'rgba(255,210,104,.54)');
-      glow.addColorStop(.52, 'rgba(255,160,42,.30)');
+      glow.addColorStop(.28, 'rgba(255,210,104,.36)');
+      glow.addColorStop(.52, 'rgba(255,160,42,.20)');
       glow.addColorStop(1, 'rgba(255,122,16,0)');
       g.fillStyle = glow; g.fillRect(0, 0, w, h);
     }, { wrap: false });
@@ -18915,7 +18950,7 @@ THREE.GLTFLoader = GLTFLoader;
     // Bake the display scale and both rounded tips into one shared solid. The
     // compact token footprint leaves the lane and upcoming hazards readable;
     // logical pickup coordinates and tolerances remain entirely unchanged.
-    var pretzelVisualScale = 0.50;
+    var pretzelVisualScale = 0.58;
     pretzelGeo.scale(pretzelVisualScale, pretzelVisualScale, pretzelVisualScale);
     var solidParts = [{ geo: pretzelGeo }];
     [0, PRETZEL_PATH.length - 1].forEach(function (idx) {
@@ -19120,7 +19155,7 @@ THREE.GLTFLoader = GLTFLoader;
   // the immutable collider constants below, never this render hierarchy. The
   // foot-anchored root stays on the same world point while the smaller chase
   // silhouette opens the centre lane and Berlin skyline around it.
-  rig.scale.setScalar(0.77);
+  rig.scale.setScalar(0.90);
 
   // Costume palette. Two rules, both taken straight from the reference art:
   //  1. Flat and SATURATED. The hero must be the most chromatic thing in a
@@ -21212,6 +21247,157 @@ THREE.GLTFLoader = GLTFLoader;
     return complete;
   }
 
+  // Refine the authored silhouette once in bind space. Wider cloth, hands and
+  // sneakers read at phone size without changing joint lengths or the foot
+  // contact animation. The original GLB remains intact; only its render copy
+  // changes, and the normal transform preserves smooth normals across UV seams.
+  function refineCourierSilhouette(mesh) {
+    if (!mesh || !mesh.skeleton || !mesh.geometry.attributes.skinWeight) return false;
+    var geo = mesh.geometry.clone(), sk = mesh.skeleton;
+    var pos = geo.attributes.position, normals = geo.attributes.normal;
+    var si = geo.attributes.skinIndex, sw = geo.attributes.skinWeight;
+    var invBind = mesh.bindMatrix.clone().invert(), specs = [], bonePoints = [];
+    var i, c, point = new THREE.Vector3(), normal = new THREE.Vector3();
+    var result = new THREE.Vector3(), resultN = new THREE.Vector3();
+    var delta = new THREE.Vector3(), nDelta = new THREE.Vector3();
+    var sleeve = new Float32Array(pos.count), sole = new Float32Array(pos.count * 2);
+    var garment = new Float32Array(pos.count * 2);
+    var footBounds = { Left:new THREE.Box3(), Right:new THREE.Box3() };
+    // The atlas has fragmented islands. Identify the actual rubber underside
+    // geometrically: foot/toe weights, ground-level height and downward normal.
+    for (i = 0; i < pos.count; i++) {
+      for (c = 0; c < 4; c++) {
+        var footName = sk.bones[si.getComponent(i, c)].name;
+        if (sw.getComponent(i, c) > 0.45 && /^(Left|Right)(Foot|ToeBase)$/.test(footName)) {
+          footBounds[footName.indexOf('Left') === 0 ? 'Left' : 'Right'].expandByPoint(point.fromBufferAttribute(pos, i));
+        }
+      }
+    }
+    for (i = 0; i < sk.bones.length; i++) {
+      bonePoints.push(new THREE.Vector3().setFromMatrixPosition(
+        new THREE.Matrix4().multiplyMatrices(invBind, sk.boneInverses[i].clone().invert())));
+    }
+    function joint(name) { return sk.bones.findIndex(function (b) { return b.name === name; }); }
+    var waistPoint = bonePoints[joint('Hips')];
+    var wristFrames = {};
+    ['Left', 'Right'].forEach(function (side) {
+      var wrist = bonePoints[joint(side + 'Hand')], elbow = bonePoints[joint(side + 'ForeArm')];
+      if (wrist && elbow) wristFrames[side] = { point:wrist, axis:wrist.clone().sub(elbow).normalize() };
+    });
+    for (i = 0; i < sk.bones.length; i++) {
+      var name = sk.bones[i].name, end = -1, radial = 1, uniform = 1;
+      var axis = new THREE.Vector3(0, 1, 0), center = bonePoints[i].clone();
+      var isSleeve = /^(Left|Right)(Shoulder|Arm|ForeArm)$/.test(name);
+      if (/^(Left|Right)Arm$/.test(name)) { radial = 1.34; end = joint(name.replace('Arm', 'ForeArm')); }
+      else if (/ForeArm$/.test(name)) { radial = 1.40; end = joint(name.replace('ForeArm', 'Hand')); }
+      else if (/UpLeg$/.test(name)) { radial = 1.14; end = joint(name.replace('UpLeg', 'Leg')); }
+      else if (/^(Left|Right)Leg$/.test(name)) { radial = 1.18; end = joint(name.replace('Leg', 'Foot')); }
+      else if (/Hand$/.test(name)) uniform = 1.13;
+      else if (name === 'Head') uniform = 1.08;
+      if (end >= 0) axis.copy(bonePoints[end]).sub(center).normalize();
+      var shoe = /^(Left|Right)(Foot|ToeBase)$/.test(name);
+      if (shoe) center.copy(bonePoints[joint(name.replace(/(Foot|ToeBase)$/, 'Foot'))]);
+      specs.push({ center:center, axis:axis, radial:radial, uniform:uniform,
+        shoe:shoe, sleeve:isSleeve,
+        footBounds:shoe ? footBounds[name.indexOf('Left') === 0 ? 'Left' : 'Right'] : null });
+    }
+    for (i = 0; i < pos.count; i++) {
+      point.fromBufferAttribute(pos, i); result.set(0, 0, 0); resultN.set(0, 0, 0);
+      if (normals) normal.fromBufferAttribute(normals, i);
+      var total = 0, sleeveWeight = 0, soleWeight = 0, soleLength = 0;
+      for (c = 0; c < 4; c++) {
+        var weight = sw.getComponent(i, c), spec = specs[si.getComponent(i, c)];
+        if (!weight || !spec) continue;
+        total += weight;
+        delta.copy(point).sub(spec.center);
+        nDelta.copy(normal);
+        if (spec.shoe) {
+          if (normals && spec.footBounds && !spec.footBounds.isEmpty()) {
+            var fb = spec.footBounds;
+            var nearGround = 1 - THREE.MathUtils.smoothstep(point.y - fb.min.y, 0.026, 0.040);
+            var underside = THREE.MathUtils.smoothstep(-normal.y, 0.26, 0.68);
+            soleWeight += weight * nearGround * underside;
+            soleLength += weight * THREE.MathUtils.clamp((point.z - fb.min.z) / Math.max(0.01, fb.max.z - fb.min.z), 0, 1);
+          }
+          // Broad arcade sneaker silhouette: toe and heel share the ankle
+          // centre so the toe hinge never splits. Preserve sole and cuff
+          // heights while giving the planted foot and raised outsole enough
+          // area to read during a stride on a small portrait display.
+          delta.x *= 1.48; delta.z *= 1.30;
+          nDelta.x /= 1.48; nDelta.z /= 1.30;
+        } else {
+          var along = delta.dot(spec.axis), normalAlong = normal.dot(spec.axis);
+          delta.multiplyScalar(spec.radial).addScaledVector(spec.axis, along * (1 - spec.radial));
+          delta.multiplyScalar(spec.uniform);
+          nDelta.multiplyScalar(1 / spec.radial).addScaledVector(spec.axis, normalAlong * (1 - 1 / spec.radial));
+        }
+        result.addScaledVector(delta.add(spec.center), weight);
+        resultN.addScaledVector(nDelta, weight);
+        if (spec.sleeve) sleeveWeight += weight;
+      }
+      if (total > 0) {
+        result.multiplyScalar(1 / total); pos.setXYZ(i, result.x, result.y, result.z);
+        if (normals) { resultN.normalize(); normals.setXYZ(i, resultN.x, resultN.y, resultN.z); }
+      }
+      sleeve[i] = Math.min(1, sleeveWeight);
+      sole[i * 2] = Math.min(1, soleWeight);
+      sole[i * 2 + 1] = soleLength;
+      // Distances interpolate across the existing surface, so broad cuffs and
+      // the hem get clean edges even where the source mesh has sparse rings.
+      // Both cuffs are measured up the forearm from the actual wrist pivot.
+      var wristFrame = wristFrames[point.x >= 0 ? 'Left' : 'Right'];
+      garment[i * 2] = waistPoint ? point.y - waistPoint.y : 1;
+      garment[i * 2 + 1] = wristFrame ? delta.copy(wristFrame.point).sub(point).dot(wristFrame.axis) : 1;
+    }
+    geo.setAttribute('aCourierSleeve', new THREE.BufferAttribute(sleeve, 1));
+    geo.setAttribute('aCourierSole', new THREE.BufferAttribute(sole, 2));
+    geo.setAttribute('aCourierGarment', new THREE.BufferAttribute(garment, 2));
+    geo.computeBoundingBox(); geo.computeBoundingSphere();
+    mesh.geometry = geo;
+    return true;
+  }
+
+  // Both arms share one clear jacket colour. Tinting the existing skinned
+  // surface also removes the atlas's pale left sleeve and narrow seam bands;
+  // it adds no overlay geometry, texture fetch or draw call.
+  function courierSleeveMaterial(material) {
+    var previous = material.onBeforeCompile, previousKey = material.customProgramCacheKey;
+    material.onBeforeCompile = function (shader) {
+      if (previous) previous(shader);
+      shader.uniforms.courierSleeveColor = { value: new THREE.Color(0xf04b32) };
+      shader.uniforms.courierSoleColor = { value: new THREE.Color(0x303b45) };
+      shader.uniforms.courierTreadColor = { value: new THREE.Color(0x64717a) };
+      shader.uniforms.courierHemColor = { value: new THREE.Color(0xffe4a2) };
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', '#include <common>\nattribute float aCourierSleeve;\nvarying float vCourierSleeve;\nattribute vec2 aCourierSole;\nvarying vec2 vCourierSole;\nattribute vec2 aCourierGarment;\nvarying vec2 vCourierGarment;')
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvCourierSleeve = aCourierSleeve;\nvCourierSole = aCourierSole;\nvCourierGarment = aCourierGarment;');
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform vec3 courierSleeveColor;\nvarying float vCourierSleeve;\nuniform vec3 courierSoleColor;\nuniform vec3 courierTreadColor;\nvarying vec2 vCourierSole;\nuniform vec3 courierHemColor;\nvarying vec2 vCourierGarment;')
+        .replace('#include <map_fragment>', '#include <map_fragment>\n' +
+          // The real atlas changes from shirt to jeans at bind Y=.75-.76.
+          // Its lower cloth is weighted to the thighs: a Hips-weight mask
+          // incorrectly painted a stripe far above that edge. Use the already
+          // sampled red cloth, before sleeve recolouring, to retain the exact
+          // UV boundary and protect denim/skin without another texture fetch.
+          'float courierCloth = smoothstep(0.02, 0.10, diffuseColor.r - 2.4 * max(diffuseColor.g, diffuseColor.b));\n' +
+          'float courierHem = courierCloth * smoothstep(-0.180, -0.165, vCourierGarment.x) * (1.0 - smoothstep(-0.115, -0.105, vCourierGarment.x));\n' +
+          'diffuseColor.rgb = mix(diffuseColor.rgb, courierSleeveColor, smoothstep(0.12, 0.78, vCourierSleeve));\n' +
+          'float courierCuff = smoothstep(0.006, 0.012, vCourierGarment.y) * (1.0 - smoothstep(0.052, 0.060, vCourierGarment.y)) * smoothstep(0.12, 0.78, vCourierSleeve);\n' +
+          'diffuseColor.rgb = mix(diffuseColor.rgb, courierHemColor, max(courierHem, courierCuff));\n' +
+          // Five broad crosswise tread pads remain readable on a lifted foot.
+          // Their coordinates are skinned varyings, so they follow the sole
+          // through the toe hinge without swimming over it during animation.
+          'float courierTread = 1.0 - smoothstep(0.28, 0.40, abs(fract(vCourierSole.y * 5.0) - 0.5));\n' +
+          'vec3 courierRubber = mix(courierSoleColor, courierTreadColor, courierTread * 0.72);\n' +
+          'diffuseColor.rgb = mix(diffuseColor.rgb, courierRubber, smoothstep(0.08, 0.70, vCourierSole.x));');
+      if (typeof canvas !== 'undefined' && canvas.dataset) canvas.dataset.courierFinish = 'garment-edge-v6';
+    };
+    material.customProgramCacheKey = function () {
+      return 'courierGarmentEdgeV6|' + (previousKey ? previousKey.call(material) : '');
+    };
+    material.needsUpdate = true;
+  }
+
   // Dress the authored rig in bind space so accessories follow every authored
   // run, jump and roll without modifying the animation clips or skin weights.
   function dressCourierHero(mesh) {
@@ -21391,9 +21577,48 @@ THREE.GLTFLoader = GLTFLoader;
     maybeFinishPreload();
   }
 
+  // Keep the original PNG model for decoders without lossless WebP. Fetch it
+  // only if the smaller primary model fails, including on a file:// launch.
+  function loadCourierWithFallback(loader, source, onLoad, onError) {
+    var retried = false;
+    function retryPNG() {
+      if (retried) { onError(); return; }
+      retried = true;
+      function loadPNG() {
+        try {
+          loader.load(globalThis.BERLIN_RUNNER_HERO_V12_DATA_URI ||
+            'assets/models/berlin-runner-hero-v12.glb?rev=31', function (gltf) {
+              // The core PNG path can also resolve a failed decode as null.
+              // This pinned model requires a painted skinned body to be usable.
+              var paintedBody = false;
+              if (gltf && gltf.scene) gltf.scene.traverse(function (o) {
+                if (o.isSkinnedMesh && o.material && o.material.map) paintedBody = true;
+              });
+              if (paintedBody) onLoad(gltf);
+              else onError();
+            }, undefined, onError);
+        } catch (e) { onError(); }
+      }
+      if (location.protocol !== 'file:' || globalThis.BERLIN_RUNNER_HERO_V12_DATA_URI) {
+        loadPNG();
+      } else {
+        var script = document.createElement('script');
+        script.onload = function () {
+          if (globalThis.BERLIN_RUNNER_HERO_V12_DATA_URI) loadPNG();
+          else onError();
+        };
+        script.onerror = onError;
+        script.src = 'assets/models/berlin-runner-hero-v12.inline.js';
+        document.head.appendChild(script);
+      }
+    }
+    try { loader.load(source, onLoad, undefined, retryPNG); }
+    catch (e) { retryPNG(); }
+  }
+
   if (USE_GENERATED_HERO && ASSETS.character && THREE.GLTFLoader) {
     try {
-      new THREE.GLTFLoader(assetManager).load(ASSETS.character, function (gltf) {
+      loadCourierWithFallback(new THREE.GLTFLoader(assetManager), ASSETS.character, function (gltf) {
         var model = gltf.scene;
         var heroSkin = null;
         charAssetComplete = isCompleteAuthoredHero(model);
@@ -21436,6 +21661,7 @@ THREE.GLTFLoader = GLTFLoader;
           // far cheaper than MeshStandardMaterial on this ~25k-tri skinned mesh.
           function tuneMaterial(src) {
             if (src.map) {
+              canvas.dataset.heroTextureFormat = src.map.userData.mimeType || 'unknown';
               recolourHeroGarment(src.map);
               src.map.colorSpace = THREE.SRGBColorSpace;
               src.map.anisotropy = MAX_ANISO;
@@ -21474,9 +21700,11 @@ THREE.GLTFLoader = GLTFLoader;
               heroShaderPatch(mm, 'heroBody', 0.62, heroCostumeReady);
             });
           } else if (charAssetComplete && o.isSkinnedMesh) {
+            var courierRefined = refineCourierSilhouette(o);
             var authoredMats = Array.isArray(o.material) ? o.material : [o.material];
             authoredMats.forEach(function (mm) {
               heroShaderPatch(mm, 'heroAuthored', 0.46, false);
+              if (courierRefined) courierSleeveMaterial(mm);
             });
           }
         });
@@ -21583,7 +21811,7 @@ THREE.GLTFLoader = GLTFLoader;
         rig.visible = true;
         heroReady = true;
         maybeFinishPreload();
-      }, undefined, activateProceduralHeroFallback);
+      }, activateProceduralHeroFallback);
     } catch (e) {
       activateProceduralHeroFallback();
     }
@@ -22152,7 +22380,7 @@ THREE.GLTFLoader = GLTFLoader;
       var rx, rz;
       if (len < 1e-4) { rx = 1; rz = 0; } else { rx = dz / len; rz = -dx / len; }
       var taper = 1 - i / (FX_TRAIL_N - 1);
-      var w = (0.16 + 0.30 * taper) * (0.55 + 0.65 * fxTrailFade);
+      var w = (0.10 + 0.18 * taper) * (0.55 + 0.65 * fxTrailFade);
       var v0 = i * 6, v1 = v0 + 3;
       fxTrailPos[v0] = fxTrailHist[i3] + rx * w;
       fxTrailPos[v0 + 1] = fxTrailHist[i3 + 1] + taper * 0.05;
@@ -22160,7 +22388,8 @@ THREE.GLTFLoader = GLTFLoader;
       fxTrailPos[v1] = fxTrailHist[i3] - rx * w;
       fxTrailPos[v1 + 1] = fxTrailHist[i3 + 1] + taper * 0.05;
       fxTrailPos[v1 + 2] = fxTrailHist[i3 + 2] - rz * w;
-      var a = taper * taper * fxTrailFade * 0.55;
+      // A light acceleration accent, kept below the road/foot contrast.
+      var a = taper * taper * fxTrailFade * 0.16;
       var c0 = i * 8, c1 = c0 + 4;
       fxTrailCol[c0] = 1.0; fxTrailCol[c0 + 1] = 0.82; fxTrailCol[c0 + 2] = 0.52; fxTrailCol[c0 + 3] = a;
       fxTrailCol[c1] = 1.0; fxTrailCol[c1 + 1] = 0.82; fxTrailCol[c1 + 2] = 0.52; fxTrailCol[c1 + 3] = a;
@@ -23720,8 +23949,11 @@ THREE.GLTFLoader = GLTFLoader;
     updatePowerupHUD(true);
     if (pretzelSolidInst) {
       pretzelSolidInst.count = 0;
-      pretzelSolidInkCount = 0;
-      pretzelSolidInst.instanceMatrix.needsUpdate = true;
+      pretzelSolidInst.visible = false;
+    }
+    if (pretzelHaloInst) {
+      pretzelHaloInst.count = 0;
+      pretzelHaloInst.visible = false;
     }
     clearParticles();
     fxPrevPlayerX = player.x;
@@ -23730,8 +23962,9 @@ THREE.GLTFLoader = GLTFLoader;
     rig.rotation.set(0, 0, 0);
     // Matches updateCamera's new resting backOff/height (see the low, close
     // chase-cam rework there) so the very first rendered frame doesn't pop.
-    camPos.set(0, 2.20, player.z - 3.35);
-    camLook.set(0, 1.46, player.z + 12.8);
+    var startPortrait = clamp((0.72 - camera.aspect) / 0.30, 0, 1);
+    camPos.set(0, 3.05 + startPortrait * 0.52, player.z - 4.35 - startPortrait * 1.15);
+    camLook.set(0, 1.12, player.z + 12.8);
     camera.position.copy(camPos);
     camera.fov = fovVisual;
     camera.updateProjectionMatrix();
@@ -23788,6 +24021,7 @@ THREE.GLTFLoader = GLTFLoader;
   // by WebGLShadowMap and aren't reachable through the public material API
   // at all -- only an actual render triggers them.
   function warmRemainingPrograms(done) {
+    var warmStartedAt = performance.now();
     // Station platform lamps and the tunnel headlight sweep used to be real
     // THREE.PointLights nested inside per-chunk station/tunnel roots, so
     // NUM_POINT_LIGHTS (and therefore every lit material's compiled variant)
@@ -23822,6 +24056,19 @@ THREE.GLTFLoader = GLTFLoader;
 
     var savedTarget = renderer.getRenderTarget();
     var steps = [];
+    // Shader shape depends on target colour space, not its pixel count. Keep
+    // the post path's format/type/MSAA while preventing hundreds of uncullable
+    // proxies from filling the full Retina buffer just to link their programs.
+    // The direct-render fallback keeps its canvas path: r156 always selects
+    // linear output for an ordinary offscreen target, regardless of its tag.
+    var warmTarget = null;
+    if (POST.on && sceneRT) {
+      warmTarget = new THREE.WebGLRenderTarget(8, 8, {
+        type:sceneRT.texture.type, format:sceneRT.texture.format,
+        depthBuffer:true, stencilBuffer:false, samples:sceneRT.samples
+      });
+      warmTarget.texture.colorSpace = sceneRT.texture.colorSpace;
+    }
 
     // Compile the exact material/object program shapes without walking every
     // facade, prop and pooled holder in the city twice. Material identity is
@@ -23841,6 +24088,9 @@ THREE.GLTFLoader = GLTFLoader;
       var lightCopy = obj.clone(false);
       lightCopy.position.copy(obj.getWorldPosition(new THREE.Vector3()));
       lightCopy.castShadow = obj.castShadow;
+      // Only these temporary lights use a tiny atlas; map size is a uniform,
+      // so every gameplay depth variant still links without a 2048² raster.
+      if (lightCopy.shadow) lightCopy.shadow.mapSize.set(32, 32);
       programWarmScene.add(lightCopy);
       if (obj === sun) programWarmSun = lightCopy;
     });
@@ -23937,12 +24187,11 @@ THREE.GLTFLoader = GLTFLoader;
                         obj.isSprite ? 'sprite' : obj.isPoints ? 'points' :
                         obj.isLineSegments ? 'lineSeg' : obj.isLine ? 'line' : 'mesh';
         var geoSig = obj.isSprite ? 'g0' : warmGeoSignature(obj.geometry);
-        // An instanced pool that has not had setColorAt() called on it yet
-        // reports instanceColor === null at warm-up time and grows the
-        // attribute later, on its first tinted spawn -- a fresh link mid-run.
-        // Warm both shapes for every instanced mesh; the pair is cheap and the
-        // pool's eventual state stops mattering.
-        var shapes = obj.isInstancedMesh ? ['inst', 'instColor'] : [baseShape];
+        // Every tinted pool allocates instanceColor at construction, including
+        // empty pickup/parked pools. Plain lamps/trees never acquire colours.
+        // Warming both shapes manufactured an unreachable extra shader for
+        // every material/geometry pair and doubled their compile/depth work.
+        var shapes = [obj.isInstancedMesh && obj.instanceColor ? 'instColor' : baseShape];
         for (var si = 0; si < shapes.length; si++) {
           var warmKey = warmMat.id + '|' + shapes[si] + '|' + geoSig +
                         '|' + (obj.receiveShadow ? 1 : 0);
@@ -23952,6 +24201,8 @@ THREE.GLTFLoader = GLTFLoader;
         }
       }
     });
+    canvas.dataset.warmObjects = String(Object.keys(programWarmKeys).length);
+    canvas.dataset.warmGatherMs = (performance.now() - warmStartedAt).toFixed(1);
 
     // One shadow state, not two. This step used to run twice -- once with
     // sun.castShadow on and once with it off -- because the quality ladder
@@ -23963,8 +24214,10 @@ THREE.GLTFLoader = GLTFLoader;
     // be reached.
     steps.push(function () {
       if (programWarmSun) programWarmSun.castShadow = sun.castShadow;
-      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+      if (warmTarget) renderer.setRenderTarget(warmTarget);
+      var compileStartedAt = performance.now();
       try { renderer.compile(programWarmScene, camera); } catch (e) {}
+      canvas.dataset.warmCompileMs = (performance.now() - compileStartedAt).toFixed(1);
     });
 
     // The outline prepass's four MeshNormalMaterial program shapes used to be
@@ -23980,25 +24233,31 @@ THREE.GLTFLoader = GLTFLoader;
     // compiles all of them behind the loading card instead.
     steps.push(function () {
       if (programWarmSun) programWarmSun.castShadow = sun.castShadow;
-      if (POST.on && sceneRT) renderer.setRenderTarget(sceneRT);
+      if (warmTarget) renderer.setRenderTarget(warmTarget);
+      var depthStartedAt = performance.now();
       try {
         renderer.shadowMap.needsUpdate = true;
         renderer.render(programWarmScene, camera);
       } catch (e) {}
+      canvas.dataset.warmDepthMs = (performance.now() - depthStartedAt).toFixed(1);
     });
 
     steps.push(function () {
       renderer.shadowMap.needsUpdate = true;
       renderer.setRenderTarget(savedTarget);
+      if (warmTarget) warmTarget.dispose();
       // The warm scene's cloned lights were given their own shadow render
       // targets by the depth pass above. Nothing references them afterwards and
       // GPU resources are not reclaimed by GC, so a 2048² map would simply leak.
       programWarmScene.traverse(function (warmLight) {
+        // Release proxy-owned instance buffers, never shared source geometry.
+        if (warmLight.isInstancedMesh) warmLight.dispose();
         if (warmLight.isLight && warmLight.shadow && warmLight.shadow.map) {
           warmLight.shadow.map.dispose();
           warmLight.shadow.map = null;
         }
       });
+      canvas.dataset.warmTotalMs = (performance.now() - warmStartedAt).toFixed(1);
     });
 
     // Spread across frames rather than one long synchronous block, so the
@@ -25675,14 +25934,19 @@ THREE.GLTFLoader = GLTFLoader;
     // readable without fisheye distortion.
     var portraitView = clamp((0.72 - camera.aspect) / 0.30, 0, 1);
     // Dolly in over a slide, ease out over a jump — both purely framing.
-    var dolly = -slideVisual * 0.58 + clamp(visualPlayer.y, 0, 3.2) * 0.15;
-    var backOff = 3.35 + speedMix * 0.90 + bridgeRevealAmount * 0.22 +
-                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 2.15;
+    var dolly = -slideVisual * 0.18 + clamp(visualPlayer.y, 0, 3.2) * 0.15;
+    // The raised lens needs another metre behind the runner in landscape so
+    // the soles stay above the bottom edge. Portrait keeps its original total
+    // distance; only the split between base dolly and portrait allowance changes.
+    var backOff = 4.35 + speedMix * 0.90 + bridgeRevealAmount * 0.22 +
+                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 1.15;
     // Published for the near-side render cull (see nearCullZ): portrait alone
-    // pulls the lens 2.15 m further back, so a fixed offset from the runner
+    // pulls the lens 1.15 m further back, so a fixed offset from the runner
     // would leave that whole band of street being culled on screen.
     cameraBackOff = backOff;
-    var height = 2.20 + speedMix * 0.28 + bridgeRevealAmount * 0.24 + routeCameraCrest * 0.08 -
+    // Expose the top of hazards and the space between successive gates.
+    // The existing dolly and lateral follow preserve all three lane sightlines.
+    var height = 3.05 + speedMix * 0.28 + bridgeRevealAmount * 0.24 + routeCameraCrest * 0.08 -
                  slideVisual * 0.30 + portraitView * 0.52;
     // Extra vertical follow while airborne only (airVisual, not visualPlayer.y
     // alone, so grounded rooftop sections keep their own already-tuned
@@ -25705,7 +25969,7 @@ THREE.GLTFLoader = GLTFLoader;
     sampleRoutePoint(targetX, targetY + playerSurfaceY(targetZ), targetZ);
     var desiredCamX = routePointX, desiredCamY = routePointY, desiredCamZ = routePointZ;
     var lookLogicalX = visualPlayer.x * (0.80 + portraitView * 0.12) + laneDelta * 0.11 + bridgeReveal * 1.22;
-    var lookLogicalY = 1.46 + visualPlayer.y * 0.48 - slideVisual * 0.20;
+    var lookLogicalY = 1.12 + visualPlayer.y * 0.48 - slideVisual * 0.20;
     var lookLogicalZ = visualPlayer.z + 12.8 + speedMix * 1.6;
     sampleRoutePoint(lookLogicalX, lookLogicalY + playerSurfaceY(lookLogicalZ), lookLogicalZ);
     var desiredLookX = routePointX, desiredLookY = routePointY, desiredLookZ = routePointZ;
@@ -26028,7 +26292,7 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Shadow frustum only needs to move when the shadow map will be refreshed.
     // Point/rim lights still follow every frame, preserving the live lighting.
-    if (frameNumber % shadowRefreshPeriod() === 0) {
+    if (shadowRefreshDue) {
       sampleRoutePoint(player.x, playerSurfaceY(player.z), player.z);
       // Keep in sync with the init-time offset above (-45/72/48) — this is
       // the per-frame re-anchor as the sun follows the route curve.
@@ -26072,12 +26336,7 @@ THREE.GLTFLoader = GLTFLoader;
 
     // Pretzels spin and bob. Logical slots keep their original identity for
     // collision; only active solid transforms are compacted into the renderer.
-    //
-    // Two passes over the pool so the compacted instances come out sorted into
-    // "inside the ink band" then "beyond it", rather than in pool order. Each
-    // active token is still animated exactly once — it matches exactly one pass
-    // — and the split lets the outline prepass draw instances [0, inkCount)
-    // instead of the whole trail. Nothing else depends on instance order.
+    // The depth-based composite needs no near/far prefix, so compact once.
     var pretzelSolidCount = 0;
     var pretzelHaloCount = 0;
     // The halo billboards all share the camera's orientation (see
@@ -26085,19 +26344,19 @@ THREE.GLTFLoader = GLTFLoader;
     pretzelHaloInvQuat.copy(camera.quaternion).invert();
     pretzelHaloInst.quaternion.copy(camera.quaternion);
     pretzelHaloInst.updateMatrix();
-    var pretzelInkZ = player.z + PICKUP_INK_FAR;
-    for (var pretzelPass = 0; pretzelPass < 2; pretzelPass++) {
       for (var pi2 = 0; pi2 < pretzels.length; pi2++) {
         var pr = pretzels[pi2];
         if (!pr.active) continue;
-        if ((pr.z <= pretzelInkZ) !== (pretzelPass === 0)) continue;
         var pretzelBobY = pr.y + Math.sin(t * 3 + pr.z * 0.3) * 0.1;
         var magnetPull = magnetTimer > 0 ? clamp(1 - (pr.z - visualPlayer.z) / 16, 0, 1) : 0;
         magnetPull *= magnetPull;
         applyPlayFrame(pr.sprite,
           lerp(pr.x, visualPlayer.x, magnetPull),
           lerp(pretzelBobY, visualPlayer.y + 1.05, magnetPull), pr.z, 0, 0, 0);
-        pr.mesh.rotation.y = t * 2.6 + pr.z;
+        // Keep the three openings readable throughout the approach. A slow
+        // yaw rocks the baked crust through the light without turning it
+        // into an edge-on glowing sliver for half of each spin.
+        pr.mesh.rotation.y = Math.sin(t * 1.8 + pr.z * 0.31) * 0.58;
         pr.mesh.rotation.z = Math.sin(t * 2 + pr.z) * .16;
         var s = 1.0 + Math.sin(t * 4 + pr.z) * 0.07;
         pr.sprite.scale.set(s, s, s);
@@ -26113,7 +26372,7 @@ THREE.GLTFLoader = GLTFLoader;
         // clamp and one multiply per active token, and the token's own lit
         // geometry carries the read at that range.
         var haloFade = clamp((pr.z - visualPlayer.z - 0.6) / 6.2, 0, 1);
-        var haloSize = 1.42 * s;   // clears the token's own silhouette
+        var haloSize = 1.22 * s;   // narrow rim outside the token silhouette
         pretzelHaloPos.copy(pr.sprite.position).applyQuaternion(pretzelHaloInvQuat);
         pretzelHaloScale.set(haloSize, haloSize, 1);
         pretzelHaloMatrix.compose(pretzelHaloPos, PRETZEL_HALO_QUAT, pretzelHaloScale);
@@ -26126,13 +26385,20 @@ THREE.GLTFLoader = GLTFLoader;
         pretzelSolidMatrix.multiplyMatrices(pr.sprite.matrix, pr.mesh.matrix);
         pretzelSolidInst.setMatrixAt(pretzelSolidCount++, pretzelSolidMatrix);
       }
-      if (pretzelPass === 0) pretzelSolidInkCount = pretzelSolidCount;
-    }
     pretzelSolidInst.count = pretzelSolidCount;
-    pretzelSolidInst.instanceMatrix.needsUpdate = true;
+    pretzelSolidInst.visible = pretzelSolidCount > 0;
     pretzelHaloInst.count = pretzelHaloCount;
-    pretzelHaloInst.instanceMatrix.needsUpdate = true;
-    if (pretzelHaloInst.instanceColor) pretzelHaloInst.instanceColor.needsUpdate = true;
+    pretzelHaloInst.visible = pretzelHaloCount > 0;
+    if (pretzelSolidCount) {
+      pretzelSolidInst.instanceMatrix.updateRange.count = pretzelSolidCount * 16;
+      pretzelSolidInst.instanceMatrix.needsUpdate = true;
+      pretzelHaloInst.instanceMatrix.updateRange.count = pretzelHaloCount * 16;
+      pretzelHaloInst.instanceMatrix.needsUpdate = true;
+      if (pretzelHaloInst.instanceColor) {
+        pretzelHaloInst.instanceColor.updateRange.count = pretzelHaloCount * 3;
+        pretzelHaloInst.instanceColor.needsUpdate = true;
+      }
+    }
 
     // Power-ups use only six pooled roots and are animated in world space. A
     // counter-rotating halo keeps the silhouette readable against bright sky;
@@ -26234,6 +26500,22 @@ THREE.GLTFLoader = GLTFLoader;
   var PROMOTE_RETRY_SECONDS = 25;
   var droppedCatchups = 0;
   var deferredTrafficDt = 0;
+  var trafficRefreshElapsed = 0, shadowRefreshElapsed = 0;
+  var trafficRefreshDue = false, shadowRefreshDue = false;
+  function updateRenderCadence(dt) {
+    // Real seconds keep 120/144 Hz displays from doubling shadow submissions
+    // and instance-buffer uploads. Carry the remainder on fractional refreshes.
+    var trafficInterval = 1 / 30;
+    var shadowInterval = shadowRefreshPeriod() / 60;
+    trafficRefreshElapsed += dt;
+    shadowRefreshElapsed += dt;
+    trafficRefreshDue = trafficRefreshElapsed + 1e-7 >= trafficInterval;
+    shadowRefreshDue = shadowRefreshElapsed + 1e-7 >= shadowInterval;
+    if (trafficRefreshDue) trafficRefreshElapsed = Math.max(0,
+      trafficRefreshElapsed - Math.floor((trafficRefreshElapsed + 1e-7) / trafficInterval) * trafficInterval);
+    if (shadowRefreshDue) shadowRefreshElapsed = Math.max(0,
+      shadowRefreshElapsed - Math.floor((shadowRefreshElapsed + 1e-7) / shadowInterval) * shadowInterval);
+  }
   var perfWarmup = 0;
 
   // ---- graded quality ladder ---------------------------------------------
@@ -26332,6 +26614,28 @@ THREE.GLTFLoader = GLTFLoader;
     QUALITY_TIER_MAX = t;
   }
   buildQualityLadder();
+
+  function rebuildViewportQualityTier() {
+    // Rung numbers shift when supersampling becomes available/unavailable.
+    // Preserve the actual effects, otherwise dragging a window onto a 1x
+    // monitor can turn a resolution-only tier into disabled AO and bloom.
+    var oldResolutionCount = RES_TIER_COUNT;
+    var resolutionFraction = oldResolutionCount > 0
+      ? clamp((qualityTier - TIER_RES_START + 1) / oldResolutionCount, 0, 1) : 0;
+    var oldRungs = [TIER_DOF_OFF, TIER_MSAA_OFF, TIER_RES_START, TIER_SHADOW_SLOW,
+      TIER_SHADOW_OFF, TIER_AO_OFF, TIER_BLOOM_OFF, TIER_FOCAL_OUTLINE];
+    var domain = -1;
+    for (var i = 0; i < oldRungs.length; i++) {
+      if (oldRungs[i] > 0 && qualityTier >= oldRungs[i] && (i !== 2 || oldResolutionCount > 0)) domain = i;
+    }
+    buildQualityLadder();
+    var newRungs = [TIER_DOF_OFF, TIER_MSAA_OFF, TIER_RES_START, TIER_SHADOW_SLOW,
+      TIER_SHADOW_OFF, TIER_AO_OFF, TIER_BLOOM_OFF, TIER_FOCAL_OUTLINE];
+    if (domain === 2) return RES_TIER_COUNT > 0
+      ? TIER_RES_START + Math.max(1, Math.ceil(resolutionFraction * RES_TIER_COUNT)) - 1
+      : Math.max(0, TIER_DOF_OFF, TIER_MSAA_OFF);
+    return domain < 0 ? 0 : Math.max(0, newRungs[domain]);
+  }
 
   var qualityTier = 0;
   var dofActive = POST.dofOn;
@@ -26593,6 +26897,7 @@ THREE.GLTFLoader = GLTFLoader;
     dt_ = raw;
     var t = now / 1000;
     monitorFrameBudget(raw);
+    updateRenderCadence(raw);
 
     if (started && !gameOver) {
       // Fixed sub-steps keep collision reliable at 200+ km/h on slow frames.
@@ -26710,7 +27015,7 @@ THREE.GLTFLoader = GLTFLoader;
     // material buckets at 30 Hz in every quality mode, while the cross-screen
     // tram above remains a true per-frame update. This removes hundreds of
     // matrix writes/uploads per second without changing the rendered objects.
-    if ((frameNumber & 1) === 0) {
+    if (trafficRefreshDue) {
       updateMovingTraffic(deferredTrafficDt, player.z);
       deferredTrafficDt = 0;
     }
@@ -26728,7 +27033,7 @@ THREE.GLTFLoader = GLTFLoader;
     // pass on every rendered frame. The frustum itself is re-anchored on
     // exactly these frames -- see updateWorldVisuals -- so the two must share
     // shadowRefreshPeriod() rather than repeating the cadence.
-    if (frameNumber % shadowRefreshPeriod() === 0) {
+    if (shadowRefreshDue) {
       renderer.shadowMap.needsUpdate = true;
     }
 
@@ -26745,6 +27050,8 @@ THREE.GLTFLoader = GLTFLoader;
       canvas.dataset.aa = sceneRT && sceneRT.samples ? 'msaa' : 'fxaa';
       canvas.dataset.framesPresented = String(frameNumber);
       canvas.dataset.pixelBudget = String(PIXEL_BUDGET);
+      canvas.dataset.routeDistance = distance.toFixed(1);
+      canvas.dataset.skyMood = moodFromIndex + '>' + moodToIndex + ':' + moodMix.toFixed(3);
     }
   }
 
@@ -26769,10 +27076,13 @@ THREE.GLTFLoader = GLTFLoader;
     MIN_RENDER_SCALE = Math.min(1,
       1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
     // Rotation, zoom and moving between monitors can change the usable rungs.
-    buildQualityLadder();
-    var viewportTier = qualityTier;
+    var viewportTier = rebuildViewportQualityTier();
     qualityTier = -1;
     ladderCeiling = QUALITY_TIER_MAX;
+    // A new pixel budget needs fresh promotion evidence as well.
+    promoteFloor = 0; promoteWatch = 0; promoteRetryIn = 0;
+    ladderProbeUntil = 0;
+    perfWarmup = 0; perfPressure = perfHeadroom = 0;
     applyQualityTier(viewportTier);
     pMat.uniforms.uScale.value = vh * 0.5;
   }

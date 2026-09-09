@@ -34,6 +34,7 @@ const output = path.join(img, 'berlin-art.inline.js');
 // slot -> file, matching the ASSETS slot names in berlin-runner.html
 const SLOTS = [
   ['summerSky', 'berlin-summer-sky-v1.png'],
+  ['sunsetSky', 'berlin-sunset-sky-v2.png'],
   ['skylineStrip', 'berlin-skyline-strip.png'],
   ['streetArt', 'berlin-street-art-atlas-v1-1024.png']
 ];

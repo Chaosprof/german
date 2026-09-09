@@ -1,15 +1,17 @@
 /* Artikel Blitz service worker: precache the app shell, then runtime-cache
    everything the app requests (data JSON, deck manifests, runner assets). */
-const CACHE_NAME = "artikel-blitz-v42";
+const CACHE_NAME = "artikel-blitz-v51";
 const PRECACHE_URLS = [
   "./",
   "./index.html",
   "./berlin-runner.html",
+  "./assets/models/berlin-coffee-sign-v1.mesh.js",
   "./data/berlin-runner-decks.js",
-  "./assets/models/berlin-runner-hero-v12.glb?rev=31",
+  "./assets/models/berlin-runner-hero-v13.glb?rev=32",
   "./assets/img/berlin-street-art-atlas-v1-1024.png",
   "./assets/img/berlin-skyline-strip.png",
   "./assets/img/berlin-summer-sky-v1.png",
+  "./assets/img/berlin-sunset-sky-v2.png",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
