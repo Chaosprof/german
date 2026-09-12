@@ -10,7 +10,7 @@ const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(
 const context = vm.createContext({console});
 vm.runInContext(scripts.find(s => s.includes('three.js r156 (MIT)')), context);
 const T = context.THREE;
-const glb = fs.readFileSync(path.join(root, 'assets/models/berlin-runner-hero-v13.glb'));
+const glb = fs.readFileSync(path.join(root, 'assets/models/berlin-runner-hero-v14.glb'));
 const jsonLength = glb.readUInt32LE(12);
 const doc = JSON.parse(glb.subarray(20, 20 + jsonLength));
 const bin = glb.subarray(28 + jsonLength);
@@ -42,8 +42,10 @@ const skeleton = new T.Skeleton(skin.joints.map(i => nodes[i]), skin.joints.map(
 const primitive = doc.meshes[0].primitives[0], geometry = new T.BufferGeometry();
 geometry.setAttribute('position', attribute(primitive.attributes.POSITION));
 geometry.setAttribute('normal', attribute(primitive.attributes.NORMAL));
+geometry.setAttribute('uv', attribute(primitive.attributes.TEXCOORD_0));
 geometry.setAttribute('skinIndex', attribute(primitive.attributes.JOINTS_0));
 geometry.setAttribute('skinWeight', attribute(primitive.attributes.WEIGHTS_0));
+geometry.setIndex(attribute(primitive.indices));
 const mesh = new T.SkinnedMesh(geometry, new T.MeshStandardMaterial());
 mesh.bind(skeleton, new T.Matrix4());
 const before = Buffer.from(geometry.attributes.position.array.buffer).toString('base64');
@@ -57,6 +59,61 @@ assert.equal(mesh.geometry.attributes.position.count, geometry.attributes.positi
 assert.deepEqual(Array.from(mesh.geometry.attributes.skinWeight.array), Array.from(geometry.attributes.skinWeight.array));
 assert.deepEqual(Array.from(mesh.geometry.attributes.skinIndex.array), Array.from(geometry.attributes.skinIndex.array));
 assert.deepEqual(skeleton.bones.map(b => b.matrixWorld.elements.slice()), originalBones, 'joint lengths and bind pose stay intact');
+assert.deepEqual(Array.from(mesh.geometry.attributes.uv.array),Array.from(geometry.attributes.uv.array),'authored UVs remain byte-identical');
+assert.deepEqual(Array.from(mesh.geometry.index.array),Array.from(geometry.index.array),'triangle topology remains byte-identical');
+// Compare against the accepted pre-expansion body. Shin weights also reach
+// the shoes, so keeping the Foot transform alone does not preserve contact.
+const previousRefineSource=html.slice(refineStart,refineEnd).replace('radial = 1.32','radial = 1.14')
+  .replace('radial = 1.36','radial = 1.18').replace('uniform = 1.20','uniform = 1.08');
+const previousMesh=new T.SkinnedMesh(geometry,mesh.material);previousMesh.bind(skeleton,new T.Matrix4());
+new Function('THREE',previousRefineSource+'return refineCourierSilhouette;')(T)(previousMesh);
+let protectedShoeVertices=0;
+for(let v=0;v<geometry.attributes.position.count;v++){
+  let shoeWeight=0;
+  for(let c=0;c<4;c++)if(/^(Left|Right)(Foot|ToeBase)$/.test(skeleton.bones[geometry.attributes.skinIndex.getComponent(v,c)].name))
+    shoeWeight+=geometry.attributes.skinWeight.getComponent(v,c);
+  if(shoeWeight>.45||(shoeWeight>0&&geometry.attributes.position.getY(v)<.02)){
+    for(const attributeName of ['position','normal'])for(let c=0;c<3;c++)assert.equal(
+      mesh.geometry.attributes[attributeName].getComponent(v,c),previousMesh.geometry.attributes[attributeName].getComponent(v,c),
+      'entire shoe surface and sole retain the accepted refinement exactly');
+    protectedShoeVertices++;
+  }
+}
+assert.ok(protectedShoeVertices>1300,'the actual shoes and mixed-weight cuffs are covered');
+function regionBounds(geo,names){
+  const wanted=new Set(names),box=new T.Box3();
+  for(let v=0;v<geo.attributes.position.count;v++){
+    let weight=0;for(let c=0;c<4;c++)if(wanted.has(skeleton.bones[geo.attributes.skinIndex.getComponent(v,c)].name))weight+=geo.attributes.skinWeight.getComponent(v,c);
+    if(weight>.45)box.expandByPoint(new T.Vector3().fromBufferAttribute(geo.attributes.position,v));
+  }
+  return box;
+}
+const headFamily=['Head','head_end','headfront'];
+const headWidthRatio=regionBounds(mesh.geometry,headFamily).getSize(new T.Vector3()).x/
+  regionBounds(previousMesh.geometry,headFamily).getSize(new T.Vector3()).x;
+assert.ok(headWidthRatio>1.10&&headWidthRatio<1.12,'real head volume grows by the intended modest amount');
+for(const side of ['Left','Right'])for(const region of ['UpLeg','Leg']){
+  const width=regionBounds(mesh.geometry,[side+region]).getSize(new T.Vector3()).x;
+  const formerWidth=regionBounds(previousMesh.geometry,[side+region]).getSize(new T.Vector3()).x;
+  assert.ok(width>formerWidth*1.025&&width<formerWidth*1.18,'actual trouser silhouette grows without lengthening joints');
+}
+// The shipped v14 tips currently have no weighted vertices. Redistribute
+// actual fully head-weighted vertices across all three real head bones to
+// prove the shared transform also preserves tip-weighted islands and seams.
+const familyIndices=headFamily.map(name=>skeleton.bones.findIndex(b=>b.name===name));
+assert.ok(familyIndices.every(i=>i>=0));
+const tipGeometry=geometry.clone(),tipProbes=[];
+for(let v=0;v<geometry.attributes.position.count;v++){
+  let headWeight=0;for(let c=0;c<4;c++)if(geometry.attributes.skinIndex.getComponent(v,c)===familyIndices[0])headWeight+=geometry.attributes.skinWeight.getComponent(v,c);
+  if(headWeight>.99999){
+    tipGeometry.attributes.skinIndex.setXYZW(v,...familyIndices,0);tipGeometry.attributes.skinWeight.setXYZW(v,.25,.25,.5,0);tipProbes.push(v);
+  }
+}
+const tipMesh=new T.SkinnedMesh(tipGeometry,mesh.material);tipMesh.bind(skeleton,new T.Matrix4());refine(tipMesh);
+for(const v of tipProbes)for(const name of ['position','normal'])for(let c=0;c<3;c++)assert.ok(
+  Math.abs(tipMesh.geometry.attributes[name].getComponent(v,c)-mesh.geometry.attributes[name].getComponent(v,c))<1e-7,
+  'head, end and front influences produce the same surface without a seam');
+assert.equal(tipProbes.length,990,'all fully head-weighted vertices in the actual v14 surface are exercised');
 const sleeveVertices = {Left: 0, Right: 0};
 const soleVertices = {Left: 0, Right: 0};
 const garmentVertices = {Left:0, Right:0, Hem:0};
@@ -233,24 +290,150 @@ for (const clipName of testedClips) {
 }
 nodes.forEach((n, i) => { n.position.copy(bindTransforms[i][0]); n.quaternion.copy(bindTransforms[i][1]); n.scale.copy(bindTransforms[i][2]); });
 animationRoot.updateMatrixWorld(true); skeleton.update();
+// Sample the actual imported run and the actual runtime torso code. The
+// complete rig reverses the authored donor's spine names; its mocap already
+// has a strong shoulder counter-swing that the old Spine01 overlay suppressed.
+const yawStart = html.indexOf('  function heroRunChestYawWeight(');
+const yawEnd = html.indexOf('\n  function poseRunner(', yawStart);
+assert.ok(yawStart > 0 && yawEnd > yawStart);
+const chestYawWeight = new Function('clamp', html.slice(yawStart, yawEnd) + '\nreturn heroRunChestYawWeight;')(T.MathUtils.clamp);
+const counterStart = html.indexOf("      nudgeCharBone('Spine', 0.045");
+const counterEnd = html.indexOf('\n      // Run juice', counterStart);
+const juiceStart = html.indexOf("        nudgeCharBone('Spine01', 0.055", counterEnd);
+const juiceEnd = html.indexOf('\n        // Head stays level', juiceStart);
+const hipBob = html.match(/nudgeCharBone\('Hips', Math\.cos\(runPhase \* 2\) \* 0\.020, 0, 0, runCounter\);/);
+assert.ok(counterStart > 0 && counterEnd > counterStart && juiceEnd > juiceStart && hipBob);
+const torsoLayer = new Function('nudgeCharBone', 'heroRunChestYawWeight', 'runCounter', 'charAssetComplete',
+  'namedPrimaryWeight', 'namedLaneOwnership', 'swing', 'swing2', 'heroSpeedK', 'runPhase',
+  html.slice(counterStart, counterEnd) + html.slice(juiceStart, juiceEnd) + hipBob[0]);
+const boneLookup = Object.fromEntries(nodes.map(n => [n.name, n]));
+const nudgeStart = html.indexOf('  function nudgeCharBone(');
+const nudgeEnd = html.indexOf('\n  // Absolute counterpart', nudgeStart);
+const nudge = new Function('charBones', html.slice(nudgeStart, nudgeEnd) + '\nreturn nudgeCharBone;')(boneLookup);
+function actualClip(name) {
+  const animation = doc.animations.find(a => a.name === name);
+  return new T.AnimationClip(name + '_torso_probe', -1, animation.channels.map(channel => {
+    const sampler = animation.samplers[channel.sampler];
+    const property = {translation:'position', rotation:'quaternion', scale:'scale'}[channel.target.path];
+    const Track = property === 'quaternion' ? T.QuaternionKeyframeTrack : T.VectorKeyframeTrack;
+    return new Track(nodes[channel.target.node].name + '.' + property,
+      attribute(sampler.input).array, attribute(sampler.output).array);
+  }));
+}
+const probeRunClip = actualClip('run');
+const probeRunAction = mixer.clipAction(probeRunClip); probeRunAction.paused = true; probeRunAction.play();
+const shoulderA = new T.Vector3(), shoulderB = new T.Vector3();
+const yawSamples = {source:[], previous:[], corrected:[]};
+let maxYawFootDelta = 0;
+function shoulderYaw() {
+  boneLookup.LeftShoulder.getWorldPosition(shoulderA);
+  boneLookup.RightShoulder.getWorldPosition(shoulderB);
+  shoulderA.sub(shoulderB); return Math.atan2(shoulderA.z, shoulderA.x) * 180 / Math.PI;
+}
+for (let frame = 0; frame < 60; frame++) {
+  const phase = frame / 60 * Math.PI * 2;
+  probeRunAction.time = frame / 60 * probeRunClip.duration; mixer.update(0);
+  const cleanPose = nodes.map(n => n.quaternion.clone());
+  animationRoot.updateMatrixWorld(true); yawSamples.source.push(shoulderYaw());
+  let oldFeet;
+  for (const variant of ['previous','corrected','fallback','primary','lane']) {
+    nodes.forEach((n,i) => n.quaternion.copy(cleanPose[i]));
+    torsoLayer(nudge, variant === 'previous' ? weight => weight : chestYawWeight,
+      1, variant !== 'fallback', variant === 'primary' ? 1 : 0, variant === 'lane' ? 1 : 0,
+      Math.sin(phase), -Math.sin(phase), 0, phase);
+    animationRoot.updateMatrixWorld(true);
+    const feet = ['LeftFoot','RightFoot'].map(name => boneLookup[name].getWorldPosition(new T.Vector3()));
+    if (variant === 'previous') oldFeet = feet;
+    else for (let side=0;side<2;side++) maxYawFootDelta = Math.max(maxYawFootDelta, feet[side].distanceTo(oldFeet[side]));
+    if (yawSamples[variant]) yawSamples[variant].push(shoulderYaw());
+    if (variant === 'fallback' || variant === 'primary' || variant === 'lane') {
+      assert.ok(Math.abs(shoulderYaw() - yawSamples.previous[frame]) < 1e-10,
+        'fallback rigs and full named-action ownership preserve their original torso pose');
+    }
+  }
+  nodes.forEach((n,i) => n.quaternion.copy(cleanPose[i]));
+}
+const yawExcursion = Object.fromEntries(Object.entries(yawSamples).map(([name,values]) =>
+  [name, Math.max(...values) - Math.min(...values)]));
+assert.ok(yawExcursion.corrected > yawExcursion.previous * 1.45, 'ordinary run restores visible shoulder excursion');
+assert.ok(Math.abs(yawExcursion.corrected - yawExcursion.source) < 4, 'restored excursion stays close to the underlying mocap');
+assert.equal(maxYawFootDelta, 0, 'both feet retain exact world positions at all 60 run phases');
+// Repeated real mixer transitions exercise a paused/scrubbed base run, an
+// additive roll and a lane cut. Replaying the same sequence must be periodic;
+// an additive Euler offset cannot accumulate when clips hand ownership back.
+const probeActions = ['hero_roll','hero_lane_l'].map(name => {
+  const clip = actualClip(name); T.AnimationUtils.makeClipAdditive(clip,0,clip,120);
+  const action = mixer.clipAction(clip); action.paused=true; action.play(); action.weight=0;
+  return action;
+});
+const transitionReference = [];
+for (let cycle=0;cycle<5;cycle++) for (let frame=0;frame<120;frame++) {
+  const phase=frame/120*Math.PI*2;
+  const primary=frame>=40&&frame<70?Math.sin((frame-40)/30*Math.PI):0;
+  const lane=frame>=76&&frame<100?Math.sin((frame-76)/24*Math.PI):0;
+  probeRunAction.time=frame/120*probeRunClip.duration; probeRunAction.weight=1-primary;
+  probeActions[0].time=Math.max(0,(frame-40)/30)*probeActions[0].getClip().duration;probeActions[0].weight=primary;
+  probeActions[1].time=Math.max(0,(frame-76)/24)*probeActions[1].getClip().duration;probeActions[1].weight=lane;
+  mixer.update(0);
+  torsoLayer(nudge,chestYawWeight,1-primary,true,primary,lane,Math.sin(phase),-Math.sin(phase),0,phase);
+  const rotations=['Spine','Spine01','Spine02'].map(name=>boneLookup[name].quaternion.clone());
+  if(cycle===0)transitionReference.push(rotations);
+  // Compare components: exported float quaternions are not perfectly unit
+  // length, so angleTo can report a small angle even against the same value.
+  else rotations.forEach((q,i)=>assert.ok(q.toArray().every((v,k)=>
+    Math.abs(v-transitionReference[frame][i].toArray()[k])<1e-9),'run/action transitions have no cumulative yaw drift'));
+}
+mixer.stopAllAction();mixer.uncacheClip(probeRunClip);
+probeActions.forEach(action=>mixer.uncacheClip(action.getClip()));
+nodes.forEach((n,i)=>{n.position.copy(bindTransforms[i][0]);n.quaternion.copy(bindTransforms[i][1]);n.scale.copy(bindTransforms[i][2]);});
+animationRoot.updateMatrixWorld(true);skeleton.update();
+console.log(`PASS: complete-rig shoulder excursion ${yawExcursion.previous.toFixed(2)}° -> ${yawExcursion.corrected.toFixed(2)}° (source ${yawExcursion.source.toFixed(2)}°); exact foot positions; preserved fallback/named ownership; 600 run/roll/cut transition samples without drift.`);
 const start = html.indexOf('  function dressCourierHero(mesh) {');
 const end = html.indexOf('\n  function findHeroRunClip', start);
 assert.ok(start > 0 && end > start);
 const mergeStart = html.indexOf('  function mergeBoxes(specs) {');
 const mergeEnd = html.indexOf('\n  // DRAW-CALL CONSOLIDATION:', mergeStart);
 const mergeBoxes = new Function('THREE', html.slice(mergeStart, mergeEnd) + '\nreturn mergeBoxes;')(T);
-const dress = new Function('THREE', 'heroTrimMat', 'roundedBox', 'mergeBoxes',
-  html.slice(start, end) + '\nreturn dressCourierHero;')(
+const makeDress = source => new Function('THREE', 'heroTrimMat', 'roundedBox', 'mergeBoxes',
+  source + '\nreturn dressCourierHero;')(
     T, color => new T.MeshStandardMaterial({color}),
     (w, h, d, r, material, x, y, z) => {
       const o = new T.Mesh(new T.BoxGeometry(w, h, d), material);
       o.position.set(x, y, z); return o;
     }, mergeBoxes);
+const dress = makeDress(html.slice(start,end));
 dress(mesh);
 const cap = skeleton.bones.find(b => b.name === 'Head').getObjectByName('Courier cap');
 const bag = skeleton.bones.find(b => b.name === 'Spine02').getObjectByName('Courier sling bag');
 assert.ok(cap && bag, 'both accessories attach to the intended actual bones');
 assert.equal(cap.children.length + bag.children.length, 7, 'outfit stays within seven draws');
+// Dress the accepted smaller head with its former head-derived pack radius.
+// Compare actual merged vertices, not just a duplicated dimension constant.
+makeDress(html.slice(start,end).replace('var bagRadius = ts.y * 0.58445;', 'var bagRadius = radius;'))(previousMesh);
+const previousCap=cap.parent.children.filter(o=>o.name==='Courier cap').at(-1);
+const previousBag=bag.parent.children.filter(o=>o.name==='Courier sling bag').at(-1);
+assert.notEqual(previousCap,cap);assert.notEqual(previousBag,bag);
+animationRoot.updateMatrixWorld(true);
+let maxBagDelta=0;
+for(const [current,former] of [[cap,previousCap],[bag,previousBag]]){
+  assert.equal(current.children.length,former.children.length,'head growth adds no accessory draws');
+  for(let i=0;i<current.children.length;i++){
+    const a=current.children[i],b=former.children[i];
+    assert.equal(a.geometry.attributes.position.count,b.geometry.attributes.position.count,'accessory vertex count remains fixed');
+    assert.equal(a.geometry.index?.count,b.geometry.index?.count,'accessory triangle count remains fixed');
+    if(current===bag)for(let v=0;v<a.geometry.attributes.position.count;v++){
+      const av=new T.Vector3().fromBufferAttribute(a.geometry.attributes.position,v).applyMatrix4(a.matrixWorld);
+      const bv=new T.Vector3().fromBufferAttribute(b.geometry.attributes.position,v).applyMatrix4(b.matrixWorld);
+      maxBagDelta=Math.max(maxBagDelta,av.distanceTo(bv));
+    }
+  }
+}
+assert.ok(maxBagDelta<.001,'every pack vertex remains within 1 mm of the accepted size/location');
+const capWidthRatio=new T.Box3().setFromObject(cap).getSize(new T.Vector3()).x/
+  new T.Box3().setFromObject(previousCap).getSize(new T.Vector3()).x;
+assert.ok(capWidthRatio>1.10&&capWidthRatio<1.12,'attached cap fits the fuller actual head');
+previousCap.removeFromParent();previousBag.removeFromParent();
+console.log(`PASS: fuller trousers; head/cap width +${((headWidthRatio-1)*100).toFixed(2)}%; ${tipProbes.length} shared-head seam probes; ${protectedShoeVertices} unchanged shoe/cuff vertices and normals; pack max displacement ${(maxBagDelta*1000).toFixed(4)} mm; unchanged UVs, topology and accessory draws.`);
 assert.equal(before, Buffer.from(geometry.attributes.position.array.buffer).toString('base64'), 'source skin geometry stays intact');
 for (const accessory of [cap, bag]) {
   nodes.filter(n => !n.parent).forEach(n => n.updateMatrixWorld(true));

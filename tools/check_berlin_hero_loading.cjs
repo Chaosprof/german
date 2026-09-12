@@ -79,11 +79,11 @@ function fallbackFixture(protocol, scriptWorks = true) {
   failedScript.load({load:(url,ok,progress,bad) => bad()},'primary',() => assert.fail('unexpected success'),() => errorCount++);
   assert.equal(errorCount,1, 'missing local fallback releases the game to its procedural character');
   const sw = fs.readFileSync(path.join(__dirname,'..','sw.js'),'utf8');
-  const primary = 'assets/models/berlin-runner-hero-v13.glb?rev=32';
+  const primary = 'assets/models/berlin-runner-hero-v14.glb?rev=33';
   assert.ok(html.includes('href="' + primary + '"'));
   assert.ok(html.includes("'" + primary + "', props:"));
   assert.ok(sw.includes('./' + primary));
-  assert.ok(html.includes('berlin-runner-hero-v13.inline.js'));
-  assert.ok(html.includes('character: globalThis.BERLIN_RUNNER_HERO_V13_DATA_URI'));
+  assert.ok(html.includes('berlin-runner-hero-v14.inline.js'));
+  assert.ok(html.includes('character: globalThis.BERLIN_RUNNER_HERO_V14_DATA_URI'));
   console.log('PASS: lossless WebP source/handler/probe; required, optional and null-decode paths; HTTP/file PNG retry; delivery URLs agree.');
 })().catch(error => {console.error(error); process.exitCode=1;});
