@@ -18,7 +18,11 @@ for(const query of ['', '?profile=1', '?softshadows=1', '?profile=1&softshadows=
   const marker='#elif defined( SHADOWMAP_TYPE_PCF_SOFT )';
   const begin=patched.indexOf(marker),end=patched.indexOf('#elif',begin+8);
   const kernel=patched.slice(begin,end);
-  assert.equal((kernel.match(/texture2DCompare\(/g)||[]).length,4,'four shadow-map reads');
+  assert.equal((kernel.match(/texture2DCompare\(/g)||[]).length,12,'bounded twelve-read soft area-shadow kernel');
+  assert.match(kernel,/texelSize \* clamp\(shadowRadius, 1\.0, 4\.0\)/,'penumbra uses the existing light radius in shadow texels');
+  const weights=kernel.match(/shadow = ([\d.]+) \* mix[\s\S]*?\+ ([\d.]+) \* ring/);
+  assert.ok(weights,'normalized bilinear centre and eight-sample ring');
+  assert.equal(Number(weights[1])+8*Number(weights[2]),1,'fully lit and fully shadowed values remain exact');
   const oldBegin=originalChunk.indexOf(marker),oldEnd=originalChunk.indexOf('#elif',oldBegin+8);
   assert.equal(patched.slice(0,begin),originalChunk.slice(0,oldBegin),'frustum rejection/bias and other shadow filters are untouched');
   assert.equal(patched.slice(end),originalChunk.slice(oldEnd),'VSM, point shadows and fallback remain intact');
@@ -59,8 +63,37 @@ for(const speed of [13,26])for(const offset of [0,500])for(const hasSlot of [tru
     spawnObstacle:(...args)=>trams.push(args),
     obstacleFitsQuizApproach:(kind,z,gate)=>z+4+.45<=gate-17};
   vm.runInNewContext(opening,state);
-  assert.deepEqual(rewards,[[1,offset+8,9,false]],'nine real rewards start in the free centre lane');
+  assert.deepEqual(rewards,[[1,offset+8,4,false,8]],'four spaced real rewards start in the free centre lane');
   assert.equal(trams.length,hasSlot?1:0,'full obstacle pools never steal a live hazard');
-  for(const [kind,lane,z] of trams){assert.equal(kind,3);assert.equal(lane,0);assert.ok(z>offset+30&&z+4+.45<gateZ-17,'entire tram clears the quiz reaction space');}
+  for(const [kind,lane,z] of trams){
+    assert.equal(kind,3);assert.equal(lane,2,'tram occupies the screen-right lane');
+    assert.ok((z-offset-state.OB_KINDS[3].halfD-state.HALF_D)/speed>=.85,
+      'opening retains at least850ms before the nearest tram collision face at fast speed');
+    assert.ok(z+state.OB_KINDS[3].halfD+state.HALF_D<gateZ-state.GATE_CLEAR_BEFORE,
+      'entire tram clears the quiz reaction space');
+  }
 }
-console.log(`PASS: four-sample shadow branch/fallback; ${shapes} bounded rounded props, ${oldTriangles}→${newTriangles} triangles; both opening speeds, reset offsets, free centre and pool exhaustion.`);
+// Execute the actual pooled spawn path. A different visual spacing must not
+// steal active pickups, allocate new holders or change ordinary formations.
+const pickupSource=section('  function spawnPretzelRun(', '\n  // A diagonal reward trail');
+const pickupPool=Array.from({length:6},(_,i)=>({active:i<2,sprite:new THREE.Group(),z:900+i,y:1.15,lane:2,x:-3}));
+const originalHolders=pickupPool.map(p=>p.sprite);
+const pickupState=vm.createContext({pretzels:pickupPool,LANES:[3,0,-3]});
+vm.runInContext(pickupSource,pickupState);
+pickupState.spawnPretzelRun(1,8,4,false,8);
+assert.deepEqual(pickupPool.slice(0,2).map(p=>p.z),[900,901],'opening never overwrites active pooled pickups');
+assert.deepEqual(pickupPool.slice(2).map(p=>p.z),[8,16,24,32]);
+assert.ok(pickupPool.slice(2).every(p=>p.active&&p.lane===1&&p.y===1.15&&p.sprite.visible));
+assert.ok(pickupPool.every((p,i)=>p.sprite===originalHolders[i]),'opening uses the existing holders');
+pickupState.spawnPretzelRun(1,40,4,false,8);
+assert.deepEqual(pickupPool.slice(2).map(p=>p.z),[8,16,24,32],'exhausted pool leaves the current run intact');
+pickupPool.forEach(p=>{p.active=false;});
+pickupState.spawnPretzelRun(0,60,5,false);
+const ordinarySpacing=pickupPool[1].z-pickupPool[0].z;
+assert.ok([2.18,2.40,2.58].some(spacing=>Math.abs(ordinarySpacing-spacing)<1e-8),'ordinary formations keep their original spacing');
+const attract=section('      // Hold a composed title-screen stance', '\n    var renderAlpha =').replace(/\n    }\s*$/,'');
+const title={player:{z:0},prevZ:0,interpPrevRunPhase:0,runPhase:0,raw:1/30,updateChunks:z=>assert.equal(z,0)};
+for(let frame=0;frame<300;frame++)vm.runInNewContext(attract,title);
+assert.equal(title.player.z,0,'ten seconds on the title card preserve the fresh-page reference block');
+assert.ok(Math.abs(title.runPhase-6.5)<1e-10,'authored idle animation continues while forward travel is held');
+console.log(`PASS: twelve-sample soft-shadow branch/fallback; ${shapes} bounded rounded props, ${oldTriangles}→${newTriangles} triangles; both opening speeds, reset offsets, free centre and pool exhaustion.`);

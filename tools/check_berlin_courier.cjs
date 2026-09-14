@@ -64,7 +64,7 @@ assert.deepEqual(Array.from(mesh.geometry.index.array),Array.from(geometry.index
 // Compare against the accepted pre-expansion body. Shin weights also reach
 // the shoes, so keeping the Foot transform alone does not preserve contact.
 const previousRefineSource=html.slice(refineStart,refineEnd).replace('radial = 1.32','radial = 1.14')
-  .replace('radial = 1.36','radial = 1.18').replace('uniform = 1.20','uniform = 1.08');
+  .replace('radial = 1.36','radial = 1.18').replace('uniform = 1.10','uniform = 1.20');
 const previousMesh=new T.SkinnedMesh(geometry,mesh.material);previousMesh.bind(skeleton,new T.Matrix4());
 new Function('THREE',previousRefineSource+'return refineCourierSilhouette;')(T)(previousMesh);
 let protectedShoeVertices=0;
@@ -91,7 +91,7 @@ function regionBounds(geo,names){
 const headFamily=['Head','head_end','headfront'];
 const headWidthRatio=regionBounds(mesh.geometry,headFamily).getSize(new T.Vector3()).x/
   regionBounds(previousMesh.geometry,headFamily).getSize(new T.Vector3()).x;
-assert.ok(headWidthRatio>1.10&&headWidthRatio<1.12,'real head volume grows by the intended modest amount');
+assert.ok(headWidthRatio>.90&&headWidthRatio<.93,'actual head width reduces by 8–10% for the closer reference camera');
 for(const side of ['Left','Right'])for(const region of ['UpLeg','Leg']){
   const width=regionBounds(mesh.geometry,[side+region]).getSize(new T.Vector3()).x;
   const formerWidth=regionBounds(previousMesh.geometry,[side+region]).getSize(new T.Vector3()).x;
@@ -407,9 +407,12 @@ const cap = skeleton.bones.find(b => b.name === 'Head').getObjectByName('Courier
 const bag = skeleton.bones.find(b => b.name === 'Spine02').getObjectByName('Courier sling bag');
 assert.ok(cap && bag, 'both accessories attach to the intended actual bones');
 assert.equal(cap.children.length + bag.children.length, 7, 'outfit stays within seven draws');
-// Dress the accepted smaller head with its former head-derived pack radius.
-// Compare actual merged vertices, not just a duplicated dimension constant.
-makeDress(html.slice(start,end).replace('var bagRadius = ts.y * 0.58445;', 'var bagRadius = radius;'))(previousMesh);
+// Dress the former larger head too. The backpack must remain independent
+// of head sizing; compare every actual merged vertex in world space.
+const formerHeadMesh=new T.SkinnedMesh(geometry,mesh.material);formerHeadMesh.bind(skeleton,new T.Matrix4());
+new Function('THREE',html.slice(refineStart,refineEnd).replace('uniform = 1.10','uniform = 1.20')+
+  '\nreturn refineCourierSilhouette;')(T)(formerHeadMesh);
+makeDress(html.slice(start,end))(formerHeadMesh);
 const previousCap=cap.parent.children.filter(o=>o.name==='Courier cap').at(-1);
 const previousBag=bag.parent.children.filter(o=>o.name==='Courier sling bag').at(-1);
 assert.notEqual(previousCap,cap);assert.notEqual(previousBag,bag);
@@ -428,12 +431,14 @@ for(const [current,former] of [[cap,previousCap],[bag,previousBag]]){
     }
   }
 }
-assert.ok(maxBagDelta<.001,'every pack vertex remains within 1 mm of the accepted size/location');
+// The torso bounds include a few blended neck vertices. They move slightly
+// with the reduced head, but must not resize the pack by the head's 8–10%.
+assert.ok(maxBagDelta<.0025,'blended neck vertices move every pack vertex by less than 2.5 mm');
 const capWidthRatio=new T.Box3().setFromObject(cap).getSize(new T.Vector3()).x/
   new T.Box3().setFromObject(previousCap).getSize(new T.Vector3()).x;
-assert.ok(capWidthRatio>1.10&&capWidthRatio<1.12,'attached cap fits the fuller actual head');
+assert.ok(capWidthRatio>.90&&capWidthRatio<.93,'attached cap follows the reduced actual head');
 previousCap.removeFromParent();previousBag.removeFromParent();
-console.log(`PASS: fuller trousers; head/cap width +${((headWidthRatio-1)*100).toFixed(2)}%; ${tipProbes.length} shared-head seam probes; ${protectedShoeVertices} unchanged shoe/cuff vertices and normals; pack max displacement ${(maxBagDelta*1000).toFixed(4)} mm; unchanged UVs, topology and accessory draws.`);
+console.log(`PASS: fuller trousers; head/cap width ${((headWidthRatio-1)*100).toFixed(2)}%; ${tipProbes.length} shared-head seam probes; ${protectedShoeVertices} unchanged shoe/cuff vertices and normals; head-independent pack displacement ${(maxBagDelta*1000).toFixed(4)} mm; unchanged UVs, topology and accessory draws.`);
 assert.equal(before, Buffer.from(geometry.attributes.position.array.buffer).toString('base64'), 'source skin geometry stays intact');
 for (const accessory of [cap, bag]) {
   nodes.filter(n => !n.parent).forEach(n => n.updateMatrixWorld(true));

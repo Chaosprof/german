@@ -11,6 +11,39 @@ scripts.forEach((source, i) => new vm.Script(source, {filename:`inline-${i}.js`}
 const context = vm.createContext({console});
 vm.runInContext(scripts.find(s => s.includes('three.js r156 (MIT)')), context);
 const THREE = context.THREE;
+const postStart=html.indexOf('  function makeReferenceStonePostGeometry() {');
+const postEnd=html.indexOf('  var bollardGeometry =',postStart);
+const stonePost=new Function('THREE',html.slice(postStart,postEnd)+'return makeReferenceStonePostGeometry();')(THREE);
+assert.equal(stonePost.index.count/3,320,'one shared post stays within its 320-triangle budget');
+const postBox=stonePost.boundingBox;
+assert.ok(Math.abs(postBox.min.y+.4)<1e-6&&Math.abs(postBox.max.y-.6)<1e-6);
+assert.ok(postBox.max.x<=.180001&&postBox.min.x>=-.180001);
+for(let v=0;v<stonePost.attributes.position.count;v++) {
+  const n=new THREE.Vector3().fromBufferAttribute(stonePost.attributes.normal,v);
+  assert.ok(Math.abs(n.length()-1)<.00001,'post profile normals are normalized');
+}
+const postMesh=new THREE.Mesh(stonePost,new THREE.MeshStandardMaterial({vertexColors:true}));
+let postRays=0;
+for(const y of [-.33,0,.35,.46,.57])for(let side=0;side<16;side++) {
+  const angle=side/16*Math.PI*2,ray=new THREE.Raycaster(new THREE.Vector3(Math.cos(angle),y,Math.sin(angle)),new THREE.Vector3(-Math.cos(angle),0,-Math.sin(angle)));
+  assert.ok(ray.intersectObject(postMesh).length,'rounded post has a closed outward-facing silhouette');postRays++;
+}
+const rollStart=html.indexOf('  function rollBollards(ud) {'),rollEnd=html.indexOf('  // Station/bridge/tunnel frontages',rollStart);
+const rollStone=new Function('THREE','REFERENCE_STONE_POSTS','ROAD_HALF','BOLLARD_ZERO','bollardZeroQuat','BOLLARD_ZERO_SCALE',html.slice(rollStart,rollEnd)+'return rollBollards;')(
+  THREE,true,7.2,new THREE.Vector3(0,-50,0),new THREE.Quaternion(),new THREE.Vector3(0,0,0));
+const postMatrices=Array.from({length:16},()=>new THREE.Matrix4());
+const postUd={motif:0,bollardsView:{setMatrixAt:(i,m)=>postMatrices[i].copy(m),needsUpdate:()=>{}}};
+for(const motif of [0,1,2,1,0]) {
+  postUd.motif=motif;rollStone(postUd);
+  const visible=postMatrices.filter(m=>m.elements[0]!==0);
+  assert.equal(visible.length,motif===1?8:16,'crossings clear their middle and recycled blocks restore all posts');
+  for(const m of visible) {
+    assert.ok(Math.abs(m.elements[12])-.18>7.2,'post silhouette stays outside every running lane');
+    if(motif===1)assert.ok(Math.abs(m.elements[14])-.18>9,'complete viaduct opening remains clear');
+    assert.equal(m.elements[13],.4,'post base retains its curb-relative height');
+  }
+}
+console.log(`PASS: stone curb posts; ${postRays} silhouette rays, unit normals, 320 triangles, same 16-slot pool, road/crossing clearance and recycled layout.`);
 function sourceBetween(start, end) {
   const a=html.indexOf(start), b=html.indexOf(end,a+start.length);
   assert.ok(a>=0 && b>a, `embedded source section: ${start}`);
@@ -36,13 +69,90 @@ assert.equal(colored.attributes.position.getX(0), originalX, 'shared input geome
 assert.equal(merge([{geo:plain}]).attributes.color, undefined, 'plain batches must not allocate unused colors');
 assert.ok(result.boundingSphere && Number.isFinite(result.boundingSphere.radius));
 
+// The transit landmark is a closed masonry body with a genuine open barrel.
+// Ray tests exercise the actual exported surface, not its construction formula.
+const transitCache=new Map(),transitRoot=new THREE.Group();
+const transitContext=vm.createContext({THREE,Math,mergeBoxes:merge,root:transitRoot,
+  STREET_MAT:{viaductBrick:new THREE.MeshStandardMaterial({map:new THREE.Texture()})},
+  cached:(key,build)=>{if(!transitCache.has(key))transitCache.set(key,build());return transitCache.get(key);}});
+const transitArchSource=sourceBetween("    var archGeo = cached('viaduct_masonry_arch_v3'",
+  '    // Cream coping sits above the arch;');
+vm.runInContext(transitArchSource,transitContext);
+const transitArch=transitContext.archGeo,transitMesh=transitContext.masonryArch;
+vm.runInContext(transitArchSource,transitContext);
+assert.equal(transitContext.archGeo,transitArch,'every recycled transit root reuses one masonry geometry');
+transitMesh.updateMatrixWorld(true);transitArch.computeBoundingBox();
+assert.ok(transitArch.boundingBox.min.x>=-26.001&&transitArch.boundingBox.max.x<=26.001,
+  'outer support piers stay within the existing 52m deck footprint');
+assert.ok(transitArch.boundingBox.min.y>=-.02&&transitArch.boundingBox.max.y<=9.051,
+  'arch terminates at the unchanged 9.05m train deck underside');
+assert.ok(transitArch.boundingBox.min.z>=-2.406&&transitArch.boundingBox.max.z<=2.406,
+  'shallow raised ring and bevel remain inside the existing 4.9m coping depth');
+assert.equal(transitArch.groups.length,0,'solid brick body and both lips use one material submission');
+assert.ok(transitMesh.material.vertexColors&&!transitContext.STREET_MAT.viaductBrick.vertexColors,
+  'radial stone colors stay on one dedicated opaque arch material');
+assert.equal(transitMesh.material,transitContext.STREET_MAT.viaductRing,'recycled roots share the colored masonry material');
+assert.equal(transitMesh.material.map,transitContext.STREET_MAT.viaductBrick.map,'base brick atlas stays shared and unmodified');
+for(let v=0;v<transitArch.attributes.position.count;v++){
+  const p=transitArch.attributes.position,n=transitArch.attributes.normal,u=transitArch.attributes.uv;
+  assert.ok([p.getX(v),p.getY(v),p.getZ(v),u.getX(v),u.getY(v)].every(Number.isFinite));
+  assert.ok(Math.abs(Math.hypot(n.getX(v),n.getY(v),n.getZ(v))-1)<1e-5,'unit arch and bevel normals');
+}
+let openTransitRays=0;
+for(const x of [-5.0,-2.8,0,2.8,5.0])for(const y of [.35,1.8,3.9,6.3]){
+  const hits=new THREE.Raycaster(new THREE.Vector3(x,y,-15),new THREE.Vector3(0,0,1)).intersectObject(transitMesh);
+  assert.equal(hits.length,0,'runner, jump and gate headroom remain open through the full barrel');openTransitRays++;
+}
+for(const angle of [20,45,70,90,110,135,160]){
+  const a=angle*Math.PI/180,dir=new THREE.Vector3(Math.cos(a),Math.sin(a),0);
+  const hits=new THREE.Raycaster(new THREE.Vector3(0,1.18,0),dir).intersectObject(transitMesh);
+  assert.ok(hits.length&&Math.abs(hits[0].distance-7.26)<.005,'actual barrel preserves the old inner radius');
+  assert.ok(hits[0].face.normal.dot(dir)<-.99,'barrel faces into the aperture');
+  assert.ok(Math.abs(hits[0].uv.y-a*7.26/2.16)<.001,'radial brick courses follow the curved reveal');
+}
+for(const x of [-6.2,-3.2,3.2,6.2]){
+  const hits=new THREE.Raycaster(new THREE.Vector3(x,8.8,-15),new THREE.Vector3(0,0,1)).intersectObject(transitMesh);
+  assert.ok(hits.length&&hits[0].face.normal.z<-.99,'solid front spandrels face the approaching camera');
+  assert.ok(Math.abs(hits[0].uv.x-x/.64)<1e-5&&Math.abs(hits[0].uv.y-8.8/2.16)<1e-5,
+    'front masonry uses correctly scaled planar brick courses');
+}
+for(const side of [-1,1]){
+  const direction=new THREE.Vector3(0,0,1);
+  assert.equal(new THREE.Raycaster(new THREE.Vector3(side*18,4,-15),direction).intersectObject(transitMesh).length,0,
+    'open side bays retain the cross-street sightlines');
+  for(const point of [[side*18,8.2],[side*25.35,.25]])assert.ok(
+    new THREE.Raycaster(new THREE.Vector3(point[0],point[1],-15),direction).intersectObject(transitMesh).length,
+    'solid side span connects the deck to a ground-reaching outer pier');
+}
+// Probe the actual entrance stones and narrow radial joints. Changing their
+// color cannot quietly hide another overlaid ring or narrow the playable arch.
+const stoneColors=new Set();let stoneRays=0;
+for(let stone=0;stone<61;stone++){
+  const angle=(stone+.5)*Math.PI/61,radius=7.52;
+  const hit=new THREE.Raycaster(new THREE.Vector3(Math.cos(angle)*radius,
+    1.18+Math.sin(angle)*radius,-15),new THREE.Vector3(0,0,1)).intersectObject(transitMesh)[0];
+  assert.ok(hit&&hit.face.normal.z<-.99,'each voussoir presents a visible front face');
+  const projection=-hit.point.z-2.3;
+  assert.ok(Math.abs(projection-(stone===30?.063:.052))<1e-5,'stones project 52mm, with a restrained 63mm keystone');
+  stoneColors.add(transitArch.attributes.color.getX(hit.face.a).toFixed(3));stoneRays++;
+}
+for(let seam=1;seam<61;seam++){
+  const angle=seam*Math.PI/61,radius=7.52;
+  const hit=new THREE.Raycaster(new THREE.Vector3(Math.cos(angle)*radius,
+    1.18+Math.sin(angle)*radius,-15),new THREE.Vector3(0,0,1)).intersectObject(transitMesh)[0];
+  assert.ok(hit&&Math.abs(hit.point.z+2.3)<1e-5,'radial mortar joint exposes the original masonry face');stoneRays++;
+}
+assert.equal(stoneColors.size,6,'five restrained brick tones plus one keystone survive geometry merging');
+assert.ok(transitArch.attributes.position.count/3<3000,'solid arch remains within a small fixed geometry budget');
+console.log(`PASS: cached ${transitArch.attributes.position.count/3}-triangle transit masonry, ${openTransitRays} open corridor rays, ${stoneRays} visible stone/joint rays, shared atlas/material, radial reveal UVs, front spandrels, unit normals and unchanged deck/pier bounds.`);
+
 // Build every shipped terrace width/height/shop combination with the actual
 // geometry factories. Check the form and UVs independently of its box assembly.
 context.mergeBoxes=merge;
 context.FACADE_STOREY_BANDS=Number(html.match(/var FACADE_STOREY_BANDS = (\d+)/)[1]);
 context.buildingCoreGeo={};
 context.MERGE_CORE_SHOP=false;
-vm.runInContext(sourceBetween('  function scaleUV(', '  // ------------------------------------------------------------- cel shading'),context);
+vm.runInContext(sourceBetween('  function scaleUV(', '  // ----------------------------------------------------- smooth PBR lighting'),context);
 vm.runInContext(sourceBetween('  var STOREY_H =', '  // Which atlas cell'),context);
 vm.runInContext(sourceBetween('  function mergeCoreParts(', '  // The whole point'),context);
 vm.runInContext(sourceBetween('  function getTerraceBuildingCoreGeo(', '  function styleUnit('),context);
@@ -154,11 +264,12 @@ const writeCap = new Function('buildingPartZeroMat','buildingPartScratchA','buil
   html.slice(capWriterStart,capWriterEnd)+'\n}\nreturn writeBuildingPartPools;')(zeroCap,new THREE.Matrix4(),new THREE.Matrix4());
 const ROAD_EDGE = Number(html.match(/var ROAD_HALF = ([\d.]+)/)[1]);
 const WALK_EDGE = Number(html.match(/var WALK_OUT = ([\d.]+)/)[1]);
-const cornerSelector = html.slice(html.indexOf('        var streetCorner = hasCross'),html.indexOf('        // The crossing keeps a full 18 m opening'));
-const selectCorner = new Function('hasCross','b2','var hasStation=false,hasBridge=false,hasTunnel=false,bridgeEdgeChunk=false;'+cornerSelector+'return streetCorner;');
+const cornerSelector = html.slice(html.indexOf('        var streetCorner =',html.indexOf('  function rollChunk(')),html.indexOf('        // The crossing keeps a full 18 m opening'));
+const selectCorner = new Function('hasCross','b2','referenceBeat','var hasStation=false,hasBridge=false,hasTunnel=false,bridgeEdgeChunk=false;'+cornerSelector+'return streetCorner;');
 assert.equal(selectCorner(false,0),false,'ordinary kiosk frontages never receive a deep crossing overhang');
 assert.equal(selectCorner(true,0),true);
 assert.equal(selectCorner(true,1),false);
+assert.equal(selectCorner(true,0,true),false,'reference crossings use the continuous prior-block facade, without a duplicate legacy approach corner');
 let crossingRoadClearance = Infinity;
 for (const side of [-1,1]) for (const width of [11,13.5,16]) {
   const block = new THREE.Group(); block.rotation.y = side<0 ? Math.PI/2 : -Math.PI/2;
@@ -869,7 +980,7 @@ const coreContext=vm.createContext({THREE,console,window:{location:{search:''}},
   mergeBoxes:merge,FACADE_STOREY_BANDS:context.FACADE_STOREY_BANDS,
   renderScale:1,PROFILE_RENDER:false});
 for(const [start,end] of [
-  ['  function scaleUV(', '  // ------------------------------------------------------------- cel shading'],
+  ['  function scaleUV(', '  // ----------------------------------------------------- smooth PBR lighting'],
   ['  var STOREY_H =', '  // Which atlas cell'],
   ['  function mergeCoreParts(', '  // The whole point'],
   ['  var trimGeo =', '  // Altbau reveals share'],

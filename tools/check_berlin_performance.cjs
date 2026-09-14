@@ -2,6 +2,7 @@
 // Exercise the shipped controller and geometry, without a mocked copy of either.
 const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
 const path = require('path');
+const useKiezLamps = process.argv.includes('--kiez-lamps');
 const html = fs.readFileSync(path.join(__dirname, '..', 'berlin-runner.html'), 'utf8');
 function section(a, b) {
   const start = html.indexOf(a), end = html.indexOf(b, start + a.length);
@@ -248,23 +249,37 @@ assert.equal(recovery.profileRestorePending,false);
 assert.equal(restoreButton.disabled,false);assert.ok(restoreStatus.textContent.includes('wiederhergestellt'));
 const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 const t=vm.createContext({console});vm.runInContext(scripts.find(s=>s.includes('three.js r156 (MIT)')),t);
-const cache = new Map();
 const merge=new Function('THREE', section('  function mergeBoxes(specs) {','\n  // DRAW-CALL CONSOLIDATION:')+';return mergeBoxes;')(t.THREE);
-const tree=new Function('THREE','cached','mergeBoxes',section('  function sculptedCanopyGeometry() {','  function makeTree()')+';return sculptedCanopyGeometry;')(
-  t.THREE,(key,fn)=>{if(!cache.has(key))cache.set(key,fn());return cache.get(key);},merge);
-const canopy=tree();
-assert.equal(canopy,tree(),'all tree crowns share one geometry');
-assert.ok((canopy.index ? canopy.index.count : canopy.attributes.position.count)/3 < 3600,'sculpted canopy triangle budget');
+t.mat=(color,options)=>new t.THREE.MeshStandardMaterial({color,...options});
+t.atob=s=>Buffer.from(s,'base64').toString('binary');
+vm.runInContext(section('  // BEGIN BLENDER GARDEN KIT','  // END BLENDER GARDEN KIT'),t);
+const canopy=t.berlinGardenKit.geometry('treeNear');
+assert.equal(canopy,t.berlinGardenKit.geometry('treeNear'),'all street trees share one geometry');
+assert.ok(canopy.index.count/3 <= 14000,'accepted taller street tree stays within its14,000-triangle budget');
 assert.ok([...canopy.attributes.position.array,...canopy.attributes.color.array].every(Number.isFinite));
 canopy.computeBoundingBox();
-assert.ok(canopy.boundingBox.max.x < 2.05 && canopy.boundingBox.min.x > -2.05,'canopy stays inside live cull bounds');
+const streetTreeHeight=canopy.boundingBox.max.y-canopy.boundingBox.min.y;
+assert.ok(streetTreeHeight>8&&streetTreeHeight<8.5,'accepted street crown retains its taller authored envelope');
+assert.equal(t.berlinGardenKit.canopyRadius,2.85,'street-only cull radius comes from the accepted asset metadata');
+function treeGeometryFingerprint(geometry){
+  const hash=require('crypto').createHash('sha256');
+  for(const attr of [...Object.values(geometry.attributes),geometry.index].filter(Boolean))
+    hash.update(Buffer.from(attr.array.buffer,attr.array.byteOffset,attr.array.byteLength));
+  return hash.digest('hex');
+}
+const backgroundTree=t.berlinGardenKit.geometry('tree'),backgroundLeaves=t.berlinGardenKit.geometry('leaves');
+const backgroundFingerprints=[backgroundTree,backgroundLeaves].map(treeGeometryFingerprint);
+for(let i=0;i<canopy.attributes.position.count;i++){
+  const p=canopy.attributes.position;
+  assert.ok(Math.hypot(p.getX(i),p.getZ(i))<t.berlinGardenKit.canopyRadius,'rotated tree stays inside live cull bounds');
+}
 // Exercise the actual lamp factory and batching functions with the shipped
 // merger. Material/primitive stubs avoid texture painting, not geometry logic.
 const THREE=t.THREE, lampCache=new Map();
 // Execute the shipped ground clone and cel patch against the embedded r156.
 // A tint-only material must share GPU textures and keep the shader hook that
 // Three intentionally does not copy with Material.clone().
-const groundContext=vm.createContext({THREE,window:{}});
+const groundContext=vm.createContext({THREE,window:{location:{search:'?profile=1&lightfacing=1'}}});
 vm.runInContext(section('  var CEL_BANDS =', '  // ---------------------------------------------- shared flat-prop material'),groundContext);
 const cobbleMaterial=groundContext.applyCelShading(new THREE.MeshStandardMaterial({
   map:new THREE.Texture(),normalMap:new THREE.Texture(),roughnessMap:new THREE.Texture(),roughness:1
@@ -289,7 +304,7 @@ chainedMaterial.onBeforeCompile=shader=>{shader.uniforms.existingHook={value:1};
 chainedMaterial.customProgramCacheKey=()=> 'existing-hook';
 groundContext.applyCelShading(chainedMaterial);
 assert.equal(patchedGroundShader(chainedMaterial).uniforms.existingHook.value,1,'cel application preserves an existing shader hook');
-assert.equal(chainedMaterial.customProgramCacheKey(),'cel-v1|existing-hook','cel application preserves an existing program key');
+assert.equal(chainedMaterial.customProgramCacheKey(),'pbr-daylight-v3|existing-hook','natural PBR application preserves an existing program key');
 console.log('PASS: r156 ground clone shares all three texture resources; independent palette uniforms; single cel patch, identical program key and preserved callback chain.');
 // The shipped r156 light classifier already knows when an exact zero would
 // reach RE_Direct. Verify every direct-light block is guarded without changing
@@ -300,14 +315,26 @@ const celChunk=groundContext.celLightsFragmentBegin();
 const guardedBlocks=[...celChunk.matchAll(/if \( directLight\.visible \) \{[^{}]*\}/g)].map(m=>m[0]);
 const pointGuardPattern=/\{ vec3 berlinLightDelta[^{}]*if \( berlinLightInRange[^{}]*\{[^{}]*\} else \{[^{}]*\} \}/g;
 const pointGuards=[...celChunk.matchAll(pointGuardPattern)].map(m=>m[0]);
+const facingPattern=/\n#if defined\( STANDARD \) && !defined\( USE_CLEARCOAT \)\n\t\tdirectLight\.visible = directLight\.visible && dot\( geometry\.normal, directLight\.direction \) > 0\.0;\n#endif/g;
+const facingGuards=[...celChunk.matchAll(facingPattern)].map(m=>m[0]);
+assert.equal(facingGuards.length,3,'point, spot and sun all reject zero native irradiance before shadow work');
+for(const info of [pointCall,'getSpotLightInfo( spotLight, geometry, directLight );','getDirectionalLightInfo( directionalLight, geometry, directLight );']){
+  const infoAt=celChunk.indexOf(info),facingAt=celChunk.indexOf('directLight.visible = directLight.visible && dot(',infoAt);
+  const shadowAt=celChunk.indexOf('directLight.color *= ( directLight.visible && receiveShadow )',infoAt);
+  assert.ok(infoAt>=0&&facingAt>infoAt&&shadowAt>facingAt,'actual shaded normal is checked before its unchanged shadow eligibility expression');
+}
 const originalDirectCount=THREE.ShaderChunk.lights_fragment_begin.split(directCall).length-1;
 assert.equal(originalDirectCount,3,'r156 point, spot and directional direct-light blocks');
 assert.equal(guardedBlocks.length,originalDirectCount,'all direct-light blocks have their own guard');
 assert.ok(guardedBlocks.every(block=>block.includes('celQuantize(')&&block.includes(directCall)),
-  'guard skips both cel quantization and the PBR invocation');
+  'compatibility authoring branch and native PBR invocation remain scoped');
+assert.match(groundContext.CEL_FUNCTIONS_GLSL,/#define BERLIN_SMOOTH_LIGHTING 1/,'shipped shaders compile out stepped lighting');
+const naturalLightBlocks=guardedBlocks.map(block=>block.replace(/#ifndef BERLIN_SMOOTH_LIGHTING\n[\s\S]*?#endif\n/g,''));
+assert.ok(naturalLightBlocks.every(block=>!block.includes('celQuantize(')&&!block.includes('directLight.color')),
+  'compiled daylight never reshapes direct radiance before Standard diffuse/specular evaluation');
 assert.equal(pointGuards.length,1,'one guard covers the unrolled fixed point-light slots');
-assert.equal(celChunk.replace(/if \( directLight\.visible \) \{[^{}]*\}/g,directCall).replace(pointGuardPattern,pointCall),
-  THREE.ShaderChunk.lights_fragment_begin,'all source outside the two light injections, including point shadows, is byte-exact');
+assert.equal(celChunk.replace(/if \( directLight\.visible \) \{[^{}]*\}/g,directCall).replace(pointGuardPattern,pointCall).replace(facingPattern,''),
+  THREE.ShaderChunk.lights_fragment_begin,'all source outside the exact-zero light injections, including point shadows, is byte-exact');
 function glslBody(source,signature) {
   const start=source.indexOf(signature);assert.ok(start>=0,signature);
   const open=source.indexOf('{',start);let at=open+1,depth=1;
@@ -367,15 +394,53 @@ for(const branch of attenuationBranches.slice(1)) {
   }
 }
 const futurePointPatch=new Function('THREE','var _celLightsChunk=null;'+
-  section('  function celLightsFragmentBegin() {','  // Wires the cel patch')+'return celLightsFragmentBegin;');
+  section('  function celLightsFragmentBegin() {','  // Wires the lighting optimization')+'return celLightsFragmentBegin;');
 const noDirectSource=THREE.ShaderChunk.lights_fragment_begin.split(directCall).join('RE_DirectFuture( directLight );');
 assert.equal(futurePointPatch({ShaderChunk:{lights_fragment_begin:noDirectSource}})(),noDirectSource,
   'missing direct marker leaves the complete future shader unchanged');
 const noPointSource=THREE.ShaderChunk.lights_fragment_begin.replace(pointCall,'getPointLightInfoFuture( pointLight, geometry, directLight );');
 const noPointPatched=futurePointPatch({ShaderChunk:{lights_fragment_begin:noPointSource}})();
-assert.equal(noPointPatched.replace(/if \( directLight\.visible \) \{[^{}]*\}/g,directCall),noPointSource,
+assert.equal(noPointPatched.replace(/if \( directLight\.visible \) \{[^{}]*\}/g,directCall).replace(facingPattern,''),noPointSource,
   'changed point signature retains Three point-info behavior with only the established direct-light patch');
 console.log(`PASS: ${skippedPointInfo} exact-zero point slots skip getPointLightInfo; ${retainedPointInfo} dim/active/out-of-range slots preserve exact r156 output, shadow eligibility and future-chunk fallback.`);
+// The guard uses the actual r156 native irradiance factor. Include clearcoat's
+// independent normal: rejecting by only the base normal would erase that lobe.
+const directPhysical=glslBody(THREE.ShaderChunk.lights_physical_pars_fragment,'void RE_Direct_Physical(');
+assert.match(directPhysical,/float dotNL = saturate\( dot\( geometry.normal, directLight.direction \) \);\s*vec3 irradiance = dotNL \* directLight.color;/);
+assert.match(directPhysical,/clearcoatSpecular \+= ccIrradiance \*/);
+assert.match(directPhysical,/reflectedLight.directSpecular \+= irradiance \*/);
+assert.match(directPhysical,/reflectedLight.directDiffuse \+= irradiance \*/);
+const facingBody=facingGuards[0].replace(/\n?#(?:if[^\n]*|endif)/g,'');
+const applyFacing=new Function('directLight','geometry','dot',facingBody);
+const facingDot=(a,b)=>a.reduce((sum,v,i)=>sum+v*b[i],0);
+let facingCases=0,skippedFacingShadows=0;
+for(const nl of [-1,-.75,-.001,-1e-12,0,1e-12,.001,.4,1])
+for(const radiance of [0,1e-12,.1,3.32])for(const shadow of [0,.075,.4,.775,1])
+for(const clearcoat of [false,true])for(const receiveShadow of [false,true]){
+  const geometry={normal:[0,0,1]},direction=[Math.sqrt(1-nl*nl),0,nl];
+  const originalVisible=radiance!==0,incident={visible:originalVisible,direction,color:radiance};
+  if(!clearcoat)applyFacing(incident,geometry,facingDot);
+  const originalShadow=originalVisible&&receiveShadow?shadow:1;
+  const actualShadow=incident.visible&&receiveShadow?shadow:1;
+  function shade(visible,factor){
+    const base=Math.max(0,nl)*radiance*factor;
+    return {diffuse:visible?base*.37:0,specular:visible?base*.61:0,
+      clearcoat:clearcoat&&visible?Math.max(0,.45)*radiance*factor*.23:0};
+  }
+  assert.deepEqual(shade(incident.visible,actualShadow),shade(originalVisible,originalShadow),
+    'front/grazing/back normals, dim lights and every penumbra preserve all native light lobes');
+  if(!clearcoat&&nl<=0&&originalVisible&&receiveShadow){assert.equal(incident.visible,false);skippedFacingShadows++;}
+  facingCases++;
+}
+for(const search of ['', '?profile=1&lightfacing=0','?lightfacing=0','?profile=1','?lightfacing=1','?profile=1&lightfacing=1']){
+  const baseline=vm.createContext({THREE,window:{location:{search}}});
+  vm.runInContext(section('  var CEL_BANDS =', '  // ---------------------------------------------- shared flat-prop material'),baseline);
+  const baselineChunk=baseline.celLightsFragmentBegin();
+  assert.equal((baselineChunk.match(facingPattern)||[]).length,search==='?profile=1&lightfacing=1'?3:0,
+    'unproven facing branch is opt-in only in an explicit profiling session');
+  assert.equal((baselineChunk.match(pointGuardPattern)||[]).length,1,'facing A/B retains existing range and exact-zero optimizations');
+}
+console.log(`PASS: ${facingCases} native PBR/clearcoat cases preserve exact light; ${skippedFacingShadows} back-facing shadow evaluations removed; profile-only facing A/B keeps all previous guards.`);
 const clampLight=(x,a,b)=>Math.max(a,Math.min(b,x));
 const quantizeBody=glslBody(groundContext.CEL_FUNCTIONS_GLSL,'float celQuantize(')
   .replace(/\b(?:float|int) (\w+)\b/g,'let $1').replace(/\bfloat\(/g,'Number(');
@@ -398,9 +463,9 @@ console.log(`PASS: ${quantizeSamples} toon-light samples preserve the original c
 const lightMath={clamp:clampLight,dot:(a,b)=>a.reduce((sum,x,i)=>sum+x*b[i],0),max:Math.max,
   uCelBands:groundContext.CEL_BANDS.value,uCelSoft:groundContext.CEL_EDGE_SOFT.value};
 const guardedLight=new Function('directLight','geometry','material','reflectedLight','RE_Direct','celQuantize',
-  ...Object.keys(lightMath),guardedBlocks[0].replace(/\bfloat celNL\b/,'let celNL'));
+  ...Object.keys(lightMath),naturalLightBlocks[0]);
 const unguardedLight=new Function('directLight','geometry','material','reflectedLight','RE_Direct','celQuantize',
-  ...Object.keys(lightMath),guardedBlocks[0].replace('if ( directLight.visible )','').replace(/\bfloat celNL\b/,'let celNL'));
+  ...Object.keys(lightMath),directCall);
 let guardedZeroLights=0,retainedLightChannels=0;
 for(const branch of attenuationBranches.slice(1)) {
   const attenuation=new Function('lightDistance','cutoffDistance','decayExponent',...Object.keys(scalarHelpers),
@@ -422,7 +487,7 @@ for(const branch of attenuationBranches.slice(1)) {
       }
       const before=shade(unguardedLight),after=shade(guardedLight);
       assert.deepEqual(after.reflected,before.reflected,'active contribution and existing accumulated light are unchanged');
-      assert.equal(after.quantizations,visible?1:0,'zero lights skip cel work; arbitrarily dim active lights remain');
+      assert.equal(after.quantizations,0,'native daylight performs no quantization, including arbitrarily dim active lights');
       assert.equal(after.directCalls,visible?1:0,'only zero-contribution lights skip direct shading');
       if(visible)retainedLightChannels++;else guardedZeroLights++;
     }
@@ -433,7 +498,7 @@ const cachedLamp=(key,fn)=>{if(!lampCache.has(key))lampCache.set(key,fn());retur
 const compact=new Function('THREE','mergeBoxes',section('  var staticMergeGeometryCache = new Map();','  // Merges building parts that carry different materials')+';return compactStaticPropGroup;')(THREE,merge);
 const lampMaterials={};
 for(const name of ['metalDark','poleGreen','chrome','lampGlobe'])lampMaterials[name]=new THREE.MeshStandardMaterial({transparent:name==='lampGlobe'});
-const lampContext=vm.createContext({THREE,ASSETS:{},MAT:lampMaterials,cached:cachedLamp,
+const lampContext=vm.createContext({THREE,ASSETS:{},MAT:lampMaterials,cached:cachedLamp,KIEZ_DISTRICT_ENABLED:useKiezLamps,
   cylGeo:(a,b,h,n)=>cachedLamp([a,b,h,n].join(','),()=>new THREE.CylinderGeometry(a,b,h,n)),
   roundedBox:(w,h,d,r,mat,x=0,y=0,z=0)=>{
     const m=new THREE.Mesh(cachedLamp([w,h,d,r].join(':'),()=>new THREE.BoxGeometry(w,h,d)),mat);
@@ -445,12 +510,34 @@ const lampContext=vm.createContext({THREE,ASSETS:{},MAT:lampMaterials,cached:cac
 });
 vm.runInContext(section('  function makeStreetLamp() {','  // One shared sculpted canopy:'),lampContext);
 const lampRoot=new THREE.Group(), lamps=[lampContext.makeStreetLamp(),lampContext.makeStreetLamp()];
+if(useKiezLamps) {
+  let solidTriangles=0;
+  for(const mesh of lamps[0].children.filter(mesh=>mesh.isMesh&&!mesh.material.transparent&&mesh!==lamps[0].userData.flag)) {
+    const geometry=mesh.geometry,position=geometry.attributes.position,normal=geometry.attributes.normal;
+    solidTriangles+=(geometry.index?geometry.index.count:position.count)/3;
+    for(let i=0;i<position.count;i++) {
+      assert.ok(Number.isFinite(position.getX(i)+position.getY(i)+position.getZ(i)),'lantern vertices are finite');
+      assert.ok(Math.abs(Math.hypot(normal.getX(i),normal.getY(i),normal.getZ(i))-1)<1e-5,'lantern normals are unit length');
+    }
+  }
+  assert.ok(solidTriangles>=500&&solidTriangles<=900,'complete opaque lantern remains within its 500–900 triangle budget');
+  const iron=lamps[0].children.find(mesh=>mesh.material===lampMaterials.metalDark&&!mesh.userData.noStaticMerge);
+  iron.geometry.computeBoundingBox();
+  assert.ok(iron.geometry.boundingBox.min.y>=-1e-6&&iron.geometry.boundingBox.max.y<=6.50,'gas lantern preserves grounded root and original height contract');
+  assert.ok(iron.geometry.boundingBox.max.x-iron.geometry.boundingBox.min.x<.55,'narrow upright silhouette replaces the overhanging curved arm');
+  assert.equal(lamps[0].userData.bulb.material,lampMaterials.lampGlobe,'daylight callback owns the original shared lamp material');
+  assert.equal(lamps[0].userData.bulb.geometry,lamps[1].userData.bulb.geometry,'all lamp panes reuse one cached mesh');
+  assert.equal(iron.geometry,lamps[1].children.find(mesh=>mesh.material===lampMaterials.metalDark&&!mesh.userData.noStaticMerge).geometry,'all ironwork reuses one cached mesh');
+  assert.ok(!lampMaterials.lampGlobe.transparent&&lampMaterials.lampGlobe.opacity===1&&lampMaterials.lampGlobe.depthWrite,'panes use the opaque depth-writing pool path');
+  assert.equal(new Set(lamps[0].children.filter(mesh=>mesh.isMesh&&!mesh.userData.noStaticMerge&&!mesh.material.transparent).map(mesh=>mesh.material)).size,2,'body and panes need only two shared opaque materials');
+  console.log(`PASS: reference gas lantern geometry; ${solidTriangles} opaque triangles, <6.5 m height, slender capped silhouette, unit normals and shared material/cache ownership.`);
+}
 lamps.forEach((lamp,i)=>{lamp.position.set(i?9:-9,0.16,i?9:-11);lamp.rotation.y=i?0:Math.PI;lampRoot.add(lamp);});
 const lampDrawsBefore=lamps.reduce((n,lamp)=>n+lamp.children.filter(o=>o.isMesh).length,0);
 const lampBatches=lampContext.batchRigidChunkProps(lampRoot,lamps,'lamp');
 lampContext.syncRigidChunkProps(lampBatches);
 const lampDrawsAfter=lamps.reduce((n,lamp)=>n+lamp.children.filter(o=>o.isMesh).length,0)+lampBatches.length;
-assert.equal(lampDrawsBefore-lampDrawsAfter,4,'paired street lamps save four opaque draws');
+assert.equal(lampDrawsBefore-lampDrawsAfter,useKiezLamps?2:4,'paired street lamps instance each identical opaque part once');
 for (const batch of lampBatches) {
   assert.equal(batch.mesh.count,2);
   assert.equal(batch.mesh.castShadow,batch.entries[0].source.castShadow);
@@ -463,7 +550,9 @@ for (const batch of lampBatches) {
 }
 lamps.forEach(lamp=>{
   assert.ok(lamp.children.includes(lamp.userData.flag) && lamp.children.includes(lamp.userData.flagStub),'flag remains independently toggled');
-  assert.ok(lamp.children.includes(lamp.userData.bulb) && lamp.children.includes(lamp.userData.cone),'transparent layers retain original sorting');
+  assert.ok(lamp.children.includes(lamp.userData.cone),'cone retains original independent sorting');
+  if(useKiezLamps) assert.ok(lampBatches.some(batch=>batch.entries.some(entry=>entry.source===lamp.userData.bulb)),'bulb reference survives while opaque panes enter their instance pool');
+  else assert.ok(lamp.children.includes(lamp.userData.bulb),'legacy globe retains original transparent sorting');
 });
 lamps[0].visible=false;lampContext.syncRigidChunkProps(lampBatches);
 assert.ok(lampBatches.every(b=>b.mesh.count===1),'individual authored lamp culling is preserved');
@@ -474,20 +563,18 @@ assert.ok(lampBatches.every(b=>b.mesh.count===2 && b.mesh.visible),'lamp reroll 
 // Four real tree factories reuse precisely the same opaque geometry. Their
 // existing per-tree cull updates compact prefixes only on an actual transition.
 lampContext.MAT.kerb=new THREE.MeshStandardMaterial();
-lampContext.PROP_BARK=new THREE.MeshStandardMaterial();
-lampContext.SOFT_TREE_CANOPY=new THREE.MeshStandardMaterial({vertexColors:true});
-lampContext.sculptedCanopyGeometry=()=>canopy;
-vm.runInContext(section('  function makeTree() {','  // Litfaßsäule'),lampContext);
+lampContext.berlinGardenKit=t.berlinGardenKit;
+vm.runInContext(section('  var streetTreeFarGeometry = null;','  // Litfaßsäule'),lampContext);
 const grove=new THREE.Group(), trees=Array.from({length:4},()=>lampContext.makeTree());
 trees.forEach((tr,i)=>{tr.position.set(i%2?9:-9,0.16,-12+i*12);tr.rotation.y=i*0.7;tr.scale.setScalar(0.8+i*0.1);tr.userData.rolledActive=true;grove.add(tr);});
 const treeDrawsBefore=trees.reduce((n,tr)=>n+tr.children.filter(o=>o.isMesh).length,0);
 const treeBatches=lampContext.batchRigidChunkProps(grove,trees,'tree');
 lampContext.syncRigidChunkProps(treeBatches);
-assert.equal(treeDrawsBefore-treeBatches.length,12,'full four-tree grove saves twelve beauty draws');
-assert.equal(treeBatches.filter(b=>b.mesh.castShadow).length,2,'trunk and crown retain their separate shadow behavior');
-const crownBatch=treeBatches.find(b=>b.mesh.material===lampContext.SOFT_TREE_CANOPY);
-assert.equal(crownBatch.mesh.geometry,canopy,'instancing keeps exact coloured canopy geometry');
-for(const batch of treeBatches)batch.entries.forEach((entry,i)=>{
+assert.equal(treeDrawsBefore-treeBatches.filter(b=>b.mesh.visible).length,9,'four complete near trees share three beauty draws including pits');
+assert.equal(treeBatches.filter(b=>b.mesh.castShadow&&b.mesh.visible).length,1,'joined branches and leaves retain one active shadow caster');
+const crownBatch=treeBatches.find(b=>b.mesh.material===t.berlinGardenKit.material);
+assert.equal(crownBatch.mesh.geometry,canopy,'instancing keeps exact Blender tree geometry');
+for(const batch of treeBatches.filter(b=>b.lodFar!==true))batch.entries.forEach((entry,i)=>{
   const expected=new THREE.Matrix4().multiplyMatrices(entry.prop.matrix,entry.local),actual=new THREE.Matrix4();
   batch.mesh.getMatrixAt(i,actual);
   assert.ok(actual.elements.every((v,j)=>Math.abs(v-expected.elements[j])<1e-5),'grove retains individual scale, rotation and placement');
@@ -495,17 +582,75 @@ for(const batch of treeBatches)batch.entries.forEach((entry,i)=>{
 Object.assign(lampContext,{chunk:grove,ud:{trees,treeBatches},bulkNear:true,nearCullZ:-5});
 const treeCull=section('    var treeBatchDirty = false;', '    // mass used to have');
 vm.runInContext(treeCull,lampContext);
-assert.ok(treeBatches.every(b=>b.mesh.count===3),'original trailing-canopy cull removes only the passed tree');
+assert.ok(treeBatches.every(b=>b.mesh.count===(b.lodFar===true?0:3)),'original trailing-canopy cull removes only the passed tree');
 const treeVersion=crownBatch.mesh.instanceMatrix.version;
 vm.runInContext(treeCull,lampContext);
 assert.equal(crownBatch.mesh.instanceMatrix.version,treeVersion,'steady grove does not upload any new matrices');
 lampContext.nearCullZ=50;vm.runInContext(treeCull,lampContext);
 assert.ok(treeBatches.every(b=>b.mesh.count===0&&!b.mesh.visible),'fully passed grove submits nothing');
 lampContext.nearCullZ=-50;vm.runInContext(treeCull,lampContext);
-assert.ok(treeBatches.every(b=>b.mesh.count===4&&b.mesh.visible),'recycled grove restores every authored tree');
+assert.ok(treeBatches.every(b=>b.mesh.count===(b.lodFar===true?0:4)&&b.mesh.visible===(b.lodFar!==true)),'recycled grove restores every authored tree');
+// Distance LOD preserves the actual near geometry and the authored street far
+// envelope. Exercise selection and packed transforms through the
+// shipped writers, including perspective/Photo changes and hysteresis.
+const farCrownBatch=treeBatches.find(b=>b.lodFar===true), farCrown=farCrownBatch.geometry;
+assert.equal(farCrownBatch.material,crownBatch.material,'both levels share the identical opaque PBR atlas');
+assert.equal(lampContext.getStreetTreeFarGeometry(),farCrown,'one cached lower-detail geometry');
+assert.equal(farCrown,t.berlinGardenKit.geometry('treeStreetFar'),'runtime uses the exact cached authored street LOD without cloning or resizing');
+assert.notEqual(farCrown,backgroundTree,'street LOD never replaces the background grove');
+assert.deepEqual([backgroundTree,backgroundLeaves].map(treeGeometryFingerprint),backgroundFingerprints,
+  'street construction and LOD leave every background vertex/index/normal/UV/color byte unchanged');
+for(const edge of ['min','max'])assert.ok(farCrown.boundingBox[edge].distanceTo(canopy.boundingBox[edge])<1e-5,'all artist-authored bounds are matched');
+assert.ok(farCrown.index.count/3<=4000,'authored street far model stays within its4,000-triangle budget');
+for(let i=0,p=farCrown.attributes.position;i<p.count;i++)assert.ok(Math.hypot(p.getX(i),p.getZ(i))<t.berlinGardenKit.canopyRadius,
+  'authored far leaves also fit the shared yaw-independent cull radius');
+assert.ok(farCrown.index.count<canopy.index.count*.42,'each distant tree removes at least58% of its triangles');
+const lodCamera=new THREE.PerspectiveCamera(40,16/9,.1,420);
+lodCamera.lookAt(0,0,1);lodCamera.updateMatrixWorld();
+grove.userData={trees,treeBatches};
+Object.assign(lampContext,{chunks:[grove],PROFILE_RENDER:false,window:{location:{search:''}}});
+function selectTreeLOD(depths,scale=1){
+  trees.forEach((tree,i)=>{tree.visible=true;tree.position.set(i%2?9:-9,0,depths[i]);tree.scale.setScalar(scale);});
+  grove.updateMatrixWorld(true);lodCamera.updateMatrixWorld();lampContext.updateStreetTreeLOD(lodCamera);
+}
+selectTreeLOD([25,34,42,43]);
+assert.ok(trees.every(tree=>!tree.userData.treeLodFar),'taller desktop trees keep full detail beyond the42m distance gate while occupying over19% of the frame');
+assert.equal(crownBatch.mesh.count,4);assert.equal(farCrownBatch.mesh.count,0);
+const treeLodProjection=[];
+for(const [label,fov,pixels] of [['desktop',40,720],['phone',69,844],['Photo zoom',20,720]])for(const scale of [.94,1,1.12,1.30]){
+  lodCamera.fov=fov;lodCamera.updateProjectionMatrix();
+  const projectedHeight=depth=>{
+    const bottom=new THREE.Vector3(0,canopy.boundingBox.min.y*scale,depth).project(lodCamera);
+    const top=new THREE.Vector3(0,canopy.boundingBox.max.y*scale,depth).project(lodCamera);
+    return Math.abs(top.y-bottom.y)/2;
+  };
+  // Find independent image-space limits by projecting the real mesh envelope.
+  const gate=(fraction,minimum)=>{let lo=minimum,hi=300;
+    for(let i=0;i<50;i++){const mid=(lo+hi)/2;if(projectedHeight(mid)>=fraction)lo=mid;else hi=mid;}return (lo+hi)/2;};
+  const enter=gate(.19,42),exit=gate(.24,34),all=d=>[d,d,d,d];
+  selectTreeLOD(all(25),scale);
+  selectTreeLOD(all(enter-.01),scale);assert.ok(trees.every(tree=>!tree.userData.treeLodFar),'full geometry stays until both distance and actual projection permit entry');
+  selectTreeLOD(all(enter+.01),scale);assert.ok(trees.every(tree=>tree.userData.treeLodFar),'small distant trees enter the authored far pool');
+  assert.equal(crownBatch.mesh.count,0);assert.equal(farCrownBatch.mesh.count,4);
+  const lodVersion=farCrownBatch.mesh.instanceMatrix.version;
+  selectTreeLOD(all((enter+exit)/2),scale);
+  assert.equal(farCrownBatch.mesh.instanceMatrix.version,lodVersion,'hysteresis does not rewrite matrices or oscillate detail');
+  selectTreeLOD(all(exit+.01),scale);assert.ok(trees.every(tree=>tree.userData.treeLodFar),'far survives inside its distance/projection hysteresis');
+  selectTreeLOD(all(exit-.01),scale);assert.ok(trees.every(tree=>!tree.userData.treeLodFar),'approaching canopy restores full detail at the projected exit boundary');
+  assert.equal(crownBatch.mesh.count,4);assert.equal(farCrownBatch.mesh.count,0);
+  treeLodProjection.push({view:label,scale,enterMeters:+enter.toFixed(3),enterPixels:+(projectedHeight(enter)*pixels).toFixed(2),
+    exitMeters:+exit.toFixed(3),exitPixels:+(projectedHeight(exit)*pixels).toFixed(2)});
+}
+lodCamera.fov=40;lodCamera.updateProjectionMatrix();selectTreeLOD([70,70,70,70]);
+assert.ok(trees.every(tree=>tree.userData.treeLodFar));
+lampContext.PROFILE_RENDER=true;lampContext.window.location.search='?profile=1&treelod=0';
+lampContext.updateStreetTreeLOD(lodCamera);
+assert.ok(trees.every(tree=>!tree.userData.treeLodFar),'profile baseline restores every full model without reinstalling pools');
+lampContext.PROFILE_RENDER=false;
+console.log(`PASS: camera-aware street-tree LOD, exact foreground, authored/cache identity, immutable background, hysteresis/Photo/baseline; four distant crowns save${(canopy.index.count-farCrown.index.count)*4/3}triangles with one shared opaque far draw. Projection ${JSON.stringify(treeLodProjection)}`);
 lampContext.ASSETS.props={tree:'optional.glb'};
 assert.equal(lampContext.batchRigidChunkProps(grove,trees,'tree').length,0,'optional external tree assets retain original rendering path');
-console.log('PASS: actual four-tree grove saves 12 beauty/6 caster submissions; exact canopy, transforms, existing cull, empty/recycled grove and change-only uploads.');
+console.log('PASS: actual four-tree grove saves 9 beauty/3 caster submissions; exact Blender branches/leaves, transforms, existing cull, empty/recycled grove and change-only uploads.');
 // Promote actual lamp/tree batch outputs and mapped manholes across chunks.
 // Check source-equivalent frustum decisions and per-pass membership rather
 // than inferring FPS from the reduced number of material submissions.
@@ -532,7 +677,7 @@ for(let ci=0;ci<5;ci++) {
   const lampPair=[lampContext.makeStreetLamp(),lampContext.makeStreetLamp()];
   lampPair.forEach((lamp,i)=>{
     lamp.position.set(i?9:-9,.16,i?9:-11);lamp.rotation.y=i?0:Math.PI;chunk.add(lamp);
-    fixtureTransparent.push({object:lamp.userData.bulb,material:lamp.userData.bulb.material,parent:lamp});
+    if(lamp.userData.bulb.material.transparent) fixtureTransparent.push({object:lamp.userData.bulb,material:lamp.userData.bulb.material,parent:lamp});
     fixtureTransparent.push({object:lamp.userData.cone,material:lamp.userData.cone.material,parent:lamp});
   });
   const lampRows=lampContext.batchRigidChunkProps(chunk,lampPair,'lamp');lampContext.syncRigidChunkProps(lampRows);
@@ -581,8 +726,8 @@ fixtureScene.onBeforeRender=function(...args){fixtureBeforeCount++;fixtureBefore
 Object.assign(lampContext,{scene:fixtureScene,worldRoot:fixtureWorld,sun:fixtureSun,chunks:fixtureChunks});
 lampContext.installStreetFixturePools();
 const fixturePools=lampContext.streetFixturePools;
-assert.equal(fixturePools.sources.length,44,'original fixtures plus ten independently placed opaque furniture pieces');
-assert.equal(fixturePools.pools.length,10,'exact repeated furniture shares one additional pool');
+assert.equal(fixturePools.sources.length,useKiezLamps?34:44,'joined Blender tree fixtures, paired LOD holders and ten independently placed opaque furniture pieces');
+assert.equal(fixturePools.pools.length,useKiezLamps?8:10,'distance LOD adds one shared opaque tree pool across all chunks');
 assert.equal(fixturePools.furnitureSources,10);
 assert.ok(excludedFurniture.every(mesh=>mesh.material===furnitureMaterial),'controlled, custom callback and replaced assets remain untouched');
 assert.ok(fixturePools.sources.every(row=>row.source.material!==row.material&&!row.source.material.visible&&row.material.visible),
@@ -646,7 +791,14 @@ function presentStreetFixtures() {
   return {oldBeautyDraws,beautyDraws,oldShadowDraws,shadowDraws};
 }
 const fixtureStart=presentStreetFixtures();
-assert.equal(fixtureStart.oldBeautyDraws,44);assert.equal(fixtureStart.beautyDraws,10,'44→10 opaque draws in this deterministic scene');
+assert.equal(fixtureStart.oldBeautyDraws,useKiezLamps?33:43);assert.equal(fixtureStart.beautyDraws,useKiezLamps?8:10,'mixed near/far trees cost one additional world draw');
+lampContext.PROFILE_RENDER=true;lampContext.canvas={dataset:{}};lampContext.frameNumber=0;
+presentStreetFixtures();
+const measuredTreeLOD=JSON.parse(lampContext.canvas.dataset.streetFixturePooling);
+assert.equal(measuredTreeLOD.treeLodNear,2);assert.equal(measuredTreeLOD.treeLodFar,6);
+assert.equal(measuredTreeLOD.treeLodSavedTriangles,(canopy.index.count-farCrown.index.count)*2,
+  'existing device report counts actual submitted near/far crowns and exact triangle savings');
+lampContext.PROFILE_RENDER=false;
 const fixtureVersions=()=>Array.from(fixturePools.pools,pool=>pool.mesh.instanceMatrix.version);
 const originalVersions=fixtureVersions();presentStreetFixtures();
 assert.deepEqual(fixtureVersions(),originalVersions,'unchanged frame uploads no world-pool matrices');
@@ -884,4 +1036,94 @@ for (const pool of [poolState.pretzelSolidInst,poolState.pretzelHaloInst]) {
 vm.runInContext('pretzelSolidInst=null;pretzelHaloInst=null;',poolState);
 vm.runInContext('"use strict";\n' + poolReset,poolState);
 console.log(`PASS: collectible reset; actual lamp factory saves ${lampDrawsBefore-lampDrawsAfter} draws per visible pair; transforms, culling, shadow flags and independent transparent/flag layers preserved.`);
+// The connected Kiez route must not construct its retired macro scenes. Use
+// the actual factories and geometry builders; only canvas painting and global
+// texture/material inputs are stand-ins, with a distinct identity per slot.
+function routeFunction(name) {
+  const marker='  function '+name+'(',at=html.indexOf(marker),open=html.indexOf('{',at);
+  assert.ok(at>=0&&open>at,'actual route helper '+name);
+  return html.slice(at,open+1)+glslBody(html,marker)+'\n}';
+}
+const routeMaterial=(name)=>{const m=new THREE.MeshStandardMaterial({map:new THREE.Texture()});m.name=name;return m;};
+const routePalette=(name)=>new Proxy({}, {get(o,k){return o[k]||(o[k]=routeMaterial(name+'.'+String(k)));}});
+const routeScope=vm.createContext({THREE,console,Math,clamp:THREE.MathUtils.clamp,mergeBoxes:merge,
+  MAT:routePalette('MAT'),STATION_MAT:routePalette('STATION'),TUNNEL_MAT:routePalette('TUNNEL'),
+  BRIDGE_MAT:routePalette('BRIDGE'),STREET_MAT:routePalette('STREET'),facadeMats:routePalette('facade'),
+  PROP_WOOD:routeMaterial('wood'),PROP_BANNER:routeMaterial('banner'),PROP_CRATE_BLUE:routeMaterial('crate'),
+  CONSTRUCTION_HOARD_MAT:routeMaterial('hoarding'),STREET_ART_MAT:routeMaterial('art'),destRollMat:routeMaterial('destination'),
+  ASSETS:{streetArt:true},canvas:{dataset:{}},outlineTransparentDetails:[],outlineTransparentWasVisible:[],seqLightMarkers:[],
+  OBERBAUM_MASONRY_COLUMNS:3,OBERBAUM_MASONRY_ROWS:6,oberbaumBrickTex:new THREE.Texture(),
+  FACADE_TILE_W:7.2,FACADE_STOREY_BANDS:3,STOREY_H:3.6,ROAD_HALF:7.2,WALK_OUT:12.4,
+  riverbankIndustrialCache:Object.create(null),canvasTexture:()=>new THREE.Texture()});
+vm.runInContext(section('  var geoCache = Object.create(null);','  function icoGeo(r)'),routeScope);
+vm.runInContext(section('  var staticMergeGeometryCache =','  // Merges building parts that carry different materials'),routeScope);
+for(const name of ['icoGeo','box','roundedBox','scaleUV','mergedPart','streetArtCellGeo','addStreetArtBatch',
+  'registerSeqLightMarker','makeStationTrain','makeStationSequence','mapOberbaumMasonry','makeOberbaumArchGeo',
+  'riverbankFacadeGeometry','riverbankIndustrialGeometry','makeSpreeVessels','makeSpreeBridgeSequence',
+  'tramNoseProfile','makeTunnelTrain','makeTunnelSequence','makeBvgStopStory','makeInactiveRouteSequence','setMoverLive',
+  'freezeObjectTree','freezeChunkStaticMatrices'])vm.runInContext(routeFunction(name),routeScope);
+vm.runInContext(section('  var bridgeCableMat =','  function makeSpreeVessels()'),routeScope);
+const macroStart=html.indexOf('  function makeChunk(');
+const retiredSceneCode=section('    var streetStory =','    // Dedicated crate stacks',macroStart)+
+  section('    var construction = new THREE.Group();','    var transit =',macroStart)+
+  section('    var station = KIEZ_DISTRICT_ENABLED','    // Cross street:',macroStart);
+const routeFactoryNames=['makeBvgStopStory','makeStationSequence','makeSpreeBridgeSequence','makeTunnelSequence'];
+const routeFactoryCalls=[],routeOriginals={};
+for(const name of routeFactoryNames){routeOriginals[name]=routeScope[name];routeScope[name]=function(){
+  const result=routeOriginals[name]();routeFactoryCalls.push({name,result});return result;
+};}
+function routePayload(root){
+  const geometry=new Set(),materials=new Set();let nodes=0,meshes=0,lines=0,triangles=0,bytes=0;
+  root.traverse(node=>{nodes++;if(!node.isMesh&&!node.isLine)return;if(node.isMesh)meshes++;else lines++;
+    const geo=node.geometry;geometry.add(geo);(Array.isArray(node.material)?node.material:[node.material]).forEach(m=>materials.add(m));
+    if(node.isMesh)triangles+=(geo.index?geo.index.count:geo.attributes.position.count)/3;
+  });
+  for(const geo of geometry){for(const attr of Object.values(geo.attributes))bytes+=attr.array.byteLength;if(geo.index)bytes+=geo.index.array.byteLength;}
+  return {nodes,meshes,lines,geometries:geometry.size,materials:materials.size,triangles,bytes};
+}
+function buildRouteRetired(reference){
+  routeScope.KIEZ_DISTRICT_ENABLED=reference;routeScope.g=new THREE.Group();routeScope.ud={transit:{train:new THREE.Object3D()}};
+  vm.runInContext(retiredSceneCode,routeScope);routeScope.g.userData=routeScope.ud;
+  return {root:routeScope.g,ud:routeScope.ud,payload:routePayload(routeScope.g)};
+}
+const kiezRetired=buildRouteRetired(true);
+assert.equal(routeFactoryCalls.length,0,'Kiez calls none of the four retired factories');
+assert.deepEqual(kiezRetired.payload,{nodes:10,meshes:0,lines:0,geometries:0,materials:0,triangles:0,bytes:0});
+assert.equal(routeScope.seqLightMarkers.length,0,'Kiez creates no sequence light markers');
+assert.equal(kiezRetired.ud.constructionSides.length,0,'Kiez allocates no scaffold side payload');
+const legacyRetired=buildRouteRetired(false);
+assert.deepEqual(routeFactoryCalls.map(call=>call.name),routeFactoryNames,'legacy calls every original factory once');
+for(const [key,name] of [['streetStory','makeBvgStopStory'],['station','makeStationSequence'],['bridge','makeSpreeBridgeSequence'],['tunnel','makeTunnelSequence']]){
+  assert.equal(legacyRetired.ud[key],routeFactoryCalls.find(call=>call.name===name).result,'legacy retains exact original factory object identity');
+}
+assert.equal(legacyRetired.ud.constructionSides.length,2);
+assert.equal(routeScope.seqLightMarkers.length,3,'legacy retains both station lamps and the tunnel sweep marker');
+assert.ok(legacyRetired.payload.nodes>100&&legacyRetired.payload.triangles>30000&&legacyRetired.payload.bytes>1000000,
+  'real macro factories contain substantial constructed geometry eliminated from Kiez startup');
+// The remaining references support the unchanged freeze and mover lifecycle
+// across repeated rerolls; they never acquire a mesh or compile candidate.
+kiezRetired.root.add(kiezRetired.ud.transit.train);
+assert.equal(kiezRetired.ud.routeMovers.length,1);assert.equal(kiezRetired.ud.routeMovers[0],kiezRetired.ud.transit.train);
+assert.equal(legacyRetired.ud.routeMovers.length,5,'legacy retains all five original animated objects');
+const reusedRouteMovers=kiezRetired.ud.routeMovers;
+for(let cycle=0;cycle<20;cycle++){
+  kiezRetired.root.position.z=cycle*40;routeScope.freezeChunkStaticMatrices(kiezRetired.root);
+  for(const mover of [kiezRetired.ud.station.train,kiezRetired.ud.bridge.vessels,kiezRetired.ud.tunnel.train,kiezRetired.ud.tunnel.sweep]){
+    assert.equal(mover.matrixAutoUpdate,false);assert.equal(mover.matrixWorldAutoUpdate,false,'freeze never reactivates retired movers');
+    routeScope.setMoverLive(mover,false);
+    assert.ok(mover.parent&&mover.parent.userData.inactiveRoute,'inert mover keeps a valid owned ancestry');
+  }
+  assert.equal(routePayload(kiezRetired.root).meshes,0);
+  assert.equal(kiezRetired.ud.routeMovers,reusedRouteMovers,'rerolls reuse the startup mover list');
+}
+for(const [search,expected] of [['',0],['?district=legacy',5],['?profile=1&district=legacy',5]]){
+  const lightScene=new THREE.Scene(),lightScope=vm.createContext({THREE,scene:lightScene,window:{location:{search}}});
+  vm.runInContext(section('  var rim = new THREE.PointLight(', '  // Fixed pool of "sequence" point lights'),lightScope);
+  vm.runInContext(section('  var KIEZ_DISTRICT_ENABLED =','  // Called by makeStationSequence'),lightScope);
+  assert.equal(lightScope.SEQ_LIGHT_POOL_SIZE,expected);assert.equal(lightScope.seqLightPool.length,expected);
+  assert.equal(lightScene.children.filter(node=>node.isPointLight).length,expected+2,'total point lights preserve both courier sources');
+}
+assert.equal((html.match(/var KIEZ_DISTRICT_ENABLED =/g)||[]).length,1,'route selection has one initialization before resource allocation');
+console.log('PASS: retired route construction; actual legacy payload '+JSON.stringify(legacyRetired.payload)+
+  ' becomes '+JSON.stringify(kiezRetired.payload)+' in Kiez; exact legacy identities,20freeze/recycle cycles and5→0sequence lights.');
 console.log('PASS: 30/60 Hz presentation at 59.94–144 Hz; stable traffic/shadow work at 30–144 Hz; allocation-free effect tier changes; single-commit rotation; Retina/4K pixel budgets; sustained pressure/recovery; context recovery; hitch/background guards; shared canopy geometry and bounds.');

@@ -1,0 +1,270 @@
+'use strict';
+const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
+const path = require('path');
+const root = path.resolve(__dirname, '..');
+const html = fs.readFileSync(path.join(root, 'berlin-runner.html'), 'utf8');
+const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
+scripts.forEach((s,i)=>new vm.Script(s,{filename:'inline-'+i}));
+const scope=vm.createContext({console});
+vm.runInContext(scripts.find(s=>s.includes('three.js r156 (MIT)')),scope);
+const THREE=scope.THREE;
+scope.atob=s=>Buffer.from(s,'base64').toString('binary');
+scope.BERLIN_REFERENCE_ARCHITECTURE=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-reference-architecture-v1.json'),'utf8'));
+vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_packed_geometry.js'),'utf8'),scope);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8'),scope);
+const createKit=scope.createBerlinKiezKit;
+const noop=()=>{};
+const ctx=new Proxy({createLinearGradient:()=>({addColorStop:noop})},{get:(o,k)=>o[k]||noop,set:(o,k,v)=>(o[k]=v,true)});
+const kit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,...opts}),
+  (width,height)=>({width,height,getContext:()=>ctx}));
+const raw=fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/, '\n').trim();
+if(!process.argv.includes('--canonical-only'))assert.ok(html.includes(raw),'shipped factory matches editable source');
+// Independent image decodes can complete in any order. The generated plaster
+// owns just cell 1; room cells and the old plaster fallback remain available.
+const loaderSource=raw.slice(raw.indexOf('  function loadPaintedCells('),raw.indexOf('  var material = makeMaterial'));
+for(const order of [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0],[0,1],[1,0]]) {
+  const images=[],cells=new Map(),texture={userData:{},needsUpdate:false};
+  const imageContext=vm.createContext({CELL:512,texture,
+    BERLIN_REFERENCE_INTERIORS:'rooms',BERLIN_SECONDARY_ROOMS:'secondary',BERLIN_REFERENCE_PLASTER:'plaster',
+    Image:class {constructor(){this.width=1024;this.height=1024;images.push(this);}},
+    ctx:{fillRect:noop,drawImage(image,sx,sy,sw,sh,dx,dy,dw,dh){
+      cells.set(dx/512+dy/512*4,image.src);
+      assert.equal(dw,512);assert.equal(dh,512);
+      assert.equal(sw,image.src==='plaster'?1024:512,'full plaster and room quadrant use their own source extents');
+    }}});
+  vm.runInContext(loaderSource,imageContext);
+  assert.equal(images.length,3);
+  order.forEach(i=>images[i].onload());
+  assert.equal(cells.get(1),order.includes(2)?'plaster':'rooms');
+  for(const id of [4,5])assert.equal(cells.get(id),'rooms');
+  for(const id of [6,7,8,15])assert.equal(cells.get(id),'secondary');
+  assert.equal(!!texture.userData.plasterLoaded,order.includes(2));
+  assert.ok(texture.needsUpdate&&texture.userData.referenceLoaded&&texture.userData.secondaryLoaded);
+}
+console.log('PASS: six asynchronous atlas decode orders and two failed-plaster fallbacks; only plaster cell 1 changes, all shop cells remain intact.');
+if(process.argv.includes('--contact')){
+  const baseline=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-facade-contact-v76/baseline/berlin-reference-architecture-v1.json')));
+  const decode=scope.decodeBerlinMeshRecord;
+  let protectedPaint=0,changedPaint=0;
+  for(const [key,record]of Object.entries(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes)){
+    const before=baseline.meshes[key];
+    for(const attr of Object.keys(before))if(attr!=='color')assert.deepEqual(record[attr],before[attr],'contact bake preserves '+key+' '+attr);
+    if(!['13.5:0:1','13.5:1:1'].includes(key)){assert.equal(record.color,before.color);continue;}
+    const g=decode(THREE,record),uv=g.attributes.uv,cloth=key==='13.5:0:1'?bakeryFabricFaces(g,true):new Set();
+    const protectedVertices=new Set();
+    for(const face of cloth)for(let j=0;j<3;j++)protectedVertices.add(g.index.getX(face*3+j));
+    const oldColor=Buffer.from(before.color,'base64'),newColor=Buffer.from(record.color,'base64');
+    assert.equal(oldColor.length,newColor.length,'same GPU color buffer');
+    for(let i=0;i<uv.count;i++){
+      const cell=Math.floor(uv.getX(i)*4)+4*Math.floor((1-uv.getY(i))*4);
+      for(let j=0;j<3;j++){
+        const was=oldColor[i*3+j],now=newColor[i*3+j];
+        if(cell!==1||protectedVertices.has(i)){assert.equal(now,was,'glass, rooms, signs and cloth remain exact');protectedPaint++;}
+        else{assert.ok(now<=was&&now>=Math.floor(was*.5),'solid contact paint has a bounded local darkening');if(now!==was)changedPaint++;}
+      }
+    }
+  }
+  const oldScope=vm.createContext({THREE,Math});
+  vm.runInContext(fs.readFileSync(path.join(root,'audit/berlin-facade-contact-v76/berlin_kiez_kit-v75.js'),'utf8'),oldScope);
+  const oldKit=oldScope.createBerlinKiezKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,...opts}),()=>({getContext:()=>ctx}));
+  let neutralChanges=0;
+  for(const width of [11,13.5,16])for(const variant of [2,3,4,5])for(const side of [-1,1]){
+    const before=oldKit.geometry(width,variant,side),after=kit.geometry(width,variant,side);
+    for(const attr of ['position','normal','uv'])assert.deepEqual(after.attributes[attr].array,before.attributes[attr].array,'neutral contact paint leaves '+attr+' unchanged');
+    const a=after.attributes.color.array,b=before.attributes.color.array;
+    assert.equal(a.length,b.length);
+    for(let i=0;i<a.length;i++){assert.ok(a[i]<=b[i]+1e-7&&a[i]>=b[i]*.25,'bounded neutral recess/soffit shading');if(Math.abs(a[i]-b[i])>1e-7)neutralChanges++;}
+  }
+  assert.ok(changedPaint>10000&&neutralChanges>1000);
+  console.log(`PASS: contact paint changes ${changedPaint} focal and ${neutralChanges} neutral channels; ${protectedPaint} glass/room/cloth channels protected, exact geometry/normals/UVs and unchanged buffers.`);
+}
+let maximum=0,total=0,returnRays=0,turretRays=0,shopRays=0,insetRays=0,soffitRays=0,preservedGroundTriangles=0;
+const accepted=JSON.parse(fs.readFileSync(path.join(root,'audit/architecture-accepted-v66/berlin-reference-architecture-v1.json'),'utf8')).meshes;
+function atlasCell(uv) {return Math.floor(uv.x*4)+4*Math.floor((1-uv.y)*4);}
+// Identify complete textile components, so the intentional v71 fabric change
+// cannot exempt the attachment rail, glazing, or nearby structural trim.
+function bakeryFabricFaces(g,continuous) {
+  const p=g.attributes.position,index=g.index,parents=[],weld=[],points=new Map();
+  const find=i=>{while(parents[i]!==i){parents[i]=parents[parents[i]];i=parents[i];}return i;};
+  for(let i=0;i<p.count;i++) {
+    const key=[p.getX(i),p.getY(i),p.getZ(i)].join(',');
+    if(!points.has(key)){points.set(key,parents.length);parents.push(parents.length);}
+    weld.push(points.get(key));
+  }
+  for(let i=0;i<index.count;i+=3) {
+    const a=find(weld[index.getX(i)]);
+    for(let j=1;j<3;j++)parents[find(weld[index.getX(i+j)])]=a;
+  }
+  const components=new Map();
+  for(let i=0;i<index.count;i+=3) {
+    const key=find(weld[index.getX(i)]);
+    if(!components.has(key))components.set(key,{faces:[],min:[Infinity,Infinity,Infinity],max:[-Infinity,-Infinity,-Infinity]});
+    const c=components.get(key);c.faces.push(i/3);
+    for(let j=0;j<3;j++) {
+      const k=index.getX(i+j),v=[p.getX(k),p.getY(k),p.getZ(k)];
+      for(let axis=0;axis<3;axis++){c.min[axis]=Math.min(c.min[axis],v[axis]);c.max[axis]=Math.max(c.max[axis],v[axis]);}
+    }
+  }
+  const fabric=[...components.values()].filter(({min:lo,max:hi,faces})=>{
+    if(!(lo[0]>-6.21&&hi[0]<.66))return false;
+    if(continuous)return faces.length===1756&&lo[1]>3.50&&lo[1]<3.52&&hi[1]>5.64&&hi[1]<5.66&&lo[2]>.18&&lo[2]<.20&&hi[2]>2.18&&hi[2]<2.19;
+    const roof=3.80<lo[1]&&lo[1]<3.89&&5.60<hi[1]&&hi[1]<5.70&&.15<lo[2]&&lo[2]<.25&&2.10<hi[2]&&hi[2]<2.18;
+    const hem=3.49<lo[1]&&lo[1]<3.54&&3.85<hi[1]&&hi[1]<3.90&&2.11<lo[2]&&lo[2]<2.14&&2.18<hi[2]&&hi[2]<2.20;
+    return roof||hem;
+  });
+  assert.equal(fabric.length,continuous?1:17,'only the known connected fabric components are exempt');
+  const faces=new Set(fabric.flatMap(c=>c.faces));
+  assert.equal(faces.size,continuous?1756:1472,'fabric-only triangle budget is unchanged');
+  return faces;
+}
+function groundFaces(g,ceiling,omit=new Set()) {
+  const position=g.attributes.position,index=g.index,faces=[];
+  const a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();
+  for(let i=0;i<(index?index.count:position.count);i+=3) {
+    if(omit.has(i/3))continue;
+    a.fromBufferAttribute(position,index?index.getX(i):i);
+    b.fromBufferAttribute(position,index?index.getX(i+1):i+1);
+    c.fromBufferAttribute(position,index?index.getX(i+2):i+2);
+    if(b.sub(a).cross(c.sub(a)).lengthSq()<1e-12)continue;
+    const vertices=[];let below=true;
+    for(let j=0;j<3;j++) {
+      const k=index?index.getX(i+j):i+j;
+      below&&=position.getY(k)<ceiling;
+      vertices.push([position.getX(k),position.getY(k),position.getZ(k)].map(v=>v.toFixed(4)).join(','));
+    }
+    if(below)faces.push(vertices.sort().join('|'));
+  }
+  return [...new Set(faces)].sort();
+}
+for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const side of [-1,1]) {
+  const g=kit.geometry(w,variant,side);
+  assert.equal(g,kit.geometry(w,variant,side),'shared cache owns each exact variant');
+  assert.equal(g.groups.length,1); assert.equal(g.groups[0].materialIndex,0);
+  const bb=g.boundingBox;
+  assert.ok(bb.max.z<2.35&&bb.min.z>=-8.31,'bounded pavement projection / rear mass');
+  const corniceAllowance=variant<2?.45*Math.max(1,w/13.5):.45;
+  assert.ok(bb.max.x<=w/2+corniceAllowance&&bb.min.x>=-w/2-corniceAllowance,'bounded frontage width, including scaled roof cornice');
+  assert.ok(bb.min.y>=-.02&&bb.max.y<22,'grounded and bounded roof silhouette');
+  const pos=g.attributes.position,norm=g.attributes.normal,uv=g.attributes.uv;
+  for(let i=0;i<pos.count;i++) {
+    assert.ok(Number.isFinite(pos.getX(i)+pos.getY(i)+pos.getZ(i)));
+    assert.ok(Math.abs(Math.hypot(norm.getX(i),norm.getY(i),norm.getZ(i))-1)<.002,'unit normals');
+    assert.ok(uv.getX(i)>0&&uv.getX(i)<1&&uv.getY(i)>0&&uv.getY(i)<1,`padded atlas UVs: ${w}:${variant}:${side} vertex ${i} UV ${uv.getX(i)},${uv.getY(i)}`);
+  }
+  const mesh=new THREE.Mesh(g,kit.material); mesh.updateMatrixWorld(true);
+  const authored=variant<2, sourceW=authored?13.5:w, xScale=authored?w/13.5:1;
+  assert.equal(!!g.userData.blender,authored,'both focal storefronts use the actual Blender meshes');
+  const count=variant===1?3:sourceW===16&&variant!==0?3:2,spacing=(sourceW-.9)/count;
+  for(let j=0;j<count;j++) {
+    let x=variant===0?-1.15+(sourceW-3.65)*(j===0?-.165:.36)+.51:(j-(count-1)/2)*spacing+.51;
+    if(authored)x*=xScale*side;
+    const ray=new THREE.Raycaster(new THREE.Vector3(x,1.20,6),new THREE.Vector3(0,0,-1));
+    const hit=ray.intersectObject(mesh)[0];
+    assert.ok(hit,'shop has real glazing');
+    assert.equal(atlasCell(hit.uv),[5,4,6,8,7,15][variant],'shop identity matches its unobstructed interior');
+    shopRays++;
+  }
+  const floors=[3,4,3,3,4,3][variant];
+  const groundH=variant===0?6.0:4.70,roofBase=groundH+floors*3.05;
+  assert.equal(g.userData.height,roofBase,'authored height metadata follows the actual storey base');
+  if(authored) {
+    const master=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[`13.5:${variant}:1`];
+    assert.ok(master.triangles-accepted[`13.5:${variant}:1`].triangles<=3000,'actual runtime master stays within the approved triangle increase');
+    const baySpacing=(13.5-1)/3,centers=[-baySpacing,0,baySpacing].filter(x=>variant!==0||Math.abs(x-(13.5/2-2.10))>=2.1);
+    for(const center of centers)for(let floor=0;floor<floors;floor++) {
+      const cy=groundH+floor*3.05+3.05*.51;
+      const pane=new THREE.Raycaster(new THREE.Vector3((center+.30)*xScale*side,cy-.4,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+      assert.equal(pane&&atlasCell(pane.uv),2,'real upper-wall hole exposes glazing, not the solid structural core');
+      assert.ok(Math.abs(pane.point.z+.230)<.002,'upper pane sits 23cm behind the façade plane');
+      const jamb=new THREE.Raycaster(new THREE.Vector3((center+.69)*xScale*side,cy-.4,-.10),new THREE.Vector3(side,0,0)).intersectObject(mesh)[0];
+      assert.ok(jamb&&atlasCell(jamb.uv)===1&&Math.abs(jamb.point.x-(center+.735)*xScale*side)<.032,'a lateral ray reaches the actual shaded recess return');
+      insetRays+=2;
+      if(variant===1||floor===floors-1) {
+        const spandrel=new THREE.Raycaster(new THREE.Vector3((center+.70)*xScale*side,cy+.97,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+        assert.ok(spandrel&&atlasCell(spandrel.uv)===1&&Math.abs(spandrel.point.z)<.002,'arched opening has masonry above its curved head, not an open rectangle');
+        insetRays++;
+      }
+    }
+    for(let floor=1;floor<floors;floor++)for(const z of [.04,.25]) {
+      const yy=groundH+floor*3.05-.221;
+      const soffit=new THREE.Raycaster(new THREE.Vector3(-baySpacing*.5*xScale*side,yy-.10,z),new THREE.Vector3(0,1,0)).intersectObject(mesh)[0];
+      assert.ok(soffit&&Math.abs(soffit.point.y-yy)<.002&&soffit.face.normal.y<-.99,`cornice exposes a broad downward-facing shaded underside: ${JSON.stringify({w,variant,side,floor,z,yy,point:soffit&&soffit.point,normal:soffit&&soffit.face.normal})}`);
+      soffitRays++;
+    }
+    if(w===13.5&&side===1) {
+      const oldGeometry=scope.decodeBerlinMeshRecord(THREE,accepted[`13.5:${variant}:1`]);
+      const oldFabric=variant===0?bakeryFabricFaces(oldGeometry,false):new Set();
+      const newFabric=variant===0?bakeryFabricFaces(g,true):new Set();
+      const oldGround=groundFaces(oldGeometry,groundH-.61,oldFabric),newGround=groundFaces(g,groundH-.61,newFabric);
+      if(newGround.join('\n')!==oldGround.join('\n')) {
+        const oldSet=new Set(oldGround),newSet=new Set(newGround);
+        assert.fail(`accepted ground-storey geometry changed: ${JSON.stringify({variant,newCount:newGround.length,oldCount:oldGround.length,newOnly:newGround.filter(v=>!oldSet.has(v)).slice(0,3),oldOnly:oldGround.filter(v=>!newSet.has(v)).slice(0,3)})}`);
+      }
+      preservedGroundTriangles+=newGround.length;
+    }
+  }
+  for(const edge of [-1,1]) {
+    const ray=new THREE.Raycaster(new THREE.Vector3(edge*(w/2+5),roofBase+.25,-4),new THREE.Vector3(-edge,0,0));
+    const hit=ray.intersectObject(mesh)[0];
+    assert.ok(hit&&Math.abs(hit.point.x-edge*(w/2+.3*xScale))<.03,'masonry closes the side-wall roof spring line, including its 27mm bevel');
+  }
+  const rearHit=new THREE.Raycaster(new THREE.Vector3(0,roofBase+.25,-12),new THREE.Vector3(0,0,1)).intersectObject(mesh)[0];
+  assert.ok(rearHit&&Math.abs(rearHit.point.z+8.30)<.001,'masonry closes the rear-wall roof spring line');
+  for(const edge of [-1,1]) for(let f=0;f<floors;f++) for(const depth of [-2.05,-5.85]) {
+    const ray=new THREE.Raycaster(new THREE.Vector3(edge*(w/2+5),groundH+f*3.05+3.05*.51-.4,depth+.4),new THREE.Vector3(-edge,0,0));
+    const hit=ray.intersectObject(mesh)[0];
+    assert.equal(hit&&atlasCell(hit.uv),2,'return-wall glass remains visible behind the rotated frame');
+    assert.ok(Math.abs(hit.point.x-edge*(w/2-.230*xScale))<.002,'every side-wall pane is recessed in a real opening');
+    returnRays++;
+  }
+  if(!authored) {
+    const bays=w===16?4:3, baySpacing=(w-1)/bays;
+    for(let b=0;b<bays;b++) {
+      const cx=(b-(bays-1)/2)*baySpacing;
+      if(variant===3&&Math.abs(cx-side*(w/2-1.5))<2.1)continue;
+      for(let floor=0;floor<floors;floor++) {
+        const cy=groundH+floor*3.05+3.05*.51;
+        const pane=new THREE.Raycaster(new THREE.Vector3(cx+.30,cy-.4,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+        assert.ok(pane&&atlasCell(pane.uv)===2&&Math.abs(pane.point.z+.230)<.002,'neighbour panes sit behind real wall openings');
+        const jamb=new THREE.Raycaster(new THREE.Vector3(cx+.69,cy-.4,-.10),new THREE.Vector3(1,0,0)).intersectObject(mesh)[0];
+        assert.ok(jamb&&atlasCell(jamb.uv)===1&&Math.abs(jamb.point.x-cx-.735)<.002,'neighbour recess has a lateral masonry return');
+        insetRays+=2;
+      }
+    }
+  }
+  if(variant===0||variant===3) for(let f=0;f<floors;f++) for(const angle of [-.74,.28]) {
+    const sa=Math.sin(angle),ca=Math.cos(angle),x=side*(w/2-(variant===0?2.10:1.5)*xScale),mirror=authored?side:1;
+    const ray=new THREE.Raycaster(new THREE.Vector3(x+(sa*6+.30*ca)*xScale*mirror,groundH+f*3.05+3.05*.51-.4,-.05+ca*6-.30*sa),new THREE.Vector3(-sa*xScale*mirror,0,-ca).normalize());
+    const hit=ray.intersectObject(mesh)[0];
+    assert.equal(hit&&atlasCell(hit.uv),2,'curved-bay glass is outside the cylinder and inside the frame');
+    turretRays++;
+  }
+  if(variant===0) {
+    const sa=Math.sin(.10),ca=Math.cos(.10),x=side*(w/2-2.10*xScale);
+    const groundRay=new THREE.Raycaster(new THREE.Vector3(x+(sa*6+.15*ca)*xScale*side,2.72,-.05+ca*6-.15*sa),
+      new THREE.Vector3(-sa*xScale*side,0,-ca).normalize());
+    const groundHit=groundRay.intersectObject(mesh)[0];
+    assert.equal(groundHit&&atlasCell(groundHit.uv),2,'continuous ground bay preserves its curved glazing in front of the drum');
+    const canopyX=(-1.15-(13.5-3.65)*.165+.13)*xScale*side;
+    const canopyRay=new THREE.Raycaster(new THREE.Vector3(canopyX,8,1.175),new THREE.Vector3(0,-1,0));
+    const canopyHit=canopyRay.intersectObject(mesh)[0];
+    assert.ok(canopyHit&&Math.abs(canopyHit.point.y-4.705)<.003,
+      'the actual baked canopy has the shallow fabric bow between its unchanged wall mount and front hem');
+    assert.ok(canopyHit.face.normal.y>.70&&canopyHit.face.normal.z>.64,'pitched cloth has the intended upward/forward lighting normal');
+  }
+  const triangles=(g.index?g.index.count:pos.count)/3;
+  maximum=Math.max(maximum,triangles);total+=triangles;
+}
+assert.equal(Object.keys(kit.cache).length,36);
+assert.ok(maximum<23000,'per-building triangle budget includes selectively beveled Blender facades');
+assert.equal(kit.texture.image.width,2048); assert.equal(kit.texture.image.height,2048);
+scope.IS_MOBILE=true;
+const mobileKit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,...opts}),
+  (width,height)=>({width,height,getContext:()=>ctx}));
+assert.equal(mobileKit.texture.image.width,1024); assert.equal(mobileKit.texture.image.height,1024);
+assert.ok(!kit.material.transparent,'no glass overdraw or sorting path');
+// Legacy facade LOD must not restore the replaced dressing or materials.
+assert.ok(html.includes('d.coreFarMaterial = berlinKiezKit.material;'));
+assert.ok(html.includes('d.proxyDetailBase.fill(0);'));
+assert.ok(html.includes('if (d.kiez) { writeInstances = false; d.roofShell.visible = false; }'));
+console.log(`PASS: 36 Kiez modules including twelve Blender-derived facades; padded shared atlas, cached reuse, one material per building, normalized surfaces, pavement bounds and ${maximum} maximum triangles; ${total} cached triangles total. Actual surface rays reach ${shopRays} shop panes, ${returnRays} return-wall panes, ${turretRays} curved-bay panes, ${insetRays} recessed panes/returns/arched masonry and ${soffitRays} cornice undersides; ${preservedGroundTriangles} accepted ground-storey triangles retained.`);

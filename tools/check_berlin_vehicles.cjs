@@ -174,13 +174,18 @@ const tramRegister=c.registerProp;
 c.registerProp=(_kind,root)=>root;
 const runnerTram=c.makeRunnerTram();c.registerProp=tramRegister;runnerTram.updateMatrixWorld(true);
 const tramGlass=c.makeRunnerTram.glazingMaterial;
+const tramHeadlamp=c.makeRunnerTram.headlampMaterial;
+assert.ok(tramHeadlamp.isMeshBasicMaterial&&tramHeadlamp!==c.MAT.bulb,
+  'tram ivory headlamps retain their daytime appearance without changing city lamps');
+assert.ok(c.makeRunnerTram.yellowMaterial!==c.MAT.bvgYellow,
+  'the vintage paint is local to the tram');
 assert.ok(tramGlass&&tramGlass!==c.MAT.glassDark&&!tramGlass.transparent,
   'tram owns an opaque glass finish without recolouring other city vehicles');
-assert.equal(runnerTram.children.filter(o=>o.material===tramGlass).length,14,
+assert.equal(runnerTram.children.filter(o=>o.material===tramGlass).length,16,
   'all cab, door and passenger panes use the same shared tram glass material');
 const tramProbes=[];
 for(const part of runnerTram.children.filter(o=>o.isMesh)){
-  const glass=part.material===tramGlass, lamp=part.material===c.PROP_TAIL||part.material===c.MAT.bulb;
+  const glass=part.material===tramGlass, lamp=part.material===c.PROP_TAIL||part.material===tramHeadlamp;
   const sign=part.material===c.destRollMat;
   const bumper=part.material===c.MAT.metalDark&&Math.abs(part.position.z)>3.9;
   if(!glass&&!lamp&&!sign&&!bumper)continue;
@@ -210,19 +215,19 @@ for(const probe of tramProbes){
   assert.ok(hit&&hit.object.material===probe.material&&hit.point.distanceTo(probe.point)<0.00001,
     'actual tram apertures expose glazing; lamps, bumpers and route displays remain in front of the shell');
 }
-assert.equal(tramProbes.length,720);
+assert.equal(tramProbes.length,792);
 const tramBounds=new THREE.Box3().setFromObject(runnerTram);
 assert.ok(tramBounds.min.x>=-1.25&&tramBounds.max.x<=1.25&&tramBounds.min.z>=-4&&tramBounds.max.z<=4&&
   tramBounds.min.y>=0&&tramBounds.max.y<=3.15,'whole tram fits the exact lane obstacle envelope');
 for(const x of [-0.6,0,0.6]){
   carRay.set(new THREE.Vector3(x,4,0),carDown);const hit=carRay.intersectObject(runnerTram,true)[0];
-  assert.ok(hit&&hit.object.material===c.STATION_MAT.sbahnCream&&hit.point.y>3,
-    'broad rounded cream crown creates the tall readable silhouette');
+  assert.ok(hit&&hit.object.material===c.makeRunnerTram.creamMaterial&&hit.point.y>2.77,
+    'broad rounded cream crown leaves room for the classic pantograph');
 }
-// Rear lamps must face the incoming runner at -Z, rather than silently becoming
-// headlights through a factory rotation. Both bogies remain beneath the body.
-carRay.set(new THREE.Vector3(-0.72,1.04,-10),new THREE.Vector3(0,0,1));
-assert.equal(carRay.intersectObject(runnerTram,true)[0].object.material,c.PROP_TAIL);
+// The classic driving cab now faces the runner at -Z. The stationary obstacle
+// keeps its original orientation/envelope and both bogies beneath the body.
+carRay.set(new THREE.Vector3(-0.70,1.01,-10),new THREE.Vector3(0,0,1));
+assert.equal(carRay.intersectObject(runnerTram,true)[0].object.material,tramHeadlamp);
 let tramDraws=0,tramTriangles=0;
 runnerTram.traverse(o=>{if(o.isMesh){tramDraws++;tramTriangles+=(o.geometry.index?o.geometry.index.count:o.geometry.attributes.position.count)/3;
   assert.ok(!o.material.transparent&&o.castShadow,'tram has only opaque batches with a solid shadow');
@@ -234,7 +239,7 @@ assert.ok(cachedTram.children.every((mesh,i)=>mesh.geometry===runnerTram.childre
   'tram factories reuse the cached merged geometry and shared palette');
 assert.ok(clonedTram.children.every((mesh,i)=>mesh.geometry===cachedTram.children[i].geometry&&mesh.material===cachedTram.children[i].material),
   'tram pool clones share all geometry and materials');
-console.log(`PASS: runner tram ${tramProbes.length} actual glazing/trim rays; rear lamps, rounded crown, exact 2.5×8×3.15 m envelope; ${tramDraws} opaque draws / ${tramTriangles} triangles; cached factories and clones.`);
+console.log(`PASS: runner tram ${tramProbes.length} actual glazing/trim rays; split driving cab, facing lamps, cream crown/pantograph, exact 2.5×8×3.15 m envelope; ${tramDraws} opaque draws / ${tramTriangles} triangles; cached factories and clones.`);
 // The shaped bus shell once buried its rear bumper and lamps. Find the real
 // trim meshes before batching, then ray-test their actual surface points
 // against the complete batched vehicle from six elevated camera positions.
@@ -711,3 +716,49 @@ assert.ok(rejectedCompanions>0,'courses reach optional companions that alone cro
 assert.equal(slideFormations.size,3,'all three flat slide formations reach actual pickup checks');
 assert.ok(checkedSlidePickups>100&&recoveryPairs>100&&minFreeSlots>0,'bounded course coverage never relies on obstacle pool exhaustion');
 console.log(`PASS: ${sequentialCourses} sequential corridors; all swept quiz boundaries, ${rejectedCompanions} rejected offset companions, ${recoveryPairs} action-recovery pairs, ${checkedSlidePickups} real slide pickups across all formations; minimum ${minFreeSlots}/48 free slots. Later beats by speed/difficulty: ${density.join(', ')}.`);
+
+// The authored opening is inserted after all visible future corridors have
+// already been scheduled. Exercise that real order, including random extremes,
+// so the close tram cannot overlap another prop or create a three-lane wall.
+vm.runInContext(section('  function ensureGatesAhead() {','  // Fill the run-up'),course);
+vm.runInContext(section('  var WORLD_EMERGE =','  // Stock linear fog'),course);
+const openingCourseSource=section('    // A composed opening:', '\n  function showHeroLoadError()')
+  .replace(/\r\n/g,'\n').replace(/\n  }\s*$/,'');
+const seededRandom=course.Math.random;
+let openingCourses=0,closestOpeningGap=Infinity;
+for(const velocity of [13,26])for(const offset of [0,500])for(let trial=-2;trial<24;trial++){
+  courseSeed=(trial+3)*982451653;
+  course.Math.random=trial===-2?()=>0:trial===-1?()=>.999999:seededRandom;
+  Object.assign(course,{speed:velocity,distance:0,overdriveTier:0,quizStreak:0,
+    lastObstacleZ:offset,nextGateZ:offset,powerupCorridorIndex:0,started:true,gameOver:false});
+  course.player.z=offset;course.gates=[];
+  course.spawnGate=z=>course.gates.push({position:{z},userData:{active:true}});
+  course.obstacles=Array.from({length:48},()=>({active:false,
+    holder:{visible:false,position:new THREE.Vector3(),updateMatrix(){}},
+    variants:c.OB_VISUAL_TEMPLATES.map(a=>a.map(()=>({visible:false})))}));
+  course.pretzels=Array.from({length:80},()=>({active:false,
+    sprite:{visible:false,position:new THREE.Vector3()}}));
+  courseRuns.length=0;course.ensureGatesAhead();
+  const scheduled=course.obstacles.filter(o=>o.active),rewardBefore=new Set(course.pretzels.filter(p=>p.active));
+  assert.ok(scheduled.every(o=>o.z>=offset+58),'first scheduling beat cannot enter the authored opening');
+  vm.runInContext(openingCourseSource,course);
+  const openingTrams=course.obstacles.filter(o=>o.active&&!scheduled.includes(o));
+  assert.equal(openingTrams.length,1,'actual queued corridors leave a real slot for the opening tram');
+  const tram=openingTrams[0];
+  assert.equal(tram.spec.name,'tram');assert.equal(tram.lane,2);
+  assert.ok(tram.z>offset+24&&tram.z<=offset+28,'tram stays in its bounded visible approach');
+  assert.ok((tram.z-offset-tram.spec.halfD-course.HALF_D)/velocity>=.85,
+    'the opening keeps at least 850 ms to its nearest collision face even at fast speed');
+  assert.ok(course.obstacleFitsQuizApproach(3,tram.z,course.gates[0].position.z),'full tram clears first quiz reaction space');
+  for(const other of scheduled){
+    const gap=Math.abs(other.z-tram.z)-other.spec.halfD-tram.spec.halfD-2*course.HALF_D;
+    assert.ok(gap>12,'opening tram neither overlaps a queued prop nor combines with a same-depth blocked lane');
+    closestOpeningGap=Math.min(closestOpeningGap,gap);
+  }
+  const openingRewards=course.pretzels.filter(p=>p.active&&!rewardBefore.has(p));
+  assert.deepEqual(openingRewards.map(p=>p.z),[8,16,24,32].map(z=>z+offset));
+  assert.ok(openingRewards.every(p=>p.lane===1&&p.y===1.15),'four opening rewards remain in the clear center');
+  openingCourses++;
+}
+course.Math.random=seededRandom;
+console.log(`PASS: ${openingCourses} actual queued opening courses at13/26m/s, fresh/restart offsets and random extremes; four pooled center pickups, first quiz clearance and minimum ${closestOpeningGap.toFixed(2)}m surface gap to scheduled props.`);

@@ -11,6 +11,16 @@ const source=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(x=>
 const runtime=vm.createContext({console});
 vm.runInContext(source.find(x=>x.includes('three.js r156 (MIT)')),runtime);
 const THREE=runtime.THREE;
+const stockFogChunks=Object.fromEntries(['fog_vertex','fog_pars_vertex','fog_fragment','fog_pars_fragment']
+  .map(name=>[name,THREE.ShaderChunk[name]]));
+const surfaceFogSource=section('  THREE.ShaderChunk.fog_fragment =','  // Haze starts');
+const syncSurfaceFog=html.match(/surfaceVistaState.enabled = surfaceVistaRequested && POST.on && surfaceVistaState.map \? 1 : 0;/)[0];
+const fogLibraries=Object.keys(THREE.ShaderLib).filter(name=>THREE.ShaderLib[name].uniforms.fogColor);
+function expandChunks(shader){return shader.replace(/#include <([\w\d_]+)>/g,(_,name)=>{
+  assert.equal(typeof THREE.ShaderChunk[name],'string','every fog shader include resolves: '+name);
+  return expandChunks(THREE.ShaderChunk[name]);
+});}
+let surfaceFogProfiles=0,surfaceFogCases=0;
 let desktopPostShader,desktopPostConfig;
 // Construct the actual post chain with real r156 targets/materials. This
 // checks feature selection and shader declarations, not GPU/FPS behavior.
@@ -32,11 +42,18 @@ for(const mode of ['webgl2','webgl1-hdr','webgl1-ldr','no-depth','no-derivatives
   assert.equal(fixture.POST.on,active,`${mode}: selects a usable presentation path`);
   assert.equal(classes.get('gpu-finish'),active,'CSS finishing layers remain available only for direct-render fallback');
   if(active){
+    assert.equal(fixture.POST.aoOn,false,'shipped plaster uses baked/native contact shading');
+    assert.equal(fixture.contactAORT,null,'disabled SSAO allocates no contact render target');
+    assert.equal(fixture.contactAOMat,null,'disabled SSAO creates no kernel material');
+    // Retain coverage for the optional source feature without confusing it
+    // with the shipped path above. This is an explicit test-only opt-in.
+    fixture.POST.aoOn=true;fixture.buildContactAO();
     assert.ok(fixture.compositeMat.fragmentShader.includes('dFdx(P)'));
     assert.equal(fixture.compositeMat.extensions.derivatives,true,'WebGL 1 derivative functions are enabled');
     assert.equal(fixture.sceneRT.texture.type,mode==='webgl1-ldr'?THREE.UnsignedByteType:THREE.HalfFloatType);
     assert.equal(fixture.sceneRT.samples,mode==='webgl2'?2:0,'phone HDR remains single-sampled');
     assert.equal(fixture.compositeMat.uniforms.tOutlineD.value,fixture.sceneRT.depthTexture);
+    assert.equal(fixture.compositeMat.uniforms.uStreetVista,undefined,'distant artwork stays behind opaque and transparent foreground, outside the composite');
     assert.equal(fixture.contactAORT.width,390);
     assert.equal(fixture.contactAORT.height,844);
     assert.equal(fixture.contactAORT.texture.type,THREE.UnsignedByteType,'contact shading uses one small RGBA8 buffer');
@@ -63,17 +80,172 @@ for(const mode of ['webgl2','webgl1-hdr','webgl1-ldr','no-depth','no-derivatives
     assert.equal(fixture.canvas.dataset.postProcessing,'depth-composite');
     if(mode==='webgl2'){
       desktopPostShader=fixture.compositeMat.fragmentShader;
+      fixture.POST.aoOn=false;
       desktopPostConfig=fixture.POST;
     }
   }else{
     assert.equal(fixture.sceneRT,null,'unsupported devices allocate no unusable targets');
     assert.equal(fixture.compositeMat,null,'unsupported devices never attempt the unsupported shader');
     assert.equal(fixture.renderer.toneMapping,THREE.ACESFilmicToneMapping);
-    assert.equal(fixture.canvas.style.filter,'saturate(1.09) contrast(1.035)');
+    assert.equal(fixture.canvas.style.filter,'none','direct fallback has no extra display-space contrast or compositor pass');
     assert.equal(fixture.canvas.dataset.postProcessing,'direct');
   }
+  // Build the actual global hook for every capability profile. ShaderLib was
+  // assembled by Three before app startup; adding only UniformsLib.fog would
+  // miss all these built-in uniform clones, including Basic/line materials.
+  Object.assign(THREE.ShaderChunk,stockFogChunks);
+  fixture.window={location:{search:''}};
+  vm.runInContext(surfaceFogSource,fixture);
+  const precision=mode==='low-precision'?'mediump':'highp';
+  assert.equal(fixture.surfaceVistaPrecision,precision);
+  const clonedFogUniforms=fogLibraries.map(name=>THREE.UniformsUtils.clone(THREE.ShaderLib[name].uniforms));
+  for(let i=0;i<fogLibraries.length;i++){
+    const name=fogLibraries[i],shader=THREE.ShaderLib[name];
+    assert.equal(clonedFogUniforms[i].berlinFogVista.value,fixture.surfaceVistaState,
+      name+' retains the same live plain struct, without a cloned texture');
+    const vertex=expandChunks(shader.vertexShader),fragment=expandChunks(shader.fragmentShader);
+    assert.ok(vertex.includes('varying '+precision+' vec3 vBerlinFogView;'));
+    assert.ok(fragment.includes('varying '+precision+' vec3 vBerlinFogView;'));
+    assert.ok(vertex.indexOf('vBerlinFogView = mvPosition.xyz;')>vertex.indexOf('vec4 mvPosition'),
+      name+' captures the final projected vertex, after stock instancing/skinning/sprite transforms');
+    assert.ok(fragment.includes('uniform BerlinFogVista berlinFogVista;'));
+    assert.ok(fragment.includes('linearToOutputTexel(vec4(city, 1.0)).rgb'),
+      name+' converts sampled linear color at the existing post-colorspace fog stage');
+  }
+  const decodedVista=new THREE.Texture();fixture.surfaceVistaState.map=decodedVista;
+  vm.runInContext(syncSurfaceFog,fixture);
+  assert.equal(fixture.surfaceVistaState.enabled,active?1:0,'direct/capability fallback disables this candidate');
+  assert.ok(clonedFogUniforms.every(u=>u.berlinFogVista.value.map===decodedVista),'late decode reaches every original shader clone');
+  fixture.surfaceVistaRequested=false;vm.runInContext(syncSurfaceFog,fixture);
+  assert.equal(fixture.surfaceVistaState.enabled,0,'opt-out wins over a decoded image');
+  fixture.surfaceVistaRequested=true;fixture.surfaceVistaState.map=null;vm.runInContext(syncSurfaceFog,fixture);
+  assert.equal(fixture.surfaceVistaState.enabled,0,'load failure leaves the original fog active');
+  fixture.skyTextures=[new THREE.Texture()];fixture.BERLIN_FERNSEHTURM_SURFACE_GLSL='';
+  vm.runInContext(section('  var SKYLINE_TOP_FAR =','  var skyDome ='),fixture);
+  assert.ok(fixture.skyMat.vertexShader.includes('varying '+precision+' vec3 vSkyViewPosition;'));
+  assert.ok(fixture.skyMat.fragmentShader.includes('berlinStreetPicture(berlinStreetDomeUv(viewPosition))'),
+    'dome and surface use exactly the same direction and image crop helper');
+  if(mode==='low-precision')for(const shader of [THREE.ShaderChunk.berlin_street_vista_pars,
+    THREE.ShaderChunk.fog_pars_vertex,THREE.ShaderChunk.fog_pars_fragment,
+    fixture.skyMat.vertexShader,fixture.skyMat.fragmentShader])assert.ok(!/\bhighp\b/.test(shader),
+      'a genuine mediump-only fragment device gets no unsupported explicit highp qualifier');
+  const fogBody=THREE.ShaderChunk.fog_fragment.slice(THREE.ShaderChunk.fog_fragment.indexOf('if (berlinFogVista.enabled'),
+    THREE.ShaderChunk.fog_fragment.lastIndexOf('#endif')).replace(/\b(?:vec3|float) (\w+) =/g,'let $1 =');
+  assert.ok(!/gl_FragDepth|gl_FragColor\.a|\bdiscard\b/.test(fogBody),'fog changes only RGB, never alpha/depth/coverage');
+  const evalFog=new Function('berlinFogVista','vFogDepth','vBerlinFogView','fogColor','fogFactor','gl_FragColor',
+    'berlinStreetDomeUv','berlinStreetPicture','texture2D','linearToOutputTexel','vec4','smoothstep','mix',fogBody);
+  const mix=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t);
+  const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
+  for(const enabled of [0,1])for(const depth of [0,59.999,60,90,120,120.001,149,178,240])
+  for(const mask of [0,.3,1])for(const alpha of [0,.17,1]){
+    const state={...fixture.surfaceVistaState,enabled},base=[.21,.38,.57],haze=[.7,.75,.8],city=[.31,.5,.25];
+    const color={rgb:base.slice(),a:alpha},factor=Math.pow(smooth(60,178,depth),2.4);
+    let textureReads=0,directionReads=0;
+    evalFog(state,depth,null,haze,factor,color,()=>{directionReads++;return [0,0];},()=>({xy:[.5,.25],z:mask}),
+      ()=>{textureReads++;return {rgb:city};},v=>v,(rgb,a)=>({rgb,a}),smooth,mix);
+    assert.equal(color.a,alpha);
+    assert.equal(directionReads,enabled&&depth>120?1:0,'near/off pixels do no directional work');
+    assert.equal(textureReads,enabled&&depth>120&&mask>0?1:0,'only distant in-cone pixels sample the existing image once');
+    if(!enabled||depth<=120||mask===0)assert.deepEqual(color.rgb,mix(base,haze,factor),'original RGB expression is exact on every bypass path');
+    if(enabled&&depth>=178&&mask===1)assert.deepEqual(color.rgb,mix(haze,city,.65),'fully fogged central surfaces match dome city/haze color');
+    surfaceFogCases++;
+  }
+  fixture.skyMat.dispose();decodedVista.dispose();surfaceFogProfiles++;
 }
 console.log('PASS: actual post setup across six capability profiles; WebGL 1 derivative declaration, HDR/LDR choice, phone MSAA budget, depth source, and allocation-free direct fallback.');
+console.log(`PASS: surface fog across ${surfaceFogProfiles} capability profiles/${fogLibraries.length} built-in libraries/${surfaceFogCases} RGB cases; exact near/disabled output, shared late-decode ownership, unchanged alpha/depth, one far-only texture read, identical dome helper and genuine mediump qualifier fallback. GLSL source contracts, not a driver compilation claim.`);
+// Execute the shipped direction arithmetic, then compare against Three's
+// independent ray/sphere intersection, including translated/banked cameras
+// and points on both sides of the horizon. Both shader callers use this helper.
+const directionSource=THREE.ShaderChunk.berlin_street_vista_pars;
+const directionBody=directionSource.slice(directionSource.indexOf('{')+1,directionSource.indexOf('\n}') )
+  .replace(/\b(?:highp|mediump) (?:vec3|float) (\w+) =/g,'let $1 =')
+  .replace('viewPosition * mat3(viewMatrix)','multiplyView(viewPosition, viewMatrix)')
+  .replace(/viewMatrix\[(\d)\]\.xyz/g,'viewMatrix[$1]')
+  .replace('vec3(0.0, eyeY, 0.0) + ray * travel','addEye(ray, eyeY, travel)');
+const evaluateDomeUv=new Function('viewPosition','viewMatrix','normalize','multiplyView','dot','sqrt','max','abs','atan','asin','clamp','fract','vec2','addEye',directionBody);
+const directionHelpers=[v=>v.clone().normalize(),(v,m)=>new THREE.Vector3(v.dot(m[0]),v.dot(m[1]),v.dot(m[2])),
+  (a,b)=>a.dot(b),Math.sqrt,Math.max,Math.abs,Math.atan2,Math.asin,THREE.MathUtils.clamp,x=>x-Math.floor(x),(...v)=>v,
+  (ray,eyeY,travel)=>ray.clone().multiplyScalar(travel).add(new THREE.Vector3(0,eyeY,0))];
+let directionCases=0,maxDirectionError=0;
+for(const position of [[0,2.55,-6.5],[1.3,3.57,84],[-5,18,1024]])for(const bank of [-.12,0,.12]){
+  const view=new THREE.PerspectiveCamera(40,16/9,.4,4000);view.position.fromArray(position);
+  view.lookAt(position[0]+.3,position[1]-.1,position[2]+18);view.rotateZ(bank);view.updateMatrixWorld(true);
+  const m=view.matrixWorldInverse.elements,columns=[0,1,2,3].map(i=>new THREE.Vector3(m[i*4],m[i*4+1],m[i*4+2]));
+  const centre=new THREE.Vector3(position[0],0,position[2]),sphere=new THREE.Sphere(centre,2000);
+  for(const azimuth of [-.1,-.05,0,.05,.1])for(const elevation of [-.032,-.018,-.003,.008,.03,.06])for(const distance of [130,178,500]){
+    const direction=new THREE.Vector3(Math.sin(azimuth)*Math.cos(elevation),Math.sin(elevation),Math.cos(azimuth)*Math.cos(elevation));
+    const point=view.position.clone().addScaledVector(direction,distance).applyMatrix4(view.matrixWorldInverse);
+    const actual=evaluateDomeUv(point,columns,...directionHelpers);
+    const hit=new THREE.Ray(view.position,direction).intersectSphere(sphere,new THREE.Vector3()).sub(centre).normalize();
+    const expected=[.25+Math.atan2(hit.x,hit.z)/(2*Math.PI),Math.asin(hit.y)*2/Math.PI];
+    for(let axis=0;axis<2;axis++){const error=Math.abs(actual[axis]-expected[axis]);maxDirectionError=Math.max(maxDirectionError,error);
+      assert.ok(error<1e-10,'surface and exact dome rays share signed spherical UVs');}
+    assert.equal(Math.sign(actual[1]),Math.sign(expected[1]),'below-horizon coordinates never mirror the sky');directionCases++;
+  }
+}
+console.log(`PASS: ${directionCases} translated/banked/depth ray cases agree with exact dome sphere UVs; maximum error${maxDirectionError.toExponential(2)}. Projection arithmetic check, not GPU sampling precision.`);
+// Execute the actual environment controller through multiple former day/night
+// boundaries, rewards and overdrive. Lighting must remain identical, while
+// geometric skyline approach and the existing device fallback still function.
+const daylightContext=vm.createContext({THREE});
+vm.runInContext(section('  var MOOD_TREATMENTS = [','  // ========================================================== world layout'),daylightContext);
+const light=()=>({color:new THREE.Color(),intensity:0});
+const daylightUniforms=Object.fromEntries(['mapA','mapB','uMapAScale','uMapBScale','uMix','uDayAir','uSkylineTop'].map(k=>[k,{value:0}]));
+for(const key of ['uTint','uHaze','uSkylineTint'])daylightUniforms[key]={value:new THREE.Vector3()};
+const daylightPost={on:true};
+for(const key of ['lift','gain','gamma','shadowTint','highTint'])daylightPost[key]=new THREE.Color();
+const daylightDom=Object.fromEntries(['colorgrade','colorgradeNight','colorgradeDawn','halation','halationNight','halationDawn','vig'].map(k=>[k,{style:{}}]));
+Object.assign(daylightContext,{
+  clamp:THREE.MathUtils.clamp,lerp:THREE.MathUtils.lerp,distance:0,answerKick:0,fxAberrKick:0,
+  POST:daylightPost,scene:{background:new THREE.Color(),fog:new THREE.Fog(0,1,170)},
+  skyMat:{uniforms:daylightUniforms},skyTextures:[{userData:{panoramaScale:1.4}},{},{}],
+  skylineStripActive:true,SKYLINE_APPROACH_DIST:1200,SKYLINE_TOP_FAR:.158,SKYLINE_TOP_NEAR:.183,
+  FOG_COLOR:new THREE.Color(),FOG_FAR_MAX:178,renderer:{},hemi:{...light(),groundColor:new THREE.Color()},
+  sun:{...light(),castShadow:true},fill:light(),rim:light(),groundBounce:light(),
+  shopMats:[{},{},{}],MAT:{glassLit:{},bulb:{color:new THREE.Color()},lampGlobe:{emissive:new THREE.Color()}},
+  STATION_MAT:{light:{}},lampConeMat:{},skylineLayers:[0,1,2].map(()=>({material:{color:new THREE.Color()}})),
+  _skylineHazeTmp:new THREE.Color(),SKYLINE_HAZE_LEAN:[.12,.25,.4],el:daylightDom
+});
+vm.runInContext(section('  function updateEnvironmentMood(od) {','  var lastSpeedveilOpacity = -1;'),daylightContext);
+function daylightSnapshot(){
+  const d=daylightContext,u=d.skyMat.uniforms;
+  return JSON.stringify({
+    indices:[d.moodFromIndex,d.moodToIndex,d.moodMix,d.moodDuskWeight,d.moodNightWeight,d.moodDawnWeight],
+    sky:[u.uMix.value,u.uDayAir.value,u.uMapAScale.value,u.uMapBScale.value,u.uTint.value,u.uHaze.value,u.uSkylineTint.value],
+    scene:[d.scene.background,d.scene.fog],lights:[d.hemi,d.sun,d.fill,d.rim,d.groundBounce],
+    post:Object.fromEntries(Object.entries(d.POST).filter(([k])=>k!=='gradeDirty')),
+    shop:d.shopMats,materials:d.MAT,station:d.STATION_MAT,cone:d.lampConeMat,dom:d.el
+  });
+}
+daylightContext.updateEnvironmentMood(0);
+const fixedDaylight=daylightSnapshot();
+let daylightRuns=0;
+for(const distance of [0,895,896,1279,1280,2560,3840,10000,50000])for(const overdrive of [0,1,4])for(const answerKick of [0,1]){
+  daylightContext.distance=distance;daylightContext.answerKick=answerKick;daylightContext.fxAberrKick=.02;
+  if(daylightRuns%3===0)daylightContext.lastMoodFromIndex=-1; // include a fresh apply, not just cache hits
+  daylightContext.updateEnvironmentMood(overdrive);
+  assert.equal(daylightSnapshot(),fixedDaylight,'route, reward and overdrive retain exactly one daylight');
+  assert.deepEqual(Array.from(daylightPost.gamma.toArray()),[1,1,1],
+    'the specialized composite is valid only while grading gamma remains the identity');
+  assert.equal(daylightUniforms.mapA.value,daylightContext.skyTextures[0]);
+  assert.equal(daylightUniforms.mapB.value,daylightContext.skyTextures[0]);
+  assert.ok(daylightUniforms.uSkylineTop.value>=.158&&daylightUniforms.uSkylineTop.value<=.183);
+  daylightRuns++;
+}
+daylightPost.gradeDirty=false;daylightContext.updateEnvironmentMood(4);
+assert.equal(daylightPost.gradeDirty,false,'steady daylight avoids per-frame material and grade writes');
+daylightContext.skyTextures[0]={userData:{panoramaScale:.8}};
+daylightContext.updateEnvironmentMood(0);
+assert.equal(daylightUniforms.mapA.value,daylightContext.skyTextures[0],'asynchronous daylight texture replacement invalidates the cache');
+assert.equal(daylightUniforms.uMapAScale.value,.8);
+daylightContext.skylineStripActive=false;daylightContext.updateEnvironmentMood(0);
+assert.ok(daylightContext.skylineLayers.every(layer=>layer.visible),'failed skyline strip restores the fog-tinted fallback rings');
+daylightContext.POST.on=false;daylightContext.updateEnvironmentMood(0);
+assert.equal(daylightContext.renderer.toneMappingExposure,daylightContext.MOOD_TREATMENTS[0].exposure,'direct fallback receives the same fixed exposure');
+daylightContext.sun.castShadow=false;daylightContext.updateEnvironmentMood(0);
+assert.equal(daylightContext.POST.exposure,daylightContext.MOOD_TREATMENTS[0].exposure-.42,'emergency no-shadow compensation remains intact');
+console.log(`PASS: ${daylightRuns} daylight runs through 50 km, former hour boundaries, rewards and overdrive; fixed radiance/fog/palette/grade, texture reload, skyline fallback and direct-render capability handling.`);
 // Execute the shader's depth-aware sample rejection with quantized RGBA8
 // storage, including a foreground character against distant scenery.
 const tapSource=section('vec2 contactTap(', 'float filteredContactAO(',desktopPostShader);
@@ -96,7 +268,7 @@ for(const [foreground,background] of [[3,12],[8,40],[30,85]]){
   const [value,weight]=runContactTap(packedContact(background,1),foreground,.25,85,smooth,Math.abs,(...v)=>v);
   assert.equal(value,0);assert.equal(weight,0,'background occlusion cannot bleed across the hero/vehicle silhouette');
 }
-console.log('PASS: half-size contact buffer/odd-size rotation; 0.66 mm packed-depth precision and depth-separated silhouette rejection.');
+console.log('PASS: shipped SSAO allocates no target/kernel; optional contact feature retains half-size/odd-size rotation, 0.66 mm packed-depth precision and silhouette rejection.');
 // Execute the shipped scalar early-out and final blend equations. Neighbour
 // depths may produce any edge confidence, so compare that whole range with
 // the former unconditional fade, including the exact boundary and a nonzero
@@ -190,6 +362,11 @@ for(const [variant,on] of [[2,true],[0,true],[2,false],[2,true]]){
   });
 }
 function buildTree(source){
+  if(source.includes('  // BEGIN BLENDER GARDEN KIT')){
+    runtime.mat=(color,options)=>new THREE.MeshStandardMaterial({color,...options});
+    runtime.atob=s=>Buffer.from(s,'base64').toString('binary');
+    return vm.runInContext('(function(){'+section('  // BEGIN BLENDER GARDEN KIT','  // END BLENDER GARDEN KIT',source)+';return berlinGardenKit.geometry("treeNear");})()',runtime);
+  }
   const cache=new Map();
   return new Function('THREE','cached','mergeBoxes',section('  function sculptedCanopyGeometry() {','  function makeTree()',source)+';return sculptedCanopyGeometry();')(
     THREE,(key,fn)=>{if(!cache.has(key))cache.set(key,fn());return cache.get(key);},mergeBoxes);
@@ -198,22 +375,17 @@ const canopy=buildTree(html);checkGeometry(canopy,'canopy');
 const count=canopy.index.count/3;
 const geometryBytes=g=>Object.values(g.attributes).reduce((sum,a)=>sum+a.array.byteLength,0)+(g.index?g.index.array.byteLength:0);
 const packedBytes=geometryBytes(canopy);
-assert.ok(packedBytes<50000,'indexed packed canopy keeps its GPU buffer below 50 KB');
+assert.ok(packedBytes<750000,'lush near canopy keeps its one shared GPU buffer below 750 KB');
 assert.equal(canopy.attributes.normal.normalized,true,'signed normal data reaches the shader normalized');
 assert.equal(canopy.attributes.color.normalized,true,'byte colours reach the shader normalized');
 for(const index of canopy.index.array)assert.ok(index<canopy.attributes.position.count);
-assert.ok(canopy.userData.hiddenTrianglesRemoved>700,'buried foliage removal makes a material saving');
-assert.equal(count+canopy.userData.hiddenTrianglesRemoved,3456,'every original face is retained or proven buried');
-const seen=new Map(),p=canopy.attributes.position,n=canopy.attributes.normal;
+assert.ok(count<=14000,'near street tree stays within the full crown budget');
+const p=canopy.attributes.position,n=canopy.attributes.normal;
 for(let i=0;i<p.count;i++){
-  assert.ok(Math.hypot(p.getX(i),p.getZ(i))<2.05,'rotated foliage fits the shared cull/parking envelope');
-  const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*1e5)).join('|');
-  if(seen.has(key)){
-    const j=seen.get(key);
-    assert.ok(Math.hypot(n.getX(i)-n.getX(j),n.getY(i)-n.getY(j),n.getZ(i)-n.getZ(j))<0.002,'welded sphere seams stay smooth');
-  } else seen.set(key,i);
+  assert.ok(Math.hypot(p.getX(i),p.getZ(i))<2.85,'rotated foliage fits the measured cull/parking envelope');
+  assert.ok(Math.abs(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))-1)<.002,'smooth leaf and branch normals remain normalized');
 }
-console.log(`PASS: aligned regular/arched windows across 72 facade layouts; pooled variant recycling; bevel normals/bounds; ${count} crown triangles (${canopy.userData.hiddenTrianglesRemoved} hidden faces removed), ${packedBytes} geometry bytes, smooth seams and unchanged cull envelope.`);
+console.log(`PASS: aligned regular/arched windows across 72 facade layouts; pooled variant recycling; bevel normals/bounds; ${count} Blender tree triangles, ${packedBytes} geometry bytes, smooth normals and measured cull envelope.`);
 // Construct the actual collectible; texture callbacks run against a drawing
 // stub while the solid, capped rope and both instance pools use real Three.
 const drawStub={createRadialGradient:()=>({addColorStop(){}}),createLinearGradient:()=>({addColorStop(){}}),
@@ -503,13 +675,17 @@ if(process.argv.includes('--export')){
   const kit={regular:pack(windowKit.regular),arch:pack(windowKit.arch),canopy:pack(canopy)};
   const beforeArg=process.argv.indexOf('--before');
   if(beforeArg>=0){
-    const original=buildTree(fs.readFileSync(process.argv[beforeArg+1],'utf8'));
+    const beforeSource=fs.readFileSync(process.argv[beforeArg+1],'utf8');
+    const original=buildTree(beforeSource);
     kit.beforeCanopy=pack(original);
     const oldMesh=new THREE.Mesh(original),newMesh=new THREE.Mesh(canopy);
     oldMesh.updateMatrixWorld();newMesh.updateMatrixWorld();
     const ray=new THREE.Raycaster(),center=new THREE.Vector3(0,4.1,0);
     let compared=0;
-    for(let az=0;az<24;az++)for(const el of [-0.45,0.1,0.65]){
+    // Exact surface equality only applies to optimization of the same asset;
+    // replacing sphere crowns with individual leaves intentionally changes it.
+    const sameAsset=beforeSource.includes('  // BEGIN BLENDER GARDEN KIT');
+    for(let az=0;az<(sameAsset?24:0);az++)for(const el of [-0.45,0.1,0.65]){
       const a=az*Math.PI/12,direction=new THREE.Vector3(Math.cos(a)*Math.cos(el),Math.sin(el),Math.sin(a)*Math.cos(el));
       const right=new THREE.Vector3().crossVectors(direction,new THREE.Vector3(0,1,0)).normalize();
       const up=new THREE.Vector3().crossVectors(right,direction).normalize();
@@ -522,7 +698,8 @@ if(process.argv.includes('--export')){
         compared++;
       }
     }
-    console.log(`PASS: ${compared} rays across 72 viewpoints preserve the original foliage surface; geometry ${geometryBytes(original)} -> ${packedBytes} bytes.`);
+    console.log(compared?`PASS: ${compared} rays across 72 viewpoints preserve the original foliage surface; geometry ${geometryBytes(original)} -> ${packedBytes} bytes.`:
+      `Exported legacy/new foliage comparison: intentional asset replacement, ${geometryBytes(original)} -> ${packedBytes} bytes.`);
   }
   fs.writeFileSync(path.join(root,'audit/berlin-finish-inspection.json'),JSON.stringify(kit));
 }

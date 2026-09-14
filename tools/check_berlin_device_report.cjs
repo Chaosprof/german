@@ -16,6 +16,13 @@ Object.assign(c,{window:{location:{search:'?profile=1'},innerWidth:390,innerHeig
   canvas:{width:780,height:1688,dataset:{postProcessing:'depth-composite'}},
   scene:new THREE.Scene(),camera:new THREE.PerspectiveCamera(),MAT:{},
   STREET_MAT:{},STATION_MAT:{},BRIDGE_MAT:{},TUNNEL_MAT:{}});
+c.scene.fog=new THREE.Fog(0xdbe4e9,48,168);
+Object.assign(c,{sun:new THREE.DirectionalLight(0xffdfb4,3.32),hemi:{intensity:1.10},fill:{intensity:.44},POST:{exposure:1.04},
+  seqLightPool:[],seqLightMarkers:[],
+  surfaceVistaRequested:true,surfaceVistaPrecision:'highp',surfaceVistaState:{map:null,enabled:0,strength:.65,fadeNear:120,fadeFar:178},
+  skyTextures:[{image:{width:1536,height:1024},userData:{panoramaScale:3}}],
+  skyMat:{uniforms:{uMapAScale:{value:3},uMix:{value:0},uDayAir:{value:1},uStreetVistaOn:{value:0}}}});
+c.sun.position.set(-62,75,-9);c.sun.target.position.set(0,0,14);
 vm.runInContext(section('  var PROFILE_RENDER =','  // Called in place of renderer.render'),c);
 vm.runInContext(section('  function makeDeviceReport(deviceLabel) {','  var profilePanel = null;'),c);
 c.profileSessionStarted=Date.UTC(2026,8,9,12);
@@ -42,6 +49,37 @@ const report=c.makeDeviceReport('iPhone test · Low Power Mode off');
 assert.equal(report.device,'iPhone test · Low Power Mode off');
 assert.equal(report.dpr,3);assert.equal(report.mobilePath,true);
 assert.equal(report.renderer.gpuTimer,'unavailable','unsupported GPU timer never blocks a report');
+assert.equal(report.lighting.setting,'fixed warm daylight');
+assert.deepEqual([report.lighting.sequenceLights.slots,report.lighting.sequenceLights.markers],[0,0],
+  'Kiez report confirms that unused sequence lights and markers were not allocated');
+c.seqLightPool.length=5;c.seqLightMarkers.length=48;
+const legacyLights=c.makeDeviceReport('legacy route').lighting.sequenceLights;
+assert.deepEqual([legacyLights.slots,legacyLights.markers],[5,48],'legacy counts reflect actual retained arrays');
+c.seqLightPool.length=0;c.seqLightMarkers.length=0;
+assert.deepEqual(Array.from(report.lighting.sun.position),[-62,75,-9]);
+assert.equal(report.lighting.sun.intensity,3.32);
+assert.equal(report.lighting.sky.painted,true,'report identifies the loaded plate instead of assuming it loaded');
+assert.deepEqual([report.lighting.sky.width,report.lighting.sky.height,report.lighting.sky.horizontalScale],[1536,1024,3]);
+assert.deepEqual([report.lighting.sky.elevationScale,report.lighting.sky.elevationOffset],[1.35,.34]);
+assert.deepEqual([report.lighting.sky.mix,report.lighting.sky.dayAir],[0,1]);
+assert.equal(report.lighting.sky.distantStreetLoaded,false,'a requested city backdrop is not reported as loaded before decode');
+assert.equal(report.lighting.sky.surfaceStreet.requested,true);
+assert.equal(report.lighting.sky.surfaceStreet.loaded,false);
+assert.equal(report.lighting.sky.surfaceStreet.enabled,false);
+assert.deepEqual(Array.from(report.lighting.sky.surfaceStreet.depthFade),[120,178]);
+assert.deepEqual(Array.from(report.lighting.sky.surfaceStreet.signedElevation),[-.022,.045]);
+c.surfaceVistaState.map=new THREE.Texture();c.surfaceVistaState.enabled=1;
+assert.equal(c.makeDeviceReport('surface ready').lighting.sky.surfaceStreet.enabled,true);
+c.surfaceVistaRequested=false;c.surfaceVistaState.enabled=0;
+const surfaceOptOut=c.makeDeviceReport('surface disabled').lighting.sky.surfaceStreet;
+assert.equal(surfaceOptOut.loaded,true);assert.equal(surfaceOptOut.requested,false);assert.equal(surfaceOptOut.enabled,false);
+c.surfaceVistaRequested=true;c.surfaceVistaState.map=null;
+c.skyMat.uniforms.uStreetVistaOn.value=1;
+assert.equal(c.makeDeviceReport('loaded city').lighting.sky.distantStreetLoaded,true);
+c.skyTextures[0]={image:{width:2048,height:512},userData:{}};c.skyMat.uniforms.uMapAScale.value=1;
+const fallbackSkyReport=c.makeDeviceReport('sky fallback').lighting.sky;
+assert.equal(fallbackSkyReport.painted,false);
+assert.deepEqual([fallbackSkyReport.elevationScale,fallbackSkyReport.elevationOffset],[1,0],'procedural fallback reports its own projection');
 assert.equal(report.configurations.length,3,'rotation and adaptive resolution are separated');
 assert.equal(report.configurations[0].averageFps,60);
 assert.ok(Math.abs(report.configurations[1].averageFps-30)<0.1);
