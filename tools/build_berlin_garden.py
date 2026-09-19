@@ -44,6 +44,11 @@ elif '--stage-sprays' in sys.argv:
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(AUDIT, exist_ok=True)
 R = random.Random(86012)
+STONE_STORE_PLANTER = '--stage-stone' in sys.argv or not any(arg.startswith('--stage-') or arg=='--flowering-planter' for arg in sys.argv)
+if '--stage-stone' in sys.argv:
+    AUDIT = os.path.join(ROOT, 'audit', 'berlin-storefront-stone-v79')
+    OUT = os.path.join(AUDIT, 'models')
+    os.makedirs(OUT, exist_ok=True)
 ICO_TEMPLATES={}
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -559,9 +564,16 @@ for count in [c[3] for c in clusters]+[c[2] for c in clusters]:
 
 # A flared stone planter with a visible rolled rim, soil, central shoots and
 # uneven foliage. The same one-material pool can draw shrubs or street trees.
-planter.tube([(0,0,0),(0,0,.06),(0,0,.74),(0,0,.81)], [.31,.33,.45,.47],12,(181,112,72))
-planter.tube([(0,0,.77),(0,0,.87)], [.485,.475],12,(229,194,145))
+planter.tube([(0,0,0),(0,0,.06),(0,0,.74),(0,0,.81)], [.31,.33,.45,.47],12,(169,158,138) if STONE_STORE_PLANTER else (181,112,72))
+planter.tube([(0,0,.77),(0,0,.87)], [.485,.475],12,(207,197,177) if STONE_STORE_PLANTER else (229,194,145))
 planter.tube([(0,0,.874),(0,0,.879)], [.408,.408],12,(62,54,35))
+if STONE_STORE_PLANTER:
+    # Reuse the twelve-sided rings as a softly chamfered square. Radius and
+    # height stay fixed; the broad faces, rolled rim and soil remain closed.
+    for i,(x,y,z) in enumerate(planter.v):
+        radius=math.hypot(x,y);maximum=max(abs(x),abs(y))
+        factor=.10+.90*radius/maximum if maximum>.000001 else 1
+        planter.v[i]=(x*factor,y*factor,z)
 shrub_clusters=[(Vector((0,0,1.43)),(.35,.33,.38)),(Vector((-.25,.07,1.23)),(.31,.31,.33)),
     (Vector((.25,.02,1.29)),(.32,.30,.34)),(Vector((0,.23,1.25)),(.33,.30,.35)),(Vector((0,-.23,1.16)),(.35,.29,.32))]
 for k,(tip,radius) in enumerate(shrub_clusters if not FLOWERING_PLANTER else []):
@@ -640,11 +652,13 @@ if FLOWERING_PLANTER:
     # flower legible from above and oblique gameplay cameras. Three flowers at
     # each tip form loose cream/blush clusters without rounded proxy balls.
     flower_colors=[(254,237,197),(244,183,184),(252,230,203),(244,181,183),(255,239,211),(249,194,184)]
+    if STONE_STORE_PLANTER:
+        flower_colors=[(247,161,167),(235,129,149),(250,193,184),(237,137,154),(255,225,198),(244,154,170)]
     bloom_tips=[Vector(p) for p in [(0,-.04,1.76),(-.40,-.15,1.48),(.34,-.25,1.56),
                 (-.12,-.47,1.24),(.14,.34,1.65),(-.22,.12,1.73)]] if LUSH_PROTOTYPE else tips
     for k,tip in enumerate(bloom_tips):
         a=k*2.39996+.35
-        normal=Vector((math.cos(a)*.36,math.sin(a)*.36,.88)).normalized()
+        normal=Vector((math.cos(a)*(.62 if STONE_STORE_PLANTER else .36),math.sin(a)*(.62 if STONE_STORE_PLANTER else .36),.60 if STONE_STORE_PLANTER else .88)).normalized()
         u=normal.cross(Vector((0,0,1))).normalized();v=normal.cross(u).normalized()
         flower_count=4 if LUSH_PROTOTYPE else 3
         for j in range(flower_count):
@@ -655,7 +669,7 @@ if FLOWERING_PLANTER:
                 theta=petal*math.tau/5+k*.7+j*.35
                 direction=(u*math.cos(theta)+v*math.sin(theta))
                 across=normal.cross(direction)
-                ps=1.12 if LUSH_PROTOTYPE else 1
+                ps=1.80 if STONE_STORE_PLANTER else 1.12 if LUSH_PROTOTYPE else 1
                 pc=center+direction*(.026*ps)
                 verts=[pc+direction*(.034*ps),pc+across*(.023*ps),pc-direction*(.028*ps),pc-across*(.023*ps),
                        pc+normal*.010,pc-normal*.002]

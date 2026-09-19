@@ -5,6 +5,45 @@ building object's unique `runtime_key` custom property, its active atlas UV
 layer, and its `Color` attribute. The current game uses the 13.5 m bakery and
 bookstore with keys `13.5:0:1` and `13.5:1:1` as shared masters.
 
+The current bakery has two upper storeys and a wider curved bay (v81), at
+14,614 triangles including the later v86 planting. `tools/stage_berlin_bakery_form_v81.py` reproduces the earlier form edit
+from its preserved baseline under `audit/berlin-bakery-form-v81/`. Its record
+metadata includes `roofBase`, `upperFloors`, and `upperTurretScaleX`; the
+re-export path retains these fields when writing edited geometry. The
+v81 edit left the bookstore master and other eleven authoring records unchanged.
+
+The current planting source is `tools/stage_berlin_facade_planting_v86.py`.
+It replaces only flowerbox/balcony plants on both shipping masters; bookstore
+now uses15,889 triangles. The other ten records and all non-plant triangle
+corners on both masters are preserved exactly. Its immutable baseline,
+matching final exports, visibility evidence and preservation hashes are in
+`audit/berlin-facade-planting-v86/`. The final balcony's leaves and blossoms
+follow fixed radial frames around the rail; this is real geometry, with no
+camera-facing behavior or extra material batches. Stage names describe the
+asset recipe; the combined live game first accepts the final arrangement in v88.
+
+The accepted v99 display edit ships in the v100 game. Its source is
+`tools/stage_berlin_bakery_display_v99.py`, with immutable pre-edit sources,
+matching exports, transform membership and exact preservation evidence under
+`audit/berlin-bakery-display-v99/`. It widens the actual 11 m instance's primary
+opening from 5.054 m to 5.530 m, keeping its centre fixed, and widens the
+continuous canopy to 6.101 m. The display room, frame, counter, shelves and
+loaves move together; only the two adjacent masonry piers compress. Outer
+and doorway masonry remain 0.376 m and 0.460 m wide. The doorway, curved bay,
+planting, colors, UVs, indices, full bounds and other eleven records stay exact.
+The bakery still has 14,614 triangles and one shared material.
+
+Preserve `displayRevision`, `primaryDisplayWidth11` and
+`primaryDisplayScaleX` when carrying this record through another export.
+The existing Kiez checker independently reconstructs the connected source
+components and verifies the v99 transform manifest before retaining its older
+ground-geometry comparison. Do not regenerate from the procedural `build(11)`
+formula: the game resizes the 13.5 m edited master, whose original opening was
+already wider than that formula. Likewise, the old architecture builder does
+not replay the later awning, contact paint, bay and planting edits. Start from
+the current native mesh, or use the corresponding immutable stage baseline
+when deliberately reproducing a prior recipe.
+
 Edit the mesh, UVs or vertex paint in Blender and save. Modifiers are evaluated
 for both runtime meshes and GLB export without destructively applying them in
 the saved source. Object transforms arrange the asset sheet: make geometry

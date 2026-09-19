@@ -1,6 +1,6 @@
 'use strict';
 const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
-const path = require('path');
+const path = require('path'), crypto = require('crypto');
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'berlin-runner.html'), 'utf8');
 const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
@@ -9,7 +9,7 @@ const scope=vm.createContext({console});
 vm.runInContext(scripts.find(s=>s.includes('three.js r156 (MIT)')),scope);
 const THREE=scope.THREE;
 scope.atob=s=>Buffer.from(s,'base64').toString('binary');
-scope.BERLIN_REFERENCE_ARCHITECTURE=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-reference-architecture-v1.json'),'utf8'));
+scope.BERLIN_REFERENCE_ARCHITECTURE=JSON.parse(fs.readFileSync(path.join(root,process.env.BERLIN_ARCHITECTURE_DIR||'assets/models','berlin-reference-architecture-v1.json'),'utf8'));
 vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_packed_geometry.js'),'utf8'),scope);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8'),scope);
 const createKit=scope.createBerlinKiezKit;
@@ -83,7 +83,7 @@ const accepted=JSON.parse(fs.readFileSync(path.join(root,'audit/architecture-acc
 function atlasCell(uv) {return Math.floor(uv.x*4)+4*Math.floor((1-uv.y)*4);}
 // Identify complete textile components, so the intentional v71 fabric change
 // cannot exempt the attachment rail, glazing, or nearby structural trim.
-function bakeryFabricFaces(g,continuous) {
+function connectedGeometry(g) {
   const p=g.attributes.position,index=g.index,parents=[],weld=[],points=new Map();
   const find=i=>{while(parents[i]!==i){parents[i]=parents[parents[i]];i=parents[i];}return i;};
   for(let i=0;i<p.count;i++) {
@@ -105,8 +105,13 @@ function bakeryFabricFaces(g,continuous) {
       for(let axis=0;axis<3;axis++){c.min[axis]=Math.min(c.min[axis],v[axis]);c.max[axis]=Math.max(c.max[axis],v[axis]);}
     }
   }
-  const fabric=[...components.values()].filter(({min:lo,max:hi,faces})=>{
-    if(!(lo[0]>-6.21&&hi[0]<.66))return false;
+  return [...components.values()];
+}
+function bakeryFabricFaces(g,continuous,expectedX) {
+  const fabric=connectedGeometry(g).filter(({min:lo,max:hi,faces})=>{
+    if(expectedX) {
+      if(Math.abs(lo[0]-expectedX[0])>.00002||Math.abs(hi[0]-expectedX[1])>.00002)return false;
+    } else if(!(lo[0]>-6.21&&hi[0]<.66))return false;
     if(continuous)return faces.length===1756&&lo[1]>3.50&&lo[1]<3.52&&hi[1]>5.64&&hi[1]<5.66&&lo[2]>.18&&lo[2]<.20&&hi[2]>2.18&&hi[2]<2.19;
     const roof=3.80<lo[1]&&lo[1]<3.89&&5.60<hi[1]&&hi[1]<5.70&&.15<lo[2]&&lo[2]<.25&&2.10<hi[2]&&hi[2]<2.18;
     const hem=3.49<lo[1]&&lo[1]<3.54&&3.85<hi[1]&&hi[1]<3.90&&2.11<lo[2]&&lo[2]<2.14&&2.18<hi[2]&&hi[2]<2.20;
@@ -136,6 +141,65 @@ function groundFaces(g,ceiling,omit=new Set()) {
   }
   return [...new Set(faces)].sort();
 }
+// v99 widens 21 display components and compresses only their two neighbouring
+// piers. Independently prove that exact transform before using the immutable
+// pre-v99 surface for the continuing v66 ground-storey preservation check.
+function validateBakeryDisplayTransform() {
+  const key='13.5:0:1',record=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  if(record.displayRevision!=='wider-coherent-display-v99')return null;
+  const folder=path.join(root,'audit/berlin-bakery-display-v99');
+  const baseline=JSON.parse(fs.readFileSync(path.join(folder,'baseline/berlin-reference-architecture-v1.json'),'utf8'));
+  const manifest=JSON.parse(fs.readFileSync(path.join(folder,'transform-manifest.json'),'utf8'));
+  const prior=baseline.meshes[key],before=scope.decodeBerlinMeshRecord(THREE,prior),parts=connectedGeometry(before);
+  assert.equal(parts.length,375);assert.equal(manifest.targetMaster,key);assert.equal(manifest.indexPayloadUnchanged,true);
+  const display=new Set([...Array.from({length:12},(_,i)=>170+i),...Array.from({length:8},(_,i)=>205+i),226]);
+  const componentIds=[...display,194,195].sort((a,b)=>a-b);
+  assert.deepEqual(manifest.components.map(c=>c.id),componentIds,'manifest names only the known display and two piers');
+  assert.equal(parts[170].faces.length,4);assert.equal(parts[226].faces.length,1756);
+  assert.equal(parts[194].faces.length,108);assert.equal(parts[195].faces.length,108);
+  const center=(parts[170].min[0]+parts[170].max[0])*.5;
+  const scale=5.53/((parts[170].max[0]-parts[170].min[0])*11/13.5);
+  assert.ok(Math.abs(center+2.77525)<.000001&&Math.abs(scale-1.094206858)<.00000001);
+  const displayX=x=>center+(x-center)*scale;
+  const left=parts[194],right=parts[195];
+  const rules=new Map();
+  for(const entry of manifest.components){
+    const part=parts[entry.id],vertices=[...new Set(part.faces.flatMap(t=>[0,1,2].map(c=>before.index.getX(t*3+c))))].sort((a,b)=>a-b);
+    assert.deepEqual(entry.faces,part.faces);assert.deepEqual(entry.vertices,vertices,'manifest vertices come from the actual connected component');
+    assert.ok(part.max[1]<=5.75,'upper bay and planting never enter this transform');
+    const anchor=display.has(entry.id)?center:entry.id===194?left.min[0]:right.max[0];
+    const factor=display.has(entry.id)?scale:entry.id===194?(displayX(left.max[0])-left.min[0])/(left.max[0]-left.min[0]):
+      (right.max[0]-displayX(right.min[0]))/(right.max[0]-right.min[0]);
+    assert.ok(factor>.5&&Math.abs(entry.xScale-factor)<1e-12&&Math.abs(entry.anchorX-anchor)<1e-12);
+    for(const v of vertices){assert.ok(!rules.has(v));rules.set(v,{anchor,factor});}
+  }
+  for(const name of ['uv','color','index','vertices','triangles','min','max'])assert.deepEqual(record[name],prior[name],'v99 retains exact '+name);
+  for(const other of Object.keys(baseline.meshes))if(other!==key)assert.deepEqual(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[other],baseline.meshes[other],'v99 leaves other master '+other+' exact');
+  const p0=Buffer.from(prior.position,'base64'),p1=Buffer.from(record.position,'base64'),n0=Buffer.from(prior.normal,'base64'),n1=Buffer.from(record.normal,'base64');
+  const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+  assert.equal(sha(p0),manifest.sourceRecordPositionSha256);assert.equal(sha(p1),manifest.targetRecordPositionSha256);
+  let protectedVertices=0;
+  for(let v=0;v<prior.vertices;v++){
+    const rule=rules.get(v);
+    if(!rule){assert.ok(p1.subarray(v*12,v*12+12).equals(p0.subarray(v*12,v*12+12)));assert.ok(n1.subarray(v*6,v*6+6).equals(n0.subarray(v*6,v*6+6)));protectedVertices++;continue;}
+    const expected=Math.fround(Math.round((rule.anchor+(p0.readFloatLE(v*12)-rule.anchor)*rule.factor)*1e5)/1e5);
+    assert.ok(Math.abs(p1.readFloatLE(v*12)-expected)<.000001,'only the specified horizontal affine coordinate changes');
+    assert.ok(p1.subarray(v*12+4,v*12+12).equals(p0.subarray(v*12+4,v*12+12)),'all vertical/depth coordinates stay exact');
+    const old=[0,1,2].map(k=>n0.readInt16LE(v*6+k*2)),normal=[old[0]/rule.factor,old[1],old[2]],length=Math.hypot(...normal);
+    for(let k=0;k<3;k++){
+      const expected=old[0]&&(old[1]||old[2])?Math.round(normal[k]/length*32767):old[k];
+      assert.ok(Math.abs(n1.readInt16LE(v*6+k*2)-expected)<=1,'normal follows inverse transpose without changing the paint');
+    }
+  }
+  const range=id=>{const xs=manifest.components.find(c=>c.id===id).vertices.map(v=>p1.readFloatLE(v*12));return [Math.min(...xs),Math.max(...xs)];};
+  const pane=range(170),frame=range(205),canopy=range(226),support=range(212),sill=range(206),f=11/13.5;
+  assert.ok(Math.abs((pane[1]-pane[0])*f-5.53)<.00001&&Math.abs((pane[0]+pane[1])*.5-center)<.00001);
+  assert.ok((frame[0]-left.min[0])*f>.37&&(right.max[0]-frame[1])*f>.45,'healthy outer/door masonry remains');
+  assert.ok((support[0]+6.75)*f>.14&&(parts[220].min[0]-support[1])*f>.13&&(parts[213].min[0]-sill[1])*f>.22,'canopy, sign and lower sills do not clip');
+  console.log(`PASS: exact v99 display transform; ${rules.size} selected and ${protectedVertices} protected vertices; all color/UV/index bytes and eleven other records exact; positive masonry/trim clearances.`);
+  return {before,canopyXBounds:canopy};
+}
+const bakeryDisplayProof=validateBakeryDisplayTransform();
 for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const side of [-1,1]) {
   const g=kit.geometry(w,variant,side);
   assert.equal(g,kit.geometry(w,variant,side),'shared cache owns each exact variant');
@@ -164,7 +228,8 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
     assert.equal(atlasCell(hit.uv),[5,4,6,8,7,15][variant],'shop identity matches its unobstructed interior');
     shopRays++;
   }
-  const floors=[3,4,3,3,4,3][variant];
+  const form=authored?scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[`13.5:${variant}:1`]:{};
+  const floors=form.upperFloors??[3,4,3,3,4,3][variant];
   const groundH=variant===0?6.0:4.70,roofBase=groundH+floors*3.05;
   assert.equal(g.userData.height,roofBase,'authored height metadata follows the actual storey base');
   if(authored) {
@@ -179,7 +244,7 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
       const jamb=new THREE.Raycaster(new THREE.Vector3((center+.69)*xScale*side,cy-.4,-.10),new THREE.Vector3(side,0,0)).intersectObject(mesh)[0];
       assert.ok(jamb&&atlasCell(jamb.uv)===1&&Math.abs(jamb.point.x-(center+.735)*xScale*side)<.032,'a lateral ray reaches the actual shaded recess return');
       insetRays+=2;
-      if(variant===1||floor===floors-1) {
+      if(variant===1||(floor===floors-1&&form.upperTopArched!==false)) {
         const spandrel=new THREE.Raycaster(new THREE.Vector3((center+.70)*xScale*side,cy+.97,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
         assert.ok(spandrel&&atlasCell(spandrel.uv)===1&&Math.abs(spandrel.point.z)<.002,'arched opening has masonry above its curved head, not an open rectangle');
         insetRays++;
@@ -194,8 +259,10 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
     if(w===13.5&&side===1) {
       const oldGeometry=scope.decodeBerlinMeshRecord(THREE,accepted[`13.5:${variant}:1`]);
       const oldFabric=variant===0?bakeryFabricFaces(oldGeometry,false):new Set();
-      const newFabric=variant===0?bakeryFabricFaces(g,true):new Set();
-      const oldGround=groundFaces(oldGeometry,groundH-.61,oldFabric),newGround=groundFaces(g,groundH-.61,newFabric);
+      const newFabric=variant===0?bakeryFabricFaces(g,true,bakeryDisplayProof?.canopyXBounds):new Set();
+      const groundGeometry=variant===0&&bakeryDisplayProof?bakeryDisplayProof.before:g;
+      const groundFabric=groundGeometry===g?newFabric:bakeryFabricFaces(groundGeometry,true);
+      const oldGround=groundFaces(oldGeometry,groundH-.61,oldFabric),newGround=groundFaces(groundGeometry,groundH-.61,groundFabric);
       if(newGround.join('\n')!==oldGround.join('\n')) {
         const oldSet=new Set(oldGround),newSet=new Set(newGround);
         assert.fail(`accepted ground-storey geometry changed: ${JSON.stringify({variant,newCount:newGround.length,oldCount:oldGround.length,newOnly:newGround.filter(v=>!oldSet.has(v)).slice(0,3),oldOnly:oldGround.filter(v=>!newSet.has(v)).slice(0,3)})}`);
@@ -234,7 +301,8 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
   }
   if(variant===0||variant===3) for(let f=0;f<floors;f++) for(const angle of [-.74,.28]) {
     const sa=Math.sin(angle),ca=Math.cos(angle),x=side*(w/2-(variant===0?2.10:1.5)*xScale),mirror=authored?side:1;
-    const ray=new THREE.Raycaster(new THREE.Vector3(x+(sa*6+.30*ca)*xScale*mirror,groundH+f*3.05+3.05*.51-.4,-.05+ca*6-.30*sa),new THREE.Vector3(-sa*xScale*mirror,0,-ca).normalize());
+    const turretScale=form.upperTurretScaleX??1;
+    const ray=new THREE.Raycaster(new THREE.Vector3(x+(sa*6+.30*ca)*xScale*mirror*turretScale,groundH+f*3.05+3.05*.51-.4,-.05+ca*6-.30*sa),new THREE.Vector3(-sa*xScale*mirror*turretScale,0,-ca).normalize());
     const hit=ray.intersectObject(mesh)[0];
     assert.equal(hit&&atlasCell(hit.uv),2,'curved-bay glass is outside the cylinder and inside the frame');
     turretRays++;

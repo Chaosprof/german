@@ -233,7 +233,7 @@ function createBerlinKiezKit(THREE, makeMaterial, canvasFactory) {
         authored.computeBoundingBox();authored.computeBoundingSphere();
         authored.name='Blender Kiez '+variant+' '+w+'m';
         authored.userData={kiez:true,blender:true,variant:variant,width:w,
-          height:(variant===0?6.0:4.70)+(variant===1?4:3)*3.05,triangles:record.triangles,
+          height:record.roofBase!==undefined?record.roofBase:(variant===0?6.0:4.70)+(variant===1?4:3)*3.05,triangles:record.triangles,
           masterWidth:13.5,bevel:.027,contactBaked:true};
         cache[key]=authored;return authored;
       }

@@ -2,7 +2,8 @@
 // Inspect actual binary GLB attributes, not a mock of the exporter.
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..');
-const buffer=fs.readFileSync(path.join(root,'assets/models/berlin-reference-architecture-v1.glb'));
+const assets=path.join(root,process.env.BERLIN_ARCHITECTURE_DIR||'assets/models');
+const buffer=fs.readFileSync(path.join(assets,'berlin-reference-architecture-v1.glb'));
 assert.equal(buffer.readUInt32LE(0),0x46546c67);assert.equal(buffer.readUInt32LE(4),2);
 assert.equal(buffer.readUInt32LE(8),buffer.length);
 let gltf,binary;
@@ -23,7 +24,7 @@ function accessor(index){
   const offset=(view.byteOffset||0)+(a.byteOffset||0),stride=view.byteStride||size*format[0];
   return {count:a.count,size,get:(i,j)=>binary[format[1]](offset+i*stride+j*format[0])/(a.normalized?format[2]:1)};
 }
-const runtime=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-reference-architecture-v1.json'),'utf8'));
+const runtime=JSON.parse(fs.readFileSync(path.join(assets,'berlin-reference-architecture-v1.json'),'utf8'));
 assert.equal(gltf.meshes.length,12);assert.equal(gltf.materials.length,1);
 assert.ok(gltf.materials[0].pbrMetallicRoughness.baseColorTexture,'export retains painted atlas');
 let vertices=0,triangles=0,nonWhite=0,minColor=1,maxColor=0,maxNormalError=0;

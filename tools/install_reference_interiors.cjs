@@ -3,7 +3,7 @@ const fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),file=path.join(root,'berlin-runner.html');
 let html=fs.readFileSync(file,'utf8');
 const start='  // BEGIN REFERENCE INTERIOR IMAGE',end='  // END REFERENCE INTERIOR IMAGE';
-const bytes=fs.readFileSync(path.join(root,'assets/img/berlin-reference-surfaces-v2.jpg'));
+const bytes=fs.readFileSync(path.join(root,'assets/img/berlin-reference-surfaces-v3.jpg'));
 const rooms=fs.readFileSync(path.join(root,'assets/img/berlin-secondary-shop-rooms-v1.jpg'));
 const plaster=fs.readFileSync(path.join(root,'assets/img/berlin-reference-plaster-v1.jpg'));
 const block=start+'\n  var BERLIN_REFERENCE_INTERIORS = '+JSON.stringify('data:image/jpeg;base64,'+bytes.toString('base64'))+';\n'+

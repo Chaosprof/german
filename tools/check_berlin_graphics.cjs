@@ -72,10 +72,12 @@ assert.ok(result.boundingSphere && Number.isFinite(result.boundingSphere.radius)
 // The transit landmark is a closed masonry body with a genuine open barrel.
 // Ray tests exercise the actual exported surface, not its construction formula.
 const transitCache=new Map(),transitRoot=new THREE.Group();
+const transitDeckLift=Number(html.match(/var deckLift = ([\d.]+);/)[1]);
 const transitContext=vm.createContext({THREE,Math,mergeBoxes:merge,root:transitRoot,
+  deckLift:transitDeckLift,
   STREET_MAT:{viaductBrick:new THREE.MeshStandardMaterial({map:new THREE.Texture()})},
   cached:(key,build)=>{if(!transitCache.has(key))transitCache.set(key,build());return transitCache.get(key);}});
-const transitArchSource=sourceBetween("    var archGeo = cached('viaduct_masonry_arch_v3'",
+const transitArchSource=sourceBetween("    var archGeo = cached('viaduct_masonry_arch_v4'",
   '    // Cream coping sits above the arch;');
 vm.runInContext(transitArchSource,transitContext);
 const transitArch=transitContext.archGeo,transitMesh=transitContext.masonryArch;
@@ -84,8 +86,8 @@ assert.equal(transitContext.archGeo,transitArch,'every recycled transit root reu
 transitMesh.updateMatrixWorld(true);transitArch.computeBoundingBox();
 assert.ok(transitArch.boundingBox.min.x>=-26.001&&transitArch.boundingBox.max.x<=26.001,
   'outer support piers stay within the existing 52m deck footprint');
-assert.ok(transitArch.boundingBox.min.y>=-.02&&transitArch.boundingBox.max.y<=9.051,
-  'arch terminates at the unchanged 9.05m train deck underside');
+assert.ok(transitArch.boundingBox.min.y>=-.02&&Math.abs(transitArch.boundingBox.max.y-10.15)<.001,
+  'taller spandrels terminate at the 10.15m deck underside');
 assert.ok(transitArch.boundingBox.min.z>=-2.406&&transitArch.boundingBox.max.z<=2.406,
   'shallow raised ring and bevel remain inside the existing 4.9m coping depth');
 assert.equal(transitArch.groups.length,0,'solid brick body and both lips use one material submission');
@@ -127,24 +129,24 @@ for(const side of [-1,1]){
 // Probe the actual entrance stones and narrow radial joints. Changing their
 // color cannot quietly hide another overlaid ring or narrow the playable arch.
 const stoneColors=new Set();let stoneRays=0;
-for(let stone=0;stone<61;stone++){
-  const angle=(stone+.5)*Math.PI/61,radius=7.52;
+for(let stone=0;stone<61;stone++)for(const radius of [7.52,8.13]){
+  const angle=(stone+.5)*Math.PI/61;
   const hit=new THREE.Raycaster(new THREE.Vector3(Math.cos(angle)*radius,
     1.18+Math.sin(angle)*radius,-15),new THREE.Vector3(0,0,1)).intersectObject(transitMesh)[0];
   assert.ok(hit&&hit.face.normal.z<-.99,'each voussoir presents a visible front face');
   const projection=-hit.point.z-2.3;
-  assert.ok(Math.abs(projection-(stone===30?.063:.052))<1e-5,'stones project 52mm, with a restrained 63mm keystone');
+  assert.ok(Math.abs(projection-(stone===30?.092:.075))<1e-5,'both sides of the broader ring project 75mm, with a 92mm keystone');
   stoneColors.add(transitArch.attributes.color.getX(hit.face.a).toFixed(3));stoneRays++;
 }
-for(let seam=1;seam<61;seam++){
-  const angle=seam*Math.PI/61,radius=7.52;
+for(let seam=1;seam<61;seam++)for(const radius of [7.52,8.13]){
+  const angle=seam*Math.PI/61;
   const hit=new THREE.Raycaster(new THREE.Vector3(Math.cos(angle)*radius,
     1.18+Math.sin(angle)*radius,-15),new THREE.Vector3(0,0,1)).intersectObject(transitMesh)[0];
   assert.ok(hit&&Math.abs(hit.point.z+2.3)<1e-5,'radial mortar joint exposes the original masonry face');stoneRays++;
 }
 assert.equal(stoneColors.size,6,'five restrained brick tones plus one keystone survive geometry merging');
 assert.ok(transitArch.attributes.position.count/3<3000,'solid arch remains within a small fixed geometry budget');
-console.log(`PASS: cached ${transitArch.attributes.position.count/3}-triangle transit masonry, ${openTransitRays} open corridor rays, ${stoneRays} visible stone/joint rays, shared atlas/material, radial reveal UVs, front spandrels, unit normals and unchanged deck/pier bounds.`);
+console.log(`PASS: cached ${transitArch.attributes.position.count/3}-triangle transit masonry, ${openTransitRays} open corridor rays, ${stoneRays} visible stone/joint rays, shared atlas/material, radial reveal UVs, front spandrels, unit normals, taller deck and unchanged footprint/aperture.`);
 
 // Build every shipped terrace width/height/shop combination with the actual
 // geometry factories. Check the form and UVs independently of its box assembly.
@@ -238,6 +240,38 @@ const roundedStart = html.indexOf('  var geoCache = Object.create(null);');
 const roundedEnd = html.indexOf('  // Generalised sibling to roundedBoxGeo', roundedStart);
 const buildRounded = new Function('THREE','clamp', html.slice(roundedStart,roundedEnd)+'\nreturn roundedBoxGeo;')(THREE,THREE.MathUtils.clamp);
 const capGeometry = buildRounded(5.04,.46,2.28,.14,.04);
+// Build the complete bridge support assembly up to the moving train. This
+// catches a raised arch with old rails/coping left behind at the former height.
+const supportStart=html.indexOf('  function makeTransitSpectacle(chunkSlot) {');
+const supportEnd=html.indexOf('    for (var carIndex = 0;',supportStart);
+const supportMaterials={},supportSteel={};
+for(const key of ['metalDark','stone','rail'])supportMaterials[key]=new THREE.MeshStandardMaterial();
+for(const key of ['viaductBrick','viaductDeck','viaductSteel'])supportSteel[key]=new THREE.MeshStandardMaterial();
+const supportCache=new Map();
+const supportFactory=new Function('THREE','cached','roundedBox','roundedBoxGeo','mergeBoxes','MAT','STREET_MAT',
+  'stadtbahnFasciaGeometry','stadtbahnFasciaMat','viaductSignMat',
+  html.slice(supportStart,supportEnd)+'return {root:root,train:train};}\nreturn makeTransitSpectacle;')(
+    THREE,(key,create)=>{if(!supportCache.has(key))supportCache.set(key,create());return supportCache.get(key);},
+    (w,h,d,r,m,x,y,z,b)=>{const o=new THREE.Mesh(buildRounded(w,h,d,r,b),m);o.position.set(x,y,z);return o;},
+    buildRounded,merge,supportMaterials,supportSteel,()=>new THREE.PlaneGeometry(1,1),
+    new THREE.MeshBasicMaterial(),new THREE.MeshBasicMaterial());
+const support=supportFactory(0);support.root.updateMatrixWorld(true);
+const rails=support.root.children.filter(o=>o.material===supportMaterials.rail);
+assert.equal(rails.length,2,'both original rail supports remain');
+assert.ok(Math.abs(support.train.position.y-11.14)<1e-6,'moving train follows the raised rail level');
+for(const rail of rails){
+  const b=new THREE.Box3().setFromObject(rail);
+  assert.ok(Math.abs(b.max.y-11.20)<.001&&Math.abs(b.min.y-11.08)<.001,'actual rail surfaces rise with the deck');
+}
+const deckMesh=support.root.children.find(o=>o.material===supportSteel.viaductDeck&&Math.abs(o.position.y-10.61)<.001);
+assert.ok(deckMesh,'full steel deck is raised with the masonry');
+const deckBounds=new THREE.Box3().setFromObject(deckMesh);
+assert.ok(Math.abs(deckBounds.min.y-10.15)<.001&&Math.abs(deckBounds.max.y-11.07)<.001,
+  'deck underside meets the masonry and top sits under the rails');
+for(const x of [-5,0,5])for(const y of [.35,1.8,3.9,6.3])assert.equal(
+  new THREE.Raycaster(new THREE.Vector3(x,y,-15),new THREE.Vector3(0,0,1)).intersectObject(support.root,true).length,0,
+  'complete support assembly leaves the playable aperture clear');
+console.log('PASS: complete raised bridge support assembly; aligned masonry/deck/rails/train level and unobstructed playable aperture.');
 const rollBayStart = html.indexOf('    var hasErker = streetCorner ||');
 const rollBayEnd = html.indexOf('    // Balcony only where there is no Erker',rollBayStart);
 const rollBay = new Function('d','w','s','streetCorner','styleUnit','dressBias','erkerGeo','crossingCornerBayGeo','STOREY_H','ERKER_H',
@@ -732,6 +766,8 @@ for(const portal of gate.userData.portals) {
 }
 const ga=new THREE.Vector3(),gb=new THREE.Vector3(),gc=new THREE.Vector3(),gt=new THREE.Triangle(ga,gb,gc);
 let gateSignRays=0,gateVariants=0;
+for(const kiez of [false,true]) {
+gateContext.KIEZ_DISTRICT_ENABLED=kiez;
 for(const key of gateContext.FRAME_VARIANT_KEYS) {
   const variant=gateContext.getFrameVariant(key);
   assert.equal(gateContext.getFrameVariant(key),variant,'hardware variants reuse their two cached geometries');
@@ -776,6 +812,11 @@ for(const key of gateContext.FRAME_VARIANT_KEYS) {
   }
   gateVariants++;
 }
+}
+const kiezFrame=gateContext.getFrameVariant('classic');
+for(const key of gateContext.FRAME_VARIANT_KEYS)
+  assert.equal(gateContext.getFrameVariant(key),kiezFrame,'the continuous Kiez shares one cached historic frame across the existing shuffle bag');
+assert.equal(kiezFrame.accentMat.emissive.getHex(),0,'the daylight brass collars do not emit artificial yellow light');
 // Sign backing and painted border both contain the entire foreground label.
 gateContext.gateSignFaceGeo.computeBoundingBox();
 const signSize=gateContext.gateSignFaceGeo.boundingBox.getSize(new THREE.Vector3());
@@ -802,7 +843,7 @@ for(const article of ['der','die','das'])for(const state of ['idle','right','wro
     }
   }
 }
-console.log(`PASS: ${gateVariants} actual gate variants; cached two-draw hardware, full lane passage, mirrored tower notch, ${gateSignRays} sign-face rays, cached article layout and ${hasGateFont?'native Segoe glyph metrics/border fit':'font-size contract (native metrics unavailable)'}.`);
+console.log(`PASS: ${gateVariants} actual gate variants; cached two-draw hardware (${(kiezFrame.beam.attributes.position.count+kiezFrame.accent.attributes.position.count)/3} Kiez triangles), full lane passage, mirrored tower notch, ${gateSignRays} sign-face rays, cached article layout and ${hasGateFont?'native Segoe glyph metrics/border fit':'font-size contract (native metrics unavailable)'}.`);
 
 // Run the actual opaque gate pool through Three's public render lifecycle.
 // Source meshes retain the original state/visibility API while submissions

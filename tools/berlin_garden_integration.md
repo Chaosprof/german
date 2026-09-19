@@ -1,5 +1,10 @@
 # Berlin garden mesh integration
 
+The current canonical pack combines the V95 layered stone planter with the
+V100 broad canopy paint, accepted in the V101 game. Its geometry remains the
+V8 street trees and original grove. Use the current rebuild guidance below;
+the original procedural builder does not reproduce these later asset passes.
+
 Run `node tools/install_berlin_garden.cjs` to update the existing garden block.
 The installer embeds the new packed meshes, atlas and factory and preserves
 exactly one shared `decodeBerlinMeshRecord` declaration for architecture too.
@@ -96,20 +101,37 @@ the conservative street radius of 2.85 m. Background `tree`, `leaves` and
 `trunk` remain byte-identical to the prior grove assets, at their old size
 and with their existing origin conventions.
 
-The accepted v6 planter uses 6,000 triangles for the original terracotta pot,
-cream rim and soil, six shoots, 22 twig sprays, 496 closed oval leaves and
-24 five-petal cream/blush flowers with raised gold centres. The shrub has no
-green backing spheres. Flower clusters sit on its exterior. Original pot
-geometry and exact planter bounds remain unchanged: min [-0.56734, 0, -0.55551],
-max [0.59477, 1.85933, 0.52996].
+The historical v79 planter used 6,000 triangles for a chamfered square stone container,
+pale rim and soil, six shoots, 22 twig sprays, 496 closed oval leaves and
+24 five-petal blush flowers with raised gold centres. The shrub has no green
+backing spheres. Larger flower clusters face outward on its exterior. The
+180-triangle base retains its topology and UVs, with reshaped positions and
+normals. Exact overall bounds remain min [-0.56734, 0, -0.55551],
+max [0.59477, 1.85933, 0.52996]. The prior terracotta asset remains in v8 audit.
 
 Authoritative outputs are `assets/models/berlin-kiez-garden-v1.blend`, `.glb`,
 `.json`, `.inline.js`, and `berlin-kiez-garden-v1-atlas.jpg`. The near runtime
 geometry uses 684,890 bytes, shared once. The JPEG is 93,914 bytes and the
-complete inline pack is 2,219,958 bytes; the reusable GLB is 1,394,236 bytes.
+complete inline pack is 2,267,197 bytes; the reusable GLB is 1,402,472 bytes.
 The texture source and exact image
 generation prompt are documented in `audit/berlin-garden-surface-generation.md`.
-Rebuild assets and preview with:
+Reproduce the current accepted pack and its canopy comparison with:
+
+```powershell
+& 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe' -b -t 2 --python tools/stage_berlin_canopy_paint_v100.py -- --render
+node tools/check_berlin_canopy_paint_v100.cjs
+```
+
+This opens the immutable V100 baseline, which already contains the accepted
+V87 tree paint and V95 planter. It writes matching `.blend`, `.glb`, `.json`,
+`.inline.js` and atlas outputs under `audit/berlin-canopy-paint-v100/models/`.
+It changes only near/far leaf RGB and preserves the complete planter. Promote
+those five outputs to `assets/models/` before running the existing garden
+installer. The current preview is
+`audit/berlin-canopy-paint-v100/canopy-comparison.png`; measured preservation
+and paint results are in that stage's `validation.json`.
+
+For the historical pre-bake geometry and stone planter, the original command is:
 
 ```powershell
 & 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe' -b -t 2 --python tools/build_berlin_garden.py -- --render
@@ -118,22 +140,67 @@ Rebuild assets and preview with:
 The tree render is `audit/berlin-kiez-garden-v1-preview.png`; the planter
 close-up is `audit/berlin-kiez-planter-v6-preview.png`. Measured counts and
 bounds are in `audit/berlin-kiez-garden-v1-manifest.json`.
-The default build selects accepted v6 street trees and the v6 flowering
-planter, preserving the original grove records. Add `--stage-lush` to write
-that current set under `audit/berlin-garden-lush-v6/` before replacing
-canonical assets. Explicit historical modes `--stage-planter`, `--stage-tetra`,
+The default builder selects historical v8 street trees and the v79 stone planter,
+preserving the original grove records. It resets later V95/V100 work and is
+not the current canonical rebuild path. Add `--stage-stone` to stage that
+set under `audit/berlin-storefront-stone-v79/`. Historical `--stage-lush`
+reproduces the v6 tree/planter set under `audit/berlin-garden-lush-v6/`.
+Explicit historical modes `--stage-planter`, `--stage-tetra`,
 `--stage-coreless` and `--stage-sprays` retain their v5/v4/v3/v2 recipes and
 separate audit folders. The legacy explicit `--flowering-planter` flag still
-selects the v5 recipe at canonical paths; omit it for the accepted v6 default.
+selects the v5 recipe at canonical paths; omit it for the v8/v79 default.
 
-Run `node tools/check_berlin_garden.cjs --lush` to verify decoded geometry, closed
+The accepted v87 canopy pass adds local overlap shading to the v8 street-tree
+leaf colors. Its source is `tools/stage_berlin_canopy_depth.py`; outputs and
+immutable pre-bake baseline are in `audit/berlin-canopy-depth-v87/`. It changes
+only near/far leaf paint, with matching colors on all 418 retained far leaves.
+The default garden builder above regenerates the pre-bake geometry and paint;
+it does not reproduce this later color pass. Use the staged v87 outputs or
+the saved Blender file to retain that historical version. Its complete pack
+predates the V95 planter. Never rebake on an already darkened input.
+
+The accepted V100 pass replaces most scalar V87 contrast with broader canopy
+color groups: warmer exposed foliage and cooler connected interiors. It uses
+48 upward-biased visibility rays per leaf over 2.6 m, with 0.72 m neighbor
+grouping and no fixed horizontal sun direction. Area-weighted leaf luminance
+changes by only -0.0076%; all 418 retained far leaves copy their near RGB
+exactly. Five far cores receive the corresponding local color change. It adds
+no runtime shader work, attributes, materials, textures or draws. Geometry,
+curved normals, trunks, the full V95 planter and atlas stay byte-identical.
+Parent and critic accepted the live V101 opening and approach views; the
+approach tree showed coherent darker interiors beneath lighter leaves without
+muddy or crushed regions. Evidence:
+`audit/berlin-reference-canopy-paint-v101.png`,
+`audit/berlin-reference-canopy-paint-approach-v101.png` and
+`audit/berlin-garden-validation-v101.log`.
+
+The accepted V102 contour pass rounds 400 exposed leaves and removes 200
+deeply concealed leaves. It preserves the 13,992-triangle budget, exact crown
+bounds, all 418 far-retained leaves, V100 paint, trunks, planter and atlas.
+The shared near geometry falls from 684,890 to 661,690 bytes. Live V103 opening
+and approach review found a modest silhouette improvement without visible
+thinning; motion aliasing has not been established by those stills.
+Current editable source and matching exports are under
+`audit/berlin-leaf-contours-v102/models/`, authored with
+`tools/stage_berlin_leaf_contours_v102.py`. Copying V100 would undo this pass.
+
+Run `node tools/check_berlin_garden.cjs --lush --curved --stone --canopy-depth --layered-planter --canopy-paint --leaf-contours` to verify decoded geometry, closed
 components (welded by position across normal/UV splits), normals, UVs,
 triangle budgets, shared texture decoding, GLB material, trunk placement,
-the original pot bytes and outward closed leaf/flower surfaces.
+the original base topology/UVs, reshaped stone faces and outward closed leaf/flower surfaces.
 Before embedding a newly rebuilt asset, `--assets-only` checks its geometry
 without requiring the current HTML to contain the new bytes already.
-For staged assets, add `--asset-dir=audit/berlin-garden-lush-v6/models`.
-Caps are 14,000 near triangles, 4,000 street far triangles, 6,000 planter
+For current staged assets, add `--asset-dir=audit/berlin-leaf-contours-v102/models`.
+The explicit `--canopy-depth` flag validates the independent whole-leaf bake
+checks and exact shipping payload before allowing its intentional paint change.
+The additional `--canopy-paint` flag independently verifies the current
+color-only pass and permits only those exact near/far RGB changes. Historical
+V87/V95 checks retain their old behavior without this flag. Omit both canopy
+flags when validating the historical pre-bake v79 stone stage.
+`--leaf-contours` requires `--canopy-paint` and independently verifies the
+immutable V100 source, protected geometry, new closed blades and GLB parity
+before allowing the exact V102 near payload. Omit it for historical V100.
+Caps are 14,000 near triangles, 4,000 street far triangles, 6,800 planter
 triangles and 750,000 bytes for the single shared near buffer. Grove budgets
 remain unchanged. Keep existing pool and shadow-caster behavior, with the
 new measured street bounds and metadata radius used by culling assertions.
@@ -147,3 +214,18 @@ frame `audit/berlin-reference-lush-opening-v69.png` showed fuller, taller crowns
 and substantial planter foliage, with layout rays keeping shops clear.
 Combined desktop rendering and performance must
 be checked in the integrated game; the offline preview is not an FPS test.
+
+The accepted v95 planter replaces only foliage above the original stone pot.
+Its taller central shrub and lower spreading shoulders use 640 closed leaves,
+seven shoots and five flower clusters (20 heads), totaling 6,698 triangles.
+The final outward leaf planes retain the initial candidate's colors while
+removing its horizontal stacked appearance. Source:
+`tools/stage_berlin_layered_planter_v95.py`; authoritative matching exports:
+`audit/berlin-layered-planter-v95/models/`. The pot, exact envelope, V87 tree
+records and atlas remained unchanged in that stage. The staged baseline and
+initial revision are immutable. V100's later pack preserves this entire
+planter. Default regeneration or copying the older V87 pack would lose it;
+copying the V95 stage alone would reset the later V100 tree paint. Preserve
+the current saved Blender file or use the V100 rebuild above for the full set.
+The explicit `--layered-planter` check retains all historical canopy checks
+and independently verifies the changed planter and protected payloads.

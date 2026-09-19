@@ -39,7 +39,10 @@ records={}
 for key in keys:
     obj=objects_by_key[key];evaluated=obj.evaluated_get(depsgraph)
     mesh=evaluated.to_mesh(preserve_all_data_layers=True,depsgraph=depsgraph)
-    try: records[key]=packed_geometry(obj,mesh)
+    try:
+        # Retain authored form metadata alongside newly exported geometry.
+        records[key]=dict(previous['meshes'].get(key,{}))
+        records[key].update(packed_geometry(obj,mesh))
     finally: evaluated.to_mesh_clear()
 updated=dict(previous);updated['meshes']=records
 updated_bytes=json.dumps(updated,separators=(',',':')).encode('utf8')

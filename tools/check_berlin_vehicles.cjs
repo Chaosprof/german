@@ -11,6 +11,18 @@ const c = vm.createContext({console});
 vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
   .map(m => m[1]).find(s => s.includes('three.js r156 (MIT)')), c);
 const THREE = c.THREE;
+c.atob=value=>Buffer.from(value,'base64').toString('binary');
+const tramData=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/models/berlin-vintage-tram-v90.json'),'utf8'));
+const tramBlock=section('  // BEGIN BLENDER VINTAGE TRAM','  // END BLENDER VINTAGE TRAM');
+const tramAssignment=tramBlock.match(/^\s*\/\/ BEGIN BLENDER VINTAGE TRAM\s+var BERLIN_VINTAGE_TRAM_DATA\s*=\s*([\s\S]*);\s*$/);
+assert.ok(tramAssignment,'the playable build contains one marked Blender tram data assignment');
+assert.deepEqual(JSON.parse(tramAssignment[1]),tramData,'the embedded Blender tram data exactly matches the validated asset');
+const tramInline=tramAssignment[0];
+vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_packed_geometry.js'),'utf8'),c);
+vm.runInContext(tramInline,c);
+c.BERLIN_KIEZ_CAR_BODY=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/models/berlin-kiez-car-body-v1.json'),'utf8'));
+assert.ok(html.includes('var BERLIN_KIEZ_CAR_BODY = '+JSON.stringify(c.BERLIN_KIEZ_CAR_BODY)+';'),
+  'the playable build contains the current Blender car shells');
 c.clamp = THREE.MathUtils.clamp;
 c.mat = (color, options) => new THREE.MeshStandardMaterial({color, ...options});
 c.MAT = new Proxy({}, {get(target, name) {
@@ -67,8 +79,8 @@ const carTrimProbes=[];
 for(const end of [-1,1]) for(const cameraX of [-4,0,4]) {
   const origin=new THREE.Vector3(cameraX,3.5,end*9);
   for(const part of shapedCar.children.filter(o=>o.isMesh)) {
-    const glass=part.material===c.MAT.glassDark;
-    if(!glass && part.material!==(end>0?c.MAT.bulb:c.PROP_TAIL)) continue;
+    const glass=part.material===shapedCar.userData.glazingMat;
+    if(!glass && part.material!==(end>0?shapedCar.userData.headlampMat:c.PROP_TAIL)) continue;
     const bounds=new THREE.Box3().setFromObject(part), centre=bounds.getCenter(new THREE.Vector3());
     if(centre.z*end<=0 || (glass && bounds.max.x-bounds.min.x<1)) continue;
     for(const u of [-1,0,1]) for(const v of [-1,0,1]) {
@@ -82,6 +94,38 @@ for(const end of [-1,1]) for(const cameraX of [-4,0,4]) {
     }
   }
 }
+const bodyShell=shapedCar.children.find(o=>o.geometry===c.geoCache.blender_kiez_car_v1_body);
+assert.ok(bodyShell,'the running car uses its authored Blender body');
+for(const side of [-1,1])for(const z of [-1.35,1.35])for(const offset of [-.2,0,.2]) {
+  carRay.set(new THREE.Vector3(side*2,.66,z+offset),new THREE.Vector3(-side,0,0));
+  const bodyHit=carRay.intersectObject(bodyShell)[0];
+  assert.ok(!bodyHit||Math.abs(bodyHit.point.x)<.75,'the outer side skin has a real opening into the recessed wheel well');
+  const carHit=carRay.intersectObject(shapedCar,true)[0];
+  assert.ok(carHit&&carHit.object.material===c.MAT.tyre,'the assembled wheel remains visible through its open fender');
+}
+for(const part of shapedCar.children.filter(o=>o.material===shapedCar.userData.glazingMat)) {
+  const bounds=new THREE.Box3().setFromObject(part),centre=bounds.getCenter(new THREE.Vector3());
+  if(bounds.max.x-bounds.min.x>1)continue;
+  // Each side batch contains two panes. Aim through actual triangles, then
+  // verify the cabin frame cannot hide that same hit from the street.
+  const pos=part.geometry.attributes.position;
+  for(let triangle=0;triangle<pos.count;triangle+=3) {
+    const target=new THREE.Vector3();
+    for(let i=0;i<3;i++)target.add(new THREE.Vector3().fromBufferAttribute(pos,triangle+i));
+    target.multiplyScalar(1/3).applyMatrix4(part.matrixWorld);
+    for(const dz of [-.8,0,.8]) {
+      const origin=new THREE.Vector3(Math.sign(centre.x)*5,1.8,target.z+dz);
+      carRay.set(origin,target.clone().sub(origin).normalize());
+      const hit=carRay.intersectObject(part)[0];assert.ok(hit);
+      carTrimProbes.push({origin,point:hit.point.clone(),material:part.material});
+    }
+  }
+}
+for(const key of ['body','cabin']) {
+  const geo=c.geoCache['blender_kiez_car_v1_'+key],p=geo.attributes.position,n=geo.attributes.normal;
+  for(let i=0;i<p.count;i++)assert.ok(Number.isFinite(p.getX(i))&&Math.abs(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))-1)<.00001,
+    'Blender shells retain finite positions and unit corner normals');
+}
 c.compactStaticPropGroup(shapedCar); shapedCar.updateMatrixWorld(true);
 for(const probe of carTrimProbes) {
   carRay.set(probe.origin,probe.point.clone().sub(probe.origin).normalize());
@@ -89,7 +133,7 @@ for(const probe of carTrimProbes) {
   assert.ok(hit && hit.object.material===probe.material && hit.point.distanceTo(probe.point)<0.00001,
     'crowned car decks leave the actual windscreens and lamps visible from front/rear oblique views');
 }
-assert.equal(carTrimProbes.length,162);
+assert.equal(carTrimProbes.length,186);
 const carBounds=new THREE.Box3().setFromObject(shapedCar);
 assert.ok(carBounds.min.x>=-1.056 && carBounds.max.x<=1.056 && carBounds.min.y>=0 &&
   carBounds.max.y<=1.696 && carBounds.min.z>=-2.151 && carBounds.max.z<=2.151,
@@ -218,9 +262,15 @@ for(const probe of tramProbes){
 assert.equal(tramProbes.length,792);
 const tramBounds=new THREE.Box3().setFromObject(runnerTram);
 assert.ok(tramBounds.min.x>=-1.25&&tramBounds.max.x<=1.25&&tramBounds.min.z>=-4&&tramBounds.max.z<=4&&
-  tramBounds.min.y>=0&&tramBounds.max.y<=3.15,'whole tram fits the exact lane obstacle envelope');
+  tramBounds.min.y>=0&&Math.abs(tramBounds.max.y-4.10)<.000002,'tram decoration fits its exact 4.10 m render envelope');
+assert.equal(c.OB_KINDS[3].yMax,3.15,'roof decoration leaves the original gameplay collider unchanged');
+assert.equal(tramData.roofRevision,'raised-equipment-v103');
+const roofBaseline=JSON.parse(fs.readFileSync(path.join(__dirname,'../audit/berlin-tram-roof-v103/baseline/berlin-vintage-tram-v90.json'),'utf8'));
+assert.deepEqual(tramData.meshes,roofBaseline.meshes,'roof pass changes no mesh vertex attributes or topology');
+const roofEdits=new Set([63,64,65,66,67,68,69,70,71,72,75,76,77,78,81,82,83,84,85].map(i=>'part_'+String(i).padStart(3,'0')));
+tramData.parts.forEach((p,i)=>{if(!roofEdits.has(p.mesh))assert.deepEqual(p,roofBaseline.parts[i],'all non-roof transforms remain exact');});
 for(const x of [-0.6,0,0.6]){
-  carRay.set(new THREE.Vector3(x,4,0),carDown);const hit=carRay.intersectObject(runnerTram,true)[0];
+  carRay.set(new THREE.Vector3(x,4.5,2.5),carDown);const hit=carRay.intersectObject(runnerTram,true)[0];
   assert.ok(hit&&hit.object.material===c.makeRunnerTram.creamMaterial&&hit.point.y>2.77,
     'broad rounded cream crown leaves room for the classic pantograph');
 }
@@ -232,14 +282,14 @@ let tramDraws=0,tramTriangles=0;
 runnerTram.traverse(o=>{if(o.isMesh){tramDraws++;tramTriangles+=(o.geometry.index?o.geometry.index.count:o.geometry.attributes.position.count)/3;
   assert.ok(!o.material.transparent&&o.castShadow,'tram has only opaque batches with a solid shadow');
   for(const name of ['position','normal','uv'])assert.ok(o.geometry.attributes[name]);}});
-assert.ok(tramDraws<=9&&tramTriangles<=6200,'tram respects its opaque draw and triangle budget');
+assert.ok(tramDraws<=9&&tramTriangles<=8000,'rounded Blender tram respects its opaque draw and triangle budget');
 const cachedTram=c.makeRunnerTram(),clonedTram=cachedTram.clone(true);
 assert.equal(cachedTram.children.length,runnerTram.children.length);
 assert.ok(cachedTram.children.every((mesh,i)=>mesh.geometry===runnerTram.children[i].geometry&&mesh.material===runnerTram.children[i].material),
   'tram factories reuse the cached merged geometry and shared palette');
 assert.ok(clonedTram.children.every((mesh,i)=>mesh.geometry===cachedTram.children[i].geometry&&mesh.material===cachedTram.children[i].material),
   'tram pool clones share all geometry and materials');
-console.log(`PASS: runner tram ${tramProbes.length} actual glazing/trim rays; split driving cab, facing lamps, cream crown/pantograph, exact 2.5×8×3.15 m envelope; ${tramDraws} opaque draws / ${tramTriangles} triangles; cached factories and clones.`);
+console.log(`PASS: runner tram ${tramProbes.length} actual glazing/trim rays; split driving cab, facing lamps, cream crown/pantograph, exact 2.5×8 m footprint, 4.10 m roof render height / unchanged 3.15 m collision height; ${tramDraws} opaque draws / ${tramTriangles} triangles; cached factories and clones.`);
 // The shaped bus shell once buried its rear bumper and lamps. Find the real
 // trim meshes before batching, then ray-test their actual surface points
 // against the complete batched vehicle from six elevated camera positions.

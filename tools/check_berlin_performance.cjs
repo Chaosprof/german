@@ -135,6 +135,15 @@ function qualityTrace(c,seconds,frameCost) {
 function settledController(ms) {
   const c=controller(false,.8);c.perfWarmup=3;c.perfEmaMs=ms;return c;
 }
+// One dropped refresh per15 frames is a visible ~56fps cadence, even though
+// it never reaches the old52fps demotion threshold. Only resolution affects
+// this trace; measured recovery must preserve all lighting and scene detail.
+const nearBudget=controller(false,.8);
+qualityTrace(nearBudget,30,c=>c.renderScale<.97?1000/60:(c.frameNumber%15===0?1000/30:1000/60));
+assert.ok(nearBudget.renderScale<1&&nearBudget.renderScale>.85,
+  'sustained near60fps misses trigger a small useful supersampling reduction');
+assert.ok(nearBudget.qualityTier<nearBudget.TIER_SHADOW_SLOW&&nearBudget.aoActive&&nearBudget.bloomActive,
+  'near-budget recovery keeps all lighting and geometry detail');
 for(const ms of [20,1000/30]) {
   const c=controller(false,.8), moves=qualityTrace(c,70,()=>ms);
   assert.ok(moves.some(m=>m.to===c.QUALITY_TIER_MAX),'ineffective early rungs must not prevent deeper domains being explored');
@@ -195,7 +204,9 @@ const resized=settledController(26);
 Object.assign(resized,{window:{innerWidth:1280,innerHeight:720,devicePixelRatio:1},
   lastViewportW:1280,lastViewportH:720,lastViewportDpr:1.25,
   PROFILE_RENDER:false,IS_MOBILE:false,PIXEL_BUDGET:4608000,measureSafeArea(){},
-  camera:{aspect:1,updateProjectionMatrix(){}},pMat:{uniforms:{uScale:{value:0}}}});
+  camera:{aspect:16/9,fov:40,position:{toArray:()=>[0,3,-7]},updateProjectionMatrix(){}},
+  photoMode:false,fovVisual:40,pMat:{uniforms:{uScale:{value:0}}}});
+vm.runInContext(section('  function baseCameraFov(aspect)', '  var camera = new THREE.PerspectiveCamera'),resized);
 resized.applyQualityTier(resized.TIER_SHADOW_OFF);
 resized.ladderProbeUntil=.7;resized.ladderProbeFrames=18;resized.ladderCheckpointTier=8;resized.ladderCheckpointMs=26;
 vm.runInContext(section('  function commitViewportResize()', '  function queueViewportResize()'),resized);
@@ -210,9 +221,18 @@ assert.equal(resized.ladderProbeUntil,.6,'identical resize does not cancel a val
 resized.window.devicePixelRatio=2;resized.commitViewportResize();
 assert.equal(resized.RES_TIER_COUNT,3);assert.equal(resized.ladderCheckpointTier,resized.TIER_SHADOW_OFF);
 assert.equal(resized.ladderProbeUntil,0);
-for(const [edge,value] of [['left',-46],['right',46],['top',46],['bottom',-46]])
-  assert.equal(Number(html.match(new RegExp(`sun\\.shadow\\.camera\\.${edge} = (-?\\d+);`))[1]),value,'starting shadow extent remains authored at 46 m');
-console.log('PASS: ineffective 20/33 ms traces restore full picture; early, cumulative and deep useful checkpoints; severe-probe EMA-tail rejection; promotions/recovery, hidden/reset/resize evidence and authored 46 m shadow extent.');
+// The paused photograph retains its pose, but the lens must follow orientation
+// immediately; it cannot wait for the stopped simulation to update the camera.
+Object.assign(resized,{photoMode:true,canvas:{dataset:{}},distance:3.5,player:{z:3.5},
+  camLook:{toArray:()=>[0,2.45,13.7]}});
+resized.window.innerWidth=390;resized.window.innerHeight=844;resized.commitViewportResize();
+assert.equal(resized.camera.fov,69);assert.equal(resized.fovVisual,69);
+assert.equal(JSON.parse(resized.canvas.dataset.photoPose).distance,3.5);
+resized.camera.fov+=3;
+resized.window.innerWidth=1280;resized.window.innerHeight=720;resized.commitViewportResize();
+assert.equal(resized.camera.fov,43,'rotation preserves the action lens offset');
+assert.equal(JSON.parse(resized.canvas.dataset.photoPose).fov,43);
+console.log('PASS: ineffective 20/33 ms traces restore full picture; early, cumulative and deep useful checkpoints; severe-probe EMA-tail rejection; promotions/recovery and hidden/reset/resize evidence.');
 let environmentRebuilds=0;
 const events = {}, recovery=controller(false,.8);
 Object.assign(recovery,{
@@ -276,6 +296,81 @@ for(let i=0;i<canopy.attributes.position.count;i++){
 // Exercise the actual lamp factory and batching functions with the shipped
 // merger. Material/primitive stubs avoid texture painting, not geometry logic.
 const THREE=t.THREE, lampCache=new Map();
+// Execute the shipped light rig: translating its camera must change only whole
+// shadow texels, never the fractional sampling phase of a fixed world point.
+const stableLight=vm.createContext({THREE,Math,scene:new THREE.Scene()});
+vm.runInContext(section('  var sun = new THREE.DirectionalLight(', '  // Broad, neutral-cool sky bounce'),stableLight);
+vm.runInContext(section('  var WORLD_EMERGE =', '  // Stock linear fog'),stableLight);
+function refreshStableLight(z) {
+  stableLight.updateStableSunShadow(z);stableLight.scene.updateMatrixWorld(true);
+  stableLight.sun.shadow.updateMatrices(stableLight.sun);
+}
+const fixedLight=stableLight.sun, fixedShadow=fixedLight.shadow;
+assert.equal(fixedShadow.mapSize.x,2048);assert.equal(fixedShadow.mapSize.y,2048);
+for(const [edge,value] of [['left',-112],['right',112],['top',112],['bottom',-112]])
+  assert.equal(fixedShadow.camera[edge],value,'initialized coverage matches the approved fixed112m half extent');
+assert.ok(Math.abs(fixedShadow.camera.projectionMatrix.elements[0]-1/stableLight.SHADOW_BOX)<1e-12,
+  'camera projection is initialized from its live bounds before the first shadow map');
+const fixedProjection=Array.from(fixedShadow.camera.projectionMatrix.elements);
+const fixedShape=[fixedShadow.mapSize.x,fixedShadow.mapSize.y,fixedShadow.camera.near,
+  fixedShadow.camera.far,fixedShadow.camera.left,fixedShadow.camera.right,fixedShadow.radius];
+for(const focused of [true,false,true,false]) {
+  stableLight.applyShadowScope(focused);refreshStableLight(0);
+  assert.equal(stableLight.shadowFocused,focused,'quality still selects the refresh cadence');
+  assert.deepEqual(Array.from(fixedShadow.camera.projectionMatrix.elements),fixedProjection,
+    'every quality transition retains the original initialized projection');
+  assert.deepEqual([fixedShadow.mapSize.x,fixedShadow.mapSize.y,fixedShadow.camera.near,
+    fixedShadow.camera.far,fixedShadow.camera.left,fixedShadow.camera.right,fixedShadow.radius],fixedShape,
+    'quality cannot change map resolution, depth range or physical filter footprint');
+}
+let gridPhaseChecks=0,shadowCoverageChecks=0;
+for(const origin of [0,400,10000]) {
+  refreshStableLight(origin);
+  const points=[[-30,0,20],[0,0,80],[12.4,0,170],[30,0,180],[-12.4,20.485,40]]
+    .map(([x,y,z])=>new THREE.Vector3(x,y,z+origin));
+  const original=points.map(p=>p.clone().applyMatrix4(fixedShadow.matrix));
+  for(const advance of [.0001,.01,.2,1.3,2.6,5.2,10,40]) {
+    refreshStableLight(origin+advance);
+    assert.ok(fixedLight.position.clone().sub(fixedLight.target.position)
+      .distanceTo(stableLight.shadowSunOffset)<1e-10,'translation retains exact authored sun direction');
+    points.forEach((point,i)=>{
+      const projected=point.clone().applyMatrix4(fixedShadow.matrix);
+      for(const axis of ['x','y']) {
+        const delta=(projected[axis]-original[i][axis])*fixedShadow.mapSize[axis];
+        assert.ok(Math.abs(delta-Math.round(delta))<1e-7,'fixed world points retain their light-space texel phase');
+        gridPhaseChecks++;
+      }
+    });
+  }
+  refreshStableLight(origin);
+  // The 60 m cross street is the widest shadow-receiving ground; the much
+  // larger background plane does not receive shadows. Include a margin past
+  // fog178, then trace toward the real sun to cover tall off-camera casters.
+  for(const x of [-30,-12.4,0,12.4,30])for(const z of [-12,0,60,120,stableLight.FOG_FAR_MAX,stableLight.FOG_FAR_MAX+6])
+    for(const height of [0,8.5,20.485,30]) {
+      const p=new THREE.Vector3(x,0,origin+z).addScaledVector(stableLight.shadowSunOffset,
+        height/stableLight.shadowSunOffset.y);
+      assert.ok(fixedShadow.getFrustum().containsPoint(p),'visible ground and its sunward caster ray remain inside the actual light frustum');
+      shadowCoverageChecks++;
+    }
+}
+assert.match(section('  function updateWorldVisuals(', '    var rimBlend'),
+  /if\s*\(shadowRefreshDue\)\s*updateStableSunShadow\(player\.z\)/,
+  'running rig uses only route progress, never camera or lane X');
+// r156 constructs its own depth material. Execute that actual selector to
+// prove the invisible proxy's beauty depthWrite/colorWrite do not disable it.
+const embeddedThree=scripts.find(s=>s.includes('three.js r156 (MIT)'));
+const depthStart=embeddedThree.indexOf('function b(e,n,i,s){let a=null;const o=!0===i.isPointLight?e.customDistanceMaterial');
+const depthEnd=embeddedThree.indexOf('function T(n,i,s,a,l)',depthStart);
+assert.ok(depthStart>=0&&depthEnd>depthStart,'embedded shadow-depth material selector found');
+const depthMaterial=new THREE.MeshDepthMaterial(),proxyMaterial=new THREE.MeshBasicMaterial({colorWrite:false,depthWrite:false});
+const selectDepth=new Function('t','d','u','p','r','f',embeddedThree.slice(depthStart,depthEnd)+';return b;')(
+  {localClippingEnabled:false},new THREE.MeshDistanceMaterial(),depthMaterial,{},THREE.VSMShadowMap,
+  {[THREE.FrontSide]:THREE.BackSide,[THREE.BackSide]:THREE.FrontSide,[THREE.DoubleSide]:THREE.DoubleSide});
+assert.equal(selectDepth(new THREE.Mesh(new THREE.BoxGeometry(),proxyMaterial),proxyMaterial,fixedLight,THREE.PCFSoftShadowMap),depthMaterial);
+assert.ok(depthMaterial.depthWrite&&depthMaterial.colorWrite&&depthMaterial.visible,
+  'proxy suppresses beauty writes but still emits visible packed depth into the shadow map');
+console.log(`PASS: fixed shadow projection/quality; ${gridPhaseChecks} world-point texel-phase checks; ${shadowCoverageChecks} receiver/caster coverage cases; actual r156 proxy depth writes.`);
 // Execute the shipped ground clone and cel patch against the embedded r156.
 // A tint-only material must share GPU textures and keep the shader hook that
 // Three intentionally does not copy with Material.clone().
@@ -570,7 +665,7 @@ trees.forEach((tr,i)=>{tr.position.set(i%2?9:-9,0.16,-12+i*12);tr.rotation.y=i*0
 const treeDrawsBefore=trees.reduce((n,tr)=>n+tr.children.filter(o=>o.isMesh).length,0);
 const treeBatches=lampContext.batchRigidChunkProps(grove,trees,'tree');
 lampContext.syncRigidChunkProps(treeBatches);
-assert.equal(treeDrawsBefore-treeBatches.filter(b=>b.mesh.visible).length,9,'four complete near trees share three beauty draws including pits');
+assert.equal(treeDrawsBefore-treeBatches.filter(b=>b.mesh.visible&&!b.shadowOnly).length,9,'four complete near trees share three beauty draws including pits');
 assert.equal(treeBatches.filter(b=>b.mesh.castShadow&&b.mesh.visible).length,1,'joined branches and leaves retain one active shadow caster');
 const crownBatch=treeBatches.find(b=>b.mesh.material===t.berlinGardenKit.material);
 assert.equal(crownBatch.mesh.geometry,canopy,'instancing keeps exact Blender tree geometry');
@@ -582,18 +677,35 @@ for(const batch of treeBatches.filter(b=>b.lodFar!==true))batch.entries.forEach(
 Object.assign(lampContext,{chunk:grove,ud:{trees,treeBatches},bulkNear:true,nearCullZ:-5});
 const treeCull=section('    var treeBatchDirty = false;', '    // mass used to have');
 vm.runInContext(treeCull,lampContext);
-assert.ok(treeBatches.every(b=>b.mesh.count===(b.lodFar===true?0:3)),'original trailing-canopy cull removes only the passed tree');
+assert.ok(treeBatches.every(b=>b.mesh.count===(b.shadowOnly?4:b.lodFar===true?0:3)),
+  'beauty culls the passed tree while every authored tree remains a stable shadow caster');
 const treeVersion=crownBatch.mesh.instanceMatrix.version;
 vm.runInContext(treeCull,lampContext);
 assert.equal(crownBatch.mesh.instanceMatrix.version,treeVersion,'steady grove does not upload any new matrices');
 lampContext.nearCullZ=50;vm.runInContext(treeCull,lampContext);
-assert.ok(treeBatches.every(b=>b.mesh.count===0&&!b.mesh.visible),'fully passed grove submits nothing');
+assert.ok(treeBatches.every(b=>b.shadowOnly?b.mesh.count===4&&b.mesh.visible:b.mesh.count===0&&!b.mesh.visible),
+  'fully passed beauty submits nothing while off-camera shadows remain resident');
 lampContext.nearCullZ=-50;vm.runInContext(treeCull,lampContext);
 assert.ok(treeBatches.every(b=>b.mesh.count===(b.lodFar===true?0:4)&&b.mesh.visible===(b.lodFar!==true)),'recycled grove restores every authored tree');
 // Distance LOD preserves the actual near geometry and the authored street far
 // envelope. Exercise selection and packed transforms through the
 // shipped writers, including perspective/Photo changes and hysteresis.
 const farCrownBatch=treeBatches.find(b=>b.lodFar===true), farCrown=farCrownBatch.geometry;
+const staticCrownBatch=treeBatches.find(b=>b.shadowOnly);
+assert.equal(staticCrownBatch.geometry,farCrown,'one fixed authored far crown supplies shadows at all beauty distances');
+assert.ok(staticCrownBatch.mesh.userData.staticTreeShadow&&staticCrownBatch.mesh.castShadow);
+assert.ok(!crownBatch.mesh.castShadow&&!farCrownBatch.mesh.castShadow,'beauty LOD meshes cannot alter the shadow map');
+assert.ok(!staticCrownBatch.material.colorWrite&&!staticCrownBatch.material.depthWrite,'proxy cannot alter beauty colour or depth');
+const casterSnapshot=()=>Array.from(staticCrownBatch.mesh.instanceMatrix.array);
+trees.forEach(tree=>tree.userData.treeLodFar=false);lampContext.syncRigidChunkProps(treeBatches);
+const unchangedCaster=casterSnapshot();
+trees.forEach(tree=>{tree.userData.treeLodFar=true;tree.visible=false;});lampContext.syncRigidChunkProps(treeBatches);
+assert.equal(staticCrownBatch.mesh.count,4);assert.deepEqual(casterSnapshot(),unchangedCaster,
+  'changing beauty LOD and hiding all original roots leaves every shadow transform byte unchanged');
+trees[0].userData.rolledActive=false;lampContext.syncRigidChunkProps(treeBatches);
+assert.equal(staticCrownBatch.mesh.count,3,'an unauthored tree never acquires a shadow proxy');
+trees.forEach(tree=>{tree.userData.rolledActive=true;tree.userData.treeLodFar=false;tree.visible=true;});
+lampContext.syncRigidChunkProps(treeBatches);
 assert.equal(farCrownBatch.material,crownBatch.material,'both levels share the identical opaque PBR atlas');
 assert.equal(lampContext.getStreetTreeFarGeometry(),farCrown,'one cached lower-detail geometry');
 assert.equal(farCrown,t.berlinGardenKit.geometry('treeStreetFar'),'runtime uses the exact cached authored street LOD without cloning or resizing');
@@ -718,16 +830,25 @@ for(let ci=0;ci<5;ci++) {
   lampContext.freezeObjectTree(chunk,[],false);
   fixtureChunks.push(chunk);fixtureLamps.push(lampPair);
 }
-const sourceShadowBand=new Function('ud','visible','dz',section('    var shadowNear = visible && dz > -20 && dz < 58;',
+const sourceShadowBand=new Function('ud','visible','dz',section('    var shadowNear = visible;',
   '    // Bollards and lane dashes lived under this chunk'));
+const chunkVisible=new Function('dz','CHUNK_CULL_FAR',section('    var farLimit = CHUNK_CULL_FAR;',
+  '    var ud = chunk.userData;')+';return visible;');
+const casterLifetime={shadowNear:null,shadowCasters:[{castShadow:false},{castShadow:false}]};
+for(const [dz,expected] of [[-56.01,false],[-55.99,true],[-38,true],[-20,true],[58,true],[178,true],[209.99,true],[210.01,false]]) {
+  const visible=chunkVisible(dz,210);sourceShadowBand(casterLifetime,visible,dz);
+  assert.equal(visible,expected,'phased facades retain the approved full resident interval');
+  assert.ok(casterLifetime.shadowCasters.every(mesh=>mesh.castShadow===expected),
+    'no separate distance band can retire a resident static caster');
+}
 for(const chunk of fixtureChunks)sourceShadowBand(chunk.userData,true,chunk.position.z);
 let fixtureBeforeCount=0;const fixtureBeforeArgs=[];
 fixtureScene.onBeforeRender=function(...args){fixtureBeforeCount++;fixtureBeforeArgs.push(args);};
 Object.assign(lampContext,{scene:fixtureScene,worldRoot:fixtureWorld,sun:fixtureSun,chunks:fixtureChunks});
 lampContext.installStreetFixturePools();
 const fixturePools=lampContext.streetFixturePools;
-assert.equal(fixturePools.sources.length,useKiezLamps?34:44,'joined Blender tree fixtures, paired LOD holders and ten independently placed opaque furniture pieces');
-assert.equal(fixturePools.pools.length,useKiezLamps?8:10,'distance LOD adds one shared opaque tree pool across all chunks');
+assert.equal(fixturePools.sources.length,useKiezLamps?36:46,'two chunk-local fixed shadow holders accompany unchanged beauty fixtures');
+assert.equal(fixturePools.pools.length,useKiezLamps?9:11,'one shared shadow-only canopy pool accompanies unchanged beauty pools');
 assert.equal(fixturePools.furnitureSources,10);
 assert.ok(excludedFurniture.every(mesh=>mesh.material===furnitureMaterial),'controlled, custom callback and replaced assets remain untouched');
 assert.ok(fixturePools.sources.every(row=>row.source.material!==row.material&&!row.source.material.visible&&row.material.visible),
@@ -751,7 +872,7 @@ function presentStreetFixtures() {
     const source=row.source;
     let visible=row.material.visible&&source.layers.test(fixtureCamera.layers)&&(!source.isInstancedMesh||source.count>0);
     for(let parent=source;parent;parent=parent.parent)visible&&=parent.visible;
-    const inView=visible&&(!source.frustumCulled||fixtureView.intersectsObject(source));
+    const inView=visible&&!source.userData.staticTreeShadow&&(!source.frustumCulled||fixtureView.intersectsObject(source));
     const inShadow=visible&&fixtureRenderer.shadowMap.enabled&&fixtureSun.castShadow&&fixtureSun.visible&&source.castShadow&&
       (!source.frustumCulled||lightFrustum.intersectsObject(source));
     oldBeautyDraws+=Number(inView);oldShadowDraws+=Number(inShadow);
@@ -813,9 +934,12 @@ fixtureChunks[0].rotation.y=.13;fixtureChunks[0].scale.set(1.02,.98,1.04);fixtur
 fixtureLamps[0][0].visible=false;lampContext.syncRigidChunkProps(fixtureChunks[0].userData.lampBatches);presentStreetFixtures();
 fixtureChunks[0].userData.trees[0].visible=false;lampContext.syncRigidChunkProps(fixtureChunks[0].userData.treeBatches);presentStreetFixtures();
 fixtureChunks[0].userData.manholes[0].visible=false;presentStreetFixtures();
-// The real chunk shadow-band transition changes caster membership without
-// changing any ordinary visibility or material/geometry state.
+// Casters now survive the former near band and retire only with their owning
+// chunk. The fixed canopy pool never emits a beauty instance.
 sourceShadowBand(fixtureChunks[1].userData,true,80);presentStreetFixtures();
+assert.ok(fixtureChunks[1].userData.shadowCasters.every(mesh=>mesh.castShadow),
+  'crossing the old58m cutoff cannot add or remove visible ground shadows');
+sourceShadowBand(fixtureChunks[1].userData,false,80);presentStreetFixtures();
 assert.ok(fixtureChunks[1].userData.shadowCasters.every(mesh=>!mesh.castShadow));
 fixtureRenderer.shadowMap.enabled=false;
 assert.equal(presentStreetFixtures().shadowDraws,0,'disabled shadows do not leave any stale caster prefix');

@@ -125,6 +125,10 @@ for(const mode of ['webgl2','webgl1-hdr','webgl1-ldr','no-depth','no-derivatives
   assert.ok(fixture.skyMat.vertexShader.includes('varying '+precision+' vec3 vSkyViewPosition;'));
   assert.ok(fixture.skyMat.fragmentShader.includes('berlinStreetPicture(berlinStreetDomeUv(viewPosition))'),
     'dome and surface use exactly the same direction and image crop helper');
+  const domeHazeMix=fixture.skyMat.fragmentShader.match(/mix\(\s*uHaze\s*,\s*city\s*,\s*([\d.]+)\s*\)/);
+  assert.ok(domeHazeMix,'the actual dome shader declares its city/haze blend');
+  assert.equal(Number(domeHazeMix[1]),fixture.surfaceVistaState.strength,
+    'dome city blend and surface fog use the same authored strength');
   if(mode==='low-precision')for(const shader of [THREE.ShaderChunk.berlin_street_vista_pars,
     THREE.ShaderChunk.fog_pars_vertex,THREE.ShaderChunk.fog_pars_fragment,
     fixture.skyMat.vertexShader,fixture.skyMat.fragmentShader])assert.ok(!/\bhighp\b/.test(shader),
@@ -147,7 +151,7 @@ for(const mode of ['webgl2','webgl1-hdr','webgl1-ldr','no-depth','no-derivatives
     assert.equal(directionReads,enabled&&depth>120?1:0,'near/off pixels do no directional work');
     assert.equal(textureReads,enabled&&depth>120&&mask>0?1:0,'only distant in-cone pixels sample the existing image once');
     if(!enabled||depth<=120||mask===0)assert.deepEqual(color.rgb,mix(base,haze,factor),'original RGB expression is exact on every bypass path');
-    if(enabled&&depth>=178&&mask===1)assert.deepEqual(color.rgb,mix(haze,city,.65),'fully fogged central surfaces match dome city/haze color');
+    if(enabled&&depth>=178&&mask===1)assert.deepEqual(color.rgb,mix(haze,city,state.strength),'fully fogged central surfaces match dome city/haze color');
     surfaceFogCases++;
   }
   fixture.skyMat.dispose();decodedVista.dispose();surfaceFogProfiles++;
@@ -190,6 +194,7 @@ console.log(`PASS: ${directionCases} translated/banked/depth ray cases agree wit
 // geometric skyline approach and the existing device fallback still function.
 const daylightContext=vm.createContext({THREE});
 vm.runInContext(section('  var MOOD_TREATMENTS = [','  // ========================================================== world layout'),daylightContext);
+assert.equal(daylightContext.MOOD_TREATMENTS.length,1,'only the fixed warm daylight palette is shipped');
 const light=()=>({color:new THREE.Color(),intensity:0});
 const daylightUniforms=Object.fromEntries(['mapA','mapB','uMapAScale','uMapBScale','uMix','uDayAir','uSkylineTop'].map(k=>[k,{value:0}]));
 for(const key of ['uTint','uHaze','uSkylineTint'])daylightUniforms[key]={value:new THREE.Vector3()};
@@ -246,6 +251,101 @@ assert.equal(daylightContext.renderer.toneMappingExposure,daylightContext.MOOD_T
 daylightContext.sun.castShadow=false;daylightContext.updateEnvironmentMood(0);
 assert.equal(daylightContext.POST.exposure,daylightContext.MOOD_TREATMENTS[0].exposure-.42,'emergency no-shadow compensation remains intact');
 console.log(`PASS: ${daylightRuns} daylight runs through 50 km, former hour boundaries, rewards and overdrive; fixed radiance/fog/palette/grade, texture reload, skyline fallback and direct-render capability handling.`);
+// Execute the actual compiled material's small color expressions. Only GLSL
+// scalar declarations, RGB swizzles and vector/scalar compound assignments
+// are adapted for JS; every coefficient and branch comes from the shader.
+// This checks arithmetic invariants, not GPU compilation or mediump accuracy.
+function runColorBody(body,colorName){
+  let translated=body.replace(/\bfloat\s+(\w+)\s*=/g,'let $1 =');
+  translated=translated.replace(new RegExp('\\b'+colorName+'\\.([rgb])','g'),(_,c)=>colorName+'['+'rgb'.indexOf(c)+']');
+  translated=translated.replace(new RegExp('\\b'+colorName+'\\s*([*\\-])=\\s*([^;]+);','g'),
+    (_,op,expression)=>`${colorName} = ${colorName}.map(channel => channel ${op} (${expression}));`);
+  const evaluate=new Function(colorName,'min','max','mix','vec3','clamp','dot',translated);
+  return rgb=>evaluate(rgb.slice(),Math.min,Math.max,(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t),
+    (...v)=>v.length===1?[v[0],v[0],v[0]]:v,THREE.MathUtils.clamp,(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0));
+}
+const toneSource=section('vec3 neutralTonemap(', 'vec3 encodeSRGB(',desktopPostShader);
+const toneBody=toneSource.slice(toneSource.indexOf('{')+1,toneSource.lastIndexOf('}'));
+const toneColor=runColorBody(toneBody,'c');
+const peakBranch=toneBody.match(/if\s*\(peak\s*<\s*([^)]*)\)/);
+assert.ok(peakBranch,'the shipped tone curve has a peak-compression boundary');
+const toneKnee=new Function('return ('+peakBranch[1]+');')();
+const tonePeak=runColorBody(toneBody.slice(0,peakBranch.index)+'return peak;','c');
+const toeBranch=toneBody.match(/x\s*<\s*([^?]+)\?/);
+assert.ok(toeBranch,'the shipped toe has an explicit continuous boundary');
+const toneToe=new Function('return ('+toeBranch[1]+');')();
+const colorDirections=[[1,1,1],[1,0,0],[0,1,0],[0,0,1],[1,1,0],[0,1,1],
+  [1,0,1],[1,.52,.20],[.18,1,.35],[.12,.34,1]];
+const intensities=[0,1e-9,1e-7,1e-5,...Array.from({length:2048},(_,i)=>(i+1)/128),32,64,256];
+let toneCases=0,clarityCases=0,maxKneeJump=0;
+function finiteColor(rgb,label){assert.equal(rgb.length,3);assert.ok(rgb.every(Number.isFinite),label+' stays finite');}
+for(const direction of colorDirections){
+  let previous=[0,0,0];
+  for(const intensity of intensities){
+    const input=direction.map(v=>v*intensity),output=toneColor(input);finiteColor(output,'tone ramp');
+    output.forEach((v,k)=>{
+      assert.ok(v>=-1e-12&&v<=1+1e-12,'nonnegative HDR inputs tone-map into display headroom');
+      assert.ok(v>=previous[k]-1e-12,'every RGB channel is monotonic along a fixed-hue exposure ramp');
+    });
+    if(direction.every(v=>v===1))assert.ok(Math.max(...output)-Math.min(...output)<1e-12,'gray stays achromatic');
+    previous=output;toneCases++;
+  }
+  // Solve the branch location from its actual pre-compression arithmetic;
+  // colored toes do not all reach the shoulder at the gray input value.
+  let lo=0,hi=16;
+  assert.ok(tonePeak(direction.map(v=>v*hi))>toneKnee);
+  for(let i=0;i<60;i++){const mid=(lo+hi)/2;
+    if(tonePeak(direction.map(v=>v*mid))<toneKnee)lo=mid;else hi=mid;
+  }
+  const at=(lo+hi)/2,epsilon=1e-7;
+  const lower=toneColor(direction.map(v=>v*(at-epsilon))),upper=toneColor(direction.map(v=>v*(at+epsilon)));
+  for(let k=0;k<3;k++){
+    const jump=upper[k]-lower[k];maxKneeJump=Math.max(maxKneeJump,Math.abs(jump));
+    assert.ok(jump>=-1e-10&&jump<2e-6,'compression shoulder is continuous and never reverses brightness');
+  }
+}
+const toeBelow=toneColor(Array(3).fill(toneToe-1e-7)),toeAbove=toneColor(Array(3).fill(toneToe+1e-7));
+assert.ok(toeAbove.every((v,i)=>v>=toeBelow[i]&&v-toeBelow[i]<2e-6),'gray toe is continuous and monotonic');
+assert.deepEqual(toneColor([0,0,0]),[0,0,0],'tone curve preserves true black');
+
+const clarityBody=section('  float clarityLuma =','  col *= 1.0 - uVignette',desktopPostShader);
+const clarityColor=runColorBody(clarityBody+'return col;','col');
+assert.deepEqual(Array.from(daylightContext.MOOD_TREATMENTS[0].grdLift.toArray()),[0,0,0],
+  'the actual daylight grade cannot lift black before the clarity arithmetic');
+assert.deepEqual(clarityColor([0,0,0]),[0,0,0],'clarity preserves exact black without a divide-by-zero');
+assert.deepEqual(clarityColor([1,1,1]),[1,1,1],'clarity preserves display white');
+for(const direction of colorDirections){
+  let previous=[0,0,0];
+  for(let i=0;i<=1024;i++){
+    const input=direction.map(v=>v*i/256),output=clarityColor(input);finiteColor(output,'clarity ramp');
+    output.forEach((v,k)=>{
+      assert.ok(v>=0&&v<=1+1e-12,'common gain respects per-channel highlight headroom before final clamp');
+      assert.ok(v>=previous[k]-1e-12,'clarity gray/color ramps cannot reverse brightness');
+      if(input[k]===0)assert.equal(v,0,'clarity never contaminates a zero color channel');
+      for(let j=0;j<3;j++)assert.ok(Math.abs(v*input[j]-output[j]*input[k])<1e-12,
+        'one shared RGB gain preserves hue instead of clipping channels independently');
+    });
+    previous=output;clarityCases++;
+  }
+}
+// Saturation can briefly put channels outside gamut. The following final
+// shader clamp owns negative-channel clipping; clarity must remain finite,
+// preserve the common gain and cap the positive peak before that clamp.
+for(const input of [[1.2,.5,.1],[.9,-.05,.04],[-.03,.2,1.1],[2,1,.01]]){
+  const output=clarityColor(input);finiteColor(output,'post-saturation color');
+  assert.ok(Math.max(...output)<=1+1e-12);
+  for(let k=0;k<3;k++)for(let j=0;j<3;j++)assert.ok(Math.abs(output[k]*input[j]-output[j]*input[k])<1e-12);
+  clarityCases++;
+}
+const aaSource=section('vec3 antialiasScene(', 'void main(){',desktopPostShader);
+const aaClamp=aaSource.match(/dir\s*=\s*clamp\([^;]*vec2\((-[\d.]+)\),vec2\(([\d.]+)\)\)\*px;/);
+assert.ok(aaClamp,'actual edge-directed AA bounds its sample direction');
+const aaSpan=Math.max(Math.abs(Number(aaClamp[1])),Math.abs(Number(aaClamp[2])));
+const aaTaps=[...aaSource.matchAll(/texture2D\(tScene,uv[+-]dir([/*])([\d.]+)\)/g)];
+assert.equal(aaTaps.length,4,'all directional AA color taps are covered');
+const maxAATap=Math.max(...aaTaps.map(m=>aaSpan*(m[1]==='/'?1/Number(m[2]):Number(m[2]))));
+assert.ok(maxAATap<=2,'directional AA taps stay within two scene texels per axis');
+console.log(`PASS: actual shader arithmetic across ${toneCases} monotonic HDR gray/color samples and ${clarityCases} headroom/hue samples; exact black/white, continuous toe/shoulder (max shoulder delta ${maxKneeJump.toExponential(2)}), and AA sample extent ${maxAATap} scene texels per axis. CPU arithmetic checks, not GPU precision claims.`);
 // Execute the shader's depth-aware sample rejection with quantized RGBA8
 // storage, including a foreground character against distant scenery.
 const tapSource=section('vec2 contactTap(', 'float filteredContactAO(',desktopPostShader);
