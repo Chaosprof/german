@@ -48,7 +48,13 @@
 <div class="row"><button data-t="7"><b>7 &mdash; Web Audio suspended</b>Beep, suspend the context, then speak<small>If 6 is silent and this is not, that is the cause</small></button></div>
 <div class="row"><button data-t="8"><b>8 &mdash; exactly like the game</b>Prime, pitch 0.78, rate 0.86, cancel+gap<small>The real code path, start to finish</small></button></div>
 
-<div class="row"><button class="util" data-t="env">Re-read environment</button><button class="util" data-t="copy">Copy log</button></div>
+<p class="hint">These three run inside a real same-origin <b>iframe</b> &mdash; which is how the game actually runs when you start it from Artikel Blitz.</p>
+
+<div class="row"><button data-t="9"><b>9 &mdash; inside an iframe</b>The frame speaks for itself<small>This is the game&rsquo;s real situation</small></button></div>
+<div class="row"><button data-t="10"><b>10 &mdash; iframe via the parent</b>Frame builds the utterance in the top page<small>If 9 is silent and this speaks, that is the fix</small></button></div>
+<div class="row"><button data-t="11"><b>11 &mdash; iframe, primed first</b>Frame warms its own engine, then speaks<small>If this speaks, priming inside the frame is enough</small></button></div>
+
+<div class="row"><button class="util" data-t="frameenv">Frame environment</button><button class="util" data-t="env">Re-read environment</button><button class="util" data-t="copy">Copy log</button></div>
 
 <div id="log"></div>
 
@@ -156,6 +162,33 @@
     return audio;
   }
 
+  // A real same-origin child document, created from a tap the way Artikel
+  // Blitz creates the runner's frame, and kept alive between tests.
+  var frame = null, frameReady = false, frameQueue = [];
+  function withFrame(cb) {
+    if (frame && frameReady) { cb(frame); return; }
+    frameQueue.push(cb);
+    if (frame) return;
+    frame = document.createElement('iframe');
+    frame.src = 'voice-test-frame.html?embed=1';
+    frame.title = 'voice test frame';
+    frame.setAttribute('allow', 'accelerometer; autoplay; gyroscope; fullscreen');
+    frame.style.cssText = 'width:100%;height:54px;margin-top:10px;border:1px solid #2c3543;border-radius:10px;background:#0b0e13';
+    frame.addEventListener('load', function () {
+      frameReady = true;
+      log('iframe loaded');
+      var q = frameQueue; frameQueue = [];
+      for (var i = 0; i < q.length; i++) q[i](frame);
+    });
+    document.body.appendChild(frame);
+  }
+
+  window.addEventListener('message', function (e) {
+    if (!e.data || e.data.from !== 'voice-frame') return;
+    var m = String(e.data.msg);
+    log('[frame] ' + m, /ONERROR|dropped|threw|BLOCKED/.test(m) ? 'bad' : (/onstart|onend/.test(m) ? 'ok' : ''));
+  });
+
   var tests = {
     '1': function () {
       log('--- 1: plain, inside the tap gesture ---', 'note');
@@ -226,6 +259,22 @@
           say('8', { voice: pick, pitch: 0.78, rate: 0.86, volume: 1 });
         }, 90);
       }, 400);
+    },
+    '9': function () {
+      log('--- 9: an iframe speaks for itself (the game path) ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'self' }, '*'); });
+    },
+    '10': function () {
+      log('--- 10: the iframe speaks through the top page ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'parent' }, '*'); });
+    },
+    '11': function () {
+      log('--- 11: the iframe primes its own engine first ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'prime' }, '*'); });
+    },
+    'frameenv': function () {
+      log('--- frame environment ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'env' }, '*'); });
     },
     'env': function () { log('--- environment re-read ---', 'note'); log(readEnv()); },
     'copy': function () {

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>voice test frame</title>
+<style>
+  body { margin: 0; background: #0b0e13; color: #7fd0ff;
+         font: 12px/1.4 ui-monospace, Menlo, monospace; padding: 6px 8px; }
+</style>
+</head>
+<body>
+frame
+<script>
+// Stands in for berlin-runner.html?embed=1: same origin, same nesting, spoken
+// from a message handler rather than a tap - exactly like a cleared gate.
+(function () {
+  var held = [];
+  function report(msg) {
+    try { parent.postMessage({ from: 'voice-frame', msg: msg }, '*'); } catch (e) {}
+    document.body.appendChild(document.createTextNode('\n' + msg));
+  }
+
+  function germanVoice(win) {
+    var vs = [];
+    try { vs = win.speechSynthesis.getVoices() || []; } catch (e) { return null; }
+    var best = null;
+    for (var i = 0; i < vs.length; i++) {
+      var lang = String(vs[i].lang || '').toLowerCase().replace('_', '-');
+      if (lang.indexOf('de') !== 0) continue;
+      if (!best || (lang === 'de-de' && String(best.lang).toLowerCase() !== 'de-de')) best = vs[i];
+    }
+    return best;
+  }
+
+  // win is the window whose speech engine and realm are used. For the
+  // through-the-parent test the utterance MUST be built with the parent's
+  // constructor, or it belongs to the wrong document.
+  function speakWith(win, label) {
+    var u;
+    try { u = new win.SpeechSynthesisUtterance('der Bahnhof'); }
+    catch (e) { report(label + ': constructor threw - ' + e); return; }
+    var voice = germanVoice(win);
+    u.lang = (voice && voice.lang) || 'de-DE';
+    if (voice) u.voice = voice;
+    u.pitch = 0.78; u.rate = 0.86; u.volume = 1;
+    var fired = false;
+    u.onstart = function () { fired = true; report(label + ': onstart'); };
+    u.onend = function () { report(label + ': onend'); };
+    u.onerror = function (e) { report(label + ': ONERROR ' + ((e && e.error) || '?')); };
+    held.push(u);
+    report(label + ': speak() voice=' + (voice ? voice.name : 'none, lang only'));
+    try { win.speechSynthesis.speak(u); }
+    catch (e) { report(label + ': speak() threw - ' + e); return; }
+    setTimeout(function () {
+      if (!fired) report(label + ': NO EVENT after 1.2s - dropped');
+      try {
+        var s = win.speechSynthesis;
+        report(label + ': state speaking=' + s.speaking + ' pending=' + s.pending + ' paused=' + s.paused);
+      } catch (e) {}
+    }, 1200);
+  }
+
+  window.addEventListener('message', function (e) {
+    var cmd = e.data && e.data.cmd;
+    if (cmd === 'self') {
+      speakWith(window, '9 iframe speaks itself');
+    } else if (cmd === 'parent') {
+      try { speakWith(window.parent, '10 iframe via parent'); }
+      catch (err) { report('10: reaching the parent threw - ' + err); }
+    } else if (cmd === 'prime') {
+      // The game primes inside the first gesture; here the tap happened in the
+      // parent, so this is the harder case on purpose.
+      try {
+        var warm = new SpeechSynthesisUtterance('de');
+        warm.volume = 0; warm.lang = 'de-DE';
+        held.push(warm);
+        window.speechSynthesis.speak(warm);
+        report('11: primed inside the frame');
+      } catch (err) { report('11: priming threw - ' + err); }
+      setTimeout(function () { speakWith(window, '11 iframe after priming'); }, 500);
+    } else if (cmd === 'env') {
+      var own = -1, par = '-';
+      try { own = (window.speechSynthesis.getVoices() || []).length; } catch (err) { own = 'threw'; }
+      try { par = (window.parent.speechSynthesis.getVoices() || []).length; } catch (err) { par = 'BLOCKED'; }
+      report('frame env: own voices=' + own + ', parent voices=' + par +
+             ', same-origin parent=' + (par !== 'BLOCKED'));
+    }
+  });
+
+  report('frame ready');
+})();
+</script>
+</body>
+</html>
