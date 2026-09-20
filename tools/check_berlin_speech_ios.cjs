@@ -45,10 +45,12 @@ function makeClock() {
 // opts.webkitCancel  - drop any speak() issued in the same task as a cancel()
 // opts.pauseOnCancel - a cancel while speaking leaves the engine paused
 // opts.swallowFirst  - the first real utterance never starts (iPhone's cold engine)
+// opts.coldFrame     - the first utterance of ANY kind is dropped in silence,
+//                      warm-up included: measured behaviour of an iframe on iOS
 function makeEngine(clock, opts) {
   const spoken = [];      // every AUDIBLE utterance the engine actually started
   const offered = [];     // every utterance handed to speak(), accepted or not
-  let cancelledAt = -1, current = null, swallowed = 0;
+  let cancelledAt = -1, current = null, swallowed = 0, everOffered = 0;
   const synth = {
     paused: false,
     speaking: false,
@@ -64,6 +66,9 @@ function makeEngine(clock, opts) {
     resume() { synth.paused = false; },
     speak(u) {
       offered.push(u);
+      // A cold frame swallows the very first utterance it is ever handed, with
+      // no start and no error, and honours everything after it.
+      if (opts.coldFrame && everOffered++ === 0) return;
       // WebKit: same task as the cancel -> the utterance is simply dropped.
       if (opts.webkitCancel && clock.now() === cancelledAt) return;
       if (opts.swallowFirst && u.volume !== 0 && swallowed++ === 0) return;
@@ -120,6 +125,7 @@ function load(opts) {
     '  ready: speechReady, voice: function () { return speechVoice; },\n' +
     '  langOnly: function () { return speechLangOnly; },\n' +
     '  duck: function () { return musicDuck; },\n' +
+    '  everStarted: function () { return speechEverStarted; },\n' +
     '  webkit: IS_WEBKIT_SPEECH, ios: IS_IOS_SPEECH\n' +
     '};');
 
@@ -276,6 +282,45 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
   t.clock.advance(2000);
   assert.equal(t.engine.offered.length, before, 'the queued phrase never reaches the engine');
   assert.equal(t.api.duck(), 1, 'and the music duck is not left hanging');
+}
+
+// 11. The cold frame, which is what an iPhone actually does: the warm-up is
+//     swallowed in silence, and the first gate has to survive that.
+{
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: true, webkitCancel: true });
+  t.api.prime();
+  t.clock.advance(50);
+  assert.equal(t.engine.spoken.length, 0, 'the warm-up was swallowed, as on the device');
+  assert.equal(t.api.everStarted(), false, 'and the engine is still known to be cold');
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(2000);
+  assert.equal(t.engine.spoken.length, 1, 'the first gate is still heard');
+  assert.equal(t.engine.spoken[0].text, 'der Bahnhof');
+  assert.ok(t.api.everStarted(), 'and the engine is now known to be awake');
+}
+
+// 12. While the engine is cold every gesture re-primes it; once a phrase has
+//     actually started, priming never runs again.
+{
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: true });
+  t.api.prime();
+  t.clock.advance(50);
+  const afterFirst = t.engine.offered.length;
+  t.api.prime();                              // same second: too soon, no spam
+  t.clock.advance(50);
+  assert.equal(t.engine.offered.length, afterFirst, 'priming does not spam the engine');
+  t.clock.advance(2000);
+  t.api.prime();                              // a later gesture, still cold
+  t.clock.advance(50);
+  assert.equal(t.engine.offered.length, afterFirst + 1, 'a later gesture re-primes a cold engine');
+  t.api.speak('das', 'Tor', 1, false);
+  t.clock.advance(2000);
+  assert.ok(t.api.everStarted());
+  const afterSpeaking = t.engine.offered.length;
+  t.clock.advance(5000);
+  t.api.prime();
+  t.clock.advance(50);
+  assert.equal(t.engine.offered.length, afterSpeaking, 'a woken engine is never primed again');
 }
 
 console.log('berlin speech / iOS: all checks passed');

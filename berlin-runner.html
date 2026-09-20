@@ -5023,7 +5023,9 @@ THREE.GLTFLoader = GLTFLoader;
   var speechCurrent = null;       // GC guard, see speechSpeak
   var speechWarm = null;          // ditto, for the priming utterance
   var speechSpeakTimer = null;    // WebKit's cancel -> speak gap
-  var speechRetryTimer = null;    // one retry when an utterance never starts
+  var speechRetryTimer = null;    // retries while the engine is still cold
+  var speechEverStarted = false;  // has ANY utterance actually begun?
+  var speechPrimeWait = false;    // a warm-up is already in flight
 
   // Every browser on an iPhone is WebKit, and WebKit's synthesiser has three
   // habits that are fatal to the way this is written: a speak() issued in the
@@ -5047,6 +5049,56 @@ THREE.GLTFLoader = GLTFLoader;
   // engine that will take de-DE without one is the iPhone case.
   function speechReady() {
     return SPEECH_SUPPORTED && (!!speechVoice || speechLangOnly);
+  }
+
+  // ---- voice diagnostics ---------------------------------------------------
+  // Speech that works in every standalone test on a phone and not in the game
+  // is a question about which step the game reaches, and a phone has no
+  // console worth opening. This draws the last few speech events over the run.
+  //
+  // The runner is an iframe inside Artikel Blitz, so its URL is not the
+  // player's to set: ?voicedebug=1 works when the page is opened directly, and
+  // a long press on the voice button works anywhere.
+  var VOICE_DEBUG = false;
+  try {
+    VOICE_DEBUG = /[?&]voicedebug=1/.test(window.location.search) ||
+                  localStorage.getItem('artikel-express-voicedebug') === '1';
+  } catch (e) {}
+  var voiceLogEl = null, voiceLogLines = [];
+  var voiceLogT0 = (window.performance && performance.now) ? performance.now() : Date.now();
+  function voiceNow() {
+    return ((window.performance && performance.now) ? performance.now() : Date.now()) - voiceLogT0;
+  }
+  function voiceLog(msg) {
+    if (!VOICE_DEBUG) return;
+    voiceLogLines.push((voiceNow() / 1000).toFixed(2) + 's ' + msg);
+    if (voiceLogLines.length > 15) voiceLogLines.shift();
+    if (!voiceLogEl) {
+      voiceLogEl = document.createElement('div');
+      voiceLogEl.id = 'voicelog';
+      voiceLogEl.setAttribute('aria-hidden', 'true');
+      voiceLogEl.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:9999;' +
+        'max-width:66vw;padding:6px 8px;border-radius:8px;background:rgba(6,9,14,.84);' +
+        'color:#8fe3ff;font:10px/1.35 ui-monospace,Menlo,monospace;white-space:pre-wrap;' +
+        'pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.85)';
+      document.body.appendChild(voiceLogEl);
+    }
+    voiceLogEl.textContent = voiceLogLines.join('\n');
+  }
+  function voiceLogState(tag) {
+    if (!VOICE_DEBUG) return;
+    var n = -1, speaking = '?', pending = '?', paused = '?';
+    try {
+      n = (window.speechSynthesis.getVoices() || []).length;
+      speaking = window.speechSynthesis.speaking;
+      pending = window.speechSynthesis.pending;
+      paused = window.speechSynthesis.paused;
+    } catch (e) {}
+    voiceLog(tag + ' voices=' + n +
+             ' pick=' + (speechVoice ? speechVoice.name : (speechLangOnly ? 'lang-only' : 'NONE')) +
+             ' on=' + speechEnabled + ' primed=' + speechPrimed + ' everStarted=' + speechEverStarted +
+             ' eng[' + speaking + '/' + pending + '/' + paused + ']' +
+             ' frame=' + (window.top !== window.self));
   }
 
   // GERMAN ONLY, deliberately. An en-US voice will happily read "der Bahnhof"
@@ -5089,7 +5141,10 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function refreshSpeechVoice() {
+    var before = speechVoice ? speechVoice.name : (speechLangOnly ? 'lang-only' : 'NONE');
     speechVoice = pickGermanVoice();
+    var after = speechVoice ? speechVoice.name : (speechLangOnly ? 'lang-only' : 'NONE');
+    if (after !== before) voiceLogState('voice ' + before + ' -> ' + after);
     refreshVoiceButton();
   }
 
@@ -5126,7 +5181,15 @@ THREE.GLTFLoader = GLTFLoader;
   // guess is never the last version of the word the player hears. That is the
   // whole point of a gender drill, and it is the half a scoreboard cannot do.
   function speakArticleWord(article, noun, streak, correction) {
-    if (!speechReady() || !speechEnabled || !article || !noun) return;
+    if (!speechReady() || !speechEnabled || !article || !noun) {
+      voiceLog('gate "' + article + ' ' + noun + '" SKIPPED: ' +
+        (!SPEECH_SUPPORTED ? 'no engine'
+          : (!article || !noun ? 'no word'
+            : (!speechEnabled ? 'voice switched off' : 'no German voice'))));
+      return;
+    }
+    voiceLog('gate "' + article + ' ' + noun + '"' + (correction ? ' (correction)' : '') +
+             ' streak=' + streak);
     if (speechPendingTimer) { clearTimeout(speechPendingTimer); speechPendingTimer = null; }
     if (correction) {
       // Let the buzzer land on its own first. The correction carries further as
@@ -5217,20 +5280,34 @@ THREE.GLTFLoader = GLTFLoader;
       // later speak() then sits in the queue mute for the rest of the run.
       try { if (synth.paused) synth.resume(); } catch (e) {}
       var started = false;
-      var onstart = u.onstart;
-      u.onstart = function (ev) { started = true; if (onstart) onstart.call(u, ev); };
-      try { synth.speak(u); } catch (e) { unduckForSpeech(); return; }
-      // The first phrase of a session is the one an iPhone swallows when the
-      // engine was not fully awake for the priming gesture. Say it again rather
-      // than lose the word the player just earned; once only, and only if
-      // nothing has started and nothing newer has taken its place.
-      if (attempt === 0) {
+      var onstart = u.onstart, onend = u.onend, onerror = u.onerror;
+      u.onstart = function (ev) {
+        started = true;
+        speechEverStarted = true;             // the engine is awake from here
+        voiceLog('onstart "' + u.text + '"');
+        if (onstart) onstart.call(u, ev);
+      };
+      u.onend = function (ev) { voiceLog('onend'); if (onend) onend.call(u, ev); };
+      u.onerror = function (ev) {
+        voiceLog('ONERROR ' + ((ev && ev.error) || '?'));
+        if (onerror) onerror.call(u, ev);
+      };
+      voiceLog('speak() try ' + (attempt + 1) + ' voice=' +
+               (u.voice ? u.voice.name : 'lang-only'));
+      try { synth.speak(u); } catch (e) { voiceLog('speak() threw'); unduckForSpeech(); return; }
+      // A cold engine swallows what it is handed and says nothing about it:
+      // no start, no error. Measured on an iPhone, an iframe drops the FIRST
+      // utterance it ever offers and honours the next one - so a dropped
+      // phrase is worth offering again rather than losing the word the player
+      // just earned. Twice, and only while nothing newer has taken its place.
+      if (attempt < 2) {
         speechRetryTimer = setTimeout(function () {
           speechRetryTimer = null;
           if (started || speechCurrent !== u) return;
           try { if (synth.speaking) return; } catch (e) {}
-          speechSpeak(build, 1);
-        }, 400);
+          voiceLog('dropped, no event - retrying');
+          speechSpeak(build, attempt + 1);
+        }, 400 + attempt * 450);
       }
     };
     // 90 ms is the whole fix on iPhone: under the beat of a cleared gate, and
@@ -5245,7 +5322,19 @@ THREE.GLTFLoader = GLTFLoader;
   // silent warm-up there means the first cleared gate is not the one that gets
   // swallowed.
   function primeSpeech() {
-    if (!SPEECH_SUPPORTED || speechPrimed) return;
+    if (!SPEECH_SUPPORTED) return;
+    // Measured on an iPhone: a frame's engine drops the first utterance it is
+    // ever handed, with no event either way, and honours the next one. One
+    // warm-up at the start card is therefore a promise the engine need not
+    // keep - so keep re-priming on later gestures until a phrase has actually
+    // been heard to start, then never again.
+    if (speechPrimed && speechEverStarted) return;
+    // One warm-up in flight at a time: touches arrive far faster than an
+    // engine takes to wake, and a queue of them would delay the real phrase.
+    if (speechPrimed && speechPrimeWait) return;
+    speechPrimeWait = true;
+    setTimeout(function () { speechPrimeWait = false; }, 1500);
+    voiceLog(speechPrimed ? 're-priming (engine still cold)' : 'priming');
     speechPrimed = true;
     try {
       // Non-empty text on purpose. WebKit discards an utterance with nothing to
@@ -5294,14 +5383,41 @@ THREE.GLTFLoader = GLTFLoader;
   (function wireVoiceButton() {
     var btn = document.getElementById('voicebtn');
     if (!btn) return;
+    var voiceHold = null, voiceHeld = false;
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
+      // A long press opened the log rather than toggling the voice.
+      if (voiceHeld) { voiceHeld = false; return; }
       // Same first-gesture role as the music button: pressing this on the start
       // card has to be able to bring the audio and the speech engine up itself.
       unlockGameAudio();
       setSpeechEnabled(!speechEnabled);
       btn.blur();
     });
+    // Long press: the diagnostic log. The runner is an iframe inside Artikel
+    // Blitz, so there is no URL the player can add ?voicedebug=1 to.
+    function voiceHoldStart() {
+      voiceHold = setTimeout(function () {
+        voiceHold = null; voiceHeld = true;
+        VOICE_DEBUG = !VOICE_DEBUG;
+        try { localStorage.setItem('artikel-express-voicedebug', VOICE_DEBUG ? '1' : '0'); } catch (e) {}
+        if (!VOICE_DEBUG) {
+          if (voiceLogEl && voiceLogEl.parentNode) voiceLogEl.parentNode.removeChild(voiceLogEl);
+          voiceLogEl = null; voiceLogLines = [];
+        } else {
+          voiceLog('voice log on');
+          voiceLogState('state');
+        }
+      }, 650);
+    }
+    function voiceHoldEnd() { if (voiceHold) { clearTimeout(voiceHold); voiceHold = null; } }
+    btn.addEventListener('touchstart', voiceHoldStart, { passive: true });
+    btn.addEventListener('mousedown', voiceHoldStart);
+    btn.addEventListener('touchend', voiceHoldEnd, { passive: true });
+    btn.addEventListener('touchmove', voiceHoldEnd, { passive: true });
+    btn.addEventListener('touchcancel', voiceHoldEnd, { passive: true });
+    btn.addEventListener('mouseup', voiceHoldEnd);
+    btn.addEventListener('mouseleave', voiceHoldEnd);
     if (SPEECH_SUPPORTED) {
       refreshSpeechVoice();
       // The voice list is populated asynchronously on every engine, often after
@@ -26768,6 +26884,9 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
   }
   canvas.addEventListener('touchstart', function (e) {
     if (photoMode) return;
+    // Cheap once the engine is awake: primeSpeech returns immediately after a
+    // phrase has started. Until then every touch is another chance to wake it.
+    primeSpeech();
     if (!started) { begin(); return; }
     var t = e.changedTouches[0];
     touchX = t.clientX; touchY = t.clientY; touchT = performance.now();

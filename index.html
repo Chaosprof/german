@@ -3832,7 +3832,8 @@ function RunnerScreen({ onExit }) {
 
   return (
     <div style={{position:"fixed",inset:0,zIndex:50,background:"#10131c"}}>
-      <iframe ref={iframeRef} src="berlin-runner.html?embed=1"
+      <iframe ref={iframeRef}
+        src={"berlin-runner.html?embed=1" + (/[?&]voicedebug=1/.test(location.search) ? "&voicedebug=1" : "")}
         style={{position:"absolute",inset:0,width:"100%",height:"100%",border:"none",display:"block"}}
         title="Berlin Runner"
         allow="accelerometer; autoplay; gyroscope; fullscreen" />
