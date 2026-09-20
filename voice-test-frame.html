@@ -60,6 +60,40 @@ frame
     }, 1200);
   }
 
+  // The game's frame is not a bare document: it runs Web Audio and WebGL of
+  // its own. Every frame test so far ran in silence, so this is the untested
+  // combination - speech in a frame that owns an audio context.
+  var primed = false, audio = null;
+  function ensurePrimed(cb) {
+    if (primed) { cb(); return; }
+    primed = true;
+    try {
+      var w = new SpeechSynthesisUtterance('de');
+      w.volume = 0; w.lang = 'de-DE';
+      held.push(w);
+      window.speechSynthesis.speak(w);
+      report('frame primed (warm-up)');
+    } catch (e) { report('frame priming threw - ' + e); }
+    setTimeout(cb, 600);
+  }
+  function startAudio() {
+    var Ctor = window.AudioContext || window.webkitAudioContext;
+    if (!Ctor) { report('no Web Audio in the frame'); return null; }
+    if (!audio) { audio = new Ctor(); report('frame AudioContext created, state=' + audio.state); }
+    if (audio.state === 'suspended') audio.resume();
+    try {
+      var o = audio.createOscillator(), g = audio.createGain();
+      o.frequency.value = 330;
+      g.gain.value = 0.0001;
+      g.gain.exponentialRampToValueAtTime(0.2, audio.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.45);
+      o.connect(g); g.connect(audio.destination);
+      o.start(); o.stop(audio.currentTime + 0.5);
+      report('frame beep played, state=' + audio.state);
+    } catch (e) { report('frame beep threw - ' + e); }
+    return audio;
+  }
+
   window.addEventListener('message', function (e) {
     var cmd = e.data && e.data.cmd;
     if (cmd === 'self') {
@@ -78,6 +112,33 @@ frame
         report('11: primed inside the frame');
       } catch (err) { report('11: priming threw - ' + err); }
       setTimeout(function () { speakWith(window, '11 iframe after priming'); }, 500);
+    } else if (cmd === 'audio-self') {
+      ensurePrimed(function () {
+        startAudio();
+        setTimeout(function () { speakWith(window, '12 frame audio + frame speech'); }, 600);
+      });
+    } else if (cmd === 'audio-parent') {
+      ensurePrimed(function () {
+        startAudio();
+        setTimeout(function () {
+          try { speakWith(window.parent, '13 frame audio + parent speech'); }
+          catch (err) { report('13: reaching the parent threw - ' + err); }
+        }, 600);
+      });
+    } else if (cmd === 'audio-suspend') {
+      ensurePrimed(function () {
+        startAudio();
+        setTimeout(function () {
+          if (!audio) { speakWith(window, '14 frame speech (no audio context)'); return; }
+          audio.suspend().then(function () {
+            report('frame audio suspended, state=' + audio.state);
+            speakWith(window, '14 audio suspended + frame speech');
+          }, function (err) {
+            report('14: suspend failed - ' + err);
+            speakWith(window, '14 audio suspended + frame speech');
+          });
+        }, 600);
+      });
     } else if (cmd === 'env') {
       var own = -1, par = '-';
       try { own = (window.speechSynthesis.getVoices() || []).length; } catch (err) { own = 'threw'; }

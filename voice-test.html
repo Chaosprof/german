@@ -54,6 +54,12 @@
 <div class="row"><button data-t="10"><b>10 &mdash; iframe via the parent</b>Frame builds the utterance in the top page<small>If 9 is silent and this speaks, that is the fix</small></button></div>
 <div class="row"><button data-t="11"><b>11 &mdash; iframe, primed first</b>Frame warms its own engine, then speaks<small>If this speaks, priming inside the frame is enough</small></button></div>
 
+<p class="hint">The game&rsquo;s frame also runs <b>Web Audio</b> of its own &mdash; music and sound effects. That combination is the one thing still untested, and in the game every single utterance is dropped.</p>
+
+<div class="row"><button data-t="12"><b>12 &mdash; frame audio + frame speech</b>Frame primes, beeps, then speaks<small>The game&rsquo;s exact situation</small></button></div>
+<div class="row"><button data-t="13"><b>13 &mdash; frame audio + parent speech</b>Beeps in the frame, speaks in the top page<small>If 12 is silent and this speaks, that is the fix</small></button></div>
+<div class="row"><button data-t="14"><b>14 &mdash; audio suspended</b>Beeps, suspends the context, then speaks<small>If this speaks, the audio context is the blocker</small></button></div>
+
 <div class="row"><button class="util" data-t="frameenv">Frame environment</button><button class="util" data-t="env">Re-read environment</button><button class="util" data-t="copy">Copy log</button></div>
 
 <div id="log"></div>
@@ -271,6 +277,18 @@
     '11': function () {
       log('--- 11: the iframe primes its own engine first ---', 'note');
       withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'prime' }, '*'); });
+    },
+    '12': function () {
+      log('--- 12: the frame owns an audio context and speaks ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'audio-self' }, '*'); });
+    },
+    '13': function () {
+      log('--- 13: frame audio, but the top page speaks ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'audio-parent' }, '*'); });
+    },
+    '14': function () {
+      log('--- 14: frame audio suspended, then the frame speaks ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'audio-suspend' }, '*'); });
     },
     'frameenv': function () {
       log('--- frame environment ---', 'note');
