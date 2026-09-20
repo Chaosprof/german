@@ -819,7 +819,7 @@
   <button id="photobtn" type="button" aria-pressed="false" aria-label="Fotomodus (P)" title="Fotomodus (P)">▣</button>
 
   <div id="touchhint">
-    <span>◀ Wischen ▶ · Spur</span><span>▲ Sprung</span><span>▼ Rutschen</span>
+    <span>↔ Spur · außen: Salto</span><span>▲ Sprung</span><span>▼ Rutschen</span>
   </div>
 
   <div id="powerups" aria-label="Aktive Power-ups" aria-live="polite">
@@ -835,7 +835,7 @@
       <div class="sub">Dein Kiez. Dein Tempo. Dein Deutsch.</div>
       <div class="rule"></div>
       <div class="keys">
-        <span class="keyboard-control"><kbd>A</kbd> <kbd>D</kbd> / <kbd>&larr;</kbd> <kbd>&rarr;</kbd></span><span class="touch-control">↔ Wischen</span><span>Spur wechseln</span>
+        <span class="keyboard-control"><kbd>A</kbd> <kbd>D</kbd> / <kbd>&larr;</kbd> <kbd>&rarr;</kbd></span><span class="touch-control">↔ Wischen</span><span>Spur wechseln · außen weiter = Salto</span>
         <span class="keyboard-control"><kbd>W</kbd> / <kbd>&uarr;</kbd> / <kbd>Space</kbd></span><span class="touch-control">↑ / Tippen</span><span>Springen</span>
         <span class="keyboard-control"><kbd>S</kbd> / <kbd>&darr;</kbd></span><span class="touch-control">↓ Wischen</span><span>Rutschen</span>
         <span class="lane"><span style="color:#5bb8ff">der</span> <span style="color:#ff6fa8">die</span> <span style="color:#46d98a">das</span></span><span>Lauf durch das Tor mit dem richtigen Artikel</span>
@@ -5019,6 +5019,35 @@ THREE.GLTFLoader = GLTFLoader;
   var speechPrimed = false;
   var speechDuckTimer = null;
   var speechPendingTimer = null;
+  var speechLangOnly = false;     // engine can speak German, list not readable
+  var speechCurrent = null;       // GC guard, see speechSpeak
+  var speechWarm = null;          // ditto, for the priming utterance
+  var speechSpeakTimer = null;    // WebKit's cancel -> speak gap
+  var speechRetryTimer = null;    // one retry when an utterance never starts
+
+  // Every browser on an iPhone is WebKit, and WebKit's synthesiser has three
+  // habits that are fatal to the way this is written: a speak() issued in the
+  // same task as a cancel() is dropped - and can wedge the synthesiser for the
+  // rest of the run - a cancel landing mid-utterance leaves it paused with a
+  // silent queue, and an utterance the page no longer names can be collected
+  // in the middle of the noun. None of that is detectable, so it is worked
+  // around unconditionally on WebKit.
+  var IS_IOS_SPEECH = (function () {
+    var ua = navigator.userAgent || '';
+    // iPadOS 13+ reports itself as a Mac; the touch points give it away.
+    return /iPhone|iPod|iPad/.test(ua) ||
+           (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+  })();
+  var IS_WEBKIT_SPEECH = IS_IOS_SPEECH || (function () {
+    var ua = navigator.userAgent || '';
+    return /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR|SamsungBrowser/.test(ua);
+  })();
+
+  // Is there anything to speak with? A voice object is the good case; an
+  // engine that will take de-DE without one is the iPhone case.
+  function speechReady() {
+    return SPEECH_SUPPORTED && (!!speechVoice || speechLangOnly);
+  }
 
   // GERMAN ONLY, deliberately. An en-US voice will happily read "der Bahnhof"
   // and it is funny for about four gates, but this is a pronunciation drill and
@@ -5032,7 +5061,7 @@ THREE.GLTFLoader = GLTFLoader;
   function pickGermanVoice() {
     if (!SPEECH_SUPPORTED) return null;
     var voices;
-    try { voices = window.speechSynthesis.getVoices() || []; } catch (e) { return null; }
+    try { voices = window.speechSynthesis.getVoices() || []; } catch (e) { voices = []; }
     var best = null, bestScore = -1;
     for (var i = 0; i < voices.length; i++) {
       var v = voices[i];
@@ -5044,6 +5073,18 @@ THREE.GLTFLoader = GLTFLoader;
       if (v.default) score += 1;
       if (score > bestScore) { bestScore = score; best = v; }
     }
+    // An EMPTY list is the one case that is not evidence of anything. iPhone
+    // fills getVoices() lazily and a home-screen web app can leave it empty for
+    // a whole session, and refusing to speak there would silence a device that
+    // ships German out of the box. So with nothing to read, ask for de-DE by
+    // language and let the engine choose the voice. A list that is populated
+    // and simply has no German still disables the button - the rule above is
+    // about never reading German in an English voice, and a readable list is
+    // the only way to know that is what would happen.
+    // ...and only on WebKit, which is where that quirk lives. Chrome fills
+    // the list reliably, and an empty one there is a transient at first paint
+    // that would briefly hand the game an en-US voice.
+    speechLangOnly = !best && voices.length === 0 && IS_WEBKIT_SPEECH;
     return best;
   }
 
@@ -5071,7 +5112,10 @@ THREE.GLTFLoader = GLTFLoader;
 
   function stopSpeech() {
     if (speechPendingTimer) { clearTimeout(speechPendingTimer); speechPendingTimer = null; }
+    if (speechSpeakTimer) { clearTimeout(speechSpeakTimer); speechSpeakTimer = null; }
+    if (speechRetryTimer) { clearTimeout(speechRetryTimer); speechRetryTimer = null; }
     if (!SPEECH_SUPPORTED) return;
+    speechCurrent = null;
     try { window.speechSynthesis.cancel(); } catch (e) {}
     unduckForSpeech();
   }
@@ -5082,7 +5126,7 @@ THREE.GLTFLoader = GLTFLoader;
   // guess is never the last version of the word the player hears. That is the
   // whole point of a gender drill, and it is the half a scoreboard cannot do.
   function speakArticleWord(article, noun, streak, correction) {
-    if (!SPEECH_SUPPORTED || !speechEnabled || !speechVoice || !article || !noun) return;
+    if (!speechReady() || !speechEnabled || !article || !noun) return;
     if (speechPendingTimer) { clearTimeout(speechPendingTimer); speechPendingTimer = null; }
     if (correction) {
       // Let the buzzer land on its own first. The correction carries further as
@@ -5098,18 +5142,20 @@ THREE.GLTFLoader = GLTFLoader;
   }
 
   function utterArticleWord(article, noun, streak, correction) {
-    if (!SPEECH_SUPPORTED || !speechEnabled || !speechVoice) return;
-    var synth = window.speechSynthesis;
-    // Latest word wins. Deep into a streak the gates arrive faster than a
-    // two-word phrase takes to say, and a queue would drift a whole noun behind
-    // the player - hearing the article for the gate before last is worse than
-    // hearing nothing at all.
-    try { synth.cancel(); } catch (e) {}
+    if (!speechReady() || !speechEnabled) return;
+    var used = speechVoice;                  // null on a lang-only engine
+    speechSpeak(function () {
+      return buildArticleUtterance(article, noun, streak, correction, used);
+    }, 0);
+  }
+
+  function buildArticleUtterance(article, noun, streak, correction, used) {
     var u;
-    try { u = new SpeechSynthesisUtterance(article + ' ' + noun); } catch (e) { return; }
-    var used = speechVoice;
-    u.voice = used;
-    u.lang = used.lang || 'de-DE';
+    try { u = new SpeechSynthesisUtterance(article + ' ' + noun); } catch (e) { return null; }
+    // Handing over a voice OBJECT is the part WebKit is least reliable about,
+    // so a lang-only engine gets the language and picks the voice itself.
+    if (used) u.voice = used;
+    u.lang = (used && used.lang) || 'de-DE';
     // Low and slow is the joke - a stern Berlin platform announcer, which also
     // happens to be the most legible way to land a two-word phrase over a music
     // bed. The streak lifts it: by a dozen in a row the announcer has stopped
@@ -5129,9 +5175,10 @@ THREE.GLTFLoader = GLTFLoader;
     }
     u.volume = 1;
     u.onstart = duckForSpeech;
-    u.onend = unduckForSpeech;
+    u.onend = function () { if (speechCurrent === u) speechCurrent = null; unduckForSpeech(); };
     u.onerror = function (e) {
       var err = e && e.error;
+      if (speechCurrent === u) speechCurrent = null;
       if (err === 'interrupted' || err === 'canceled') { unduckForSpeech(); return; }
       // A remote voice with no network lands here. Strike it off and re-pick, so
       // the next gate either finds a local voice or the button honestly reports
@@ -5140,7 +5187,56 @@ THREE.GLTFLoader = GLTFLoader;
       unduckForSpeech();
       refreshSpeechVoice();
     };
-    try { synth.speak(u); } catch (e) { unduckForSpeech(); }
+    return u;
+  }
+
+  // Latest word wins. Deep into a streak the gates arrive faster than a
+  // two-word phrase takes to say, and a queue would drift a whole noun behind
+  // the player - hearing the article for the gate before last is worse than
+  // hearing nothing at all. So every phrase starts with a cancel.
+  //
+  // Which is exactly where an iPhone goes quiet: on WebKit a speak() in the
+  // same task as that cancel is dropped. The utterance is therefore built by a
+  // callback rather than passed in, so the gap - and the retry below - can each
+  // make a fresh one; WebKit will not re-speak an utterance it has already
+  // been handed.
+  function speechSpeak(build, attempt) {
+    var synth = window.speechSynthesis;
+    attempt = attempt || 0;
+    if (speechSpeakTimer) { clearTimeout(speechSpeakTimer); speechSpeakTimer = null; }
+    if (speechRetryTimer) { clearTimeout(speechRetryTimer); speechRetryTimer = null; }
+    try { synth.cancel(); } catch (e) {}
+    var fire = function () {
+      speechSpeakTimer = null;
+      var u = build();
+      if (!u) return;
+      // Hold the reference: WebKit collects an utterance that only the engine
+      // still names, and the phrase stops in the middle of the noun.
+      speechCurrent = u;
+      // A cancel that landed mid-utterance leaves WebKit paused, and every
+      // later speak() then sits in the queue mute for the rest of the run.
+      try { if (synth.paused) synth.resume(); } catch (e) {}
+      var started = false;
+      var onstart = u.onstart;
+      u.onstart = function (ev) { started = true; if (onstart) onstart.call(u, ev); };
+      try { synth.speak(u); } catch (e) { unduckForSpeech(); return; }
+      // The first phrase of a session is the one an iPhone swallows when the
+      // engine was not fully awake for the priming gesture. Say it again rather
+      // than lose the word the player just earned; once only, and only if
+      // nothing has started and nothing newer has taken its place.
+      if (attempt === 0) {
+        speechRetryTimer = setTimeout(function () {
+          speechRetryTimer = null;
+          if (started || speechCurrent !== u) return;
+          try { if (synth.speaking) return; } catch (e) {}
+          speechSpeak(build, 1);
+        }, 400);
+      }
+    };
+    // 90 ms is the whole fix on iPhone: under the beat of a cleared gate, and
+    // well under the 240 ms a correction already waits for the buzzer.
+    if (IS_WEBKIT_SPEECH) speechSpeakTimer = setTimeout(fire, 90);
+    else fire();
   }
 
   // Some engines only populate getVoices() - and only permit speaking at all -
@@ -5152,11 +5248,23 @@ THREE.GLTFLoader = GLTFLoader;
     if (!SPEECH_SUPPORTED || speechPrimed) return;
     speechPrimed = true;
     try {
-      var warm = new SpeechSynthesisUtterance(' ');
-      warm.volume = 0; warm.lang = 'de-DE';
+      // Non-empty text on purpose. WebKit discards an utterance with nothing to
+      // say, and a discarded utterance does not spend the user gesture - which
+      // on an iPhone is the only thing speech may ever start from, so the
+      // warm-up has to actually be an utterance. volume 0 keeps it inaudible.
+      var warm = new SpeechSynthesisUtterance('de');
+      warm.volume = 0; warm.rate = 1; warm.lang = 'de-DE';
+      if (speechVoice) warm.voice = speechVoice;
+      speechWarm = warm;
       window.speechSynthesis.speak(warm);
     } catch (e) {}
     refreshSpeechVoice();
+    // iPhone fills the voice list lazily, and in a home-screen web app the
+    // voiceschanged event does not reliably arrive at all - so re-read it a
+    // couple of times after the gesture that woke the engine, or the button
+    // stays disabled on a device that speaks German perfectly well.
+    setTimeout(refreshSpeechVoice, 250);
+    setTimeout(refreshSpeechVoice, 1200);
   }
 
   function setSpeechEnabled(on) {
@@ -5169,7 +5277,7 @@ THREE.GLTFLoader = GLTFLoader;
   function refreshVoiceButton() {
     var btn = document.getElementById('voicebtn');
     if (!btn) return;
-    var available = SPEECH_SUPPORTED && !!speechVoice;
+    var available = speechReady();
     var on = speechEnabled && available;
     btn.classList.toggle('off', !on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -5177,7 +5285,9 @@ THREE.GLTFLoader = GLTFLoader;
     btn.title = !SPEECH_SUPPORTED
       ? 'Dieser Browser kann nicht sprechen'
       : (!available
-          ? 'Keine deutsche Stimme installiert \u2014 Windows: Einstellungen \u203a Zeit und Sprache \u203a Sprache \u203a Deutsch hinzuf\u00fcgen'
+          ? (IS_IOS_SPEECH
+              ? 'Keine deutsche Stimme \u2014 iPhone: Einstellungen \u203a Bedienungshilfen \u203a Gesprochene Inhalte \u203a Stimmen \u203a Deutsch'
+              : 'Keine deutsche Stimme installiert \u2014 Windows: Einstellungen \u203a Zeit und Sprache \u203a Sprache \u203a Deutsch hinzuf\u00fcgen')
           : (speechEnabled ? 'Stimme aus (V)' : 'Stimme an (V)'));
   }
 
@@ -5201,6 +5311,17 @@ THREE.GLTFLoader = GLTFLoader;
       } catch (e) {
         window.speechSynthesis.onvoiceschanged = refreshSpeechVoice;
       }
+      // A lock screen or an app switch leaves WebKit's synthesiser paused, with
+      // an empty queue (the game's visibilitychange handler calls stopSpeech on
+      // the way out) and so nothing to nudge it back. Lift the pause on return,
+      // or every gate after the first interruption is silent.
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) return;
+        try {
+          if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        } catch (e) {}
+        refreshSpeechVoice();
+      });
     }
     refreshVoiceButton();
   })();
@@ -5215,7 +5336,7 @@ THREE.GLTFLoader = GLTFLoader;
 
   // ---------------------------------------------------------- renderer -----
   var canvas = document.getElementById('c');
-  canvas.dataset.graphicsRevision = 'kiez-reference-v111';
+  canvas.dataset.graphicsRevision = 'kiez-reference-v112';
   var renderer;
   try {
     // The beauty pass renders into its own multisampled target and the default
@@ -27720,6 +27841,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     visualPlayer.z = interpPrevZ = player.z;
     startZ = player.z;
     lane = targetLane = 1;
+    resetLaneWrap();
     laneGlideVelocity = interpPrevLaneVelocity = visualLaneVelocity = 0;
     interpPrevVy = visualVy = player.vy;
     speed = BASE_SPEED;
@@ -28232,10 +28354,82 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
   el.start.addEventListener('touchstart', function (e) { e.preventDefault(); begin(); }, { passive: false });
   el.restart.addEventListener('click', function () { reset(); });
 
+  // Outer-lane shortcuts share keyboard/touch input and the fixed physics clock.
+  // The quiz commits to the requested outer lane during the transfer; obstacles
+  // continue to test the real moving body. There is no collision immunity.
+  var LANE_WRAP_TIME = 0.48, LANE_FLIP_TIME = 0.42;
+  var laneWrapAge = 9, laneWrapCount = 0;
+  var laneFlipProgress = 1, interpPrevLaneFlip = 1, visualLaneFlip = 1;
+  var laneFlipDir = 1;
+
+  function resetLaneWrap() {
+    laneWrapAge = 9; laneWrapCount = 0;
+    laneFlipProgress = interpPrevLaneFlip = visualLaneFlip = 1;
+    laneFlipDir = 1;
+  }
+
+  function beginLaneWrap(previousLane) {
+    laneWrapAge = 0; laneWrapCount++;
+    laneFootLockActive = false;
+    laneActionAge = laneOutgoingAge = 9;
+    // A grounded wrap launches a compact aerial. An existing jump or roll
+    // keeps its own physics/clip, and rapid taps never restart a half-finished
+    // rotation or grant repeated mid-air jumps.
+    if (grounded && slideTimer <= 0 && slideExitGrace <= 0 &&
+        bufJump <= 0 && bufSlide <= 0 && laneFlipProgress >= 1) {
+      jumpWarpFrom = wrapPi(heroRunPhase - visualRunPhase);
+      jumpGaitOctant = gaitOctantAt(heroRunPhase);
+      jumpSupportSide = gaitSupportAt(heroRunPhase);
+      jumpWarpTo = wrapPi((jumpSupportSide > 0 ? 0 : Math.PI) - runPhase);
+      player.vy = 10.8;
+      grounded = false; coyote = 0; fastFalling = false;
+      jumpActionAge = 0; takeoffPulse = 1;
+      laneFlipProgress = interpPrevLaneFlip = visualLaneFlip = 0;
+      laneFlipDir = Math.sign(LANES[targetLane] - LANES[previousLane]);
+      fxTakeoff(player.x, player.z);
+    }
+    if (gameAudio) {
+      var now = gameAudio.currentTime;
+      playNoise(now, 0.20, 0.10, 920, 0.7);
+      playTone(260, now, 0.20, 0.10, 'triangle', 570);
+    }
+  }
+
+  function advanceLaneWrap(dt) {
+    laneWrapAge = Math.min(9, laneWrapAge + dt);
+    if (laneFlipProgress >= 1) return;
+    // A down swipe can still fast-fall. Finish the turn before contact instead
+    // of locking controls, snapping upright, or rolling through the pavement.
+    var flightLeft = (player.vy + Math.sqrt(player.vy * player.vy +
+      2 * GRAV * Math.max(0, player.y))) / GRAV;
+    var step = Math.max(dt / LANE_FLIP_TIME,
+      (1 - laneFlipProgress) * dt / Math.max(dt, flightLeft * 0.88));
+    laneFlipProgress = grounded ? 1 : Math.min(1, laneFlipProgress + step);
+  }
+
+  function laneForArticle() {
+    return laneWrapAge < LANE_WRAP_TIME ? targetLane : laneOf(player.x);
+  }
+
+  function applyLaneWrapPose() {
+    if (visualLaneFlip >= 1) return;
+    var turn = -laneFlipDir * Math.PI * 2 * phaseEase(visualLaneFlip);
+    var tuck = Math.sin(Math.PI * visualLaneFlip);
+    tuck *= tuck;
+    // Side somersault about the pelvis, not the feet. The imported jump clip
+    // supplies the knee tuck; this root layer carries the whole dressed rig.
+    body.rotation.z = body.rotation.z * (1 - tuck * 0.90) + turn;
+    body.rotation.y *= 1 - tuck * 0.85;
+    var pivot = 0.94;
+    body.position.x += Math.sin(turn) * pivot;
+    body.position.y += (1 - Math.cos(turn)) * pivot;
+  }
+
   // ============================================================= physics ====
   function simulate(dt) {
     interpPrevX = player.x; interpPrevY = player.y; interpPrevZ = player.z;
     interpPrevLaneVelocity = laneGlideVelocity;
+    interpPrevLaneFlip = laneFlipProgress;
     interpPrevVy = player.vy;
     interpPrevRunPhase = runPhase;
     prevZ = player.z;
@@ -28272,12 +28466,16 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
 
     if (stumbleTimer <= 0) {
       var previousTargetLane = targetLane;
-      if (bufLeft > 0 && targetLane > 0) {
-        targetLane--; bufLeft = 0; playLaneSound();
-      } else if (bufRight > 0 && targetLane < 2) {
-        targetLane++; bufRight = 0; playLaneSound();
+      var laneInput = bufLeft > 0 ? -1 : (bufRight > 0 ? 1 : 0);
+      var wrappingLane = laneInput !== 0 &&
+        (targetLane + laneInput < 0 || targetLane + laneInput > 2);
+      if (laneInput) {
+        targetLane = (targetLane + laneInput + 3) % 3;
+        if (laneInput < 0) bufLeft = 0; else bufRight = 0;
+        if (wrappingLane) beginLaneWrap(previousTargetLane);
+        else playLaneSound();
       }
-      if (targetLane !== previousTargetLane) {
+      if (targetLane !== previousTargetLane && !wrappingLane) {
         if (laneActionAge < 0.415) {
           laneOutgoingAge = laneActionAge;
           laneOutgoingDir = laneActionDir;
@@ -28319,7 +28517,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     // and gameplay never disagree about which lane the runner occupies.
     var laneX = LANES[targetLane];
     var dx = laneX - player.x;
-    var laneOmega = 16;
+    var laneOmega = laneWrapAge < LANE_WRAP_TIME ? 28 : 16;
     var laneStep = laneOmega * dt;
     var laneDecay = 1 / (1 + laneStep + 0.48 * laneStep * laneStep +
                          0.235 * laneStep * laneStep * laneStep);
@@ -28409,6 +28607,8 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
         grounded = false;
       }
     }
+
+    advanceLaneWrap(dt);
 
     // ---- run cycle + footstep audio
     var sliding = slideTimer > 0 && grounded;
@@ -28506,7 +28706,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
         // one being crossed is the one the verdict must light — it can no
         // longer be whichever gate startQuestion happened to spawn last.
         activeGate = g;
-        var idx = laneOf(player.x);
+        var idx = laneForArticle();
         var portal = ud.portals[idx];
         answerArticle(portal.userData.article, portal);
       }
@@ -29650,6 +29850,12 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
       coatTailR.rotation.z = leanRoll * -0.18 + stumbleFlail * 0.10;
     }
 
+    applyLaneWrapPose();
+    if (PROFILE_RENDER) canvas.dataset.laneWrap = JSON.stringify({
+      lane: targetLane, x: visualPlayer.x, y: visualPlayer.y,
+      age: laneWrapAge, flip: visualLaneFlip, wraps: laneWrapCount,
+      grounded: grounded, sliding: slideTimer > 0
+    });
     applyPlayerFrame(rig, visualPlayer.x, visualPlayer.y, visualPlayer.z, 0, 0, 0);
 
     // For the first load beat of a lane change, keep the selected support shoe
@@ -29824,11 +30030,13 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     // readable without fisheye distortion.
     var portraitView = clamp((0.72 - camera.aspect) / 0.30, 0, 1);
     var wideView = clamp((camera.aspect - 1.05) / 0.55, 0, 1);
+    var wrapFraming = (1 - phaseEase((laneWrapAge - 0.28) / 0.32)) * portraitView;
     // The desktop lens leaves room for the complete forward roll.
     // Portrait retains its existing slide dolly and airborne follow.
     var dolly = slideVisual * (-0.18 + wideView * 0.50) + clamp(visualPlayer.y, 0, 3.2) * 0.15;
     var backOff = 4.35 + wideView * 2.15 + speedMix * 0.30 + bridgeRevealAmount * 0.22 +
-                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 1.15;
+                  Math.abs(routeCameraMix) * 0.06 + dolly + portraitView * 1.15 +
+                  wrapFraming * phaseEase(laneWrapAge / 0.055) * 0.80;
     // Published for the near-side render cull (see nearCullZ): portrait alone
     // pulls the lens 1.15 m further back, so a fixed offset from the runner
     // would leave that whole band of street being culled on screen.
@@ -29845,11 +30053,14 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     // carry it past the top edge at apex. This does not touch FOV or backOff
     // zoom; it keeps the existing framing and just has the rig track the jump.
     var laneDelta = LANES[targetLane] - visualPlayer.x;
+    // Feed-forward removes camera lag during the six-metre portrait shortcut.
+    // The normal lane camera returns smoothly after landing.
     // Trailing the lateral move, not leading it, is what makes the street swing
     // past on a lane change instead of sliding rigidly sideways.
     var lateralLag = clamp(fxLaneVel * 0.0115, -0.42, 0.42);
     var targetX = visualPlayer.x * (0.64 + portraitView * 0.22) - laneDelta * 0.08 - lateralLag -
                   bridgeReveal * 0.24 - routeCameraMix * 0.06;
+    targetX = lerp(targetX, visualPlayer.x + clamp(visualLaneVelocity / 42, -1.25, 1.25), wrapFraming);
     var gaitWeight = grounded ? (1 - slideVisual) : 0;
     var strideBob = Math.sin(runPhase * 2) * 0.025 * gaitWeight;
     var airLift = airVisual * clamp(visualPlayer.y, 0, 3.2);
@@ -29858,6 +30069,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     sampleRoutePoint(targetX, targetY + playerSurfaceY(targetZ), targetZ);
     var desiredCamX = routePointX, desiredCamY = routePointY, desiredCamZ = routePointZ;
     var lookLogicalX = visualPlayer.x * (0.80 + portraitView * 0.12) + laneDelta * 0.11 + bridgeReveal * 1.22;
+    lookLogicalX = lerp(lookLogicalX, visualPlayer.x + clamp(visualLaneVelocity / 26, -1.40, 1.40), wrapFraming);
     var lookLogicalY = 1.12 + wideView * 1.33 + visualPlayer.y * 0.48 - slideVisual * 0.20;
     var lookLogicalZ = visualPlayer.z + 12.8 - wideView * 1.5 + speedMix * 1.6;
     sampleRoutePoint(lookLogicalX, lookLogicalY + playerSurfaceY(lookLogicalZ), lookLogicalZ);
@@ -29865,11 +30077,11 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
 
     // Softer lateral tracking than vertical/longitudinal: the rig is allowed to
     // fall behind sideways and catch up, which is the swing.
-    camPos.x += (desiredCamX - camPos.x) * damp(6.1, dt);
+    camPos.x += (desiredCamX - camPos.x) * damp(lerp(6.1, 42, wrapFraming), dt);
     camPos.y += (desiredCamY - camPos.y) * damp(7.2, dt);
     camPos.z += (desiredCamZ - camPos.z) * damp(22, dt);
 
-    camLook.x += (desiredLookX - camLook.x) * damp(10.5, dt);
+    camLook.x += (desiredLookX - camLook.x) * damp(lerp(10.5, 26, wrapFraming), dt);
     camLook.y += (desiredLookY - camLook.y) * damp(7.5, dt);
     camLook.z += (desiredLookZ - camLook.z) * damp(12, dt);
 
@@ -29890,7 +30102,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     camera.lookAt(camLook);
     // Bank into the lane change.
     fxBank += (clamp(-fxLaneVel * 0.0032, -0.085, 0.085) - fxBank) * damp(9.5, dt);
-    camera.rotation.z += leanRoll * 0.17 + fxBank + sx * shake * 0.014 +
+    camera.rotation.z += (leanRoll * 0.17 + fxBank) * (1 - wrapFraming * 0.75) + sx * shake * 0.014 +
                          fxKickRoll * kick + routePathBank(visualPlayer.z) * 0.78;
 
     // Keep the runner framed from frame one, then widen gently at full speed.
@@ -30741,6 +30953,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     visualRunPhase = lerp(interpPrevRunPhase, runPhase, renderAlpha);
     visualLaneVelocity = lerp(interpPrevLaneVelocity, laneGlideVelocity, renderAlpha);
     visualVy = lerp(interpPrevVy, player.vy, renderAlpha);
+    visualLaneFlip = lerp(interpPrevLaneFlip, laneFlipProgress, renderAlpha);
 
     // Advance presentation/action clocks before mixer weights are sampled.
     // Previously poseRunner advanced them after charMixer.update, making every
