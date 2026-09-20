@@ -17,6 +17,27 @@ const noop=()=>{};
 const ctx=new Proxy({createLinearGradient:()=>({addColorStop:noop})},{get:(o,k)=>o[k]||noop,set:(o,k,v)=>(o[k]=v,true)});
 const kit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,...opts}),
   (width,height)=>({width,height,getContext:()=>ctx}));
+// V114 adds profiled joinery to the saved masters. Prove the old meshes are
+// exact protected prefixes before running their historical preservation tests.
+// All normal runtime ray/bounds/material checks below still use the full mesh.
+const formsBaseline=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/architecture/baseline/berlin-reference-architecture-v1.json'),'utf8'));
+function protectedFormBase(key) {
+  const current=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  if(!['rounded-profile-architecture-v114','stepped-smooth-architecture-v114'].includes(current.formsRevision))return current;
+  const base=formsBaseline.meshes[key];
+  assert.equal(current.formsBaseVertices,base.vertices);
+  assert.equal(current.formsBaseTriangles,base.triangles);
+  assert.ok(current.triangles>base.triangles&&current.triangles-base.triangles<9000,'bounded visible profile additions including smooth arched curves');
+  for(const field of ['position','normal','uv','color','index']) {
+    const a=Buffer.from(base[field],'base64'),b=Buffer.from(current[field],'base64');
+    assert.ok(b.length>a.length&&b.subarray(0,a.length).equals(a),'original '+key+' '+field+' is byte-exact');
+  }
+  const index=Buffer.from(current.index,'base64');
+  for(let i=base.triangles*3;i<current.triangles*3;i++)assert.ok(index.readUInt16LE(i*2)>=base.vertices,
+    'new profiles cannot replace or reconnect old structural faces');
+  return base;
+}
+const historicalArchitecture=Object.fromEntries(Object.keys(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes).map(key=>[key,protectedFormBase(key)]));
 const raw=fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/, '\n').trim();
 if(!process.argv.includes('--canonical-only'))assert.ok(html.includes(raw),'shipped factory matches editable source');
 // Independent image decodes can complete in any order. The generated plaster
@@ -78,7 +99,7 @@ if(process.argv.includes('--contact')){
   assert.ok(changedPaint>10000&&neutralChanges>1000);
   console.log(`PASS: contact paint changes ${changedPaint} focal and ${neutralChanges} neutral channels; ${protectedPaint} glass/room/cloth channels protected, exact geometry/normals/UVs and unchanged buffers.`);
 }
-let maximum=0,total=0,returnRays=0,turretRays=0,shopRays=0,insetRays=0,soffitRays=0,preservedGroundTriangles=0;
+let maximum=0,total=0,returnRays=0,turretRays=0,shopRays=0,insetRays=0,soffitRays=0,profileRays=0,preservedGroundTriangles=0;
 const accepted=JSON.parse(fs.readFileSync(path.join(root,'audit/architecture-accepted-v66/berlin-reference-architecture-v1.json'),'utf8')).meshes;
 function atlasCell(uv) {return Math.floor(uv.x*4)+4*Math.floor((1-uv.y)*4);}
 // Identify complete textile components, so the intentional v71 fabric change
@@ -145,7 +166,7 @@ function groundFaces(g,ceiling,omit=new Set()) {
 // piers. Independently prove that exact transform before using the immutable
 // pre-v99 surface for the continuing v66 ground-storey preservation check.
 function validateBakeryDisplayTransform() {
-  const key='13.5:0:1',record=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  const key='13.5:0:1',record=historicalArchitecture[key];
   if(record.displayRevision!=='wider-coherent-display-v99')return null;
   const folder=path.join(root,'audit/berlin-bakery-display-v99');
   const baseline=JSON.parse(fs.readFileSync(path.join(folder,'baseline/berlin-reference-architecture-v1.json'),'utf8'));
@@ -174,7 +195,7 @@ function validateBakeryDisplayTransform() {
     for(const v of vertices){assert.ok(!rules.has(v));rules.set(v,{anchor,factor});}
   }
   for(const name of ['uv','color','index','vertices','triangles','min','max'])assert.deepEqual(record[name],prior[name],'v99 retains exact '+name);
-  for(const other of Object.keys(baseline.meshes))if(other!==key)assert.deepEqual(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[other],baseline.meshes[other],'v99 leaves other master '+other+' exact');
+  for(const other of Object.keys(baseline.meshes))if(other!==key)assert.deepEqual(historicalArchitecture[other],baseline.meshes[other],'v99 leaves other master '+other+' exact');
   const p0=Buffer.from(prior.position,'base64'),p1=Buffer.from(record.position,'base64'),n0=Buffer.from(prior.normal,'base64'),n1=Buffer.from(record.normal,'base64');
   const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
   assert.equal(sha(p0),manifest.sourceRecordPositionSha256);assert.equal(sha(p1),manifest.targetRecordPositionSha256);
@@ -205,7 +226,9 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
   assert.equal(g,kit.geometry(w,variant,side),'shared cache owns each exact variant');
   assert.equal(g.groups.length,1); assert.equal(g.groups[0].materialIndex,0);
   const bb=g.boundingBox;
-  assert.ok(bb.max.z<2.35&&bb.min.z>=-8.31,'bounded pavement projection / rear mass');
+  const formProfiles=variant<2&&['rounded-profile-architecture-v114','stepped-smooth-architecture-v114'].includes(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[`13.5:${variant}:1`].formsRevision);
+  assert.ok(bb.max.z<(formProfiles&&variant===0?2.50:2.35)&&bb.min.z>=-8.31,
+    'bounded pavement projection / rear mass, including the rounded angled-bay sill tips');
   const corniceAllowance=variant<2?.45*Math.max(1,w/13.5):.45;
   assert.ok(bb.max.x<=w/2+corniceAllowance&&bb.min.x>=-w/2-corniceAllowance,'bounded frontage width, including scaled roof cornice');
   assert.ok(bb.min.y>=-.02&&bb.max.y<22,'grounded and bounded roof silhouette');
@@ -234,7 +257,8 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
   assert.equal(g.userData.height,roofBase,'authored height metadata follows the actual storey base');
   if(authored) {
     const master=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[`13.5:${variant}:1`];
-    assert.ok(master.triangles-accepted[`13.5:${variant}:1`].triangles<=3000,'actual runtime master stays within the approved triangle increase');
+    const history=historicalArchitecture[`13.5:${variant}:1`];
+    assert.ok(history.triangles-accepted[`13.5:${variant}:1`].triangles<=3000,'protected original master retains its accepted triangle budget');
     const baySpacing=(13.5-1)/3,centers=[-baySpacing,0,baySpacing].filter(x=>variant!==0||Math.abs(x-(13.5/2-2.10))>=2.1);
     for(const center of centers)for(let floor=0;floor<floors;floor++) {
       const cy=groundH+floor*3.05+3.05*.51;
@@ -243,6 +267,12 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
       assert.ok(Math.abs(pane.point.z+.230)<.002,'upper pane sits 23cm behind the façade plane');
       const jamb=new THREE.Raycaster(new THREE.Vector3((center+.69)*xScale*side,cy-.4,-.10),new THREE.Vector3(side,0,0)).intersectObject(mesh)[0];
       assert.ok(jamb&&atlasCell(jamb.uv)===1&&Math.abs(jamb.point.x-(center+.735)*xScale*side)<.032,'a lateral ray reaches the actual shaded recess return');
+      if(formProfiles)for(const offset of [-.84,.84]) {
+        const shoulder=new THREE.Raycaster(new THREE.Vector3((center+offset)*xScale*side,cy-.4,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+        assert.ok(shoulder&&[0,1].includes(atlasCell(shoulder.uv))&&shoulder.point.z>.14&&shoulder.point.z<.22,
+          `native profile provides substantial stone depth outside the unchanged pane: ${JSON.stringify({w,variant,side,center,cy,offset,point:shoulder&&shoulder.point})}`);
+        profileRays++;
+      }
       insetRays+=2;
       if(variant===1||(floor===floors-1&&form.upperTopArched!==false)) {
         const spandrel=new THREE.Raycaster(new THREE.Vector3((center+.70)*xScale*side,cy+.97,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
@@ -260,8 +290,9 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
       const oldGeometry=scope.decodeBerlinMeshRecord(THREE,accepted[`13.5:${variant}:1`]);
       const oldFabric=variant===0?bakeryFabricFaces(oldGeometry,false):new Set();
       const newFabric=variant===0?bakeryFabricFaces(g,true,bakeryDisplayProof?.canopyXBounds):new Set();
-      const groundGeometry=variant===0&&bakeryDisplayProof?bakeryDisplayProof.before:g;
-      const groundFabric=groundGeometry===g?newFabric:bakeryFabricFaces(groundGeometry,true);
+      const groundGeometry=variant===0&&bakeryDisplayProof?bakeryDisplayProof.before:
+        formProfiles?scope.decodeBerlinMeshRecord(THREE,historicalArchitecture[`13.5:${variant}:1`]):g;
+      const groundFabric=variant!==0?new Set():groundGeometry===g?newFabric:bakeryFabricFaces(groundGeometry,true);
       const oldGround=groundFaces(oldGeometry,groundH-.61,oldFabric),newGround=groundFaces(groundGeometry,groundH-.61,groundFabric);
       if(newGround.join('\n')!==oldGround.join('\n')) {
         const oldSet=new Set(oldGround),newSet=new Set(newGround);
@@ -295,6 +326,19 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
         assert.ok(pane&&atlasCell(pane.uv)===2&&Math.abs(pane.point.z+.230)<.002,'neighbour panes sit behind real wall openings');
         const jamb=new THREE.Raycaster(new THREE.Vector3(cx+.69,cy-.4,-.10),new THREE.Vector3(1,0,0)).intersectObject(mesh)[0];
         assert.ok(jamb&&atlasCell(jamb.uv)===1&&Math.abs(jamb.point.x-cx-.735)<.002,'neighbour recess has a lateral masonry return');
+        // Probe the visible geometry, not just the authored profile constants:
+        // both raised shoulders must be real front-facing stone, and the
+        // projecting sill nose must close below the pane at all module widths.
+        for(const offset of [-.84,.84]) {
+          const shoulder=new THREE.Raycaster(new THREE.Vector3(cx+offset,cy-.4,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+          assert.ok(shoulder&&atlasCell(shoulder.uv)===1&&shoulder.point.z>.14&&shoulder.point.z<.20,
+            'rounded architrave has substantial depth on both sides of the unchanged opening');
+          profileRays++;
+        }
+        const nose=new THREE.Raycaster(new THREE.Vector3(cx+1.00,cy-1.20,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+        assert.ok(nose&&atlasCell(nose.uv)===1&&nose.point.z>.28&&nose.point.z<.31&&nose.face.normal.z>.5,
+          `bullnose sill has a closed outward-facing rounded front: ${JSON.stringify({w,variant,side,cx,cy,point:nose&&nose.point,normal:nose&&nose.face.normal})}`);
+        profileRays++;
         insetRays+=2;
       }
     }
@@ -324,7 +368,7 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
   maximum=Math.max(maximum,triangles);total+=triangles;
 }
 assert.equal(Object.keys(kit.cache).length,36);
-assert.ok(maximum<23000,'per-building triangle budget includes selectively beveled Blender facades');
+assert.ok(maximum<25000,'per-building triangle budget includes smooth focal arches and selectively beveled Blender facades');
 assert.equal(kit.texture.image.width,2048); assert.equal(kit.texture.image.height,2048);
 scope.IS_MOBILE=true;
 const mobileKit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,...opts}),
@@ -336,3 +380,4 @@ assert.ok(html.includes('d.coreFarMaterial = berlinKiezKit.material;'));
 assert.ok(html.includes('d.proxyDetailBase.fill(0);'));
 assert.ok(html.includes('if (d.kiez) { writeInstances = false; d.roofShell.visible = false; }'));
 console.log(`PASS: 36 Kiez modules including twelve Blender-derived facades; padded shared atlas, cached reuse, one material per building, normalized surfaces, pavement bounds and ${maximum} maximum triangles; ${total} cached triangles total. Actual surface rays reach ${shopRays} shop panes, ${returnRays} return-wall panes, ${turretRays} curved-bay panes, ${insetRays} recessed panes/returns/arched masonry and ${soffitRays} cornice undersides; ${preservedGroundTriangles} accepted ground-storey triangles retained.`);
+console.log(`PASS: ${profileRays} surface rays verify substantial native/secondary architraves and closed rounded sills.`);

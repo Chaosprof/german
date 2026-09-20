@@ -303,13 +303,28 @@ function createBerlinKiezKit(THREE, makeMaterial, canvasFactory) {
       var rim=wallInset?.06:.16, barDepth=wallInset?-depth+.045:.17;
       var ca=Math.cos(angle||0),sa=Math.sin(angle||0);
       function at(v,depth){return [x+v[0]*ca+depth*sa,y+v[1],z-v[0]*sa+depth*ca];}
+      // A substantial stone architrave: inner bead, broad convex face and
+      // rounded return into the wall. The opening and recessed pane stay put.
+      // These bands are in the existing merged mesh, not separate draws.
+      if(wallInset) {
+        var profile=[[0,rim],[.035,rim+.025],[.105,rim+.100],
+          [.265,rim+.115],[.350,rim+.085],[.420,.006]];
+        for(var band=0;band<profile.length-1;band++) {
+          var a=shape(ww+profile[band][0],hh+profile[band][0],arch);
+          var b=shape(ww+profile[band+1][0],hh+profile[band+1][0],arch);
+          for(var edge=0;edge<N;edge++) {
+            var next=(edge+1)%N;
+            quad(at(b[edge],profile[band+1][1]),at(b[next],profile[band+1][1]),
+              at(a[next],profile[band][1]),at(a[edge],profile[band][1]),frame,1);
+          }
+        }
+      }
       for(var i=0;i<N;i++) {
         var j=(i+1)%N;
-        quad(at(outer[i],rim),at(outer[j],rim),at(inner[j],rim),at(inner[i],rim),frame,1);
+        if(!wallInset)quad(at(outer[i],rim),at(outer[j],rim),at(inner[j],rim),at(inner[i],rim),frame,1);
         // A restrained contact gradient follows the real 23cm upper reveal.
         // Its front lip stays light; the wall end beside the glass is deeper.
         quad(at(inner[i],rim),at(inner[j],rim),at(inner[j],-depth),at(inner[i],-depth),isShop?0x756049:wallInset?0x9e927e:trimShade,1,wallInset?[1,1,.72,.72]:undefined);
-        if(wallInset)quad(at(outer[j],0),at(outer[i],0),at(outer[i],rim),at(outer[j],rim),frame,1);
       }
       if(isShop&&arch)for(var sp=2;sp<outer.length-1;sp++) {
         var va=outer[sp],vb=outer[sp+1],top=hh/2+.11;
@@ -326,7 +341,23 @@ function createBerlinKiezKit(THREE, makeMaterial, canvasFactory) {
       if(!isShop)box(x+sa*(barDepth+.01),y+hh*.06,z+ca*(barDepth+.01),ww,.045,.10,mullionColor,0,0,angle||0);
       // Pronounced sill and its cool contact seam make the openings read at speed.
       var sillPush=compactSill?.04:.10;
-      box(x+sa*sillPush,y-hh/2-.19,z+ca*sillPush,ww+(compactSill?.25:.49),.17,compactSill?.21:.38,wallInset?frame:cream,1,0,angle||0);
+      if(wallInset) {
+        // Broad bullnose sill, including its underside rather than a square bar.
+        var nose=[[-.13,-.12],[.235,-.12],[.285,-.085],[.30,-.025],
+          [.278,.038],[.225,.075],[-.13,.075]], half=(ww+.56)/2;
+        function sillPoint(u,q){return at([u,-hh/2-.18+q[1]],q[0]);}
+        for(var sn=0;sn<nose.length;sn++) {
+          var nn=(sn+1)%nose.length;
+          quad(sillPoint(-half,nose[sn]),sillPoint(half,nose[sn]),
+            sillPoint(half,nose[nn]),sillPoint(-half,nose[nn]),frame,1);
+        }
+        for(var sc=1;sc<nose.length-1;sc++) {
+          quad(sillPoint(-half,nose[0]),sillPoint(-half,nose[sc]),
+            sillPoint(-half,nose[sc+1]),sillPoint(-half,nose[0]),frame,1);
+          quad(sillPoint(half,nose[0]),sillPoint(half,nose[sc+1]),
+            sillPoint(half,nose[sc]),sillPoint(half,nose[0]),frame,1);
+        }
+      } else box(x+sa*sillPush,y-hh/2-.19,z+ca*sillPush,ww+(compactSill?.25:.49),.17,compactSill?.21:.38,cream,1,0,angle||0);
       box(x+sa*.06,y+hh/2+.21,z+ca*.06,ww+.37,.10,.27,trimShade,0,0,angle||0);
     }
     // Flat wall skins leave genuine openings over a set-back structural core.
