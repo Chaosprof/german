@@ -5027,6 +5027,8 @@ THREE.GLTFLoader = GLTFLoader;
   var speechEverStarted = false;  // has ANY utterance actually begun?
   var speechPrimeWait = false;    // a warm-up is already in flight
   var speechColdFails = 0;        // phrases in a row that produced no event
+  var speechWakeTries = 0;
+  var speechWakeTimer = null;
   var speechAudioParked = false;  // the graph is suspended for an utterance
   var speechParkTimer = null;
 
@@ -5148,6 +5150,9 @@ THREE.GLTFLoader = GLTFLoader;
     speechVoice = pickGermanVoice();
     var after = speechVoice ? speechVoice.name : (speechLangOnly ? 'lang-only' : 'NONE');
     if (after !== before) voiceLogState('voice ' + before + ' -> ' + after);
+    // The loop gives up quietly when there is nothing to speak with; a voice
+    // arriving late (iPhone fills the list after first paint) is its cue.
+    if (speechVoice || speechLangOnly) startSpeechWake();
     refreshVoiceButton();
   }
 
@@ -5377,15 +5382,64 @@ THREE.GLTFLoader = GLTFLoader;
         }, 400 + attempt * 450);
       }
 
-      // Two silences in a row from an engine that has never spoken: stop
-      // asking it to talk over the page's own sound.
-      if (!speechEverStarted && speechColdFails >= 2) speechParkAudio(go);
+      // An engine that has not spoken yet does not get asked to talk over the
+      // page's own sound at all. It used to take two silences first, which is
+      // exactly the first gate or two of a session - the words the player is
+      // most likely to be listening for.
+      if (!speechEverStarted) speechParkAudio(go);
       else go();
     };
     // 90 ms is the whole fix on iPhone: under the beat of a cleared gate, and
     // well under the 240 ms a correction already waits for the buzzer.
     if (IS_WEBKIT_SPEECH) speechSpeakTimer = setTimeout(fire, 90);
     else fire();
+  }
+
+  // A frame's engine does not wake on the first utterance it is handed, or the
+  // second: measured on an iPhone it takes several, spread over seconds, and
+  // then it works for the rest of the session. Spending those attempts on
+  // cleared gates costs the player the first few words of every session.
+  //
+  // So spend them where they are free instead. The runner loads its assets and
+  // sits on the start card for seconds with no audio playing at all, and a
+  // silent warm-up costs nothing there. By the time the first gate arrives the
+  // engine has usually been awake for a while.
+  //
+  // Deliberately NOT routed through speechSpeak: no cancel (which keeps a cold
+  // engine cold), no retry, and no parking of the audio graph - these are free
+  // attempts, and the player must not hear the bed stutter for them.
+  function speechWakePoke() {
+    var u;
+    speechWakeTries++;
+    try { u = new SpeechSynthesisUtterance('de'); } catch (e) { return; }
+    u.volume = 0; u.rate = 1;
+    u.lang = (speechVoice && speechVoice.lang) || 'de-DE';
+    if (speechVoice) u.voice = speechVoice;
+    u.onstart = function () {
+      if (speechEverStarted) return;
+      speechEverStarted = true;
+      speechColdFails = 0;
+      voiceLog('engine awake (warm-up started)');
+    };
+    speechWarm = u;                         // GC guard, same as every utterance
+    try { window.speechSynthesis.speak(u); } catch (e) {}
+  }
+
+  function speechWakeLoop() {
+    speechWakeTimer = null;
+    if (!SPEECH_SUPPORTED || speechEverStarted) return;
+    if (!speechEnabled || !speechReady()) return;   // re-kicked when that changes
+    if (speechWakeTries >= 14) { voiceLog('wake-up gave up after 14'); return; }
+    voiceLog('wake-up poke ' + (speechWakeTries + 1));
+    speechWakePoke();
+    speechWakeTimer = setTimeout(speechWakeLoop, 700);
+  }
+
+  function startSpeechWake() {
+    if (speechWakeTimer || speechEverStarted || !SPEECH_SUPPORTED) return;
+    // A poke has just gone out if priming brought us here: wait a beat rather
+    // than hand the engine two utterances in the same task.
+    speechWakeTimer = setTimeout(speechWakeLoop, speechWakeTries ? 700 : 0);
   }
 
   // Some engines only populate getVoices() - and only permit speaking at all -
@@ -5408,17 +5462,16 @@ THREE.GLTFLoader = GLTFLoader;
     setTimeout(function () { speechPrimeWait = false; }, 1500);
     voiceLog(speechPrimed ? 're-priming (engine still cold)' : 'priming');
     speechPrimed = true;
-    try {
-      // Non-empty text on purpose. WebKit discards an utterance with nothing to
-      // say, and a discarded utterance does not spend the user gesture - which
-      // on an iPhone is the only thing speech may ever start from, so the
-      // warm-up has to actually be an utterance. volume 0 keeps it inaudible.
-      var warm = new SpeechSynthesisUtterance('de');
-      warm.volume = 0; warm.rate = 1; warm.lang = 'de-DE';
-      if (speechVoice) warm.voice = speechVoice;
-      speechWarm = warm;
-      window.speechSynthesis.speak(warm);
-    } catch (e) {}
+    // Non-empty text on purpose. WebKit discards an utterance with nothing to
+    // say, and a discarded utterance does not spend the user gesture - which on
+    // an iPhone is the only thing speech may ever start from, so the warm-up
+    // has to actually be an utterance. volume 0 keeps it inaudible, and its
+    // onstart is what tells us the engine is finally awake.
+    // A loop tick may already be pending from page load; fold it into this
+    // one, so the gesture carries the poke and the next is a beat later.
+    if (speechWakeTimer) { clearTimeout(speechWakeTimer); speechWakeTimer = null; }
+    speechWakePoke();
+    startSpeechWake();
     refreshSpeechVoice();
     // iPhone fills the voice list lazily, and in a home-screen web app the
     // voiceschanged event does not reliably arrive at all - so re-read it a
@@ -5510,6 +5563,9 @@ THREE.GLTFLoader = GLTFLoader;
         } catch (e) {}
         refreshSpeechVoice();
       });
+      // Before any gesture, while the runner is still loading: the whole point
+      // is to be awake by the first gate, and nothing is playing yet.
+      startSpeechWake();
     }
     refreshVoiceButton();
   })();

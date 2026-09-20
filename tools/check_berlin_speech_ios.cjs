@@ -328,28 +328,37 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
   assert.ok(t.api.everStarted(), 'and the engine is now known to be awake');
 }
 
-// 12. While the engine is cold every gesture re-primes it; once a phrase has
-//     actually started, priming never runs again.
+// 12. A cold frame wants several attempts before it wakes, and the player
+//     should not pay for them with the first words of the session. The loop
+//     spends them while the runner is still loading, with nothing playing.
 {
-  const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 1 });
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 4 });
+  t.api.prime();                              // the start card
+  t.clock.advance(50);
+  assert.equal(t.api.everStarted(), false, 'one warm-up is not enough for a cold frame');
+  t.clock.advance(4000);                      // still loading: free attempts
+  assert.ok(t.api.everStarted(), 'the loop woke the engine before the run began');
+  assert.ok(t.engine.offered.length >= 4, 'it took as many tries as the engine wanted');
+  assert.equal(t.engine.spoken.length, 0, 'and the player heard none of them');
+
+  const settled = t.engine.offered.length;
+  t.clock.advance(20000);
+  assert.equal(t.engine.offered.length, settled, 'it stops poking the moment it is awake');
+
+  // Which is the point of all of it: the FIRST gate is an ordinary phrase.
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(1000);
+  assert.equal(t.engine.spoken.length, 1, 'the first gate of the session is spoken');
+  assert.equal(t.engine.spoken[0].text, 'der Bahnhof');
+}
+
+// 12b. An engine that never wakes must not be poked forever.
+{
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 9999 });
   t.api.prime();
-  t.clock.advance(50);
-  const afterFirst = t.engine.offered.length;
-  t.api.prime();                              // same second: too soon, no spam
-  t.clock.advance(50);
-  assert.equal(t.engine.offered.length, afterFirst, 'priming does not spam the engine');
-  t.clock.advance(2000);
-  t.api.prime();                              // a later gesture, still cold
-  t.clock.advance(50);
-  assert.equal(t.engine.offered.length, afterFirst + 1, 'a later gesture re-primes a cold engine');
-  t.api.speak('das', 'Tor', 1, false);
-  t.clock.advance(2000);
-  assert.ok(t.api.everStarted());
-  const afterSpeaking = t.engine.offered.length;
-  t.clock.advance(5000);
-  t.api.prime();
-  t.clock.advance(50);
-  assert.equal(t.engine.offered.length, afterSpeaking, 'a woken engine is never primed again');
+  t.clock.advance(60000);
+  assert.equal(t.api.everStarted(), false);
+  assert.ok(t.engine.offered.length <= 14, 'the wake-up gives up: ' + t.engine.offered.length);
 }
 
 // 13. The device's actual behaviour, and the reason the game stayed mute while
