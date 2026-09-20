@@ -39,6 +39,7 @@ for (const hz of [30, 59.94, 60, 90, 120, 144]) {
 const resizeCalls=[];
 let postResizes=0;
 const buffer=vm.createContext({Math, window:{innerWidth:390,innerHeight:844,devicePixelRatio:3},
+  LOCK_MOBILE_PRESENTATION:false,STABLE_PRESENTATION_SCALE:1,
   MIN_RENDER_SCALE:0.5,EMERGENCY_RENDER_SCALE:0.92,emergencyResolutionActive:false,
   MAX_RENDER_DPR:2,renderScale:1,clamp:(x,a,b)=>Math.max(a,Math.min(x,b)),
   renderer:{setDrawingBufferSize:(...args)=>resizeCalls.push(args)},
@@ -75,6 +76,7 @@ for (const [w,h,dpr,mobile] of [[390,844,3,true],[844,390,3,true],[1920,1080,1,f
 }
 function controller(mobile, minScale) {
   const c = vm.createContext({Math, Infinity,
+    IS_MOBILE:mobile,LOCK_MOBILE_PRESENTATION:mobile,STABLE_PRESENTATION_SCALE:1,
     clamp:(x,a,b)=>Math.max(a,Math.min(x,b)), lerp:(a,b,t)=>a+(b-a)*t,
     POST:{dofOn:false,aoOn:true,bloomOn:true,outlineOn:true},
     sceneRTBaseSamples:mobile?0:2, MIN_RENDER_SCALE:minScale,
@@ -88,10 +90,10 @@ function controller(mobile, minScale) {
   vm.runInContext(section('  var frameNumber = 0;', '  var presentationClock = 0;'),c);
   return c;
 }
-const slow = controller(true,0.52);
+const slow = controller(false,0.52);
 for (let i=0;i<1000;i++) {slow.frameNumber++;slow.monitorFrameBudget(Math.max(1/60,slow.renderScale*slow.renderScale/30));}
 assert.ok(slow.qualityTier > 0, 'fill pressure keeps resolution reductions that measurably help');
-assert.ok(slow.renderScale < 1, 'phone recovers fill budget');
+assert.ok(slow.renderScale < 1, 'adaptive desktop recovers fill budget');
 const lowTier = slow.qualityTier;
 for(let i=0;i<3600;i++){slow.frameNumber++;slow.monitorFrameBudget(1/60);}
 assert.ok(slow.qualityTier < lowTier, 'sustained 60 fps recovers image quality');
@@ -103,7 +105,45 @@ for(let i=0;i<300;i++)smooth.monitorFrameBudget(0.1);
 assert.equal(smooth.qualityTier,0,'background frames cannot demote quality');
 slow.MIN_RENDER_SCALE=1; slow.buildQualityLadder();
 assert.equal(slow.RES_TIER_COUNT,0,'resize removes unavailable supersampling rungs');
-assert.equal(slow.TIER_MSAA_OFF,0,'phone ladder has no inert MSAA rung');
+const phone=controller(true,0.52);
+assert.equal(phone.TIER_MSAA_OFF,0,'phone ladder has no inert MSAA rung');
+assert.equal(phone.RES_TIER_COUNT,0,'phone has no resolution-reduction rungs');
+assert.equal(phone.QUALITY_TIER_MAX,2,'phone retains only cadence/particle relief');
+assert.equal(phone.TIER_BLOOM_OFF,0,'phone never drops the lighting finish');
+
+// Exercise the actual allocator together with every mobile tier and sustained
+// frame-pressure trace. Even a direct emergency/low-scale request cannot erase
+// Retina detail. Desktop adaptation is covered independently below.
+for(const [width,height,dpr] of [[375,667,2],[390,844,3],[430,932,3],[844,390,3],[1024,1366,2]]) {
+  const c=controller(true,.5);let allocations=0;
+  c.window={innerWidth:width,innerHeight:height,devicePixelRatio:dpr};
+  c.renderer={setDrawingBufferSize(w,h,ratio){allocations++;c.canvas.width=Math.floor(w*ratio);c.canvas.height=Math.floor(h*ratio);}};
+  vm.runInContext(budgetSource,c);
+  vm.runInContext(section('  var renderScale = 1;','  renderer.outputColorSpace ='),c);
+  const pixels=c.canvas.width*c.canvas.height;
+  assert.equal(c.canvas.dataset.resolutionPolicy,'fixed-high-detail');
+  assert.ok(pixels<=1250000 && pixels>Math.min(width*height*dpr*dpr,1250000)*.99);
+  for(const requestedScale of [.92,.5,.1,0,1]) {
+    c.emergencyResolutionActive=true;c.applyRenderScale(requestedScale);
+    assert.equal(c.renderScale,1);assert.equal(c.canvas.width*c.canvas.height,pixels);
+  }
+  c.emergencyResolutionActive=false;
+  for(let tier=0;tier<=c.QUALITY_TIER_MAX;tier++) {
+    c.applyQualityTier(tier);assert.equal(c.renderScale,1);
+    assert.ok(c.aoActive && c.bloomActive && c.outlineActive);
+    assert.equal(c.emergencyResolutionActive,false);
+  }
+  for(const frameMs of [1000/60,25,1000/30,80,1000/60]) {
+    for(let frame=0;frame<Math.ceil(180000/frameMs);frame++) {
+      c.frameNumber++;c.monitorFrameBudget(frameMs/1000);
+      assert.equal(c.renderScale,1);
+      assert.ok(c.aoActive && c.bloomActive && c.outlineActive);
+      assert.equal(c.canvas.width*c.canvas.height,pixels);
+    }
+  }
+  assert.equal(allocations,1,'15-minute pressure/recovery trace never reallocates the mobile scene');
+}
+console.log('PASS: fixed mobile sampling/lighting at five Retina phone/tablet/landscape sizes; every tier, emergency requests, and 15-minute slow/recovery traces retain the exact opening buffer.');
 const rotated=controller(false,0.5);
 rotated.applyQualityTier(rotated.TIER_RES_START+1);
 rotated.MIN_RENDER_SCALE=1;

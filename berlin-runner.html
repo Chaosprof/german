@@ -5580,7 +5580,7 @@ THREE.GLTFLoader = GLTFLoader;
 
   // ---------------------------------------------------------- renderer -----
   var canvas = document.getElementById('c');
-  canvas.dataset.graphicsRevision = 'kiez-reference-v112';
+  canvas.dataset.graphicsRevision = 'kiez-reference-v113';
   var renderer;
   try {
     // The beauty pass renders into its own multisampled target and the default
@@ -5649,6 +5649,10 @@ THREE.GLTFLoader = GLTFLoader;
   // Window width controls the HUD layout, not the device's rendering budget.
   // A narrow desktop panel still keeps desktop texture detail and edge sampling.
   var IS_MOBILE = !HAS_FINE_POINTER;
+  // Preserve the opening image throughout a phone run. CSS resolution is not
+  // Retina resolution: falling from ~2 scene pixels per CSS pixel to 1 erased
+  // three quarters of the detail after the first few slow frames.
+  var LOCK_MOBILE_PRESENTATION = IS_MOBILE;
   // Fill cost is a function of TOTAL drawing-buffer pixels, not of the DPR
   // multiplier — and expressing the ceiling as a ratio quietly punished the
   // devices with the smallest viewports, which is backwards.
@@ -5679,7 +5683,7 @@ THREE.GLTFLoader = GLTFLoader;
   var emergencyResolutionActive = false;
   // Preserve at least CSS resolution where the pixel budget allows it. On
   // huge screens the budget itself is the floor, not unrestricted native 4K.
-  var MIN_RENDER_SCALE = Math.min(1,
+  var MIN_RENDER_SCALE = LOCK_MOBILE_PRESENTATION ? 1 : Math.min(1,
     1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
   // Keep the pixel-budgeted native DPR throughout the run. Fine foliage and
   // softened silhouettes need that sample density as much as the title screen.
@@ -5688,7 +5692,9 @@ THREE.GLTFLoader = GLTFLoader;
   function applyRenderScale(scale) {
     photoRenderDirty = true;
     var scaleFloor = MIN_RENDER_SCALE * (emergencyResolutionActive ? EMERGENCY_RENDER_SCALE : 1);
-    renderScale = clamp(scale, scaleFloor, 1);
+    // Enforce this at the allocation boundary as well as in the ladder, so
+    // resize, recovery and future callers cannot quietly soften a phone.
+    renderScale = LOCK_MOBILE_PRESENTATION ? STABLE_PRESENTATION_SCALE : clamp(scale, scaleFloor, 1);
     var vw = Math.max(1, window.innerWidth), vh = Math.max(1, window.innerHeight);
     var dpr = Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR) * renderScale;
     // Effect-only tier changes must not reset the canvas or invalidate depth
@@ -5702,6 +5708,8 @@ THREE.GLTFLoader = GLTFLoader;
     if (typeof postResize === 'function') postResize();
   }
   applyRenderScale(renderScale);
+  canvas.dataset.resolutionPolicy = LOCK_MOBILE_PRESENTATION ? 'fixed-high-detail' : 'adaptive';
+  canvas.dataset.pixelBudget = String(PIXEL_BUDGET);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   // Tonemapping lives in the composite pass (see the post chain below): ACES
   // rolls saturation off long before it reaches white, which is exactly the
@@ -26815,6 +26823,9 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     return { version:1, game:'Berlin Runner', build:canvas.dataset.graphicsRevision || null,
       device:deviceLabel || '', userAgent:navigator.userAgent,
       dpr:window.devicePixelRatio || 1, mobilePath:IS_MOBILE,
+      presentation:{resolutionPolicy:canvas.dataset.resolutionPolicy || 'adaptive',
+        pixelBudget:Number(canvas.dataset.pixelBudget) || null,
+        scenePixels:canvas.width * canvas.height},
       startedAt:profileSessionStarted ? new Date(profileSessionStarted).toISOString() : null,
       capturedAt:new Date().toISOString(),
       lighting: {
@@ -30816,10 +30827,12 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     var t = 0;
     // 0 means "this rung does not exist": every test against it is
     // `qualityTier < TIER_X`, and no tier is ever below 0.
-    TIER_DOF_OFF = POST.dofOn ? ++t : 0;
-    TIER_MSAA_OFF = sceneRTBaseSamples > 0 ? ++t : 0;
+    TIER_DOF_OFF = POST.dofOn && !LOCK_MOBILE_PRESENTATION ? ++t : 0;
+    TIER_MSAA_OFF = sceneRTBaseSamples > 0 && !LOCK_MOBILE_PRESENTATION ? ++t : 0;
     // Supersampling rungs only exist where there is supersampling.
-    RES_TIER_COUNT = MIN_RENDER_SCALE < 0.999 ? 3 : 0;
+    // Phone pressure can reduce update frequency and incidental particles,
+    // never the sampling density, geometry, textures or lighting finish.
+    RES_TIER_COUNT = !LOCK_MOBILE_PRESENTATION && MIN_RENDER_SCALE < 0.999 ? 3 : 0;
     TIER_RES_START = t + 1;
     t += RES_TIER_COUNT;
     TIER_SHADOW_SLOW = ++t;
@@ -30849,9 +30862,9 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     // first. SSAO and bloom remain on the ladder rather than being deleted,
     // because a genuinely fill-bound device would still want them -- they are
     // simply last in line now, where their measured value puts them.
-    TIER_AO_OFF = ++t;
-    TIER_BLOOM_OFF = ++t;
-    TIER_FOCAL_OUTLINE = ++t;
+    TIER_AO_OFF = LOCK_MOBILE_PRESENTATION ? 0 : ++t;
+    TIER_BLOOM_OFF = LOCK_MOBILE_PRESENTATION ? 0 : ++t;
+    TIER_FOCAL_OUTLINE = LOCK_MOBILE_PRESENTATION ? 0 : ++t;
     QUALITY_TIER_MAX = t;
   }
   buildQualityLadder();
@@ -30904,9 +30917,9 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     tier = clamp(tier, 0, QUALITY_TIER_MAX);
     if (tier === qualityTier) return;
     qualityTier = tier;
-    dofActive = POST.dofOn && TIER_DOF_OFF > 0 && qualityTier < TIER_DOF_OFF;
-    aoActive = POST.aoOn && qualityTier < TIER_AO_OFF;
-    bloomActive = POST.bloomOn && qualityTier < TIER_BLOOM_OFF;
+    dofActive = POST.dofOn && (TIER_DOF_OFF === 0 || qualityTier < TIER_DOF_OFF);
+    aoActive = POST.aoOn && (TIER_AO_OFF === 0 || qualityTier < TIER_AO_OFF);
+    bloomActive = POST.bloomOn && (TIER_BLOOM_OFF === 0 || qualityTier < TIER_BLOOM_OFF);
     shadowSlow = qualityTier >= TIER_SHADOW_SLOW;
     // NOT sun.castShadow -- see applyShadowScope for why that flag is frozen.
     applyShadowScope(qualityTier >= TIER_SHADOW_OFF);
@@ -30927,12 +30940,12 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     // rungs at once on a high-DPR device. Interpolate against the real floor
     // instead so every device gets RES_TIER_COUNT evenly spaced steps down to
     // its own 1:1 limit, never below it.
-    emergencyResolutionActive = qualityTier >= TIER_FOCAL_OUTLINE;
-    var qualityRenderScale = RES_TIER_COUNT > 0
-      ? lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT) : 1;
+    emergencyResolutionActive = !LOCK_MOBILE_PRESENTATION && TIER_FOCAL_OUTLINE > 0 && qualityTier >= TIER_FOCAL_OUTLINE;
+    var qualityRenderScale = LOCK_MOBILE_PRESENTATION ? STABLE_PRESENTATION_SCALE :
+      (RES_TIER_COUNT > 0 ? lerp(1, MIN_RENDER_SCALE, resSteps / RES_TIER_COUNT) : 1);
     if (emergencyResolutionActive) qualityRenderScale *= EMERGENCY_RENDER_SCALE;
     applyRenderScale(qualityRenderScale);
-    setSceneRTLeanMode(qualityTier >= TIER_MSAA_OFF);
+    setSceneRTLeanMode(LOCK_MOBILE_PRESENTATION || (TIER_MSAA_OFF > 0 && qualityTier >= TIER_MSAA_OFF));
     adaptiveSlowMode = qualityTier >= TIER_SHADOW_OFF;
   }
 
@@ -31376,7 +31389,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     CSS_PIXELS = Math.max(1, vw * vh);
     MAX_RENDER_DPR = Math.min(
       Math.sqrt(PIXEL_BUDGET / CSS_PIXELS), IS_MOBILE ? 2.5 : 2.0);
-    MIN_RENDER_SCALE = Math.min(1,
+    MIN_RENDER_SCALE = LOCK_MOBILE_PRESENTATION ? 1 : Math.min(1,
       1 / Math.max(0.0001, Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR)));
     // Rotation, zoom and moving between monitors can change the usable rungs.
     var viewportTier = rebuildViewportQualityTier();

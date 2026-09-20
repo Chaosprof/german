@@ -13,7 +13,8 @@ Object.assign(c,{window:{location:{search:'?profile=1'},innerWidth:390,innerHeig
   navigator:{userAgent:'iPhone Safari test fixture'},IS_MOBILE:true,
   renderer:{capabilities:{isWebGL2:true},info:{render:{calls:123,triangles:456}}},
   started:true,gameOver:false,perfWarmup:10,qualityTier:0,renderScale:1,distance:100,
-  canvas:{width:780,height:1688,dataset:{postProcessing:'depth-composite'}},
+  aoActive:false,contactAORT:null,
+  canvas:{width:780,height:1688,dataset:{postProcessing:'depth-composite',resolutionPolicy:'fixed-high-detail',pixelBudget:'1250000'}},
   scene:new THREE.Scene(),camera:new THREE.PerspectiveCamera(),MAT:{},
   STREET_MAT:{},STATION_MAT:{},BRIDGE_MAT:{},TUNNEL_MAT:{}});
 c.scene.fog=new THREE.Fog(0xdbe4e9,48,168);
@@ -23,6 +24,11 @@ Object.assign(c,{sun:new THREE.DirectionalLight(0xffdfb4,3.32),hemi:{intensity:1
   skyTextures:[{image:{width:1536,height:1024},userData:{panoramaScale:3}}],
   skyMat:{uniforms:{uMapAScale:{value:3},uMix:{value:0},uDayAir:{value:1},uStreetVistaOn:{value:0}}}});
 c.sun.position.set(-62,75,-9);c.sun.target.position.set(0,0,14);
+c.BASE_EXPOSURE=1.04;c.shadowFocused=false;c.shadowSlow=false;
+vm.runInContext(section('  var POST = {','  var postVert ='),c);
+vm.runInContext(html.match(/  var SHADOW_BOX =[^;]+;/)[0],c);
+c.sun.shadow.mapSize.set(c.SHADOW_MAP_SIZE,c.SHADOW_MAP_SIZE);
+vm.runInContext(section('  function shadowRefreshPeriod() {','  // Broader load-shedding'),c);
 vm.runInContext(section('  var PROFILE_RENDER =','  // Called in place of renderer.render'),c);
 vm.runInContext(section('  function makeDeviceReport(deviceLabel) {','  var profilePanel = null;'),c);
 c.profileSessionStarted=Date.UTC(2026,8,9,12);
@@ -48,6 +54,9 @@ assert.equal(c.profileSession.length,4);
 const report=c.makeDeviceReport('iPhone test · Low Power Mode off');
 assert.equal(report.device,'iPhone test · Low Power Mode off');
 assert.equal(report.dpr,3);assert.equal(report.mobilePath,true);
+assert.equal(report.presentation.resolutionPolicy,'fixed-high-detail');
+assert.equal(report.presentation.pixelBudget,1250000);
+assert.equal(report.presentation.scenePixels,1350*624,'report gives actual latest scene allocation');
 assert.equal(report.renderer.gpuTimer,'unavailable','unsupported GPU timer never blocks a report');
 assert.equal(report.lighting.setting,'fixed warm daylight');
 assert.deepEqual([report.lighting.sequenceLights.slots,report.lighting.sequenceLights.markers],[0,0],
