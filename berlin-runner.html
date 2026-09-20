@@ -5148,6 +5148,24 @@ THREE.GLTFLoader = GLTFLoader;
     refreshVoiceButton();
   }
 
+  // NEVER cancel an engine that has not spoken yet. Measured on an iPhone: a
+  // frame's synthesiser drops what it is handed until it has woken up, and a
+  // cancel() aimed at it while it is still cold keeps it that way - the game
+  // cancelled before every phrase and before every retry, so it re-wedged the
+  // engine on every gate and never got a word out, while a test frame that
+  // never cancels wakes up on its own after a few tries.
+  //
+  // Nothing is lost by holding back: an engine that has never started an
+  // utterance has nothing to interrupt. Once one has actually been heard, the
+  // cancel is both safe and necessary - it is what makes the latest word win.
+  function speechCancel() {
+    if (!SPEECH_SUPPORTED || !speechEverStarted) return;
+    try {
+      var synth = window.speechSynthesis;
+      if (synth.speaking || synth.pending) synth.cancel();
+    } catch (e) {}
+  }
+
   function duckForSpeech() {
     musicDuck = 0.40;
     applyMusicGain(0.05);
@@ -5171,7 +5189,7 @@ THREE.GLTFLoader = GLTFLoader;
     if (speechRetryTimer) { clearTimeout(speechRetryTimer); speechRetryTimer = null; }
     if (!SPEECH_SUPPORTED) return;
     speechCurrent = null;
-    try { window.speechSynthesis.cancel(); } catch (e) {}
+    speechCancel();
     unduckForSpeech();
   }
 
@@ -5268,7 +5286,7 @@ THREE.GLTFLoader = GLTFLoader;
     attempt = attempt || 0;
     if (speechSpeakTimer) { clearTimeout(speechSpeakTimer); speechSpeakTimer = null; }
     if (speechRetryTimer) { clearTimeout(speechRetryTimer); speechRetryTimer = null; }
-    try { synth.cancel(); } catch (e) {}
+    speechCancel();
     var fire = function () {
       speechSpeakTimer = null;
       var u = build();
