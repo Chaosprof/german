@@ -5026,6 +5026,9 @@ THREE.GLTFLoader = GLTFLoader;
   var speechRetryTimer = null;    // retries while the engine is still cold
   var speechEverStarted = false;  // has ANY utterance actually begun?
   var speechPrimeWait = false;    // a warm-up is already in flight
+  var speechColdFails = 0;        // phrases in a row that produced no event
+  var speechAudioParked = false;  // the graph is suspended for an utterance
+  var speechParkTimer = null;
 
   // Every browser on an iPhone is WebKit, and WebKit's synthesiser has three
   // habits that are fatal to the way this is written: a speak() issued in the
@@ -5166,6 +5169,38 @@ THREE.GLTFLoader = GLTFLoader;
     } catch (e) {}
   }
 
+  // Last resort, and it costs something: park the whole audio graph for the
+  // length of the phrase. The bed, the city noise and the footsteps all stop
+  // for about a second.
+  //
+  // Some frames never let the synthesiser start while the page is producing
+  // sound without pause - and this page is: a looping noise buffer and a
+  // rumble oscillator run from the first gesture to the end of the run,
+  // whatever the music button says. Ducking the bed is not enough, because
+  // the sources keep running underneath it.
+  //
+  // This only ever engages on a device where the voice has already failed
+  // twice over with no event at all, so a phone that speaks normally never
+  // loses a note of the bed.
+  function speechParkAudio(then) {
+    if (!gameAudio || gameAudio.state !== 'running') { then(); return; }
+    speechAudioParked = true;
+    voiceLog('parking the audio graph');
+    var done = false;
+    var go = function () { if (done) return; done = true; then(); };
+    // Do not let a suspend that never settles swallow the phrase with it.
+    setTimeout(go, 250);
+    try { gameAudio.suspend().then(go, go); } catch (e) { go(); }
+  }
+
+  function speechUnparkAudio() {
+    if (speechParkTimer) { clearTimeout(speechParkTimer); speechParkTimer = null; }
+    if (!speechAudioParked) return;
+    speechAudioParked = false;
+    voiceLog('audio graph back');
+    try { if (gameAudio && gameAudio.state === 'suspended') gameAudio.resume(); } catch (e) {}
+  }
+
   function duckForSpeech() {
     musicDuck = 0.40;
     applyMusicGain(0.05);
@@ -5177,6 +5212,7 @@ THREE.GLTFLoader = GLTFLoader;
     speechDuckTimer = setTimeout(unduckForSpeech, 4000);
   }
   function unduckForSpeech() {
+    speechUnparkAudio();
     if (speechDuckTimer) { clearTimeout(speechDuckTimer); speechDuckTimer = null; }
     if (musicDuck === 1) return;
     musicDuck = 1;
@@ -5302,7 +5338,8 @@ THREE.GLTFLoader = GLTFLoader;
       u.onstart = function (ev) {
         started = true;
         speechEverStarted = true;             // the engine is awake from here
-        voiceLog('onstart "' + u.text + '"');
+        speechColdFails = 0;
+        voiceLog('onstart "' + u.text + '"' + (speechAudioParked ? ' (audio parked)' : ''));
         if (onstart) onstart.call(u, ev);
       };
       u.onend = function (ev) { voiceLog('onend'); if (onend) onend.call(u, ev); };
@@ -5310,23 +5347,40 @@ THREE.GLTFLoader = GLTFLoader;
         voiceLog('ONERROR ' + ((ev && ev.error) || '?'));
         if (onerror) onerror.call(u, ev);
       };
-      voiceLog('speak() try ' + (attempt + 1) + ' voice=' +
-               (u.voice ? u.voice.name : 'lang-only'));
-      try { synth.speak(u); } catch (e) { voiceLog('speak() threw'); unduckForSpeech(); return; }
+      var go = function () {
+        voiceLog('speak() try ' + (attempt + 1) + ' voice=' +
+                 (u.voice ? u.voice.name : 'lang-only') +
+                 ' audio=' + (gameAudio ? gameAudio.state : 'none'));
+        try { synth.speak(u); }
+        catch (e) { voiceLog('speak() threw'); unduckForSpeech(); return; }
+        scheduleSpeechRetry();
+        // A parked graph must come back even when the engine says nothing at
+        // all about the utterance it just swallowed.
+        if (speechAudioParked) {
+          if (speechParkTimer) clearTimeout(speechParkTimer);
+          speechParkTimer = setTimeout(speechUnparkAudio, 3000);
+        }
+      };
       // A cold engine swallows what it is handed and says nothing about it:
-      // no start, no error. Measured on an iPhone, an iframe drops the FIRST
-      // utterance it ever offers and honours the next one - so a dropped
-      // phrase is worth offering again rather than losing the word the player
-      // just earned. Twice, and only while nothing newer has taken its place.
-      if (attempt < 2) {
+      // no start, no error. So a dropped phrase is worth offering again rather
+      // than losing the word the player just earned - twice, and only while
+      // nothing newer has taken its place.
+      function scheduleSpeechRetry() {
+        if (attempt >= 2) return;
         speechRetryTimer = setTimeout(function () {
           speechRetryTimer = null;
           if (started || speechCurrent !== u) return;
           try { if (synth.speaking) return; } catch (e) {}
-          voiceLog('dropped, no event - retrying');
+          speechColdFails++;
+          voiceLog('dropped, no event (' + speechColdFails + ' in a row) - retrying');
           speechSpeak(build, attempt + 1);
         }, 400 + attempt * 450);
       }
+
+      // Two silences in a row from an engine that has never spoken: stop
+      // asking it to talk over the page's own sound.
+      if (!speechEverStarted && speechColdFails >= 2) speechParkAudio(go);
+      else go();
     };
     // 90 ms is the whole fix on iPhone: under the beat of a cleared gate, and
     // well under the 240 ms a correction already waits for the buzzer.

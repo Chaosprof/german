@@ -51,6 +51,10 @@ function makeClock() {
 // opts.coldCancel    - a cancel() arriving before the engine has ever started
 //                      an utterance wedges it for good: nothing it is handed
 //                      afterwards is ever spoken
+// opts.audioBlocks   - an audio context: while it is 'running' the engine
+//                      speaks nothing at all, which is the page-makes-sound
+//                      hypothesis stated as behaviour
+// opts.onSpeak       - called with each utterance as it is offered
 function makeEngine(clock, opts) {
   const spoken = [];      // every AUDIBLE utterance the engine actually started
   const offered = [];     // every utterance handed to speak(), accepted or not
@@ -72,7 +76,10 @@ function makeEngine(clock, opts) {
     resume() { synth.paused = false; },
     speak(u) {
       offered.push(u);
+      if (opts.onSpeak) opts.onSpeak(u);
       if (wedged) return;                        // nothing gets out, ever again
+      // The page's own sound holds the engine shut.
+      if (opts.audioBlocks && opts.audioBlocks.state === 'running') return;
       // A cold frame swallows the utterances it is handed first, with no start
       // and no error, and honours them once it has woken up.
       if (opts.coldFrame && everOffered++ < opts.coldFrame) return;
@@ -98,6 +105,19 @@ function makeEngine(clock, opts) {
   return { synth: synth, spoken: spoken, offered: offered };
 }
 
+// An AudioContext whose suspend/resume settle synchronously, so a test can
+// assert on the state the engine saw without unwinding the stack.
+function makeAudioContext() {
+  const settled = { then(fn) { fn(); return settled; } };
+  const ctx = {
+    state: 'running',
+    log: [],
+    suspend() { ctx.state = 'suspended'; ctx.log.push('suspend'); return settled; },
+    resume() { ctx.state = 'running'; ctx.log.push('resume'); return settled; }
+  };
+  return ctx;
+}
+
 function makeVoice(name, lang, local) {
   return { name: name, lang: lang, localService: local, default: false };
 }
@@ -117,7 +137,8 @@ function load(opts) {
     this.pitch = 1; this.rate = 1; this.volume = 1;
     this.onstart = null; this.onend = null; this.onerror = null;
   }
-  const win = { speechSynthesis: engine.synth, SpeechSynthesisUtterance: Utterance };
+  const win = { speechSynthesis: engine.synth, SpeechSynthesisUtterance: Utterance,
+                __gameAudio: opts.audio || null };
   const doc = { getElementById: () => btn, addEventListener() {}, hidden: false };
   const store = {};
   const localStorage = { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); } };
@@ -126,7 +147,7 @@ function load(opts) {
   const factory = new Function(
     'window', 'navigator', 'document', 'localStorage', 'setTimeout', 'clearTimeout',
     'SpeechSynthesisUtterance', 'unlockGameAudio', 'applyMusicGain',
-    'var musicDuck = 1;\n' + source +
+    'var musicDuck = 1;\nvar gameAudio = window.__gameAudio || null;\n' + source +
     '\nreturn {\n' +
     '  speak: speakArticleWord, prime: primeSpeech, stop: stopSpeech,\n' +
     '  refresh: refreshSpeechVoice, enable: setSpeechEnabled,\n' +
@@ -369,6 +390,46 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
   t.api.speak('der', 'Bahnhof', 1, false);
   t.clock.advance(3000);
   assert.equal(t.engine.spoken.length, 1, 'the voice still works after being switched off cold');
+}
+
+// 15. The page's own sound holds the engine shut - a looping noise buffer and
+//     a rumble oscillator run here from the first gesture to the end of the
+//     run, whatever the music button says. After two silences the graph is
+//     parked for the length of the phrase, and comes back afterwards.
+{
+  const audio = makeAudioContext();
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, audio: audio, audioBlocks: audio,
+                   onSpeak: u => { u.audioAtSpeak = audio.state; } });
+  t.api.prime();
+  t.clock.advance(1000);
+  assert.equal(t.engine.spoken.length, 0, 'the warm-up is swallowed while the page makes sound');
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(3000);
+  assert.equal(t.engine.spoken.length, 1, 'the phrase is heard once the graph is parked');
+  assert.equal(t.engine.spoken[0].audioAtSpeak, 'suspended', 'and it was parked when it spoke');
+  assert.equal(audio.state, 'running', 'the bed is back afterwards');
+  assert.ok(t.api.everStarted());
+
+  // Proven awake: the next phrase must not park anything.
+  audio.log.length = 0;
+  t.api.speak('die', 'Strasse', 2, false);
+  t.clock.advance(3000);
+  assert.deepEqual(audio.log, [], 'a working engine never costs the player the bed');
+}
+
+// 16. A phone where speech works normally never has its audio touched.
+{
+  const audio = makeAudioContext();
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, audio: audio });
+  t.api.prime();
+  t.clock.advance(1000);
+  audio.log.length = 0;
+  for (const noun of ['Bahnhof', 'Tor', 'Baum']) {
+    t.api.speak('der', noun, 1, false);
+    t.clock.advance(2000);
+  }
+  assert.equal(t.engine.spoken.length, 3);
+  assert.deepEqual(audio.log, [], 'the audio graph is never parked when nothing is wrong');
 }
 
 console.log('berlin speech / iOS: all checks passed');

@@ -60,6 +60,12 @@
 <div class="row"><button data-t="13"><b>13 &mdash; frame audio + parent speech</b>Beeps in the frame, speaks in the top page<small>If 12 is silent and this speaks, that is the fix</small></button></div>
 <div class="row"><button data-t="14"><b>14 &mdash; audio suspended</b>Beeps, suspends the context, then speaks<small>If this speaks, the audio context is the blocker</small></button></div>
 
+<p class="hint">The last two are the game for real: the frame makes sound <b>without pause</b> &mdash; a looping city bed and a rumble oscillator, which run from the first tap to the end of a run whatever the music button says. Every earlier test only ever played a beep that had already finished.</p>
+
+<div class="row"><button data-t="15"><b>15 &mdash; continuous audio + speech</b>Frame keeps playing, then speaks<small>The game, exactly</small></button></div>
+<div class="row"><button data-t="16"><b>16 &mdash; continuous audio parked</b>Suspends the graph, speaks, resumes<small>If 15 is silent and this speaks, that is the fix</small></button></div>
+<div class="row"><button class="util" data-t="quiet">Stop the frame audio</button></div>
+
 <div class="row"><button class="util" data-t="frameenv">Frame environment</button><button class="util" data-t="env">Re-read environment</button><button class="util" data-t="copy">Copy log</button></div>
 
 <div id="log"></div>
@@ -289,6 +295,17 @@
     '14': function () {
       log('--- 14: frame audio suspended, then the frame speaks ---', 'note');
       withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'audio-suspend' }, '*'); });
+    },
+    '15': function () {
+      log('--- 15: the frame makes sound without pause, and speaks ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'loud-self' }, '*'); });
+    },
+    '16': function () {
+      log('--- 16: park the continuous audio, then speak ---', 'note');
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'loud-park' }, '*'); });
+    },
+    'quiet': function () {
+      withFrame(function (f) { f.contentWindow.postMessage({ cmd: 'quiet' }, '*'); });
     },
     'frameenv': function () {
       log('--- frame environment ---', 'note');

@@ -94,6 +94,37 @@ frame
     return audio;
   }
 
+  // Sound without pause, the way the game makes it.
+  var loopSrc = null, loopGain = null, rumble = null;
+  function startContinuous() {
+    var ctx = startAudio();
+    if (!ctx || loopSrc) return;
+    try {
+      var buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      loopSrc = ctx.createBufferSource();
+      loopSrc.buffer = buf; loopSrc.loop = true;
+      var band = ctx.createBiquadFilter();
+      band.type = 'bandpass'; band.frequency.value = 620; band.Q.value = 0.5;
+      loopGain = ctx.createGain(); loopGain.gain.value = 0.06;
+      loopSrc.connect(band); band.connect(loopGain); loopGain.connect(ctx.destination);
+      loopSrc.start();
+      rumble = ctx.createOscillator();
+      var rg = ctx.createGain();
+      rumble.frequency.value = 42; rg.gain.value = 0.05;
+      rumble.connect(rg); rg.connect(ctx.destination);
+      rumble.start();
+      report('continuous city bed + rumble started, state=' + ctx.state);
+    } catch (e) { report('continuous audio threw - ' + e); }
+  }
+  function stopContinuous() {
+    try { if (loopSrc) loopSrc.stop(); } catch (e) {}
+    try { if (rumble) rumble.stop(); } catch (e) {}
+    loopSrc = rumble = null;
+    report('continuous audio stopped');
+  }
+
   window.addEventListener('message', function (e) {
     var cmd = e.data && e.data.cmd;
     if (cmd === 'self') {
@@ -139,6 +170,31 @@ frame
           });
         }, 600);
       });
+    } else if (cmd === 'loud-self') {
+      // The game does not play a beep and stop: a looping noise buffer and a
+      // rumble oscillator run from the first gesture to the end of the run.
+      // This is that, and it is the one condition never tested so far.
+      ensurePrimed(function () {
+        startContinuous();
+        setTimeout(function () { speakWith(window, '15 continuous audio + frame speech'); }, 700);
+      });
+    } else if (cmd === 'loud-park') {
+      ensurePrimed(function () {
+        startContinuous();
+        setTimeout(function () {
+          if (!audio) { speakWith(window, '16 frame speech'); return; }
+          audio.suspend().then(function () {
+            report('continuous audio parked, state=' + audio.state);
+            speakWith(window, '16 continuous audio parked + frame speech');
+            setTimeout(function () {
+              audio.resume();
+              report('continuous audio resumed, state=' + audio.state);
+            }, 2500);
+          }, function (err) { report('16: suspend failed - ' + err); });
+        }, 700);
+      });
+    } else if (cmd === 'quiet') {
+      stopContinuous();
     } else if (cmd === 'env') {
       var own = -1, par = '-';
       try { own = (window.speechSynthesis.getVoices() || []).length; } catch (err) { own = 'threw'; }
