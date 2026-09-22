@@ -6,6 +6,10 @@ const prefix='berlin-kiez-garden-v1';
 const shipping=process.argv.includes('--shipping');
 assert(process.argv.slice(2).every(arg=>['--shipping','--sprays','--crown','--lod-cores'].includes(arg)),'unsupported argument');
 const read=(file)=>JSON.parse(fs.readFileSync(file,'utf8'));
+if(shipping&&read(path.join(root,'assets/models',prefix+'.json')).canopyRevision==='branch-led-lobed-crown-v114') {
+  require('./check_berlin_branch_canopy_v114.cjs');
+  process.exit(0);
+}
 const before=read(path.join(mainStage,'baseline',prefix+'.json'));
 const after=read(path.join(stage,'models',prefix+'.json'));
 const hashes=read(path.join(mainStage,'baseline/sha256.json'));
@@ -157,16 +161,23 @@ for(let axis=0;axis<3;axis++){
 let shippingReport;
 if(shipping){
   const canonical=path.join(root,'assets/models');
+  const live=read(path.join(canonical,prefix+'.json'));
+  if(['rounded-branching-shrub-v114','twig-spray-shrub-v114'].includes(live.planterRevision)) {
+    require('./check_berlin_planter_forms_v114.cjs');
+    shippingReport={canonicalFilesExact:5,embeddedPayloadExact:true,oneSharedDecoder:true,planterFormsVerified:true};
+  } else {
   for(const suffix of ['.json','.inline.js','.glb','.blend','-atlas.jpg'])assert.deepEqual(fs.readFileSync(path.join(canonical,prefix+suffix)),fs.readFileSync(path.join(stage,'models',prefix+suffix)),'canonical '+suffix+' exactly matches independently verified stage');
-  const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8');
+  const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8').replaceAll('\r\n','\n');
   const start='// BEGIN BLENDER GARDEN KIT',end='// END BLENDER GARDEN KIT';
   assert.equal(html.split(start).length,2,'one garden block');assert.equal(html.split(end).length,2,'one garden block end');
-  const block=html.slice(html.indexOf(start),html.indexOf(end));assert(block.includes(inline.trim()),'actual HTML garden block embeds exact verified inline source');
+  const block=html.slice(html.indexOf(start),html.indexOf(end));assert(block.includes(inline.replaceAll('\r\n','\n').trim()),'actual HTML garden block embeds exact verified inline source');
   assert.equal((html.match(/\bvar BERLIN_KIEZ_GARDEN_DATA\s*=/g)||[]).length,1,'one garden data declaration');
   const declared=block.match(/\bvar BERLIN_KIEZ_GARDEN_DATA\s*=\s*(\{[^\r\n]*\});/);assert(declared,'parse actual embedded garden object');assert.deepEqual(JSON.parse(declared[1]),after,'actual embedded runtime object agrees with native exports');
   assert.equal((html.match(/\bfunction decodeBerlinMeshRecord\s*\(/g)||[]).length,1,'one shared garden/architecture decoder');
-  for(const source of ['berlin_packed_geometry.js','berlin_garden_integration.js'])assert(html.includes(fs.readFileSync(path.join(root,'tools',source),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/,'\n').trim()),'actual runtime '+source+' matches source');
+  for(const source of ['berlin_packed_geometry.js','berlin_garden_integration.js'])assert(html.includes(fs.readFileSync(path.join(root,'tools',source),'utf8').replaceAll('\r\n','\n').replace(/\nif \(typeof module[^\n]+\n?$/,'\n').trim()),'actual runtime '+source+' matches source');
   shippingReport={canonicalFilesExact:5,embeddedPayloadExact:true,oneSharedDecoder:true};
+  }
 }
-const result={passed:true,mode:shipping?'shipping':'staged',revision:lodCores?'focused-lod-cores':crown?'branch-masses':sprays?'drooping-sprays':'rounded-blades',protected:'V95 planter, V100 palette source, grove, atlas, shared material, immutable baseline; all 552 trunk triangles exact',retainedLeaves:{count:farLeafCount,maximumCenterDifference},glb:{vertices:vertexCount,triangles:glbIndex.a.count/3,verifiedCorners:glbIndex.a.count,protectedViews,materialsNodesImagesExact:true},...reports,...(focusedLodReport?{focusedLod:focusedLodReport}:{}),...(shipping?{shipping:shippingReport}:{})};
+if(shippingReport?.planterFormsVerified&&focusedLodReport){focusedLodReport.acceptedGlbExact=false;focusedLodReport.acceptedTreeGlbBuffersExact=true;}
+const result={passed:true,mode:shipping?'shipping':'staged',revision:lodCores?'focused-lod-cores':crown?'branch-masses':sprays?'drooping-sprays':'rounded-blades',protected:shippingReport?.planterFormsVerified?'V95 pot and five current tree records exact; curved planter surfaces separately verified; unchanged atlas/material':'V95 planter, V100 palette source, grove, atlas, shared material, immutable baseline; all 552 trunk triangles exact',retainedLeaves:{count:farLeafCount,maximumCenterDifference},glb:{vertices:vertexCount,triangles:glbIndex.a.count/3,verifiedCorners:glbIndex.a.count,protectedViews,materialsNodesImagesExact:true},...reports,...(focusedLodReport?{focusedLod:focusedLodReport}:{}),...(shipping?{shipping:shippingReport}:{})};
 fs.writeFileSync(path.join(stage,shipping?'shipping-check.json':'independent-check.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));

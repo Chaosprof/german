@@ -72,8 +72,8 @@ assert.deepEqual(Array.from(mesh.geometry.attributes.uv.array),Array.from(geomet
 assert.deepEqual(Array.from(mesh.geometry.index.array),Array.from(geometry.index.array),'triangle topology remains byte-identical');
 // Reverse only the recorded mask-authoring edits to recover the accepted v110
 // refinement. New mask channels must not alter a single rendered surface byte.
-const outfitEdits=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-courier-v111/character-edits.json'),'utf8'));
-let priorMaskSource=html.slice(refineStart,refineEnd),reversedMaskEdits=0;
+const outfitEdits=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-courier-v111/character-edits.json'),'utf8')).map(e=>({...e,before:e.before.replaceAll('\r\n','\n'),after:e.after.replaceAll('\r\n','\n')}));
+let priorMaskSource=html.slice(refineStart,refineEnd).replaceAll('\r\n','\n'),reversedMaskEdits=0;
 for(const edit of [...outfitEdits].reverse())if(priorMaskSource.includes(edit.after)) {
   priorMaskSource=priorMaskSource.replace(edit.after,edit.before);reversedMaskEdits++;
 }

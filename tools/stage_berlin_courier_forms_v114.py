@@ -8,7 +8,8 @@ from pathlib import Path
 from mathutils import Vector
 ROOT=Path(__file__).resolve().parents[1]
 STAGE=ROOT/'audit/berlin-model-forms-v114/courier'
-if os.getenv('BERLIN_COURIER_CONTOURS'):STAGE=STAGE/'contour-trial'
+if os.getenv('BERLIN_COURIER_QUIET_HEM'):STAGE=STAGE/'quiet-hem'
+elif os.getenv('BERLIN_COURIER_CONTOURS'):STAGE=STAGE/'contour-trial'
 elif os.getenv('BERLIN_COURIER_SOFT_NORMALS'):STAGE=STAGE/'normal-trial'
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.preferences.filepaths.save_version=0

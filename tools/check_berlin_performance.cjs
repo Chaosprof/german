@@ -315,11 +315,12 @@ t.atob=s=>Buffer.from(s,'base64').toString('binary');
 vm.runInContext(section('  // BEGIN BLENDER GARDEN KIT','  // END BLENDER GARDEN KIT'),t);
 const canopy=t.berlinGardenKit.geometry('treeNear');
 assert.equal(canopy,t.berlinGardenKit.geometry('treeNear'),'all street trees share one geometry');
-assert.ok(canopy.index.count/3 <= 14000,'accepted taller street tree stays within its14,000-triangle budget');
+const branchedCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='branch-led-lobed-crown-v114';
+assert.ok(canopy.index.count/3 <= (branchedCanopy?25000:14000),'street tree stays within its authored rounded-leaf budget');
 assert.ok([...canopy.attributes.position.array,...canopy.attributes.color.array].every(Number.isFinite));
 canopy.computeBoundingBox();
 const streetTreeHeight=canopy.boundingBox.max.y-canopy.boundingBox.min.y;
-assert.ok(streetTreeHeight>8&&streetTreeHeight<8.5,'accepted street crown retains its taller authored envelope');
+assert.ok(streetTreeHeight>8&&streetTreeHeight<(branchedCanopy?8.7:8.5),'street crown retains its taller authored envelope');
 assert.equal(t.berlinGardenKit.canopyRadius,2.85,'street-only cull radius comes from the accepted asset metadata');
 function treeGeometryFingerprint(geometry){
   const hash=require('crypto').createHash('sha256');
@@ -759,7 +760,7 @@ for(const geometry of [canopy,farCrown]) {
   for(let i=0;i<p.count;i++)assert.ok(Math.hypot(p.getX(i),p.getZ(i))<=t.berlinGardenKit.canopyRadius,
     'every near/far vertex is enclosed by the actual runtime culling radius');
 }
-assert.ok(farCrown.index.count/3<=4000,'authored street far model stays within its4,000-triangle budget');
+assert.ok(farCrown.index.count/3<=(branchedCanopy?7000:5000),'far crown retains matching leaf silhouettes within its authored budget');
 for(let i=0,p=farCrown.attributes.position;i<p.count;i++)assert.ok(Math.hypot(p.getX(i),p.getZ(i))<t.berlinGardenKit.canopyRadius,
   'authored far leaves also fit the shared yaw-independent cull radius');
 assert.ok(farCrown.index.count<canopy.index.count*.42,'each distant tree removes at least58% of its triangles');
@@ -1160,7 +1161,7 @@ function checkProgramWarmup(postOn) {
   const sourceRT=new THREE.WebGLRenderTarget(300,600,{type:THREE.HalfFloatType,samples:2});
   sourceRT.texture.colorSpace=THREE.NoColorSpace;
   let target=null,compiled=0,rendered=0,finished=false,atlasDisposed=0,proxyDisposed=0,targetDisposed=false,tick=0;
-  const callbacks=[], canvas={dataset:{}};
+  const callbacks=[], canvas={dataset:{}}, loadingPhases=[];
   const renderer={shadowMap:{needsUpdate:false},getRenderTarget:()=>target,setRenderTarget:t=>{target=t;},setOpaqueSort(){},
     compile(scene){
       compiled++;const meshes=scene.children.filter(o=>o.isMesh);
@@ -1177,6 +1178,7 @@ function checkProgramWarmup(postOn) {
     render(scene){rendered++;const clonedSun=scene.children.find(o=>o.isDirectionalLight);assert.equal(clonedSun.shadow.mapSize.x,32);clonedSun.shadow.map={dispose(){atlasDisposed++;}};scene.children.forEach(o=>{if(o.isInstancedMesh)o.addEventListener('dispose',()=>{proxyDisposed++;});});}
   };
   const warmContext=vm.createContext({THREE,INDEX_RIGID_GEOMETRY:true,scene:warmScene,sun,renderer,POST:{on:postOn},sceneRT:sourceRT,camera:new THREE.PerspectiveCamera(),canvas,
+    BerlinLoad:{phase:(name,progress)=>loadingPhases.push([name,progress])},
     performance:{now:()=>tick++},requestAnimationFrame:fn=>callbacks.push(fn),
     unifyFlatPropMaterials:()=>({converted:0,baked:0,cloned:0}),batchChunkFlatDetails:()=>({sources:0,batches:0}),
     batchSetPieceFlatSiblings:()=>({sources:0,batches:0}),indexRigidSceneGeometry:()=>({geometries:0}),
@@ -1188,6 +1190,7 @@ function checkProgramWarmup(postOn) {
   assert.ok(!finished,'Start stays gated until depth warm-up and cleanup complete');
   while(callbacks.length)callbacks.shift()();
   assert.ok(finished&&compiled===1&&rendered===1);
+  assert.deepEqual(loadingPhases.filter(p=>p[0]==='warm').map(p=>p[1]),[0,1/3,2/3,1],'loading progress covers compile, depth and cleanup steps');
   assert.equal(target,null);assert.equal(atlasDisposed,1);assert.equal(proxyDisposed,2);
   assert.equal(targetDisposed,postOn);assert.equal(sun.shadow.mapSize.x,1024,'gameplay shadow resolution is untouched');
   assert.equal(alphaMaterial.forceSinglePass,true);

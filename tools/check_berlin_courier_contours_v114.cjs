@@ -3,9 +3,10 @@
 const fs=require('fs'),path=require('path'),assert=require('assert/strict'),crypto=require('crypto');
 const root=path.resolve(__dirname,'..'),dir=path.join(root,'audit/berlin-model-forms-v114/courier');
 function read(file){const raw=fs.readFileSync(file),length=raw.readUInt32LE(12),doc=JSON.parse(raw.subarray(20,20+length)),bin=raw.subarray(28+length);return{raw,doc,bin};}
+const targetStage=process.argv.includes('--quiet-hem')?'quiet-hem':'contour-trial';
 const source=read(path.join(root,'assets/models/berlin-runner-hero-v14.glb'));
 const baseline=read(path.join(dir,'normal-trial/courier-forms-v114-authoring.glb'));
-const target=read(path.join(dir,'contour-trial/courier-forms-v114-authoring.glb'));
+const target=read(path.join(dir,targetStage+'/courier-forms-v114-authoring.glb'));
 function accessor(model,key){const primitive=model.doc.meshes[0].primitives[0],a=model.doc.accessors[primitive.attributes[key]],b=model.doc.bufferViews[a.bufferView];const at=(b.byteOffset||0)+(a.byteOffset||0),count=a.count*(a.type==='VEC3'?3:4),Type={5121:Uint8Array,5123:Uint16Array,5126:Float32Array}[a.componentType];return{at,length:count*Type.BYTES_PER_ELEMENT,values:new Type(Uint8Array.from(model.bin.subarray(at,at+count*Type.BYTES_PER_ELEMENT)).buffer)};}
 const sourceP=accessor(source,'POSITION'),beforeP=accessor(baseline,'POSITION'),beforeN=accessor(baseline,'NORMAL'),afterP=accessor(target,'POSITION'),afterN=accessor(target,'NORMAL'),skinI=accessor(source,'JOINTS_0').values,skinW=accessor(source,'WEIGHTS_0').values;
 const names=source.doc.skins[0].joints.map(i=>source.doc.nodes[i].name);
@@ -29,5 +30,10 @@ for(let i=0;i<sourceP.values.length/3;i++){
 assert.ok(preserved.lowerBody>2000&&preserved.forearmsAndCuffs>100,JSON.stringify(preserved));
 assert.ok(upperBackVertices>30&&maximumUpperBackMove<.0075,JSON.stringify({upperBackVertices,maximumUpperBackMove}));
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
-const report={baseline:'Frozen V114 normal-trial authoring GLB',target:'V114 contour-trial complete patch',preserved,allNontargetBinBytesExact:true,originalAnimationsSkinUVsMaterialsExact:true,changedPositionVertices:changedVertices,maxAdditionalMove,upperBackVertices,maximumUpperBackMove,originalHeroSha256:sha(source.raw),patchSha256:sha(fs.readFileSync(path.join(dir,'contour-trial/courier-forms-v114.bin'))),inlineSha256:sha(fs.readFileSync(path.join(dir,'contour-trial/courier-forms-v114.inline.js')))};
-fs.writeFileSync(path.join(dir,'contour-trial/additional-preservation.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+const report={baseline:'Frozen V114 normal-trial authoring GLB',target:'V114 '+targetStage+' complete patch',preserved,allNontargetBinBytesExact:true,originalAnimationsSkinUVsMaterialsExact:true,changedPositionVertices:changedVertices,maxAdditionalMove,upperBackVertices,maximumUpperBackMove,originalHeroSha256:sha(source.raw),patchSha256:sha(fs.readFileSync(path.join(dir,targetStage+'/courier-forms-v114.bin'))),inlineSha256:sha(fs.readFileSync(path.join(dir,targetStage+'/courier-forms-v114.inline.js')))};
+fs.writeFileSync(path.join(dir,targetStage+'/additional-preservation.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+
+if(process.argv.includes('--shipping')) {
+  for(const ext of ['bin','json','inline.js'])assert.deepEqual(fs.readFileSync(path.join(dir,targetStage,'courier-forms-v114.'+ext)),fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.'+ext)),'canonical sculpt matches verified candidate');
+  console.log('PASS: canonical quiet-hem payload matches the verified complete patch.');
+}

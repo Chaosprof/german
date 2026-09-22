@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('fs'),path=require('path'),assert=require('assert/strict'),crypto=require('crypto');
-const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-model-forms-v114/courier',process.env.BERLIN_COURIER_CONTOURS?'contour-trial':process.env.BERLIN_COURIER_SOFT_NORMALS?'normal-trial':'');
+const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-model-forms-v114/courier',process.env.BERLIN_COURIER_QUIET_HEM?'quiet-hem':process.env.BERLIN_COURIER_CONTOURS?'contour-trial':process.env.BERLIN_COURIER_SOFT_NORMALS?'normal-trial':'');
 fs.mkdirSync(stage,{recursive:true});
 const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8');
 const test=fs.readFileSync(path.join(__dirname,'check_berlin_courier.cjs'),'utf8');
@@ -15,7 +15,7 @@ const accepted=mesh.geometry,changed=accepted.clone();
 changed.userData=JSON.parse(JSON.stringify(accepted.userData));
 const joints=skeleton.bones.map((_,i)=>new T.Vector3().setFromMatrixPosition(skeleton.boneInverses[i].clone().invert()));
 const sourceHash=crypto.createHash('sha256').update(glb).digest('hex');
-const formPath=path.join(__dirname,process.env.BERLIN_COURIER_CONTOURS?'berlin_courier_contours_v114.js':process.env.BERLIN_COURIER_SOFT_NORMALS?'berlin_courier_soft_normals_v114.js':'berlin_courier_forms_v114.js');
+const formPath=path.join(__dirname,process.env.BERLIN_COURIER_QUIET_HEM?'berlin_courier_quiet_hem_v114.js':process.env.BERLIN_COURIER_CONTOURS?'berlin_courier_contours_v114.js':process.env.BERLIN_COURIER_SOFT_NORMALS?'berlin_courier_soft_normals_v114.js':'berlin_courier_forms_v114.js');
 if(!fs.existsSync(formPath)){
   const rows=[];
   for(let i=0;i<geometry.attributes.position.count;i++)if(accepted.attributes.aCourierSleeve.getX(i)>.8){

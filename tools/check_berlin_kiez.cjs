@@ -22,7 +22,30 @@ const kit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,..
 // All normal runtime ray/bounds/material checks below still use the full mesh.
 const formsBaseline=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/architecture/baseline/berlin-reference-architecture-v1.json'),'utf8'));
 function protectedFormBase(key) {
-  const current=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  let current=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  if(current.awningRevision) {
+    assert.equal(current.awningRevision,'bowed-cloth-rounded-valance-v114');
+    const prior=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/architecture/flowering-balcony/models/berlin-reference-architecture-v1.json'),'utf8')).meshes[key];
+    assert.equal(current.awningOldFaceStart,10402);assert.equal(current.awningOldFaceCount,1756);
+    assert.equal(current.awningBaseVertices,prior.vertices);
+    for(const field of ['position','normal','uv','color']){const old=Buffer.from(prior[field],'base64');assert.deepEqual(Buffer.from(current[field],'base64').subarray(0,old.length),old,'awning preserves every existing attribute');}
+    const old=Buffer.from(prior.index,'base64'),index=Buffer.from(current.index,'base64');
+    const retained=Buffer.concat([old.subarray(0,10402*6),old.subarray(12158*6)]);
+    assert.deepEqual(index.subarray(0,retained.length),retained,'only the connected old fabric faces are replaced; balcony and all other surfaces stay exact');
+    assert.equal(index.length-retained.length,4178*6);
+    for(let i=retained.length;i<index.length;i+=2)assert.ok(index.readUInt16LE(i)>=prior.vertices);
+    assert.deepEqual(current.min,prior.min);assert.deepEqual(current.max,prior.max);
+    const cloth=scope.decodeBerlinMeshRecord(THREE,current),p=cloth.attributes.position,n=cloth.attributes.normal;
+    for(let f=retained.length/6;f<current.triangles;f++){
+      const ids=[0,1,2].map(k=>cloth.index.getX(f*3+k)),v=ids.map(i=>new THREE.Vector3().fromBufferAttribute(p,i));
+      const face=v[1].sub(v[0]).cross(v[2].sub(v[0])),shade=ids.reduce((sum,i)=>sum.add(new THREE.Vector3().fromBufferAttribute(n,i)),new THREE.Vector3());
+      assert.ok(face.length()>1e-9,'cloth shell has no collapsed triangles');
+      assert.ok(face.dot(shade)>0,'cloth normals face their surface: '+JSON.stringify({f,ids,face:face.toArray(),shade:shade.toArray()}));
+    }
+    // Historical invariants below are checked against the independently
+    // proven retained source. All runtime ray checks still use the new cloth.
+    current=prior;
+  }
   if(!['rounded-profile-architecture-v114','stepped-smooth-architecture-v114'].includes(current.formsRevision))return current;
   const base=formsBaseline.meshes[key];
   assert.equal(current.formsBaseVertices,base.vertices);
@@ -32,12 +55,37 @@ function protectedFormBase(key) {
     const a=Buffer.from(base[field],'base64'),b=Buffer.from(current[field],'base64');
     assert.ok(b.length>a.length&&b.subarray(0,a.length).equals(a),'original '+key+' '+field+' is byte-exact');
   }
+  if(current.balconyRevision) {
+    assert.equal(current.balconyRevision,'sculpted-curved-balcony-v114');
+    const refined=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/architecture/refined-models/berlin-reference-architecture-v1.json'),'utf8')).meshes[key];
+    assert.equal(current.balconyBaseVertices,refined.vertices);
+    assert.equal(current.balconyBaseTriangles,refined.triangles);
+    assert.ok(current.triangles-refined.triangles<=(current.plantingRevision==='rounded-trailing-flowers-v114'?6500:2800),'bounded curved balcony with its complete supports, rail and rounded flowering mass');
+    for(const field of ['position','normal','uv','color','index']) {
+      const before=Buffer.from(refined[field],'base64'),after=Buffer.from(current[field],'base64');
+      assert.deepEqual(after.subarray(0,before.length),before,'balcony preserves accepted profiles and all prior geometry');
+    }
+    const p=Buffer.from(current.position,'base64');
+    for(let i=refined.vertices;i<current.vertices;i++)assert.ok(p.readFloatLE(i*12+4)>=8.26&&p.readFloatLE(i*12+8)<2.75,'balcony projection stays above head height and within its actual envelope');
+  }
   const index=Buffer.from(current.index,'base64');
   for(let i=base.triangles*3;i<current.triangles*3;i++)assert.ok(index.readUInt16LE(i*2)>=base.vertices,
     'new profiles cannot replace or reconnect old structural faces');
   return base;
 }
 const historicalArchitecture=Object.fromEntries(Object.keys(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes).map(key=>[key,protectedFormBase(key)]));
+if(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].balconyRevision) {
+  const master=kit.geometry(13.5,0,1),solid=new THREE.Mesh(master,new THREE.MeshBasicMaterial()),ray=new THREE.Raycaster();
+  solid.updateMatrixWorld(true);
+  for(const y of [8.91,8.98,9.97]) {
+    ray.set(new THREE.Vector3(4.65,y,5),new THREE.Vector3(0,0,-1));
+    const hit=ray.intersectObject(solid)[0];
+    assert.ok(hit&&hit.point.z>2.62&&hit.point.z<2.76,'actual projecting curved slab/rail is visible ahead of the old bay sill');
+  }
+  ray.set(new THREE.Vector3(4.65,8,2.35),new THREE.Vector3(0,1,0));
+  const underside=ray.intersectObject(solid)[0];
+  assert.ok(underside&&underside.point.y>8.25&&underside.point.y<8.84,'balcony has an outward-facing underside above the clear pavement');
+}
 const raw=fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/, '\n').trim();
 if(!process.argv.includes('--canonical-only'))assert.ok(html.includes(raw),'shipped factory matches editable source');
 // Independent image decodes can complete in any order. The generated plaster
@@ -133,14 +181,14 @@ function bakeryFabricFaces(g,continuous,expectedX) {
     if(expectedX) {
       if(Math.abs(lo[0]-expectedX[0])>.00002||Math.abs(hi[0]-expectedX[1])>.00002)return false;
     } else if(!(lo[0]>-6.21&&hi[0]<.66))return false;
-    if(continuous)return faces.length===1756&&lo[1]>3.50&&lo[1]<3.52&&hi[1]>5.64&&hi[1]<5.66&&lo[2]>.18&&lo[2]<.20&&hi[2]>2.18&&hi[2]<2.19;
+    if(continuous)return (faces.length===1756&&lo[1]>3.50&&lo[1]<3.52&&hi[1]>5.64&&hi[1]<5.66&&lo[2]>.18&&lo[2]<.20&&hi[2]>2.18&&hi[2]<2.19)||(faces.length===4178&&lo[1]>3.45&&lo[1]<3.49&&hi[1]>5.64&&hi[1]<5.66&&lo[2]>.17&&lo[2]<.18&&hi[2]>2.22&&hi[2]<2.23);
     const roof=3.80<lo[1]&&lo[1]<3.89&&5.60<hi[1]&&hi[1]<5.70&&.15<lo[2]&&lo[2]<.25&&2.10<hi[2]&&hi[2]<2.18;
     const hem=3.49<lo[1]&&lo[1]<3.54&&3.85<hi[1]&&hi[1]<3.90&&2.11<lo[2]&&lo[2]<2.14&&2.18<hi[2]&&hi[2]<2.20;
     return roof||hem;
   });
   assert.equal(fabric.length,continuous?1:17,'only the known connected fabric components are exempt');
   const faces=new Set(fabric.flatMap(c=>c.faces));
-  assert.equal(faces.size,continuous?1756:1472,'fabric-only triangle budget is unchanged');
+  assert.ok(continuous?[1756,4178].includes(faces.size):faces.size===1472,'only the complete known fabric component is exempt');
   return faces;
 }
 function groundFaces(g,ceiling,omit=new Set()) {
@@ -227,7 +275,7 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
   assert.equal(g.groups.length,1); assert.equal(g.groups[0].materialIndex,0);
   const bb=g.boundingBox;
   const formProfiles=variant<2&&['rounded-profile-architecture-v114','stepped-smooth-architecture-v114'].includes(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[`13.5:${variant}:1`].formsRevision);
-  assert.ok(bb.max.z<(formProfiles&&variant===0?2.50:2.35)&&bb.min.z>=-8.31,
+  assert.ok(bb.max.z<(formProfiles&&variant===0?(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].balconyRevision?2.75:2.50):2.35)&&bb.min.z>=-8.31,
     'bounded pavement projection / rear mass, including the rounded angled-bay sill tips');
   const corniceAllowance=variant<2?.45*Math.max(1,w/13.5):.45;
   assert.ok(bb.max.x<=w/2+corniceAllowance&&bb.min.x>=-w/2-corniceAllowance,'bounded frontage width, including scaled roof cornice');
@@ -360,7 +408,8 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
     const canopyX=(-1.15-(13.5-3.65)*.165+.13)*xScale*side;
     const canopyRay=new THREE.Raycaster(new THREE.Vector3(canopyX,8,1.175),new THREE.Vector3(0,-1,0));
     const canopyHit=canopyRay.intersectObject(mesh)[0];
-    assert.ok(canopyHit&&Math.abs(canopyHit.point.y-4.705)<.003,
+    const clothSculpt=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].awningRevision;
+    assert.ok(canopyHit&&(clothSculpt?canopyHit.point.y>4.59&&canopyHit.point.y<4.69:Math.abs(canopyHit.point.y-4.705)<.003),
       'the actual baked canopy has the shallow fabric bow between its unchanged wall mount and front hem');
     assert.ok(canopyHit.face.normal.y>.70&&canopyHit.face.normal.z>.64,'pitched cloth has the intended upward/forward lighting normal');
   }
@@ -368,7 +417,7 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
   maximum=Math.max(maximum,triangles);total+=triangles;
 }
 assert.equal(Object.keys(kit.cache).length,36);
-assert.ok(maximum<25000,'per-building triangle budget includes smooth focal arches and selectively beveled Blender facades');
+assert.ok(maximum<(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].awningRevision?27000:25000),'per-building triangle budget includes the authored cloth shell and rounded focal profiles');
 assert.equal(kit.texture.image.width,2048); assert.equal(kit.texture.image.height,2048);
 scope.IS_MOBILE=true;
 const mobileKit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,...opts}),

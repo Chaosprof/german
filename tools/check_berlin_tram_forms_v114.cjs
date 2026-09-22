@@ -2,7 +2,7 @@
 // Actual runtime factory + batching, with a choice of staged or shipped payload.
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-model-forms-v114/tram');
-const shipped=process.argv.includes('--shipping'),folder=shipped?path.join(root,'assets/models'):path.join(stage,'models');
+const shipped=process.argv.includes('--shipping'),upright=process.argv.includes('--upright'),folder=shipped?path.join(root,'assets/models'):path.join(stage,upright?'upright/models':'models');
 const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8');
 function section(a,b){const i=html.indexOf(a),j=html.indexOf(b,i+a.length);assert.ok(i>=0&&j>i,a);return html.slice(i,j);}
 const c=vm.createContext({console});
@@ -32,11 +32,33 @@ let protectedCount=0;
 for(let i=0;i<120;i++){
   const p=data.parts[i],old=base.parts[i];assert.equal(p.mesh,old.mesh,'original part order prefix');
   for(const k of ['translation','quaternion','scale'])assert.equal(JSON.stringify(p[k]),JSON.stringify(old[k]),'exact transform '+p.mesh);
-  if(!edits.has(p.mesh)){assert.equal(JSON.stringify(data.meshes[p.mesh]),JSON.stringify(base.meshes[p.mesh]),'exact protected record '+p.mesh);assert.equal(p.role,old.role);protectedCount++;}
+  if(!upright&&!edits.has(p.mesh)){assert.equal(JSON.stringify(data.meshes[p.mesh]),JSON.stringify(base.meshes[p.mesh]),'exact protected record '+p.mesh);assert.equal(p.role,old.role);protectedCount++;}
 }
-assert.equal(protectedCount,104);assert.ok(report.bodyGeometryExact&&report.roofGeometryAndTransformsExact);
+if(!upright){assert.equal(protectedCount,104);assert.ok(report.bodyGeometryExact&&report.roofGeometryAndTransformsExact);}
+function shape(x,y) {
+  const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
+  return [x*(1-.035*smooth(1.25,2.8,y)),y+.42*smooth(.7,2.8,y)];
+}
+if(upright) {
+  assert.equal(data.proportionRevision,'upright-coach-v114');
+  const cab=JSON.parse(fs.readFileSync(path.join(stage,'models/berlin-vintage-tram-v90.json')));
+  assert.equal(JSON.stringify(data.parts),JSON.stringify(cab.parts),'all part transforms/material roles exact');
+  for(const p of data.parts) {
+    const old=cab.meshes[p.mesh],now=data.meshes[p.mesh];
+    for(const key of ['uv','index','triangles','vertices'])assert.equal(now[key],old[key],'coach contour keeps topology and UVs '+p.mesh);
+    const matrix=new T.Matrix4().compose(new T.Vector3().fromArray(p.translation),new T.Quaternion().fromArray(p.quaternion),new T.Vector3().fromArray(p.scale));
+    const a=Buffer.from(old.position,'base64'),b=Buffer.from(now.position,'base64');
+    for(let i=0;i<old.vertices;i++) {
+      const source=new T.Vector3(...[0,1,2].map(k=>a.readFloatLE(i*12+k*4))).applyMatrix4(matrix);
+      const target=new T.Vector3(...[0,1,2].map(k=>b.readFloatLE(i*12+k*4))).applyMatrix4(matrix);
+      const expected=shape(source.x,source.y);
+      assert.ok(target.distanceTo(new T.Vector3(expected[0],expected[1],source.z))<.000005,'baked coach geometry equals shape in world coordinates');
+    }
+  }
+}
+
 const tram=c.makeRunnerTram();tram.updateMatrixWorld(true);const bounds=new T.Box3().setFromObject(tram);
-assert.ok(bounds.min.x>=-1.25001&&bounds.max.x<=1.25001&&bounds.min.y>=-.00001&&Math.abs(bounds.max.y-4.1)<.00001&&bounds.min.z>=-4.00001&&bounds.max.z<=4.00001);
+assert.ok(bounds.min.x>=-1.25001&&bounds.max.x<=1.25001&&bounds.min.y>=-.00001&&Math.abs(bounds.max.y-(upright?4.52:4.1))<.00001&&bounds.min.z>=-4.00001&&bounds.max.z<=4.00001);
 const total=tram.children.reduce((s,m)=>s+m.geometry.index.count/3,0);assert.equal(total,report.triangles);assert.ok(total<=10000);
 for(const mesh of tram.children){
   const {position:p,normal:n,uv}=mesh.geometry.attributes;assert.ok(p&&n&&uv);
@@ -51,6 +73,7 @@ assert.equal(gltf.materials.length,9);assert.ok(gltf.materials.every(m=>!m.alpha
 assert.equal(gltf.meshes.reduce((s,m)=>s+m.primitives.reduce((n,p)=>n+gltf.accessors[p.indices].count/3,0),0),total,'GLB triangles agree');
 const ray=new T.Raycaster(),checks=[];
 function probe(x,y,end,material,label){
+ if(upright)[x,y]=shape(x,y);
  ray.set(new T.Vector3(x,y,end*9),new T.Vector3(0,0,-end));
  const hit=ray.intersectObject(tram,true)[0];assert.ok(hit&&hit.object.material===material,label+' '+end+' got '+(hit&&hit.object.userData.tramPart));
  checks.push({x,y,end,material,label,point:hit.point.clone()});
@@ -70,5 +93,5 @@ for(const p of checks){ray.set(new T.Vector3(p.x,p.y,p.end*9),new T.Vector3(0,0,
 c.registerProp=(kind,g)=>{c.compactStaticPropGroup(g);return g;};const repeated=c.makeRunnerTram();
 assert.ok(repeated.children.every((m,i)=>m.geometry===tram.children[i].geometry&&m.material===tram.children[i].material),'shared batched templates');
 const result={ok:true,shipping:shipped,triangles:total,draws:tram.children.length,protectedRecords:protectedCount,exactExistingTransforms:120,
- apertureAndCoachworkVisibilityRays:checks.length,bodyExact:true,roofExact:true,collisionContract:data.collisionContract,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}};
-fs.writeFileSync(path.join(stage,shipped?'shipping-check.json':'geometry-check.json'),JSON.stringify(result,null,2));console.log('PASS '+JSON.stringify(result));
+ apertureAndCoachworkVisibilityRays:checks.length,bodyExact:!upright,roofExact:!upright,proportions:upright?'upright-coach-v114':'original',collisionContract:data.collisionContract,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}};
+fs.writeFileSync(path.join(stage,upright?'upright/'+(shipped?'shipping-check.json':'geometry-check.json'):(shipped?'shipping-check.json':'geometry-check.json')),JSON.stringify(result,null,2));console.log('PASS '+JSON.stringify(result));
