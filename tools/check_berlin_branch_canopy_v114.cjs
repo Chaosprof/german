@@ -30,9 +30,10 @@ for(const role of ['treeNear','treeStreetFar']){
   reports[role]={triangles:r.triangles,vertices:r.vertices,radius,minFacing};
 }
 assert.ok(data.meshes.treeStreetFar.triangles<data.meshes.treeNear.triangles*.42);
-const near=unpack(data.meshes.treeNear),far=unpack(data.meshes.treeStreetFar);
+const near=unpack(data.meshes.treeNear),far=unpack(data.meshes.treeStreetFar),originalNear=unpack(before.meshes.treeNear);
 // The accepted trunk is the first 552 faces in both new runtime roles.
 for(let i=0;i<552*3;i++)for(const [attr,stride]of [['position',3],['normal',3],['color',3],['uv',2]])assert.deepEqual(near[attr].slice(near.index[i]*stride,near.index[i]*stride+stride),far[attr].slice(far.index[i]*stride,far.index[i]*stride+stride));
+for(let i=0;i<552*3;i++)for(const [attr,stride]of [['position',3],['normal',3],['color',3],['uv',2]])assert.deepEqual(near[attr].slice(near.index[i]*stride,near.index[i]*stride+stride),originalNear[attr].slice(originalNear.index[i]*stride,originalNear.index[i]*stride+stride),'accepted original trunk '+attr);
 function glb(file){const b=fs.readFileSync(file),n=b.readUInt32LE(12);return{doc:JSON.parse(b.subarray(20,20+n)),bin:b.subarray(28+n)};}
 const a=glb(path.join(stage,'baseline',name+'.glb')),b=glb(path.join(stage,'models',name+'.glb'));
 for(const key of ['nodes','materials','textures','images','scenes'])assert.deepEqual(b.doc[key],a.doc[key]);
@@ -46,6 +47,8 @@ for(const [meshName,record,faceOffset]of [['Kiez_Tree_Leaves_Street',data.meshes
     const values=accessor(p.attributes[semantic]);
     for(let i=0;i<indices.length;i++)for(let k=0;k<stride;k++)assert.ok(Math.abs(values[indices[i]*stride+k]-m[key][m.index[i+faceOffset*3]*stride+k]/(key==='normal'?32767:1))<.000001,'GLB '+meshName+' '+key+' agrees with runtime');
   }
+  const paint=accessor(p.attributes.COLOR_0),paintType=b.doc.accessors[p.attributes.COLOR_0].componentType,paintScale=paintType===5123?257:1;
+  for(let i=0;i<indices.length;i++)for(let k=0;k<3;k++)assert.equal(paint[indices[i]*4+k]/paintScale,m.color[m.index[i+faceOffset*3]*3+k],'GLB painted colors agree with runtime');
   checkedCorners+=indices.length;
 }
 let protectedViews=0;

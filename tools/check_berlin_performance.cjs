@@ -320,7 +320,7 @@ assert.ok(canopy.index.count/3 <= (branchedCanopy?25000:14000),'street tree stay
 assert.ok([...canopy.attributes.position.array,...canopy.attributes.color.array].every(Number.isFinite));
 canopy.computeBoundingBox();
 const streetTreeHeight=canopy.boundingBox.max.y-canopy.boundingBox.min.y;
-assert.ok(streetTreeHeight>8&&streetTreeHeight<(branchedCanopy?8.7:8.5),'street crown retains its taller authored envelope');
+assert.ok(streetTreeHeight>8&&streetTreeHeight<8.5,'street crown retains its taller authored envelope');
 assert.equal(t.berlinGardenKit.canopyRadius,2.85,'street-only cull radius comes from the accepted asset metadata');
 function treeGeometryFingerprint(geometry){
   const hash=require('crypto').createHash('sha256');
