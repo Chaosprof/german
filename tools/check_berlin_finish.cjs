@@ -498,7 +498,11 @@ const pickupSolid=pickup.pretzelSolidInst.geometry;
 pickupSolid.computeBoundingBox();
 assert.equal(pickup.scene.children.filter(o=>o.isInstancedMesh).length,2,'solid and halo still use exactly two shared draws');
 assert.equal(pickup.pretzels.length,pickup.PRETZEL_POOL,'logical collectible pool capacity is unchanged');
-assert.equal(pickupSolid.attributes.position.count/3,1304,'fuller rope reduces the former 1,688-triangle cost');
+// V116 knot: 78 rings x 9 sides plus two 45-triangle end caps (V115's loop was 1,304).
+assert.equal(pickupSolid.attributes.position.count/3,1494,'knotted rope keeps its authored ring, side and cap counts');
+assert.ok(pickupSolid.attributes.position.count/3<=1600,'knotted pretzel stays within its 1,600-triangle budget');
+assert.ok(Math.max(...pickup.PRETZEL_RADIUS)>=0.145&&Math.min(...pickup.PRETZEL_RADIUS)<=0.08,'fat belly and thin arms: belly radius >= 0.145, arm ends <= 0.08');
+assert.equal(pickup.PRETZEL_RADIUS.length,pickup.PRETZEL_PATH.length,'one authored radius per centreline point');
 assert.equal(pickup.pretzelSolidInst.material.transparent,false,'dough remains opaque');
 assert.ok(pickupSolid.boundingBox.max.x-pickupSolid.boundingBox.min.x<0.90,'fuller token stays within its compact lane footprint');
 for(const key of ['position','normal','uv'])assert.ok([...pickupSolid.attributes[key].array].every(Number.isFinite),`pickup ${key} is finite`);
@@ -515,7 +519,16 @@ for(const [x,y] of [[-0.62,0.08],[0.62,0.08],[0,-0.57]]){
 }
 // Bound the actual reduced centerline's deviation from the authored curve.
 const pickupCurve=new THREE.CatmullRomCurve3(Array.from(pickup.PRETZEL_PATH,p=>new THREE.Vector3(...p)),false,'catmullrom',0.5);
-const pickupSegments=Array.from({length:64},(_,i)=>new THREE.Line3(pickupCurve.getPointAt(i/64),pickupCurve.getPointAt((i+1)/64)));
+// The arms cross twice in the twist, one strand in front at each crossing.
+const pickupCrossings=[];let pickupPrevX=null;
+for(let i=0;i<=4000;i++){const p=pickupCurve.getPointAt(i/4000);
+  if(p.y>-0.12&&p.y<0.22&&Math.abs(p.x)<0.2){if(pickupPrevX!==null&&Math.sign(p.x)!==Math.sign(pickupPrevX)&&p.x!==0)pickupCrossings.push(p.clone());pickupPrevX=p.x;}else pickupPrevX=null;}
+assert.equal(pickupCrossings.length,4,'two strands each cross the twist axis twice');
+pickupCrossings.sort((a,b)=>a.y-b.y);
+for(const [a,b] of [[pickupCrossings[0],pickupCrossings[1]],[pickupCrossings[2],pickupCrossings[3]]]){
+  assert.ok(Math.abs(a.y-b.y)<0.02&&a.z*b.z<0&&Math.abs(a.z-b.z)>=0.16,'at each crossing one strand passes in front of the other, clear of both radii');
+}
+const pickupSegments=Array.from({length:78},(_,i)=>new THREE.Line3(pickupCurve.getPointAt(i/78),pickupCurve.getPointAt((i+1)/78)));
 const nearestPickupPoint=new THREE.Vector3();let maxPickupCurveError=0;
 for(let i=0;i<=512;i++){
   const point=pickupCurve.getPointAt(i/512);let error=Infinity;
@@ -523,7 +536,7 @@ for(let i=0;i<=512;i++){
   maxPickupCurveError=Math.max(maxPickupCurveError,error*0.58);
 }
 assert.ok(maxPickupCurveError<0.007,'reduced tube centerline stays within 7mm of its authored curve');
-console.log(`PASS: opaque 1,304-triangle pretzel, three open loops, fixed two-draw pool and ${(maxPickupCurveError*1000).toFixed(2)}mm maximum centerline deviation.`);
+console.log(`PASS: opaque 1,494-triangle knotted pretzel (fat belly, two-crossing twist), three open loops, fixed two-draw pool and ${(maxPickupCurveError*1000).toFixed(2)}mm maximum centerline deviation.`);
 // Build the actual power-up pool. The bear shield must read as a shield and
 // present its paw throughout its bounded rock, with no extra opaque draw.
 pickup.clamp=THREE.MathUtils.clamp;
