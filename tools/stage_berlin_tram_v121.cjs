@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),vm=require('vm');
+const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-parity-tram-v121');
+let h=fs.readFileSync(path.join(stage,'baseline.html'),'utf8');
+const a=h.indexOf('  // BEGIN BLENDER VINTAGE TRAM'),b=h.indexOf('  // END BLENDER VINTAGE TRAM',a);
+assert.ok(a>0&&b>a);
+h=h.slice(0,a)+'  // BEGIN BLENDER VINTAGE TRAM\n'+fs.readFileSync(path.join(stage,'models/berlin-vintage-tram-v90.inline.js'),'utf8')+h.slice(b);
+assert.ok(h.includes("'kiez-reference-v120'"));h=h.replace("'kiez-reference-v120'","'kiez-reference-v121'");
+for(const s of h.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi))new vm.Script(s[1]);
+fs.writeFileSync(path.join(stage,'candidate.html'),h);
+console.log('Staged tram v121; unchanged runtime factory, nine materials and collision contract.');

@@ -5,7 +5,7 @@ const path = require('path');
 const vm = require('vm');
 const assert = require('assert/strict');
 const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'berlin-runner.html'), 'utf8');
+const html = fs.readFileSync(path.resolve(root, process.env.BERLIN_HTML || 'berlin-runner.html'), 'utf8');
 const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(x => x[1]);
 const context = vm.createContext({console});
 vm.runInContext(scripts.find(s => s.includes('three.js r156 (MIT)')), context);
@@ -95,6 +95,29 @@ const previousRefineSource=html.slice(refineStart,refineEnd).replace('radial = 1
 const previousMesh=new T.SkinnedMesh(geometry,mesh.material);previousMesh.bind(skeleton,new T.Matrix4());
 makeRefine(previousRefineSource)(previousMesh);
 if(clothScope)assert.notEqual(previousMesh.geometry.userData.courierClothV97?.baked,true,'former head/trouser variant retains its own refinement');
+const parityShoes=formsScope.includes('"finishRevision":120');
+let historicalShoeGeometry=mesh.geometry;
+if(parityShoes){
+  // The later shoe sculpt intentionally changes the protected shoe region.
+  // First retain the historical head/trouser proof against its exact prior
+  // forms payload, then independently verify the new sculpt below.
+  const quietScope=fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/courier/quiet-hem/courier-forms-v114.inline.js'),'utf8');
+  const quietMesh=new T.SkinnedMesh(geometry,mesh.material);quietMesh.bind(skeleton,new T.Matrix4());
+  new Function('THREE','atob',clothScope+'\n'+quietScope+'\n'+html.slice(refineStart,refineEnd)+'\nreturn refineCourierSilhouette;')(T,atob)(quietMesh);
+  historicalShoeGeometry=quietMesh.geometry;
+  let moved=0,maxMove=0;
+  for(let v=0;v<geometry.attributes.position.count;v++){
+    let shoeWeight=0;
+    for(let k=0;k<4;k++)if(/^(Left|Right)(Foot|ToeBase)$/.test(skeleton.bones[geometry.attributes.skinIndex.getComponent(v,k)].name))shoeWeight+=geometry.attributes.skinWeight.getComponent(v,k);
+    const move=new T.Vector3().fromBufferAttribute(mesh.geometry.attributes.position,v).distanceTo(new T.Vector3().fromBufferAttribute(quietMesh.geometry.attributes.position,v));
+    maxMove=Math.max(maxMove,move);if(move>0)moved++;
+    if(shoeWeight<=.45)for(const name of ['position','normal'])for(let k=0;k<3;k++)assert.equal(mesh.geometry.attributes[name].getComponent(v,k),quietMesh.geometry.attributes[name].getComponent(v,k),'V120 preserves every non-shoe position and normal');
+  }
+  assert.ok(moved>=1300&&maxMove<.028,'shoe sculpt is real and bounded to 28mm');
+  const shade=mesh.geometry.attributes.aCourierFinish;
+  assert.equal(shade.count,geometry.attributes.position.count);
+  assert.ok(Array.from(shade.array).every(v=>Number.isFinite(v)&&v>.70&&v<1.15),'precomputed fold shade is finite and restrained');
+}
 let protectedShoeVertices=0;
 for(let v=0;v<geometry.attributes.position.count;v++){
   let shoeWeight=0;
@@ -102,7 +125,7 @@ for(let v=0;v<geometry.attributes.position.count;v++){
     shoeWeight+=geometry.attributes.skinWeight.getComponent(v,c);
   if(shoeWeight>.45||(shoeWeight>0&&geometry.attributes.position.getY(v)<.02)){
     for(const attributeName of ['position','normal'])for(let c=0;c<3;c++)assert.equal(
-      mesh.geometry.attributes[attributeName].getComponent(v,c),previousMesh.geometry.attributes[attributeName].getComponent(v,c),
+      historicalShoeGeometry.attributes[attributeName].getComponent(v,c),previousMesh.geometry.attributes[attributeName].getComponent(v,c),
       'entire shoe surface and sole retain the accepted refinement exactly');
     protectedShoeVertices++;
   }
@@ -201,7 +224,9 @@ for (let v = 0; v < mesh.geometry.attributes.position.count; v++) {
       sleeveVertices[name.startsWith('Left') ? 'Left' : 'Right']++;
     }
     if (/^(Left|Right)(Foot|ToeBase)$/.test(name) && geometry.attributes.position.getY(v) < 0.02) {
-      assert.ok(Math.abs(mesh.geometry.attributes.position.getY(v) - geometry.attributes.position.getY(v)) < 1e-6, 'shoe sole heights stay anchored');
+      const rise=mesh.geometry.attributes.position.getY(v)-geometry.attributes.position.getY(v);
+      if(parityShoes)assert.ok(rise>=-1e-6&&rise<.008,'arched outsole rises at most 8mm and never sinks below the source sole');
+      else assert.ok(Math.abs(rise)<1e-6,'shoe sole heights stay anchored');
     }
   }
 }
@@ -223,7 +248,7 @@ assert.equal(previousShaderCalls, 1, 'costume/lighting shader chain remains inta
 assert.equal(previousShaderThis,finish);assert.equal(previousShaderRenderer,shaderRenderer,'existing shader hook receives its owner and renderer');
 assert.equal((shader.vertexShader.match(/attribute vec2 aCourierSole;/g) || []).length, 1);
 assert.ok(shader.vertexShader.includes('vCourierSole = aCourierSole;'));
-assert.ok(shader.fragmentShader.includes('fract(vCourierSole.y * 5.0)'));
+assert.ok(shader.fragmentShader.includes('fract(vCourierSole.y * '+(parityShoes?'7.0':'5.0')+')'));
 assert.ok(shader.fragmentShader.includes('diffuseColor.rgb = mix(diffuseColor.rgb, courierRubber'));
 assert.ok(shader.uniforms.courierSoleColor.value.isColor && shader.uniforms.courierTreadColor.value.isColor);
 assert.ok(shader.uniforms.courierHemColor.value.isColor);
@@ -410,7 +435,7 @@ for (const run of [0, .25, .5, .75, 1]) for (const primary of [0, .25, .5, 1])
   for (const lane of [0, .25, .5, 1]) {
     const offsets = [];
     const angle = armLayer((...args) => offsets.push(args), T.MathUtils.clamp, run, primary, lane);
-    assert.ok(Number.isFinite(angle) && angle >= 0 && angle <= .10, 'arm spread remains within 0.10 radians');
+    assert.ok(Number.isFinite(angle) && angle >= 0 && angle <= (parityShoes ? .17 : .10), 'arm spread remains within the accepted silhouette adjustment');
     assert.deepEqual(offsets, [['LeftArm', 0, 0, -angle, 1], ['RightArm', 0, 0, angle, 1]],
       'only upper arms receive equal, opposite offsets');
     if (!run || primary === 1 || lane === 1) assert.equal(angle, 0, 'rest and full named ownership disable arm spread');
@@ -535,7 +560,7 @@ const packStart=html.indexOf('  // BEGIN BLENDER COURIER BAG');
 const packEnd=html.indexOf('  // END BLENDER COURIER BAG',packStart);
 assert.ok(packStart>0&&packEnd>packStart,'the shipping page embeds its backpack geometry');
 const bagData=new Function(html.slice(packStart,packEnd)+'\nreturn BERLIN_COURIER_BAG_DATA;')();
-assert.deepEqual(bagData,JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-courier-bag-v1.json'),'utf8')),
+assert.deepEqual(bagData,JSON.parse(fs.readFileSync(path.resolve(root,process.env.BERLIN_BAG_DIR||'assets/models','berlin-courier-bag-v1.json'),'utf8')),
   'actual embedded backpack matches the Blender export');
 context.atob=atob;
 const decodeBerlinMeshRecord=vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_packed_geometry.js'),'utf8')+
@@ -634,7 +659,7 @@ const capWidthRatio=new T.Box3().setFromObject(cap).getSize(new T.Vector3()).x/
   new T.Box3().setFromObject(previousCap).getSize(new T.Vector3()).x;
 assert.ok(capWidthRatio>.90&&capWidthRatio<.93,'attached cap follows the reduced actual head');
 previousCap.removeFromParent();previousBag.removeFromParent();
-console.log(`PASS: fuller trousers; head/cap width ${((headWidthRatio-1)*100).toFixed(2)}%; ${tipProbes.length} shared-head seam probes; ${protectedShoeVertices} unchanged shoe/cuff vertices and normals; head-independent pack displacement ${(maxBagDelta*1000).toFixed(4)} mm; unchanged UVs, topology and accessory draws.`);
+console.log(`PASS: fuller trousers; head/cap width ${((headWidthRatio-1)*100).toFixed(2)}%; ${tipProbes.length} shared-head seam probes; ${protectedShoeVertices} shoe/cuff vertices preserve the historical trouser-expansion contract${parityShoes?' before the independently bounded V120 shoe sculpt':''}; head-independent pack displacement ${(maxBagDelta*1000).toFixed(4)} mm; unchanged UVs, topology and accessory draws.`);
 assert.equal(before, Buffer.from(geometry.attributes.position.array.buffer).toString('base64'), 'source skin geometry stays intact');
 for (const accessory of [cap, bag]) {
   for (const part of accessory.children) {

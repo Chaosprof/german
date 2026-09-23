@@ -316,12 +316,13 @@ vm.runInContext(section('  // BEGIN BLENDER GARDEN KIT','  // END BLENDER GARDEN
 const canopy=t.berlinGardenKit.geometry('treeNear');
 assert.equal(canopy,t.berlinGardenKit.geometry('treeNear'),'all street trees share one geometry');
 const branchedCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='branch-led-lobed-crown-v114';
-assert.ok(canopy.index.count/3 <= (branchedCanopy?25000:14000),'street tree stays within its authored rounded-leaf budget');
+const denseCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='dense-layered-linden-v118';
+assert.ok(canopy.index.count/3 <= (denseCanopy?20000:branchedCanopy?25000:14000),'street tree stays within its authored rounded-leaf budget');
 assert.ok([...canopy.attributes.position.array,...canopy.attributes.color.array].every(Number.isFinite));
 canopy.computeBoundingBox();
 const streetTreeHeight=canopy.boundingBox.max.y-canopy.boundingBox.min.y;
-assert.ok(streetTreeHeight>8&&streetTreeHeight<8.5,'street crown retains its taller authored envelope');
-assert.equal(t.berlinGardenKit.canopyRadius,2.85,'street-only cull radius comes from the accepted asset metadata');
+assert.ok(denseCanopy?streetTreeHeight>9.8&&streetTreeHeight<10.2:streetTreeHeight>8&&streetTreeHeight<8.5,'street crown retains its authored envelope');
+assert.equal(t.berlinGardenKit.canopyRadius,denseCanopy?2.89:2.85,'street-only cull radius comes from the accepted asset metadata');
 function treeGeometryFingerprint(geometry){
   const hash=require('crypto').createHash('sha256');
   for(const attr of [...Object.values(geometry.attributes),geometry.index].filter(Boolean))
@@ -760,7 +761,7 @@ for(const geometry of [canopy,farCrown]) {
   for(let i=0;i<p.count;i++)assert.ok(Math.hypot(p.getX(i),p.getZ(i))<=t.berlinGardenKit.canopyRadius,
     'every near/far vertex is enclosed by the actual runtime culling radius');
 }
-assert.ok(farCrown.index.count/3<=(branchedCanopy?7000:5000),'far crown retains matching leaf silhouettes within its authored budget');
+assert.ok(farCrown.index.count/3<=(denseCanopy?5500:branchedCanopy?7000:5000),'far crown retains matching leaf silhouettes within its authored budget');
 for(let i=0,p=farCrown.attributes.position;i<p.count;i++)assert.ok(Math.hypot(p.getX(i),p.getZ(i))<t.berlinGardenKit.canopyRadius,
   'authored far leaves also fit the shared yaw-independent cull radius');
 assert.ok(farCrown.index.count<canopy.index.count*.42,'each distant tree removes at least58% of its triangles');
@@ -800,7 +801,11 @@ for(const [label,fov,pixels] of [['desktop',40,720],['phone',69,844],['Photo zoo
   treeLodProjection.push({view:label,scale,enterMeters:+enter.toFixed(3),enterPixels:+(projectedHeight(enter)*pixels).toFixed(2),
     exitMeters:+exit.toFixed(3),exitPixels:+(projectedHeight(exit)*pixels).toFixed(2)});
 }
-lodCamera.fov=40;lodCamera.updateProjectionMatrix();selectTreeLOD([70,70,70,70]);
+lodCamera.fov=40;lodCamera.updateProjectionMatrix();
+// The prior loop ends at scale 1.30. Reset it explicitly, then project the
+// current authored crown to select a point beyond the 19% LOD boundary.
+const farTestDepth=Math.max(70,streetTreeHeight/(2*Math.tan(40*Math.PI/360)*.19)+2);
+selectTreeLOD([farTestDepth,farTestDepth,farTestDepth,farTestDepth],1);
 assert.ok(trees.every(tree=>tree.userData.treeLodFar));
 lampContext.PROFILE_RENDER=true;lampContext.window.location.search='?profile=1&treelod=0';
 lampContext.updateStreetTreeLOD(lodCamera);

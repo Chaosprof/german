@@ -54,8 +54,12 @@ for(const [meshName,record,faceOffset]of [['Kiez_Tree_Leaves_Street',data.meshes
 let protectedViews=0;
 for(let i=0;i<a.doc.bufferViews.length;i++)if(!changed.has(i)){const x=a.doc.bufferViews[i],y=b.doc.bufferViews[i];assert.deepEqual(b.bin.subarray(y.byteOffset||0,(y.byteOffset||0)+y.byteLength),a.bin.subarray(x.byteOffset||0,(x.byteOffset||0)+x.byteLength));protectedViews++;}
 if(shipping){
+  if(read(path.join(root,'assets/models',name+'.json')).canopyRevision==='dense-layered-linden-v118'){
+    require('./check_berlin_canopy_v118.cjs');
+  }else{
   for(const suffix of ['.json','.inline.js','.glb','.blend','-atlas.jpg'])assert.deepEqual(fs.readFileSync(path.join(root,'assets/models',name+suffix)),fs.readFileSync(path.join(stage,'models',name+suffix)));
   const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8'),match=html.match(/var BERLIN_KIEZ_GARDEN_DATA\s*=\s*(\{[^\r\n]*\});/);assert.ok(match);assert.deepEqual(JSON.parse(match[1]),data);
   assert.equal((html.match(/\bfunction decodeBerlinMeshRecord\s*\(/g)||[]).length,1);
+  }
 }
 console.log(JSON.stringify({passed:true,shipping,...reports,checkedCorners,protectedViews,acceptedPlanterExact:true,extraMaterials:0,extraDraws:0},null,2));

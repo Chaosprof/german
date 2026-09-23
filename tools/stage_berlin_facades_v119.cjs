@@ -1,0 +1,23 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-parity-facades-v119');
+const strip=s=>s.replace(/\nif \(typeof module[^\n]+\n?$/,'\n');
+let kit=fs.readFileSync(path.join(stage,'baseline/berlin_kiez_kit.js'),'utf8');
+const decorate=strip(fs.readFileSync(path.join(__dirname,'berlin_facade_finish_v119.js'),'utf8'));
+const shader=strip(fs.readFileSync(path.join(__dirname,'berlin_facade_shader_v119.js'),'utf8'));
+kit=kit.replace("  'use strict';","  'use strict';\n"+decorate+'\n'+shader);
+kit=kit.replace('  var cache = Object.create(null), templates = Object.create(null);','  applyBerlinFacadeFinishShader(THREE,material);\n  var cache = Object.create(null), templates = Object.create(null);');
+assert.ok(kit.includes('cache[key]=authored;return authored;'));
+kit=kit.replace('cache[key]=authored;return authored;','authored=finishBerlinKiezFacade(THREE,authored,variant,w,side);\n        cache[key]=authored;return authored;');
+kit=kit.replace('cache[key]=out; return out;','out=finishBerlinKiezFacade(THREE,out,variant,w,side);\n    cache[key]=out; return out;');
+// Keep the mansard footprint but vary the cap and dormer rhythm by frontage.
+kit=kit.replace('if(col%2===0) {','if((col+variant)%2===0 || (variant===4 && col===1)) {');
+kit=kit.replace('box(xx,h+1.10,-.05,1.31,1.31,1.22,body,1);','box(xx,h+1.10,-.05,variant===4?1.57:1.31,1.31,1.22,body,1);');
+fs.writeFileSync(path.join(stage,'berlin_kiez_kit.js'),kit);
+const base=fs.existsSync(path.join(stage,'baseline.html'))?path.join(stage,'baseline.html'):path.join(root,'audit/berlin-parity-trees-v118/candidate.html');
+let h=fs.readFileSync(base,'utf8'),a=h.indexOf('  // BEGIN AUTHORED KIEZ KIT'),b=h.indexOf('  // END AUTHORED KIEZ KIT',a);
+assert.ok(a>0&&b>a);
+h=h.slice(0,a)+'  // BEGIN AUTHORED KIEZ KIT\n'+strip(kit)+'\n'+h.slice(b);
+h=h.replace("'kiez-reference-v118'","'kiez-reference-v119'");
+fs.writeFileSync(path.join(stage,'candidate.html'),h);
+console.log('Staged façade finish in '+stage);

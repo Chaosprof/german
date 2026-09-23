@@ -949,14 +949,21 @@ const passingGate=gateContext.gates[0];passingGate.position.set(0,0,0);passingGa
 passingGate.scale.set(1,1,1);passingGate.updateMatrix();passingGate.userData.z=0;
 for(const portal of passingGate.userData.portals){portal.rotation.set(0,0,0);portal.updateMatrix();}
 vm.runInContext(sourceBetween('  function laneOf(x) {','  function resolveGates() {'),gateContext);
+gateContext.laneWrapAge=Infinity;
+gateContext.LANE_WRAP_TIME=Number(html.match(/var LANE_WRAP_TIME = ([\d.]+)/)[1]);
+vm.runInContext(html.match(/  function laneForArticle\(\) \{[\s\S]*?\n  \}/)[0],gateContext);
 let passageAnswers=0;gateContext.answerArticle=()=>passageAnswers++;
 const gateCameraContext=vm.createContext({THREE,camera:gatePoolCamera,chunks:[],LANES:gateContext.LANES,
+  laneWrapAge:Infinity,laneWrapDuration:0.76,laneWrapDir:0,visualLaneVelocity:0,lerp:THREE.MathUtils.lerp,
   visualPlayer:{x:0,y:0,z:0},overdriveIntensity:0,cameraShakeClock:0,bridgeReveal:0,routeCameraBend:0,routeCameraCrest:0,
   fxPrevPlayerX:0,fxLaneVel:0,slideVisual:0,targetLane:1,grounded:true,runPhase:0,airVisual:0,landingPulse:0,
   camPos:new THREE.Vector3(),camLook:new THREE.Vector3(),camShake:0,fxKickAmp:0,fxKickX:0,fxKickY:0,fxKickZ:0,
   leanRoll:0,fxBank:0,fxKickRoll:0,answerKick:0,fxFovPunch:0,fovVisual:62,
   clamp:gateContext.clamp,damp:(rate,dt)=>1-Math.exp(-rate*dt),playerSurfaceY:()=>0,routePathBank:()=>0});
 gateCameraContext.sampleRoutePoint=(x,y,z)=>{gateCameraContext.routePointX=x;gateCameraContext.routePointY=y;gateCameraContext.routePointZ=z;};
+// Camera framing now uses the shared lane-wrap easing function. Execute its
+// shipping definition in this isolated camera fixture instead of a test stub.
+vm.runInContext(html.match(/  function phaseEase\(v\) \{[\s\S]*?\n  \}/)[0],gateCameraContext);
 vm.runInContext(sourceBetween('  function baseCameraFov(aspect) {','  var camera = new THREE.PerspectiveCamera('),gateCameraContext);
 vm.runInContext(sourceBetween('  function updateCamera(dt) {','  function updateEnvironmentMood(od) {'),gateCameraContext);
 let gatePassageViews=0,maxPassingSignHeight=0,minPassingCameraDepth=Infinity;

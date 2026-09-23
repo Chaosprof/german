@@ -54,7 +54,7 @@ values(primitive.attributes.NORMAL).forEach((v,i)=>assert.ok(Math.abs(v-m.normal
 values(primitive.attributes.COLOR_0).forEach((v,i)=>assert.equal(v,i%4===3?255:m.color[Math.floor(i/4)*3+i%4]));
 if(shipping){
   const live=read(path.join(root,'assets/models',name+'.json'));
-  if(live.canopyRevision==='branch-led-lobed-crown-v114') {
+  if(live.canopyRevision==='branch-led-lobed-crown-v114'||live.canopyRevision==='dense-layered-linden-v118') {
     assert.deepEqual(live.meshes.planter,data.meshes.planter,'combined garden retains the independently verified planter');
     require('./check_berlin_branch_canopy_v114.cjs');
   } else {

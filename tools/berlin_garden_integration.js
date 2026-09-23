@@ -44,13 +44,18 @@ function createBerlinGardenKit(THREE, makeMaterial, records) {
         '  float leafWrap = saturate((dot(geometry.normal, directLight.direction) + 0.60) / 1.60);',
         '  float leafDiffuse = mix(dotNL, leafWrap, leafMask * 0.60);',
         '  reflectedLight.directDiffuse += leafDiffuse * directLight.color * BRDF_Lambert(material.diffuseColor);',
+        // A broad backlit lobe gives thin leaves transmitted warmth. It uses
+        // the already shadowed direct light, with no extra map or render pass.
+        '  float leafThrough = saturate(dot(-geometry.viewDir, directLight.direction));',
+        '  leafThrough *= leafThrough;',
+        '  reflectedLight.directDiffuse += leafMask * leafThrough * (0.10 + 0.16 * (1.0 - dotNL)) * directLight.color * BRDF_Lambert(material.diffuseColor * vec3(1.10, 1.0, 0.48));',
         '#else',
         diffuse,
         '#endif'
       ].join('\n'));
       shader.fragmentShader=shader.fragmentShader.replace('#include <lights_physical_pars_fragment>',source);
     };
-    material.customProgramCacheKey=function(){return (previousKey?previousKey.call(this):'')+'|garden-leaf-light-v1';};
+    material.customProgramCacheKey=function(){return (previousKey?previousKey.call(this):'')+'|garden-leaf-light-v2';};
   }
   return {
     material:material,

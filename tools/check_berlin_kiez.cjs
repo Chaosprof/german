@@ -2,7 +2,7 @@
 const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
 const path = require('path'), crypto = require('crypto');
 const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'berlin-runner.html'), 'utf8');
+const html = fs.readFileSync(path.resolve(root, process.env.BERLIN_HTML || 'berlin-runner.html'), 'utf8');
 const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
 scripts.forEach((s,i)=>new vm.Script(s,{filename:'inline-'+i}));
 const scope=vm.createContext({console});
@@ -11,7 +11,8 @@ const THREE=scope.THREE;
 scope.atob=s=>Buffer.from(s,'base64').toString('binary');
 scope.BERLIN_REFERENCE_ARCHITECTURE=JSON.parse(fs.readFileSync(path.join(root,process.env.BERLIN_ARCHITECTURE_DIR||'assets/models','berlin-reference-architecture-v1.json'),'utf8'));
 vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_packed_geometry.js'),'utf8'),scope);
-vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8'),scope);
+const kitPath=path.resolve(root,process.env.BERLIN_KIEZ_KIT||'tools/berlin_kiez_kit.js');
+vm.runInContext(fs.readFileSync(kitPath,'utf8'),scope);
 const createKit=scope.createBerlinKiezKit;
 const noop=()=>{};
 const ctx=new Proxy({createLinearGradient:()=>({addColorStop:noop})},{get:(o,k)=>o[k]||noop,set:(o,k,v)=>(o[k]=v,true)});
@@ -86,7 +87,7 @@ if(scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].balconyRevision) {
   const underside=ray.intersectObject(solid)[0];
   assert.ok(underside&&underside.point.y>8.25&&underside.point.y<8.84,'balcony has an outward-facing underside above the clear pavement');
 }
-const raw=fs.readFileSync(path.join(__dirname,'berlin_kiez_kit.js'),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/, '\n').trim();
+const raw=fs.readFileSync(kitPath,'utf8').replace(/\nif \(typeof module[^\n]+\n?$/, '\n').trim();
 if(!process.argv.includes('--canonical-only'))assert.ok(html.includes(raw),'shipped factory matches editable source');
 // Independent image decodes can complete in any order. The generated plaster
 // owns just cell 1; room cells and the old plaster fallback remain available.
@@ -383,7 +384,9 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
             'rounded architrave has substantial depth on both sides of the unchanged opening');
           profileRays++;
         }
-        const nose=new THREE.Raycaster(new THREE.Vector3(cx+1.00,cy-1.20,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
+        // Trailing planting can cover a sill in V119. Verify the preserved
+        // structural surface behind it; window/glass rays still test first hits.
+        const nose=new THREE.Raycaster(new THREE.Vector3(cx+1.00,cy-1.20,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh).find(hit=>!g.userData.finishRevision||hit.faceIndex<g.userData.finishBaseTriangles);
         assert.ok(nose&&atlasCell(nose.uv)===1&&nose.point.z>.28&&nose.point.z<.31&&nose.face.normal.z>.5,
           `bullnose sill has a closed outward-facing rounded front: ${JSON.stringify({w,variant,side,cx,cy,point:nose&&nose.point,normal:nose&&nose.face.normal})}`);
         profileRays++;

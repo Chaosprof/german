@@ -25,6 +25,7 @@ if(!process.argv.includes('--assets-only')){
 const scope=vm.createContext({console,Float32Array,Int16Array,Uint16Array,Uint8Array,Uint32Array});vm.runInContext(scripts.find(s=>s.includes('three.js r156 (MIT)')),scope);
 const THREE=scope.THREE;
 const data=JSON.parse(fs.readFileSync(path.join(assetDir,'berlin-kiez-garden-v1.json'),'utf8'));
+const denseCanopy=data.canopyRevision==='dense-layered-linden-v118';
 let canopyCandidate;
 if(canopyDepth){
   // Validate the bake independently, then require the shipping pack to be
@@ -76,6 +77,20 @@ for(const color of [{r:.16,g:.09,b:.035},{r:.7,g:.3,b:.1},{r:.04,g:.22,b:.015}])
   leafCases++;
 }
 console.log(`PASS: ${leafCases} actual leaf-shader cases; native non-leaf response, bounded diffuse, unchanged shadow/attenuation/specular source and one existing material.`);
+// Execute the complete shipped leaf contribution, including transmission.
+// Scalar RGB evaluates one channel at a time; vector dot products reduce to
+// controlled cosines so we can exercise the whole angular and shadow domain.
+const leafBody=gardenShader.fragmentShader.match(/float leafMask[\s\S]*?(?=\n#else)/)[0].replace(/\bfloat\b/g,'let');
+const leafTotal=new Function('vColor','geometry','directLight','dotNL','smoothstep','saturate','dot','mix','material','reflectedLight','BRDF_Lambert','vec3',leafBody+'return reflectedLight.directDiffuse;');
+let transmissionCases=0;
+for(const color of [{r:.16,g:.09,b:.035},{r:.7,g:.3,b:.1},{r:.04,g:.22,b:.015}])for(let n=-10;n<=10;n++)for(let v=-10;v<=10;v++)for(const light of [0,1]){
+  const normal=n/10,view=v/10,native=Math.max(0,normal),response=leafTotal(color,{normal,viewDir:view},{direction:1,color:light},native,smooth,x=>Math.max(0,Math.min(1,x)),(a,b)=>a*b,(a,b,t)=>a+(b-a)*t,{diffuseColor:.5},{directDiffuse:0},x=>x,(r,g,b)=>r);
+  assert.ok(Number.isFinite(response)&&response>=0&&response<=.65,'wrapped/transmitted contribution remains finite and bounded');
+  if(!light)assert.equal(response,0,'transmission respects complete light occlusion');
+  if(color.g<=color.r)assert.equal(response,native*.5*light,'transmission never affects bark, pots or warm flowers');
+  transmissionCases++;
+}
+console.log(`PASS: ${transmissionCases} complete leaf light cases, including front/back viewing, occlusion and non-leaf rejection.`);
 assert.equal(kit.geometry('treeNear'),kit.geometry('treeNear'),'every near tree retains shared geometry');
 assert.equal(kit.material.map,kit.atlas);assert.equal(kit.atlas.colorSpace,THREE.SRGBColorSpace);
 assert.equal(kit.atlas.minFilter,THREE.LinearMipmapLinearFilter);
@@ -120,7 +135,7 @@ for(const [name,record] of Object.entries(data.meshes)){
   assert.ok(geometry.boundingSphere.radius>0);
 }
 assert.ok(data.meshes.tree.triangles<=3500,'approved grove triangle budget');
-assert.ok(data.meshes.treeNear.triangles<=(lush?14000:9000),'approved near-tree triangle budget');
+assert.ok(data.meshes.treeNear.triangles<=(denseCanopy?20000:lush?14000:9000),'approved near-tree triangle budget');
 assert.equal(data.meshes.tree.triangles,data.meshes.leaves.triangles+data.meshes.trunk.triangles);
 assert.ok(decoded.tree.boundingBox.max.y<6.1&&decoded.tree.boundingBox.min.y>-.025);
 assert.ok(decoded.planter.boundingBox.max.y<2);
@@ -131,9 +146,10 @@ for(const geometry of [decoded.tree,decoded.treeNear]){
   const p=geometry.attributes.position;
   for(let i=0;i<p.count;i++)radius=Math.max(radius,Math.hypot(p.getX(i),p.getZ(i)));
 }
-assert.ok(radius<(lush?2.85:2.60),'provided rotated-tree cull radius encloses near and grove leaves');
-if(lush)assert.equal(data.streetCanopyRadius,2.85,'street canopy culling radius is shipped as asset metadata');
-if(lush||process.argv.includes('--coreless')||process.argv.includes('--tetra')||process.argv.includes('--flowering-planter')){
+assert.ok(radius<(denseCanopy?data.streetCanopyRadius:lush?2.85:2.60),'provided rotated-tree cull radius encloses near and grove leaves');
+if(denseCanopy){assert.ok(data.streetCanopyRadius<3);require('./check_berlin_canopy_v118.cjs');}
+if(lush&&!denseCanopy)assert.equal(data.streetCanopyRadius,2.85,'street canopy culling radius is shipped as asset metadata');
+if(!denseCanopy&&(lush||process.argv.includes('--coreless')||process.argv.includes('--tetra')||process.argv.includes('--flowering-planter'))){
   const tetra=!lush&&(process.argv.includes('--tetra')||process.argv.includes('--flowering-planter')),leafFaces=tetra?4:8;
   function components(geometry){
     const p=geometry.attributes.position,indices=geometry.index,ids=new Map(),parent=[],weld=[];

@@ -3,6 +3,9 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-model-forms-v114/tram');
 const shipped=process.argv.includes('--shipping'),upright=process.argv.includes('--upright'),folder=shipped?path.join(root,'assets/models'):path.join(stage,upright?'upright/models':'models');
+if(shipped&&JSON.parse(fs.readFileSync(path.join(folder,'berlin-vintage-tram-v90.json'))).finishRevision==='raked-cab-visible-divider-v121'){
+  require('./check_berlin_tram_v121.cjs')(true);return;
+}
 const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8');
 function section(a,b){const i=html.indexOf(a),j=html.indexOf(b,i+a.length);assert.ok(i>=0&&j>i,a);return html.slice(i,j);}
 const c=vm.createContext({console});

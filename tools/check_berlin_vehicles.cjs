@@ -214,6 +214,13 @@ assert.ok(vanClone.children.every((mesh,i)=>mesh.geometry===vanTemplate.children
 console.log(`PASS: delivery microvan replaces one of four car templates; ${vanTrimProbes.length} visible glass/lamp rays; ${vanMeshes} meshes / ${vanTriangles} triangles; exact collision envelope and shared clone assets.`);
 // The large runner tram has real glazing apertures and a rear-facing identity.
 // Keep this factory/art check separate from obstacle scheduling and pool counts.
+if(tramData.finishRevision==='raked-cab-visible-divider-v121'){
+  // The V103 vertex/roof snapshots below deliberately describe the older
+  // coach. V121 has its own actual-surface rays, exact UV/topology/native
+  // proof and stricter 8,200-triangle/nine-batch budget.
+  require('./check_berlin_tram_v121.cjs')(true);
+  assert.equal(c.OB_KINDS[3].yMax,3.15,'V121 retains the gameplay collider');
+}else{
 const tramRegister=c.registerProp;
 c.registerProp=(_kind,root)=>root;
 const runnerTram=c.makeRunnerTram();c.registerProp=tramRegister;runnerTram.updateMatrixWorld(true);
@@ -290,6 +297,7 @@ assert.ok(cachedTram.children.every((mesh,i)=>mesh.geometry===runnerTram.childre
 assert.ok(clonedTram.children.every((mesh,i)=>mesh.geometry===cachedTram.children[i].geometry&&mesh.material===cachedTram.children[i].material),
   'tram pool clones share all geometry and materials');
 console.log(`PASS: runner tram ${tramProbes.length} actual glazing/trim rays; split driving cab, facing lamps, cream crown/pantograph, exact 2.5×8 m footprint, 4.10 m roof render height / unchanged 3.15 m collision height; ${tramDraws} opaque draws / ${tramTriangles} triangles; cached factories and clones.`);
+}
 // The shaped bus shell once buried its rear bumper and lamps. Find the real
 // trim meshes before batching, then ray-test their actual surface points
 // against the complete batched vehicle from six elevated camera positions.

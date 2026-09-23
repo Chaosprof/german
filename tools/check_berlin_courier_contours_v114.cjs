@@ -34,6 +34,10 @@ const report={baseline:'Frozen V114 normal-trial authoring GLB',target:'V114 '+t
 fs.writeFileSync(path.join(dir,targetStage+'/additional-preservation.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 
 if(process.argv.includes('--shipping')) {
-  for(const ext of ['bin','json','inline.js'])assert.deepEqual(fs.readFileSync(path.join(dir,targetStage,'courier-forms-v114.'+ext)),fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.'+ext)),'canonical sculpt matches verified candidate');
-  console.log('PASS: canonical quiet-hem payload matches the verified complete patch.');
+  const current=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.json')));
+  const parity=current.finishRevision===120;
+  const verified=parity?path.join(root,'audit/berlin-parity-courier-v120/shoes'):path.join(dir,targetStage);
+  for(const ext of ['bin','json','inline.js'])assert.deepEqual(fs.readFileSync(path.join(verified,'courier-forms-v114.'+ext)),fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.'+ext)),'canonical sculpt matches verified candidate');
+  if(parity){const proof=JSON.parse(fs.readFileSync(path.join(verified,'validation.json')));assert.equal(proof.sourceHash,sha(source.raw));assert.equal(proof.poseSamples,255);assert.ok(proof.nonShoePositionsNormalsExact&&proof.UVSkinMasksTopologyAnimationsExact&&proof.maxFloorLowering<.004);}
+  console.log('PASS: canonical payload matches '+(parity?'V120 shoe refinement with exact inherited quiet hem.':'the verified quiet-hem complete patch.'));
 }

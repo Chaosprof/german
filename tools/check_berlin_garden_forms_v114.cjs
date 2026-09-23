@@ -6,7 +6,7 @@ const prefix='berlin-kiez-garden-v1';
 const shipping=process.argv.includes('--shipping');
 assert(process.argv.slice(2).every(arg=>['--shipping','--sprays','--crown','--lod-cores'].includes(arg)),'unsupported argument');
 const read=(file)=>JSON.parse(fs.readFileSync(file,'utf8'));
-if(shipping&&read(path.join(root,'assets/models',prefix+'.json')).canopyRevision==='branch-led-lobed-crown-v114') {
+if(shipping&&['branch-led-lobed-crown-v114','dense-layered-linden-v118'].includes(read(path.join(root,'assets/models',prefix+'.json')).canopyRevision)) {
   require('./check_berlin_branch_canopy_v114.cjs');
   process.exit(0);
 }

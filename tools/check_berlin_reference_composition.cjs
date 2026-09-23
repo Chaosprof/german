@@ -2,14 +2,14 @@
 // Exercise the shipped placement code against the actual authored meshes.
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert/strict');
 const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'berlin-runner.html'), 'utf8');
+const html = fs.readFileSync(path.resolve(root, process.env.BERLIN_HTML || 'berlin-runner.html'), 'utf8').replace(/\r\n/g,'\n');
 const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
 const scope = vm.createContext({console});
 vm.runInContext(scripts.find(s => s.includes('three.js r156 (MIT)')), scope);
 const T = scope.THREE;
 scope.atob = s => Buffer.from(s, 'base64').toString('binary');
 scope.BERLIN_REFERENCE_ARCHITECTURE = JSON.parse(fs.readFileSync(path.join(root, process.env.BERLIN_ARCHITECTURE_DIR || 'assets/models', 'berlin-reference-architecture-v1.json')));
-for (const name of ['berlin_packed_geometry.js', 'berlin_kiez_kit.js']) vm.runInContext(fs.readFileSync(path.join(__dirname, name), 'utf8'), scope);
+for (const name of ['berlin_packed_geometry.js', 'berlin_kiez_kit.js']) vm.runInContext(fs.readFileSync(name==='berlin_kiez_kit.js'&&process.env.BERLIN_KIEZ_KIT?path.resolve(root,process.env.BERLIN_KIEZ_KIT):path.join(__dirname,name), 'utf8'), scope);
 const noop = () => {};
 const ctx = new Proxy({createLinearGradient: () => ({addColorStop: noop})}, {get: (o,k) => o[k] || noop, set: (o,k,v) => (o[k] = v, true)});
 const kit = scope.createBerlinKiezKit(T, (color, opts) => new T.MeshStandardMaterial({color, ...opts}),
@@ -146,7 +146,7 @@ assert.ok(html.includes('c.position.z < playerZ - CHUNK_LEN * 1.6'), 'recycling 
 // Instantiate the actual Blender props and their shipped placement blocks.
 vm.runInContext(fs.readFileSync(path.join(__dirname, 'berlin_garden_integration.js'), 'utf8'), scope);
 const garden = scope.createBerlinGardenKit(T, (color, opts) => new T.MeshStandardMaterial({color, ...opts}),
-  JSON.parse(fs.readFileSync(path.join(root, 'assets/models/berlin-kiez-garden-v1.json'))));
+  JSON.parse(fs.readFileSync(path.join(root, process.env.BERLIN_GARDEN_DIR || 'assets/models', 'berlin-kiez-garden-v1.json'))));
 const makePlanter = new Function('THREE', 'berlinGardenKit', 'registerProp',
   section('  function makePlanter()', '  // Wheelie bin') + '\nreturn makePlanter;')(T, garden, (kind,g) => (g.userData.propKind = kind, g));
 const propSlots = [makePlanter(), makePlanter(), makePlanter()].map(g => ({variants: [g]}));
@@ -169,7 +169,7 @@ const planterExtent = new Function('THREE', section('  var propBoundsRootInv =',
   '\nreturn propExtentTowardFacade;')(T);
 const props = {ud: {props: furnishedSlots, buildings: opening.buildings}, referenceBeat: true, contactCount: 0,
   pushContact: (_,count) => count + 1, propExtentTowardFacade: planterExtent};
-const planterPlacement = section('    if (referenceBeat) {\r\n      var referencePlanterCount', '    // Crate stacks:', rollStart);
+const planterPlacement = section('    if (referenceBeat) {\n      var referencePlanterCount', '    // Crate stacks:', rollStart);
 vm.runInNewContext(planterPlacement, props);
 const cafeBounds=new T.Box3().setFromObject(cafe);
 assert.ok(cafe.visible&&cafeBounds.min.x>7.5&&cafeBounds.max.x<10.66,

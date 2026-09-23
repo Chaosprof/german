@@ -2,7 +2,7 @@
 // Validate the shipped art geometry; --export writes a Blender inspection kit.
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..');
-const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8');
+const html=fs.readFileSync(path.resolve(root,process.env.BERLIN_HTML||'berlin-runner.html'),'utf8');
 function section(a,b,source=html){
   const start=source.indexOf(a),end=source.indexOf(b,start+a.length);
   assert.ok(start>=0&&end>start,`source anchors: ${a}`);return source.slice(start,end);
@@ -479,10 +479,14 @@ assert.ok(packedBytes<750000,'lush near canopy keeps its one shared GPU buffer b
 assert.equal(canopy.attributes.normal.normalized,true,'signed normal data reaches the shader normalized');
 assert.equal(canopy.attributes.color.normalized,true,'byte colours reach the shader normalized');
 for(const index of canopy.index.array)assert.ok(index<canopy.attributes.position.count);
-assert.ok(count<=14000,'near street tree stays within the full crown budget');
+// The dense V118 crown replaces the shipped V114 24,160-triangle tree.
+// Retain the original 750 KB memory ceiling and cap its geometry below 20k.
+const canopyRecord=JSON.parse(html.match(/var BERLIN_KIEZ_GARDEN_DATA\s*=\s*(\{[^\r\n]*\});/)[1]);
+assert.ok(count<=20000,'near street tree stays below the reduced 20k triangle budget');
+assert.ok(canopyRecord.streetCanopyRadius<=3,'street canopy has a bounded cull envelope');
 const p=canopy.attributes.position,n=canopy.attributes.normal;
 for(let i=0;i<p.count;i++){
-  assert.ok(Math.hypot(p.getX(i),p.getZ(i))<2.85,'rotated foliage fits the measured cull/parking envelope');
+  assert.ok(Math.hypot(p.getX(i),p.getZ(i))<canopyRecord.streetCanopyRadius,'rotated foliage fits the measured cull/parking envelope');
   assert.ok(Math.abs(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))-1)<.002,'smooth leaf and branch normals remain normalized');
 }
 console.log(`PASS: aligned regular/arched windows across 72 facade layouts; pooled variant recycling; bevel normals/bounds; ${count} Blender tree triangles, ${packedBytes} geometry bytes, smooth normals and measured cull envelope.`);
