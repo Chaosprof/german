@@ -159,7 +159,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-08-01-reviewed-sense-schema-v3";
+const DATA_VERSION = "2026-09-24-usefulness-ranking-v2";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 // articleHelp/pluralHelp are split into a separate file so the core noun data
@@ -168,7 +168,7 @@ const NOUN_HELP_PATH = "./data/noun-help.json" + v;
 // Approx uncompressed size of nouns.json, used only to estimate the load
 // progress bar when the server gzips the response (Content-Length is then the
 // compressed size). Update if the core file grows a lot.
-const NOUNS_CORE_APPROX_BYTES = 7594495;
+const NOUNS_CORE_APPROX_BYTES = 7698169;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
 const VERBS_DATA_PATH = "./data/verbs.json" + v;
 const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json" + v;
@@ -660,15 +660,18 @@ function getAnswerModes(mode, gameMode) {
 
 // VOCABULARY TIER CONFIG
 // ═══════════════════════════════════════════════════════════════
+// Nouns are ranked by learner usefulness (scripts/rank_nouns_by_usefulness.py).
+// `desc` is not rendered today; it records what each noun tier covers of the
+// Goethe lists (Top 1000 = 96% of A1 and 85% of A2 nouns, Top 5000 = 95% of B1).
 const TIER_OPTIONS = [
   { value: 100, label: "Top 100", desc: "Most essential words" },
   { value: 200, label: "Top 200", desc: "Core vocabulary" },
-  { value: 500, label: "Top 500", desc: "Intermediate" },
-  { value: 1000, label: "Top 1000", desc: "Advanced beginner" },
-  { value: 2000, label: "Top 2000", desc: "Intermediate-advanced" },
-  { value: 5000, label: "Top 5000", desc: "Comprehensive" },
-  { value: 10000, label: "Top 10000", desc: "C2 mastery" },
-  { value: 15000, label: "Top 15000", desc: "Advanced C2" },
+  { value: 500, label: "Top 500", desc: "A1 essentials" },
+  { value: 1000, label: "Top 1000", desc: "A1, most of A2" },
+  { value: 2000, label: "Top 2000", desc: "A2, most of B1" },
+  { value: 5000, label: "Top 5000", desc: "B1, into B2" },
+  { value: 10000, label: "Top 10000", desc: "B2–C1 breadth" },
+  { value: 15000, label: "Top 15000", desc: "Advanced reading" },
   { value: 25000, label: "Top 25000", desc: "Near-native" },
 ];
 

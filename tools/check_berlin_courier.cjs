@@ -74,15 +74,25 @@ assert.deepEqual(Array.from(mesh.geometry.index.array),Array.from(geometry.index
 // refinement. New mask channels must not alter a single rendered surface byte.
 const outfitEdits=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-courier-v111/character-edits.json'),'utf8')).map(e=>({...e,before:e.before.replaceAll('\r\n','\n'),after:e.after.replaceAll('\r\n','\n')}));
 let priorMaskSource=html.slice(refineStart,refineEnd).replaceAll('\r\n','\n'),reversedMaskEdits=0;
+const handMaterial=priorMaskSource.includes('if (spec.sleeve || spec.hand) sleeveWeight += weight;');
+if(handMaterial)priorMaskSource=priorMaskSource
+  .replace('shoe:shoe, sleeve:isSleeve, hand:/^(Left|Right)Hand$/.test(name), head:', 'shoe:shoe, sleeve:isSleeve, head:')
+  .replace('if (spec.sleeve || spec.hand) sleeveWeight += weight;', 'if (spec.sleeve) sleeveWeight += weight;');
 for(const edit of [...outfitEdits].reverse())if(priorMaskSource.includes(edit.after)) {
   priorMaskSource=priorMaskSource.replace(edit.after,edit.before);reversedMaskEdits++;
 }
 assert.ok(reversedMaskEdits>=6,'recorded mask edits reconstruct the previous refinement');
 const priorMaskMesh=new T.SkinnedMesh(geometry,mesh.material);priorMaskMesh.bind(skeleton,new T.Matrix4());
 makeRefine(priorMaskSource)(priorMaskMesh);
-for(const name of ['position','normal','uv','skinIndex','skinWeight','aCourierSleeve','aCourierSole'])
+for(const name of ['position','normal','uv','skinIndex','skinWeight','aCourierSole',...(handMaterial?[]:['aCourierSleeve'])])
   assert.deepEqual(Array.from(mesh.geometry.attributes[name].array),Array.from(priorMaskMesh.geometry.attributes[name].array),
     'outfit masks preserve every accepted '+name+' value');
+if(handMaterial)for(let v=0;v<geometry.attributes.position.count;v++){
+  let handWeight=0;
+  for(let c=0;c<4;c++)if(/^(Left|Right)Hand$/.test(skeleton.bones[geometry.attributes.skinIndex.getComponent(v,c)].name))handWeight+=geometry.attributes.skinWeight.getComponent(v,c);
+  const expected=Math.min(1,priorMaskMesh.geometry.attributes.aCourierSleeve.getX(v)+handWeight);
+  assert.ok(Math.abs(mesh.geometry.attributes.aCourierSleeve.getX(v)-expected)<1e-7,'new paint coverage is exactly the existing arm mask plus actual hand weights');
+}
 assert.equal(priorMaskMesh.geometry.attributes.aCourierGarment.itemSize,2);
 assert.equal(mesh.geometry.attributes.aCourierGarment.itemSize,4);
 for(let v=0;v<geometry.attributes.position.count;v++)for(let c=0;c<2;c++)
@@ -257,8 +267,9 @@ assert.equal((shader.fragmentShader.match(/varying vec4 vCourierGarment;/g) || [
 assert.ok(shader.vertexShader.includes('vCourierGarment = aCourierGarment;'));
 assert.ok(shader.fragmentShader.includes('max(courierHem, courierCuff)'));
 assert.ok(finish.customProgramCacheKey().includes('existingHeroShader'));
-assert.equal((shader.fragmentShader.match(/texture2D\(/g) || []).length,
-  (T.ShaderLib.standard.fragmentShader.match(/texture2D\(/g) || []).length, 'sole adds no texture fetch');
+const expandedFragment=s=>s.replace(/#include <([\w_]+)>/g,(_,name)=>{assert.ok(T.ShaderChunk[name]!==undefined,name);return expandedFragment(T.ShaderChunk[name]);});
+assert.equal((expandedFragment(shader.fragmentShader).match(/texture2D\(/g) || []).length,
+  (expandedFragment(T.ShaderLib.standard.fragmentShader).match(/texture2D\(/g) || []).length, 'expanded outfit shader adds no texture fetch sites');
 // Exterior rear rays and the exact atlas pixels they hit: a previous hem
 // counted 103 valid vertices but sat 18 cm above the real clothing boundary.
 // Pin the shipped WebP. compress_hero_webp.py --check proves every decoded
@@ -291,6 +302,12 @@ const maskExpression=name=>{const found=shader.fragmentShader.match(new RegExp('
 const evalSleeve=new Function('smoothstep','vCourierSleeve','return '+maskExpression('courierSleeve')+';');
 const evalForearm=new Function('smoothstep','vCourierGarment','courierSleeve','return '+maskExpression('courierForearm')+';');
 const evalCuff=new Function('smoothstep','vCourierGarment','courierSleeve','return '+maskExpression('courierCuff')+';');
+const denimRevision=Number(html.match(/return 'courierReferenceOutfitV(\d+)\|/)?.[1]||0);
+const denimExpression=shader.fragmentShader.match(/float courierDenim\s*=\s*([^;]+);/);
+const shoeExpression=shader.fragmentShader.match(/float courierShoe = ([^;]+);/);
+const evalShoe=shoeExpression?new Function('smoothstep','max','courierSource','vCourierGarment','return '+shoeExpression[1]+';'):null;
+const rawDenim=denimExpression?new Function('smoothstep','max','courierSleeve','courierCloth','vCourierGarment','courierShoe','return '+denimExpression[1]+';'):null;
+const evalDenim=rawDenim?(smooth,max,sleeve,cloth,garment,color={r:1,g:0,b:0})=>rawDenim(smooth,max,sleeve,cloth,garment,evalShoe?evalShoe(smooth,max,color,garment):garment.w):null;
 const rearGeo = geometry.clone(); rearGeo.setIndex(attribute(primitive.indices));
 rearGeo.setAttribute('uv', attribute(primitive.attributes.TEXCOORD_0));
 const rearMesh = new T.Mesh(rearGeo, new T.MeshBasicMaterial({side:T.DoubleSide})); rearMesh.updateMatrixWorld(true);
@@ -307,6 +324,13 @@ for (const s of rearAtlasSamples) {
   const color = new T.Color().setRGB(samplePixel[0]/255,samplePixel[1]/255,samplePixel[2]/255).convertSRGBToLinear();
   const cloth = evalCloth(smooth, Math.max, color, {x:value(0),y:value(1),z:value(2),w:value(3)});
   const mask = evalHem(smooth, cloth, {x:value(0),y:value(1)});
+  if(denimRevision>=136){
+    const sleeveValue=mesh.geometry.attributes.aCourierSleeve;
+    const sleeve=evalSleeve(smooth,sleeveValue.getX(f.a)*bary.x+sleeveValue.getX(f.b)*bary.y+sleeveValue.getX(f.c)*bary.z);
+    const denim=evalDenim(smooth,Math.max,sleeve,cloth,{x:value(0),y:value(1),z:value(2),w:value(3)},color);
+    if(s[1]===.74)assert.ok(denim>.99,'denim finish reaches the real upper-trouser surface in all five rear columns');
+    else assert.ok(denim<.001,'measured jacket hem remains outside denim paint');
+  }
   if (s[1] === .77) assert.ok(mask > .95, 'hem reaches the actual red-cloth bottom in each rear column');
   else {
     assert.equal(mask, 0, 'blue jeans below the actual cloth boundary retain their source colour');
@@ -328,6 +352,7 @@ for(const y of [1.40,1.45,1.50,1.55])for(const x of [-.05,0,.05]) {
   const probe=surfaceMaskAt(new T.Vector3(x,y,1),new T.Vector3(0,0,-1));
   assert.equal(probe.g.z,0);assert.equal(probe.g.w,0);assert.equal(probe.sleeve,0);
   assert.equal(evalCloth(smooth,Math.max,{r:1,g:0,b:0},probe.g),0,'even red facial texels cannot enter the garment colour gate');
+  if(denimRevision>=136)assert.equal(evalDenim(smooth,Math.max,probe.sleeve,0,probe.g),0,'face remains outside denim paint regardless of sampled texture color');
   faceSurfaceChecks++;
 }
 // Side rays land on verified skin pixels of the pinned donor atlas, not on

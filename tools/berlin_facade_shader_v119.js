@@ -23,7 +23,12 @@ function applyBerlinFacadeFinishShader(THREE, material) {
     ].join('\n'));
     shader.fragmentShader=shader.fragmentShader.replace('totalEmissiveRadiance+=diffuseColor.rgb*kiezShop*0.46;',[
       'if(kiezShop>0.5){',
-      'totalEmissiveRadiance+=diffuseColor.rgb*vec3(0.68,0.59,0.46);',
+      // V125: the bakery display (atlas tile 5) is already bright pastry, so
+      // it keeps a lower room glow; every other shop keeps the V124 level.
+      'totalEmissiveRadiance+=diffuseColor.rgb*(abs(kiezTile-5.0)<0.5?vec3(0.52,0.46,0.38):vec3(0.95,0.84,0.72));',
+      // Painted pendant lamps (pale warm texels) burn above the bloom
+      // threshold, so each window carries the art direction's soft halo.
+      'totalEmissiveRadiance+=smoothstep(0.62,0.74,min(diffuseColor.r,diffuseColor.g))*step(diffuseColor.b,diffuseColor.g*0.92)*vec3(5.20,4.00,2.20);',
       // Warm dark room texels without bleaching bright books and lamps.
       'vec3 kiezRoomBounce=max(vec3(0.10,0.060,0.025)-diffuseColor.rgb*0.22,vec3(0.0));',
       'totalEmissiveRadiance+=kiezRoomBounce;',
@@ -33,6 +38,6 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       'totalEmissiveRadiance+=vColor.a*(1.0-step(1.5,kiezPaintTile))*vec3(0.16,0.105,0.047);'
     ].join('\n'));
   };
-  material.customProgramCacheKey=function(){return (previousKey?previousKey.call(this):'')+'|kiez-facade-finish-v119-color';};
+  material.customProgramCacheKey=function(){return (previousKey?previousKey.call(this):'')+'|kiez-facade-finish-v125-lamps';};
 }
 if (typeof module !== 'undefined') module.exports = {applyBerlinFacadeFinishShader:applyBerlinFacadeFinishShader};

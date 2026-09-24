@@ -148,9 +148,11 @@ for(const mode of ['webgl2','webgl1-hdr','webgl1-ldr','no-depth','no-derivatives
     evalFog(state,depth,null,haze,factor,color,()=>{directionReads++;return [0,0];},()=>({xy:[.5,.25],z:mask}),
       ()=>{textureReads++;return {rgb:city};},v=>v,(rgb,a)=>({rgb,a}),smooth,mix);
     assert.equal(color.a,alpha);
-    assert.equal(directionReads,enabled&&depth>120?1:0,'near/off pixels do no directional work');
-    assert.equal(textureReads,enabled&&depth>120&&mask>0?1:0,'only distant in-cone pixels sample the existing image once');
-    if(!enabled||depth<=120||mask===0)assert.deepEqual(color.rgb,mix(base,haze,factor),'original RGB expression is exact on every bypass path');
+    // V125 moved the painted street's arrival in to 60-115 m; read it from the live state.
+    const near=state.fadeNear;
+    assert.equal(directionReads,enabled&&depth>near?1:0,'near/off pixels do no directional work');
+    assert.equal(textureReads,enabled&&depth>near&&mask>0?1:0,'only distant in-cone pixels sample the existing image once');
+    if(!enabled||depth<=near||mask===0)assert.deepEqual(color.rgb,mix(base,haze,factor),'original RGB expression is exact on every bypass path');
     if(enabled&&depth>=178&&mask===1)assert.deepEqual(color.rgb,mix(haze,city,state.strength),'fully fogged central surfaces match dome city/haze color');
     surfaceFogCases++;
   }
@@ -475,14 +477,16 @@ const canopy=buildTree(html);checkGeometry(canopy,'canopy');
 const count=canopy.index.count/3;
 const geometryBytes=g=>Object.values(g.attributes).reduce((sum,a)=>sum+a.array.byteLength,0)+(g.index?g.index.array.byteLength:0);
 const packedBytes=geometryBytes(canopy);
-assert.ok(packedBytes<750000,'lush near canopy keeps its one shared GPU buffer below 750 KB');
+const canopyRecord=JSON.parse(html.match(/var BERLIN_KIEZ_GARDEN_DATA\s*=\s*(\{[^\r\n]*\});/)[1]);
+const twigCanopy=['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(canopyRecord.canopyRevision);
+assert.ok(packedBytes<(twigCanopy?1100000:750000),'near canopy stays within its measured shared-buffer budget');
 assert.equal(canopy.attributes.normal.normalized,true,'signed normal data reaches the shader normalized');
 assert.equal(canopy.attributes.color.normalized,true,'byte colours reach the shader normalized');
 for(const index of canopy.index.array)assert.ok(index<canopy.attributes.position.count);
-// The dense V118 crown replaces the shipped V114 24,160-triangle tree.
-// Retain the original 750 KB memory ceiling and cap its geometry below 20k.
-const canopyRecord=JSON.parse(html.match(/var BERLIN_KIEZ_GARDEN_DATA\s*=\s*(\{[^\r\n]*\});/)[1]);
-assert.ok(count<=20000,'near street tree stays below the reduced 20k triangle budget');
+// V134 spends more shared geometry on fine shoots while its matte leaf
+// shader reduces measured whole-frame GPU time. Keep the previous envelope
+// for older crowns; the V134 acceptance evidence lives in its audit folder.
+assert.ok(count<=(twigCanopy?25000:20000),'near street tree stays within its measured triangle budget');
 assert.ok(canopyRecord.streetCanopyRadius<=3,'street canopy has a bounded cull envelope');
 const p=canopy.attributes.position,n=canopy.attributes.normal;
 for(let i=0;i<p.count;i++){
@@ -505,20 +509,21 @@ assert.equal(pickup.pretzels.length,pickup.PRETZEL_POOL,'logical collectible poo
 // V116 knot: 78 rings x 9 sides plus two 45-triangle end caps (V115's loop was 1,304).
 assert.equal(pickupSolid.attributes.position.count/3,1494,'knotted rope keeps its authored ring, side and cap counts');
 assert.ok(pickupSolid.attributes.position.count/3<=1600,'knotted pretzel stays within its 1,600-triangle budget');
-assert.ok(Math.max(...pickup.PRETZEL_RADIUS)>=0.145&&Math.min(...pickup.PRETZEL_RADIUS)<=0.08,'fat belly and thin arms: belly radius >= 0.145, arm ends <= 0.08');
+// V125 plump dough: belly >= 0.20 and at least twice the thinnest (twist) strand.
+assert.ok(Math.max(...pickup.PRETZEL_RADIUS)>=0.20&&Math.max(...pickup.PRETZEL_RADIUS)>=2*Math.min(...pickup.PRETZEL_RADIUS),'fat belly and thinner arms: belly radius >= 0.20 and >= 2x the arms');
 assert.equal(pickup.PRETZEL_RADIUS.length,pickup.PRETZEL_PATH.length,'one authored radius per centreline point');
 assert.equal(pickup.pretzelSolidInst.material.transparent,false,'dough remains opaque');
-assert.ok(pickupSolid.boundingBox.max.x-pickupSolid.boundingBox.min.x<0.90,'fuller token stays within its compact lane footprint');
+assert.ok(pickupSolid.boundingBox.max.x-pickupSolid.boundingBox.min.x<1.25,'V125 plump token stays well inside its 3 m lane');
 for(const key of ['position','normal','uv'])assert.ok([...pickupSolid.attributes[key].array].every(Number.isFinite),`pickup ${key} is finite`);
 const pickupMesh=new THREE.Mesh(pickupSolid,new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
 pickupMesh.updateMatrixWorld();
 const pickupRay=new THREE.Raycaster(),rayOrigin=new THREE.Vector3(),rayDirection=new THREE.Vector3(0,0,-1);
 for(const [x,y] of [[-0.33,0.13],[0.33,0.13],[0,-0.30]]){
-  pickupRay.set(rayOrigin.set(x*0.58,y*0.58,2),rayDirection);
+  pickupRay.set(rayOrigin.set(x*0.74,y*0.74,2),rayDirection);
   assert.equal(pickupRay.intersectObject(pickupMesh).length,0,'each of the three pretzel openings remains clear');
 }
 for(const [x,y] of [[-0.62,0.08],[0.62,0.08],[0,-0.57]]){
-  pickupRay.set(rayOrigin.set(x*0.58,y*0.58,2),rayDirection);
+  pickupRay.set(rayOrigin.set(x*0.74,y*0.74,2),rayDirection);
   assert.ok(pickupRay.intersectObject(pickupMesh).length>0,'outer lobes and belly retain a solid silhouette');
 }
 // Bound the actual reduced centerline's deviation from the authored curve.
@@ -530,16 +535,18 @@ for(let i=0;i<=4000;i++){const p=pickupCurve.getPointAt(i/4000);
 assert.equal(pickupCrossings.length,4,'two strands each cross the twist axis twice');
 pickupCrossings.sort((a,b)=>a.y-b.y);
 for(const [a,b] of [[pickupCrossings[0],pickupCrossings[1]],[pickupCrossings[2],pickupCrossings[3]]]){
-  assert.ok(Math.abs(a.y-b.y)<0.02&&a.z*b.z<0&&Math.abs(a.z-b.z)>=0.16,'at each crossing one strand passes in front of the other, clear of both radii');
+  assert.ok(Math.abs(a.y-b.y)<0.02&&a.z*b.z<0&&Math.abs(a.z-b.z)>=2*Math.min(...pickup.PRETZEL_RADIUS),'at each crossing one strand passes in front of the other, clear of both radii');
 }
 const pickupSegments=Array.from({length:78},(_,i)=>new THREE.Line3(pickupCurve.getPointAt(i/78),pickupCurve.getPointAt((i+1)/78)));
 const nearestPickupPoint=new THREE.Vector3();let maxPickupCurveError=0;
 for(let i=0;i<=512;i++){
   const point=pickupCurve.getPointAt(i/512);let error=Infinity;
   for(const segment of pickupSegments){segment.closestPointToPoint(point,true,nearestPickupPoint);error=Math.min(error,point.distanceTo(nearestPickupPoint));}
-  maxPickupCurveError=Math.max(maxPickupCurveError,error*0.58);
+  maxPickupCurveError=Math.max(maxPickupCurveError,error*0.74);
 }
-assert.ok(maxPickupCurveError<0.007,'reduced tube centerline stays within 7mm of its authored curve');
+// The same 78-ring tube at the V125 display scale (0.74, was 0.58): the bound
+// scales with it, so relative smoothness is held exactly where it was.
+assert.ok(maxPickupCurveError<0.007*0.74/0.58,'reduced tube centerline stays within 7mm of its authored curve');
 console.log(`PASS: opaque 1,494-triangle knotted pretzel (fat belly, two-crossing twist), three open loops, fixed two-draw pool and ${(maxPickupCurveError*1000).toFixed(2)}mm maximum centerline deviation.`);
 // Build the actual power-up pool. The bear shield must read as a shield and
 // present its paw throughout its bounded rock, with no extra opaque draw.
@@ -702,7 +709,7 @@ for(const [index,p,retirement] of [[0,approachingPickup,1],[1,taperedPickup,.5]]
   assert.ok(Math.abs(pickupInstanceScale.x-expectedScale)<1e-6,'solid instance preserves approach pulse and applies only the post-window taper');
   assert.ok(Math.abs(pickupInstancePos.z-p.z)<1e-5,'compaction preserves the source position');
   pickup.pretzelHaloInst.getMatrixAt(index,pickupInstanceMatrix);pickupInstanceMatrix.decompose(pickupInstancePos,pickupInstanceRotation,pickupInstanceScale);
-  assert.ok(Math.abs(pickupInstanceScale.x-1.22*expectedScale)<1e-6,'halo size follows the same retirement as its solid');
+  assert.ok(Math.abs(pickupInstanceScale.x-1.62*expectedScale)<1e-6,'halo size follows the same retirement as its solid');
 }
 for(const type of pickup.POWERUP_TYPES){
   clearPickupState();const p=pickup.spawnPowerup(type,1,pickup.prevZ-.8-.5);pickup.recycle();presentPickups();

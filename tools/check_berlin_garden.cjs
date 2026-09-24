@@ -3,6 +3,8 @@ const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('ass
 const root=path.resolve(__dirname,'..');
 const assetDirArg=process.argv.find(arg=>arg.startsWith('--asset-dir='));
 const assetDir=assetDirArg?path.resolve(root,assetDirArg.slice('--asset-dir='.length)):path.join(root,'assets/models');
+const gardenSourceArg=process.argv.find(arg=>arg.startsWith('--garden-source='));
+const gardenSource=gardenSourceArg?path.resolve(root,gardenSourceArg.slice('--garden-source='.length)):path.join(__dirname,'berlin_garden_integration.js');
 const lush=process.argv.includes('--lush');
 const stone=process.argv.includes('--stone');
 const canopyDepth=process.argv.includes('--canopy-depth');
@@ -25,7 +27,10 @@ if(!process.argv.includes('--assets-only')){
 const scope=vm.createContext({console,Float32Array,Int16Array,Uint16Array,Uint8Array,Uint32Array});vm.runInContext(scripts.find(s=>s.includes('three.js r156 (MIT)')),scope);
 const THREE=scope.THREE;
 const data=JSON.parse(fs.readFileSync(path.join(assetDir,'berlin-kiez-garden-v1.json'),'utf8'));
-const denseCanopy=data.canopyRevision==='dense-layered-linden-v118';
+const twigCanopy=['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(data.canopyRevision);
+const ovalCanopy=data.canopyRevision==='fine-oval-linden-v129';
+const fineCanopy=twigCanopy||ovalCanopy||data.canopyRevision==='fine-clustered-linden-v127';
+const denseCanopy=fineCanopy||data.canopyRevision==='dense-layered-linden-v118';
 let canopyCandidate;
 if(canopyDepth){
   // Validate the bake independently, then require the shipping pack to be
@@ -55,17 +60,31 @@ assert.equal(atlas.readUInt16BE(0),0xffd8,'embedded foliage atlas is a JPEG');
 assert.deepEqual(atlas,fs.readFileSync(path.join(assetDir,'berlin-kiez-garden-v1-atlas.jpg')),'embedded atlas matches Blender material image');
 scope.atob=s=>Buffer.from(s,'base64').toString('binary');scope.records=data;
 scope.makeMaterial=(color,options)=>new THREE.MeshStandardMaterial({color,...options});
-for(const file of ['berlin_packed_geometry.js','berlin_garden_integration.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,file),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/,'\n'),scope);
+for(const file of ['berlin_packed_geometry.js','berlin_garden_integration.js'])vm.runInContext(fs.readFileSync(file==='berlin_garden_integration.js'?gardenSource:path.join(__dirname,file),'utf8').replace(/\nif \(typeof module[^\n]+\n?$/,'\n'),scope);
 const kit=vm.runInContext('createBerlinGardenKit(THREE,makeMaterial,records)',scope);
 const gardenShader={vertexShader:THREE.ShaderLib.standard.vertexShader,fragmentShader:THREE.ShaderLib.standard.fragmentShader,uniforms:{}};
 kit.material.onBeforeCompile(gardenShader);
 const physical=THREE.ShaderChunk.lights_physical_pars_fragment;
 const nativeDiffuse='reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );';
 const patched=physical.replace(nativeDiffuse,gardenShader.fragmentShader.match(/#ifdef USE_COLOR\n\s+float leafMask[\s\S]*?#endif/)[0]);
-assert.ok(gardenShader.fragmentShader.includes(patched),'only the native diffuse line changes; attenuation, shadows and specular code remain untouched');
+const matteFoliage=gardenShader.fragmentShader.includes('float berlinLeafMatte()');
+let nativeSurfaceShader=gardenShader.fragmentShader;
+if(matteFoliage){
+  const specular='reflectedLight.directSpecular += irradiance * BRDF_GGX( directLight.direction, geometry.viewDir, geometry.normal, material );';
+  nativeSurfaceShader=nativeSurfaceShader.replace('if (berlinLeafMatte() < 0.99) { '+specular+' }',specular)
+    .replace(/if \(berlinLeafMatte\(\) >= 0\.99\) \{\n[\s\S]*?\n\}\n/,'');
+  assert.ok(gardenShader.fragmentShader.includes('if (berlinLeafMatte() < 0.99) radiance += getIBLRadiance'),'matte foliage skips the actual reflection lookup while other surfaces retain it');
+}
+assert.ok(nativeSurfaceShader.includes(patched),'native non-foliage PBR source remains exact; wrapped diffuse keeps original shadow/attenuation inputs');
 const expressions=gardenShader.fragmentShader.match(/float leafMask[\s\S]*?float leafDiffuse[^;]*;/)[0].replace(/\bfloat\b/g,'const');
 const leafResponse=new Function('vColor','geometry','directLight','dotNL','smoothstep','saturate','dot','mix',expressions+'return leafDiffuse;');
 const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
+if(matteFoliage){
+  const expression=gardenShader.fragmentShader.match(/float berlinLeafMatte\(\)[\s\S]*?return ([^;]+);/)[1];
+  const matte=new Function('vColor','smoothstep','return '+expression+';');
+  for(const color of [{r:.16,g:.09,b:.035},{r:.7,g:.3,b:.1},{r:.22,g:.22,b:.21}])assert.equal(matte(color,smooth),0,'bark, warm petals and stone keep their reflective material');
+  assert.equal(matte({r:.04,g:.22,b:.015},smooth),1,'green foliage enters the matte branch');
+}
 let leafCases=0;
 for(const color of [{r:.16,g:.09,b:.035},{r:.7,g:.3,b:.1},{r:.04,g:.22,b:.015}])for(let i=-20;i<=20;i++) {
   const normalDot=i/20,native=Math.max(0,normalDot);
@@ -76,7 +95,7 @@ for(const color of [{r:.16,g:.09,b:.035},{r:.7,g:.3,b:.1},{r:.04,g:.22,b:.015}])
   if(normalDot===1)assert.equal(response,1,'fully front-lit surfaces do not gain extra energy');
   leafCases++;
 }
-console.log(`PASS: ${leafCases} actual leaf-shader cases; native non-leaf response, bounded diffuse, unchanged shadow/attenuation/specular source and one existing material.`);
+console.log(`PASS: ${leafCases} actual leaf-shader cases; native non-leaf response, bounded diffuse, unchanged shadow/attenuation inputs and one existing material; matte foliage ${matteFoliage?'enabled':'disabled'}.`);
 // Execute the complete shipped leaf contribution, including transmission.
 // Scalar RGB evaluates one channel at a time; vector dot products reduce to
 // controlled cosines so we can exercise the whole angular and shadow domain.
@@ -85,7 +104,9 @@ const leafTotal=new Function('vColor','geometry','directLight','dotNL','smoothst
 let transmissionCases=0;
 for(const color of [{r:.16,g:.09,b:.035},{r:.7,g:.3,b:.1},{r:.04,g:.22,b:.015}])for(let n=-10;n<=10;n++)for(let v=-10;v<=10;v++)for(const light of [0,1]){
   const normal=n/10,view=v/10,native=Math.max(0,normal),response=leafTotal(color,{normal,viewDir:view},{direction:1,color:light},native,smooth,x=>Math.max(0,Math.min(1,x)),(a,b)=>a*b,(a,b,t)=>a+(b-a)*t,{diffuseColor:.5},{directDiffuse:0},x=>x,(r,g,b)=>r);
-  assert.ok(Number.isFinite(response)&&response>=0&&response<=.65,'wrapped/transmitted contribution remains finite and bounded');
+  // V125 sun-facing leaf sheen: dotNL^4 * 8.00 * mix(albedo*1.16, 0.85, 0.60) in this
+  // scalar probe, so a fully sunlit leaf may reach .65 + 8.00*(.5*1.16+(.85-.5*1.16)*.60).
+  assert.ok(Number.isFinite(response)&&response>=0&&response<=.65+8.00*(.5*1.16+(.85-.5*1.16)*.60)+1e-9,'wrapped/transmitted/sheen contribution remains finite and bounded');
   if(!light)assert.equal(response,0,'transmission respects complete light occlusion');
   if(color.g<=color.r)assert.equal(response,native*.5*light,'transmission never affects bark, pots or warm flowers');
   transmissionCases++;
@@ -135,7 +156,7 @@ for(const [name,record] of Object.entries(data.meshes)){
   assert.ok(geometry.boundingSphere.radius>0);
 }
 assert.ok(data.meshes.tree.triangles<=3500,'approved grove triangle budget');
-assert.ok(data.meshes.treeNear.triangles<=(denseCanopy?20000:lush?14000:9000),'approved near-tree triangle budget');
+assert.ok(data.meshes.treeNear.triangles<=(twigCanopy?25000:denseCanopy?20000:lush?14000:9000),'authored near-tree envelope; V134 installation separately requires measured frame performance');
 assert.equal(data.meshes.tree.triangles,data.meshes.leaves.triangles+data.meshes.trunk.triangles);
 assert.ok(decoded.tree.boundingBox.max.y<6.1&&decoded.tree.boundingBox.min.y>-.025);
 assert.ok(decoded.planter.boundingBox.max.y<2);
@@ -147,7 +168,17 @@ for(const geometry of [decoded.tree,decoded.treeNear]){
   for(let i=0;i<p.count;i++)radius=Math.max(radius,Math.hypot(p.getX(i),p.getZ(i)));
 }
 assert.ok(radius<(denseCanopy?data.streetCanopyRadius:lush?2.85:2.60),'provided rotated-tree cull radius encloses near and grove leaves');
-if(denseCanopy){assert.ok(data.streetCanopyRadius<3);require('./check_berlin_canopy_v118.cjs');}
+if(denseCanopy){
+  assert.ok(data.streetCanopyRadius<3);
+  const thinSheet=data.canopyRevision==='thin-sheet-linden-v137';
+  require(thinSheet?'./check_berlin_canopy_v137.cjs':twigCanopy?'./check_berlin_canopy_v134.cjs':ovalCanopy?'./check_berlin_canopy_v129.cjs':fineCanopy?'./check_berlin_canopy_v127.cjs':'./check_berlin_canopy_v118.cjs');
+  if(thinSheet){
+    const finePlanter=data.planterRevision==='fine-layered-shrub-v139';
+    if(finePlanter)require('./check_berlin_planter_v139.cjs');
+    const phase=finePlanter?'berlin-parity-v139':'berlin-parity-v137';
+    assert.deepEqual(data,JSON.parse(fs.readFileSync(path.join(root,'audit',phase,'models/berlin-kiez-garden-v1.json'),'utf8')),'loaded garden equals the independently verified candidate, including every protected canopy record');
+  }
+}
 if(lush&&!denseCanopy)assert.equal(data.streetCanopyRadius,2.85,'street canopy culling radius is shipped as asset metadata');
 if(!denseCanopy&&(lush||process.argv.includes('--coreless')||process.argv.includes('--tetra')||process.argv.includes('--flowering-planter'))){
   const tetra=!lush&&(process.argv.includes('--tetra')||process.argv.includes('--flowering-planter')),leafFaces=tetra?4:8;

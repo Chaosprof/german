@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 REMEDIATION = ROOT / "audit" / "current-review" / "remediation"
+FOLLOW_UP_MANIFESTS = (ROOT / "audit" / "noun-usefulness-2026-09.json",)
 
 
 def load(path: Path, encoding: str = "utf-8"):
@@ -53,14 +54,28 @@ def main() -> None:
     expected_ids.update(item["id"] for item in adj_manifest["fixes"])
     if len(expected_ids) != 3280:
         errors.append(f"remediation manifests contain {len(expected_ids)} unique retained findings, expected 3280")
+    # Later editorial passes list their own history entries in a manifest of
+    # the same shape (see scripts/rank_nouns_by_usefulness.py).
+    for follow_up in FOLLOW_UP_MANIFESTS:
+        if follow_up.exists():
+            expected_ids.update(item["id"] for item in load(follow_up)["items"])
 
     observed = Counter()
     for bank, rows in collections.items():
         active_keys = Counter()
         for row in rows:
+            history_ids = {history.get("findingId") for history in row.get("reviewHistory", [])}
+            # A reference_only finding stays binding unless a later entry on the
+            # same row names it in `resolves` (a documented editorial fix).
+            resolved = set()
+            for history in row.get("reviewHistory", []):
+                for finding_id in history.get("resolves", []):
+                    if finding_id not in history_ids:
+                        errors.append(f"{bank}:{row.get('id')}: resolves unknown finding {finding_id}")
+                    resolved.add(finding_id)
             for history in row.get("reviewHistory", []):
                 observed[history.get("findingId")] += 1
-                if history.get("disposition") == "reference_only" and active(row):
+                if history.get("disposition") == "reference_only" and active(row) and history.get("findingId") not in resolved:
                     errors.append(f"{bank}:{row.get('id')}: reference-only finding remains playable")
             if row.get("reviewStatus") == "reference_only" and active(row):
                 errors.append(f"{bank}:{row.get('id')}: reference-only row remains playable")

@@ -123,7 +123,9 @@ for (const [slot, cell, expectedLeft, expectedRight] of [[5,5,13,29], [2,4,75,99
     if (Math.abs(projected.x) > 1 || Math.abs(projected.y) > 1) continue;
     const ray = new T.Raycaster(camera.position, target.sub(camera.position).normalize());
     const hit = ray.intersectObjects(opening.buildings.filter(b => b.visible), true)[0];
-    if (hit && hit.object === mesh && atlasCell(hit.uv) === cell) {visibleGoods++;visibleColumnCounts.set(x,(visibleColumnCounts.get(x)||0)+1);}
+    const bookFaces=mesh.geometry.userData.displayBookFaces;
+    const physicalBook=cell===4&&bookFaces&&hit&&hit.faceIndex>=bookFaces[0]&&hit.faceIndex<bookFaces[1];
+    if (hit && hit.object === mesh && (atlasCell(hit.uv) === cell||physicalBook)) {visibleGoods++;visibleColumnCounts.set(x,(visibleColumnCounts.get(x)||0)+1);}
     else blockedGoods.push({x,y,cell:hit?.uv?atlasCell(hit.uv):null,point:hit?.point.toArray(),building:hit?.object.parent.position.toArray()});
   }
   // The farther bakery angle exposes three complete merchandise columns.
@@ -378,7 +380,7 @@ for (const [slot,name] of [[5,'bakery canopy'],[5,'bakery display'],[2,'bookstor
     }
     assert.ok(facadeVisible>0,'approach samples reach '+name+' in the '+profile.name+' view');
     if(name!=='bakery canopy')assert.equal(openingBlocked,0,
-      'foreground trees preserve opening/run merchandise sightlines to '+name+' across '+profile.name+' lateral views');
+      'foreground trees preserve opening/run merchandise sightlines to '+name+' across '+profile.name+' lateral views: '+JSON.stringify(blockedSamples.filter(s=>s.playerZ>=0)));
     // Earlier approach overlap is reported separately: a distant branch may
     // cross an awning edge without covering its focal opening/run view.
     treeSightlines.push({view:profile.name,subject:name,viewRays,facadeVisible,treeBlocked,openingBlocked,blockedSamples});

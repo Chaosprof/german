@@ -22,8 +22,27 @@ const kit=createKit(THREE,(color,opts)=>new THREE.MeshStandardMaterial({color,..
 // exact protected prefixes before running their historical preservation tests.
 // All normal runtime ray/bounds/material checks below still use the full mesh.
 const formsBaseline=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/architecture/baseline/berlin-reference-architecture-v1.json'),'utf8'));
+const contactV135=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].contactRevision==='stone-and-plaster-local-v135';
+const contactBaseline=contactV135?JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v135/baseline/berlin-reference-architecture-v1.json'),'utf8')):null;
+const flowersV138=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].plantingRevision==='rounded-floret-clusters-v138';
+const flowerBaseline=flowersV138?JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v138/baseline/berlin-reference-architecture-v1.json'),'utf8')):null;
+if(flowersV138)require('./check_berlin_flowers_v138.cjs').validate(scope.BERLIN_REFERENCE_ARCHITECTURE,flowerBaseline);
+if(contactV135)require('./check_berlin_facade_contact_v135.cjs').validate(flowerBaseline||scope.BERLIN_REFERENCE_ARCHITECTURE,contactBaseline);
 function protectedFormBase(key) {
   let current=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  // The flower validator proves every non-floral corner survives the V138
+  // repack. Historical prefix checks use that proven source; rays below use
+  // the actual current mesh, including its new floret clusters.
+  if(current.plantingRevision==='rounded-floret-clusters-v138')current=flowerBaseline.meshes[key];
+  // The independently checked V135 bake changes upper paint only. Historical
+  // color-prefix preservation uses its source; runtime rays use current data.
+  if(current.contactRevision==='stone-and-plaster-local-v135')current=contactBaseline.meshes[key];
+  if(current.upperWindowRevision==='rectangular-street-windows-v128'){
+    require('./check_berlin_bookstore_v128.cjs');
+    const proved=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v128/models/berlin-reference-architecture-v1.json'))).meshes[key];
+    assert.deepEqual(current,proved,'runtime uses the independently verified facade');
+    current=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v128/baseline/berlin-reference-architecture-v1.json'))).meshes[key];
+  }
   if(current.awningRevision) {
     assert.equal(current.awningRevision,'bowed-cloth-rounded-valance-v114');
     const prior=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-model-forms-v114/architecture/flowering-balcony/models/berlin-reference-architecture-v1.json'),'utf8')).meshes[key];
@@ -323,7 +342,7 @@ for(const w of [11,13.5,16]) for(let variant=0;variant<6;variant++) for(const si
         profileRays++;
       }
       insetRays+=2;
-      if(variant===1||(floor===floors-1&&form.upperTopArched!==false)) {
+      if((variant===1&&form.upperWindowRevision!=='rectangular-street-windows-v128')||(floor===floors-1&&form.upperTopArched!==false)) {
         const spandrel=new THREE.Raycaster(new THREE.Vector3((center+.70)*xScale*side,cy+.97,4),new THREE.Vector3(0,0,-1)).intersectObject(mesh)[0];
         assert.ok(spandrel&&atlasCell(spandrel.uv)===1&&Math.abs(spandrel.point.z)<.002,'arched opening has masonry above its curved head, not an open rectangle');
         insetRays++;

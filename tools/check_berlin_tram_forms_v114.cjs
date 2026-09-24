@@ -3,10 +3,19 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-model-forms-v114/tram');
 const shipped=process.argv.includes('--shipping'),upright=process.argv.includes('--upright'),folder=shipped?path.join(root,'assets/models'):path.join(stage,upright?'upright/models':'models');
+if(shipped&&JSON.parse(fs.readFileSync(path.join(folder,'berlin-vintage-tram-v90.json'))).finishRevision==='reference-coach-v126'){
+  require('./check_berlin_tram_v126.cjs')(true);return;
+}
+if(shipped&&JSON.parse(fs.readFileSync(path.join(folder,'berlin-vintage-tram-v90.json'))).finishRevision==='rounded-reference-coach-v123'){
+  require('./check_berlin_tram_v123.cjs')(true);return;
+}
 if(shipped&&JSON.parse(fs.readFileSync(path.join(folder,'berlin-vintage-tram-v90.json'))).finishRevision==='raked-cab-visible-divider-v121'){
   require('./check_berlin_tram_v121.cjs')(true);return;
 }
-const html=fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8');
+// V126 replaced the runtime factory and payload format. The V114 staged payload
+// is exercised with the last factory that read its format (the V125 game).
+const v126=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-vintage-tram-v90.json'))).finishRevision==='reference-coach-v126';
+const html=fs.readFileSync(path.join(root,v126?'audit/berlin-tram-v126/baseline.html':'berlin-runner.html'),'utf8');
 function section(a,b){const i=html.indexOf(a),j=html.indexOf(b,i+a.length);assert.ok(i>=0&&j>i,a);return html.slice(i,j);}
 const c=vm.createContext({console});
 vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].find(m=>m[1].includes('three.js r156 (MIT)'))[1],c);

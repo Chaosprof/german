@@ -63,7 +63,8 @@ for(const speed of [13,26])for(const offset of [0,500])for(const hasSlot of [tru
     spawnObstacle:(...args)=>trams.push(args),
     obstacleFitsQuizApproach:(kind,z,gate)=>z+4+.45<=gate-17};
   vm.runInNewContext(opening,state);
-  assert.deepEqual(rewards,[[1,offset+8,4,false,8]],'four spaced real rewards start in the free centre lane');
+  // V125: the opening line runs beside the courier in the clear left lane.
+  assert.deepEqual(rewards,[[0,offset+12,4,false,6]],'four spaced real rewards start in the clear left lane');
   assert.equal(trams.length,hasSlot?1:0,'full obstacle pools never steal a live hazard');
   for(const [kind,lane,z] of trams){
     assert.equal(kind,3);assert.equal(lane,2,'tram occupies the screen-right lane');

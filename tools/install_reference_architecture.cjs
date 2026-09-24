@@ -1,13 +1,19 @@
 'use strict';
 const fs=require('fs'),path=require('path');
+function packReferenceArchitecture(source) {
+  const data={version:1,source:source.source,masterWidth:13.5,meshes:{}};
+  for(const variant of [0,1]) {
+    const key='13.5:'+variant+':1';
+    if(!source.meshes[key])throw new Error('Missing Blender master '+key);
+    data.meshes[key]=source.meshes[key];
+  }
+  return data;
+}
+module.exports={packReferenceArchitecture};
+if(require.main===module){
 const root=path.resolve(__dirname,'..'),file=path.join(root,'berlin-runner.html');
 const source=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-reference-architecture-v1.json'),'utf8'));
-const data={version:1,source:source.source,masterWidth:13.5,meshes:{}};
-for(const variant of [0,1]) {
-  const key='13.5:'+variant+':1';
-  if(!source.meshes[key])throw new Error('Missing Blender master '+key);
-  data.meshes[key]=source.meshes[key];
-}
+const data=packReferenceArchitecture(source);
 // Authoring source keeps all twelve exact frontages; the game ships two
 // cached masters to avoid downloading six redundant width/side variations.
 const packed='var BERLIN_REFERENCE_ARCHITECTURE = '+JSON.stringify(data)+';\n';
@@ -22,3 +28,4 @@ else {
 }
 fs.writeFileSync(file,html);
 console.log('Embedded two Blender masters: '+packed.length+' bytes; twelve cached width/side variants.');
+}

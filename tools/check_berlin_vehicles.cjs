@@ -214,7 +214,13 @@ assert.ok(vanClone.children.every((mesh,i)=>mesh.geometry===vanTemplate.children
 console.log(`PASS: delivery microvan replaces one of four car templates; ${vanTrimProbes.length} visible glass/lamp rays; ${vanMeshes} meshes / ${vanTriangles} triangles; exact collision envelope and shared clone assets.`);
 // The large runner tram has real glazing apertures and a rear-facing identity.
 // Keep this factory/art check separate from obstacle scheduling and pool counts.
-if(tramData.finishRevision==='raked-cab-visible-divider-v121'){
+if(tramData.finishRevision==='reference-coach-v126'){
+  require('./check_berlin_tram_v126.cjs')(true);
+  assert.equal(c.OB_KINDS[3].yMax,3.15,'V126 reference coach retains the gameplay collider');
+}else if(tramData.finishRevision==='rounded-reference-coach-v123'){
+  require('./check_berlin_tram_v123.cjs')(true);
+  assert.equal(c.OB_KINDS[3].yMax,3.15,'reference coach retains the gameplay collider');
+}else if(tramData.finishRevision==='raked-cab-visible-divider-v121'){
   // The V103 vertex/roof snapshots below deliberately describe the older
   // coach. V121 has its own actual-surface rays, exact UV/topology/native
   // proof and stricter 8,200-triangle/nine-batch budget.
@@ -814,9 +820,10 @@ for(const velocity of [13,26])for(const offset of [0,500])for(let trial=-2;trial
     closestOpeningGap=Math.min(closestOpeningGap,gap);
   }
   const openingRewards=course.pretzels.filter(p=>p.active&&!rewardBefore.has(p));
-  assert.deepEqual(openingRewards.map(p=>p.z),[8,16,24,32].map(z=>z+offset));
-  assert.ok(openingRewards.every(p=>p.lane===1&&p.y===1.15),'four opening rewards remain in the clear center');
+  assert.deepEqual(openingRewards.map(p=>p.z),[12,18,24,30].map(z=>z+offset));
+  assert.ok(openingRewards.every(p=>p.lane===0&&p.y===1.15),'four opening rewards line the clear left lane beside the courier');
+  assert.ok(scheduled.every(o=>o.lane!==0||o.z>offset+30+o.spec.halfD+course.HALF_D),'no scheduled prop shares the opening reward line');
   openingCourses++;
 }
 course.Math.random=seededRandom;
-console.log(`PASS: ${openingCourses} actual queued opening courses at13/26m/s, fresh/restart offsets and random extremes; four pooled center pickups, first quiz clearance and minimum ${closestOpeningGap.toFixed(2)}m surface gap to scheduled props.`);
+console.log(`PASS: ${openingCourses} actual queued opening courses at13/26m/s, fresh/restart offsets and random extremes; four pooled left-lane pickups, first quiz clearance and minimum ${closestOpeningGap.toFixed(2)}m surface gap to scheduled props.`);

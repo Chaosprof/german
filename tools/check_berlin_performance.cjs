@@ -3,7 +3,7 @@
 const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
 const path = require('path');
 const useKiezLamps = process.argv.includes('--kiez-lamps');
-const html = fs.readFileSync(path.join(__dirname, '..', 'berlin-runner.html'), 'utf8');
+const html = fs.readFileSync(path.resolve(__dirname, '..', process.env.BERLIN_HTML || 'berlin-runner.html'), 'utf8');
 function section(a, b) {
   const start = html.indexOf(a), end = html.indexOf(b, start + a.length);
   assert.ok(start >= 0 && end > start, `source anchors: ${a}`);
@@ -316,13 +316,16 @@ vm.runInContext(section('  // BEGIN BLENDER GARDEN KIT','  // END BLENDER GARDEN
 const canopy=t.berlinGardenKit.geometry('treeNear');
 assert.equal(canopy,t.berlinGardenKit.geometry('treeNear'),'all street trees share one geometry');
 const branchedCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='branch-led-lobed-crown-v114';
-const denseCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='dense-layered-linden-v118';
-assert.ok(canopy.index.count/3 <= (denseCanopy?20000:branchedCanopy?25000:14000),'street tree stays within its authored rounded-leaf budget');
+const twigCanopy=['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision);
+const fineCanopy=twigCanopy||['fine-clustered-linden-v127','fine-oval-linden-v129'].includes(t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision);
+const denseCanopy=fineCanopy||t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='dense-layered-linden-v118';
+assert.ok(canopy.index.count/3 <= (twigCanopy?25000:denseCanopy?20000:branchedCanopy?25000:14000),'street tree stays within its authored envelope; V134 shipping requires measured frame performance');
 assert.ok([...canopy.attributes.position.array,...canopy.attributes.color.array].every(Number.isFinite));
 canopy.computeBoundingBox();
 const streetTreeHeight=canopy.boundingBox.max.y-canopy.boundingBox.min.y;
-assert.ok(denseCanopy?streetTreeHeight>9.8&&streetTreeHeight<10.2:streetTreeHeight>8&&streetTreeHeight<8.5,'street crown retains its authored envelope');
-assert.equal(t.berlinGardenKit.canopyRadius,denseCanopy?2.89:2.85,'street-only cull radius comes from the accepted asset metadata');
+assert.ok(twigCanopy?streetTreeHeight>9.6&&streetTreeHeight<10.2:denseCanopy?streetTreeHeight>9.8&&streetTreeHeight<10.2:streetTreeHeight>8&&streetTreeHeight<8.5,'street crown retains its authored envelope');
+assert.equal(t.berlinGardenKit.canopyRadius,fineCanopy?t.BERLIN_KIEZ_GARDEN_DATA.streetCanopyRadius:denseCanopy?2.89:2.85,'street-only cull radius comes from the accepted asset metadata');
+if(fineCanopy)assert.ok(t.berlinGardenKit.canopyRadius<(twigCanopy?3:2.95),'fine canopy remains within the validated street clearance');
 function treeGeometryFingerprint(geometry){
   const hash=require('crypto').createHash('sha256');
   for(const attr of [...Object.values(geometry.attributes),geometry.index].filter(Boolean))
@@ -341,7 +344,7 @@ const THREE=t.THREE, lampCache=new Map();
 // Execute the shipped light rig: translating its camera must change only whole
 // shadow texels, never the fractional sampling phase of a fixed world point.
 const stableLight=vm.createContext({THREE,Math,scene:new THREE.Scene()});
-vm.runInContext(section('  var sun = new THREE.DirectionalLight(', '  // Broad, neutral-cool sky bounce'),stableLight);
+vm.runInContext(section('  var sun = new THREE.DirectionalLight(', '  // Warm bounce from the sunlit left frontages'),stableLight);
 vm.runInContext(section('  var WORLD_EMERGE =', '  // Stock linear fog'),stableLight);
 function refreshStableLight(z) {
   stableLight.updateStableSunShadow(z);stableLight.scene.updateMatrixWorld(true);
