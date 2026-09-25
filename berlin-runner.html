@@ -5299,7 +5299,7 @@ BerlinLoad.phase('engine', 1);
   var speechSpeakTimer = null;    // WebKit's cancel -> speak gap
   var speechRetryTimer = null;    // retries while the engine is still cold
   var speechEverStarted = false;  // has ANY utterance actually begun?
-  var speechPrimeWait = false;    // a warm-up is already in flight
+  var speechGesturePokeAt = -1e9; // voiceNow() of the last warm-up spoken in a gesture
   var speechColdFails = 0;        // phrases in a row that produced no event
   var speechWakeTries = 0;
   var speechWakeTimer = null;
@@ -5575,7 +5575,11 @@ BerlinLoad.phase('engine', 1);
     u.onerror = function (e) {
       var err = e && e.error;
       if (speechCurrent === u) speechCurrent = null;
-      if (err === 'interrupted' || err === 'canceled') { unduckForSpeech(); return; }
+      // not-allowed is a phrase refused for want of a gesture, not a broken
+      // voice: striking the voice off for it would silence the rest of the run.
+      if (err === 'interrupted' || err === 'canceled' || err === 'not-allowed') {
+        unduckForSpeech(); return;
+      }
       // A remote voice with no network lands here. Strike it off and re-pick, so
       // the next gate either finds a local voice or the button honestly reports
       // that there is nothing to speak with.
@@ -5717,42 +5721,67 @@ BerlinLoad.phase('engine', 1);
   }
 
   // Some engines only populate getVoices() - and only permit speaking at all -
-  // after the page has spoken once inside a user gesture. unlockGameAudio sits
-  // on every first-gesture path (start card, music button, first key), so a
-  // silent warm-up there means the first cleared gate is not the one that gets
-  // swallowed.
-  function primeSpeech() {
+  // after the page has spoken once inside a user gesture. The warm-up that
+  // does that is spoken by speechGesture below, from inside the gesture
+  // itself; unlockGameAudio calls this without one, which only refreshes the
+  // voice list and keeps the wake-up loop running.
+  function primeSpeech(inGesture) {
     if (!SPEECH_SUPPORTED) return;
     // Measured on an iPhone: a frame's engine drops the first utterance it is
     // ever handed, with no event either way, and honours the next one. One
     // warm-up at the start card is therefore a promise the engine need not
     // keep - so keep re-priming on later gestures until a phrase has actually
     // been heard to start, then never again.
-    if (speechPrimed && speechEverStarted) return;
-    // One warm-up in flight at a time: touches arrive far faster than an
-    // engine takes to wake, and a queue of them would delay the real phrase.
-    if (speechPrimed && speechPrimeWait) return;
-    speechPrimeWait = true;
-    setTimeout(function () { speechPrimeWait = false; }, 1500);
-    voiceLog(speechPrimed ? 're-priming (engine still cold)' : 'priming');
-    speechPrimed = true;
-    // Non-empty text on purpose. WebKit discards an utterance with nothing to
-    // say, and a discarded utterance does not spend the user gesture - which on
-    // an iPhone is the only thing speech may ever start from, so the warm-up
-    // has to actually be an utterance. volume 0 keeps it inaudible, and its
-    // onstart is what tells us the engine is finally awake.
-    // A loop tick may already be pending from page load; fold it into this
-    // one, so the gesture carries the poke and the next is a beat later.
-    if (speechWakeTimer) { clearTimeout(speechWakeTimer); speechWakeTimer = null; }
-    speechWakePoke();
+    if (speechEverStarted) return;
+    // A tap delivers pointerup, touchend and a click within a few hundred ms,
+    // all of them gestures. One warm-up per tap is enough, and a queue of them
+    // would delay the real phrase behind it.
+    if (inGesture && voiceNow() - speechGesturePokeAt >= 500) {
+      speechGesturePokeAt = voiceNow();
+      voiceLog(speechPrimed ? 're-priming (engine still cold)' : 'priming');
+      speechPrimed = true;
+      // Non-empty text on purpose. WebKit discards an utterance with nothing to
+      // say, and a discarded utterance does not spend the user gesture - which on
+      // an iPhone is the only thing speech may ever start from, so the warm-up
+      // has to actually be an utterance. volume 0 keeps it inaudible, and its
+      // onstart is what tells us the engine is finally awake.
+      // A loop tick may already be pending from page load; fold it into this
+      // one, so the gesture carries the poke and the next is a beat later.
+      if (speechWakeTimer) { clearTimeout(speechWakeTimer); speechWakeTimer = null; }
+      // The gesture may be what finally unlocked the engine, so the loop gets
+      // a fresh budget from here. The page-load pokes can all be spent on a
+      // locked engine while the player is still reading the start card.
+      speechWakeTries = 0;
+      speechWakePoke();
+      // iPhone fills the voice list lazily, and in a home-screen web app the
+      // voiceschanged event does not reliably arrive at all - so re-read it a
+      // couple of times after the gesture that woke the engine, or the button
+      // stays disabled on a device that speaks German perfectly well.
+      setTimeout(refreshSpeechVoice, 250);
+      setTimeout(refreshSpeechVoice, 1200);
+    }
     startSpeechWake();
     refreshSpeechVoice();
-    // iPhone fills the voice list lazily, and in a home-screen web app the
-    // voiceschanged event does not reliably arrive at all - so re-read it a
-    // couple of times after the gesture that woke the engine, or the button
-    // stays disabled on a device that speaks German perfectly well.
-    setTimeout(refreshSpeechVoice, 250);
-    setTimeout(refreshSpeechVoice, 1200);
+  }
+
+  // The unlock itself. On an iPhone a warm-up only counts when it is spoken
+  // inside the handler of an event the browser treats as a user gesture:
+  // touchend, pointerup, click or a key - NOT touchstart. The start card begins
+  // the run on touchstart (which also cancels the click), and the swipe handler
+  // used to prime on touchstart too, so every touch offered the engine an
+  // utterance it was bound to refuse: the run stayed mute until the voice or
+  // music button - a click - was toggled. Capture listeners on the window see
+  // every gesture in the page, whatever element handles it, until the engine
+  // has been heard to start.
+  function speechGesture(e) {
+    if (speechEverStarted || !e || e.isTrusted === false) return;
+    if (e.type === 'keydown' && e.key === 'Escape') return;  // not a user activation
+    primeSpeech(true);
+  }
+  if (SPEECH_SUPPORTED) {
+    ['pointerup', 'touchend', 'mousedown', 'click', 'keydown'].forEach(function (type) {
+      window.addEventListener(type, speechGesture, { capture: true, passive: true });
+    });
   }
 
   function setSpeechEnabled(on) {
@@ -28354,9 +28383,8 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
   }
   canvas.addEventListener('touchstart', function (e) {
     if (photoMode) return;
-    // Cheap once the engine is awake: primeSpeech returns immediately after a
-    // phrase has started. Until then every touch is another chance to wake it.
-    primeSpeech();
+    // No speech priming here: touchstart is not a user gesture on an iPhone.
+    // speechGesture primes on the touchend that closes every tap and swipe.
     if (!started) { begin(); return; }
     var t = e.changedTouches[0];
     touchX = t.clientX; touchY = t.clientY; touchT = performance.now();

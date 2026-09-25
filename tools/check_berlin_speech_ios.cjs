@@ -12,7 +12,9 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert/strict');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'berlin-runner.html'), 'utf8').replace(/\r\n/g, '\n');
+// An optional path checks another copy of the page, e.g. an older revision.
+const page = process.argv[2] || path.join(__dirname, '..', 'berlin-runner.html');
+const html = fs.readFileSync(page, 'utf8').replace(/\r\n/g, '\n');
 const start = html.indexOf('  var SPEECH_SUPPORTED = typeof window.speechSynthesis');
 const end = html.indexOf('  function playStumbleSound() {');
 assert.ok(start > 0 && end > start, 'found the spoken-article module in the page');
@@ -55,11 +57,18 @@ function makeClock() {
 //                      speaks nothing at all, which is the page-makes-sound
 //                      hypothesis stated as behaviour
 // opts.onSpeak       - called with each utterance as it is offered
+// opts.gestureLock   - WebKit on an iPhone: speak() is refused outright - never
+//                      queued, no events - until one speak() has been issued
+//                      from inside a user gesture (touchend, pointerup, click
+//                      or a key; never touchstart), which unlocks it for good
+// opts.notAllowed    - Chrome without a gesture: the first N utterances fail
+//                      with a 'not-allowed' error event
 function makeEngine(clock, opts) {
   const spoken = [];      // every AUDIBLE utterance the engine actually started
   const offered = [];     // every utterance handed to speak(), accepted or not
   let cancelledAt = -1, current = null, swallowed = 0, everOffered = 0;
   let everStarted = false, wedged = false;
+  let unlocked = !opts.gestureLock, inGesture = false, refused = 0;
   const synth = {
     paused: false,
     speaking: false,
@@ -77,6 +86,15 @@ function makeEngine(clock, opts) {
     speak(u) {
       offered.push(u);
       if (opts.onSpeak) opts.onSpeak(u);
+      if (!unlocked) {
+        if (!inGesture) return;                  // refused before it is even queued
+        unlocked = true;                         // one gesture-borne speak() is enough
+      }
+      if (opts.notAllowed && refused < opts.notAllowed) {
+        refused++;
+        clock.setTimeout(function () { if (u.onerror) u.onerror({ error: 'not-allowed' }); }, 5);
+        return;
+      }
       if (wedged) return;                        // nothing gets out, ever again
       // The page's own sound holds the engine shut.
       if (opts.audioBlocks && opts.audioBlocks.state === 'running') return;
@@ -102,7 +120,11 @@ function makeEngine(clock, opts) {
       }, 300);
     }
   };
-  return { synth: synth, spoken: spoken, offered: offered };
+  return {
+    synth: synth, spoken: spoken, offered: offered,
+    setGesture(on) { inGesture = !!on; },
+    unlocked() { return unlocked; }
+  };
 }
 
 // An AudioContext whose suspend/resume settle synchronously, so a test can
@@ -137,15 +159,18 @@ function load(opts) {
     this.pitch = 1; this.rate = 1; this.volume = 1;
     this.onstart = null; this.onend = null; this.onerror = null;
   }
+  const listeners = {};
+  const perf = { now: () => clock.now() };
   const win = { speechSynthesis: engine.synth, SpeechSynthesisUtterance: Utterance,
-                __gameAudio: opts.audio || null };
+                __gameAudio: opts.audio || null, performance: perf,
+                addEventListener(type, fn) { (listeners[type] = listeners[type] || []).push(fn); } };
   const doc = { getElementById: () => btn, addEventListener() {}, hidden: false };
   const store = {};
   const localStorage = { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); } };
   const navigator = { userAgent: opts.ua, maxTouchPoints: opts.touch || 0 };
 
   const factory = new Function(
-    'window', 'navigator', 'document', 'localStorage', 'setTimeout', 'clearTimeout',
+    'window', 'navigator', 'document', 'localStorage', 'setTimeout', 'clearTimeout', 'performance',
     'SpeechSynthesisUtterance', 'unlockGameAudio', 'applyMusicGain',
     'var musicDuck = 1;\nvar gameAudio = window.__gameAudio || null;\n' + source +
     '\nreturn {\n' +
@@ -158,9 +183,28 @@ function load(opts) {
     '  webkit: IS_WEBKIT_SPEECH, ios: IS_IOS_SPEECH\n' +
     '};');
 
-  const api = factory(win, navigator, doc, localStorage, clock.setTimeout, clock.clearTimeout,
+  const api = factory(win, navigator, doc, localStorage, clock.setTimeout, clock.clearTimeout, perf,
                       Utterance, function () {}, function () {});
-  return { api: api, clock: clock, engine: engine, btn: btn };
+
+  // Real input, delivered the way the browser does it. touchstart and
+  // touchmove are not user gestures; every other event here is.
+  function fire(type, extra) {
+    engine.setGesture(type !== 'touchstart' && type !== 'touchmove');
+    try {
+      for (const fn of listeners[type] || []) fn(Object.assign({ type: type, isTrusted: true }, extra));
+    } finally { engine.setGesture(false); }
+  }
+  return {
+    api: api, clock: clock, engine: engine, btn: btn,
+    // A tap on an ordinary button: pointer, touch and the compatibility events.
+    tap() { fire('touchstart'); fire('pointerup'); fire('touchend'); fire('mousedown'); fire('click'); },
+    // The start card: begin() - and with it unlockGameAudio -> primeSpeech -
+    // runs on touchstart, whose preventDefault() means no click follows.
+    startTap() { fire('touchstart'); api.prime(); fire('pointerup'); fire('touchend'); },
+    // A lane change on the canvas.
+    swipe() { fire('touchstart'); fire('touchmove'); fire('pointerup'); fire('touchend'); },
+    key(k) { fire('keydown', { key: k }); }
+  };
 }
 
 const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
@@ -179,7 +223,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
   assert.ok(t.api.ready(), 'the voice is available');
   assert.equal(t.btn.disabled, false, 'the button is enabled on an iPhone');
 
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   assert.equal(t.engine.offered.length, 1, 'the priming gesture speaks exactly once');
   assert.ok(t.engine.offered[0].text.length > 0, 'the warm-up is not an empty utterance');
@@ -198,7 +242,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 //    of these lands in the same task as its own cancel() and is lost.
 {
   const t = load({ ua: IPHONE, voices: [], webkitCancel: true, pauseOnCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   const words = [['der', 'Bahnhof'], ['die', 'Straße'], ['das', 'Tor'], ['der', 'Baum']];
   for (const [article, noun] of words) {
@@ -213,7 +257,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 //    next phrase must still be heard.
 {
   const t = load({ ua: IPHONE, voices: [], webkitCancel: true, pauseOnCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   t.api.speak('der', 'Bahnhof', 1, false);
   t.clock.advance(120);                       // started, still speaking
@@ -228,7 +272,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 // 4. A swallowed first utterance is said again rather than lost.
 {
   const t = load({ ua: IPHONE, voices: [], webkitCancel: true, swallowFirst: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   t.api.speak('das', 'Tor', 1, false);
   t.clock.advance(120);
@@ -286,7 +330,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 //    the buzzer before it lands.
 {
   const t = load({ ua: IPHONE, voices: [], webkitCancel: true, pauseOnCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   t.api.speak('die', 'Straße', 1, true);
   t.clock.advance(200);
@@ -303,7 +347,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 // 10. Turning the voice off stops everything, including a pending deferral.
 {
   const t = load({ ua: IPHONE, voices: [], webkitCancel: true, pauseOnCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   const before = t.engine.offered.length;
   t.api.speak('der', 'Baum', 1, false);
@@ -317,7 +361,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 //     swallowed in silence, and the first gate has to survive that.
 {
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 1, webkitCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(50);
   assert.equal(t.engine.spoken.length, 0, 'the warm-up was swallowed, as on the device');
   assert.equal(t.api.everStarted(), false, 'and the engine is still known to be cold');
@@ -333,7 +377,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 //     spends them while the runner is still loading, with nothing playing.
 {
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 4 });
-  t.api.prime();                              // the start card
+  t.tap();                              // the start card
   t.clock.advance(50);
   assert.equal(t.api.everStarted(), false, 'one warm-up is not enough for a cold frame');
   t.clock.advance(4000);                      // still loading: free attempts
@@ -355,7 +399,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 // 12b. An engine that never wakes must not be poked forever.
 {
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 9999 });
-  t.api.prime();
+  t.tap();
   t.clock.advance(60000);
   assert.equal(t.api.everStarted(), false);
   assert.ok(t.engine.offered.length <= 14, 'the wake-up gives up: ' + t.engine.offered.length);
@@ -368,7 +412,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 //     gate. Nothing may be cancelled until a phrase has actually started.
 {
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 4, coldCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(2000);
   // Four gates: the engine drops the early ones, and must not be wedged by them.
   const words = [['der', 'Bahnhof'], ['die', 'Straße'], ['das', 'Tor'], ['der', 'Baum']];
@@ -391,7 +435,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 // 14. Turning the voice off while the engine is cold must not wedge it either.
 {
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, coldFrame: 2, coldCancel: true });
-  t.api.prime();
+  t.tap();
   t.clock.advance(1000);
   t.api.enable(false);                       // stopSpeech() on a cold engine
   t.clock.advance(1000);
@@ -409,7 +453,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
   const audio = makeAudioContext();
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, audio: audio, audioBlocks: audio,
                    onSpeak: u => { u.audioAtSpeak = audio.state; } });
-  t.api.prime();
+  t.tap();
   t.clock.advance(1000);
   assert.equal(t.engine.spoken.length, 0, 'the warm-up is swallowed while the page makes sound');
   t.api.speak('der', 'Bahnhof', 1, false);
@@ -430,7 +474,7 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
 {
   const audio = makeAudioContext();
   const t = load({ ua: IPHONE, voices: GERMAN_LIST, audio: audio });
-  t.api.prime();
+  t.tap();
   t.clock.advance(1000);
   audio.log.length = 0;
   for (const noun of ['Bahnhof', 'Tor', 'Baum']) {
@@ -439,6 +483,94 @@ const ENGLISH_ONLY = [makeVoice('Microsoft Zira', 'en-US', true), makeVoice('Dan
   }
   assert.equal(t.engine.spoken.length, 3);
   assert.deepEqual(audio.log, [], 'the audio graph is never parked when nothing is wrong');
+}
+
+// 17. The start card on an iPhone, as the player actually uses it. Speech is
+//     refused until something is spoken inside a real gesture, and the start
+//     card begins the run on touchstart, which is not one. The warm-up has to
+//     come from the touchend that closes the same tap - even after the
+//     page-load pokes have spent their budget on a locked engine.
+{
+  const t = load({ ua: IPHONE, voices: [], gestureLock: true, webkitCancel: true, pauseOnCancel: true });
+  t.clock.advance(20000);                     // reading the start card
+  assert.equal(t.engine.unlocked(), false, 'nothing unlocks speech before a gesture');
+  t.startTap();
+  assert.ok(t.engine.unlocked(), 'the start tap itself unlocks speech');
+  t.clock.advance(3000);
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(2000);
+  assert.deepEqual(t.engine.spoken.map(u => u.text), ['der Bahnhof'], 'the first gate of the run is heard');
+}
+
+// 18. The same with a cold frame: after the unlock the engine still wants a
+//     few offers, and the wake-up loop must have budget left to make them.
+{
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, gestureLock: true, coldFrame: 4 });
+  t.clock.advance(20000);
+  t.startTap();
+  t.clock.advance(4000);
+  assert.ok(t.api.everStarted(), 'the engine is awake before the first gate');
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(1000);
+  assert.deepEqual(t.engine.spoken.map(u => u.text), ['der Bahnhof']);
+}
+
+// 19. A run that began with no gesture at all (the start was queued while the
+//     runner loaded): the player's first swipe unlocks it for the next gate.
+{
+  const t = load({ ua: IPHONE, voices: [], gestureLock: true, webkitCancel: true });
+  t.api.prime();                              // begin() from a timer
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(3000);
+  assert.equal(t.engine.spoken.length, 0, 'with no gesture yet nothing can be said');
+  t.swipe();
+  t.clock.advance(1500);
+  t.api.speak('die', 'Straße', 2, false);
+  t.clock.advance(2000);
+  assert.deepEqual(t.engine.spoken.map(u => u.text), ['die Straße'], 'the first swipe unlocks it');
+}
+
+// 20. One warm-up per tap, although a tap is several gesture events.
+{
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, gestureLock: true, coldFrame: 9999 });
+  t.tap();
+  assert.equal(t.engine.offered.length, 1, 'a tap offers one warm-up, not one per event');
+}
+
+// 21. Once the engine has been heard, input costs nothing.
+{
+  const t = load({ ua: IPHONE, voices: GERMAN_LIST, gestureLock: true });
+  t.tap();
+  t.clock.advance(1000);
+  assert.ok(t.api.everStarted());
+  const n = t.engine.offered.length;
+  for (let i = 0; i < 10; i++) { t.swipe(); t.clock.advance(300); }
+  assert.equal(t.engine.offered.length, n, 'no warm-ups once the engine is awake');
+}
+
+// 22. Desktop: a keyboard start unlocks speech too. Escape is not a gesture.
+{
+  const t = load({ ua: WINDOWS_CHROME, voices: GERMAN_LIST, gestureLock: true });
+  t.key('Escape');
+  assert.equal(t.engine.unlocked(), false, 'Escape does not count as a gesture');
+  t.key(' ');
+  t.clock.advance(500);
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(500);
+  assert.deepEqual(t.engine.spoken.map(u => u.text), ['der Bahnhof'], 'a keyboard start is enough');
+}
+
+// 23. Chrome refusing a phrase for want of a gesture is not a broken voice.
+//     Striking the only German voice off for it silenced the rest of the run.
+{
+  const t = load({ ua: WINDOWS_CHROME, voices: [makeVoice('Google Deutsch', 'de-DE', false)], notAllowed: 1 });
+  t.api.speak('der', 'Bahnhof', 1, false);
+  t.clock.advance(1000);
+  assert.equal(t.api.voice() && t.api.voice().name, 'Google Deutsch', 'the voice survives not-allowed');
+  assert.equal(t.btn.disabled, false, 'and the button stays usable');
+  t.api.speak('die', 'Straße', 2, false);
+  t.clock.advance(1000);
+  assert.deepEqual(t.engine.spoken.map(u => u.text), ['die Straße'], 'the next gate is heard');
 }
 
 console.log('berlin speech / iOS: all checks passed');
