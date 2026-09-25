@@ -2,8 +2,9 @@
 """Extract German state paths from MapSVG SVG and transform to campaign map coords."""
 import re
 import sys
+from pathlib import Path
 
-with open('C:/Users/tamas/germany-states.svg', 'r') as f:
+with open(Path(__file__).resolve().parents[1] / 'germany-states.svg', 'r') as f:
     content = f.read()
 
 # Extract path elements with their id and d attributes

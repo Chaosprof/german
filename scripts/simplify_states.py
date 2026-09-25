@@ -2,8 +2,9 @@
 """Simplify German state SVG paths by converting curves to line segments 
 and applying Ramer-Douglas-Peucker simplification."""
 import re, math
+from pathlib import Path
 
-with open('C:/Users/tamas/germany-states.svg', 'r') as f:
+with open(Path(__file__).resolve().parents[1] / 'germany-states.svg', 'r') as f:
     content = f.read()
 
 pattern = r'<path\s+d="([^"]+)"\s+title="([^"]+)"\s+id="([^"]+)"'

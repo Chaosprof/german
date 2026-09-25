@@ -10,8 +10,9 @@
 // +x, u = 0.75 up the street), the thin wires and billboard streaks high in the
 // sky are softened, and it is written as a 1024 x 512 sRGB JPEG: the exact
 // size vehicleEnvTexture() pre-allocates its PMREM target for.
-// Needs puppeteer-core in C:/Users/tamas/node_modules and system Chrome.
-import puppeteer from 'file:///C:/Users/tamas/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js';
+// Needs puppeteer-core in a node_modules folder above the repo (e.g. your home
+// folder) and system Chrome.
+import puppeteer from 'puppeteer-core';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 

@@ -4,8 +4,9 @@ Target viewBox: "40 -5 350 400" — so usable area roughly x:50..380, y:0..390
 State nodes range: x:90..350, y:32..360
 """
 import re
+from pathlib import Path
 
-with open('C:/Users/tamas/germany.svg', 'r') as f:
+with open(Path(__file__).resolve().parents[1] / 'germany.svg', 'r') as f:
     content = f.read()
 
 paths = re.findall(r'<path d="([^"]+)"', content)

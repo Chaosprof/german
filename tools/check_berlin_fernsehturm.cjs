@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
-const sharp=require('C:/Users/tamas/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp');
+// sharp is not installed in the repo; fall back to the copy bundled with the Codex runtime.
+const sharp=(()=>{try{return require('sharp');}catch{return require(path.join(require('os').homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp'));}})();
 const {mapTowerPixel,glsl}=require('./berlin_fernsehturm_surface.cjs');
 const root=path.resolve(__dirname,'..');
 const toLinear=v=>{v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);};

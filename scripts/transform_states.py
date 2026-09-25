@@ -4,8 +4,9 @@ Source: MapSVG germany.svg (585x792, CC0)
 Target: Campaign map viewBox, outline fits x:55..385, y:8..382
 """
 import re
+from pathlib import Path
 
-with open('C:/Users/tamas/germany-states.svg', 'r') as f:
+with open(Path(__file__).resolve().parents[1] / 'germany-states.svg', 'r') as f:
     content = f.read()
 
 pattern = r'<path\s+d="([^"]+)"\s+title="([^"]+)"\s+id="([^"]+)"'
