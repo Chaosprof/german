@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
-const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-parity-v138'),name='berlin-reference-architecture-v1';
+const root=path.resolve(__dirname,'..'),stage=path.resolve(root,process.env.BERLIN_AUDIT_PHASE||'audit/berlin-parity-v138'),name='berlin-reference-architecture-v1';
 function load(folder){
   const b=fs.readFileSync(path.join(stage,folder,name+'.glb'));let doc,bin;
   for(let off=12;off<b.length;){const length=b.readUInt32LE(off),type=b.readUInt32LE(off+4),value=b.subarray(off+8,off+8+length);if(type===0x4e4f534a)doc=JSON.parse(value);if(type===0x004e4942)bin=value;off+=8+length;}
@@ -25,8 +25,9 @@ function inspect(pack,key){
   for(let i=0;i<p.count;i++){const candidates=lookup.get(nativeCorner(i));assert.ok(candidates);max=Math.max(max,Math.min(...candidates.map(v=>Math.hypot(...v.map((x,k)=>x-n.get(i,k))))));}
   return{triangles:index.count/3,maxNormalError:max};
 }
-const key='13.5:0:1',before=inspect(a,key),after=inspect(b,key);
-assert.ok(after.maxNormalError<=before.maxNormalError+1e-7,'native normal precision does not worsen');
+const keys=(process.env.BERLIN_NATIVE_KEYS||'13.5:0:1').split(',');
+const records={};for(const key of keys){const before=inspect(a,key),after=inspect(b,key);
+assert.ok(after.maxNormalError<=before.maxNormalError+1e-7,'native normal precision does not worsen');records[key]={before,after};}
 assert.deepEqual(fs.readFileSync(path.join(stage,'models',name+'-atlas.png')),fs.readFileSync(path.join(stage,'baseline',name+'-atlas.png')));
-const result={passed:true,before,after,protectedPaintUvAndPositions:true};
+const result={passed:true,...records[keys[0]],records,protectedPaintUvAndPositions:true};
 fs.writeFileSync(path.join(stage,'native-check.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));

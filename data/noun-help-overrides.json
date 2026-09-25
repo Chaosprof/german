@@ -244,6 +244,22 @@
       "articleHelpKey": "country.articleless",
       "pluralHelpKey": "country.none",
       "ruleId": "das.country_articleless"
+    },
+    "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz": {
+      "onlyIfArticle": "das",
+      "articleHelp": "A compound takes the article of its last part: das Gesetz, so das Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz. Everything in front of -gesetz changes nothing."
+    },
+    "Grundstücksverkehrsgenehmigungszuständigkeitsübertragungsverordnung": {
+      "onlyIfArticle": "die",
+      "articleHelp": "A compound takes the article of its last part: die Verordnung, so die Grundstücksverkehrsgenehmigungszuständigkeitsübertragungsverordnung. Everything in front of -verordnung changes nothing."
+    },
+    "Donaudampfschifffahrtsgesellschaftskapitän": {
+      "onlyIfArticle": "der",
+      "articleHelp": "A compound takes the article of its last part: der Kapitän, so der Donaudampfschifffahrtsgesellschaftskapitän. Everything in front of -kapitän changes nothing."
+    },
+    "Kraftfahrzeughaftpflichtversicherung": {
+      "onlyIfArticle": "die",
+      "articleHelp": "A compound takes the article of its last part: die Versicherung, so die Kraftfahrzeughaftpflichtversicherung. Everything in front of -versicherung changes nothing."
     }
   }
 }

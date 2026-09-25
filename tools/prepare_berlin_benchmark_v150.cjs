@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),crypto=require('crypto');
+const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-parity-v150'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const page=fs.readFileSync(path.join(stage,'candidate.html')),geometry=JSON.parse(fs.readFileSync(path.join(stage,'geometry-check.json')));
+assert.equal(geometry.passed,true);assert.equal(geometry.candidateSha256,sha(page));
+const indexed=JSON.parse(fs.readFileSync(path.join(stage,'index-check.json')));assert.equal(indexed.passed,true);assert.equal(indexed.candidateSha256,sha(page));
+for(const file of ['performance-check.log','finish-check.log']){
+ const log=fs.readFileSync(path.join(stage,file),'utf8');assert.ok(log.includes('PASS:'));assert.ok(!/AssertionError|FAIL:/.test(log));
+}
+assert.ok(!fs.existsSync(path.join(stage,'benchmark/displays150-before-0.json')),'preserve every measured run');
+fs.copyFileSync(path.join(root,'audit/berlin-parity-v127/baseline.html'),path.join(stage,'benchmark/baseline.html'));
+fs.copyFileSync(path.join(stage,'baseline.html'),path.join(stage,'benchmark/middle.html'));
+fs.writeFileSync(path.join(stage,'benchmark/candidate.html'),page);
+const plan={declaredAt:new Date().toISOString(),candidateSha256:sha(page),series:'displays150',builds:{before:'V126 original',middle:'V149 shipping',after:'V150 candidate'},runs:9,fixedFrames:1600,viewport:[1600,900],buffer:[1600,900],tier:0,programs:{before:70,middle:65,after:65},gates:{fpsAtLeastOriginal:true,p95WithinOriginalPointOneMs:true,fpsWithinPreviousOnePercent:true,p95WithinPreviousPointOneMs:true},method:'Three interleaved before/middle/after sets. Existing v4 split RNG fixture; first 5s sample excluded. Preserve all runs; no heavy parallel work or retiming unchanged candidates for better values.',limitations:'Single Windows Chromium device; physical phones unmeasured. GPU/CPU tradeoffs reported separately. Draw and triangle counters are window-boundary snapshots.'};
+fs.writeFileSync(path.join(stage,'benchmark-plan.json'),JSON.stringify(plan,null,2));
+fs.writeFileSync(path.join(stage,'verification.json'),JSON.stringify({candidateSha256:sha(page),performanceFixture:'passed: pooling, culling, LOD, context recovery, quality controls, stable cadence and change-only uploads',performanceFixtureLogSha256:sha(fs.readFileSync(path.join(stage,'performance-check.log'))),performanceFixtureSourceSha256:sha(fs.readFileSync(path.join(root,'tools/check_berlin_performance.cjs'))),finishCheckLogSha256:sha(fs.readFileSync(path.join(stage,'finish-check.log'))),geometryCheckSha256:sha(fs.readFileSync(path.join(stage,'geometry-check.json'))),indexCheckSha256:sha(fs.readFileSync(path.join(stage,'index-check.json'))),existingCompositionFailure:'Historical merchandise boundary assertion fails on frozen V145/V146 at 74.929645% vs >=75%. V150 does not change the protected facade corners or their placement; that entire historical suite is not claimed to pass.',geometryCost:{merchandiseAddedTriangles:49032,merchandiseAddedBytes:1902312,indexedSavedBytes:indexed.savedBytes,netBytes:1902312-indexed.savedBytes,largestFacadeTriangles:33876},firstTimingFailure:'rejected-cost/ preserves the first candidate and all nine runs: FPS 49.169 vs original 50.257. Exact indexed construction was added before this new comparison; no unchanged candidate was retimed.'},null,2));
+console.log(JSON.stringify(plan,null,2));

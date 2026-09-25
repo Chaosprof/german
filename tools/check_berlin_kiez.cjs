@@ -26,10 +26,20 @@ const contactV135=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].contact
 const contactBaseline=contactV135?JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v135/baseline/berlin-reference-architecture-v1.json'),'utf8')):null;
 const flowersV138=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].plantingRevision==='rounded-floret-clusters-v138';
 const flowerBaseline=flowersV138?JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v138/baseline/berlin-reference-architecture-v1.json'),'utf8')):null;
-if(flowersV138)require('./check_berlin_flowers_v138.cjs').validate(scope.BERLIN_REFERENCE_ARCHITECTURE,flowerBaseline);
+const stoneV141=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].stoneRevision==='eased-turret-cornices-v141';
+const stoneBaseline=stoneV141?JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v141/baseline/berlin-reference-architecture-v1.json'),'utf8')):null;
+const shopsV142=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes['13.5:0:1'].shopDepthRevision==='visible-recessed-displays-v142';
+const shopsBaseline=shopsV142?JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v142/baseline/berlin-reference-architecture-v1.json'),'utf8')):null;
+if(shopsV142)require('./check_berlin_shops_v142.cjs').validate(scope.BERLIN_REFERENCE_ARCHITECTURE,shopsBaseline);
+if(stoneV141)require('./check_berlin_stone_v141.cjs').validate(shopsBaseline||scope.BERLIN_REFERENCE_ARCHITECTURE,stoneBaseline);
+if(flowersV138)require('./check_berlin_flowers_v138.cjs').validate(stoneBaseline||scope.BERLIN_REFERENCE_ARCHITECTURE,flowerBaseline);
 if(contactV135)require('./check_berlin_facade_contact_v135.cjs').validate(flowerBaseline||scope.BERLIN_REFERENCE_ARCHITECTURE,contactBaseline);
 function protectedFormBase(key) {
   let current=scope.BERLIN_REFERENCE_ARCHITECTURE.meshes[key];
+  if(current.shopDepthRevision==='visible-recessed-displays-v142')current=shopsBaseline.meshes[key];
+  // Verify current cornices independently, then use their proven source for
+  // historical corner-preservation contracts. All rays still use current data.
+  if(current.stoneRevision==='eased-turret-cornices-v141')current=stoneBaseline.meshes[key];
   // The flower validator proves every non-floral corner survives the V138
   // repack. Historical prefix checks use that proven source; rays below use
   // the actual current mesh, including its new floret clusters.

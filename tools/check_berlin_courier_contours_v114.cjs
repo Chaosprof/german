@@ -35,6 +35,15 @@ fs.writeFileSync(path.join(dir,targetStage+'/additional-preservation.json'),JSON
 
 if(process.argv.includes('--shipping')) {
   const current=JSON.parse(fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.json')));
+  if(current.surfaceRevision===145){
+    const currentStage=path.join(root,'audit/berlin-parity-v145');
+    for(const ext of ['bin','json','inline.js','blend'])assert.deepEqual(fs.readFileSync(path.join(currentStage,'models/berlin-courier-forms-v114.'+ext)),fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.'+ext)),'canonical V145 sculpt matches verified candidate');
+    const surface=JSON.parse(fs.readFileSync(path.join(currentStage,'surface-check.json'))),poses=JSON.parse(fs.readFileSync(path.join(currentStage,'pose-check.json')));
+    assert.equal(surface.sourceHeroSha256,sha(source.raw));assert.ok(surface.passed&&poses.passed&&poses.poseSamples===255&&poses.trianglePoseSamples===75&&poses.maxFloorLowering<.004&&poses.bad.length===0);
+    assert.equal(surface.candidateSha256,sha(fs.readFileSync(path.join(root,'berlin-runner.html'))));
+    console.log('PASS: canonical V145 payload/native scene match validated local surface fairing, preserving the quiet-hem surface outside the recorded limb regions.');
+    process.exit(0);
+  }
   const parity=current.finishRevision===120;
   const verified=parity?path.join(root,'audit/berlin-parity-courier-v120/shoes'):path.join(dir,targetStage);
   for(const ext of ['bin','json','inline.js'])assert.deepEqual(fs.readFileSync(path.join(verified,'courier-forms-v114.'+ext)),fs.readFileSync(path.join(root,'assets/models/berlin-courier-forms-v114.'+ext)),'canonical sculpt matches verified candidate');

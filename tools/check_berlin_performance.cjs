@@ -4,6 +4,7 @@ const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
 const path = require('path');
 const useKiezLamps = process.argv.includes('--kiez-lamps');
 const html = fs.readFileSync(path.resolve(__dirname, '..', process.env.BERLIN_HTML || 'berlin-runner.html'), 'utf8');
+const nativeTreeContainers = html.includes('// BEGIN STREET CONTAINERS V146');
 function section(a, b) {
   const start = html.indexOf(a), end = html.indexOf(b, start + a.length);
   assert.ok(start >= 0 && end > start, `source anchors: ${a}`);
@@ -316,10 +317,11 @@ vm.runInContext(section('  // BEGIN BLENDER GARDEN KIT','  // END BLENDER GARDEN
 const canopy=t.berlinGardenKit.geometry('treeNear');
 assert.equal(canopy,t.berlinGardenKit.geometry('treeNear'),'all street trees share one geometry');
 const branchedCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='branch-led-lobed-crown-v114';
-const twigCanopy=['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision);
+const roundedCanopy=t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='fine-rounded-linden-v149';
+const twigCanopy=roundedCanopy||['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision);
 const fineCanopy=twigCanopy||['fine-clustered-linden-v127','fine-oval-linden-v129'].includes(t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision);
 const denseCanopy=fineCanopy||t.BERLIN_KIEZ_GARDEN_DATA.canopyRevision==='dense-layered-linden-v118';
-assert.ok(canopy.index.count/3 <= (twigCanopy?25000:denseCanopy?20000:branchedCanopy?25000:14000),'street tree stays within its authored envelope; V134 shipping requires measured frame performance');
+assert.ok(canopy.index.count/3 <= (roundedCanopy?44000:twigCanopy?25000:denseCanopy?20000:branchedCanopy?25000:14000),'street tree stays within its explicit authored envelope; shipping new geometry separately requires measured frame performance');
 assert.ok([...canopy.attributes.position.array,...canopy.attributes.color.array].every(Number.isFinite));
 canopy.computeBoundingBox();
 const streetTreeHeight=canopy.boundingBox.max.y-canopy.boundingBox.min.y;
@@ -704,13 +706,15 @@ assert.ok(lampBatches.every(b=>b.mesh.count===2 && b.mesh.visible),'lamp reroll 
 // existing per-tree cull updates compact prefixes only on an actual transition.
 lampContext.MAT.kerb=new THREE.MeshStandardMaterial();
 lampContext.berlinGardenKit=t.berlinGardenKit;
+lampContext.decodeBerlinMeshRecord=t.decodeBerlinMeshRecord;
+lampContext.atob=t.atob;
 vm.runInContext(section('  var streetTreeFarGeometry = null;','  // Litfaßsäule'),lampContext);
 const grove=new THREE.Group(), trees=Array.from({length:4},()=>lampContext.makeTree());
 trees.forEach((tr,i)=>{tr.position.set(i%2?9:-9,0.16,-12+i*12);tr.rotation.y=i*0.7;tr.scale.setScalar(0.8+i*0.1);tr.userData.rolledActive=true;grove.add(tr);});
 const treeDrawsBefore=trees.reduce((n,tr)=>n+tr.children.filter(o=>o.isMesh).length,0);
 const treeBatches=lampContext.batchRigidChunkProps(grove,trees,'tree');
 lampContext.syncRigidChunkProps(treeBatches);
-assert.equal(treeDrawsBefore-treeBatches.filter(b=>b.mesh.visible&&!b.shadowOnly).length,9,'four complete near trees share three beauty draws including pits');
+assert.equal(treeDrawsBefore-treeBatches.filter(b=>b.mesh.visible&&!b.shadowOnly).length,nativeTreeContainers?6:9,'four complete near trees share their crown and container beauty draws');
 assert.equal(treeBatches.filter(b=>b.mesh.castShadow&&b.mesh.visible).length,1,'joined branches and leaves retain one active shadow caster');
 const crownBatch=treeBatches.find(b=>b.mesh.material===t.berlinGardenKit.material);
 assert.equal(crownBatch.mesh.geometry,canopy,'instancing keeps exact Blender tree geometry');
@@ -817,7 +821,7 @@ lampContext.PROFILE_RENDER=false;
 console.log(`PASS: camera-aware street-tree LOD, exact foreground, authored/cache identity, immutable background, hysteresis/Photo/baseline; four distant crowns save${(canopy.index.count-farCrown.index.count)*4/3}triangles with one shared opaque far draw. Projection ${JSON.stringify(treeLodProjection)}`);
 lampContext.ASSETS.props={tree:'optional.glb'};
 assert.equal(lampContext.batchRigidChunkProps(grove,trees,'tree').length,0,'optional external tree assets retain original rendering path');
-console.log('PASS: actual four-tree grove saves 9 beauty/3 caster submissions; exact Blender branches/leaves, transforms, existing cull, empty/recycled grove and change-only uploads.');
+console.log(`PASS: actual four-tree grove saves ${nativeTreeContainers?6:9} beauty/3 caster submissions; exact Blender branches/leaves, transforms, existing cull, empty/recycled grove and change-only uploads.`);
 // Promote actual lamp/tree batch outputs and mapped manholes across chunks.
 // Check source-equivalent frustum decisions and per-pass membership rather
 // than inferring FPS from the reduced number of material submissions.
@@ -902,8 +906,8 @@ fixtureScene.onBeforeRender=function(...args){fixtureBeforeCount++;fixtureBefore
 Object.assign(lampContext,{scene:fixtureScene,worldRoot:fixtureWorld,sun:fixtureSun,chunks:fixtureChunks});
 lampContext.installStreetFixturePools();
 const fixturePools=lampContext.streetFixturePools;
-assert.equal(fixturePools.sources.length,useKiezLamps?36:46,'two chunk-local fixed shadow holders accompany unchanged beauty fixtures');
-assert.equal(fixturePools.pools.length,useKiezLamps?9:11,'one shared shadow-only canopy pool accompanies unchanged beauty pools');
+assert.equal(fixturePools.sources.length,(useKiezLamps?36:46)-(nativeTreeContainers?2:0),'two chunk-local fixed shadow holders accompany tree/container beauty fixtures');
+assert.equal(fixturePools.pools.length,(useKiezLamps?9:11)-(nativeTreeContainers?1:0),'one shared shadow-only canopy pool accompanies tree/container beauty pools');
 assert.equal(fixturePools.furnitureSources,10);
 assert.ok(excludedFurniture.every(mesh=>mesh.material===furnitureMaterial),'controlled, custom callback and replaced assets remain untouched');
 assert.ok(fixturePools.sources.every(row=>row.source.material!==row.material&&!row.source.material.visible&&row.material.visible),
@@ -967,7 +971,7 @@ function presentStreetFixtures() {
   return {oldBeautyDraws,beautyDraws,oldShadowDraws,shadowDraws};
 }
 const fixtureStart=presentStreetFixtures();
-assert.equal(fixtureStart.oldBeautyDraws,useKiezLamps?33:43);assert.equal(fixtureStart.beautyDraws,useKiezLamps?8:10,'mixed near/far trees cost one additional world draw');
+assert.equal(fixtureStart.oldBeautyDraws,(useKiezLamps?33:43)-(nativeTreeContainers?2:0));assert.equal(fixtureStart.beautyDraws,(useKiezLamps?8:10)-(nativeTreeContainers?1:0),'mixed near/far trees cost one additional world draw');
 lampContext.PROFILE_RENDER=true;lampContext.canvas={dataset:{}};lampContext.frameNumber=0;
 presentStreetFixtures();
 const measuredTreeLOD=JSON.parse(lampContext.canvas.dataset.streetFixturePooling);
@@ -1022,6 +1026,66 @@ lampContext.installStreetFixturePools();assert.equal(lampContext.streetFixturePo
 assert.equal(fixtureScene.onBeforeRender,fallbackHook);assert.equal(fixtureWorld.children.length,fallbackChildren);
 assert.equal(fallbackSource.material,originalFallbackMaterial,'profiling fallback changes no sources or callbacks');
 console.log(`PASS: actual world street pools; ${fixtureStart.oldBeautyDraws}→${fixtureStart.beautyDraws} opaque draws, original geometry/PBR identity, source frusta and caster prefixes, frozen/transformed roots, change-only uploads, LOD/reset/recycle and Photo orbit/resize; alpha layers untouched.`);
+if(nativeTreeContainers){
+  // Exercise the actual seven-tree layout, including the singleton that
+  // remains under each tree root after chunk-level batching.
+  const containerScene=new THREE.Scene(),containerWorld=new THREE.Group(),containerChunks=[];
+  containerScene.add(containerWorld);
+  Object.assign(lampContext,{scene:containerScene,worldRoot:containerWorld,chunks:containerChunks,
+    streetFixturePools:null,PROFILE_RENDER:false,window:{location:{search:''}},ASSETS:{props:{}}});
+  for(let ci=0;ci<3;ci++){
+    const chunk=new THREE.Group(),group=[];chunk.position.z=ci*35+15;containerWorld.add(chunk);
+    for(let slot=0;slot<7;slot++){
+      const tree=lampContext.makeTree(slot===2);tree.position.set(slot%2?9:-9,.16,slot*2-6);
+      tree.scale.set(1.1,.95,1.2);tree.rotation.y=slot*.3;tree.userData.rolledActive=true;
+      assert.equal(tree.children.length,2,'shared garden material must not merge the noncasting container into the crown');
+      assert.equal(tree.children[0].geometry,canopy);
+      assert.equal(tree.children[1].material,t.berlinGardenKit.material);
+      assert.equal(tree.children[1].castShadow,false);assert.equal(tree.children[1].receiveShadow,true);
+      assert.equal(tree.children[1].userData.streetTreeContainer,slot===2?'treeUrn':'treePit');
+      group.push(tree);chunk.add(tree);
+    }
+    const batches=lampContext.batchRigidChunkProps(chunk,group,'tree');lampContext.syncRigidChunkProps(batches);
+    assert.equal(batches.length,4,'near/far/fixed-shadow crowns plus one six-pit batch');
+    assert.equal(group[2].children.length,1);assert.ok(group.filter((_,i)=>i!==2).every(g=>g.children.length===0));
+    chunk.userData={trees:group,treeBatches:batches,lampBatches:[],manholes:[]};containerChunks.push(chunk);
+  }
+  lampContext.installStreetFixturePools();
+  const pools=lampContext.streetFixturePools,urnGeometry=lampContext.streetContainerGeometry('treeUrn');
+  assert.equal(pools.sources.length,15);assert.equal(pools.pools.length,5);assert.equal(pools.furnitureSources,3);
+  const urnPool=pools.pools.find(p=>p.mesh.geometry===urnGeometry),urnSources=pools.sources.filter(p=>p.source.geometry===urnGeometry);
+  assert.equal(urnSources.length,3);assert.ok(urnSources.every(p=>p.pool===urnPool));
+  const containerCamera=new THREE.PerspectiveCamera(70,16/9,.1,420);containerCamera.position.set(0,8,-30);containerCamera.lookAt(0,4,110);
+  function presentContainers(){
+    containerScene.updateMatrixWorld(true);containerCamera.updateMatrixWorld();
+    containerScene.onBeforeRender({shadowMap:{enabled:false}},containerScene,containerCamera,null);
+    const active=urnSources.filter(row=>row.source.parent.visible&&row.source.parent.parent.visible);
+    urnPool.mesh.onBeforeRender();assert.equal(urnPool.mesh.count,active.length);
+    for(let i=0;i<active.length;i++){
+      const actual=new THREE.Matrix4();urnPool.mesh.getMatrixAt(i,actual);
+      const expected=containerWorld.matrixWorld.clone().invert().multiply(active[i].source.matrixWorld);
+      assert.deepEqual(actual.elements,expected.elements.map(Math.fround),'singleton pool tracks root rotation/scale/recycling exactly');
+    }
+    assert.equal(urnPool.mesh.castShadow,false);urnPool.mesh.onAfterRender();assert.equal(urnPool.mesh.count,0);
+  }
+  presentContainers();const unchanged=urnPool.mesh.instanceMatrix.version;presentContainers();
+  assert.equal(urnPool.mesh.instanceMatrix.version,unchanged,'steady singleton pool causes no matrix upload');
+  containerChunks[0].userData.trees[2].visible=false;presentContainers();
+  containerChunks[1].visible=false;presentContainers();
+  containerChunks[0].userData.trees[2].visible=true;containerChunks[0].position.z=65;presentContainers();
+  containerChunks[1].visible=true;presentContainers();
+  // External tree replacements retain both original factory children until
+  // their own asset loader performs the swap; they never enter these pools.
+  lampContext.ASSETS.props.tree='optional.glb';
+  const custom=lampContext.makeTree(true),customChunk=new THREE.Group();customChunk.add(custom);
+  assert.equal(lampContext.batchRigidChunkProps(customChunk,[custom],'tree').length,0);
+  custom.userData.propKind='tree';customChunk.userData={trees:[custom],treeBatches:[],lampBatches:[],manholes:[]};
+  Object.assign(lampContext,{scene:new THREE.Scene(),worldRoot:new THREE.Group(),chunks:[customChunk],streetFixturePools:null});
+  lampContext.scene.add(lampContext.worldRoot);lampContext.worldRoot.add(customChunk);
+  lampContext.installStreetFixturePools();assert.equal(custom.children.length,2);
+  assert.equal(custom.children[1].material,t.berlinGardenKit.material);
+  console.log('PASS: three actual seven-tree chunks use two shared container pools; 1 urn/6 pits per chunk; immutable canopy, exact singleton transforms, hidden/recycled roots, no steady uploads and optional-asset exclusion.');
+}
 // Material shape facades own independent r156 program caches while every
 // mutable palette property and custom hook stays live on its original owner.
 const shapeSource=section('  var materialShapeFamilies =','  function mat(color, opts) {');

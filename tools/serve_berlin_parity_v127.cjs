@@ -31,7 +31,7 @@ const hook=`
     if(reviewParams.get('mode')==='perf'&&(reviewParams.has('fixedFrames')?reviewPerfFrames>=Number(reviewParams.get('fixedFrames')):performance.now()-reviewStartedAt>Number(reviewParams.get('seconds')||65)*1000))reviewEnd=true;
     var output={state:reviewEnd?'complete':'running',fixture:reviewParams.has('fixedFrames')?(reviewParams.has('chunkSeed')?'split-rng-v4-chunk-fixed-step':'split-rng-v3-fixed-step'):'split-rng-v2',simulationFrames:reviewPerfFrames,revision:canvas.dataset.graphicsRevision,elapsed:(performance.now()-reviewStartedAt)/1000,programsAtStart:reviewStartPrograms,programsAtEnd:renderer.info.programs.length,rows:reviewRows,profile:reviewEnd?makeDeviceReport('Codex in-app controlled A/B'):null};
     reviewNode.textContent=JSON.stringify(output);
-    if(reviewEnd){clearInterval(reviewTimer);if(!photoMode)togglePhotoMode();fetch('/save-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phase:reviewParams.get('phase'),label:reviewParams.get('label'),data:output})}).then(function(){
+    if(reviewEnd){output.pavingStartup={cpuMs:Number(canvas.dataset.pavingReliefMs||0),applyWallMs:Number(canvas.dataset.pavingReliefLoadMs||0),path:canvas.dataset.pavingRelief||'luminance'};clearInterval(reviewTimer);if(!photoMode)togglePhotoMode();fetch('/save-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phase:reviewParams.get('phase'),label:reviewParams.get('label'),data:output})}).then(function(){
       if(reviewParams.has('batch')){var next=Number(reviewParams.get('run')||0)+1,builds=reviewParams.get('builds')==='three'?['before','middle','after']:['before','after'];if(next<Number(reviewParams.get('runs')||6)){var target=builds[next%builds.length],q=new URLSearchParams(reviewParams);q.set('run',String(next));q.set('label',reviewParams.get('mode')==='counts'?'counts-'+target:(reviewParams.get('series')||'perf')+'-'+target+'-'+Math.floor(next/builds.length));location.href='/'+target+'.html?'+q.toString();}}
     });}
   },75);
@@ -50,6 +50,22 @@ const server=http.createServer((req,res)=>{
     if(e){res.writeHead(404);res.end();return;}
     if(builds[url.pathname]){
       let s=d.toString().replace('<head>','<head>'+seed);
+      if(url.searchParams.has('courierProfile')){
+        s=s.replace('            var authoredMats = Array.isArray(o.material) ? o.material : [o.material];',
+          '            canvas.dataset.courierForms=JSON.stringify(o.geometry.userData.courierFormsV114||null);\n            var authoredMats = Array.isArray(o.material) ? o.material : [o.material];');
+      }
+      if(url.searchParams.has('pavingProfile')){
+        const originalRelief='      relief(MAT.road, paving, 0.45, 0.68, 0.88);';
+        s=s.replace(originalRelief,'      var reviewReliefStart=performance.now();\n'+originalRelief+'\n      canvas.dataset.pavingReliefMs=(performance.now()-reviewReliefStart).toFixed(1);');
+      }
+      // A desktop window can change native DPI between navigations even when
+      // its CSS viewport is pinned. Optional benchmark-only DPR keeps every
+      // build's drawing buffer identical. Never changes the production file.
+      if(url.searchParams.has('dpr')){
+        const fixedDpr=Number(url.searchParams.get('dpr'));
+        if(!Number.isFinite(fixedDpr)||fixedDpr<.5||fixedDpr>3)throw new Error('Invalid review DPR');
+        s=s.replace(/\bwindow\.devicePixelRatio\b/g,String(fixedDpr));
+      }
       // Isolate Three.js UUID allocations from the gameplay random stream.
       // Adding a mesh must not change traffic/buildings in an A/B comparison.
       s=s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('three.js r156 (MIT)')?block.replace(/Math\.random/g,'window.reviewThreeRandom'):block);

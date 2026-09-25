@@ -159,7 +159,7 @@ const { useState, useEffect, useCallback, useRef, useMemo } = React;
 // WORD DATA - loaded from JSON so the app can stay a static GitHub Pages site.
 // DATA_VERSION is appended as a cache-buster query string. Bump when data
 // files change so browsers and the GitHub Pages CDN serve the fresh copy.
-const DATA_VERSION = "2026-09-24-usefulness-ranking-v2";
+const DATA_VERSION = "2026-09-24-usefulness-ranking-v3";
 const v = `?v=${DATA_VERSION}`;
 const WORDS_DATA_PATH = "./data/nouns.json" + v;
 // articleHelp/pluralHelp are split into a separate file so the core noun data
@@ -168,7 +168,7 @@ const NOUN_HELP_PATH = "./data/noun-help.json" + v;
 // Approx uncompressed size of nouns.json, used only to estimate the load
 // progress bar when the server gzips the response (Content-Length is then the
 // compressed size). Update if the core file grows a lot.
-const NOUNS_CORE_APPROX_BYTES = 7698169;
+const NOUNS_CORE_APPROX_BYTES = 7701571;
 const ADJECTIVES_DATA_PATH = "./data/adjectives.json" + v;
 const VERBS_DATA_PATH = "./data/verbs.json" + v;
 const DUAL_GENDER_PATH = "./data/dual-gender-nouns.json" + v;
@@ -205,6 +205,7 @@ let VERB_FORM_RULE_INDEX = new Map();
 let PREPOSITION_HINTS = {};
 let WORDS_META = {};
 let BUILTIN_DECKS = [];
+let BUILTIN_DECK_IDS = new Map();  // builtinDeck marker in nouns.json → noun ids (e.g. "bandwurm")
 let DUAL_GENDER_WORDS = new Set();
 let DUAL_GENDER_SENSES = new Map();
 let DUAL_GENDER_INDEX = new Map();
@@ -279,6 +280,12 @@ function hydrateWordData(payload) {
   // text is merged in later by loadNounHelp().
   EXPLANATIONS = new Map(nounEntries.map(({ id, word, ruleId, isException, weak, ruleConfidence }) => [id || word, { article: "", plural: "", ruleId: ruleId || null, isException: !!isException, weak: !!weak, confidence: ruleConfidence || null }]));
   WORDS_META = payload?.meta || {};
+  BUILTIN_DECK_IDS = new Map();
+  for (const entry of nounEntries) {
+    if (!entry.builtinDeck || !entry.id) continue;
+    if (!BUILTIN_DECK_IDS.has(entry.builtinDeck)) BUILTIN_DECK_IDS.set(entry.builtinDeck, []);
+    BUILTIN_DECK_IDS.get(entry.builtinDeck).push(entry.id);
+  }
 }
 
 // Fetch JSON while reporting download progress (0..1). Falls back to a plain
@@ -391,6 +398,7 @@ async function loadWordData(onProgress) {
     }
   } catch(e) { console.warn("Could not load dual-gender deck:", e); }
   buildWeakNounsDeck();
+  buildBandwurmDeck();
   // Load verbs with prepositions
   try {
     const vpResp = await fetch(VERB_PREP_PATH);
@@ -493,6 +501,27 @@ function buildWeakNounsDeck() {
     name: "Weak Nouns (n-Deklination)",
     description: `Masculine nouns that take -(e)n in every case except nominative singular. ${weak.length} nouns.`,
     nouns: weak.map(n => getNounEntryId(n)),
+    builtin: true,
+    folder: FOLDER_BUILTIN
+  });
+}
+
+// Tapeworm compounds (rows flagged builtinDeck: "bandwurm" in nouns.json, the
+// same four the Berlin Runner deals). They rank after every other noun, so no
+// Top-N tier includes them; this deck is the only way in. The lesson: the last
+// part of a compound decides its article, however long the front is.
+function buildBandwurmDeck() {
+  const DECK_ID = "__bandwurm__";
+  for (let i = BUILTIN_DECKS.length - 1; i >= 0; i--) {
+    if (BUILTIN_DECKS[i].id === DECK_ID) BUILTIN_DECKS.splice(i, 1);
+  }
+  const ids = (BUILTIN_DECK_IDS.get("bandwurm") || []).filter(id => NOUN_ID_INDEX.has(id));
+  if (!ids.length) return;
+  BUILTIN_DECKS.push({
+    id: DECK_ID,
+    name: "Bandwurm" + String.fromCharCode(0xAD) + "wörter",  // soft hyphen: narrow tiles break it as Bandwurm-/wörter
+    description: `Tapeworm compounds: the last part decides the article. ${ids.length} nouns.`,
+    nouns: ids,
     builtin: true,
     folder: FOLDER_BUILTIN
   });
@@ -2539,7 +2568,7 @@ function GermanNounGame() {
             </div>
           ):(
             <div style={S.nounDisplay}>
-              <span style={S.nounWord}>{currentNoun[0]}</span>
+              <span lang="de" style={nounWordStyle(currentNoun[0])}>{currentNoun[0]}</span>
               {currentNoun[3]&&<span style={S.nounSense}>{getMeaningLabel(currentNoun[3])}</span>}
             </div>
           )}
@@ -4167,7 +4196,7 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
               const expl=getExplanation(getMistakeEntryId(w));
               const isOpen=expandedIdx===i;
               return (
-                <div key={i} onClick={()=>{ if (!isMatching) setExpandedIdx(isOpen?null:i); }} style={{background:UI.panel,border:`1px solid ${isOpen&&!isMatching?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"12px 14px",cursor:isMatching?"default":"pointer",transition:"border-color 0.2s"}}>
+                <div key={i} onClick={()=>{ if (!isMatching) setExpandedIdx(isOpen?null:i); }} style={{background:UI.panel,border:`1px solid ${isOpen&&!isMatching?"rgba(210,161,74,0.4)":UI.line}`,borderRadius:12,padding:"12px 14px",cursor:isMatching?"default":"pointer",transition:"border-color 0.2s",overflowWrap:"anywhere"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:4}}>
                     {isVerbForms?(
                       <span style={{fontWeight:800,fontSize:17,color:UI.textStrong}}>{getMeaningLabel(w.english)}</span>
@@ -4177,8 +4206,8 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
                         <span style={{fontSize:12,color:UI.muted,fontStyle:"italic"}}>{getMeaningLabel(w.english)}</span>
                       </div>
                     ):(
-                    <div style={{display:"flex",alignItems:"baseline",gap:2}}>
-                      <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15}}>{w.article}</span>
+                    <div style={{display:"flex",alignItems:"baseline",flexWrap:"wrap",gap:2}}>
+                      <span style={{color:ARTICLE_COLORS[w.article],fontWeight:800,fontSize:15,flexShrink:0}}>{w.article}</span>
                       <span style={{fontWeight:800,fontSize:17,color:UI.textStrong}}> {w.noun}</span>
                       <span style={{color:UI.faint,fontSize:13,marginLeft:6}}>{"->"} {formatPluralAttempt(w.plural)}</span>
                     </div>
@@ -4340,6 +4369,18 @@ function ResultsScreen({totalCorrect,totalAnswered,bestStreak,wrongAnswers,mode,
 // ═══════════════════════════════════════════════════════════════
 // STYLES
 // ═══════════════════════════════════════════════════════════════
+// Long compounds step down in size (like the Berlin Runner's long-word tiers):
+// at a fixed 54px a 67-letter Bandwurmwort chopped into six fragments on a
+// phone. Up to ~22 letters the word still fits one line of a 400px screen;
+// longer ones wrap into two or three. lang="de" + hyphens lets browsers with
+// German hyphenation break at syllables; break-word stays the fallback.
+function nounWordStyle(word) {
+  const len = (word || "").length;
+  if (len <= 12) return S.nounWord;
+  const fontSize = len <= 15 ? 46 : len <= 18 ? 40 : len <= 22 ? 32 : len <= 30 ? 28 : 24;
+  return { ...S.nounWord, fontSize, lineHeight: 1.1, letterSpacing: "-0.02em", hyphens: "auto", WebkitHyphens: "auto" };
+}
+
 const S = {
   container:{minHeight:"100vh",background:"transparent",color:UI.text,fontFamily:FONT_SANS,display:"flex",flexDirection:"column",alignItems:"center",padding:0},
   header:{width:"100%",maxWidth:600,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 20px 8px",boxSizing:"border-box"},
@@ -4357,25 +4398,29 @@ const S = {
   nounWord:{fontSize:54,fontWeight:600,letterSpacing:"-0.035em",color:UI.textStrong,textAlign:"center",lineHeight:1.02,wordBreak:"break-word",fontFamily:FONT_SERIF,fontFeatureSettings:'"ss01","ss02"'},
   nounSense:{fontSize:14,color:UI.muted,textAlign:"center",lineHeight:1.55,maxWidth:380,fontStyle:"italic",fontFamily:FONT_SERIF,letterSpacing:"0.005em"},
   hintText:{fontSize:15,color:UI.faint,fontStyle:"italic",fontFamily:FONT_SERIF},
-  matchingBoard:{width:"100%",display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,alignItems:"stretch"},
-  matchingItemBtn:{width:"100%",background:UI.panelSoft,border:`1.5px solid ${UI.line}`,borderRadius:12,padding:"9px 11px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,color:UI.textStrong,fontFamily:"inherit",textAlign:"left",transition:"all 0.12s ease"},
+  matchingBoard:{width:"100%",display:"grid",gridTemplateColumns:"minmax(0, 1fr) minmax(0, 1fr)",gap:6,alignItems:"stretch"},
+  matchingItemBtn:{width:"100%",minWidth:0,overflowWrap:"anywhere",background:UI.panelSoft,border:`1.5px solid ${UI.line}`,borderRadius:12,padding:"9px 11px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,color:UI.textStrong,fontFamily:"inherit",textAlign:"left",transition:"all 0.12s ease"},
   matchingItemStack:{display:"flex",flexDirection:"row",gap:6,alignItems:"center",minWidth:0,flexWrap:"wrap"},
   matchingItemBadge:{padding:"1px 5px",borderRadius:999,border:`1px solid ${UI.line}`,fontSize:8,fontWeight:800,letterSpacing:1,textTransform:"uppercase",flexShrink:0},
   matchingItemMain:{fontSize:13,fontWeight:700,color:UI.textStrong,lineHeight:1.2},
   matchingItemMeta:{fontSize:9,color:UI.faint,textTransform:"uppercase",letterSpacing:0.5},
   matchingItemState:{fontSize:8,color:UI.muted,textTransform:"uppercase",letterSpacing:1,fontWeight:700,flexShrink:0},
   feedbackFlash:{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"8px 16px"},
-  flashCorrection:{fontSize:16,fontWeight:700,color:UI.textStrong,fontFamily:FONT_SERIF},
+  // minWidth 0 + overflowWrap "anywhere" let a Bandwurmwort correction wrap
+  // inside the flex row instead of pushing past both edges of the card.
+  flashCorrection:{fontSize:16,fontWeight:700,color:UI.textStrong,fontFamily:FONT_SERIF,minWidth:0,overflowWrap:"anywhere",textAlign:"center"},
   articleRow:{display:"flex",gap:10,width:"100%",justifyContent:"center",marginBottom:18},
   articleBtn:{flex:1,maxWidth:148,padding:"18px 8px 14px",border:"1.5px solid",borderRadius:16,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:UI.panel,transition:"transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease",boxShadow:"0 1px 0 rgba(255,250,238,0.6) inset, 0 6px 16px -8px rgba(58,40,26,0.12)"},
   articleBtnMain:{fontSize:26,fontWeight:700,fontFamily:FONT_SERIF,letterSpacing:"-0.01em"},
   articleBtnSub:{fontSize:9.5,textTransform:"uppercase",letterSpacing:1.6,opacity:0.7,fontFamily:FONT_MONO,fontWeight:500},
   pluralSection:{width:"100%",display:"flex",flexDirection:"column",alignItems:"center",gap:10},
   pluralLabel:{fontSize:13,color:UI.faint,textTransform:"uppercase",letterSpacing:1.2},
-  pluralChoices:{width:"100%",display:"grid",gap:10},
-  pluralChoiceBtn:{width:"100%",background:UI.panel,border:`1.5px solid ${UI.line}`,borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,color:UI.textStrong,fontSize:18,fontWeight:600,fontFamily:FONT_SERIF,textAlign:"left",transition:"transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease",boxShadow:"0 1px 0 rgba(255,250,238,0.5) inset, 0 4px 12px -8px rgba(58,40,26,0.10)"},
+  // minmax(0,1fr) + minWidth 0 + overflowWrap: long plurals (Bandwurmwörter) wrap
+  // inside their button instead of clipping the ending that tells the options apart.
+  pluralChoices:{width:"100%",display:"grid",gridTemplateColumns:"minmax(0, 1fr)",gap:10},
+  pluralChoiceBtn:{width:"100%",minWidth:0,background:UI.panel,border:`1.5px solid ${UI.line}`,borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,color:UI.textStrong,fontSize:18,fontWeight:600,fontFamily:FONT_SERIF,textAlign:"left",transition:"transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease",boxShadow:"0 1px 0 rgba(255,250,238,0.5) inset, 0 4px 12px -8px rgba(58,40,26,0.10)"},
   pluralChoiceKey:{width:28,height:28,borderRadius:999,border:`1px solid ${UI.line}`,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12,color:UI.muted,flexShrink:0},
-  pluralChoiceLabel:{fontSize:18,fontWeight:600,color:UI.textStrong,fontFamily:FONT_SERIF},
+  pluralChoiceLabel:{fontSize:18,fontWeight:600,color:UI.textStrong,fontFamily:FONT_SERIF,minWidth:0,overflowWrap:"anywhere"},
   inputRow:{display:"flex",gap:8,width:"100%",maxWidth:400},
   pluralInput:{flex:1,background:UI.panelAlt,border:`1.5px solid ${UI.line}`,borderRadius:14,padding:"13px 16px",fontSize:22,color:UI.textStrong,outline:"none",fontFamily:FONT_SERIF,fontWeight:500,textAlign:"center",letterSpacing:"-0.01em",boxShadow:"inset 0 2px 6px rgba(58,40,26,0.04)"},
   submitBtn:{background:`linear-gradient(180deg, ${UI.accent}, #d8c8a8)`,border:`1px solid rgba(58,40,26,0.32)`,borderRadius:14,padding:"13px 22px",fontSize:17,color:UI.textStrong,cursor:"pointer",fontWeight:700,boxShadow:"0 1px 0 rgba(255,250,238,0.7) inset, 0 6px 16px -6px rgba(58,40,26,0.18)",letterSpacing:"0.01em"},

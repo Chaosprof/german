@@ -27,7 +27,8 @@ if(!process.argv.includes('--assets-only')){
 const scope=vm.createContext({console,Float32Array,Int16Array,Uint16Array,Uint8Array,Uint32Array});vm.runInContext(scripts.find(s=>s.includes('three.js r156 (MIT)')),scope);
 const THREE=scope.THREE;
 const data=JSON.parse(fs.readFileSync(path.join(assetDir,'berlin-kiez-garden-v1.json'),'utf8'));
-const twigCanopy=['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(data.canopyRevision);
+const roundedCanopy=data.canopyRevision==='fine-rounded-linden-v149';
+const twigCanopy=roundedCanopy||['fine-twig-linden-v134','thin-sheet-linden-v137'].includes(data.canopyRevision);
 const ovalCanopy=data.canopyRevision==='fine-oval-linden-v129';
 const fineCanopy=twigCanopy||ovalCanopy||data.canopyRevision==='fine-clustered-linden-v127';
 const denseCanopy=fineCanopy||data.canopyRevision==='dense-layered-linden-v118';
@@ -156,7 +157,7 @@ for(const [name,record] of Object.entries(data.meshes)){
   assert.ok(geometry.boundingSphere.radius>0);
 }
 assert.ok(data.meshes.tree.triangles<=3500,'approved grove triangle budget');
-assert.ok(data.meshes.treeNear.triangles<=(twigCanopy?25000:denseCanopy?20000:lush?14000:9000),'authored near-tree envelope; V134 installation separately requires measured frame performance');
+assert.ok(data.meshes.treeNear.triangles<=(roundedCanopy?44000:twigCanopy?25000:denseCanopy?20000:lush?14000:9000),'authored near-tree envelope; new geometry separately requires measured frame performance');
 assert.equal(data.meshes.tree.triangles,data.meshes.leaves.triangles+data.meshes.trunk.triangles);
 assert.ok(decoded.tree.boundingBox.max.y<6.1&&decoded.tree.boundingBox.min.y>-.025);
 assert.ok(decoded.planter.boundingBox.max.y<2);
@@ -171,7 +172,8 @@ assert.ok(radius<(denseCanopy?data.streetCanopyRadius:lush?2.85:2.60),'provided 
 if(denseCanopy){
   assert.ok(data.streetCanopyRadius<3);
   const thinSheet=data.canopyRevision==='thin-sheet-linden-v137';
-  require(thinSheet?'./check_berlin_canopy_v137.cjs':twigCanopy?'./check_berlin_canopy_v134.cjs':ovalCanopy?'./check_berlin_canopy_v129.cjs':fineCanopy?'./check_berlin_canopy_v127.cjs':'./check_berlin_canopy_v118.cjs');
+  require(roundedCanopy?'./check_berlin_canopy_v149.cjs':thinSheet?'./check_berlin_canopy_v137.cjs':twigCanopy?'./check_berlin_canopy_v134.cjs':ovalCanopy?'./check_berlin_canopy_v129.cjs':fineCanopy?'./check_berlin_canopy_v127.cjs':'./check_berlin_canopy_v118.cjs');
+  if(roundedCanopy)assert.deepEqual(data,JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v149/models/berlin-kiez-garden-v1.json'),'utf8')),'loaded garden equals the independently verified V149 candidate, including protected planter and grove records');
   if(thinSheet){
     const finePlanter=data.planterRevision==='fine-layered-shrub-v139';
     if(finePlanter)require('./check_berlin_planter_v139.cjs');

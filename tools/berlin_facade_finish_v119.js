@@ -29,9 +29,9 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
   // the bookstore eight; the apricot master keeps three (27k budget).
   slots=slots.filter(function(s,i){return variant===0||((i*7+variant*3)%11)<8;}).slice(0,variant===0?2:variant===1?6:8);
   var extra={position:[],normal:[],color:[],uv:[]},extraIndex=[],paint=new THREE.Color();
-  function add(g,x,y,z,sx,sy,sz,color,ry,rz){
+  function add(g,x,y,z,sx,sy,sz,color,ry,rz,rx){
     var pos=g.attributes.position,norm=g.attributes.normal,ind=g.index;
-    var m=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(0,ry||0,rz||0)),new THREE.Vector3(sx,sy,sz));
+    var m=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(rx||0,ry||0,rz||0)),new THREE.Vector3(sx,sy,sz));
     var nm=new THREE.Matrix3().getNormalMatrix(m),v=new THREE.Vector3(),nn=new THREE.Vector3(),off=extra.position.length/3;
     paint.setHex(color);
     for(var j=0;j<pos.count;j++){
@@ -43,35 +43,33 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
     for(var j=0;j<(ind?ind.count:pos.count);j++)extraIndex.push(off+(ind?ind.getX(j):j));
   }
   var box=new THREE.BoxGeometry(1,1,1);
-  // Closed six-sided leaf with a curved normal field. Rounded contours read
-  // as geranium/ivy leaves, including the hanging ones seen against plaster.
+  // Small curved oval leaves: eight outline corners, a shallow front,
+  // and a closed back. Independent rim normals soften the folded leaf surface.
   var leaf=new THREE.BufferGeometry(),lp=[],ln=[],li=[];
-  var leafRim=[];
-  for(var edge=0;edge<6;edge++){
-    var angle=edge*Math.PI/3;
-    leafRim.push([Math.cos(angle),Math.sin(angle),edge%2?-.09:.09]);
+  for(var edge=0;edge<8;edge++){
+    var angle=edge*Math.PI/4,x=Math.cos(angle),y=Math.sin(angle);
+    lp.push(x,y,Math.abs(y)*.075);var nn=new THREE.Vector3(x*.55,y*.60,.62).normalize();ln.push(nn.x,nn.y,nn.z);
   }
-  var leafFaces=[[0,2,4],[5,3,1]];
-  for(var edge=0;edge<6;edge++)leafFaces.push([edge,(edge+2)%6,(edge+1)%6]);
-  leafFaces.forEach(function(face){
-    var a=new THREE.Vector3().fromArray(leafRim[face[0]]),b=new THREE.Vector3().fromArray(leafRim[face[1]]),c=new THREE.Vector3().fromArray(leafRim[face[2]]);
-    var centre=a.clone().add(b).add(c),normal=b.clone().sub(a).cross(c.clone().sub(a));
-    if(normal.dot(centre)<0)face.reverse();
-    face.forEach(function(edge){
-      var v=leafRim[edge],sign=centre.z<0?-1:1,nn=new THREE.Vector3(v[0]*.35,v[1]*.45,sign).normalize();
-      li.push(lp.length/3);lp.push(v[0],v[1],v[2]);ln.push(nn.x,nn.y,nn.z);
-    });
-  });
+  lp.push(0,0,.19,0,0,-.065);ln.push(0,0,1,0,0,-1);
+  for(var edge=0;edge<8;edge++){
+    var angle=edge*Math.PI/4,x=Math.cos(angle),y=Math.sin(angle);
+    lp.push(x,y,Math.abs(y)*.075);var nn=new THREE.Vector3(x*.40,y*.44,-.66).normalize();ln.push(nn.x,nn.y,nn.z);
+    li.push(8,edge,(edge+1)%8,9,10+(edge+1)%8,10+edge);
+  }
   leaf.setAttribute('position',new THREE.Float32BufferAttribute(lp,3));leaf.setAttribute('normal',new THREE.Float32BufferAttribute(ln,3));leaf.setIndex(li);
-  // Five loose clusters of three small florets, with smooth radial normals.
-  // The shared six-vertex heads use eight triangles each: fifteen heads keep
-  // the old 120-triangle flower budget and reduce duplicate vertex payloads.
-  var bloom=new THREE.BufferGeometry();
-  var bp=[1,0,0,-1,0,0,0,1,0,0,-1,0,0,0,1,0,0,-1];
+  // Rounded blooms retain volume when viewed along the street. Weld the
+  // twenty-face sphere to twelve vertices and use a smooth radial normal field.
+  var bloomSource=new THREE.IcosahedronGeometry(1,0),bloom=new THREE.BufferGeometry();
+  var bp=[],bn=[],bi=[],bloomPoints=new Map(),positions=bloomSource.attributes.position;
+  for(var vi=0;vi<positions.count;vi++){
+    var v=new THREE.Vector3().fromBufferAttribute(positions,vi),key=v.toArray().join(',');
+    if(!bloomPoints.has(key)){
+      bloomPoints.set(key,bp.length/3);bp.push(v.x,v.y,v.z);v.normalize();bn.push(v.x,v.y,v.z);
+    }
+    bi.push(bloomPoints.get(key));
+  }
   bloom.setAttribute('position',new THREE.Float32BufferAttribute(bp,3));
-  bloom.setAttribute('normal',new THREE.Float32BufferAttribute(bp,3));
-  bloom.setIndex([0,2,4,2,1,4,1,3,4,3,0,4,2,0,5,1,2,5,3,1,5,0,3,5]);
-  bloom.rotateZ(.43);bloom.rotateY(.31);
+  bloom.setAttribute('normal',new THREE.Float32BufferAttribute(bn,3));bloom.setIndex(bi);bloomSource.dispose();
   var geranium=[0xd56c79,0xed9a9a,0xc84e67,0xffe8cd,0xe8b1a4];
   slots.forEach(function(s,si){
     var x=(s.min[0]+s.max[0])/2,y=s.min[1]-.07,z=s.max[2]+.68;
@@ -79,23 +77,35 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
     // Dark container and one wrought-iron rail below the sill.
     add(box,x,y-.12,z,w,.22,.30,0x3d5548);
     add(box,x,y-.22,z+.19,w+.10,.035,.035,0x344340);
-    for(var j=0;j<10;j++){
-      var t=(j%5+.5)/5,tier=j<5?0:1;
-      add(leaf,x+(t-.5)*w*.9,y+.10+tier*.16+Math.sin(j*2.1+si)*.04,z+.02+tier*.05,.21,.16,.22,j%2?0x4e7137:0x758b40,Math.sin(j)*.5,.4*Math.sin(j+si));
+    // Three overlapping, uneven rows of smaller leaves make a rounded mound.
+    for(var j=0;j<24;j++){
+      var t=(j%8+.5)/8,tier=Math.floor(j/8),phase=j*2.17+si*.91+variant*.43;
+      var size=.88+.18*(.5+.5*Math.sin(phase*1.7));
+      add(leaf,x+(t-.5)*w*.99+Math.sin(phase)*.04,y+.07+tier*.115+Math.sin(phase*.81)*.055,
+        z+.04+tier*.065+Math.cos(phase)*.06,.115*size,.13*size,.18,
+        j%3?0x4e7137:0x758b40,-side*.38+Math.sin(phase)*.70,Math.cos(phase*.73)*.65,Math.sin(phase*.91)*.55);
     }
-    for(var j=0;j<15;j++){
-      var cluster=Math.floor(j/3),floret=j%3,t=(cluster+.5)/5;
-      var a=floret*Math.PI*2/3+cluster*.83+si*.37,r=.069+.011*((j*7+si)%3);
-      var cx=x+(t-.5)*w*.94+Math.sin(cluster*2.3+si)*.025;
-      var cy=y+.235+Math.sin(cluster*1.9+si)*.045;
-      add(bloom,cx+Math.cos(a)*.071,cy+Math.sin(a)*.066,z+.13+Math.cos(j*1.7)*.045,
-        r*1.08,r,r*.78,geranium[(cluster*3+si+(floret===2?1:0))%geranium.length],Math.sin(j+si)*.42,a*.27);
+    // Seven loose clusters: coherent pink/cream families per box, with one
+    // pale accent cluster. Unequal heights break the horizontal flower strip.
+    for(var j=0;j<21;j++){
+      var cluster=Math.floor(j/3),floret=j%3,t=(cluster+.5)/7;
+      var a=floret*Math.PI*2/3+cluster*.83+si*.37,r=.077+.012*((cluster+si)%3);
+      var cx=x+(t-.5)*w*.96+Math.sin(cluster*2.3+si)*.038;
+      var cy=y+.27+Math.sin(cluster*1.9+si*.73)*.105;
+      var family=cluster===(si+2)%7?3:(si*2+variant)%geranium.length;
+      add(bloom,cx+Math.cos(a)*.076,cy+Math.sin(a)*.074,z+.17+Math.cos(j*1.7+si)*.045,
+        r*1.05,r,r*.88,geranium[family],Math.sin(j+si)*.42,a*.27);
     }
-    // Trailing ivy spills over the front of the box.
+    // Three unequal ivy trails follow bent paths; their leaf pairs overlap
+    // the container edge and taper toward each hanging tip.
     for(var j=0;j<8;j++){
-      var stem=Math.floor(j/2),tier=j%2;
-      add(leaf,x+(stem/3-.5)*w*.77+(tier?-.055:.05),y-.23-tier*.17-(stem%2)*.07,z+.23+tier*.02,
-        .10,.145,.24,j%3?0x4d753a:0x678642,Math.sin(j+si)*.20,(tier?-.36:.32)+Math.cos(stem+si)*.20);
+      var stem=j<3?0:j<6?1:2,tier=j-(stem===0?0:stem===1?3:6);
+      var t=[-.37,.04,.38][stem],phase=si*.9+stem*1.7;
+      var drop=tier*(stem===1?.20:.155)+(stem===0?.03:stem===1?.12:0);
+      var size=1-tier*.12;
+      add(leaf,x+t*w+Math.sin(tier*1.1+phase)*.085,y-.17-drop,z+.245+tier*.012,
+        .105*size,.125*size,.20,j%3?0x4d753a:0x678642,
+        -side*.48+Math.sin(j+si)*.34,(tier%2?-.48:.38)+Math.cos(phase+tier*.7)*.26,Math.sin(j+si)*.35);
     }
   });
   // A small number of stepped chimney stacks break the repeated mansard
@@ -113,7 +123,7 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
     var cover=new THREE.PlaneGeometry(1,1),bookScale=width/13.5*side;
     [-4.2,0,4.2].forEach(function(bay,bi){
       [-.82,.82].forEach(function(offset,j){
-        var x=(bay+offset)*bookScale,y=1.055,z=.13,tilt=(j?-.055:.065)*side;
+        var x=(bay+offset)*bookScale,y=1.345,z=.39,tilt=(j?-.055:.065)*side;
         add(box,x,y,z,.38*Math.abs(bookScale),.58,.09,j?0x526c65:0x936850,0,tilt);
         add(box,x,y-.285,z-.025,.43*Math.abs(bookScale),.035,.18,0x71634e);
         var firstUV=extra.uv.length;
@@ -170,7 +180,7 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
   for(var i=0;i<extraIndex.length;i++)indices[faces+i]=oldCount+extraIndex[i];
   out.setIndex(new THREE.BufferAttribute(indices,1));out.addGroup(0,indices.length,0);
   out.computeBoundingBox();out.computeBoundingSphere();out.name=geometry.name;
-  out.userData=Object.assign({},geometry.userData,{triangles:indices.length/3,finishRevision:119,finishBaseVertices:oldCount,finishBaseTriangles:faces/3,flowerBoxes:slots.length,flowerClusterRevision:138,flowerHeads:slots.length*15,displayBookFaces:[displayBookStart,displayBookEnd],displayBookCount:variant===1?6:0,bicycleFaces:[bicycleStart,bicycleEnd],parkedBicycles:variant===0?1:0});
+  out.userData=Object.assign({},geometry.userData,{triangles:indices.length/3,finishRevision:119,finishBaseVertices:oldCount,finishBaseTriangles:faces/3,flowerBoxes:slots.length,flowerClusterRevision:147,flowerHeads:slots.length*21,displayBookFaces:[displayBookStart,displayBookEnd],displayBookCount:variant===1?6:0,bicycleFaces:[bicycleStart,bicycleEnd],parkedBicycles:variant===0?1:0});
   // These fields depend on fixed building geometry, not the camera or light.
   // Bake paint into the existing RGB and use its spare alpha component for
   // room light. Opaque output forces alpha to one; no added varying/attribute.

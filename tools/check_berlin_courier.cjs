@@ -106,6 +106,19 @@ const previousMesh=new T.SkinnedMesh(geometry,mesh.material);previousMesh.bind(s
 makeRefine(previousRefineSource)(previousMesh);
 if(clothScope)assert.notEqual(previousMesh.geometry.userData.courierClothV97?.baked,true,'former head/trouser variant retains its own refinement');
 const parityShoes=formsScope.includes('"finishRevision":120');
+const paritySurface=formsScope.includes('"surfaceRevision":145');
+let shoeHistory=mesh.geometry;
+if(paritySurface){
+  // Retain the V120 contract against its actual archived geometry; V145's
+  // broader limb edit has its own independently exercised pose contract.
+  const v120Scope=fs.readFileSync(path.join(root,'audit/berlin-parity-v145/baseline/berlin-courier-forms-v114.inline.js'),'utf8');
+  const v120Mesh=new T.SkinnedMesh(geometry,mesh.material);v120Mesh.bind(skeleton,new T.Matrix4());
+  new Function('THREE','atob',clothScope+'\n'+v120Scope+'\n'+html.slice(refineStart,refineEnd)+'\nreturn refineCourierSilhouette;')(T,atob)(v120Mesh);
+  shoeHistory=v120Mesh.geometry;
+  const proof=JSON.parse(fs.readFileSync(path.join(root,'audit/berlin-parity-v145/pose-check.json')));
+  assert.equal(proof.candidateSha256,require('crypto').createHash('sha256').update(html).digest('hex'));
+  assert.ok(proof.passed&&proof.poseSamples===255&&proof.trianglePoseSamples===75&&proof.maxFloorLowering<.004&&proof.bad.length===0);
+}
 let historicalShoeGeometry=mesh.geometry;
 if(parityShoes){
   // The later shoe sculpt intentionally changes the protected shoe region.
@@ -119,9 +132,9 @@ if(parityShoes){
   for(let v=0;v<geometry.attributes.position.count;v++){
     let shoeWeight=0;
     for(let k=0;k<4;k++)if(/^(Left|Right)(Foot|ToeBase)$/.test(skeleton.bones[geometry.attributes.skinIndex.getComponent(v,k)].name))shoeWeight+=geometry.attributes.skinWeight.getComponent(v,k);
-    const move=new T.Vector3().fromBufferAttribute(mesh.geometry.attributes.position,v).distanceTo(new T.Vector3().fromBufferAttribute(quietMesh.geometry.attributes.position,v));
+    const move=new T.Vector3().fromBufferAttribute(shoeHistory.attributes.position,v).distanceTo(new T.Vector3().fromBufferAttribute(quietMesh.geometry.attributes.position,v));
     maxMove=Math.max(maxMove,move);if(move>0)moved++;
-    if(shoeWeight<=.45)for(const name of ['position','normal'])for(let k=0;k<3;k++)assert.equal(mesh.geometry.attributes[name].getComponent(v,k),quietMesh.geometry.attributes[name].getComponent(v,k),'V120 preserves every non-shoe position and normal');
+    if(shoeWeight<=.45)for(const name of ['position','normal'])for(let k=0;k<3;k++)assert.equal(shoeHistory.attributes[name].getComponent(v,k),quietMesh.geometry.attributes[name].getComponent(v,k),'V120 preserves every non-shoe position and normal');
   }
   assert.ok(moved>=1300&&maxMove<.028,'shoe sculpt is real and bounded to 28mm');
   const shade=mesh.geometry.attributes.aCourierFinish;
@@ -256,9 +269,9 @@ const shader = { uniforms:{}, vertexShader:T.ShaderLib.standard.vertexShader, fr
 const shaderRenderer={};finish.onBeforeCompile(shader,shaderRenderer);
 assert.equal(previousShaderCalls, 1, 'costume/lighting shader chain remains intact');
 assert.equal(previousShaderThis,finish);assert.equal(previousShaderRenderer,shaderRenderer,'existing shader hook receives its owner and renderer');
-assert.equal((shader.vertexShader.match(/attribute vec2 aCourierSole;/g) || []).length, 1);
+assert.equal((shader.vertexShader.match(new RegExp('attribute vec'+(paritySurface?'3':'2')+' aCourierSole;','g')) || []).length, 1);
 assert.ok(shader.vertexShader.includes('vCourierSole = aCourierSole;'));
-assert.ok(shader.fragmentShader.includes('fract(vCourierSole.y * '+(parityShoes?'7.0':'5.0')+')'));
+assert.ok(shader.fragmentShader.includes('fract(vCourierSole.y * '+(paritySurface?'9.0':parityShoes?'7.0':'5.0')+')'));
 assert.ok(shader.fragmentShader.includes('diffuseColor.rgb = mix(diffuseColor.rgb, courierRubber'));
 assert.ok(shader.uniforms.courierSoleColor.value.isColor && shader.uniforms.courierTreadColor.value.isColor);
 assert.ok(shader.uniforms.courierHemColor.value.isColor);

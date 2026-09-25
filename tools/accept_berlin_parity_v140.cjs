@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path'),assert=require('assert/strict'),crypto=require('crypto');
 const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-parity-v140');
 const read=p=>JSON.parse(fs.readFileSync(path.join(stage,p),'utf8')),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-const bench='benchmark-matte';
+const bench='benchmark-local-bounce';
 const r=read(bench+'/comparison.json'),m=read('material-check.json'),b=read('bounce-check.json'),h=fs.readFileSync(path.join(stage,'candidate.html'));
 assert.equal(m.passed,true);assert.equal(b.passed,true);assert.equal(m.candidateSha256,sha(h));assert.equal(b.candidateSha256,sha(h));
 assert.equal(m.addedDraws,0);assert.equal(m.addedTextures,0);assert.equal(b.addedLights,0);assert.equal(b.maximumNewOffsetError,0);

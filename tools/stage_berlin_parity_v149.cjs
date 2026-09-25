@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),crypto=require('crypto');
+const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-parity-v149'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+for(const dir of ['frames','benchmark'])fs.mkdirSync(path.join(stage,dir),{recursive:true});
+const base=fs.readFileSync(path.join(stage,'baseline.html'),'utf8');
+assert.equal(sha(base),'865a3301b5878e7d4de039a8ba7f3519e200d9a216cffe823782b8a6af53f484');
+const pattern=/var BERLIN_KIEZ_GARDEN_DATA = \{[^\r\n]*\};/;
+const inline=fs.readFileSync(path.join(stage,'models/berlin-kiez-garden-v1.inline.js'),'utf8').match(pattern)[0];
+assert.equal((base.match(new RegExp(pattern.source,'g'))||[]).length,1);assert.equal(base.split("'kiez-reference-v148'").length,2);
+const page=base.replace(pattern,()=>inline).replace("'kiez-reference-v148'","'kiez-reference-v149'");
+fs.writeFileSync(path.join(stage,'candidate.html'),page);
+console.log(JSON.stringify({candidateSha256:sha(page),pageBytes:Buffer.byteLength(page),addedBytes:Buffer.byteLength(page)-Buffer.byteLength(base)},null,2));
