@@ -6058,7 +6058,7 @@ BerlinLoad.phase('engine', 1);
   // ~24%. So every 40 m of travel a whole 40 m block of city — facades, roofs,
   // kerbs, the lot — switched on at the vanishing point at three-quarters
   // opacity. That is the mechanical pop-in an endless runner must never show;
-  // the reference (Subway Surfers) hides the identical event by making the far
+  // the reference game hides the identical event by making the far
   // end of its corridor genuinely opaque before anything is spawned into it.
   //
   // WORLD_EMERGE is the distance at which the nearest surface of a freshly
@@ -7665,7 +7665,7 @@ BerlinLoad.phase('engine', 1);
   }
 
   // ======================================================== CITY PALETTE ====
-  // ONE curated Subway-Surfers-grade palette drives every procedural surface in
+  // ONE curated arcade-runner palette drives every procedural surface in
   // the game: the canvas painters below, the shared MAT / STREET_MAT tables, and
   // every prop factory. Two rules hold it together:
   //   1. Neighbours separate by HUE, not by value. A mint block next to a coral
@@ -8023,7 +8023,7 @@ BerlinLoad.phase('engine', 1);
   // Kerb face: a tall, narrow sheet whose only job is a bright lip at the top
   // edge and a warm shadow at the base. Box UVs put this vertical axis on the
   // kerb's tall side faces (the ones the player actually sees), so no extra
-  // geometry is needed to sell a bevelled stone edge — Subway Surfers' kerbs
+  // geometry is needed to sell a bevelled stone edge — stylised arcade kerbs
   // read exactly this way, a bold light-to-dark strip, not a texture.
   // Previously a smooth createLinearGradient across the full height: that
   // reads at the kerb/sidewalk line (V=0) and the kerb/road line (V=1) as a
@@ -12032,7 +12032,7 @@ function applyReferencePavingReliefV144(material,paving,roadTexture,resources) {
   // colour. A flat-coloured box read as a plain painted ledge — barely
   // distinguishable from the cornice above it — which is why "almost no
   // awnings" landed as a complaint even though a real projecting mesh was
-  // already there. Real Berlin/Subway-Surfers-style canopies are cloth: bold
+  // already there. Real Berlin/arcade-style canopies are cloth: bold
   // alternating colour/cream stripes, a bright sun-catching top seam and a
   // scalloped fringe along the base. Every box in awningGeo's merge (canopy
   // top + front valance) keeps its own standard 0..1 BoxGeometry UV, so one
@@ -14414,8 +14414,8 @@ function applyBerlinFacadeFinishShader(THREE, material) {
 
   // The photographed orthographic atlases are what made the street read as a row
   // of muddy beige-grey snapshots: they are lit, weathered and desaturated
-  // photographs, and no amount of tinting turns a photograph into a Subway
-  // Surfers block. The stylised sheets painted at the top of this file are now
+  // photographs, and no amount of tinting turns a photograph into a stylised
+  // arcade block. The stylised sheets painted at the top of this file are now
   // the authored look. The atlas path is kept intact behind one switch so the
   // photographic treatment can be restored without unpicking anything.
   function applyBuildingSurfaceMaterials(d) {
@@ -14762,9 +14762,9 @@ function applyBerlinFacadeFinishShader(THREE, material) {
   var PROP_CRATE_BLUE = mat(0x2f6ba8, { roughness: 0.76 });
   var PROP_CRATE_GREEN = mat(0x3f9a5f, { roughness: 0.76 });
   var PROP_CRATE_ORANGE = mat(0xe0872a, { roughness: 0.76 });
-  // BVG-branded variants of the same four crate hues — both ref images drop
-  // stacked "BVG" crates as kerbside/trackside dressing, and a plain colour
-  // block reads as "some crate", not specifically Berlin transit. Baked as a
+  // Lettered variants of the same four crate hues — both ref images drop
+  // stacked lettered crates as kerbside/trackside dressing, and a plain colour
+  // block reads as "some crate", not a Kiez street prop. Baked as a
   // full replacement face (colour fill + wordmark) rather than a text
   // overlay so it still reads as one painted crate, not a decal floating on
   // a bare box. Used by makeCrateStackDecor only; the jumpable obstacle crate
@@ -14777,7 +14777,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       g.fillStyle = c[1]; g.fillRect(0, 0, w, h);
       g.strokeStyle = 'rgba(20,14,6,0.35)'; g.lineWidth = 5;
       g.strokeRect(7, 7, w - 14, h - 14);
-      signText(g, 'BVG', w * 0.5, h * 0.5, h * 0.58, '#fff6df', 'rgba(20,14,6,0.55)', w * 0.82);
+      signText(g, 'KIEZ', w * 0.5, h * 0.5, h * 0.58, '#fff6df', 'rgba(20,14,6,0.55)', w * 0.82);
     });
     return mat(0xffffff, { map: tex, roughness: 0.76 });
   });
@@ -16237,7 +16237,7 @@ var BERLIN_REFERENCE_BUS_DATA = {"source":"Blender 5.2 / tools/stage_berlin_bus_
   }
 
   // Pavement commuters give the city a human scale and a foreground/midground
-  // silhouette layer without entering the play lanes. Subway-style city
+  // silhouette layer without entering the play lanes. Arcade-runner city
   // scenes feel inhabited because a few bold people-shaped masses interrupt
   // the hard architectural rhythm; a Berlin street made only of buildings,
   // bins and parked vehicles reads like a closed film set no matter how rich
@@ -16384,10 +16384,10 @@ var BERLIN_REFERENCE_BUS_DATA = {"source":"Blender 5.2 / tools/stage_berlin_bus_
       var cw = big ? rand(1.05, 1.35) : rand(0.48, 0.70);
       var ch = big ? rand(0.72, 0.95) : rand(0.30, 0.50);
       var cd = big ? rand(1.45, 2.05) : rand(0.48, 0.70);
-      // Half the boxes in a stack carry BVG branding — enough to register as
-      // a deliberate Berlin-transit prop without every crate on the street
+      // Half the boxes in a stack carry the KIEZ lettering — enough to register as
+      // a deliberate street prop without every crate on the street
       // turning into a wordmark. Big containers stay solid-colour only: the
-      // BVG face texture was authored for a crate-sized panel and stretches
+      // lettered face texture was authored for a crate-sized panel and stretches
       // badly across a container face.
       var bvg = !big && Math.random() < 0.5;
       var matIndex = bvg ? randInt(0, PROP_CRATE_BVG_MATS.length - 1) : randInt(0, CRATE_STACK_COLORS.length - 1);
@@ -17715,8 +17715,8 @@ var BERLIN_REFERENCE_BUS_DATA = {"source":"Blender 5.2 / tools/stage_berlin_bus_
     // directly flanking the run lane, and inside a station the sacred-track
     // read — the one rule the whole road pass exists to enforce — was
     // collapsing back into a single sheet of sand. Pushed cooler AND darker so
-    // the split is carried by hue as well as value, which is the actual Subway
-    // Surfers relationship: a warm track running through cool surroundings.
+    // the split is carried by hue as well as value, which is the actual reference
+    // relationship: a warm track running through cool surroundings.
     platform: mat(0x8f9499, { roughness: 0.94 }),
     sbahnRed: mat(0xa72732, { roughness: 0.36, metalness: 0.26 }),
     sbahnCream: mat(0xe1b74d, { roughness: 0.43, metalness: 0.16 }),
@@ -19242,7 +19242,7 @@ var BERLIN_REFERENCE_BUS_DATA = {"source":"Blender 5.2 / tools/stage_berlin_bus_
   // chunk covers every lamp, tree and sidewalk prop it owns, which costs a
   // single extra draw call per visible chunk and no per-frame CPU at all:
   // instance matrices are written once, in rollChunk, and the whole pool then
-  // rides the chunk group's transform. This is the Subway Surfers approach —
+  // rides the chunk group's transform. This is the arcade-runner approach —
   // a graphic dark shape that always reads beats a correct shadow that never
   // does.
   // Lamps, trees, sidewalk props and kerbside vehicles all draw from one pool
@@ -25543,7 +25543,7 @@ var BERLIN_REFERENCE_VAN_DATA = {"source":"Blender 5.2 / tools/stage_berlin_van_
   // keeping its fold shading. Bone blocks rather than UV islands means no seam
   // work, no second texture and no extra memory — just a saturated outfit that
   // never sinks into the asphalt.
-  // A saturated red hoodie over mid-blue jeans, Subway-Surfers style: one flat
+  // A saturated red hoodie over mid-blue jeans, arcade style: one flat
   // red across the torso/sleeves, one flat blue across hips/legs, light
   // trainers with a red toe accent. Hands/neck/Head USED to stay at amt 0
   // (untinted) on the theory that the model's own skin/hair texture would
@@ -25556,7 +25556,7 @@ var BERLIN_REFERENCE_VAN_DATA = {"source":"Blender 5.2 / tools/stage_berlin_van_
   // Head bone covers the whole skull+hair region as one blob — from the
   // permanent chase-cam angle that's fine, it reads as hair under the cap,
   // not a face anyway), skin for the neck sliver and the fists so the hands
-  // read as bare skin past the cuff, Subway-Surfers style, instead of
+  // read as bare skin past the cuff, arcade style, instead of
   // vanishing into a same-hue sleeve.
   // Runtime GL inspection (see the __heroDBG console dump this round) found the
   // GLB's single skinned mesh DOES carry a real 1024x1024 base-colour texture —
@@ -25604,7 +25604,7 @@ var BERLIN_REFERENCE_VAN_DATA = {"source":"Blender 5.2 / tools/stage_berlin_van_
     RightForeArm:  [0xc23524, 1],
     // Fists were darker still (0x7a0f0e, functionally black-maroon), which
     // erased the hand as a distinct shape — it just extended the dark sleeve
-    // smear. Bare skin, Subway-Surfers style: a fist that pops as its own
+    // smear. Bare skin, arcade style: a fist that pops as its own
     // bright shape past the cuff instead of reading as more sleeve.
     LeftHand:      [0xe0a578, 1],
     RightHand:     [0xe0a578, 1],
@@ -25660,8 +25660,8 @@ var BERLIN_REFERENCE_VAN_DATA = {"source":"Blender 5.2 / tools/stage_berlin_van_
   // and the cap. The jeans (#486090, sat 0.5) and the skin (#e0b090) are fine;
   // the garment is not.
   //
-  // The consequence is the single biggest art gap against the reference. Subway
-  // Surfers' rule is that the character is always the most saturated,
+  // The consequence is the single biggest art gap against the reference. Its
+  // rule is that the character is always the most saturated,
   // highest-contrast object in frame -- it is what lets a small figure read
   // against any backdrop. Here the runner was the LEAST saturated object on a
   // screen full of saturated facades, and on the blue tram roof of the roof
@@ -26213,7 +26213,7 @@ var BERLIN_REFERENCE_VAN_DATA = {"source":"Blender 5.2 / tools/stage_berlin_van_
   // Amplify whatever the baked clip is already doing rather than guessing its
   // phase: each tracked bone is pushed away from its own running average, which
   // is a pure amplitude boost with no drift and nothing clip-specific to tune.
-  // Gains raised for Subway-Surfers-tier silhouette energy: the arm pair is the
+  // Gains raised for arcade-runner-tier silhouette energy: the arm pair is the
   // hero's most readable motion from the chase camera, so it leads the bump
   // (0.58 -> 0.70) with the forearms following so the elbow stays one beat
   // behind the shoulder instead of stiffening into a single rigid lever.
@@ -30201,7 +30201,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     if (slideTimer > 0) {
       slideTimer -= dt;
       slideHeld += dt;
-      // A Subway-style roll is one authored, fixed-duration move on keyboard
+      // An arcade-runner roll is one authored, fixed-duration move on keyboard
       // and touch alike. The former keyboard-only hold extension could freeze
       // the visual pose for 1.1 s and made identical inputs platform-dependent.
       if (grounded) fxSlideSpray(player.x, player.z, dt);
@@ -30666,7 +30666,7 @@ var BERLIN_COURIER_BAG_DATA = {"version":1,"source":"Blender 5.2 / tools/stage_b
     // camera roll and the existing bone offsets, so the chase framing is
     // untouched. The lagging copy supplies the whip-back once the lane arrives.
     // Damp raised 13 -> 15 and target deepened -0.48 -> -0.55: the bank now
-    // reaches full travel-side lean faster (Subway Surfers cuts commit hard,
+    // reaches full travel-side lean faster (arcade-runner cuts commit hard,
     // then settle), and the deeper target gives the lagging copy more whip to
     // overshoot with on arrival.
     heroLean += (-laneVel * 0.55 - heroLean) * damp(15, dt_);

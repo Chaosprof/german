@@ -149,7 +149,7 @@ including symmetric underside coverage and preservation of sole heights.
 The bay check verifies unit normals, sidewalk setback and unchanged triangle
 budget. The live material compiled without reported browser errors. Independent
 in-game review accepted the footwear and deeper bay profiles; portrait jumping
-was rechecked. Reference comparison still favors Subway Surfers' overall art
+was rechecked. Reference comparison still favors the reference game's overall art
 direction and large shape design, so these changes are progress toward that bar.
 
 ## September 7 framing, surface and instance refinement
@@ -249,7 +249,7 @@ and work cadence through 144 Hz. Browser checks cover 390 × 844 portrait,
 HUD and launch-card bounds, without reported JavaScript/shader errors.
 
 These are browser layout/render checks and deterministic performance regressions,
-not physical iPhone GPU or thermal benchmarks. Subway Surfers remains the visual
+not physical iPhone GPU or thermal benchmarks. The reference game remains the visual
 target; this pass does not claim equivalent production art quality.
 
 ## September 2026 rendering polish

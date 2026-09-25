@@ -144,7 +144,7 @@ PROP = dict(
     # reverting to a full linear cone (most of the torso's height still
     # sits close to chest width; only the lower stretch actually narrows).
     # v11: another small step down (0.148->0.142, 72% of chest) for more
-    # shoulder-to-waist taper contrast -- a Subway-Surfers silhouette is an
+    # shoulder-to-waist taper contrast -- an arcade-runner silhouette is an
     # explicit V, not a rectangle.
     waist_half_w=0.142,
     # v2's torso depth/width ratio was ~0.6-0.7 -- a shallow box that reads
@@ -182,11 +182,11 @@ PROP = dict(
     # blank sphere, a slightly smaller sphere should still read as "head",
     # so this is the lower-risk lever vs. touching chest_half_w again
     # (unchanged here) and re-litigating the shoulder ratio from scratch.
-    # v11 (Subway-Surfers proportion pass): bigger head, mesh-only -- the Head
+    # v11 (arcade proportion pass): bigger head, mesh-only -- the Head
     # bone's head_low_z/head_top_z are rig contract and untouched; a larger
     # skull sphere around the same bone span reads as a chunkier cartoon head
     # without moving any joint.
-    # v11r2 (round-2 Subway-Surfers pass): another ~1.15x on the skull
+    # v11r2 (round-2 arcade proportion pass): another ~1.15x on the skull
     # sphere, mesh-only -- the Head bone's head_low_z/head_top_z stay rig
     # contract. Same established pattern as the first head bump: the sphere
     # grows around the unchanged bone span, everything downstream
@@ -254,7 +254,7 @@ PROP = dict(
     # the stride its visual beat at the bottom of the dark leg column.
     # v17: +~20% across the board -- "shoes are small dark ovals" vs a
     # reference where the shoe is a big, obviously chunky trainer.
-    # v11: widened again (+15% on foot_half_w) -- the Subway-Surfers trainer
+    # v11: widened again (+15% on foot_half_w) -- the arcade-runner trainer
     # is wider than the ankle it sits under, a visible ledge on BOTH sides
     # of the shin. Length/height unchanged so the sole still lands on z=0.
     foot_len=0.185, foot_half_w=0.086, foot_h=0.078,
@@ -432,14 +432,14 @@ COLORS = {
     # holds) while separating them from the black band above.
     # v19: raised 0.235/0.265/0.355 -> 0.415/0.455/0.590. The "dark anchor"
     # note above was an inference, never a user decision, and measuring the
-    # reference disproves it: sampled off a real Subway Surfers frame the
+    # reference disproves it: sampled off a real reference-game frame the
     # runner's legs read luminance 124 against a track at 103, i.e. ABOVE the
     # surface, while this hero's legs measured 55 against a lane at 93. The
     # legs were the last part of the figure still reading as a silhouette cut
     # out of the road. Blue against a warm ochre lane keeps them separate by
     # hue as well as value, so lifting them costs no readability.
     # v11r2: shifted from grey-blue toward indigo (#4A5FA8) -- the grey
-    # denim read as faded workwear; indigo is the Subway-Surfers denim read.
+    # denim read as faded workwear; indigo is the arcade-runner denim read.
     'jeans':        (0.290, 0.373, 0.659),
     # Medial-face shadow band on each leg -- a deliberate value break so the
     # two legs stay two separate readable shapes even when they swing close
