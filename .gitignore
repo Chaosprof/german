@@ -18,12 +18,16 @@ __pycache__/
 # Retired Godot prototype and its generated exports/import cache.
 godot-runner/
 
-# Third-party art references (commercial game screenshots, generated concept
-# stills). Useful locally when matching a look; not ours to redistribute.
-audit/ref/
+# Development audit trail: reviews, screenshots, baselines and reference stills.
+# Kept on developer machines only; the website never loads any of it, and
+# GitHub Pages would otherwise publish all of it.
+audit/
 
-# Regenerable visual/OCR artifacts; textual audit reports remain tracked.
-audit/game-shots/
-audit/game-video/
-audit/nwn_b1_ocr_pages/
-audit/nwn_b1_page1*.png
+# Old translation-review output and standalone prototype/test pages.
+translation_review_output_folder*/
+berlin-slice.html
+voice-test.html
+voice-test-frame.html
+
+# Blender auto-backups.
+*.blend1
