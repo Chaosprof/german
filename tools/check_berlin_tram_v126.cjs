@@ -6,6 +6,8 @@ function check(shipping = process.argv.includes('--shipping')) {
   const root = path.resolve(__dirname, '..'), stage = path.join(root, 'audit/berlin-tram-v126');
   const folder = shipping ? path.join(root, 'assets/models') : path.join(stage, 'models');
   const html = fs.readFileSync(shipping ? path.join(root, 'berlin-runner.html') : path.join(stage, 'candidate.html'), 'utf8');
+  // V152 superseded the shipped V126 coach; validate what actually ships.
+  if (shipping && html.includes('var BERLIN_REFERENCE_TRAM_DATA = ')) return require('./check_berlin_vehicles_v152.cjs')(true);
   function section(a, b) { const i = html.indexOf(a), j = html.indexOf(b, i + a.length); assert.ok(i >= 0 && j > i, a); return html.slice(i, j); }
   const c = vm.createContext({ console });
   vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].find(m => m[1].includes('three.js r156 (MIT)'))[1], c);

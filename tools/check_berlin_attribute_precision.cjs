@@ -9,7 +9,14 @@ c.scene.traverse(mesh => {
   if (mesh.geometry && mesh.geometry.userData.rigidMerged) originals.set(mesh.geometry, mesh.geometry.clone());
 });
 const stats = c.compactRigidSceneAttributes();
-assert.ok(stats.geometries >= 10, 'actual car and bus geometry is compacted');
+// V152 vehicles decode from Blender records with normalized int16 normals, so
+// they are compact before warm-up; older procedural vehicles are compacted by it.
+const compactSeen = new Set();
+c.scene.traverse(mesh => {
+  const n = mesh.geometry && mesh.geometry.attributes.normal;
+  if (n && n.array.constructor.name === 'Int16Array' && n.normalized) compactSeen.add(mesh.geometry);
+});
+assert.ok(compactSeen.size >= 10, 'actual car and bus geometry is compact (' + compactSeen.size + ', ' + stats.geometries + ' compacted now)');
 assert.equal(stats.bytesAfter, stats.bytesBefore / 2, 'eligible attributes use half the storage');
 let normals = 0, worstAngle = 0;
 const beforeNormal = new THREE.Vector3(), afterNormal = new THREE.Vector3();

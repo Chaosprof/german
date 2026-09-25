@@ -12,7 +12,22 @@ vm.runInContext([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
   .map(m => m[1]).find(s => s.includes('three.js r156 (MIT)')), c);
 const THREE = c.THREE;
 c.atob=value=>Buffer.from(value,'base64').toString('binary');
-const tramData=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/models/berlin-vintage-tram-v90.json'),'utf8'));
+// V152 replaced the tram, car, van and bus with Blender reference models whose
+// art is validated by check_berlin_vehicles_v152.cjs (materials, footprints,
+// budgets, silhouette rays, pooling). The pinned V90-V126 model probes below are
+// skipped for them; the instancing, traffic, recycling, collision and course
+// checks keep exercising the real V152 factories.
+const V152=html.includes('var BERLIN_REFERENCE_TRAM_DATA = ');
+if(V152){
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_packed_geometry.js'),'utf8'),c);
+  c.applyCelShading=m=>m;
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'berlin_vehicle_env_v152.js'),'utf8'),c);
+  vm.runInContext(section('  // BEGIN BLENDER VINTAGE TRAM','  // END BLENDER VINTAGE TRAM'),c);
+  vm.runInContext(section('  // BEGIN BLENDER KIEZ CAR BODY','  // END BLENDER KIEZ CAR BODY'),c);
+  require('./check_berlin_vehicles_v152.cjs')(true);
+}
+if(!V152){ // legacy tram/car data
+var tramData=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/models/berlin-vintage-tram-v90.json'),'utf8'));
 const tramBlock=section('  // BEGIN BLENDER VINTAGE TRAM','  // END BLENDER VINTAGE TRAM');
 const tramAssignment=tramBlock.match(/^\s*\/\/ BEGIN BLENDER VINTAGE TRAM\s+var BERLIN_VINTAGE_TRAM_DATA\s*=\s*([\s\S]*);\s*$/);
 assert.ok(tramAssignment,'the playable build contains one marked Blender tram data assignment');
@@ -23,6 +38,7 @@ vm.runInContext(tramInline,c);
 c.BERLIN_KIEZ_CAR_BODY=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/models/berlin-kiez-car-body-v1.json'),'utf8'));
 assert.ok(html.includes('var BERLIN_KIEZ_CAR_BODY = '+JSON.stringify(c.BERLIN_KIEZ_CAR_BODY)+';'),
   'the playable build contains the current Blender car shells');
+} // end legacy tram/car data
 c.clamp = THREE.MathUtils.clamp;
 c.mat = (color, options) => new THREE.MeshStandardMaterial({color, ...options});
 c.MAT = new Proxy({}, {get(target, name) {
@@ -38,12 +54,13 @@ vm.runInContext(section('  function makeCar(colorHex) {', '  // Ampelmännchen c
 // The painted decks need a real crown, closed outward-facing surfaces and
 // visible trim after batching. Flat replacement boxes or an oversized crown
 // must not pass simply because the material and mesh counts still match.
+if(!V152){ // legacy car probes
 const carCompactRegister = c.registerProp;
 c.registerProp = (_kind, root) => root;
 const shapedCar = c.makeCar(0x448877);
 c.registerProp = carCompactRegister;
 shapedCar.updateMatrixWorld(true);
-const carRay = new THREE.Raycaster(), carDown = new THREE.Vector3(0,-1,0);
+var carRay = new THREE.Raycaster(), carDown = new THREE.Vector3(0,-1,0);
 for (const [name,z] of [['bonnet',1.3],['boot',-1.5],['roof',-0.2]]) {
   const geometry = c.geoCache[`trabant_crowned_${name}_v1`];
   const mesh = shapedCar.children.find(o => o.geometry === geometry);
@@ -138,10 +155,11 @@ const carBounds=new THREE.Box3().setFromObject(shapedCar);
 assert.ok(carBounds.min.x>=-1.056 && carBounds.max.x<=1.056 && carBounds.min.y>=0 &&
   carBounds.max.y<=1.696 && carBounds.min.z>=-2.151 && carBounds.max.z<=2.151,
   'shaped car stays within its previous collision and culling envelope');
-let carMeshes=0, carTriangles=0;
+var carMeshes=0, carTriangles=0;
 shapedCar.traverse(o=>{if(o.isMesh){carMeshes++;carTriangles+=(o.geometry.index?o.geometry.index.count:o.geometry.attributes.position.count)/3;}});
 assert.ok(carMeshes<=9 && carTriangles<=7296,'car crown does not increase compacted draws or triangles');
 console.log(`PASS: three watertight crowned car decks; ${carTrimProbes.length} visible windshield/lamp rays; ${carMeshes} meshes / ${carTriangles} triangles; bounds preserved.`);
+} // end legacy car probes
 // One existing colour-only template becomes a microvan, with no extra pool
 // variants or collision spec. Test the shipped factory and template selector.
 c.STATION_MAT={sbahnCream:c.mat(0xf2dba6),steel:c.mat(0x596a75)};
@@ -150,11 +168,12 @@ vm.runInContext(section('  function makeRunnerTram() {','  function makeDelivery
 c.PROP_CAFE_CREAM=c.mat(0xe7d6b3); c.PROP_LUGGAGE_TEAL=c.mat(0x2f716f);
 c.CAR_COLORS=[0x448877]; c.pick=values=>values[0]; c.LANE_W=3;
 vm.runInContext(section('  function makeDeliveryMicrovan() {','  // Close obstacle variants'),c);
+if(!V152){ // legacy van probes
 const vanRegister=c.registerProp;
 c.registerProp=(_kind,root)=>root;
 const deliveryVan=c.makeDeliveryMicrovan(); c.registerProp=vanRegister;
 deliveryVan.updateMatrixWorld(true);
-const vanTrimProbes=[];
+var vanTrimProbes=[];
 for(const part of deliveryVan.children.filter(o=>o.isMesh)) {
   const glass=part.material===c.MAT.glassDark, frontLamp=part.material===c.MAT.bulb;
   if(!glass && !frontLamp && part.material!==c.PROP_TAIL) continue;
@@ -190,10 +209,11 @@ for(const x of [-0.5,0,0.5]){
   carRay.set(new THREE.Vector3(x,3,-0.4),carDown);
   assert.ok(carRay.intersectObject(deliveryVan,true)[0].point.y>1.90,'cargo roof retains a broad tall silhouette');
 }
-let vanMeshes=0,vanTriangles=0;
+var vanMeshes=0,vanTriangles=0;
 deliveryVan.traverse(o=>{if(o.isMesh){vanMeshes++;vanTriangles+=(o.geometry.index?o.geometry.index.count:o.geometry.attributes.position.count)/3;
   for(const name of ['position','normal','uv'])assert.ok(o.geometry.attributes[name],'van geometry enters existing material batching');}});
 assert.ok(vanMeshes<=carMeshes && vanTriangles<=carTriangles,'van does not grow draw or triangle cost');
+} // end legacy van probes
 for(const name of ['makeScaffold','makeCafeCanopy','makeSkip','makeLuggageTrolley','makeMaintenanceCluster'])c[name]=()=>new THREE.Group();
 vm.runInContext(section('  var OB_KINDS = [','  function registerObstacleTemplateClone(root) {'),c);
 assert.equal(c.OB_KINDS[2].halfW,1);assert.equal(c.OB_KINDS[2].halfD,2.1);assert.equal(c.OB_KINDS[2].yMax,1.95);
@@ -211,7 +231,8 @@ assert.ok(!vanTemplate.userData.bodyMat && new THREE.Box3().setFromObject(vanTem
   'fourth existing template is the taller microvan');
 assert.ok(vanClone.children.every((mesh,i)=>mesh.geometry===vanTemplate.children[i].geometry && mesh.material===vanTemplate.children[i].material),
   'obstacle clones share the already batched microvan assets');
-console.log(`PASS: delivery microvan replaces one of four car templates; ${vanTrimProbes.length} visible glass/lamp rays; ${vanMeshes} meshes / ${vanTriangles} triangles; exact collision envelope and shared clone assets.`);
+if(!V152)console.log(`PASS: delivery microvan replaces one of four car templates; ${vanTrimProbes.length} visible glass/lamp rays; ${vanMeshes} meshes / ${vanTriangles} triangles; exact collision envelope and shared clone assets.`);
+if(!V152){ // legacy tram and bus art
 // The large runner tram has real glazing apertures and a rear-facing identity.
 // Keep this factory/art check separate from obstacle scheduling and pool counts.
 if(tramData.finishRevision==='reference-coach-v126'){
@@ -370,6 +391,7 @@ for (const end of [-1,1]) for (const cameraX of [-6,0,6]) {
 }
 assert.equal(trimVisibleSamples,216);
 console.log(`PASS: ${trimVisibleSamples} actual bus trim surface rays; front/rear bumpers, lamps and destination signs stay visible from centre and both oblique views; full vehicle bounds preserved.`);
+} // end legacy tram and bus art
 c.scene = new THREE.Scene();
 c.worldRoot = new THREE.Group(); c.scene.add(c.worldRoot);
 c.camera = new THREE.PerspectiveCamera(65, 16 / 9, 0.4, 500);

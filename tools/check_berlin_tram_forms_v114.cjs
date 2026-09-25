@@ -3,6 +3,11 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..'),stage=path.join(root,'audit/berlin-model-forms-v114/tram');
 const shipped=process.argv.includes('--shipping'),upright=process.argv.includes('--upright'),folder=shipped?path.join(root,'assets/models'):path.join(stage,upright?'upright/models':'models');
+// V152 replaced the shipped coach with the reference KT4 tram; its forms, rays and
+// budgets are validated by check_berlin_vehicles_v152.cjs.
+if(shipped&&fs.readFileSync(path.join(root,'berlin-runner.html'),'utf8').includes('var BERLIN_REFERENCE_TRAM_DATA = ')){
+  require('./check_berlin_vehicles_v152.cjs')(true);return;
+}
 if(shipped&&JSON.parse(fs.readFileSync(path.join(folder,'berlin-vintage-tram-v90.json'))).finishRevision==='reference-coach-v126'){
   require('./check_berlin_tram_v126.cjs')(true);return;
 }

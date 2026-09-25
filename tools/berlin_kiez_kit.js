@@ -139,8 +139,8 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
         for(var cv=0;cv<cover.attributes.uv.count;cv++){
           var u=cover.attributes.uv.getX(cv),v=cover.attributes.uv.getY(cv);
           if(side<0)u=1-u;
-          extra.uv[firstUV+cv*2]=(.143+u*.139)/4;
-          extra.uv[firstUV+cv*2+1]=.5+(.125+v*.29)/4;
+          extra.uv[firstUV+cv*2]=((j?.602:.374)+u*.136)/4;
+          extra.uv[firstUV+cv*2+1]=.5+(.603+v*.147)/4;
         }
       });
     });
@@ -172,6 +172,109 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
   // The pavement surface is 16 cm above the road/building origin.
   for(var bv=bicycleVertexStart;bv<extra.position.length/3;bv++)extra.position[bv*3+1]+=.17;
   var bicycleEnd=faces/3+extraIndex.length/3;
+  // Focal shop merchandise uses the same opaque facade atlas and batch.
+  // Find actual backdrop components so native openings, mirroring and all
+  // frontage widths receive correctly fitted displays.
+  var shopDisplayStart=faces/3+extraIndex.length/3,shopDisplayVertexStart=extra.position.length/3;
+  var displayBackdropVertices=new Set(),shopBays=[],breadCount=0,spineCount=0;
+  if(variant===0||variant===1){
+    var shopTile=variant===0?5:4,sp=[],sw=[],points=new Map();
+    function rootShop(i){while(sp[i]!==i){sp[i]=sp[sp[i]];i=sp[i];}return i;}
+    for(var i=0;i<p.count;i++)if(tile(i)===shopTile&&p.getY(i)<5.2&&n.getZ(i)>.90){
+      var key=[p.getX(i).toFixed(4),p.getY(i).toFixed(4),p.getZ(i).toFixed(4)].join(',');
+      if(!points.has(key)){points.set(key,sp.length);sp.push(sp.length);}sw[i]=points.get(key);
+    }
+    for(var f=0;f<faces;f+=3){
+      var ids=[0,1,2].map(function(j){return index?index.getX(f+j):f+j;});
+      if(ids.every(function(i){return sw[i]!==undefined;}))ids.forEach(function(i){sp[rootShop(sw[i])]=rootShop(sw[ids[0]]);});
+    }
+    var bays=new Map();
+    for(var i=0;i<p.count;i++)if(sw[i]!==undefined){
+      var root=rootShop(sw[i]),bay=bays.get(root);
+      if(!bay){bay={min:[Infinity,Infinity,Infinity],max:[-Infinity,-Infinity,-Infinity],vertices:[]};bays.set(root,bay);}
+      bay.vertices.push(i);[p.getX(i),p.getY(i),p.getZ(i)].forEach(function(v,k){bay.min[k]=Math.min(bay.min[k],v);bay.max[k]=Math.max(bay.max[k],v);});
+    }
+    shopBays=Array.from(bays.values()).filter(function(b){return b.max[0]-b.min[0]>(variant===0?width*.32:1.5)&&b.max[1]-b.min[1]>2.5;});
+    shopBays.sort(function(a,b){return a.min[0]-b.min[0];});
+    var loaf=new THREE.SphereGeometry(1,12,6),crescent=new THREE.BufferGeometry(),pp=[],pi=[];
+    function breadSurface(g,start,croissant){
+      // Project existing crust/lamination detail onto the solid bread. The
+      // shared atlas and sampling count stay unchanged, unlike adding a decal.
+      var pos=g.attributes.position;
+      for(var k=0;k<pos.count;k++){
+        var x=pos.getX(k)/(croissant?.29:1),y=pos.getY(k)/(croissant?.085:1);
+        var u=(croissant?.523:.199)+x*(croissant?.038:.045),v=(croissant?.654:.650)+y*(croissant?.043:.035);
+        extra.uv[(start+k)*2]=(1+u)/4;extra.uv[(start+k)*2+1]=(2+v)/4;
+      }
+    }
+    // A closed tapered crescent with shallow folds in its laminated surface.
+    for(var ring=0;ring<=10;ring++){
+      var t=ring/10,a=-2.03+t*4.06,r=(.014+.065*Math.sin(t*Math.PI))*(ring%2?.88:1);
+      var nx=Math.sin(a)*.12,nz=Math.cos(a)*.20,nlen=Math.hypot(nx,nz);nx/=nlen;nz/=nlen;
+      for(var j=0;j<6;j++){var phi=j*Math.PI/3;pp.push(Math.sin(a)*.20+nx*Math.cos(phi)*r,.025*Math.sin(t*Math.PI)+Math.sin(phi)*r*.78,Math.cos(a)*.12+nz*Math.cos(phi)*r);}
+    }
+    for(var ring=0;ring<10;ring++)for(var j=0;j<6;j++){
+      var a=ring*6+j,b=ring*6+(j+1)%6,c=(ring+1)*6+j,d=(ring+1)*6+(j+1)%6;pi.push(a,c,b,b,c,d);
+    }
+    pp.push(Math.sin(-2.03)*.20,0,Math.cos(-2.03)*.12,Math.sin(2.03)*.20,0,Math.cos(2.03)*.12);
+    for(var j=0;j<6;j++){pi.push(66,j,(j+1)%6,67,60+(j+1)%6,60+j);}
+    crescent.setAttribute('position',new THREE.Float32BufferAttribute(pp,3));crescent.setIndex(pi);crescent.computeVertexNormals();
+    var covers=[0x60756b,0x84664e,0xa8754b,0x496979,0x9a6859,0xb5a282,0x53605b,0x7c7856];
+    shopBays.forEach(function(bay,bi){
+      bay.vertices.forEach(function(i){displayBackdropVertices.add(i);});
+      var cx=(bay.min[0]+bay.max[0])/2,w=bay.max[0]-bay.min[0]-.22,z=bay.max[2];
+      if(variant===0){
+        [1.055,1.64,2.35,3.06].forEach(function(shelf,row){
+          if(row){
+            add(box,cx,shelf-.012,z+.09,w,.034,.40,0x8b6039);
+            add(box,cx,shelf-.026,z+.295,w,.062,.025,0xae8152);
+          }
+          var count=[12,11,12,10][row],clusters=Math.ceil(count/4);
+          for(var j=0;j<count;j++){
+            var cluster=Math.floor(j/4),piece=j%4,phase=j*2.17+row*.83,size=.90+.14*(.5+.5*Math.sin(phase));
+            var x=cx+(cluster-(clusters-1)/2)*w/(clusters+.15)+(piece===3?Math.sin(phase)*.045:(piece-1)*w*.067);
+            var lift=piece===3?.15:0,depth=piece===3?-.03:0;
+            var breadStart=extra.position.length/3;
+            if((j+row)%3===1){
+              add(crescent,x,shelf+.072+lift,z+.13+depth,size,size*1.5,size,0xffffff,Math.sin(phase)*.27,0);breadSurface(crescent,breadStart,true);
+            }else{
+              var length=(j+row)%4===0?.26:.205;
+              add(loaf,x,shelf+.115*size+lift,z+.11+depth,length*size,.115*size,.115*size,0xffffff,((j%4)*.45-.675)*side+Math.sin(phase)*.10,0);breadSurface(loaf,breadStart,false);
+            }
+            breadCount++;
+          }
+        });
+      }else{
+        [1.055,1.64,2.35].forEach(function(shelf,row){
+          if(row){add(box,cx,shelf-.012,z+.065,w,.034,.35,0x786044);add(box,cx,shelf-.027,z+.247,w,.053,.025,0xa98b5c);}
+          var count=22,step=w/(count+1);
+          for(var j=0;j<count;j++){
+            // Break each shelf into two groups and vary height, width and lean.
+            var gap=j<11?-.025:.025,x=cx+(j-(count-1)/2)*step+gap;
+            var h=.34+.145*(.5+.5*Math.sin(j*2.61+row*1.17+bi*.43));
+            var bw=step*(.80+.16*(.5+.5*Math.sin(j*1.71+row))),lean=(j===0?-.075:j===21?.065:Math.sin(j*2.1+bi)*.014)*side;
+            var start=extra.position.length/3;
+            add(box,x,shelf+h/2,z+.082,bw,h,.145,covers[(j+row*3+bi)%covers.length],0,lean);
+            // Existing atlas spines supply paper/gilt detail on the actual
+            // front faces; side covers and pale page tops retain solid colour.
+            var spineU=[.055,.090,.145,.179,.225,.261,.288][(j+row*3+bi)%7];
+            for(var k=start;k<extra.position.length/3;k++){
+              if(extra.normal[k*3+1]>.8){extra.color[k*3]=.58;extra.color[k*3+1]=.51;extra.color[k*3+2]=.37;}
+              if(box.attributes.normal.getZ(k-start)>.9){
+                extra.uv[k*2]=(spineU+box.attributes.position.getX(k-start)*.020)/4;
+                extra.uv[k*2+1]=(2+.595+(box.attributes.position.getY(k-start)+.5)*.140)/4;
+                extra.color[k*3]=extra.color[k*3+1]=extra.color[k*3+2]=.88;
+              }
+            }
+            spineCount++;
+          }
+        });
+      }
+    });
+    loaf.dispose();crescent.dispose();
+  }
+  var shopDisplayEnd=faces/3+extraIndex.length/3,shopDisplayVertexEnd=extra.position.length/3;
+
   box.dispose();leaf.dispose();bloom.dispose();
   if(!extraIndex.length)return geometry;
   var out=new THREE.BufferGeometry(),oldCount=p.count,addedCount=extra.position.length/3;
@@ -188,7 +291,7 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
   for(var i=0;i<extraIndex.length;i++)indices[faces+i]=oldCount+extraIndex[i];
   out.setIndex(new THREE.BufferAttribute(indices,1));out.addGroup(0,indices.length,0);
   out.computeBoundingBox();out.computeBoundingSphere();out.name=geometry.name;
-  out.userData=Object.assign({},geometry.userData,{triangles:indices.length/3,finishRevision:119,finishBaseVertices:oldCount,finishBaseTriangles:faces/3,flowerBoxes:slots.length,flowerClusterRevision:147,flowerHeads:slots.length*21,displayBookFaces:[displayBookStart,displayBookEnd],displayBookCount:variant===1?6:0,bicycleFaces:[bicycleStart,bicycleEnd],parkedBicycles:variant===0?1:0});
+  out.userData=Object.assign({},geometry.userData,{triangles:indices.length/3,finishRevision:119,finishBaseVertices:oldCount,finishBaseTriangles:faces/3,flowerBoxes:slots.length,flowerClusterRevision:147,flowerHeads:slots.length*21,displayBookFaces:[displayBookStart,displayBookEnd],displayBookCount:variant===1?6:0,bicycleFaces:[bicycleStart,bicycleEnd],parkedBicycles:variant===0?1:0,shopDisplayRevision:150,shopDisplayFaces:[shopDisplayStart,shopDisplayEnd],shopDisplayBays:shopBays.map(function(b){return {min:b.min,max:b.max};}),breadCount:breadCount,spineCount:spineCount});
   // These fields depend on fixed building geometry, not the camera or light.
   // Bake paint into the existing RGB and use its spare alpha component for
   // room light. Opaque output forces alpha to one; no added varying/attribute.
@@ -209,6 +312,11 @@ function finishBerlinKiezFacade(THREE, geometry, variant, width, side) {
       finishColor[i*4+c]=cc.normalized?Math.round(Math.max(0,Math.min(1,value))*colorScale):value;
     }
     var light=cell===2?roomVariation:(cell<2?brown*lowRoom:0);
+    if(displayBackdropVertices.has(i))light=1;
+    if(i>=oldCount+shopDisplayVertexStart&&i<oldCount+shopDisplayVertexEnd){
+      var roomFacing=Math.max(0,Math.min(1,-out.attributes.normal.getX(i)*.35+out.attributes.normal.getY(i)*.75+out.attributes.normal.getZ(i)*.56));
+      light=.10+.36*roomFacing;
+    }
     finishColor[i*4+3]=cc.normalized?Math.round(light*colorScale):light;
   }
   out.setAttribute('color',new THREE.BufferAttribute(finishColor,4,cc.normalized));
@@ -227,6 +335,14 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       // Each atlas region occupies whole coherent triangles. Keep glass math
       // off the much larger plaster, trim, roof and foliage surfaces.
       'if(kiezPane+kiezRoom>0.5){',
+      // Physical focal-shop merchandise replaces the lower painted display.
+      // Preserve the image's upper pendant and ceiling; foreground book art
+      // has alpha zero and remains unchanged. No extra texture is sampled.
+      'if(vColor.a>0.99&&(abs(kiezPaintTile-4.0)<0.5||abs(kiezPaintTile-5.0)<0.5)){',
+      'float displayWall=1.0-smoothstep(0.755,0.785,kiezLocal.y);',
+      'vec3 woodWall=vec3(0.115,0.058,0.025)*(0.80+0.28*kiezLocal.y)*vColor.rgb;',
+      'diffuseColor.rgb=mix(diffuseColor.rgb,woodWall,displayWall);',
+      '}',
       'float kiezDiagonal=kiezLocal.x*0.65+kiezLocal.y;',
       'float kiezSheen=smoothstep(0.57,0.76,kiezDiagonal)*(1.0-smoothstep(0.94,1.14,kiezDiagonal));',
       'if(kiezPane>0.5){',
@@ -258,7 +374,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       'if(kiezPane>0.5){totalEmissiveRadiance+=diffuseColor.rgb*(0.10+0.14*vColor.a);}'
     ].join('\n'));
   };
-  material.customProgramCacheKey=function(){return (previousKey?previousKey.call(this):'')+'|kiez-facade-finish-v148-glass';};
+  material.customProgramCacheKey=function(){return (previousKey?previousKey.call(this):'')+'|kiez-facade-finish-v150-displays';};
 }
 
   var atlasSize = typeof IS_MOBILE !== 'undefined' && IS_MOBILE ? 1024 : 2048;
@@ -457,7 +573,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       'float kiezGlass=1.0-step(0.5,abs(kiezSurface-2.0));\n'+
       'float kiezGlazing=step(3.5,kiezSurface)*(1.0-step(8.5,kiezSurface));\n'+
       'roughnessFactor=mix(roughnessFactor,0.17,kiezGlass);\n'+
-      'roughnessFactor=mix(roughnessFactor,0.34,kiezGlazing);\n#endif');
+      'roughnessFactor=mix(roughnessFactor,0.34,kiezGlazing);\nif(kiezSurface>=4.0&&kiezSurface<=5.0&&vColor.a>0.08&&vColor.a<0.49)roughnessFactor=0.84;\n#endif');
     shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
       '#include <metalnessmap_fragment>\n#ifdef USE_MAP\n'+
       'metalnessFactor=mix(metalnessFactor,0.16,kiezGlass);\n#endif');
@@ -511,7 +627,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
         cache[key]=authored;return authored;
       }
     }
-    var p=[], n=[], uv=[], colors=[], shadeSoffit=false, fabricRanges=[];
+    var p=[], n=[], uv=[], colors=[], facadeIndices=[], shadeSoffit=false, fabricRanges=[];
     var white = new THREE.Color(), normal = new THREE.Vector3(), point = new THREE.Vector3();
     var matrix = new THREE.Matrix4(), rotation = new THREE.Euler(), scale = new THREE.Vector3(1,1,1);
     var quaternion = new THREE.Quaternion(), offset = new THREE.Vector3();
@@ -524,6 +640,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       // Broad painted bounce: enough shading to hold the forms even in low quality.
       var f = (.90 + Math.max(0,ny)*.10 + Math.max(0,nz)*.03)*(paintShade===undefined?1:paintShade);
       colors.push(white.r*f,white.g*f,white.b*f);
+      facadeIndices.push(p.length/3-1);
     }
     function geometry(geo,x,y,z,color,tile,rx,ry,rz,sx,sy,sz) {
       offset.set(x||0,y||0,z||0); rotation.set(rx||0,ry||0,rz||0);
@@ -532,8 +649,12 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       var normalMatrix = new THREE.Matrix3().getNormalMatrix(matrix);
       var pos=geo.attributes.position, norms=geo.attributes.normal, tex=geo.attributes.uv;
       var count=geo.index?geo.index.count:pos.count;
+      // Preserve template indexing while applying the transform once per vertex.
+      var vertexMap=new Int32Array(pos.count);vertexMap.fill(-1);
       for(var i=0;i<count;i++) {
         var j=geo.index?geo.index.getX(i):i;
+        if(vertexMap[j]>=0){facadeIndices.push(vertexMap[j]);continue;}
+        vertexMap[j]=p.length/3;
         point.fromBufferAttribute(pos,j).applyMatrix4(matrix);
         normal.fromBufferAttribute(norms,j).applyMatrix3(normalMatrix).normalize();
         vertex(point.x,point.y,point.z,normal.x,normal.y,normal.z,
@@ -561,13 +682,13 @@ function applyBerlinFacadeFinishShader(THREE, material) {
       // Use its other face for the normal, then omit the zero-area triangle.
       if(nm.lengthSq()<1e-14)nm.set(d[0]-a[0],d[1]-a[1],d[2]-a[2]).cross(vvec).negate();
       nm.normalize();
-      var points=[a,b,c,a,c,d],coords=[[0,0],[1,0],[1,1],[0,0],[1,1],[0,1]];
+      var points=[a,b,c,a,c,d],coords=[[0,0],[1,0],[1,1],[0,0],[1,1],[0,1]],quadCorners=[0,1,2,0,2,3],quadVertices=[-1,-1,-1,-1];
       for(var tr=0;tr<2;tr++) {
         var p0=points[tr*3],p1=points[tr*3+1],p2=points[tr*3+2];
         uvec.set(p1[0]-p0[0],p1[1]-p0[1],p1[2]-p0[2]);
         vvec.set(p2[0]-p0[0],p2[1]-p0[1],p2[2]-p0[2]);
         if(uvec.cross(vvec).lengthSq()<1e-14)continue;
-        for(var tv=0;tv<3;tv++){var pi=tr*3+tv,vv=points[pi],t=coords[pi];vertex(vv[0],vv[1],vv[2],nm.x,nm.y,nm.z,t[0],t[1],color,tile||0,cornerShade?cornerShade[[0,1,2,0,2,3][pi]]:1);}
+        for(var tv=0;tv<3;tv++){var pi=tr*3+tv,corner=quadCorners[pi];if(quadVertices[corner]>=0){facadeIndices.push(quadVertices[corner]);continue;}quadVertices[corner]=p.length/3;var vv=points[pi],t=coords[pi];vertex(vv[0],vv[1],vv[2],nm.x,nm.y,nm.z,t[0],t[1],color,tile||0,cornerShade?cornerShade[corner]:1);}
       }
     }
     function windowUnit(x,y,z,ww,hh,arch,tile,frame,angle,recess,compactSill,wallInset) {
@@ -798,7 +919,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
         if(variant===0) {
           // One continuous fabric shell. Color boundaries share the same
           // surface; they are not separate boxes with beveled structural seams.
-          var fabricStart=p.length/9, bandW=aw/stripes, hemRadius=.015;
+          var fabricStart=facadeIndices.length/3, bandW=aw/stripes, hemRadius=.015;
           function clothRow(row,u) {
             var t, yy, zz, slope=0, bottom=3.65-.14*Math.sin(u*Math.PI);
             if(row<=4){t=row/4;yy=5.65-1.80*t-.045*Math.sin(t*Math.PI);zz=.20+1.95*t;}
@@ -856,7 +977,7 @@ function applyBerlinFacadeFinishShader(THREE, material) {
               clothTri(a,b,c,color,[edge?1:-1,0,0]);
             });
           });
-          fabricRanges.push([fabricStart,p.length/9]);
+          fabricRanges.push([fabricStart,facadeIndices.length/3]);
         }
         for(var st=0;variant!==0&&st<stripes;st++) {
           var sx=awningX-aw/2+(st+.5)*aw/stripes;
@@ -956,9 +1077,10 @@ function applyBerlinFacadeFinishShader(THREE, material) {
     out.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
     out.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
     // One material array slot is used by the existing far/near building path.
-    out.addGroup(0,p.length/3,0); out.computeBoundingBox(); out.computeBoundingSphere();
+    out.setIndex(facadeIndices);
+    out.addGroup(0,facadeIndices.length,0); out.computeBoundingBox(); out.computeBoundingSphere();
     out.name='Kiez '+variant+' '+w+'m';
-    out.userData={kiez:true,variant:variant,width:w,height:h,triangles:p.length/9,fabricRanges:fabricRanges};
+    out.userData={kiez:true,variant:variant,width:w,height:h,triangles:facadeIndices.length/3,fabricRanges:fabricRanges};
     out=finishBerlinKiezFacade(THREE,out,variant,w,side);
     cache[key]=out; return out;
   }
