@@ -176,21 +176,6 @@ const VERB_PREP_PATH = "./data/verbs-with-prepositions.json" + v;
 const ARTICLE_RULES_PATH = "./data/article-rules.json" + v;
 const VERB_FORM_RULES_PATH = "./data/verb-form-rules.json" + v;
 const PREPOSITION_RULES_PATH = "./data/preposition-rules.json" + v;
-const VIELFALT_DECK_DIRS = [
-  "./data/goethe-a1/",
-  "./data/goethe-a2/",
-  "./data/goethe-b1/",
-  "./data/netzwerk-a1/",
-  "./data/netzwerk-a2/",
-  "./data/netzwerk-b1/",
-  "./data/vielfalt-b1plus/",
-  "./data/vielfalt-b2-1/",
-  "./data/vielfalt-b2-2/",
-  "./data/aspekte-b2/",
-  "./data/vielfalt-c1-1/",
-  "./data/vielfalt-c1-2/",
-  "./data/aspekte-c1/",
-];
 const FOLDER_BUILTIN = "Built-in";
 const FOLDER_CUSTOM = "My Decks";
 let NOUNS = [];
@@ -435,52 +420,6 @@ async function loadWordData(onProgress) {
       PREPOSITION_HINTS = prData.prepositions || {};
     }
   } catch(e) { console.warn("Could not load preposition rules:", e); }
-  // Load removable textbook glossary deck collections. Each collection is a
-  // folder with a manifest.json and deck JSON files.
-  for (const deckDir of VIELFALT_DECK_DIRS) {
-    try {
-      const manResp = await fetch(deckDir + "manifest.json" + v);
-      if (!manResp.ok) continue;
-      const manifest = await manResp.json();
-      const folderName = manifest.name || "Vielfalt Glossar";
-      const deckRefs = Array.isArray(manifest.decks) ? manifest.decks : [];
-      const deckFiles = await Promise.all(deckRefs.map(ref =>
-        fetch(deckDir + ref.file + v)
-          .then(r => r.ok ? r.json() : null)
-          .then(deck => ({ ref, deck }))
-          .catch(() => ({ ref, deck: null }))
-      ));
-      for (const { ref, deck } of deckFiles) {
-        if (!deck) continue;
-        const nouns = Array.isArray(deck.nouns) ? deck.nouns : [];
-        const verbs = Array.isArray(deck.verbs) ? deck.verbs : [];
-        const adjectives = Array.isArray(deck.adjectives) ? deck.adjectives : [];
-        const verbPrepositions = Array.isArray(deck.verbPrepositions) ? deck.verbPrepositions : [];
-        const verbForms = Array.isArray(deck.verbForms) ? deck.verbForms : [];
-        const parts = [];
-        if (nouns.length) parts.push(`${nouns.length} N`);
-        if (verbs.length) parts.push(`${verbs.length} V`);
-        if (adjectives.length) parts.push(`${adjectives.length} Adj`);
-        if (verbPrepositions.length) parts.push(`${verbPrepositions.length} V+Prep`);
-        if (verbForms.length) parts.push(`${verbForms.length} Irreg`);
-        BUILTIN_DECKS.push({
-          id: deck.id,
-          name: deck.shortName || deck.name,
-          description: parts.join(" - "),
-          nouns,
-          verbs,
-          adjectives,
-          verbPrepositions,
-          verbForms,
-          builtin: true,
-          folder: folderName,
-          fullName: deck.name,
-          lektion: typeof deck.lektion === "number" ? deck.lektion : null,
-          deckFile: ref.file || ""
-        });
-      }
-    } catch(e) { console.warn(`Could not load textbook decks from ${deckDir}:`, e); }
-  }
 }
 
 function buildWeakNounsDeck() {
@@ -687,22 +626,78 @@ function getAnswerModes(mode, gameMode) {
   return ["article"];
 }
 
-// VOCABULARY TIER CONFIG
+// LERNPFAD - the learning path through the ranked word banks
 // ═══════════════════════════════════════════════════════════════
-// Nouns are ranked by learner usefulness (scripts/rank_nouns_by_usefulness.py).
-// `desc` is not rendered today; it records what each noun tier covers of the
-// Goethe lists (Top 1000 = 96% of A1 and 85% of A2 nouns, Top 5000 = 95% of B1).
-const TIER_OPTIONS = [
-  { value: 100, label: "Top 100", desc: "Most essential words" },
-  { value: 200, label: "Top 200", desc: "Core vocabulary" },
-  { value: 500, label: "Top 500", desc: "A1 essentials" },
-  { value: 1000, label: "Top 1000", desc: "A1, most of A2" },
-  { value: 2000, label: "Top 2000", desc: "A2, most of B1" },
-  { value: 5000, label: "Top 5000", desc: "B1, into B2" },
-  { value: 10000, label: "Top 10000", desc: "B2–C1 breadth" },
-  { value: 15000, label: "Top 15000", desc: "Advanced reading" },
-  { value: 25000, label: "Top 25000", desc: "Near-native" },
+// Small units first for quick early wins, bigger ones as the words get rarer.
+// Noun units are fixed RANK ranges (noun ranks are dense over the whole bank),
+// so a unit means the same words here and in the Berlin Runner's deck menu:
+// keep lernpfadUnitSize and the stage limits in step with
+// buildRunnerDeckCatalog in berlin-runner.html. Other banks are cut by position.
+// A unit is a (tierMin, tier] range, which startGame already plays exactly.
+function lernpfadUnitSize(start) {
+  return start < 150 ? 15 : start < 1000 ? 20 : 30;
+}
+const LERNPFAD_STAGES = [
+  { upTo: 500, name: "Basics" },
+  { upTo: 1500, name: "Everyday" },
+  { upTo: 3000, name: "Intermediate" },
+  { upTo: 6000, name: "Advanced" },
 ];
+const LERNPFAD_LATE_STAGE_SPAN = 3000; // words per stage after the named ones
+
+function buildLernpfad(wordType, gameMode) {
+  let rows;
+  let byRank = false, positional = false;
+  if (wordType === "nouns") { rows = NOUNS.map(n => [n[0], n[4]]); byRank = true; }
+  else if (wordType === "adjectives") rows = ADJECTIVES.map(a => [a[0], a[2]]);
+  else if (wordType === "verbs") rows = (gameMode === "verb_forms" ? IRREGULAR_VERBS : VERBS).map(v => [v[0], v[2]]);
+  else if (wordType === "verb_prep") { rows = VERB_PREPOSITIONS.map(v => [v[0] + "|" + v[3], v[2]]); positional = true; }
+  else return { units: [], stages: [] };
+  rows = rows.filter(r => r[1] > 0).sort((a, b) => a[1] - b[1]);
+  const units = [];
+  if (byRank) {
+    const maxRank = rows.length ? rows[rows.length - 1][1] : 0;
+    let i = 0;
+    for (let start = 0, number = 1; start < maxRank; number++) {
+      const end = start + lernpfadUnitSize(start);
+      const keys = [];
+      for (; i < rows.length && rows[i][1] <= end; i++) keys.push(rows[i][0]);
+      if (keys.length) units.push({ index: units.length, number, tierMin: start, tier: end, first: start + 1, last: end, keys });
+      start = end;
+    }
+  } else {
+    for (let start = 0, number = 1; start < rows.length; number++) {
+      let end = Math.min(start + lernpfadUnitSize(start), rows.length);
+      // These banks are filtered by rank in the game: never split a shared rank.
+      while (!positional && end < rows.length && rows[end][1] === rows[end - 1][1]) end++;
+      units.push({
+        index: units.length, number,
+        tierMin: positional ? start : (start ? rows[start - 1][1] : 0),
+        tier: positional ? end : rows[end - 1][1],
+        first: start + 1, last: end,
+        keys: rows.slice(start, end).map(r => r[0]),
+      });
+      start = end;
+    }
+  }
+  const stages = [];
+  const lateBase = LERNPFAD_STAGES[LERNPFAD_STAGES.length - 1].upTo;
+  for (const u of units) {
+    const pos = u.first - 1;
+    const named = LERNPFAD_STAGES.findIndex(s => pos < s.upTo);
+    const idx = named >= 0 ? named : LERNPFAD_STAGES.length + Math.floor((pos - lateBase) / LERNPFAD_LATE_STAGE_SPAN);
+    let st = stages[stages.length - 1];
+    if (!st || st.idx !== idx) {
+      st = { idx, name: named >= 0 ? LERNPFAD_STAGES[named].name : null, first: u.first, last: u.last, units: [] };
+      stages.push(st);
+    }
+    st.units.push(u);
+    st.last = u.last;
+    u.stage = stages.length - 1;
+  }
+  for (const st of stages) if (!st.name) st.name = `Words ${st.first.toLocaleString()}–${st.last.toLocaleString()}`;
+  return { units, stages };
+}
 
 function getNounsForTier(tier, minRank) {
   return minRank ? NOUNS.filter(n => n[4] > minRank && n[4] <= tier) : NOUNS.filter(n => n[4] <= tier);
@@ -2977,16 +2972,14 @@ function DeckBuilder({onSave, onCancel}) {
 // ═══════════════════════════════════════════════════════════════
 function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, onSyncRefresh, onOpenCampaign, onOpenDashboard, onOpenGrammar, initialSelection}) {
   const init = initialSelection || {};
-  const initSource = init.deckId === "__weakest__" ? "weakest" : init.deckId ? "deck" : init.isRange ? "hundred-slices" : "top-n";
+  const initSource = init.deckId === "__weakest__" ? "weakest" : init.deckId ? "deck" : "path";
   const [mode,setMode]=useState(init.m ?? MODES.ARTICLE);
   const [tier,setTier]=useState(init.t ?? 500);
   const [tierMin,setTierMin]=useState(init.tMin ?? 0);
-  const [tierMode,setTierMode]=useState(init.isRange ? "range" : "cumulative");
   const [source,setSource]=useState(initSource);
   const [selectedDeck,setSelectedDeck]=useState(init.deckId && init.deckId !== "__weakest__" ? init.deckId : null);
   const [showSettings,setShowSettings]=useState(false);
   const [showDeckBuilder,setShowDeckBuilder]=useState(false);
-  const [openDeckFolders,setOpenDeckFolders]=useState({});
   const [contentMenuOpen,setContentMenuOpen]=useState(false);
   const [selectedGameMode,setSelectedGameMode]=useState(init.gm ?? "classic");
   const [showCasualModes,setShowCasualModes]=useState((init.gm ?? "classic") === "matching");
@@ -3039,11 +3032,9 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const handleStart = () => {
     const wType = supportsWordType ? matchWordType : "nouns";
     const diff = playStyle === "timed" ? "normal" : "easy";
-    const isRange = source === "hundred-slices";
-    const effectiveTierMin = isRange ? tierMin : 0;
     if (source === "weakest") onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else if (selectedDeck && source !== "top-n" && source !== "hundred-slices") onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
-    else onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, effectiveTierMin, isRange);
+    else if (source === "path") onStart(mode, diff, tier, null, selectedGameMode, wType, playStyle, timedSeconds, tierMin, true);
+    else if (selectedDeck) onStart(mode, diff, tier, selectedDeck, selectedGameMode, wType, playStyle, timedSeconds, 0, false);
   };
 
   const handleGameModeSelect = (gameModeId) => {
@@ -3077,8 +3068,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     : (selectedGameMode === "reverse" || selectedGameMode === "matching")
       ? `${selectedGameMode}:${matchWordType}`
       : selectedGameMode;
-  const contentReady = source === "top-n" || source === "hundred-slices" || source === "weakest" || !!selectedDeck;
-  const canStart = contentReady;
 
   const wordTypeLabel = (wType) => {
     if (wType === "nouns") return "Nouns";
@@ -3086,111 +3075,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     if (wType === "verbs") return selectedGameMode === "verb_forms" ? "Irregular Verbs" : "Verbs";
     if (wType === "verb_prep") return "Verb + Prep";
     return "Mixed";
-  };
-
-  const countForTier = (tv) => {
-    if (effectiveWordType === "nouns") return getNounsForTier(tv).length;
-    if (effectiveWordType === "adjectives") return getAdjectivesForTier(tv).length;
-    if (effectiveWordType === "verb_prep") return getVerbPrepositionsForTier(tv).length;
-    if (effectiveWordType === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(tv) : getVerbsForTier(tv)).length;
-    return getNounsForTier(tv).length + getAdjectivesForTier(tv).length + getVerbsForTier(tv).length;
-  };
-
-  const countForRange = (min, max) => {
-    if (effectiveWordType === "nouns") return getNounsForTier(max, min).length;
-    if (effectiveWordType === "adjectives") return getAdjectivesForTier(max, min).length;
-    if (effectiveWordType === "verb_prep") return getVerbPrepositionsForTier(max, min).length;
-    if (effectiveWordType === "verbs") return (selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min)).length;
-    return getNounsForTier(max, min).length + getAdjectivesForTier(max, min).length + getVerbsForTier(max, min).length;
-  };
-
-  const activeTierOptions = useMemo(() => {
-    if (effectiveWordType !== "verb_prep") return TIER_OPTIONS;
-    const options = [];
-    const total = VERB_PREPOSITIONS.length;
-    for (let value = VERB_PREP_BUCKET_SIZE; value < total; value += VERB_PREP_BUCKET_SIZE) {
-      options.push({ value, label: `Top ${value}`, desc: `${value} verb+prep combos` });
-    }
-    if (total > 0) options.push({ value: total, label: `All ${total}`, desc: "All verb+prep combos" });
-    return options;
-  }, [effectiveWordType]);
-
-  const activeRangeSize = effectiveWordType === "verb_prep" ? VERB_PREP_BUCKET_SIZE : 100;
-
-  const activeRanges = useMemo(() => {
-    const maxAvailable = countForTier(99999);
-    const ranges = [];
-    for (let min = 0; min < maxAvailable; min += activeRangeSize) {
-      const max = Math.min(min + activeRangeSize, maxAvailable);
-      const count = countForRange(min, max);
-      if (count > 0) ranges.push({ min, max, count });
-    }
-    return ranges;
-  }, [activeRangeSize, effectiveWordType, selectedGameMode]);
-
-  useEffect(() => {
-    if (effectiveWordType !== "verb_prep") return;
-    if (tierMode === "cumulative") {
-      const validTiers = activeTierOptions.map(opt => opt.value);
-      if (!validTiers.length) return;
-      if (!validTiers.includes(tier) || tierMin !== 0) {
-        setTier(validTiers[0]);
-        setTierMin(0);
-      }
-      return;
-    }
-    if (!activeRanges.length) return;
-    const hasMatch = activeRanges.some(r => r.min === tierMin && r.max === tier);
-    if (!hasMatch) {
-      setTierMin(activeRanges[0].min);
-      setTier(activeRanges[0].max);
-    }
-  }, [effectiveWordType, tierMode, tier, tierMin, activeTierOptions, activeRanges]);
-
-  const wordsInRange = (min, max) => {
-    const words = [];
-    if (effectiveWordType === "nouns" || effectiveWordType === "mixed") getNounsForTier(max, min).forEach(n => words.push(n[0]));
-    if (effectiveWordType === "adjectives" || effectiveWordType === "mixed") getAdjectivesForTier(max, min).forEach(a => words.push(a[0]));
-    if (effectiveWordType === "verbs" || effectiveWordType === "mixed") {
-      const verbs = selectedGameMode === "verb_forms" ? getIrregularVerbsForTier(max, min) : getVerbsForTier(max, min);
-      verbs.forEach(v => words.push(v[0]));
-    }
-    if (effectiveWordType === "verb_prep") getVerbPrepositionsForTier(max, min).forEach(v => words.push(v[0]+"|"+v[3]));
-    return words;
-  };
-
-  const masteryForRange = (min, max) => {
-    const words = wordsInRange(min, max);
-    if (!words.length) return { mastered: 0, total: 0, pct: 0 };
-    let mastered = 0;
-    words.forEach(w => {
-      if (masteredSet.has(w)) { mastered++; return; }
-      const s = nounStats[w];
-      if (s && (s.consecutiveCorrect || 0) >= 5) mastered++;
-    });
-    return { mastered, total: words.length, pct: Math.round((mastered / words.length) * 100) };
-  };
-
-  const modeMasteryInRange = (modeId, min, max) => {
-    if (effectiveWordType !== "nouns") return null;
-    const words = getNounsForTier(max, min || undefined);
-    if (!words.length) return null;
-    let mastered = 0;
-    words.forEach(n => {
-      const s = modeStats[modeId+":"+n[0]];
-      if (s && (s.consecutiveCorrect||0) >= 5) mastered++;
-    });
-    return { pct: Math.round((mastered / words.length) * 100) };
-  };
-
-  const describeTierSelection = () => {
-    const count = tierMode === "range" ? countForRange(tierMin, tier) : countForTier(tier);
-    const label = wordTypeLabel(effectiveWordType).toLowerCase();
-    if (!count) return "Choose vocabulary";
-    if (tierMode === "range") return `${tierMin + 1}-${tier} ${label} (${count.toLocaleString()})`;
-    const maxAvailable = countForTier(99999);
-    if (count >= maxAvailable) return `All ${label} (${count.toLocaleString()})`;
-    return `Top ${count.toLocaleString()} ${label}`;
   };
 
   const renderActivityHint = () => {
@@ -3290,230 +3174,121 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
     </div>
   );
 
-  const renderTierSelector = () => {
-    const showRanges = source === "hundred-slices";
-    const maxAvailable = countForTier(99999);
-    const seenCounts = new Set();
-    const filteredTiers = activeTierOptions.filter(t => {
-      const c = countForTier(t.value);
-      if (c <= 0) return false;
-      if (seenCounts.has(c)) return false;
-      seenCounts.add(c);
-      return true;
-    });
-    const totalMastery = masteryForRange(0, 99999);
-    const rangesCompleted = activeRanges.filter(r => masteryForRange(r.min, r.max).pct >= 100).length;
-    const rangesStarted = activeRanges.filter(r => {
-      const mastery = masteryForRange(r.min, r.max);
-      return mastery.pct > 0 && mastery.pct < 100;
-    }).length;
-
-    const rangesWithMedal = activeRanges.filter(r => {
-      const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
-      return (bestScores[key]?.pct || 0) >= 80;
-    }).length;
-    const rangesPerfect = activeRanges.filter(r => {
-      const key = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
-      return (bestScores[key]?.pct || 0) >= 100;
-    }).length;
-
-    return (
-      <div style={S.menuSection}>
-        {!showRanges ? (
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-            {filteredTiers.map(t=>{
-              const count = countForTier(t.value);
-              const capped = effectiveWordType !== "mixed" && count < t.value;
-              const label = capped ? `Top ${count.toLocaleString()}` : t.label;
-              const tierKey = `${bestScoreKeyPrefix}:tier:${t.value}`;
-              const tierBest = bestScores[tierKey];
-              const tierPct = tierBest ? tierBest.pct : 0;
-              const isSelected = tier===t.value && tierMin===0;
-              const ringColor = medalRingColor(tierPct);
-              const cardClass = medalCardClass(tierPct);
-              const isPerfect = tierPct >= 100;
-              return (
-                <button key={t.value} className={cardClass} onClick={()=>{setTier(t.value);setTierMin(0);setTierMode("cumulative");}} style={{...S.tierBtn,borderColor:isSelected?UI.gold:medalBorderColor(tierPct),backgroundColor:isSelected?UI.goldSoft:tierPct>=80?UI.goldSoft:UI.panel,position:"relative",overflow:"hidden",padding:"12px 8px"}}>
-                  {tierPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${tierPct}%`,background:medalFill(tierPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                  <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}>
-                    <ProgressRing pct={tierPct} size={38} stroke={3} color={ringColor}/>
-                    <span className={medalTextClass(tierPct)} style={{position:"absolute",fontSize:isPerfect?14:10,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":tierPct>0?tierPct+"%":""}</span>
-                  </div>
-                  <span style={{fontSize:13,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{label}</span>
-                </button>
-              );
-            })}
-          </div>
-        ):(
-          <>
-            {(rangesWithMedal>0||rangesPerfect>0)&&(
-              <div style={{display:"flex",gap:10,justifyContent:"center",padding:"6px 0"}}>
-                {rangesPerfect>0&&<span style={{fontSize:11,color:UI.gold,fontWeight:700}}>{rangesPerfect} Perfect</span>}
-                {rangesWithMedal-rangesPerfect>0&&<span style={{fontSize:11,color:UI.text,fontWeight:700}}>{rangesWithMedal-rangesPerfect} medalled</span>}
-                <span style={{fontSize:11,color:UI.muted}}>{activeRanges.length} total</span>
-              </div>
-            )}
-            <div className="range-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,maxHeight:320,overflowY:"auto",paddingRight:4}}>
-              {activeRanges.map(r=>{
-                const isSelected = tierMin===r.min && tier===r.max && tierMode==="range";
-                const rangeKey = `${bestScoreKeyPrefix}:range:${r.min+1}-${r.max}`;
-                const rangeBest = bestScores[rangeKey];
-                const rangePct = rangeBest ? rangeBest.pct : 0;
-                const ringColor = medalRingColor(rangePct);
-                const cardClass = medalCardClass(rangePct);
-                const isPerfect = rangePct >= 100;
-                return (
-                  <button key={r.min} className={cardClass} onClick={()=>{setTier(r.max);setTierMin(r.min);setTierMode("range");}} style={{...S.tierBtn,borderColor:isSelected?UI.gold:medalBorderColor(rangePct),backgroundColor:isSelected?UI.goldSoft:rangePct>=80?UI.goldSoft:UI.panel,position:"relative",overflow:"hidden",padding:"10px 6px",gap:2}}>
-                    {rangePct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${rangePct}%`,background:medalFill(rangePct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                    <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:2}}>
-                      <ProgressRing pct={rangePct} size={34} stroke={2.5} color={ringColor}/>
-                      <span className={medalTextClass(rangePct)} style={{position:"absolute",fontSize:isPerfect?12:9,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":rangePct>0?rangePct+"%":""}</span>
-                    </div>
-                    <span style={{fontSize:12,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{r.min+1}-{r.max}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
-  const renderDeckCard = (dk) => {
-    const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
-    const dkBest = bestScores[dkKey];
-    const dkPct = dkBest ? dkBest.pct : 0;
-    const isPerfect = dkPct >= 100;
-    const ringColor = medalRingColor(dkPct);
-    const cardClass = medalCardClass(dkPct);
-    const borderColor = selectedDeck===dk.id ? UI.gold : medalBorderColor(dkPct);
-    const bg = selectedDeck===dk.id ? UI.goldSoft : medalCardBg(dkPct);
-    const userDeck = !dk.builtin;
-    const subtitle = dk.description
-      ? dk.description
-      : `${dk.nouns.length} noun${dk.nouns.length===1?"":"s"}${userDeck && dk.created ? ` · ${new Date(dk.created).toLocaleDateString()}` : ""}`;
-    return (
-      <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-        <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
-          {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-          <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
-            <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"★":dkPct>0?dkPct+"%":""}</span>
-          </div>
-          <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
-          <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{subtitle}</span>
-        </button>
-        {userDeck && (
-          <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
-        )}
-      </div>
-    );
-  };
-
-  // Group decks by folder. FOLDER_BUILTIN first, FOLDER_CUSTOM last, others alphabetically.
-  const deckGroups = (() => {
-    const grouped = new Map();
-    const order = [];
-    const push = (folder, dk) => {
-      if (!grouped.has(folder)) { grouped.set(folder, []); order.push(folder); }
-      grouped.get(folder).push(dk);
-    };
-    for (const dk of availableDecks) push(dk.builtin ? (dk.folder || FOLDER_BUILTIN) : FOLDER_CUSTOM, dk);
-    const folderRank = (f) => f === FOLDER_BUILTIN ? 0 : f === FOLDER_CUSTOM ? 2 : 1;
-    order.sort((a, b) => folderRank(a) - folderRank(b) || a.localeCompare(b));
-    return order.map(folder => ({ folder, decks: grouped.get(folder) }));
+  // ── Lernpfad ──────────────────────────────────────────────────
+  // The ranked bank for this activity cut into units (see buildLernpfad). A
+  // unit is selected by putting its range in tier/tierMin, so the Start button,
+  // Replay and the return from a game all keep working unchanged.
+  const lernpfad = useMemo(() => buildLernpfad(effectiveWordType, selectedGameMode),
+    [effectiveWordType, selectedGameMode]);
+  // A word counts once it is mastered in every mode this activity asks about.
+  // Matching keeps no per-word record, so its path shows no ticks.
+  const pathModes = getAnswerModes(mode, selectedGameMode).filter(m => m !== "matching");
+  const pathModesKey = pathModes.join(",");
+  const unitMastered = useMemo(() => lernpfad.units.map(u => {
+    if (!pathModes.length) return 0;
+    let n = 0;
+    for (const key of u.keys) if (pathModes.every(m => isSkillWordMastered(m, key))) n++;
+    return n;
+  }), [lernpfad, pathModesKey, modeMasteredSets, modeStats]);
+  const unitDone = (i) => pathModes.length > 0 && unitMastered[i] >= lernpfad.units[i].keys.length;
+  const currentUnitIndex = (() => {
+    const i = lernpfad.units.findIndex((u, idx) => !unitDone(idx));
+    return i >= 0 ? i : Math.max(0, lernpfad.units.length - 1);
   })();
+  const selectedUnitIndex = lernpfad.units.findIndex(u => u.tierMin === tierMin && u.tier === tier);
+  const selectedUnit = selectedUnitIndex >= 0 ? lernpfad.units[selectedUnitIndex] : null;
+  const [openStage, setOpenStage] = useState(null); // null: the stage of the selected unit
 
-  const folderOfSelected = deckGroups.find(g => g.decks.some(dk => dk.id === selectedDeck))?.folder || null;
+  // Arriving on the path with no unit selected (first visit, another activity,
+  // an old Top N selection) lands on the next unit to learn.
+  useEffect(() => {
+    if (source !== "path" || !lernpfad.units.length || selectedUnit) return;
+    const u = lernpfad.units[currentUnitIndex];
+    setTier(u.tier);
+    setTierMin(u.tierMin);
+  }, [source, lernpfad, selectedUnit, currentUnitIndex]);
 
-  const renderDeckSelector = () => (
-    <div style={S.menuSection}>
-      {selectedDeckData && (
-        <div style={S.inlineSummaryCard}>
-          <span style={S.inlineSummaryLabel}>Current Deck</span>
-          <span style={S.inlineSummaryValue}>{selectedDeckData.fullName || selectedDeckData.name}</span>
+  const canStart = source === "path" ? !!selectedUnit : source === "weakest" || !!selectedDeck;
+
+  const startPathUnit = (u) => {
+    setTier(u.tier);
+    setTierMin(u.tierMin);
+    const wType = supportsWordType ? matchWordType : "nouns";
+    const diff = playStyle === "timed" ? "normal" : "easy";
+    onStart(mode, diff, u.tier, null, selectedGameMode, wType, playStyle, timedSeconds, u.tierMin, true);
+  };
+  const startReview = () => {
+    const wType = supportsWordType ? matchWordType : "nouns";
+    const diff = playStyle === "timed" ? "normal" : "easy";
+    onStart(mode, diff, tier, "__weakest__", selectedGameMode, wType, playStyle, timedSeconds, 0, false);
+  };
+  const hasPracticeHistory = Object.keys(nounStats).length > 0;
+  const pathItemLabel = wordTypeLabel(effectiveWordType).toLowerCase();
+  const previewOf = (u) => u.keys.slice(0, 3).map(k => k.replace("|", " ")).join(", ");
+
+  const renderLernpfad = () => {
+    if (!lernpfad.units.length) {
+      return <div style={S.stepNote}>The Lernpfad works one word type at a time. Pick Nouns, Adjectives or Verbs above.</div>;
+    }
+    const cur = lernpfad.units[currentUnitIndex];
+    const allDone = pathModes.length > 0 && lernpfad.units.every((u, i) => unitDone(i));
+    const shownStage = openStage ?? (selectedUnit ? selectedUnit.stage : cur.stage);
+    return (
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:8}}>
+        <button onClick={() => startPathUnit(cur)} style={{...S.startBtn,width:"100%",marginTop:0}}>
+          {allDone ? "Path complete · replay" : "Continue"} · Unit {cur.number} · {cur.keys.length} {pathItemLabel}
+        </button>
+        {weakestAllowed && hasPracticeHistory && (
+          <button onClick={startReview} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,width:"100%"}}>
+            Review your weakest words
+          </button>
+        )}
+        <div className="range-grid" style={{display:"flex",flexDirection:"column",gap:6,maxHeight:420,overflowY:"auto",paddingRight:4}}>
+          {lernpfad.stages.map((st, si) => {
+            const open = si === shownStage;
+            let m = 0, total = 0;
+            for (const u of st.units) { m += unitMastered[u.index] || 0; total += u.keys.length; }
+            const pct = pathModes.length && total ? Math.round((m / total) * 100) : 0;
+            return (
+              <div key={st.idx} style={{border:`1px solid ${UI.line}`,borderRadius:10,background:UI.panel,overflow:"hidden",flexShrink:0}}>
+                <button onClick={() => setOpenStage(open ? -1 : si)} style={{width:"100%",border:"none",background:"transparent",padding:"10px 12px",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:10,textAlign:"left"}}>
+                  <span style={{flex:1,minWidth:0}}>
+                    <span style={{display:"block",fontSize:13,fontWeight:800,color:UI.textStrong}}>{st.name}</span>
+                    <span style={{display:"block",fontSize:10,color:UI.muted}}>Words {st.first.toLocaleString()}–{st.last.toLocaleString()} · {st.units.length} units</span>
+                  </span>
+                  {pathModes.length > 0 && (
+                    <span style={{width:64,height:6,borderRadius:3,background:UI.line,overflow:"hidden",flexShrink:0}}>
+                      <span style={{display:"block",height:"100%",width:`${pct}%`,background:pct >= 100 ? UI.success : UI.gold}}/>
+                    </span>
+                  )}
+                  <span style={{fontSize:12,color:UI.faint}}>{open ? "▾" : "▸"}</span>
+                </button>
+                {open && (
+                  <div style={{display:"flex",flexDirection:"column",gap:4,padding:"0 8px 8px"}}>
+                    {st.units.map(u => {
+                      const done = unitDone(u.index);
+                      const isCurrent = u.index === currentUnitIndex && !allDone;
+                      const isSelected = !!selectedUnit && u.index === selectedUnit.index;
+                      return (
+                        <button key={u.number} onClick={() => { setTier(u.tier); setTierMin(u.tierMin); }}
+                          style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,cursor:"pointer",fontFamily:"inherit",textAlign:"left",
+                            border:`1px solid ${isSelected ? UI.gold : UI.line}`,background:isSelected ? UI.goldSoft : UI.panel}}>
+                          <span style={{width:16,textAlign:"center",fontWeight:900,color:done ? UI.success : isCurrent ? UI.gold : UI.faint}}>{done ? "✓" : isCurrent ? "●" : "○"}</span>
+                          <span style={{fontSize:13,fontWeight:800,color:UI.textStrong,whiteSpace:"nowrap"}}>Unit {u.number}</span>
+                          <span style={{flex:1,minWidth:0,fontSize:12,color:UI.muted,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{previewOf(u)} …</span>
+                          <span style={{fontSize:11,color:UI.faint,whiteSpace:"nowrap"}}>{pathModes.length ? `${unitMastered[u.index]}/${u.keys.length}` : u.keys.length}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-      )}
-      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:360,overflowY:"auto",paddingRight:4}}>
-        {deckGroups.map(group => {
-          const isOpen = openDeckFolders[group.folder] ?? (group.folder === folderOfSelected || group.folder === FOLDER_BUILTIN);
-          return (
-            <div key={group.folder} style={{display:"flex",flexDirection:"column",gap:6}}>
-              <button onClick={()=>setOpenDeckFolders(s => ({...s, [group.folder]: !isOpen}))}
-                style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 10px",border:`1px solid ${UI.line}`,borderRadius:8,background:UI.panelSoft,cursor:"pointer",fontSize:11,fontWeight:800,color:UI.muted,letterSpacing:1.5,textTransform:"uppercase"}}>
-                <span>{group.folder}</span>
-                <span style={{fontSize:10,color:UI.faint}}>{group.decks.length} {isOpen?"▾":"▸"}</span>
-              </button>
-              {isOpen && group.decks.map(renderDeckCard)}
-            </div>
-          );
-        })}
-        {deckGroups.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
       </div>
-      <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
-        + Create Custom Deck
-      </button>
-    </div>
-  );
-
-  // Stub-out the remaining old-style flat deck rendering (replaced above).
-  const _legacy_decks_unused = () => (
-    <div style={{display:"none"}}>
-      <div>
-        {BUILTIN_DECKS.map(dk=>{
-          const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
-          const dkBest = bestScores[dkKey];
-          const dkPct = dkBest ? dkBest.pct : 0;
-          const isPerfect = dkPct >= 100;
-          const ringColor = medalRingColor(dkPct);
-          const cardClass = medalCardClass(dkPct);
-          const borderColor = selectedDeck===dk.id ? UI.gold : medalBorderColor(dkPct);
-          const bg = selectedDeck===dk.id ? UI.goldSoft : medalCardBg(dkPct);
-          return (
-            <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
-                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
-                  <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
-                </div>
-                <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
-                <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · Built-in</span>
-              </button>
-            </div>
-          );
-        })}
-        {userData.decks.map(dk=>{
-          const dkKey = `${bestScoreKeyPrefix}:deck:${dk.id}`;
-          const dkBest = bestScores[dkKey];
-          const dkPct = dkBest ? dkBest.pct : 0;
-          const isPerfect = dkPct >= 100;
-          const ringColor = medalRingColor(dkPct);
-          const cardClass = medalCardClass(dkPct);
-          const borderColor = selectedDeck===dk.id ? UI.gold : medalBorderColor(dkPct);
-          const bg = selectedDeck===dk.id ? UI.goldSoft : medalCardBg(dkPct);
-          return (
-            <div key={dk.id} style={{display:"flex",gap:8,alignItems:"stretch"}}>
-              <button className={cardClass} onClick={()=>setSelectedDeck(dk.id)} style={{...S.modeCard,flex:1,borderColor,background:bg,position:"relative",overflow:"hidden",paddingRight:64}}>
-                {dkPct>0&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:`${dkPct}%`,background:medalFill(dkPct),borderRadius:"0 0 8px 8px",transition:"height 0.3s ease",pointerEvents:"none"}}/>}
-                <div style={{position:"absolute",top:8,right:8,zIndex:2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <ProgressRing pct={dkPct} size={44} stroke={4} color={ringColor}/>
-                  <span className={medalTextClass(dkPct)} style={{position:"absolute",fontSize:isPerfect?16:11,fontWeight:900,color:ringColor}}>{isPerfect?"\u2605":dkPct>0?dkPct+"%":""}</span>
-                </div>
-                <span style={{fontSize:15,fontWeight:700,color:isPerfect?UI.gold:UI.textStrong,position:"relative"}}>{dk.name}</span>
-                <span style={{fontSize:11,color:UI.muted,position:"relative"}}>{dk.nouns.length} noun{dk.nouns.length>1?"s":""} · {new Date(dk.created).toLocaleDateString()}</span>
-              </button>
-              <button onClick={()=>{if(confirm("Delete deck \""+dk.name+"\"?"))onDeleteDeck(dk.id);}} style={{...S.endBtn,alignSelf:"center",fontSize:11,padding:"4px 10px"}}>Del</button>
-            </div>
-          );
-        })}
-        {userData.decks.length===0&&BUILTIN_DECKS.length===0&&<p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks yet - create one or save mistakes after a session.</p>}
-      </div>
-      <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4}}>
-        + Create Custom Deck
-      </button>
-    </div>
-  );
+    );
+  };
 
   const deckItemCount = (dk) => {
     if (selectedGameMode === "verb_forms") return (dk.verbForms || []).length;
@@ -3539,9 +3314,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
   const deckCategoryFor = (dk) => {
     if (!dk.builtin) return { id: "custom", name: "Custom Decks", desc: "Saved practice decks" };
-    if (dk.folder && dk.folder !== FOLDER_BUILTIN) {
-      return { id: `folder:${dk.folder}`, name: dk.folder, desc: "Textbook glossary decks" };
-    }
     if (dk.id === "__dual_gender__" || dk.id === "__weak_nouns__") {
       return { id: "grammar", name: "Grammar Rules", desc: "Special noun patterns" };
     }
@@ -3553,7 +3325,6 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
 
   const deckCategoryOrder = (id) => {
     const order = { grammar: 0, custom: 20 };
-    if (id.startsWith("folder:")) return 10;
     return order[id] ?? 30;
   };
 
@@ -3592,11 +3363,10 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   }, [allDecks, availableDecks]);
 
   const contentCategories = useMemo(() => {
-    const options = [
-      { id: "top-n", name: "Top N", desc: "Cumulative vocabulary decks" },
-      { id: "hundred-slices", name: "Hundred slices", desc: "100-word range decks" },
-    ];
-    if (weakestAllowed) options.push({ id: "weakest", name: "Weakest", desc: "Use your worst words" });
+    const options = [{ id: "path", name: "Lernpfad", desc: "The most useful words, unit by unit" }];
+    // Reviewing is offered from inside the Lernpfad. It stays a category (hidden
+    // from the list) so the picker can still name it while it is selected.
+    if (weakestAllowed) options.push({ id: "weakest", name: "Review weak words", desc: "Your weakest words so far", hidden: true });
     return [...options, ...deckCategories];
   }, [deckCategories, weakestAllowed]);
 
@@ -3606,20 +3376,18 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
   const selectContentCategory = (next) => {
     setSource(next);
     setContentMenuOpen(false);
-    if (next === "top-n") { setSelectedDeck(null); setTierMode("cumulative"); setTierMin(0); }
-    else if (next === "hundred-slices") { setSelectedDeck(null); setTierMode("range"); }
-    else if (next === "weakest") setSelectedDeck(null);
+    if (next === "path" || next === "weakest") setSelectedDeck(null);
     else if (!deckCategories.find(c => c.id === next)?.decks.some(dk => dk.id === selectedDeck)) setSelectedDeck(null);
   };
 
   useEffect(() => {
     if (source === "deck" && selectedDeck) {
       const category = deckCategories.find(c => c.decks.some(dk => dk.id === selectedDeck));
-      setSource(category?.id || "top-n");
+      setSource(category?.id || "path");
       return;
     }
     if (!contentCategories.some(c => c.id === source)) {
-      setSource(contentCategories[0]?.id || "top-n");
+      setSource(contentCategories[0]?.id || "path");
     }
   }, [source, selectedDeck, deckCategories, contentCategories]);
 
@@ -3787,7 +3555,7 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           </button>
           {contentMenuOpen&&(
             <div className="range-grid" style={{position:"absolute",zIndex:40,top:"calc(100% + 6px)",left:0,right:0,maxHeight:300,overflowY:"auto",background:UI.panel,border:`1px solid ${UI.lineStrong}`,borderRadius:12,boxShadow:"0 18px 42px rgba(15,23,42,0.18)",padding:6,display:"flex",flexDirection:"column",gap:4}}>
-              {contentCategories.map(opt=>(
+              {contentCategories.filter(opt => !opt.hidden || opt.id === source).map(opt=>(
                 <button key={opt.id} onClick={()=>selectContentCategory(opt.id)} style={{border:"none",borderRadius:8,background:source===opt.id?UI.goldSoft:"transparent",padding:"9px 10px",textAlign:"left",cursor:"pointer",fontFamily:"inherit",display:"flex",justifyContent:"space-between",gap:10,alignItems:"baseline"}}>
                   <span style={{fontSize:13,fontWeight:800,color:UI.textStrong,overflowWrap:"anywhere"}}>{opt.name}</span>
                   {Array.isArray(opt.decks)&&<span style={{fontSize:10,color:UI.muted,whiteSpace:"nowrap"}}>{opt.decks.length}</span>}
@@ -3797,12 +3565,12 @@ function MenuScreen({onStart, userData, syncStatus, onDeleteDeck, onSaveDeck, on
           )}
         </div>
         {source==="weakest"&&<div style={S.stepNote}>Practice your weakest words based on past performance. This works best after a few sessions.</div>}
-        {(source==="top-n"||source==="hundred-slices")&&renderTierSelector()}
+        {source==="path"&&renderLernpfad()}
         {activeDeckCategory&&renderDeckSelectorClean()}
-        {!activeDeckCategory&&source!=="top-n"&&source!=="hundred-slices"&&source!=="weakest"&&(
+        {!activeDeckCategory&&source!=="path"&&source!=="weakest"&&(
           <p style={{fontSize:12,color:UI.muted,textAlign:"center",margin:"8px 0"}}>No decks available for this activity.</p>
         )}
-        {!activeDeckCategory&&(
+        {!activeDeckCategory&&source!=="path"&&(
           <button onClick={()=>setShowDeckBuilder(true)} style={{...S.secondaryActionBtn,borderColor:UI.line,color:UI.textStrong,background:UI.panel,marginTop:4,width:"100%"}}>
             + Create Custom Deck
           </button>

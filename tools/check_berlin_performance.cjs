@@ -2,7 +2,6 @@
 // Exercise the shipped controller and geometry, without a mocked copy of either.
 const fs = require('fs'), vm = require('vm'), assert = require('assert/strict');
 const path = require('path');
-const useKiezLamps = process.argv.includes('--kiez-lamps');
 const html = fs.readFileSync(path.resolve(__dirname, '..', process.env.BERLIN_HTML || 'berlin-runner.html'), 'utf8');
 const nativeTreeContainers = html.includes('// BEGIN STREET CONTAINERS V146');
 function section(a, b) {
@@ -430,12 +429,15 @@ const bareGroundClone=cobbleMaterial.clone();
 assert.equal(bareGroundClone.onBeforeCompile,THREE.Material.prototype.onBeforeCompile,'r156 clone omits shader callback');
 assert.equal(bareGroundClone.customProgramCacheKey,THREE.Material.prototype.customProgramCacheKey,'r156 clone omits custom program key');
 groundContext.MAT={cobble:cobbleMaterial};
-vm.runInContext(section('  MAT.tramBed = applyCelShading(MAT.cobble.clone());', '  // Same treatment for the viaduct masonry'),groundContext);
-const bedMaterial=groundContext.MAT.tramBed;
-for(const channel of ['map','normalMap','roughnessMap'])assert.equal(bedMaterial[channel],cobbleMaterial[channel],`${channel} shares the existing GPU resource`);
-assert.notEqual(bedMaterial.color,cobbleMaterial.color,'bed and gutters have independent colour uniforms');
-assert.notEqual(bedMaterial.emissive,cobbleMaterial.emissive,'bed emission does not mutate gutters');
-assert.equal(bedMaterial.customProgramCacheKey(),cobbleMaterial.customProgramCacheKey(),'tint-only bed retains the same cel program key');
+const gutterSheet=new THREE.Texture();
+Object.assign(groundContext,{gutterTex:gutterSheet,relief(){}});
+vm.runInContext(section('  MAT.gutter = applyCelShading(MAT.cobble.clone());', '  MAT.cobble.color.setHex(0xffffff);'),groundContext);
+const bedMaterial=groundContext.MAT.gutter;
+for(const channel of ['normalMap','roughnessMap'])assert.equal(bedMaterial[channel],cobbleMaterial[channel],`${channel} shares the existing GPU resource until relief derives its own`);
+assert.equal(bedMaterial.map,gutterSheet,'gutter swaps in its own slab sheet');
+assert.notEqual(bedMaterial.color,cobbleMaterial.color,'gutter and cobble have independent colour uniforms');
+assert.notEqual(bedMaterial.emissive,cobbleMaterial.emissive,'gutter emission does not mutate the cobble');
+assert.equal(bedMaterial.customProgramCacheKey(),cobbleMaterial.customProgramCacheKey(),'the gutter retains the same cel program key');
 function patchedGroundShader(material){const shader={uniforms:{},fragmentShader:THREE.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);return shader;}
 const bedShader=patchedGroundShader(bedMaterial),cobbleShader=patchedGroundShader(cobbleMaterial);
 assert.equal(bedShader.fragmentShader,cobbleShader.fragmentShader,'clone gets exactly the same cel shader source');
@@ -447,7 +449,7 @@ chainedMaterial.customProgramCacheKey=()=> 'existing-hook';
 groundContext.applyCelShading(chainedMaterial);
 assert.equal(patchedGroundShader(chainedMaterial).uniforms.existingHook.value,1,'cel application preserves an existing shader hook');
 assert.equal(chainedMaterial.customProgramCacheKey(),'pbr-daylight-v3|existing-hook','natural PBR application preserves an existing program key');
-console.log('PASS: r156 ground clone shares all three texture resources; independent palette uniforms; single cel patch, identical program key and preserved callback chain.');
+console.log('PASS: r156 gutter clone of the cobble; independent palette uniforms; single cel patch, identical program key and preserved callback chain.');
 // The shipped r156 light classifier already knows when an exact zero would
 // reach RE_Direct. Verify every direct-light block is guarded without changing
 // shadow sampling, loop declarations or any other surrounding shader source.
@@ -640,7 +642,7 @@ const cachedLamp=(key,fn)=>{if(!lampCache.has(key))lampCache.set(key,fn());retur
 const compact=new Function('THREE','mergeBoxes',section('  var staticMergeGeometryCache = new Map();','  // Merges building parts that carry different materials')+';return compactStaticPropGroup;')(THREE,merge);
 const lampMaterials={};
 for(const name of ['metalDark','poleGreen','chrome','lampGlobe'])lampMaterials[name]=new THREE.MeshStandardMaterial({transparent:name==='lampGlobe'});
-const lampContext=vm.createContext({THREE,ASSETS:{},MAT:lampMaterials,cached:cachedLamp,KIEZ_DISTRICT_ENABLED:useKiezLamps,
+const lampContext=vm.createContext({THREE,ASSETS:{},MAT:lampMaterials,cached:cachedLamp,
   cylGeo:(a,b,h,n)=>cachedLamp([a,b,h,n].join(','),()=>new THREE.CylinderGeometry(a,b,h,n)),
   roundedBox:(w,h,d,r,mat,x=0,y=0,z=0)=>{
     const m=new THREE.Mesh(cachedLamp([w,h,d,r].join(':'),()=>new THREE.BoxGeometry(w,h,d)),mat);
@@ -652,34 +654,31 @@ const lampContext=vm.createContext({THREE,ASSETS:{},MAT:lampMaterials,cached:cac
 });
 vm.runInContext(section('  function makeStreetLamp() {','  // One shared sculpted canopy:'),lampContext);
 const lampRoot=new THREE.Group(), lamps=[lampContext.makeStreetLamp(),lampContext.makeStreetLamp()];
-if(useKiezLamps) {
-  let solidTriangles=0;
-  for(const mesh of lamps[0].children.filter(mesh=>mesh.isMesh&&!mesh.material.transparent&&mesh!==lamps[0].userData.flag)) {
-    const geometry=mesh.geometry,position=geometry.attributes.position,normal=geometry.attributes.normal;
-    solidTriangles+=(geometry.index?geometry.index.count:position.count)/3;
-    for(let i=0;i<position.count;i++) {
-      assert.ok(Number.isFinite(position.getX(i)+position.getY(i)+position.getZ(i)),'lantern vertices are finite');
-      assert.ok(Math.abs(Math.hypot(normal.getX(i),normal.getY(i),normal.getZ(i))-1)<1e-5,'lantern normals are unit length');
-    }
+let solidTriangles=0;
+for(const mesh of lamps[0].children.filter(mesh=>mesh.isMesh&&!mesh.material.transparent&&mesh!==lamps[0].userData.flag)) {
+  const geometry=mesh.geometry,position=geometry.attributes.position,normal=geometry.attributes.normal;
+  solidTriangles+=(geometry.index?geometry.index.count:position.count)/3;
+  for(let i=0;i<position.count;i++) {
+    assert.ok(Number.isFinite(position.getX(i)+position.getY(i)+position.getZ(i)),'lantern vertices are finite');
+    assert.ok(Math.abs(Math.hypot(normal.getX(i),normal.getY(i),normal.getZ(i))-1)<1e-5,'lantern normals are unit length');
   }
-  assert.ok(solidTriangles>=500&&solidTriangles<=900,'complete opaque lantern remains within its 500–900 triangle budget');
-  const iron=lamps[0].children.find(mesh=>mesh.material===lampMaterials.metalDark&&!mesh.userData.noStaticMerge);
-  iron.geometry.computeBoundingBox();
-  assert.ok(iron.geometry.boundingBox.min.y>=-1e-6&&iron.geometry.boundingBox.max.y<=6.50,'gas lantern preserves grounded root and original height contract');
-  assert.ok(iron.geometry.boundingBox.max.x-iron.geometry.boundingBox.min.x<.55,'narrow upright silhouette replaces the overhanging curved arm');
-  assert.equal(lamps[0].userData.bulb.material,lampMaterials.lampGlobe,'daylight callback owns the original shared lamp material');
-  assert.equal(lamps[0].userData.bulb.geometry,lamps[1].userData.bulb.geometry,'all lamp panes reuse one cached mesh');
-  assert.equal(iron.geometry,lamps[1].children.find(mesh=>mesh.material===lampMaterials.metalDark&&!mesh.userData.noStaticMerge).geometry,'all ironwork reuses one cached mesh');
-  assert.ok(!lampMaterials.lampGlobe.transparent&&lampMaterials.lampGlobe.opacity===1&&lampMaterials.lampGlobe.depthWrite,'panes use the opaque depth-writing pool path');
-  assert.equal(new Set(lamps[0].children.filter(mesh=>mesh.isMesh&&!mesh.userData.noStaticMerge&&!mesh.material.transparent).map(mesh=>mesh.material)).size,2,'body and panes need only two shared opaque materials');
-  console.log(`PASS: reference gas lantern geometry; ${solidTriangles} opaque triangles, <6.5 m height, slender capped silhouette, unit normals and shared material/cache ownership.`);
 }
-lamps.forEach((lamp,i)=>{lamp.position.set(i?9:-9,0.16,i?9:-11);lamp.rotation.y=i?0:Math.PI;lampRoot.add(lamp);});
+assert.ok(solidTriangles>=500&&solidTriangles<=900,'complete opaque lantern remains within its 500–900 triangle budget');
+const iron=lamps[0].children.find(mesh=>mesh.material===lampMaterials.metalDark&&!mesh.userData.noStaticMerge);
+iron.geometry.computeBoundingBox();
+assert.ok(iron.geometry.boundingBox.min.y>=-1e-6&&iron.geometry.boundingBox.max.y<=6.50,'gas lantern preserves grounded root and original height contract');
+assert.ok(iron.geometry.boundingBox.max.x-iron.geometry.boundingBox.min.x<.55,'narrow upright silhouette replaces the overhanging curved arm');
+assert.equal(lamps[0].userData.bulb.material,lampMaterials.lampGlobe,'daylight callback owns the original shared lamp material');
+assert.equal(lamps[0].userData.bulb.geometry,lamps[1].userData.bulb.geometry,'all lamp panes reuse one cached mesh');
+assert.equal(iron.geometry,lamps[1].children.find(mesh=>mesh.material===lampMaterials.metalDark&&!mesh.userData.noStaticMerge).geometry,'all ironwork reuses one cached mesh');
+assert.ok(!lampMaterials.lampGlobe.transparent&&lampMaterials.lampGlobe.opacity===1&&lampMaterials.lampGlobe.depthWrite,'panes use the opaque depth-writing pool path');
+assert.equal(new Set(lamps[0].children.filter(mesh=>mesh.isMesh&&!mesh.userData.noStaticMerge&&!mesh.material.transparent).map(mesh=>mesh.material)).size,2,'body and panes need only two shared opaque materials');
+console.log(`PASS: reference gas lantern geometry; ${solidTriangles} opaque triangles, <6.5 m height, slender capped silhouette, unit normals and shared material/cache ownership.`);lamps.forEach((lamp,i)=>{lamp.position.set(i?9:-9,0.16,i?9:-11);lamp.rotation.y=i?0:Math.PI;lampRoot.add(lamp);});
 const lampDrawsBefore=lamps.reduce((n,lamp)=>n+lamp.children.filter(o=>o.isMesh).length,0);
 const lampBatches=lampContext.batchRigidChunkProps(lampRoot,lamps,'lamp');
 lampContext.syncRigidChunkProps(lampBatches);
 const lampDrawsAfter=lamps.reduce((n,lamp)=>n+lamp.children.filter(o=>o.isMesh).length,0)+lampBatches.length;
-assert.equal(lampDrawsBefore-lampDrawsAfter,useKiezLamps?2:4,'paired street lamps instance each identical opaque part once');
+assert.equal(lampDrawsBefore-lampDrawsAfter,2,'paired street lamps instance each identical opaque part once');
 for (const batch of lampBatches) {
   assert.equal(batch.mesh.count,2);
   assert.equal(batch.mesh.castShadow,batch.entries[0].source.castShadow);
@@ -693,8 +692,7 @@ for (const batch of lampBatches) {
 lamps.forEach(lamp=>{
   assert.ok(lamp.children.includes(lamp.userData.flag) && lamp.children.includes(lamp.userData.flagStub),'flag remains independently toggled');
   assert.ok(lamp.children.includes(lamp.userData.cone),'cone retains original independent sorting');
-  if(useKiezLamps) assert.ok(lampBatches.some(batch=>batch.entries.some(entry=>entry.source===lamp.userData.bulb)),'bulb reference survives while opaque panes enter their instance pool');
-  else assert.ok(lamp.children.includes(lamp.userData.bulb),'legacy globe retains original transparent sorting');
+  assert.ok(lampBatches.some(batch=>batch.entries.some(entry=>entry.source===lamp.userData.bulb)),'bulb reference survives while opaque panes enter their instance pool');
 });
 lamps[0].visible=false;lampContext.syncRigidChunkProps(lampBatches);
 assert.ok(lampBatches.every(b=>b.mesh.count===1),'individual authored lamp culling is preserved');
@@ -906,8 +904,8 @@ fixtureScene.onBeforeRender=function(...args){fixtureBeforeCount++;fixtureBefore
 Object.assign(lampContext,{scene:fixtureScene,worldRoot:fixtureWorld,sun:fixtureSun,chunks:fixtureChunks});
 lampContext.installStreetFixturePools();
 const fixturePools=lampContext.streetFixturePools;
-assert.equal(fixturePools.sources.length,(useKiezLamps?36:46)-(nativeTreeContainers?2:0),'two chunk-local fixed shadow holders accompany tree/container beauty fixtures');
-assert.equal(fixturePools.pools.length,(useKiezLamps?9:11)-(nativeTreeContainers?1:0),'one shared shadow-only canopy pool accompanies tree/container beauty pools');
+assert.equal(fixturePools.sources.length,36-(nativeTreeContainers?2:0),'two chunk-local fixed shadow holders accompany tree/container beauty fixtures');
+assert.equal(fixturePools.pools.length,9-(nativeTreeContainers?1:0),'one shared shadow-only canopy pool accompanies tree/container beauty pools');
 assert.equal(fixturePools.furnitureSources,10);
 assert.ok(excludedFurniture.every(mesh=>mesh.material===furnitureMaterial),'controlled, custom callback and replaced assets remain untouched');
 assert.ok(fixturePools.sources.every(row=>row.source.material!==row.material&&!row.source.material.visible&&row.material.visible),
@@ -971,7 +969,7 @@ function presentStreetFixtures() {
   return {oldBeautyDraws,beautyDraws,oldShadowDraws,shadowDraws};
 }
 const fixtureStart=presentStreetFixtures();
-assert.equal(fixtureStart.oldBeautyDraws,(useKiezLamps?33:43)-(nativeTreeContainers?2:0));assert.equal(fixtureStart.beautyDraws,(useKiezLamps?8:10)-(nativeTreeContainers?1:0),'mixed near/far trees cost one additional world draw');
+assert.equal(fixtureStart.oldBeautyDraws,33-(nativeTreeContainers?2:0));assert.equal(fixtureStart.beautyDraws,8-(nativeTreeContainers?1:0),'mixed near/far trees cost one additional world draw');
 lampContext.PROFILE_RENDER=true;lampContext.canvas={dataset:{}};lampContext.frameNumber=0;
 presentStreetFixtures();
 const measuredTreeLOD=JSON.parse(lampContext.canvas.dataset.streetFixturePooling);
@@ -1281,94 +1279,12 @@ for (const pool of [poolState.pretzelSolidInst,poolState.pretzelHaloInst]) {
 vm.runInContext('pretzelSolidInst=null;pretzelHaloInst=null;',poolState);
 vm.runInContext('"use strict";\n' + poolReset,poolState);
 console.log(`PASS: collectible reset; actual lamp factory saves ${lampDrawsBefore-lampDrawsAfter} draws per visible pair; transforms, culling, shadow flags and independent transparent/flag layers preserved.`);
-// The connected Kiez route must not construct its retired macro scenes. Use
-// the actual factories and geometry builders; only canvas painting and global
-// texture/material inputs are stand-ins, with a distinct identity per slot.
-function routeFunction(name) {
-  const marker='  function '+name+'(',at=html.indexOf(marker),open=html.indexOf('{',at);
-  assert.ok(at>=0&&open>at,'actual route helper '+name);
-  return html.slice(at,open+1)+glslBody(html,marker)+'\n}';
+// The Kiez street carries exactly the two courier point lights (warm rim and
+// ground bounce); no pooled sequence lights ride along.
+{
+  const lightScene=new THREE.Scene(),lightScope=vm.createContext({THREE,scene:lightScene});
+  vm.runInContext(section('  var rim = new THREE.PointLight(', '  var rimFollow ='),lightScope);
+  assert.equal(lightScene.children.filter(node=>node.isPointLight).length,2,'total point lights are the two courier sources');
 }
-const routeMaterial=(name)=>{const m=new THREE.MeshStandardMaterial({map:new THREE.Texture()});m.name=name;return m;};
-const routePalette=(name)=>new Proxy({}, {get(o,k){return o[k]||(o[k]=routeMaterial(name+'.'+String(k)));}});
-const routeScope=vm.createContext({THREE,console,Math,clamp:THREE.MathUtils.clamp,mergeBoxes:merge,
-  MAT:routePalette('MAT'),STATION_MAT:routePalette('STATION'),TUNNEL_MAT:routePalette('TUNNEL'),
-  BRIDGE_MAT:routePalette('BRIDGE'),STREET_MAT:routePalette('STREET'),facadeMats:routePalette('facade'),
-  PROP_WOOD:routeMaterial('wood'),PROP_BANNER:routeMaterial('banner'),PROP_CRATE_BLUE:routeMaterial('crate'),
-  CONSTRUCTION_HOARD_MAT:routeMaterial('hoarding'),STREET_ART_MAT:routeMaterial('art'),destRollMat:routeMaterial('destination'),
-  ASSETS:{streetArt:true},canvas:{dataset:{}},outlineTransparentDetails:[],outlineTransparentWasVisible:[],seqLightMarkers:[],
-  OBERBAUM_MASONRY_COLUMNS:3,OBERBAUM_MASONRY_ROWS:6,oberbaumBrickTex:new THREE.Texture(),
-  FACADE_TILE_W:7.2,FACADE_STOREY_BANDS:3,STOREY_H:3.6,ROAD_HALF:7.2,WALK_OUT:12.4,
-  riverbankIndustrialCache:Object.create(null),canvasTexture:()=>new THREE.Texture()});
-vm.runInContext(section('  var geoCache = Object.create(null);','  function icoGeo(r)'),routeScope);
-vm.runInContext(section('  var staticMergeGeometryCache =','  // Merges building parts that carry different materials'),routeScope);
-for(const name of ['icoGeo','box','roundedBox','scaleUV','mergedPart','streetArtCellGeo','addStreetArtBatch',
-  'registerSeqLightMarker','makeStationTrain','makeStationSequence','mapOberbaumMasonry','makeOberbaumArchGeo',
-  'riverbankFacadeGeometry','riverbankIndustrialGeometry','makeSpreeVessels','makeSpreeBridgeSequence',
-  'tramNoseProfile','makeTunnelTrain','makeTunnelSequence','makeBvgStopStory','makeInactiveRouteSequence','setMoverLive',
-  'freezeObjectTree','freezeChunkStaticMatrices'])vm.runInContext(routeFunction(name),routeScope);
-vm.runInContext(section('  var bridgeCableMat =','  function makeSpreeVessels()'),routeScope);
-const macroStart=html.indexOf('  function makeChunk(');
-const retiredSceneCode=section('    var streetStory =','    // Dedicated crate stacks',macroStart)+
-  section('    var construction = new THREE.Group();','    var transit =',macroStart)+
-  section('    var station = KIEZ_DISTRICT_ENABLED','    // Cross street:',macroStart);
-const routeFactoryNames=['makeBvgStopStory','makeStationSequence','makeSpreeBridgeSequence','makeTunnelSequence'];
-const routeFactoryCalls=[],routeOriginals={};
-for(const name of routeFactoryNames){routeOriginals[name]=routeScope[name];routeScope[name]=function(){
-  const result=routeOriginals[name]();routeFactoryCalls.push({name,result});return result;
-};}
-function routePayload(root){
-  const geometry=new Set(),materials=new Set();let nodes=0,meshes=0,lines=0,triangles=0,bytes=0;
-  root.traverse(node=>{nodes++;if(!node.isMesh&&!node.isLine)return;if(node.isMesh)meshes++;else lines++;
-    const geo=node.geometry;geometry.add(geo);(Array.isArray(node.material)?node.material:[node.material]).forEach(m=>materials.add(m));
-    if(node.isMesh)triangles+=(geo.index?geo.index.count:geo.attributes.position.count)/3;
-  });
-  for(const geo of geometry){for(const attr of Object.values(geo.attributes))bytes+=attr.array.byteLength;if(geo.index)bytes+=geo.index.array.byteLength;}
-  return {nodes,meshes,lines,geometries:geometry.size,materials:materials.size,triangles,bytes};
-}
-function buildRouteRetired(reference){
-  routeScope.KIEZ_DISTRICT_ENABLED=reference;routeScope.g=new THREE.Group();routeScope.ud={transit:{train:new THREE.Object3D()}};
-  vm.runInContext(retiredSceneCode,routeScope);routeScope.g.userData=routeScope.ud;
-  return {root:routeScope.g,ud:routeScope.ud,payload:routePayload(routeScope.g)};
-}
-const kiezRetired=buildRouteRetired(true);
-assert.equal(routeFactoryCalls.length,0,'Kiez calls none of the four retired factories');
-assert.deepEqual(kiezRetired.payload,{nodes:10,meshes:0,lines:0,geometries:0,materials:0,triangles:0,bytes:0});
-assert.equal(routeScope.seqLightMarkers.length,0,'Kiez creates no sequence light markers');
-assert.equal(kiezRetired.ud.constructionSides.length,0,'Kiez allocates no scaffold side payload');
-const legacyRetired=buildRouteRetired(false);
-assert.deepEqual(routeFactoryCalls.map(call=>call.name),routeFactoryNames,'legacy calls every original factory once');
-for(const [key,name] of [['streetStory','makeBvgStopStory'],['station','makeStationSequence'],['bridge','makeSpreeBridgeSequence'],['tunnel','makeTunnelSequence']]){
-  assert.equal(legacyRetired.ud[key],routeFactoryCalls.find(call=>call.name===name).result,'legacy retains exact original factory object identity');
-}
-assert.equal(legacyRetired.ud.constructionSides.length,2);
-assert.equal(routeScope.seqLightMarkers.length,3,'legacy retains both station lamps and the tunnel sweep marker');
-assert.ok(legacyRetired.payload.nodes>100&&legacyRetired.payload.triangles>30000&&legacyRetired.payload.bytes>1000000,
-  'real macro factories contain substantial constructed geometry eliminated from Kiez startup');
-// The remaining references support the unchanged freeze and mover lifecycle
-// across repeated rerolls; they never acquire a mesh or compile candidate.
-kiezRetired.root.add(kiezRetired.ud.transit.train);
-assert.equal(kiezRetired.ud.routeMovers.length,1);assert.equal(kiezRetired.ud.routeMovers[0],kiezRetired.ud.transit.train);
-assert.equal(legacyRetired.ud.routeMovers.length,5,'legacy retains all five original animated objects');
-const reusedRouteMovers=kiezRetired.ud.routeMovers;
-for(let cycle=0;cycle<20;cycle++){
-  kiezRetired.root.position.z=cycle*40;routeScope.freezeChunkStaticMatrices(kiezRetired.root);
-  for(const mover of [kiezRetired.ud.station.train,kiezRetired.ud.bridge.vessels,kiezRetired.ud.tunnel.train,kiezRetired.ud.tunnel.sweep]){
-    assert.equal(mover.matrixAutoUpdate,false);assert.equal(mover.matrixWorldAutoUpdate,false,'freeze never reactivates retired movers');
-    routeScope.setMoverLive(mover,false);
-    assert.ok(mover.parent&&mover.parent.userData.inactiveRoute,'inert mover keeps a valid owned ancestry');
-  }
-  assert.equal(routePayload(kiezRetired.root).meshes,0);
-  assert.equal(kiezRetired.ud.routeMovers,reusedRouteMovers,'rerolls reuse the startup mover list');
-}
-for(const [search,expected] of [['',0],['?district=legacy',5],['?profile=1&district=legacy',5]]){
-  const lightScene=new THREE.Scene(),lightScope=vm.createContext({THREE,scene:lightScene,window:{location:{search}}});
-  vm.runInContext(section('  var rim = new THREE.PointLight(', '  // Fixed pool of "sequence" point lights'),lightScope);
-  vm.runInContext(section('  var KIEZ_DISTRICT_ENABLED =','  // Called by makeStationSequence'),lightScope);
-  assert.equal(lightScope.SEQ_LIGHT_POOL_SIZE,expected);assert.equal(lightScope.seqLightPool.length,expected);
-  assert.equal(lightScene.children.filter(node=>node.isPointLight).length,expected+2,'total point lights preserve both courier sources');
-}
-assert.equal((html.match(/var KIEZ_DISTRICT_ENABLED =/g)||[]).length,1,'route selection has one initialization before resource allocation');
-console.log('PASS: retired route construction; actual legacy payload '+JSON.stringify(legacyRetired.payload)+
-  ' becomes '+JSON.stringify(kiezRetired.payload)+' in Kiez; exact legacy identities,20freeze/recycle cycles and5→0sequence lights.');
+console.log('PASS: two courier point lights and no pooled sequence lights.');
 console.log('PASS: 30/60 Hz presentation at 59.94–144 Hz; stable traffic/shadow work at 30–144 Hz; allocation-free effect tier changes; single-commit rotation; Retina/4K pixel budgets; sustained pressure/recovery; context recovery; hitch/background guards; shared canopy geometry and bounds.');

@@ -16,10 +16,9 @@ Object.assign(c,{window:{location:{search:'?profile=1'},innerWidth:390,innerHeig
   aoActive:false,contactAORT:null,
   canvas:{width:780,height:1688,dataset:{postProcessing:'depth-composite',resolutionPolicy:'fixed-high-detail',pixelBudget:'1250000'}},
   scene:new THREE.Scene(),camera:new THREE.PerspectiveCamera(),MAT:{},
-  STREET_MAT:{},STATION_MAT:{},BRIDGE_MAT:{},TUNNEL_MAT:{}});
+  STREET_MAT:{}});
 c.scene.fog=new THREE.Fog(0xdbe4e9,48,168);
 Object.assign(c,{sun:new THREE.DirectionalLight(0xffdfb4,3.32),hemi:{intensity:1.10},fill:{intensity:.44},POST:{exposure:1.04},
-  seqLightPool:[],seqLightMarkers:[],
   surfaceVistaRequested:true,surfaceVistaPrecision:'highp',surfaceVistaState:{map:null,enabled:0,strength:.65,fadeNear:120,fadeFar:178},
   skyTextures:[{image:{width:1536,height:1024},userData:{panoramaScale:3}}],
   skyMat:{uniforms:{uMapAScale:{value:3},uMix:{value:0},uDayAir:{value:1},uStreetVistaOn:{value:0}}}});
@@ -59,12 +58,6 @@ assert.equal(report.presentation.pixelBudget,1250000);
 assert.equal(report.presentation.scenePixels,1350*624,'report gives actual latest scene allocation');
 assert.equal(report.renderer.gpuTimer,'unavailable','unsupported GPU timer never blocks a report');
 assert.equal(report.lighting.setting,'fixed warm daylight');
-assert.deepEqual([report.lighting.sequenceLights.slots,report.lighting.sequenceLights.markers],[0,0],
-  'Kiez report confirms that unused sequence lights and markers were not allocated');
-c.seqLightPool.length=5;c.seqLightMarkers.length=48;
-const legacyLights=c.makeDeviceReport('legacy route').lighting.sequenceLights;
-assert.deepEqual([legacyLights.slots,legacyLights.markers],[5,48],'legacy counts reflect actual retained arrays');
-c.seqLightPool.length=0;c.seqLightMarkers.length=0;
 assert.deepEqual(Array.from(report.lighting.sun.position),[-62,75,-9]);
 assert.equal(report.lighting.sun.intensity,3.32);
 assert.equal(report.lighting.sky.painted,true,'report identifies the loaded plate instead of assuming it loaded');

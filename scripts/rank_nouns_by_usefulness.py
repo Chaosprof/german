@@ -175,6 +175,27 @@ RETIRE_DUPLICATES = [
     ("Parfum", "das", "Parfüm", "das"),
 ]
 
+# The Bandwurmwörter deck (the same four tapeworm compounds the Berlin Runner
+# deals from its inline MONSTER_WORDS). They are rows so the website can drill
+# them like any noun, flagged `builtinDeck` so index.html builds the deck from
+# the data. They rank after every other live noun: no Top-N tier deals them.
+BANDWURM_DECK = "bandwurm"
+BANDWURM_SOURCE = "bandwurm-deck"
+BANDWURM_NOUNS = [
+    {"word": "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz", "article": "das",
+     "plural": "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetze",
+     "english": "beef labelling supervision duties delegation act"},
+    {"word": "Grundstücksverkehrsgenehmigungszuständigkeitsübertragungsverordnung", "article": "die",
+     "plural": "Grundstücksverkehrsgenehmigungszuständigkeitsübertragungsverordnungen",
+     "english": "ordinance delegating authority over land-conveyance permits"},
+    {"word": "Donaudampfschifffahrtsgesellschaftskapitän", "article": "der",
+     "plural": "Donaudampfschifffahrtsgesellschaftskapitäne",
+     "english": "Danube steamship company captain"},
+    {"word": "Kraftfahrzeughaftpflichtversicherung", "article": "die",
+     "plural": "Kraftfahrzeughaftpflichtversicherungen",
+     "english": "motor third-party liability insurance"},
+]
+
 # Plain plurals imported as plural-only rows (mostly from glossaries that list
 # "die Getränke (Pl.)"). Each is exactly its singular row's plural field, so
 # the plural drill already teaches it; retired onto the singular (2026-09-24).
@@ -466,6 +487,34 @@ def apply_additions(rows: list[dict], log: list[str]) -> list[dict]:
         added.append(row)
     if added:
         log.append(f"added {len(added)} nouns: " + ", ".join(f"{r['article']} {r['word']}" for r in added))
+    return added
+
+
+def apply_bandwurm_rows(rows: list[dict], log: list[str]) -> list[dict]:
+    present = {(row["word"], row["article"]) for row in rows}
+    counter = next_id(rows)
+    added = []
+    for spec in BANDWURM_NOUNS:
+        if (spec["word"], spec["article"]) in present:
+            continue
+        row = {
+            "word": spec["word"],
+            "article": spec["article"],
+            "plural": spec["plural"],
+            "english": spec["english"],
+            "rank": 0,  # assigned below
+            "leipzigRank": None,
+            "manuallyAdded": True,
+            "source": BANDWURM_SOURCE,
+            "builtinDeck": BANDWURM_DECK,
+            "id": f"noun-{counter:05d}",
+        }
+        counter += 1
+        history(row, "add", "added", "Bandwurmwörter deck noun (tapeworm compound); drilled only through its built-in deck.")
+        rows.append(row)
+        added.append(row)
+    if added:
+        log.append(f"added {len(added)} Bandwurmwörter: " + ", ".join(f"{r['article']} {r['word']}" for r in added))
     return added
 
 
@@ -854,7 +903,7 @@ def main() -> None:
     repaired = apply_repairs(rows, log)
     renames = apply_retirements(rows, log)
     renames.update(DECK_WORD_RENAMES)
-    added = apply_additions(rows, log)
+    added = apply_additions(rows, log) + apply_bandwurm_rows(rows, log)
     retag = [row for row in repaired if any(k in REPAIRS[row["id"]] for k in ("word", "article", "adjectivalNoun"))]
     tag_rules(added + retag)
     rewrite_decks(renames, write, log)
@@ -876,7 +925,8 @@ def main() -> None:
     spoken, reliable = spoken_frequency(rows, written, noun_freq, competitors)
     effective, detail = score(rows, membership, written, spoken, reliable)
 
-    order = sorted(rows, key=lambda r: (is_retired(r), effective[r["id"]], -(written.get(r["id"]) or 0), r["word"], r["id"]))
+    # Retired rows last; deck-only rows (Bandwurmwörter) just before them.
+    order = sorted(rows, key=lambda r: (is_retired(r), r.get("builtinDeck") is not None, effective[r["id"]], -(written.get(r["id"]) or 0), r["word"], r["id"]))
     for position, row in enumerate(order, start=1):
         row["rank"] = position
 

@@ -21,16 +21,17 @@ function section(a, b, from = 0) {
 }
 const rollStart = html.indexOf('  function rollChunk(');
 const flags = section('    var worldChunkIndex =', '    ud.motif =', rollStart);
-const layoutSetup = section('    var motifWidths =', '    var windowBayIdx =', rollStart);
+const layoutSetup = section('    var heightBandBase =', '    var windowBayIdx =', rollStart);
 const loopStart = html.indexOf('    [-1, 1].forEach(function (side, sideIdx)', rollStart);
 const layoutLoop = section('    [-1, 1].forEach(function (side, sideIdx)', '        // Window-bay and shopDepth instances', loopStart) + '\n      }\n    });';
-const layoutCode = new vm.Script(flags + '\nvar hasCross = motif === 1, crossZ = 0;\n' + layoutSetup + layoutLoop);
+const layoutCode = new vm.Script(flags + '\nvar hasCross = motif === 1, crossZ = 0;\n' + layoutSetup +
+  'var visibleBuildings = 0;\n' + layoutLoop);
 function block(index) {
   const buildings = Array.from({length: 6}, (_, slot) => {
     const g = new T.Group(); g.userData.side = slot < 3 ? -1 : 1;
     g.rotation.y = -g.userData.side * Math.PI / 2; return g;
   });
-  const c = vm.createContext({CHUNK_LEN: 40, WALK_OUT: 12.4, KIEZ_DISTRICT_ENABLED: true,
+  const c = vm.createContext({CHUNK_LEN: 40, WALK_OUT: 12.4, refactorBurn: noop,
     chunkZ: index * 40, ud: {buildings}, writeBuildingPartPools: noop, macroHueFamily: noop,
     rollBuilding(g, width) {
       g.userData.width = width;
@@ -39,38 +40,13 @@ function block(index) {
     }});
   layoutCode.runInContext(c);
   for (const g of buildings) {g.position.z += index * 40; g.updateMatrixWorld(true);}
-  return {index, buildings, reference: c.referenceBeat, cross: c.hasCross, motif: c.motif, context: c};
+  return {index, buildings, cross: c.hasCross, motif: c.motif, context: c};
 }
 const blocks = Array.from({length: 65}, (_, i) => block(i - 16));
-const actorFlags = new vm.Script(section('    ud.motif =', '    if (hasStation)', rollStart));
-// Execute the shipped flags across recycled/negative indices and both routes.
-// Inactive legacy actors must be explicitly retired, not merely hidden behind
-// the reference facades while their mover callbacks continue running.
-let routeFlagChecks = 0;
-for (const reference of [true,false]) for (let index = -32; index <= 64; index++) {
-  const part = () => ({root:{visible:true},train:{},vessels:{},sweep:{}});
-  const ud = {construction:{visible:true},constructionSides:[],catenary:{},station:part(),bridge:part(),tunnel:part()};
-  const state = vm.createContext({CHUNK_LEN:40,chunkZ:index*40,KIEZ_DISTRICT_ENABLED:reference,ud,
-    setMoverLive:(actor,on)=>{actor.live=on;}});
-  vm.runInContext(flags,state);actorFlags.runInContext(state);
-  const cycle = ((index%8)+8)%8,macro=((index%16)+16)%16,motif=((index%4)+4)%4;
-  assert.equal(state.referenceBeat,reference);
-  for (const [key,expected] of [['station',!reference&&motif===2&&cycle===2],
-    ['bridge',!reference&&motif===2&&macro===6],['tunnel',!reference&&motif===0&&macro===12]]) {
-    assert.equal(ud[key].root.visible,expected,'macro actor visibility follows the selected route');
-    assert.equal((key==='bridge'?ud[key].vessels:ud[key].train).live,expected,'inactive transport movers are retired on reroll');
-    if(key==='tunnel')assert.equal(ud[key].sweep.live,expected);
-  }
-  assert.equal(ud.construction.visible,!reference&&motif===3,'construction survives only in the unchanged legacy route');
-  if(reference){assert.ok([0,1,2].includes(ud.motif));assert.equal(ud.catenary.visible,true);}
-  else assert.equal(ud.motif,motif,'legacy four-beat motif sequence is preserved');
-  routeFlagChecks++;
-}
 let visible = 0, minRoadGap = Infinity, ordinarySeams = 0;
 for (const b of blocks) {
   assert.equal(b.buildings.length, 6, 'same six reusable facade slots');
-  assert.equal(b.reference,true,'every Kiez block retains the reference garden street');
-  assert.equal(b.context.bridgeEdgeChunk,false,'removed river sequence leaves no bridge-neighbour special cases');
+  assert.ok([0,1,2].includes(b.motif), 'every block is a shopfront, crossing or leafy beat');
   assert.equal(b.buildings.filter(g=>g.visible).length,b.cross?2:6,
     'ordinary blocks retain every lot; only the two approach frontages border a crossing');
   for (const g of b.buildings.filter(g => g.visible)) {
@@ -79,7 +55,7 @@ for (const b of blocks) {
     const roadGap = (g.userData.side > 0 ? box.min.x : -box.max.x) - 7.2;
     minRoadGap = Math.min(minRoadGap, roadGap);
     assert.ok(roadGap >= .3, 'all masonry, awnings and trim clear the fixed road by at least 30 cm');
-    if (b.reference && b.cross) {
+    if (b.cross) {
       assert.ok(Math.abs(g.position.z - b.index * 40) - g.userData.width / 2 >= 9,
         'actual frontages preserve the full 18 m crossing opening');
     }
@@ -152,7 +128,7 @@ const garden = scope.createBerlinGardenKit(T, (color, opts) => new T.MeshStandar
 const makePlanter = new Function('THREE', 'berlinGardenKit', 'registerProp',
   section('  function makePlanter()', '  // Wheelie bin') + '\nreturn makePlanter;')(T, garden, (kind,g) => (g.userData.propKind = kind, g));
 const propSlots = [makePlanter(), makePlanter(), makePlanter()].map(g => ({variants: [g]}));
-const cafeContext=vm.createContext({THREE:T,clamp:T.MathUtils.clamp,KIEZ_DISTRICT_ENABLED:true,
+const cafeContext=vm.createContext({THREE:T,clamp:T.MathUtils.clamp,
   MAT:{metalDark:new T.MeshStandardMaterial(),barrierWhite:new T.MeshStandardMaterial()},
   PROP_WOOD:new T.MeshStandardMaterial(),freezeObjectTree:g=>g.updateMatrixWorld(true)});
 for(const [a,b]of [
@@ -171,7 +147,7 @@ const planterExtent = new Function('THREE', section('  var propBoundsRootInv =',
   '\nreturn propExtentTowardFacade;')(T);
 const props = {ud: {props: furnishedSlots, buildings: opening.buildings}, referenceBeat: true, contactCount: 0,
   pushContact: (_,count) => count + 1, propExtentTowardFacade: planterExtent};
-const planterPlacement = section('    if (referenceBeat) {\n      var referencePlanterCount', '    // Crate stacks:', rollStart);
+const planterPlacement = section('    var referencePlanterCount = 0;', '    syncRigidChunkProps(ud.treeBatches);', rollStart);
 vm.runInNewContext(planterPlacement, props);
 const cafeBounds=new T.Box3().setFromObject(cafe);
 assert.ok(cafe.visible&&cafeBounds.min.x>7.5&&cafeBounds.max.x<10.66,
@@ -244,10 +220,10 @@ const makeTree = new Function('THREE', 'berlinGardenKit', 'registerProp', 'round
     (w,h,d,r,mat,x,y,z,bevel) => {const m = new T.Mesh(roundedGeo(w,h,d,r,bevel), mat); m.position.set(x,y,z); return m;},
     {kerb: kit.material, metalDark: kit.material}, getFarTree);
 const trees = Array.from({length: 4}, makeTree);
-const treePlacement = section('    ud.trees.forEach(function (tree, i)', '    // Sidewalk props:', rollStart);
+const treePlacement = section('    ud.trees.forEach(function (tree, i)',
+  '    ud.props.forEach(function (prop) { prop.variants.forEach(function (v) { v.visible = false; }); });', rollStart);
 vm.runInNewContext(treePlacement,
-  {ud: {trees}, motif: 0, referenceBeat: true, ROAD_HALF: 7.2, hierarchyStoryOn: false,
-    hasCross: false, hasStation: false, hasBridge: false, hasTunnel: false, bridgeEdgeChunk: false,
+  {ud: {trees}, motif: 0, ROAD_HALF: 7.2, hasCross: false, refactorBurn: noop,
     contactCount: 0, pushContact: (_,count) => count + 1});
 let minimumPitRoadClearance = Infinity, maximumPitFacadeReach = -Infinity;
 for (const g of trees) {
@@ -264,10 +240,10 @@ for (const g of trees) {
 // The changed crowns remain inside their owning slabs, including recycled
 // positions. The existing chunk-edge gate therefore retains its full margin.
 let stagedTreeBlocks = 0, stagedTreeCount = 0;
-for (const b of blocks.filter(b => b.reference)) {
+for (const b of blocks) {
   const fixture = b.context;
   fixture.ud.trees = Array.from({length: 4}, makeTree);
-  Object.assign(fixture, {ROAD_HALF: 7.2, hierarchyStoryOn: false, contactCount: 0,
+  Object.assign(fixture, {ROAD_HALF: 7.2, contactCount: 0,
     pushContact: (_, count) => count + 1});
   vm.runInContext(treePlacement, fixture);
   stagedTreeBlocks++;
@@ -386,7 +362,7 @@ for (const [slot,name] of [[5,'bakery canopy'],[5,'bakery display'],[2,'bookstor
     treeSightlines.push({view:profile.name,subject:name,viewRays,facadeVisible,treeBlocked,openingBlocked,blockedSamples});
   }
 }
-const report = {pass: true, blocks: blocks.length, routeFlagChecks, visibleFacades: visible,
+const report = {pass: true, blocks: blocks.length, visibleFacades: visible,
   minimumRoadClearance: minRoadGap, ordinarySeams, projection, minimumPlanterClearance,
   planterProjection, planterPortalRays, planterDraws:poolContext.streetFixturePools.pools.length,
   minimumPitRoadClearance, maximumPitFacadeReach, stagedTreeBlocks, stagedTreeCount,
